@@ -968,7 +968,7 @@ SEGUNDA PARTE: REESTRUCTURACIÓN ARQUITECTÓNICA, ESCALABILIDAD Y ADMINISTRACIÓ
   - CA-145: La auditoría identifica las funciones, variables, bloques de código, endpoints y dependencias que deben conservarse durante cada migración.
   - CA-146: No quedan funciones existentes desconectadas, referencias obsoletas ni llamadas a endpoints inexistentes después de una etapa de migración.
   - CA-147: Los dashboards conservan la comunicación con los servicios que necesitan, sin depender de implementaciones internas que hayan sido trasladadas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -1943,7 +1943,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-16] Ampliar la gestión de sustituciones y la reasignación de clases afectadas
+### [X] [TAREA-F7-IMP-16] Ampliar la gestión de sustituciones y la reasignación de clases afectadas
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-16 (P1 · Sustituciones Complejas)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Ampliación de gestión docente)
@@ -1976,7 +1976,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-103: Las vistas de los usuarios reflejan el responsable efectivo.
   - CA-F7-104: Las notificaciones se envían a los destinatarios correspondientes.
   - CA-F7-105: La finalización de la sustitución no altera indebidamente las asignaciones futuras.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

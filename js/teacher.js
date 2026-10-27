@@ -1485,24 +1485,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const motivo = prompt("Motivo de la sustitución temporal:", "Licencia Médica / Permiso");
 
-        try {
-            const res = await fetchApi('ACADEMIC', 'createTeacherSubstitution', {
-                ofertaId,
-                sustitutoUserId,
-                fechaInicio: new Date().toISOString().split('T')[0],
-                fechaFin: "",
-                motivo,
-                autorizadoPor: currentUser.nombre
-            });
-
-            if (res.status === 'success') {
-                alert(`Sustitución docente registrada exitosamente para ${sustitutoUserId}.`);
-            } else {
-                alert("Error: " + res.message);
-            }
-        } catch (e) {
-            alert("Error registrando sustitución: " + e.message);
-        }
+        window.openTeacherSubstitutionModal(ofertaId, sustitutoUserId);
     });
 
     // Handler para Publicador de Aula Virtual (Fase 8)
@@ -1618,6 +1601,91 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    /*
+     * [TAREA-F7-IMP-16] Ampliar la gestión de sustituciones y la reasignación de clases afectadas
+     * Interfaz y controladores frontend para el registro y consulta de sustituciones docentes temporales.
+     */
+    window.openTeacherSubstitutionModal = function(ofertaId = "", sustitutoId = "") {
+        const modal = document.getElementById('modal-teacher-substitution');
+        if (!modal) return;
+
+        const ofertaInput = document.getElementById('subst-oferta-id');
+        const docenteInput = document.getElementById('subst-docente-id');
+        const inicioInput = document.getElementById('subst-fecha-inicio');
+        const alertBox = document.getElementById('subst-conflict-alert');
+
+        if (ofertaInput) ofertaInput.value = ofertaId || "";
+        if (docenteInput) docenteInput.value = sustitutoId || "";
+        if (inicioInput) inicioInput.value = new Date().toISOString().split('T')[0];
+        if (alertBox) alertBox.classList.add('hidden');
+
+        modal.classList.remove('hidden');
+    };
+
+    window.handleCreateTeacherSubstitutionSubmit = async function(e) {
+        if (e) e.preventDefault();
+
+        const ofertaId = document.getElementById('subst-oferta-id')?.value?.trim();
+        const sustitutoUserId = document.getElementById('subst-docente-id')?.value?.trim();
+        const fechaInicio = document.getElementById('subst-fecha-inicio')?.value;
+        const fechaFin = document.getElementById('subst-fecha-fin')?.value;
+        const motivo = document.getElementById('subst-motivo')?.value?.trim();
+        const alertBox = document.getElementById('subst-conflict-alert');
+
+        if (!ofertaId || !sustitutoUserId) {
+            alert("Por favor complete los campos requeridos.");
+            return;
+        }
+
+        try {
+            if (window.showLoading) window.showLoading("Verificando disponibilidad y registrando sustitución...");
+            const res = await fetchApi('ACADEMIC', 'createTeacherSubstitution', {
+                ofertaId,
+                sustitutoUserId,
+                fechaInicio,
+                fechaFin,
+                motivo,
+                autorizadoPor: currentUser ? currentUser.nombre || currentUser.userId : 'Secretaría'
+            });
+            if (window.hideLoading) window.hideLoading();
+
+            if (res && res.status === 'warning' && res.hasConflict) {
+                if (alertBox) {
+                    alertBox.innerHTML = `<span class="font-bold">Conflicto de horario:</span> ${res.message}`;
+                    alertBox.classList.remove('hidden');
+                }
+                if (confirm(`${res.message}\n¿Desea forzar el registro de la sustitución de todos modos?`)) {
+                    if (window.showLoading) window.showLoading("Forzando registro de sustitución...");
+                    const forceRes = await fetchApi('ACADEMIC', 'createTeacherSubstitution', {
+                        ofertaId,
+                        sustitutoUserId,
+                        fechaInicio,
+                        fechaFin,
+                        motivo,
+                        autorizadoPor: currentUser ? currentUser.nombre || currentUser.userId : 'Secretaría',
+                        forzarSustitucion: true
+                    });
+                    if (window.hideLoading) window.hideLoading();
+                    if (forceRes && forceRes.status === 'success') {
+                        alert("Sustitución forzada registrada exitosamente.");
+                        document.getElementById('modal-teacher-substitution')?.classList.add('hidden');
+                    } else {
+                        alert(forceRes?.message || "No se pudo registrar la sustitución.");
+                    }
+                }
+            } else if (res && res.status === 'success') {
+                alert(`Sustitución docente registrada exitosamente. ${res.data?.clasesAfectadasCount || 0} clase(s) reasignadas.`);
+                document.getElementById('modal-teacher-substitution')?.classList.add('hidden');
+            } else {
+                alert(res?.message || "Ocurrió un error al registrar la sustitución.");
+            }
+        } catch (err) {
+            if (window.hideLoading) window.hideLoading();
+            console.error("Error al registrar sustitución:", err);
+            alert("Error al procesar la solicitud: " + err.message);
+        }
+    };
 
     // [TAREA-F6-027] [Fase 6: Expediente Institucional y Ciclo de Vida] - Controlador de inspección de integridad y vista previa de impacto de restauración
     window.previewAndVerifyBackupRestore = async function(fileId) {

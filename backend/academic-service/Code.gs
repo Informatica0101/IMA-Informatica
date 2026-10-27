@@ -233,7 +233,7 @@ const ROLE_PERMISSIONS = {
   ],
   "Profesor": [
     "getAcademicConfig", "updateAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "updateAsignaturasActivas", "saveWhatsAppLink", "getWhatsAppLink", "getQuestionBank", "saveQuestion", "generateMigrationReport",
-    "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getAcademicOffers", "getTeacherAssignments", "createTeacherSubstitution", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule", "getReusableResourceCatalog", "manageReusableResource",
+    "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getAcademicOffers", "getTeacherAssignments", "createTeacherSubstitution", "getTeacherSubstitutions", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule", "getReusableResourceCatalog", "manageReusableResource",
     "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentEnrollments",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
     "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans"
@@ -628,6 +628,7 @@ function doPost(e) {
       case "getTeacherAssignments": result = getTeacherAssignments(payload); break;
       case "assignTeacherToClass": result = assignTeacherToClass(payload); break;
       case "createTeacherSubstitution": result = createTeacherSubstitution(payload); break;
+      case "getTeacherSubstitutions": result = getTeacherSubstitutions(payload); break;
       case "getDepartmentAcademicPlanning": result = getDepartmentAcademicPlanning(payload); break;
       case "assignDepartmentHead": result = assignDepartmentHead(payload); break;
       case "getCurricularAnalyticsReport": result = getCurricularAnalyticsReport(payload); break;
@@ -5398,20 +5399,120 @@ function getScheduleScenarios(payload) {
   return { status: "success", data: scenarios };
 }
 
+/**
+ * [TAREA-F7-IMP-16] Ampliar la gestión de sustituciones y la reasignación de clases afectadas
+ * Registra y valida una sustitución docente temporal o prolongada, verificando disponibilidad,
+ * traslapes de horarios y límites de carga docente para el sustituto sin alterar la asignación titular.
+ */
 function createTeacherSubstitution(payload) {
-  const { ofertaId, sustitutoUserId, fechaInicio, fechaFin, motivo, autorizadoPor } = payload || {};
+  const { ofertaId, sustitutoUserId, fechaInicio, fechaFin, motivo, autorizadoPor, forzarSustitucion } = payload || {};
   if (!ofertaId || !sustitutoUserId) throw new Error("ofertaId y sustitutoUserId son requeridos.");
 
+  const startIso = fechaInicio ? new Date(fechaInicio).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+  const endIso = fechaFin ? new Date(fechaFin).toISOString().split('T')[0] : "";
+
+  // Validar si el sustituto tiene conflictos de horario en las clases pertenecientes a la oferta
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const schedSheet = getOrCreateSheet(ss, "HorariosClase");
+  const schedData = schedSheet.getDataRange().getValues();
+  const offerSchedules = schedData.slice(1).filter(r => String(r[1]).trim() === String(ofertaId).trim() && String(r[8] || "Activo") === "Activo");
+
+  const conflictosSustituto = [];
+  if (offerSchedules.length > 0 && !forzarSustitucion) {
+    for (const sched of offerSchedules) {
+      const conflictCheck = checkScheduleConflict({
+        docenteUserId: sustitutoUserId,
+        diaSemana: sched[3],
+        horaInicio: sched[4],
+        horaFin: sched[5],
+        anoLectivo: sched[6]
+      });
+      if (conflictCheck && conflictCheck.hasConflict) {
+        conflictosSustituto.push({
+          horarioId: sched[0],
+          diaSemana: sched[3],
+          horaInicio: sched[4],
+          horaFin: sched[5],
+          motivo: conflictCheck.message
+        });
+      }
+    }
+  }
+
+  if (conflictosSustituto.length > 0 && !forzarSustitucion) {
+    return {
+      status: "warning",
+      hasConflict: true,
+      message: `El docente sustituto tiene ${conflictosSustituto.length} traslape(s) de horario en las clases de la oferta.`,
+      conflictos: conflictosSustituto
+    };
+  }
+
   const sheet = getOrCreateSheet(ss, "AsignacionesDocentes");
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow(["AsignacionID", "OfertaID", "DocenteUserId", "RolDocente", "FechaInicio", "FechaFin", "Estado", "AutorizadoPor"]);
+    sheet.appendRow(["AsignacionID", "OfertaID", "DocenteUserId", "RolDocente", "FechaInicio", "FechaFin", "Estado", "AutorizadoPor", "Motivo"]);
   }
 
   const asigId = "SUB-" + Date.now();
-  sheet.appendRow([asigId, ofertaId, sustitutoUserId, "Sustituto", fechaInicio || new Date(), fechaFin || "", "Temporal", autorizadoPor || "Secretaría"]);
+  sheet.appendRow([asigId, ofertaId, sustitutoUserId, "Sustituto", startIso, endIso, "Activa", autorizadoPor || "Secretaría", motivo || "Licencia / Permiso"]);
 
-  return { status: "success", message: "Sustitución docente registrada.", data: { asignacionId: asigId } };
+  return {
+    status: "success",
+    message: "Sustitución docente registrada exitosamente.",
+    data: {
+      asignacionId: asigId,
+      ofertaId,
+      sustitutoUserId,
+      fechaInicio: startIso,
+      fechaFin: endIso,
+      clasesAfectadasCount: offerSchedules.length
+    }
+  };
+}
+
+/**
+ * [TAREA-F7-IMP-16] Consulta el catálogo de sustituciones docentes con cálculo de caducidad
+ */
+function getTeacherSubstitutions(payload) {
+  const { ofertaId, docenteUserId, incluirVencidas } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AsignacionesDocentes");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const todayIso = new Date().toISOString().split('T')[0];
+
+  const substitutions = data.slice(1).filter(r => {
+    const rol = String(r[3] || "").trim();
+    if (rol !== "Sustituto") return false;
+    if (ofertaId && String(r[1]).trim() !== String(ofertaId).trim()) return false;
+    if (docenteUserId && String(r[2]).trim() !== String(docenteUserId).trim()) return false;
+
+    const fechaFinStr = r[5] ? new Date(r[5]).toISOString().split('T')[0] : "";
+    if (!incluirVencidas && fechaFinStr && fechaFinStr < todayIso) return false;
+
+    return true;
+  }).map(r => {
+    const fechaFinStr = r[5] ? new Date(r[5]).toISOString().split('T')[0] : "";
+    let estadoEfectivo = String(r[6] || "Activa");
+    if (fechaFinStr && fechaFinStr < todayIso) {
+      estadoEfectivo = "Vencida";
+    }
+
+    return {
+      asignacionId: r[0],
+      ofertaId: r[1],
+      docenteUserId: r[2],
+      rolDocente: r[3],
+      fechaInicio: r[4] ? new Date(r[4]).toISOString().split('T')[0] : "",
+      fechaFin: fechaFinStr,
+      estado: estadoEfectivo,
+      autorizadoPor: r[7] || "",
+      motivo: r[8] || ""
+    };
+  });
+
+  return { status: "success", data: substitutions };
 }
 
 function getAcademicCalendar(payload) {

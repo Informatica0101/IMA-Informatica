@@ -937,3 +937,20 @@ Auditoría inicial e inspección de archivos para TAREA-F7-IMP-15:
   - Se inyectará el comentario identificativo `[TAREA-F7-IMP-15] [Fase 7: Planificación Académica, Horarios y Recursos]`.
 - Pendientes.md:
   - Se actualizará la TAREA-F7-IMP-15 a marcada `[X] Completado`.
+
+===============================================================================
+AUDITORÍA DE IMPLEMENTACIÓN - TAREA-F7-IMP-16
+===============================================================================
+Fecha: 2025-05-24
+Tarea: [TAREA-F7-IMP-16] Ampliar la gestión de sustituciones y la reasignación de clases afectadas
+Archivos Auditados:
+  - backend/academic-service/Code.gs (Líneas 5400-5420)
+  - js/teacher.js (Líneas 1480-1510)
+  - teacher-dashboard.html
+
+Hallazgos:
+1. La función backend `createTeacherSubstitution` realizaba una inserción directa sin comprobar traslapes de horario ni límites de carga docente para el profesor sustituto.
+2. No existía un endpoint de consulta `getTeacherSubstitutions` para inspeccionar sustituciones vigentes o vencidas.
+3. Se requiere pre-validar traslapes con `checkScheduleConflict`, calcular la fecha de vencimiento y actualizar los estados automáticos (`Activa`, `Vencida`, `Cancelada`).
+4. Se integrará una interfaz modal en `teacher-dashboard.html` (`#modal-teacher-substitution`) para la selección de oferta, docente sustituto, rango de fechas y motivo con validación de conflictos.
+===============================================================================

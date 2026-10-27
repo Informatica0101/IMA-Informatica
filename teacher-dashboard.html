@@ -3257,6 +3257,67 @@
         </div>
     </div>
 
+    <!-- [TAREA-F7-IMP-16] [Fase 7: Planificación Académica, Horarios y Recursos] - Modal de Gestión de Sustituciones Docentes (#modal-teacher-substitution) -->
+    <div id="modal-teacher-substitution" class="fixed inset-0 z-[110] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-xl w-full p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid font-bold fa-user-clock"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">Gestión de Sustituciones Docentes</h3>
+                        <p class="text-xs text-slate-500">Reasignación temporal y verificación de traslapes para licencias prolongadas</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('modal-teacher-substitution').classList.add('hidden')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="form-teacher-substitution" onsubmit="window.handleCreateTeacherSubstitutionSubmit(event)" class="space-y-4">
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-700 uppercase">Oferta Académica / Asignatura</label>
+                    <input type="text" id="subst-oferta-id" required placeholder="Ej: OFE-10-A / OFE-11-B" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-700 uppercase">ID Docente Sustituto</label>
+                    <input type="text" id="subst-docente-id" required placeholder="Ej: DOC-2026-004" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Fecha Inicio</label>
+                        <input type="date" id="subst-fecha-inicio" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Fecha Fin (Opcional)</label>
+                        <input type="date" id="subst-fecha-fin" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-700 uppercase">Motivo / Justificación</label>
+                    <textarea id="subst-motivo" rows="2" placeholder="Ej: Licencia médica / Permiso maternal" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+                </div>
+
+                <div id="subst-conflict-alert" class="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 hidden">
+                    <span class="font-bold">Advertencia:</span> Se detectaron traslapes de horario para el docente sustituto.
+                </div>
+
+                <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                    <button type="button" onclick="document.getElementById('modal-teacher-substitution').classList.add('hidden')" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-xs font-bold uppercase hover:bg-slate-200">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-5 py-2 bg-amber-600 text-white rounded-xl text-xs font-bold uppercase hover:bg-amber-700 shadow-md">
+                        <i class="fa-solid fa-check mr-1"></i> Confirmar Sustitución
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- [REQ-EXP-010] [Fase 1: Registro y Expediente de Estudiantes] - Interfaz modal para la importación masiva de expedientes desde archivos CSV y XLSX (#modal-excel-importer). -->
     <div id="modal-excel-importer" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[90] flex items-center justify-center p-2 md:p-4 hidden">
         <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 space-y-4 animate-fade-in-up">

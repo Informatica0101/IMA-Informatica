@@ -2000,3 +2000,28 @@ Archivos modificados:
   Se incorporaron cerrojos de concurrencia de LockService (tryLock con timeout de 8 a 15 segundos) y bloques de liberación segura `finally { lock.releaseLock(); }` en las funciones `createClassSchedule`, `publishClassSchedules`, `saveClassroomResource`, `saveClassroomMaintenance` e `importBulkClassSchedules`. En `createClassSchedule` se añadió la validación Optimistic Concurrency Control comparando el timestamp `lastUpdated` del payload con el registro existente en la hoja.
 - Pendientes.md (Líneas 1911 y 1942):
   Se actualizó el estado de la tarea [TAREA-F7-IMP-15] a marcado '[X]' y estado '[X] Completado'.
+
+===============================================================================
+REGISTRO DE CAMBIOS - TAREA-F7-IMP-16
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - backend/academic-service/Code.gs
+  - teacher-dashboard.html
+  - js/teacher.js
+  - Pendientes.md
+  - Auditoria.txt
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. backend/academic-service/Code.gs:
+   - Se amplio createTeacherSubstitution para soportar rango de fechas (fechaInicio, fechaFin), motivo y verificacion previa de traslapes mediante checkScheduleConflict en clases pertenecientes a la oferta.
+   - Se agrego funcion getTeacherSubstitutions para consultar el catalogo de sustituciones con calculo dinmico de caducidad (Activa vs Vencida).
+   - Se declaro getTeacherSubstitutions en ROLE_PERMISSIONS y en el enrutador doPost.
+2. teacher-dashboard.html:
+   - Se agrego interfaz modal #modal-teacher-substitution para el registro de sustituciones docentes con campos para oferta, docente sustituto, fecha inicio, fecha fin y motivo.
+3. js/teacher.js:
+   - Se agregaron controladores window.openTeacherSubstitutionModal y window.handleCreateTeacherSubstitutionSubmit con soporte para confirmacion de sustitucion forzada ante conflictos.
+4. Pendientes.md:
+   - Se marco la tarea [TAREA-F7-IMP-16] como completada [X].
+===============================================================================

@@ -386,3 +386,9 @@ TAREAS PENDIENTES DE REVISIÓN
 - TAREA-F7-IMP-13: Incorporar importación, exportación y validación masiva de horarios (Importación CSV/JSON con previsualización y validación atómica de traslapes)
 - TAREA-F7-IMP-14: Fortalecer la publicación y el control de cambios masivos (Previsualización de impacto, conteo de bloques/docentes/aulas y publicación masiva confirmada)
 - TAREA-F7-IMP-15: Incorporar control de concurrencia y protección de operaciones críticas (Cerrojos LockService y validación Optimistic Locking por timestamp)
+
+===============================================================================
+TAREAS PENDIENTES DE REVISIÓN
+===============================================================================
+- [TAREA-F7-IMP-16] Ampliar la gestión de sustituciones y la reasignación de clases afectadas
+===============================================================================
