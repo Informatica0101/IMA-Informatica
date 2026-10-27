@@ -668,7 +668,8 @@ document.addEventListener('DOMContentLoaded', () => {
         tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-gray-400 italic"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando matriz de horarios...</td></tr>';
 
         try {
-            const res = await fetchApi('ACADEMIC', 'getClassSchedules', { docenteUserId: currentUser.userId });
+            const bypass = Boolean(window.forceScheduleCacheBypass);
+            const res = await fetchApi('ACADEMIC', 'getClassSchedules', { docenteUserId: currentUser.userId, bypassCache: bypass });
             if (res.status === 'success') {
                 masterScheduleData = res.data || [];
                 window.renderSchedulePlanningMatrix(masterScheduleData);

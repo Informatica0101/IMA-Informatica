@@ -850,7 +850,8 @@ document.addEventListener('DOMContentLoaded', function() {
         fetchApi('ACADEMIC', 'getStudentSchedule', {
             userId: currentUser.userId,
             grado: currentUser.grado,
-            seccion: currentUser.seccion
+            seccion: currentUser.seccion,
+            bypassCache: Boolean(window.forceStudentScheduleBypass)
         }).then(function(res) {
             if (res && res.status === 'success' && Array.isArray(res.schedules)) {
                 var schedules = res.schedules;

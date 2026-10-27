@@ -2108,3 +2108,26 @@ Descripción de los Cambios:
 4. Pendientes.md:
    - Se actualizó el estado de [TAREA-F7-IMP-19] a completado [X].
 ===============================================================================
+
+REGISTRO DE CAMBIOS - TAREA-F7-IMP-20
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - backend/academic-service/Code.gs
+  - js/teacher.js
+  - js/student.js
+  - Pendientes.md
+  - Auditoria.txt
+  - MapaDependencias.md
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. backend/academic-service/Code.gs:
+   - Se optimizó getClassSchedules con almacenamiento en caché reutilizando CacheService de Google Apps Script (TTL 600 segundos).
+   - Se implementó la función invalidateScheduleCache para purgar la caché de consultas ante modificaciones, cancelaciones o guardados de horario.
+   - Se agregó la acción invalidateScheduleCache en ROLE_PERMISSIONS y la ruta en doPost.
+2. js/teacher.js y js/student.js:
+   - Se agregó soporte para bypassCache en peticiones de recarga forzada de matriz de horarios para docentes y estudiantes.
+3. Pendientes.md:
+   - Se actualizó el estado de [TAREA-F7-IMP-20] a completado [X].
+===============================================================================

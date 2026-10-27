@@ -993,3 +993,14 @@ HALLAZGO / REQUERIMIENTO:
 - Se requiere registrar el permiso en ROLE_PERMISSIONS y la ruta en doPost.
 - Se requiere maquetar el modal #modal-section-capacity-control en teacher-dashboard.html y agregar los controladores JavaScript openSectionCapacityControlModal y loadSectionCapacityControlData en js/teacher.js.
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-05-18
+ARCHIVO AUDITADO: backend/academic-service/Code.gs, js/teacher.js, js/student.js
+TAREA: [TAREA-F7-IMP-20] Optimizar el rendimiento y la escalabilidad de las consultas de planificación
+HALLAZGO / REQUERIMIENTO:
+- Se requiere optimizar el rendimiento de las consultas de planificación mediante el uso de CacheService de Google Apps Script.
+- Se debe implementar almacenamiento en caché con tiempo de vida (TTL) configurable para getClassSchedules y consultas frecuentes por año lectivo, docente, grado o sección.
+- Se requiere implementar un mecanismo de invalidación automática de caché (invalidateScheduleCache) invocado ante operaciones de escritura, edición, eliminación o publicación de horarios.
+- Se debe permitir forzar la omisión de caché (bypassCache: true) en consultas críticas desde el cliente.
+===============================================================================

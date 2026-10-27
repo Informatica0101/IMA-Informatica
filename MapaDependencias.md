@@ -82,3 +82,8 @@
 - **Endpoint:** `getSectionCapacityAnalyticsReport` (Análisis dinámico de matrícula activa por sección vs aforo físico de aulas y cupos administrativos).
 - **Integración:** Evaluación cruzada con `Matriculas`, `OfertaAcademica` y `SedesAulas` vía `HorariosClase` para generar alertas preventivas y proponer aulas alternativas con aforo suficiente.
 - **Interfaz y Modal:** `#modal-section-capacity-control` en `teacher-dashboard.html` y controladores `openSectionCapacityControlModal` y `loadSectionCapacityControlData` en `js/teacher.js`.
+
+### 2.9 Rendimiento y Escalabilidad de Consultas de Planificación (Fase 7 - TAREA-F7-IMP-20)
+- **Mecanismo de Caché:** `CacheService` de Google Apps Script con claves compuestas por año lectivo, grado, sección y docente ID (`schedules_...`).
+- **Mecanismo de Involución/Purga:** Endpoint `invalidateScheduleCache` invocado en mutaciones para garantizar coherencia sin lecturas obsoletas.
+- **Control Cliente:** Soporte para parámetro `bypassCache` en `js/teacher.js` y `js/student.js` para recargas forzadas bajo demanda.

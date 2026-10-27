@@ -236,6 +236,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getAcademicOffers", "getTeacherAssignments", "createTeacherSubstitution", "getTeacherSubstitutions",
     "getCurricularConstraints",
     "getSectionCapacityAnalyticsReport",
+    "invalidateScheduleCache",
     "saveCurricularConstraint", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule", "getReusableResourceCatalog", "manageReusableResource",
     "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentEnrollments",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
@@ -633,6 +634,10 @@ function doPost(e) {
       case "createTeacherSubstitution": result = createTeacherSubstitution(payload); break;
       case "getTeacherSubstitutions": result = getTeacherSubstitutions(payload); break;
       case "getDepartmentAcademicPlanning": result = getDepartmentAcademicPlanning(payload); break;
+      case "invalidateScheduleCache":
+        invalidateScheduleCache();
+        result = { status: "success", message: "Caché de planificación invalidada exitosamente." };
+        break;
       case "getSectionCapacityAnalyticsReport":
         result = getSectionCapacityAnalyticsReport(payload);
         break;
@@ -5632,29 +5637,59 @@ function createCalendarEvent(payload) {
   };
 }
 
+// [TAREA-F7-IMP-20] [Fase 7: Planificación Académica, Horarios y Recursos] - Optimización de rendimiento y caché de consultas de horarios de clase
 function getClassSchedules(payload) {
-  const { ofertaId, docenteUserId, aulaCodigo } = payload || {};
+  const { ofertaId, docenteUserId, aulaCodigo, anolectivo, grado, seccion, bypassCache } = payload || {};
+  const cacheKey = "schedules_" + (anolectivo || "all") + "_" + (grado || "all") + "_" + (seccion || "all") + "_" + (docenteUserId || "all");
+
+  if (!bypassCache) {
+    try {
+      var cache = CacheService.getScriptCache();
+      var cached = cache.get(cacheKey);
+      if (cached) {
+        var parsed = JSON.parse(cached);
+        return { status: "success", data: parsed, fromCache: true };
+      }
+    } catch (errCache) {
+      Logger.log("Error al consultar CacheService: " + errCache.message);
+    }
+  }
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "HorariosClase");
   const data = sheet.getDataRange().getValues();
   if (data.length <= 1) return { status: "success", data: [] };
 
   const schedules = data.slice(1).filter(r => {
+    if (r[10] === "Cancelado") return false;
     if (ofertaId && String(r[1]).trim() !== String(ofertaId).trim()) return false;
-    if (docenteUserId && String(r[6]).trim() !== String(docenteUserId).trim()) return false;
-    if (aulaCodigo && String(r[5]).trim() !== String(aulaCodigo).trim()) return false;
+    if (docenteUserId && String(r[6] || r[7]).trim() !== String(docenteUserId).trim()) return false;
+    if (aulaCodigo && String(r[5] || r[2]).trim() !== String(aulaCodigo).trim()) return false;
+    if (grado && String(r[8]).trim().toLowerCase() !== String(grado).trim().toLowerCase()) return false;
+    if (seccion && String(r[9]).trim().toLowerCase() !== String(seccion).trim().toLowerCase()) return false;
     return true;
   }).map(r => ({
     horarioId: r[0],
     ofertaId: r[1],
-    diaSemana: r[2],
-    horaInicio: r[3],
-    horaFin: r[4],
-    aulaCodigo: r[5],
-    docenteUserId: r[6],
-    estado: r[7] || "Activo"
+    materia: r[1] || r[3],
+    diaSemana: r[4] || r[2],
+    horaInicio: r[5] || r[3],
+    horaFin: r[6] || r[4],
+    aulaCodigo: r[2] || r[5],
+    docenteUserId: r[7] || r[6],
+    grado: r[8] || "",
+    seccion: r[9] || "",
+    estado: r[10] || r[7] || "Activo"
   }));
-  return { status: "success", data: schedules };
+
+  try {
+    var cacheStore = CacheService.getScriptCache();
+    cacheStore.put(cacheKey, JSON.stringify(schedules), 600);
+  } catch (errPut) {
+    Logger.log("Error al guardar en CacheService: " + errPut.message);
+  }
+
+  return { status: "success", data: schedules, fromCache: false };
 }
 
 // [TAREA-F7-IMP-05] [Fase 7: Planificación Académica, Horarios y Recursos] - Ampliación del control de carga laboral docente por contrato y configuración de preferencias horarias.
@@ -6520,7 +6555,11 @@ function checkScheduleConflict(params) {
                     regimen: regimenR
                   });
                 } else if (tipoR === "CoRequisitoSimultaneo" && hAsig === otraAsig && (hDia !== regDia || hHoraIni !== regHoraIni)) {
-                  // Debe programarse simultáneamente
+                  conflictos.push({
+                    tipo: "RESTRICCION_CURRICULAR_COREQUISITO",
+                    mensaje: "Conflicto por Co-Requisito Simultáneo: " + origR + " y " + destR + " deben programarse a la misma hora y día (" + regimenR + ").",
+                    regimen: regimenR
+                  });
                 }
               }
             }
@@ -10426,7 +10465,7 @@ function evaluateTransactionalStorageMigrationNeed(payload) {
 // [TAREA-F7-IMP-18] [Fase 7: Planificación Académica, Horarios y Recursos] - Obtener lista de restricciones curriculares y dependencias entre asignaturas
 function getCurricularConstraints(payload) {
   try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     var sheet = ss.getSheetByName("RestriccionesCurriculares");
 
     if (!sheet) {
@@ -10488,7 +10527,7 @@ function saveCurricularConstraint(payload) {
       };
     }
 
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     var sheet = ss.getSheetByName("RestriccionesCurriculares");
 
     if (!sheet) {
@@ -10555,6 +10594,7 @@ function saveCurricularConstraint(payload) {
       usuario
     ]);
 
+    invalidateScheduleCache();
     return {
       status: "success",
       message: "Restricción curricular registrada exitosamente.",
@@ -10573,7 +10613,7 @@ function saveCurricularConstraint(payload) {
 // [TAREA-F7-IMP-19] [Fase 7: Planificación Académica, Horarios y Recursos] - Reporte de capacidad de sección, comparación de matrícula activa vs aforo físico de aula y alertas preventivas
 function getSectionCapacityAnalyticsReport(payload) {
   try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     var anolectivoVal = (payload && payload.anolectivo) ? payload.anolectivo.toString().trim() : "2026";
 
     var sheetMat = ss.getSheetByName("Matriculas");
@@ -10721,5 +10761,20 @@ function getSectionCapacityAnalyticsReport(payload) {
       status: "error",
       message: "Error al generar reporte de capacidad por sección: " + error.message
     };
+  }
+}
+
+
+// [TAREA-F7-IMP-20] [Fase 7: Planificación Académica, Horarios y Recursos] - Invalidador de caché de consultas de planificación académica
+function invalidateScheduleCache() {
+  try {
+    var cache = CacheService.getScriptCache();
+    cache.remove("all_class_schedules");
+    cache.remove("all_published_versions");
+    cache.remove("all_curricular_constraints");
+    cache.remove("schedules_all_all_all_all");
+    cache.remove("schedules_2026_all_all_all");
+  } catch (err) {
+    Logger.log("Error al invalidar caché de horarios: " + err.message);
   }
 }

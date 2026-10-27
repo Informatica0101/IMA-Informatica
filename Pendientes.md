@@ -2087,7 +2087,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-20] Optimizar el rendimiento y la escalabilidad de las consultas de planificación
+### [X] [TAREA-F7-IMP-20] Optimizar el rendimiento y la escalabilidad de las consultas de planificación
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-20 (P2 · Rendimiento)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Optimización técnica y funcional)
