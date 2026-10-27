@@ -558,6 +558,9 @@
                                 <button onclick="window.openScheduleVersionsModal()" class="bg-cyan-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-cyan-700 transition-all shadow-md">
                                     <i class="fa-solid fa-code-branch mr-1"></i> Versiones Horario
                                 </button>
+                                <button onclick="window.openPlanningQualityReportModal()" class="bg-emerald-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-emerald-700 transition-all shadow-md">
+                                    <i class="fa-solid fa-chart-line mr-1"></i> Reportes Calidad
+                                </button>
                                 <button id="btn-load-schedules-list" class="bg-indigo-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md">
                                     <i class="fas fa-sync-alt mr-1"></i> Actualizar
                                 </button>
@@ -1563,6 +1566,70 @@
             </div>
             <div class="flex justify-center bg-gray-50 rounded-2xl overflow-hidden">
                 <img id="lightbox-image" src="" alt="Vista previa" class="max-w-full max-h-[70vh] object-contain">
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA-F7-IMP-12] [Fase 7: Planificación Académica, Horarios y Recursos] - Modal de Reportes Ejecutivos de Calidad de Planificación y Ocupación (#modal-planning-quality-report) -->
+    <div id="modal-planning-quality-report" class="fixed inset-0 z-[110] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full overflow-hidden border border-slate-100 animate-fade-in">
+            <div class="p-5 bg-emerald-50 border-b border-emerald-100 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-lg shadow-md">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Reportes de Calidad y Ocupación de Espacios</h3>
+                        <p class="text-[10px] text-slate-500 font-medium">Ocupación de aulas, distribución de carga y métricas de planificación</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('modal-planning-quality-report').classList.add('hidden')" class="w-8 h-8 rounded-full bg-white/80 text-slate-500 hover:text-slate-800 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto text-xs">
+                <div id="planning-quality-metrics-container" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="p-3 bg-emerald-50 rounded-2xl border border-emerald-100 text-center">
+                        <span class="block text-[10px] text-emerald-700 font-bold uppercase">Ocupación Global</span>
+                        <span id="qual-metric-ocupacion" class="text-lg font-black text-emerald-800">0%</span>
+                    </div>
+                    <div class="p-3 bg-blue-50 rounded-2xl border border-blue-100 text-center">
+                        <span class="block text-[10px] text-blue-700 font-bold uppercase">Bloques Activos</span>
+                        <span id="qual-metric-activos" class="text-lg font-black text-blue-800">0</span>
+                    </div>
+                    <div class="p-3 bg-amber-50 rounded-2xl border border-amber-100 text-center">
+                        <span class="block text-[10px] text-amber-700 font-bold uppercase">Borradores</span>
+                        <span id="qual-metric-borradores" class="text-lg font-black text-amber-800">0</span>
+                    </div>
+                    <div class="p-3 bg-purple-50 rounded-2xl border border-purple-100 text-center">
+                        <span class="block text-[10px] text-purple-700 font-bold uppercase">Total Bloques</span>
+                        <span id="qual-metric-total" class="text-lg font-black text-purple-800">0</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center pt-2">
+                    <h4 class="font-bold text-slate-700 uppercase tracking-wider text-[11px]">Ocupación Física por Aula / Espacio</h4>
+                    <button id="btn-export-planning-quality-csv" class="px-3 py-1 bg-emerald-600 text-white rounded-xl font-bold text-[11px] hover:bg-emerald-700">
+                        <i class="fa-solid fa-file-csv mr-1"></i> Exportar CSV
+                    </button>
+                </div>
+
+                <div class="max-h-52 overflow-y-auto border border-slate-100 rounded-2xl">
+                    <table class="w-full text-xs text-left text-slate-600">
+                        <thead class="bg-slate-100 text-slate-700 font-bold sticky top-0">
+                            <tr>
+                                <th class="p-2.5">Aula</th>
+                                <th class="p-2.5">Nombre</th>
+                                <th class="p-2.5">Capacidad</th>
+                                <th class="p-2.5">Horas/Sem.</th>
+                                <th class="p-2.5">Ocupación</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbl-planning-quality-body" class="divide-y divide-slate-100">
+                            <tr><td colspan="5" class="p-3 text-center text-slate-400">Cargando reporte...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

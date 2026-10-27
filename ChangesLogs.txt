@@ -1952,3 +1952,15 @@ Descripción objetiva:
 - Actualizada la función `getStudentSchedule` en `backend/academic-service/Code.gs` para inyectar metadatos de sincronización (`lastSyncTime`, `freshnessToken`, `totalActiveSlots`).
 - Ampliada la función `window.fetchAndRenderStudentSchedule` en `js/student.js` con la etiqueta identificativa `[TAREA-F7-IMP-11]`, agregando distintivo visual de tiempo relativo de sincronización y botón de actualización bajo demanda.
 - Actualizado el estado de [TAREA-F7-IMP-11] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 171, 671, 2925-2998)
+- teacher-dashboard.html (Líneas 561, 1573-1635)
+- js/teacher.js (Líneas 863-925)
+- Pendientes.md (Línea 1806)
+Descripción objetiva:
+- Creada la función `getPlanningQualityAndOccupancyReport` en `backend/academic-service/Code.gs` e integrada en `ROLE_PERMISSIONS` y dispatcher `doPost` para calcular la ocupación porcentual física de aulas, distribución de bloques por estado y exportación de datos en CSV.
+- Incorporados el botón UI "Reportes Calidad", el modal `#modal-planning-quality-report` y la función `openPlanningQualityReportModal` con exportación CSV en `teacher-dashboard.html` y `js/teacher.js` antecedida por la etiqueta identificativa `[TAREA-F7-IMP-12]`.
+- Actualizado el estado de [TAREA-F7-IMP-12] a Completado en Pendientes.md.

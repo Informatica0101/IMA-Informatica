@@ -168,7 +168,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicPeriods", "manageAcademicPeriod", "getSubjectCatalog", "createSubjectCatalogItem", "getStudyPlans", "createStudyPlan",
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
-    "getClassroomResources", "saveClassroomResource", "saveClassroomMaintenance", "getStudentSchedule", "getScheduleConflictResolutionAlternatives", "saveScheduleScenario", "getScheduleScenarios", "saveTeacherWorkLoadPreferences", "createSessionException", "getScheduleVersions", "compareScheduleVersions", "restoreScheduleVersion",
+    "getClassroomResources", "saveClassroomResource", "saveClassroomMaintenance", "getStudentSchedule", "getScheduleConflictResolutionAlternatives", "saveScheduleScenario", "getScheduleScenarios", "saveTeacherWorkLoadPreferences", "createSessionException", "getScheduleVersions", "compareScheduleVersions", "restoreScheduleVersion", "getPlanningQualityAndOccupancyReport",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate", "getAdmissionAnalyticsReport",
     "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles", "getMergePreviewComparison", "unmergeStudentFiles", "getStudentFileAdministrativeReports", "initializeDirectionSecretaryDriveStructure",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion", "checkAndNotifyExpiringStudentDocuments",
@@ -668,6 +668,7 @@ function doPost(e) {
       case "getScheduleVersions": result = getScheduleVersions(payload); break;
       case "compareScheduleVersions": result = compareScheduleVersions(payload); break;
       case "restoreScheduleVersion": result = restoreScheduleVersion(payload); break;
+      case "getPlanningQualityAndOccupancyReport": result = getPlanningQualityAndOccupancyReport(payload); break;
       case "getPendingSessionRecoveries": result = getPendingSessionRecoveries(payload); break;
       case "publishClassSchedules": result = publishClassSchedules(payload); break;
       case "getIndividualCalendar": result = getIndividualCalendar(payload); break;
@@ -2920,6 +2921,79 @@ function generateInstitutionalUUID(payload) {
     uuid: uuidPart,
     institutionalId: fullId,
     timestamp: new Date().toISOString()
+  };
+}
+
+// [TAREA-F7-IMP-12] [Fase 7: Planificación Académica, Horarios y Recursos] - Reportes ejecutivos de calidad de planificación, ocupación de aulas e indicadores de carga.
+function getPlanningQualityAndOccupancyReport(payload) {
+  const { anoLectivo } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const horRows = getOrCreateSheet(ss, "HorariosClase").getDataRange().getValues().slice(1);
+  const aulaRows = getOrCreateSheet(ss, "SedesAulas").getDataRange().getValues().slice(1);
+
+  const activeHorarios = horRows.filter(r => r[7] !== "Inactivo");
+
+  const aulaOccupancyMap = {};
+  aulaRows.forEach(a => {
+    if (a[6] !== "Inactivo") {
+      aulaOccupancyMap[a[2]] = { codigo: a[2], nombre: a[3], capacidad: a[4], tipo: a[5], bloquesAsignados: 0, horasSemanales: 0 };
+    }
+  });
+
+  let totalActivos = 0;
+  let totalBorradores = 0;
+  let totalCancelados = 0;
+
+  activeHorarios.forEach(h => {
+    const estado = h[7] || "Activo";
+    if (estado === "Activo") totalActivos++;
+    else if (estado === "Borrador") totalBorradores++;
+    else if (estado === "Cancelado") totalCancelados++;
+
+    const aulaCod = h[5];
+    if (aulaCod && aulaOccupancyMap[aulaCod]) {
+      aulaOccupancyMap[aulaCod].bloquesAsignados++;
+      try {
+        const startMins = Number(h[3].split(":")[0]) * 60 + Number(h[3].split(":")[1]);
+        const endMins = Number(h[4].split(":")[0]) * 60 + Number(h[4].split(":")[1]);
+        if (endMins > startMins) {
+          aulaOccupancyMap[aulaCod].horasSemanales += (endMins - startMins) / 60;
+        }
+      } catch (e) {}
+    }
+  });
+
+  const totalCapacidadAulas = Object.keys(aulaOccupancyMap).length * 40;
+  let totalHorasOcupadas = 0;
+  Object.values(aulaOccupancyMap).forEach(a => {
+    a.porcentajeOcupacion = Math.min(100, Math.round((a.horasSemanales / 40) * 100));
+    totalHorasOcupadas += a.horasSemanales;
+  });
+
+  const porcentajeGlobalOcupacion = totalCapacidadAulas > 0 ? Math.round((totalHorasOcupadas / totalCapacidadAulas) * 100) : 0;
+
+  let csvData = "AulaCodigo,NombreAula,Capacidad,Bloques,HorasSemanales,PorcentajeOcupacion\n";
+  Object.values(aulaOccupancyMap).forEach(a => {
+    csvData += `"${a.codigo}","${a.nombre}",${a.capacidad},${a.bloquesAsignados},${a.horasSemanales},${a.porcentajeOcupacion}%\n`;
+  });
+
+  logStructuredEvent("ACADEMIC", "getPlanningQualityAndOccupancyReport", "INFO", "QUALITY_REPORT_GENERATED", `Reporte de calidad e indicadores generado para ${anoLectivo || 'Global'}`, { porcentajeGlobalOcupacion, totalActivos, totalBorradores }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    report: {
+      anoLectivo: anoLectivo || "2026",
+      indicadores: {
+        totalBloques: activeHorarios.length,
+        totalActivos,
+        totalBorradores,
+        totalCancelados,
+        porcentajeGlobalOcupacion: `${porcentajeGlobalOcupacion}%`
+      },
+      aulasOcupacion: Object.values(aulaOccupancyMap),
+      csvData
+    }
   };
 }
 

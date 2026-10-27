@@ -1803,7 +1803,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-12] Ampliar los reportes de carga docente, ocupación y calidad de planificación
+### [X] [TAREA-F7-IMP-12] Ampliar los reportes de carga docente, ocupación y calidad de planificación
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-12 (P2 · Analítica de Horarios)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Ampliación de análisis y reportes)
@@ -1835,7 +1835,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-78: Los filtros combinados producen resultados coherentes.
   - CA-F7-79: Los reportes no incluyen datos fuera del ámbito autorizado.
   - CA-F7-80: Las exportaciones coinciden con los resultados presentados en pantalla.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

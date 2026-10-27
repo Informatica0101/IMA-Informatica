@@ -860,6 +860,70 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // [TAREA-F7-IMP-12] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador UI de reportes de calidad de planificación y ocupación de aulas
+    window.openPlanningQualityReportModal = async function() {
+        const modal = document.getElementById('modal-planning-quality-report');
+        if (modal) modal.classList.remove('hidden');
+
+        const tbody = document.getElementById('tbl-planning-quality-body');
+        if (!tbody) return;
+        tbody.innerHTML = '<tr><td colspan="5" class="p-3 text-center text-slate-400">Cargando reporte de ocupación...</td></tr>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getPlanningQualityAndOccupancyReport', {});
+            if (res && res.status === 'success' && res.report) {
+                const rep = res.report;
+                const ind = rep.indicadores || {};
+
+                document.getElementById('qual-metric-ocupacion').textContent = ind.porcentajeGlobalOcupacion || '0%';
+                document.getElementById('qual-metric-activos').textContent = ind.totalActivos || 0;
+                document.getElementById('qual-metric-borradores').textContent = ind.totalBorradores || 0;
+                document.getElementById('qual-metric-total').textContent = ind.totalBloques || 0;
+
+                const aulas = rep.aulasOcupacion || [];
+                if (aulas.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="p-3 text-center text-slate-400">No hay aulas registradas para calcular ocupación.</td></tr>';
+                } else {
+                    tbody.innerHTML = aulas.map(a => `
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-2.5 font-bold text-slate-800">${a.codigo}</td>
+                            <td class="p-2.5">${a.nombre}</td>
+                            <td class="p-2.5 font-medium">${a.capacidad} est.</td>
+                            <td class="p-2.5 font-bold text-emerald-700">${a.horasSemanales} hrs</td>
+                            <td class="p-2.5">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200">
+                                        <div class="bg-emerald-500 h-2 rounded-full" style="width: ${a.porcentajeOcupacion}%"></div>
+                                    </div>
+                                    <span class="font-bold text-[11px] text-slate-700">${a.porcentajeOcupacion}%</span>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+
+                const btnExport = document.getElementById('btn-export-planning-quality-csv');
+                if (btnExport) {
+                    btnExport.onclick = () => {
+                        if (!rep.csvData) return alert('No hay datos para exportar.');
+                        const blob = new Blob([rep.csvData], { type: 'text/csv;charset=utf-8;' });
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.setAttribute('download', `Reporte_Calidad_Ocupacion_${rep.anoLectivo}.csv`);
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    };
+                }
+            } else {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-3 text-center text-rose-500">Error al cargar el reporte de calidad.</td></tr>';
+            }
+        } catch (err) {
+            console.error('Error al obtener reporte de calidad:', err);
+            tbody.innerHTML = '<tr><td colspan="5" class="p-3 text-center text-rose-500">Error de comunicación con el servidor.</td></tr>';
+        }
+    };
+
     // [TAREA-F7-IMP-09] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de consulta de versiones de horarios, comparación diff y restauración controlada
     window.openScheduleVersionsModal = async function() {
         const modal = document.getElementById('modal-schedule-versions');

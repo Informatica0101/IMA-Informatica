@@ -863,6 +863,22 @@ Auditoría inicial e inspección de archivos para TAREA-F7-IMP-10:
 
 -------------------------------------------------------------------------------
 FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-12] Ampliar los reportes de carga docente, ocupación y calidad de planificación
+-------------------------------------------------------------------------------
+Auditoría inicial e inspección de archivos para TAREA-F7-IMP-12:
+- backend/academic-service/Code.gs:
+  - Inspeccionadas las funciones `getTeachingHoursSummary`, `getCurricularAnalyticsReport` y `getTeacherTeachingLoad`.
+  - Se creará la función `getPlanningQualityAndOccupancyReport` para calcular porcentajes de ocupación física de aulas, distribución de carga docente vs límites por contrato, detección de horas libres/huecos en franjas horarias y resumen por estado (Activo, Borrador, Cancelado), con generación de CSV para descarga.
+  - Se registrará en `ROLE_PERMISSIONS` y dispatcher `doPost` de `backend/academic-service/Code.gs`.
+- teacher-dashboard.html / js/teacher.js:
+  - Se añadirá el botón UI "Reportes Calidad" y el modal `#modal-planning-quality-report`.
+  - Se implementará la función `openPlanningQualityReportModal` y el exportador CSV en `js/teacher.js` antecedido por la etiqueta identificativa `[TAREA-F7-IMP-12]`.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-12 a `[X] Completado`.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
 TAREA: [TAREA-F7-IMP-11] Fortalecer la coherencia y actualización de los portales relacionados
 -------------------------------------------------------------------------------
 Auditoría inicial e inspección de archivos para TAREA-F7-IMP-11:
