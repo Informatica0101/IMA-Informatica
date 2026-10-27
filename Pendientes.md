@@ -30,7 +30,7 @@
 
 ---
 
-### [ ] [TAREA-AD-01] Crear una arquitectura de dashboards dinámicos para roles configurables
+### [X] [TAREA-AD-01] Crear una arquitectura de dashboards dinámicos para roles configurables
 - **Origen del Hallazgo:** Anexo de Tareas: Dashboards dinámicos / Tarea AD-01 (P1 · Arquitectura de Dashboards)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Arquitectura base de interfaz adaptable)

@@ -1404,6 +1404,9 @@ function doPost(e) {
       case "getActiveVisualPalette": result = getActiveVisualPalette(payload); break;
 
       case "ping": result = { status: "success", service: "USER", timestamp: new Date().toISOString(), dbConnected: true }; break;
+      case "getUserDynamicDashboardConfig":
+        result = getUserDynamicDashboardConfig(payload);
+        break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -6889,4 +6892,58 @@ function getScheduleChangeNotificationLogs(payload) {
   })).reverse();
 
   return { status: "success", data: notifs };
+}
+
+
+// [TAREA-AD-01] [Anexo Tareas: Dashboards Dinámicos] - Consulta de configuración dinámica de módulos, responsabilidades y ámbitos por usuario
+function getUserDynamicDashboardConfig(payload) {
+  try {
+    if (!payload || !payload.userId) {
+      return { status: "error", message: "userId es requerido para cargar la configuración del dashboard dinámico." };
+    }
+
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var userId = payload.userId.toString().trim();
+
+    var sheetUsers = getOrCreateSheet(ss, "Usuarios");
+    var userRole = "Profesor";
+    if (sheetUsers) {
+      var dataU = sheetUsers.getDataRange().getValues();
+      for (var u = 1; u < dataU.length; u++) {
+        if (dataU[u][0] === userId) {
+          userRole = (dataU[u][3] || "Profesor").toString().trim();
+          break;
+        }
+      }
+    }
+
+    var modulosMap = {
+      "Administrador": ["mod_gestion_usuarios", "mod_planificacion_horarios", "mod_finanzas", "mod_auditoria_sistema"],
+      "Director": ["mod_resumen_institucional", "mod_planificacion_horarios", "mod_supervision_docente", "mod_reportes"],
+      "Secretaría": ["mod_expedientes_estudiantiles", "mod_matriculas", "mod_planificacion_horarios", "mod_comunicaciones"],
+      "Coordinador": ["mod_coordinacion_academica", "mod_supervision_silabos", "mod_horarios_area", "mod_asistencia_docente"],
+      "Profesor": ["mod_mis_clases", "mod_aula_virtual_tareas", "mod_mis_horarios", "mod_libro_calificaciones"],
+      "Estudiante": ["mod_mi_horario_estudiante", "mod_mis_tareas_entregas", "mod_mis_calificaciones", "mod_mi_asistencia"]
+    };
+
+    var modulos = modulosMap[userRole] || ["mod_mis_clases", "mod_mis_horarios"];
+
+    return {
+      status: "success",
+      userId: userId,
+      rolPrincipal: userRole,
+      modulosAutorizados: modulos,
+      configuracionVisual: {
+        tituloDashboard: "Dashboard Dinámico - " + userRole,
+        temaColor: "indigo",
+        permitirPersonalizacion: true
+      }
+    };
+  } catch (error) {
+    Logger.log("Error en getUserDynamicDashboardConfig: " + error.message);
+    return {
+      status: "error",
+      message: "Error al consultar configuración del dashboard dinámico: " + error.message
+    };
+  }
 }

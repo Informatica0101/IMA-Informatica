@@ -2296,10 +2296,25 @@ function getDriveStorageQuotaMetricsReport(payload) {
     var bytesUsed = 0;
     var bytesTotal = 15 * 1024 * 1024 * 1024;
     try {
-      bytesUsed = DriveApp.getStorageUsed();
-      bytesTotal = DriveApp.getStorageLimit();
+      // Intentar consultar cuota mediante Drive Advanced Service si está habilitado
+      if (typeof Drive !== "undefined" && Drive.About && Drive.About.get) {
+        var about = Drive.About.get();
+        if (about && about.quotaBytesUsed) {
+          bytesUsed = parseInt(about.quotaBytesUsed, 10) || 0;
+          bytesTotal = parseInt(about.quotaBytesTotal, 10) || bytesTotal;
+        }
+      } else {
+        // Estimación por carpetas del sistema
+        var files = DriveApp.getFiles();
+        var fileCount = 0;
+        while (files.hasNext() && fileCount < 100) {
+          var f = files.next();
+          bytesUsed += f.getSize();
+          fileCount++;
+        }
+      }
     } catch (eDrive) {
-      Logger.log("Aviso al consultar métricas nativas de DriveApp: " + eDrive.message);
+      Logger.log("Aviso al consultar métricas de cuotas en DriveApp: " + eDrive.message);
     }
 
     var bytesFree = Math.max(0, bytesTotal - bytesUsed);
@@ -2348,6 +2363,12 @@ function getSubmissionDocumentPreviewUrl(payload) {
   try {
     if (!payload || !payload.fileId) {
       return { status: "error", message: "fileId es requerido para previsualizar documento." };
+    }
+
+    // Validar token de sesión y autorización del usuario
+    var sessionCheck = verifySessionToken(payload.sessionToken || payload.token);
+    if (!sessionCheck || !sessionCheck.valid) {
+      return { status: "error", message: "Acceso denegado: Sesión no válida o expirada para previsualizar este documento." };
     }
 
     var fileId = payload.fileId.toString().trim();

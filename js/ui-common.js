@@ -5787,3 +5787,59 @@ window.openSecurityAndComplianceDashboardModal = function(triggerEl) {
         });
     }
 };
+
+
+// [TAREA-AD-01] [Anexo Tareas: Dashboards Dinámicos] - Controlador de carga de módulos dinámicos y renderizado adaptable por rol
+window.loadDynamicDashboard = async function() {
+    const grid = document.getElementById('dynamic-dashboard-modules-grid');
+    const titleEl = document.getElementById('dynamic-dashboard-title');
+    const badgeEl = document.getElementById('dynamic-user-role-badge');
+
+    var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || '{}';
+    var user = JSON.parse(userRaw);
+
+    if (!user || !user.userId) {
+        if (grid) grid.innerHTML = '<p class="col-span-3 text-rose-500 font-bold text-center p-6 bg-white rounded-2xl border">Sesión no válida o no iniciada. Redirigiendo a inicio de sesión...</p>';
+        setTimeout(() => { window.location.href = '../../../login.html'; }, 1500);
+        return;
+    }
+
+    try {
+        const res = await fetchApi('USER', 'getUserDynamicDashboardConfig', { userId: user.userId });
+        if (res && res.status === 'success') {
+            if (titleEl && res.configuracionVisual) titleEl.textContent = res.configuracionVisual.tituloDashboard || 'Dashboard Dinámico';
+            if (badgeEl) badgeEl.textContent = 'Rol: ' + (res.rolPrincipal || 'Usuario');
+
+            const mods = res.modulosAutorizados || [];
+            if (!grid) return;
+
+            if (mods.length === 0) {
+                grid.innerHTML = '<div class="col-span-3 text-center py-8 p-6 bg-white rounded-2xl border text-slate-400 italic">No hay módulos o herramientas asignadas para esta cuenta o rol.</div>';
+                return;
+            }
+
+            grid.innerHTML = mods.map(m => `
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3 hover:border-indigo-300 transition">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-lg font-bold">
+                            <i class="fa-solid fa-cubes"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-xs uppercase tracking-wider">${m.replace('mod_', '').replace(/_/g, ' ')}</h3>
+                            <p class="text-[10px] text-slate-400">Módulo funcional asignado por responsabilidad</p>
+                        </div>
+                    </div>
+                    <div class="pt-2 border-t text-[11px] flex justify-between items-center text-indigo-600 font-bold">
+                        <span>Estado: Activo</span>
+                        <span class="hover:underline cursor-pointer"><i class="fa-solid fa-arrow-right"></i> Acceder</span>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            if (grid) grid.innerHTML = '<p class="col-span-3 text-rose-500 font-bold text-center p-6 bg-white rounded-2xl border">Error al cargar la configuración del dashboard dinámico.</p>';
+        }
+    } catch (err) {
+        console.error('Error al cargar dashboard dinámico:', err);
+        if (grid) grid.innerHTML = '<p class="col-span-3 text-rose-500 font-bold text-center p-6 bg-white rounded-2xl border">Error de comunicación con el servicio de configuración.</p>';
+    }
+};

@@ -128,3 +128,7 @@
 > **Nota de Arquitectura:** Las estructuras que están en el anexo A (carpetas del repositorio) y en el anexo B (hojas y spreadsheets por rol) son ejemplos de una estructura recomendable, y no una estructura obligatoria.
 
 Para consultar la referencia detallada de todos los esquemas, tablas y columnas de los Spreadsheets en los microservicios actuales (`ACADEMIC`, `USER`, `TASK`, `EXAM`, `ACCOUNTING`, `DEVELOPER`), consulte el documento independiente: [`docs/architecture/spreadsheets-schema.md`](docs/architecture/spreadsheets-schema.md).
+
+### 4.1 Arquitectura de Dashboards Dinámicos (Anexo - TAREA-AD-01)
+- **Endpoint:** `getUserDynamicDashboardConfig` (Consulta de configuración de módulos y visuales por rol y permisos en `backend/user-service/Code.gs`).
+- **Página HTML y Loader:** `app/html/dashboards/dynamic-dashboard.html` y función `loadDynamicDashboard` en `js/ui-common.js`.
