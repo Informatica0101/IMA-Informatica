@@ -676,6 +676,25 @@ window.loadGuardianLinkageStatus = function(solicitudObj) {
     }
 };
 
+// [TAREA-F7-IMP-10] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador UI de consulta de historial de notificaciones de cambios de horario
+window.loadScheduleChangeNotificationLogs = async function(horarioId) {
+    try {
+        if (window.showLoading) window.showLoading('Consultando notificaciones de cambio de horario...');
+        const res = await fetchApi('USER', 'getScheduleChangeNotificationLogs', { horarioId });
+        if (window.hideLoading) window.hideLoading();
+
+        if (res && res.status === 'success' && Array.isArray(res.data)) {
+            alert(`Historial de Notificaciones de Cambio de Horario:\n\nTotal notificaciones: ${res.data.length}\n` +
+                  (res.data.length > 0 ? res.data.map(n => `[${n.estadoEntrega || 'Entregado'}] ${n.titulo} -> Destino: ${n.destinatario} (${n.fecha ? new Date(n.fecha).toLocaleDateString() : ''})`).slice(0, 5).join('\n') : 'Sin notificaciones recientes.'));
+        } else {
+            alert('Error al consultar notificaciones: ' + (res ? res.message : 'Error desconocido'));
+        }
+    } catch (err) {
+        if (window.hideLoading) window.hideLoading();
+        alert('Error de comunicación: ' + err.message);
+    }
+};
+
 // [TAREA-F6-018] [Fase 6: Expediente Institucional y Ciclo de Vida] - Gestión de autorizaciones, responsables legales y lista consolidada de tutores
 window.loadStudentGuardianConsolidatedList = async function(expedienteId) {
     const container = document.getElementById('modal-adm-tutors-container');

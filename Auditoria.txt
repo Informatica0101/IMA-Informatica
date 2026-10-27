@@ -841,3 +841,21 @@ Auditoría inicial e inspección de archivos para TAREA-F7-IMP-09:
   - Se implementará la función `openScheduleVersionsModal` en `js/teacher.js` con la etiqueta identificativa `[TAREA-F7-IMP-09]`.
 - Pendientes.md:
   - Se actualizará el estado de la TAREA-F7-IMP-09 a `[X] Completado`.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-10] Fortalecer las notificaciones y la trazabilidad de cambios académicos
+-------------------------------------------------------------------------------
+Auditoría inicial e inspección de archivos para TAREA-F7-IMP-10:
+- backend/user-service/Code.gs:
+  - Inspeccionada la función `sendMultiChannelNotification` y la hoja `BandejaNotificaciones`.
+  - Se creará la función `dispatchScheduleChangeNotifications` para notificar automáticamente sobre cambios de horarios, aula o docente asignado con clave de deduplicación (`NOTIF_SCHED_<id>_<timestamp>`), registro del estado de entrega y aislamiento de errores.
+  - Se creará la función `getScheduleChangeNotificationLogs` para consultar el historial de notificaciones de cambios de horarios.
+  - Se registrarán en `ROLE_PERMISSIONS` y dispatcher `doPost` de `backend/user-service/Code.gs`.
+- backend/academic-service/Code.gs:
+  - Se actualizará `createClassSchedule` para invocar el despacho de notificaciones de cambio de horario.
+- js/secretary.js / js/teacher.js:
+  - Se implementará la función `window.loadScheduleChangeNotificationLogs` antecedida por la etiqueta identificativa `[TAREA-F7-IMP-10]`.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-10 a `[X] Completado`.

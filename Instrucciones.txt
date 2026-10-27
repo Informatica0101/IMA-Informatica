@@ -380,3 +380,4 @@ TAREAS PENDIENTES DE REVISIÓN
 - TAREA-F7-IMP-06: Ampliar la gestión de disponibilidad, equipamiento y capacidad de espacios (Equipamiento de aulas e indisponibilidad por mantenimiento)
 - TAREA-F7-IMP-08: Ampliar las excepciones del calendario y la gestión de sesiones (Excepciones de sesión puntual sin alterar serie recurrente)
 - TAREA-F7-IMP-09: Desarrollar versiones de horarios, comparación y restauración controlada (Historial de versiones, comparación diff y restauración RESTORE-SCHEDULE-CONFIRMED)
+- TAREA-F7-IMP-10: Fortalecer las notificaciones y la trazabilidad de cambios académicos (Despacho de avisos por cambio de horario, deduplicación y estado de entrega)

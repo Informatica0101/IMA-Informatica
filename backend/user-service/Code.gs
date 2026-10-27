@@ -938,7 +938,7 @@ const ROLE_PERMISSIONS = {
   "Director": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getStudentProcedureNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "dispatchScheduleChangeNotifications", "getScheduleChangeNotificationLogs", "getAdmissionNotificationLogs", "getStudentProcedureNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
     "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData", "generatePrivilegeAndAccountAuditReport", "getPaginatedAuditLogReport", "auditAndReconcileIdentityInconsistencies"
   ],
@@ -1313,6 +1313,8 @@ function doPost(e) {
       case "getUnifiedNotifications": result = getUnifiedNotifications(payload); break;
       case "getUserNotifications": result = getUserNotifications(payload); break;
       case "sendMultiChannelNotification": result = sendMultiChannelNotification(payload); break;
+      case "dispatchScheduleChangeNotifications": result = dispatchScheduleChangeNotifications(payload); break;
+      case "getScheduleChangeNotificationLogs": result = getScheduleChangeNotificationLogs(payload); break;
       case "getAdmissionNotificationLogs": result = getAdmissionNotificationLogs(payload); break;
       case "getStudentProcedureNotificationLogs": result = getStudentProcedureNotificationLogs(payload); break;
       case "registerAndDispatchEvent": result = registerAndDispatchEvent(payload); break;
@@ -6818,4 +6820,73 @@ function getStudentGuardianConsolidatedList(payload) {
     totalTutores: list.length,
     tutores: list
   };
+}
+
+// [TAREA-F7-IMP-10] [Fase 7: Planificación Académica, Horarios y Recursos] - Despacho estandarizado de notificaciones por cambios de horario con deduplicación y aislamiento de errores.
+function dispatchScheduleChangeNotifications(payload) {
+  const { horarioId, ofertaId, diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, tipoCambio, motivo } = payload || {};
+  if (!horarioId || !diaSemana) throw new Error("horarioId y diaSemana son requeridos para notificar cambios de horario.");
+
+  const deduplicationKey = `NOTIF_SCHED_${horarioId}_${diaSemana}_${horaInicio || '00'}`;
+  const titulo = `Cambio de Horario Académico - ${tipoCambio || 'Actualización'}`;
+  const mensaje = `Se ha registrado una modificación en el horario de clase (${horarioId}). ` +
+                  `Día: ${diaSemana}, Hora: ${horaInicio || ''} - ${horaFin || ''}, Aula: ${aulaCodigo || 'Asignada'}. ` +
+                  `${motivo ? 'Motivo: ' + motivo : ''}`;
+
+  const recipients = [];
+  if (docenteUserId) recipients.push(docenteUserId);
+
+  let successCount = 0;
+  recipients.forEach(targetUser => {
+    try {
+      const res = sendMultiChannelNotification({
+        userId: targetUser,
+        titulo,
+        mensaje,
+        tipo: "CambioHorarioAcademico",
+        categoria: "Horarios",
+        deduplicationKey: `${deduplicationKey}_${targetUser}`,
+        authRole: payload && payload.authRole
+      });
+      if (res && res.status === "success") successCount++;
+    } catch (errNotif) {
+      logStructuredEvent("USER", "dispatchScheduleChangeNotifications", "WARN", "SCHEDULE_NOTIF_FAILED", `Fallo al notificar cambio de horario a ${targetUser}: ${errNotif.message}`, { horarioId, targetUser }, payload && payload.authRole);
+    }
+  });
+
+  return {
+    status: "success",
+    message: `Notificaciones de cambio de horario procesadas para ${recipients.length} destinatario(s).`,
+    despachadas: successCount
+  };
+}
+
+// [TAREA-F7-IMP-10] [Fase 7: Planificación Académica, Horarios y Recursos] - Consulta del historial de notificaciones de cambios de horario.
+function getScheduleChangeNotificationLogs(payload) {
+  const { horarioId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BandejaNotificaciones");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const notifs = data.slice(1).filter(r => {
+    if (r[2] !== "CambioHorarioAcademico") return false;
+    if (horarioId && !String(r[4] || "").includes(String(horarioId))) return false;
+    return true;
+  }).map(r => ({
+    notificacionId: r[0],
+    destinatario: r[1],
+    tipo: r[2],
+    titulo: r[3],
+    mensaje: r[4],
+    fecha: r[5] ? new Date(r[5]).toISOString() : null,
+    leido: r[6],
+    categoria: r[7],
+    deduplicationKey: r[9],
+    estadoEntrega: r[10],
+    emailDestino: r[11]
+  })).reverse();
+
+  return { status: "success", data: notifs };
 }

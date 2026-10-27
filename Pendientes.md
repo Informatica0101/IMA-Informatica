@@ -1729,7 +1729,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-10] Fortalecer las notificaciones y la trazabilidad de cambios académicos
+### [X] [TAREA-F7-IMP-10] Fortalecer las notificaciones y la trazabilidad de cambios académicos
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-10 (P1 · Notificaciones de Horarios)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Ampliación de notificaciones e integración)
@@ -1762,7 +1762,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-66: El historial permite identificar el evento, los destinatarios y el resultado del envío.
   - CA-F7-67: Los estados de entrega no se marcan como confirmados sin evidencia del canal.
   - CA-F7-68: Los destinatarios no reciben información ajena a sus permisos.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
