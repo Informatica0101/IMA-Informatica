@@ -5007,7 +5007,8 @@ window.closeGlobalOmniboxModal = function() {
     }
 };
 
-window.executeOmniboxSearch = function(query) {
+// [TAREA-F6-020] [Fase 6: Expediente Institucional y Ciclo de Vida] - Ejecución de búsqueda global omnibox con soporte de filtros y distinción de coincidencia exacta
+window.executeOmniboxSearch = function(query, filters) {
     const container = document.getElementById('omnibox-results-container');
     if (!container) return;
     container.innerHTML =
@@ -5015,11 +5016,16 @@ window.executeOmniboxSearch = function(query) {
             '<i class="fa-solid fa-spinner fa-spin text-3xl mb-2 block"></i> Buscando resultados...' +
         '</div>';
 
+    const payload = Object.assign({ query: query || '' }, filters || {});
+
     if (typeof fetchApi === 'function') {
-        fetchApi('USER', 'searchGlobalOmnibox', { query: query }).then(function(response) {
+        fetchApi('USER', 'searchGlobalOmnibox', payload).then(function(response) {
             if (response && response.status === 'success' && Array.isArray(response.results) && response.results.length > 0) {
                 let html = '<div class="space-y-2">';
                 response.results.forEach(function(item) {
+                    const exactBadge = item.exactMatch
+                        ? '<span class="text-[8px] uppercase font-black px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 ml-1">Coincidencia Exacta</span>'
+                        : '';
                     html +=
                         '<div onclick="window.handleOmniboxResultClick(\'' + item.type + '\', \'' + item.id + '\')" class="p-3 bg-slate-50 hover:bg-blue-50 border border-slate-100 hover:border-blue-200 rounded-2xl flex items-center gap-3 cursor-pointer transition-all hover:scale-[1.01]">' +
                             '<div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold flex-shrink-0">' +
@@ -5027,7 +5033,7 @@ window.executeOmniboxSearch = function(query) {
                             '</div>' +
                             '<div class="flex-grow min-w-0">' +
                                 '<div class="flex items-center justify-between">' +
-                                    '<h4 class="font-bold text-slate-800 text-sm truncate">' + item.title + '</h4>' +
+                                    '<h4 class="font-bold text-slate-800 text-sm truncate flex items-center">' + item.title + exactBadge + '</h4>' +
                                     '<span class="text-[10px] uppercase font-black px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">' + item.category + '</span>' +
                                 '</div>' +
                                 '<p class="text-xs text-slate-500 font-medium truncate">' + item.subtitle + '</p>' +

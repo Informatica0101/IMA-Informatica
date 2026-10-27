@@ -938,7 +938,7 @@ const ROLE_PERMISSIONS = {
   "Director": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getStudentProcedureNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "dispatchScheduleChangeNotifications", "getScheduleChangeNotificationLogs", "getAdmissionNotificationLogs", "getStudentProcedureNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
     "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData", "generatePrivilegeAndAccountAuditReport", "getPaginatedAuditLogReport", "auditAndReconcileIdentityInconsistencies"
   ],
@@ -1313,6 +1313,8 @@ function doPost(e) {
       case "getUnifiedNotifications": result = getUnifiedNotifications(payload); break;
       case "getUserNotifications": result = getUserNotifications(payload); break;
       case "sendMultiChannelNotification": result = sendMultiChannelNotification(payload); break;
+      case "dispatchScheduleChangeNotifications": result = dispatchScheduleChangeNotifications(payload); break;
+      case "getScheduleChangeNotificationLogs": result = getScheduleChangeNotificationLogs(payload); break;
       case "getAdmissionNotificationLogs": result = getAdmissionNotificationLogs(payload); break;
       case "getStudentProcedureNotificationLogs": result = getStudentProcedureNotificationLogs(payload); break;
       case "registerAndDispatchEvent": result = registerAndDispatchEvent(payload); break;
@@ -6074,17 +6076,19 @@ function purgeStructuredLogs(payload) {
   }
 }
 
-// [TAREA-F6-020] [Fase 6: Expediente Institucional y Ciclo de Vida] - Búsqueda global omnibox multi-entidad por expediente, DNI, código, nombres con enmascaramiento de PII y estado de matrícula
+// [TAREA-F6-020] [Fase 6: Expediente Institucional y Ciclo de Vida] - Búsqueda global omnibox multi-entidad por expediente, DNI, código, nombres con enmascaramiento de PII, filtros contextuales y estado de matrícula
 function searchGlobalOmnibox(payload) {
   try {
     if (!payload) return { status: "error", message: "Payload no provisto." };
     const normQuery = normalizeString(payload.query || "");
-    if (normQuery.length < 2) {
+    if (normQuery.length < 2 && !payload.filterGrado && !payload.filterAnoLectivo && !payload.filterEstado) {
       return { status: "success", results: [] };
     }
     const verifiedRole = getUserVerifiedRole(payload);
     const results = [];
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+    const { filterAnoLectivo, filterGrado, filterSeccion, filterEstado } = payload || {};
 
     if (["Administrador", "Desarrollador", "Director", "Subdirector", "Secretaría", "Profesor", "Coordinador", "Consejeros", "Contador", "RecursosHumanos"].indexOf(verifiedRole) !== -1) {
       const isPrivileged = ["Administrador", "Director", "Secretaría", "Secretaria", "Subdirector", "Desarrollador"].indexOf(verifiedRole) !== -1;
@@ -6113,13 +6117,22 @@ function searchGlobalOmnibox(payload) {
         const normExpId = normalizeString(expId);
         const normName = normalizeString(nombreComp);
 
-        if (normExpId.indexOf(normQuery) !== -1 || normCode.indexOf(normQuery) !== -1 || normDni.indexOf(normQuery) !== -1 || normName.indexOf(normQuery) !== -1) {
-          const mat = matData.find(m => String(m[2]).trim() === studentUserId.trim());
-          const periodoMat = mat ? String(mat[6] || "2026") : (expRow[8] || "N/A");
-          const gradoMat = mat ? String(mat[4] || "") : (expRow[5] || "");
-          const seccionMat = mat ? String(mat[5] || "") : (expRow[6] || "");
+        const mat = matData.find(m => String(m[2]).trim() === studentUserId.trim());
+        const periodoMat = mat ? String(mat[6] || "2026") : (expRow[8] || "N/A");
+        const gradoMat = mat ? String(mat[4] || "") : (expRow[5] || "");
+        const seccionMat = mat ? String(mat[5] || "") : (expRow[6] || "");
 
+        // Aplicar filtros opcionales por año lectivo, grado, sección o estado del expediente
+        if (filterAnoLectivo && String(periodoMat).trim() !== String(filterAnoLectivo).trim()) return;
+        if (filterGrado && normalizeString(gradoMat).indexOf(normalizeString(filterGrado)) === -1) return;
+        if (filterSeccion && normalizeString(seccionMat) !== normalizeString(filterSeccion)) return;
+        if (filterEstado && normalizeString(estadoExp) !== normalizeString(filterEstado)) return;
+
+        const matchesQuery = !normQuery || (normExpId.indexOf(normQuery) !== -1 || normCode.indexOf(normQuery) !== -1 || normDni.indexOf(normQuery) !== -1 || normName.indexOf(normQuery) !== -1);
+
+        if (matchesQuery) {
           const maskedDni = dniVal ? (isPrivileged ? dniVal : (dniVal.slice(0, 4) + "****" + dniVal.slice(-2))) : "N/A";
+          const isExact = normCode === normQuery || normExpId === normQuery || normDni === normQuery;
 
           results.push({
             id: studentUserId || expId,
@@ -6131,10 +6144,13 @@ function searchGlobalOmnibox(payload) {
             icon: "fa-id-card",
             type: "student_file",
             targetModule: "student_file",
-            exactMatch: normCode === normQuery || normExpId === normQuery || normDni === normQuery
+            exactMatch: isExact
           });
         }
       });
+
+      // Ordenar priorizando coincidencias exactas arriba
+      results.sort((a, b) => (b.exactMatch ? 1 : 0) - (a.exactMatch ? 1 : 0));
 
       if (uData.length > 0) {
         for (let i = 0; i < uData.length; i++) {
@@ -6804,4 +6820,73 @@ function getStudentGuardianConsolidatedList(payload) {
     totalTutores: list.length,
     tutores: list
   };
+}
+
+// [TAREA-F7-IMP-10] [Fase 7: Planificación Académica, Horarios y Recursos] - Despacho estandarizado de notificaciones por cambios de horario con deduplicación y aislamiento de errores.
+function dispatchScheduleChangeNotifications(payload) {
+  const { horarioId, ofertaId, diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, tipoCambio, motivo } = payload || {};
+  if (!horarioId || !diaSemana) throw new Error("horarioId y diaSemana son requeridos para notificar cambios de horario.");
+
+  const deduplicationKey = `NOTIF_SCHED_${horarioId}_${diaSemana}_${horaInicio || '00'}`;
+  const titulo = `Cambio de Horario Académico - ${tipoCambio || 'Actualización'}`;
+  const mensaje = `Se ha registrado una modificación en el horario de clase (${horarioId}). ` +
+                  `Día: ${diaSemana}, Hora: ${horaInicio || ''} - ${horaFin || ''}, Aula: ${aulaCodigo || 'Asignada'}. ` +
+                  `${motivo ? 'Motivo: ' + motivo : ''}`;
+
+  const recipients = [];
+  if (docenteUserId) recipients.push(docenteUserId);
+
+  let successCount = 0;
+  recipients.forEach(targetUser => {
+    try {
+      const res = sendMultiChannelNotification({
+        userId: targetUser,
+        titulo,
+        mensaje,
+        tipo: "CambioHorarioAcademico",
+        categoria: "Horarios",
+        deduplicationKey: `${deduplicationKey}_${targetUser}`,
+        authRole: payload && payload.authRole
+      });
+      if (res && res.status === "success") successCount++;
+    } catch (errNotif) {
+      logStructuredEvent("USER", "dispatchScheduleChangeNotifications", "WARN", "SCHEDULE_NOTIF_FAILED", `Fallo al notificar cambio de horario a ${targetUser}: ${errNotif.message}`, { horarioId, targetUser }, payload && payload.authRole);
+    }
+  });
+
+  return {
+    status: "success",
+    message: `Notificaciones de cambio de horario procesadas para ${recipients.length} destinatario(s).`,
+    despachadas: successCount
+  };
+}
+
+// [TAREA-F7-IMP-10] [Fase 7: Planificación Académica, Horarios y Recursos] - Consulta del historial de notificaciones de cambios de horario.
+function getScheduleChangeNotificationLogs(payload) {
+  const { horarioId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BandejaNotificaciones");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const notifs = data.slice(1).filter(r => {
+    if (r[2] !== "CambioHorarioAcademico") return false;
+    if (horarioId && !String(r[4] || "").includes(String(horarioId))) return false;
+    return true;
+  }).map(r => ({
+    notificacionId: r[0],
+    destinatario: r[1],
+    tipo: r[2],
+    titulo: r[3],
+    mensaje: r[4],
+    fecha: r[5] ? new Date(r[5]).toISOString() : null,
+    leido: r[6],
+    categoria: r[7],
+    deduplicationKey: r[9],
+    estadoEntrega: r[10],
+    emailDestino: r[11]
+  })).reverse();
+
+  return { status: "success", data: notifs };
 }

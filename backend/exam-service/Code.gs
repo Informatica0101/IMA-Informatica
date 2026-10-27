@@ -89,7 +89,7 @@ const ROLE_PERMISSIONS = {
     "getAllExams", "getTeacherExamActivity", "getExamQuestions", "getStudentExams", "getExamResult",
     "getGradebookData", "saveGradebookGrades", "getEvaluationCategories", "saveEvaluationCategory",
     "getRubrics", "saveRubric", "saveStudentRecovery", "getStudentRecoveries", "closePeriodGradebook", "reopenPeriodGradebook", "getStudentAcademicReport",
-    "manageQuestionBank", "getQuestionBank"
+    "manageQuestionBank", "getQuestionBank", "checkExamSchedulingConflict", "simulateExamReschedule"
   ],
   "Estudiante": [
     "getStudentExams", "getExamQuestions", "submitExam", "getExamResult", "getEvaluationCategories", "getRubrics", "getStudentRecoveries", "getStudentAcademicReport"
@@ -382,6 +382,8 @@ function doPost(e) {
       case "getStudentAcademicReport": result = getStudentAcademicReport(payload); break;
       case "manageQuestionBank": result = manageQuestionBank(payload); break;
       case "getQuestionBank": result = getQuestionBank(payload); break;
+      case "checkExamSchedulingConflict": result = checkExamSchedulingConflict(payload); break;
+      case "simulateExamReschedule": result = simulateExamReschedule(payload); break;
       default:
         result = { status: "error", message: `Acción no válida: ${action}` };
     }
@@ -655,6 +657,79 @@ function getExamQuestions({ examenId }) {
     data: {
       ...examDetails,
       preguntas: preguntas
+    }
+  };
+}
+
+// [TAREA-F7-IMP-07] [Fase 7: Planificación Académica, Horarios y Recursos] - Validación de sobrecarga de evaluaciones por sección y conflictos de agenda.
+function checkExamSchedulingConflict(payload) {
+  const { seccionAsignada, fechaLimite, examenId, maxExamenesPorDia } = payload || {};
+  if (!seccionAsignada || !fechaLimite) {
+    return { status: "success", hasConflict: false };
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const examenesSheet = getSheetOrThrow(ss, "Examenes");
+  const examenesData = examenesSheet.getDataRange().getValues().slice(1);
+
+  const limitMax = Number(maxExamenesPorDia) || 2;
+  const dateTarget = String(fechaLimite).split("T")[0].split(" ")[0];
+
+  const sameDayExams = examenesData.filter(r => {
+    if (examenId && String(r[0]).trim() === String(examenId).trim()) return false;
+    if (r[7] === "Inactivo" || r[7] === "Cancelado") return false;
+    const sameSec = normalizeString(r[4]) === normalizeString(seccionAsignada) || normalizeString(r[3]) === normalizeString(seccionAsignada);
+    const rDate = String(r[5]).split("T")[0].split(" ")[0];
+    return sameSec && rDate === dateTarget;
+  });
+
+  if (sameDayExams.length >= limitMax) {
+    return {
+      status: "success",
+      hasConflict: true,
+      reason: `Sobrecarga evaluativa: La sección ${seccionAsignada} ya tiene ${sameDayExams.length} evaluacion(es) programada(s) para el ${dateTarget} (Límite máximo: ${limitMax}/día).`,
+      examenesCount: sameDayExams.length,
+      limitMax
+    };
+  }
+
+  return { status: "success", hasConflict: false, examenesCount: sameDayExams.length, limitMax };
+}
+
+// [TAREA-F7-IMP-07] [Fase 7: Planificación Académica, Horarios y Recursos] - Simulación de reprogramación de evaluaciones previa confirmación oficial.
+function simulateExamReschedule(payload) {
+  const { examenId, nuevaFecha, nuevaSeccion } = payload || {};
+  if (!examenId || !nuevaFecha) throw new Error("examenId y nuevaFecha son requeridos para simular la reprogramación.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrThrow(ss, "Examenes");
+  const data = sheet.getDataRange().getValues();
+  const examRow = data.slice(1).find(r => String(r[0]).trim() === String(examenId).trim());
+
+  if (!examRow) throw new Error("Examen no encontrado.");
+
+  const seccionTarget = nuevaSeccion || examRow[4];
+  const conflictCheck = checkExamSchedulingConflict({
+    seccionAsignada: seccionTarget,
+    fechaLimite: nuevaFecha,
+    examenId,
+    maxExamenesPorDia: 2
+  });
+
+  logStructuredEvent("EXAM", "simulateExamReschedule", "INFO", "EXAM_RESCHEDULE_SIMULATED", `Simulación de reprogramación para examen ${examenId}`, { examenId, nuevaFecha, tieneConflicto: conflictCheck.hasConflict }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    simulacion: {
+      examenId,
+      titulo: examRow[1],
+      asignatura: examRow[2],
+      seccionOriginal: examRow[4],
+      seccionDestino: seccionTarget,
+      fechaOriginal: examRow[5],
+      fechaPropuesta: nuevaFecha,
+      tieneConflicto: conflictCheck.hasConflict,
+      motivoConflicto: conflictCheck.reason || null
     }
   };
 }

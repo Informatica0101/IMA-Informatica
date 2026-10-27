@@ -586,9 +586,83 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- LÓGICA CONSTRUCTOR DE HORARIOS Y SUSTITUCIONES DOCENTES (FASE 7) ---
-    async function loadMasterSchedules() {
+    let masterScheduleData = [];
+
+    // [TAREA-F7-IMP-02] [Fase 7: Planificación Académica, Horarios y Recursos] - Matriz visual de planificación y disponibilidad multi-perspectiva (Docente, Sección, Aula, Estado).
+    window.renderSchedulePlanningMatrix = function(schedules) {
         const tbody = document.getElementById('schedules-table-body');
         const badge = document.getElementById('schedule-count-badge');
+        if (!tbody) return;
+
+        const mode = document.getElementById('sch-matrix-mode')?.value || 'institucional';
+        const statusFilter = document.getElementById('sch-matrix-status')?.value || 'todos';
+        const query = (document.getElementById('sch-matrix-search')?.value || '').toLowerCase().trim();
+
+        let filtered = (schedules || []).filter(s => {
+            if (statusFilter !== 'todos' && String(s.estado || 'Activo').toLowerCase() !== statusFilter.toLowerCase()) {
+                return false;
+            }
+            if (query) {
+                const matchStr = `${s.diaSemana || ''} ${s.ofertaId || ''} ${s.grado || ''} ${s.seccion || ''} ${s.aulaCodigo || ''} ${s.docenteUserId || ''}`.toLowerCase();
+                if (!matchStr.includes(query)) return false;
+            }
+            return true;
+        });
+
+        // Aplicar ordenamiento dinámico según la perspectiva seleccionada (Institucional, Docente, Sección, Aula)
+        filtered.sort((a, b) => {
+            if (mode === 'docente') {
+                return String(a.docenteUserId || '').localeCompare(String(b.docenteUserId || ''));
+            } else if (mode === 'seccion') {
+                return String(`${a.grado || ''} ${a.seccion || ''}`).localeCompare(String(`${b.grado || ''} ${b.seccion || ''}`));
+            } else if (mode === 'aula') {
+                return String(a.aulaCodigo || '').localeCompare(String(b.aulaCodigo || ''));
+            }
+            return 0;
+        });
+
+        if (badge) badge.textContent = `${filtered.length} Bloques`;
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-gray-400 italic">No hay bloques de horario registrados que coincidan con los filtros seleccionados.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = filtered.map(s => {
+            const isDraft = String(s.estado).toLowerCase() === 'borrador';
+            const statusBadge = isDraft
+                ? '<span class="px-2 py-0.5 bg-amber-100 text-amber-800 font-black rounded-md text-[9px] uppercase">Borrador</span>'
+                : '<span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded-md text-[9px] uppercase">Publicado</span>';
+
+            return `
+                <tr class="hover:bg-indigo-50/40 transition-colors border-b border-gray-100">
+                    <td class="p-3 font-bold text-gray-800">
+                        <span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded-md text-[9px] uppercase mr-1.5">${s.diaSemana}</span>
+                        <span>${s.horaInicio} - ${s.horaFin}</span>
+                    </td>
+                    <td class="p-3 font-semibold text-gray-700">
+                        ${s.ofertaId}
+                        <div class="mt-0.5">${statusBadge}</div>
+                    </td>
+                    <td class="p-3 text-gray-600 font-medium">${s.grado || 'Grado'} ${s.seccion || 'Secc.'}</td>
+                    <td class="p-3 font-mono text-gray-600"><span class="px-2 py-1 bg-teal-50 text-teal-700 font-bold rounded-lg text-[10px]"><i class="fas fa-door-open mr-1"></i>${s.aulaCodigo || 'AULA-101'}</span></td>
+                    <td class="p-3 text-gray-600">${s.docenteUserId || currentUser.nombre}</td>
+                    <td class="p-3 text-right">
+                        <button onclick="window.deleteScheduleBlock('${s.horarioId}')" class="px-2.5 py-1 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-[10px] font-bold uppercase transition-colors" title="Eliminar">
+                            <i class="fas fa-trash-alt mr-1"></i>Eliminar
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    };
+
+    window.filterScheduleMatrix = function() {
+        window.renderSchedulePlanningMatrix(masterScheduleData);
+    };
+
+    async function loadMasterSchedules() {
+        const tbody = document.getElementById('schedules-table-body');
         if (!tbody) return;
 
         tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-gray-400 italic"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando matriz de horarios...</td></tr>';
@@ -596,31 +670,8 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const res = await fetchApi('ACADEMIC', 'getClassSchedules', { docenteUserId: currentUser.userId });
             if (res.status === 'success') {
-                const schedules = res.data || [];
-                if (badge) badge.textContent = `${schedules.length} Bloques`;
-
-                if (schedules.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-gray-400 italic">No hay bloques de horario registrados para este docente. Utilice el formulario superior para programar sus clases.</td></tr>';
-                    return;
-                }
-
-                tbody.innerHTML = schedules.map(s => `
-                    <tr class="hover:bg-indigo-50/40 transition-colors">
-                        <td class="p-3 font-bold text-gray-800">
-                            <span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded-md uppercase text-[9px] mr-1.5">${s.diaSemana}</span>
-                            <span>${s.horaInicio} - ${s.horaFin}</span>
-                        </td>
-                        <td class="p-3 font-semibold text-gray-700">${s.ofertaId}</td>
-                        <td class="p-3 text-gray-600 font-medium">Grado / Secc. Asignada</td>
-                        <td class="p-3 font-mono text-gray-600">${s.aulaCodigo || 'N/A'}</td>
-                        <td class="p-3 text-gray-600">${s.docenteUserId || currentUser.nombre}</td>
-                        <td class="p-3 text-right">
-                            <button onclick="window.deleteScheduleBlock('${s.horarioId}')" class="px-2.5 py-1 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-[10px] font-bold uppercase transition-colors">
-                                <i class="fas fa-trash-alt mr-1"></i>Eliminar
-                            </button>
-                        </td>
-                    </tr>
-                `).join('');
+                masterScheduleData = res.data || [];
+                window.renderSchedulePlanningMatrix(masterScheduleData);
             } else {
                 tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-red-500">${res.message || 'Error al cargar horarios'}</td></tr>`;
             }
@@ -682,7 +733,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            const res = await fetchApi('ACADEMIC', 'createClassSchedule', {
+            // [TAREA-F7-IMP-01] Soporte de excepciones justificadas al asignar horarios
+            let res = await fetchApi('ACADEMIC', 'createClassSchedule', {
                 ofertaId,
                 diaSemana,
                 horaInicio,
@@ -698,12 +750,704 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(res.message);
             }
         } catch (err) {
-            alert("Conflicto / Error en asignación de horario:\n" + err.message);
+            if (err.message && err.message.includes("Conflicto de horario detectado")) {
+                if (confirm("Conflicto detectado: " + err.message + "\n\n¿Desea abrir el Asistente de Resolución de Conflictos para evaluar alternativas de aula u horario?")) {
+                    window.openAssistedConflictResolutionModal({
+                        ofertaId,
+                        diaSemana,
+                        horaInicio,
+                        horaFin,
+                        aulaCodigo,
+                        docenteUserId,
+                        reason: err.message
+                    });
+                } else if (confirm("¿Desea registrar una excepción justificada para autorizar esta asignación?")) {
+                    const excepcionJustificacion = prompt("Ingrese el motivo / justificación explícita de la excepción:", "");
+                    if (excepcionJustificacion && excepcionJustificacion.trim().length > 5) {
+                        try {
+                            const resExc = await fetchApi('ACADEMIC', 'createClassSchedule', {
+                                ofertaId,
+                                diaSemana,
+                                horaInicio,
+                                horaFin,
+                                aulaCodigo,
+                                docenteUserId,
+                                excepcionJustificacion
+                            });
+                            if (resExc.status === 'success') {
+                                alert("¡Horario asignado con excepción explícitamente configurada!");
+                                loadMasterSchedules();
+                                return;
+                            }
+                        } catch (excErr) {
+                            alert("Error al procesar excepción: " + excErr.message);
+                        }
+                    }
+                }
+            } else {
+                alert("Conflicto / Error en asignación de horario:\n" + err.message);
+            }
         } finally {
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-check mr-1"></i> Publicar Horario';
         }
     });
+
+    // [TAREA-F7-IMP-03] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de resolución asistida de conflictos
+    window.openAssistedConflictResolutionModal = async function(conflictData) {
+        const modal = document.getElementById('modal-schedule-conflict-resolution');
+        const container = document.getElementById('conflict-resolution-content');
+        if (!modal || !container) return;
+
+        modal.classList.remove('hidden');
+        container.innerHTML = `<div class="p-4 text-center text-amber-600 font-bold"><i class="fas fa-spinner fa-spin mr-2"></i>Buscando alternativas disponibles de aula y horario...</div>`;
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getScheduleConflictResolutionAlternatives', conflictData);
+            if (res && res.status === 'success') {
+                let html = `
+                    <div class="p-3 bg-red-50 text-red-800 rounded-xl border border-red-200 mb-3 space-y-1">
+                        <strong class="block uppercase text-[10px]">Conflicto que Impide la Asignación:</strong>
+                        <p class="text-xs font-medium">${conflictData.reason || 'Soliapamiento de horario/aula'}</p>
+                    </div>
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-slate-800 uppercase tracking-wider text-[10px]">Alternativas Sugeridas (${res.totalAlternativas} disponibles):</h4>
+                `;
+
+                if (Array.isArray(res.alternativasAulas) && res.alternativasAulas.length > 0) {
+                    html += `<div class="space-y-1.5"><p class="font-bold text-teal-700 text-[10px] uppercase">Aulas Alternativas Disponibles:</p>`;
+                    res.alternativasAulas.forEach(a => {
+                        html += `
+                            <div class="p-2.5 bg-teal-50/60 rounded-xl border border-teal-200 flex justify-between items-center">
+                                <div>
+                                    <strong class="text-slate-800">${a.nombreAula} (${a.aulaCodigo})</strong>
+                                    <p class="text-[10px] text-slate-500">${a.descripcion}</p>
+                                </div>
+                                <button onclick="window.applyConflictAlternative('${conflictData.ofertaId}', '${conflictData.diaSemana}', '${conflictData.horaInicio}', '${conflictData.horaFin}', '${a.aulaCodigo}', '${conflictData.docenteUserId}')" class="px-2.5 py-1 bg-teal-600 text-white font-bold rounded-lg text-[10px] uppercase hover:bg-teal-700">Aplicar</button>
+                            </div>
+                        `;
+                    });
+                    html += `</div>`;
+                }
+
+                if (Array.isArray(res.alternativasHorarios) && res.alternativasHorarios.length > 0) {
+                    html += `<div class="space-y-1.5 pt-2"><p class="font-bold text-indigo-700 text-[10px] uppercase">Bloques Horarios Libres en Misma Aula:</p>`;
+                    res.alternativasHorarios.forEach(h => {
+                        html += `
+                            <div class="p-2.5 bg-indigo-50/60 rounded-xl border border-indigo-200 flex justify-between items-center">
+                                <div>
+                                    <strong class="text-slate-800">${h.diaSemana} ${h.horaInicio} - ${h.horaFin}</strong>
+                                    <p class="text-[10px] text-slate-500">${h.descripcion}</p>
+                                </div>
+                                <button onclick="window.applyConflictAlternative('${conflictData.ofertaId}', '${h.diaSemana}', '${h.horaInicio}', '${h.horaFin}', '${conflictData.aulaCodigo}', '${conflictData.docenteUserId}')" class="px-2.5 py-1 bg-indigo-600 text-white font-bold rounded-lg text-[10px] uppercase hover:bg-indigo-700">Aplicar</button>
+                            </div>
+                        `;
+                    });
+                    html += `</div>`;
+                }
+
+                if (res.totalAlternativas === 0) {
+                    html += `<p class="p-4 text-center text-slate-400 italic bg-slate-50 rounded-xl">No se encontraron alternativas automáticas sin conflicto en la misma jornada. Pruebe cambiando manualmente el docente o el día.</p>`;
+                }
+
+                html += `</div>`;
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = `<div class="p-4 text-center text-red-600 font-bold">${res.message || 'Error al obtener alternativas.'}</div>`;
+            }
+        } catch (err) {
+            container.innerHTML = `<div class="p-4 text-center text-red-600 font-bold">Error de conexión: ${err.message}</div>`;
+        }
+    };
+
+    // [TAREA-F7-IMP-13] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador UI de importación, exportación y previsualización masiva de horarios
+    window.openBulkScheduleImportExportModal = function() {
+        const modal = document.getElementById('modal-bulk-schedule-import-export');
+        if (modal) modal.classList.remove('hidden');
+
+        const btnExport = document.getElementById('btn-export-bulk-schedules-csv');
+        if (btnExport) {
+            btnExport.onclick = async () => {
+                try {
+                    if (window.showLoading) window.showLoading('Generando matriz de horarios en CSV...');
+                    const res = await fetchApi('ACADEMIC', 'exportBulkClassSchedules', {});
+                    if (window.hideLoading) window.hideLoading();
+
+                    if (res && res.status === 'success' && res.csvData) {
+                        const blob = new Blob([res.csvData], { type: 'text/csv;charset=utf-8;' });
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.setAttribute('download', `Matriz_Horarios_${res.anoLectivo || '2026'}.csv`);
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    } else {
+                        alert('Error al exportar matriz: ' + (res ? res.message : 'Error desconocido'));
+                    }
+                } catch (err) {
+                    if (window.hideLoading) window.hideLoading();
+                    alert('Error de comunicación: ' + err.message);
+                }
+            };
+        }
+
+        const btnPreview = document.getElementById('btn-preview-bulk-schedule');
+        const btnConfirm = document.getElementById('btn-confirm-bulk-schedule-import');
+        const resultBox = document.getElementById('bulk-import-result-box');
+        let parsedRowsToImport = [];
+
+        if (btnPreview) {
+            btnPreview.onclick = async () => {
+                const fileInput = document.getElementById('input-bulk-schedule-file');
+                if (!fileInput || !fileInput.files[0]) return alert('Por favor seleccione un archivo CSV o JSON.');
+
+                const file = fileInput.files[0];
+                const text = await file.text();
+
+                parsedRowsToImport = [];
+                if (file.name.endsWith('.json')) {
+                    try { parsedRowsToImport = JSON.parse(text); } catch (e) { return alert('JSON malformado.'); }
+                } else {
+                    const lines = text.split('\n').filter(l => l.trim().length > 0);
+                    if (lines.length <= 1) return alert('Archivo CSV sin filas de datos.');
+
+                    for (let i = 1; i < lines.length; i++) {
+                        const cols = lines[i].split(',').map(c => c.replace(/"/g, '').trim());
+                        if (cols.length >= 3) {
+                            parsedRowsToImport.push({
+                                horarioId: cols[0],
+                                ofertaId: cols[1],
+                                diaSemana: cols[2],
+                                horaInicio: cols[3],
+                                horaFin: cols[4],
+                                aulaCodigo: cols[5],
+                                docenteUserId: cols[6],
+                                estado: cols[7] || 'Borrador'
+                            });
+                        }
+                    }
+                }
+
+                if (parsedRowsToImport.length === 0) return alert('No se encontraron filas válidas para importar.');
+
+                try {
+                    if (window.showLoading) window.showLoading('Previsualizando y validando traslapes...');
+                    const res = await fetchApi('ACADEMIC', 'importBulkClassSchedules', {
+                        filas: parsedRowsToImport,
+                        previsualizar: true
+                    });
+                    if (window.hideLoading) window.hideLoading();
+
+                    if (res && res.resumen) {
+                        const r = res.resumen;
+                        resultBox.classList.remove('hidden');
+                        if (r.conflictosCount > 0) {
+                            resultBox.className = 'p-4 rounded-2xl border bg-amber-50 border-amber-200 text-amber-900';
+                            resultBox.innerHTML = `<p class="font-bold mb-1"><i class="fa-solid fa-triangle-exclamation mr-1 text-amber-600"></i>Previsualización con Advertencias:</p>` +
+                                `<p class="text-xs">Válidos: <strong>${r.validosCount}</strong> | Conflictos: <strong>${r.conflictosCount}</strong> | Duplicados: <strong>${r.duplicadosCount}</strong></p>` +
+                                `<div class="mt-2 text-[11px] bg-white/80 p-2 rounded-xl border border-amber-100 max-h-32 overflow-y-auto">${res.conflictos.map(c => `• Fila ${c.filaIdx}: ${c.reason}`).join('<br>')}</div>`;
+                            if (btnConfirm) btnConfirm.classList.add('hidden');
+                        } else {
+                            resultBox.className = 'p-4 rounded-2xl border bg-emerald-50 border-emerald-200 text-emerald-900';
+                            resultBox.innerHTML = `<p class="font-bold mb-1"><i class="fa-solid fa-circle-check mr-1 text-emerald-600"></i>Previsualización Exitosa:</p>` +
+                                `<p class="text-xs">Todas las <strong>${r.validosCount}</strong> filas son válidas sin traslapes detectados.</p>`;
+                            if (btnConfirm) btnConfirm.classList.remove('hidden');
+                        }
+                    }
+                } catch (err) {
+                    if (window.hideLoading) window.hideLoading();
+                    alert('Error en previsualización: ' + err.message);
+                }
+            };
+        }
+
+        if (btnConfirm) {
+            btnConfirm.onclick = async () => {
+                if (parsedRowsToImport.length === 0) return;
+                try {
+                    if (window.showLoading) window.showLoading('Importando matriz de horarios...');
+                    const res = await fetchApi('ACADEMIC', 'importBulkClassSchedules', {
+                        filas: parsedRowsToImport,
+                        previsualizar: false
+                    });
+                    if (window.hideLoading) window.hideLoading();
+
+                    if (res && res.status === 'success') {
+                        alert(`¡Importación masiva completada! Se guardaron ${res.countInserted} bloques de horario.`);
+                        modal.classList.add('hidden');
+                        loadMasterSchedules();
+                    } else {
+                        alert('Error al importar: ' + (res ? res.message : 'Error desconocido'));
+                    }
+                } catch (err) {
+                    if (window.hideLoading) window.hideLoading();
+                    alert('Error de comunicación: ' + err.message);
+                }
+            };
+        }
+    };
+
+    // [TAREA-F7-IMP-14] [Fase 7: Planificación Académica, Horarios y Recursos] - UI Modal para previsualización del impacto de publicación y control de cambios masivos
+    window.openPublishImpactPreviewModal = async function() {
+        const modal = document.getElementById('modal-publish-impact-preview');
+        if (modal) modal.classList.remove('hidden');
+
+        const summaryBox = document.getElementById('publish-impact-summary-box');
+        const detailsContainer = document.getElementById('publish-impact-details');
+        const btnConfirmPublish = document.getElementById('btn-confirm-publish-schedules');
+
+        if (summaryBox) summaryBox.innerHTML = '<p class="text-xs text-slate-500"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Analizando bloques en Borrador e impacto de publicación...</p>';
+        if (detailsContainer) detailsContainer.innerHTML = '';
+        if (btnConfirmPublish) btnConfirmPublish.classList.add('hidden');
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'previewPublishImpact', {});
+            if (res && res.status === 'success' && res.impacto) {
+                const imp = res.impacto;
+                if (summaryBox) {
+                    summaryBox.innerHTML = `
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+                            <div class="p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
+                                <p class="text-[10px] uppercase tracking-wider text-indigo-700 font-bold">Bloques en Borrador</p>
+                                <p class="text-xl font-bold text-indigo-900">${imp.bloquesBorradorCount}</p>
+                            </div>
+                            <div class="p-3 bg-purple-50 border border-purple-100 rounded-xl">
+                                <p class="text-[10px] uppercase tracking-wider text-purple-700 font-bold">Docentes Afectados</p>
+                                <p class="text-xl font-bold text-purple-900">${imp.docentesAfectadosCount}</p>
+                            </div>
+                            <div class="p-3 bg-blue-50 border border-blue-100 rounded-xl">
+                                <p class="text-[10px] uppercase tracking-wider text-blue-700 font-bold">Aulas Involucradas</p>
+                                <p class="text-xl font-bold text-blue-900">${imp.aulasInvolucradasCount}</p>
+                            </div>
+                            <div class="p-3 ${imp.conflictosCount > 0 ? 'bg-amber-50 border-amber-200 text-amber-900' : 'bg-emerald-50 border-emerald-200 text-emerald-900'} border rounded-xl">
+                                <p class="text-[10px] uppercase tracking-wider font-bold">${imp.conflictosCount > 0 ? 'Conflictos Detectados' : 'Sin Conflictos'}</p>
+                                <p class="text-xl font-bold">${imp.conflictosCount}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (detailsContainer) {
+                    let detailsHtml = '';
+                    if (imp.conflictosCount > 0) {
+                        detailsHtml += `<div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs font-semibold mb-3"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Atención: Hay ${imp.conflictosCount} traslapes de docente o aula detectados. Resuelva estos conflictos antes de publicar.</div>`;
+                    }
+                    detailsHtml += `<p class="text-xs font-bold text-slate-700 mb-2">Resumen de Notificaciones y Sincronización:</p>` +
+                        `<ul class="text-xs text-slate-600 space-y-1 list-disc pl-4 mb-3">` +
+                        `<li>Se enviarán notificaciones multicanal a <strong>${imp.docentesAfectadosCount} docentes</strong> notificando sus nuevos horarios asignados.</li>` +
+                        `<li>El token de sincronización del portal familiar se actualizará automáticamente.</li>` +
+                        `<li>Se registrará una versión inmutable en el historial de versiones con estado 'Publicado'.</li>` +
+                        `</ul>`;
+                    detailsContainer.innerHTML = detailsHtml;
+                }
+
+                if (btnConfirmPublish && imp.bloquesBorradorCount > 0 && imp.conflictosCount === 0) {
+                    btnConfirmPublish.classList.remove('hidden');
+                    btnConfirmPublish.onclick = async () => {
+                        if (!confirm(`¿Está seguro de publicar ${imp.bloquesBorradorCount} bloques de horario? Esta acción notificará a los docentes y actualizará la oferta académica activa.`)) return;
+                        try {
+                            if (window.showLoading) window.showLoading('Publicando horarios masivamente...');
+                            const pubRes = await fetchApi('ACADEMIC', 'publishClassSchedules', {
+                                modo: 'masivo',
+                                notificarCambios: true
+                            });
+                            if (window.hideLoading) window.hideLoading();
+
+                            if (pubRes && pubRes.status === 'success') {
+                                alert(`¡Publicación masiva completada! Se publicaron ${pubRes.countPublished || pubRes.countUpdated || 'los'} bloques exitosamente.`);
+                                modal.classList.add('hidden');
+                                loadMasterSchedules();
+                            } else {
+                                alert('Error al publicar horarios: ' + (pubRes ? pubRes.message : 'Error desconocido'));
+                            }
+                        } catch (pErr) {
+                            if (window.hideLoading) window.hideLoading();
+                            alert('Error al publicar: ' + pErr.message);
+                        }
+                    };
+                }
+            } else {
+                if (summaryBox) summaryBox.innerHTML = '<p class="text-xs text-rose-600 font-medium">Error al calcular impacto: ' + (res ? res.message : 'Respuesta no válida') + '</p>';
+            }
+        } catch (err) {
+            if (summaryBox) summaryBox.innerHTML = '<p class="text-xs text-rose-600 font-medium">Error de red/servidor: ' + err.message + '</p>';
+        }
+    };
+
+    // [TAREA-F7-IMP-12] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador UI de reportes de calidad de planificación y ocupación de aulas
+    window.openPlanningQualityReportModal = async function() {
+        const modal = document.getElementById('modal-planning-quality-report');
+        if (modal) modal.classList.remove('hidden');
+
+        const tbody = document.getElementById('tbl-planning-quality-body');
+        if (!tbody) return;
+        tbody.innerHTML = '<tr><td colspan="5" class="p-3 text-center text-slate-400">Cargando reporte de ocupación...</td></tr>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getPlanningQualityAndOccupancyReport', {});
+            if (res && res.status === 'success' && res.report) {
+                const rep = res.report;
+                const ind = rep.indicadores || {};
+
+                document.getElementById('qual-metric-ocupacion').textContent = ind.porcentajeGlobalOcupacion || '0%';
+                document.getElementById('qual-metric-activos').textContent = ind.totalActivos || 0;
+                document.getElementById('qual-metric-borradores').textContent = ind.totalBorradores || 0;
+                document.getElementById('qual-metric-total').textContent = ind.totalBloques || 0;
+
+                const aulas = rep.aulasOcupacion || [];
+                if (aulas.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="p-3 text-center text-slate-400">No hay aulas registradas para calcular ocupación.</td></tr>';
+                } else {
+                    tbody.innerHTML = aulas.map(a => `
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-2.5 font-bold text-slate-800">${a.codigo}</td>
+                            <td class="p-2.5">${a.nombre}</td>
+                            <td class="p-2.5 font-medium">${a.capacidad} est.</td>
+                            <td class="p-2.5 font-bold text-emerald-700">${a.horasSemanales} hrs</td>
+                            <td class="p-2.5">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-16 bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200">
+                                        <div class="bg-emerald-500 h-2 rounded-full" style="width: ${a.porcentajeOcupacion}%"></div>
+                                    </div>
+                                    <span class="font-bold text-[11px] text-slate-700">${a.porcentajeOcupacion}%</span>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+
+                const btnExport = document.getElementById('btn-export-planning-quality-csv');
+                if (btnExport) {
+                    btnExport.onclick = () => {
+                        if (!rep.csvData) return alert('No hay datos para exportar.');
+                        const blob = new Blob([rep.csvData], { type: 'text/csv;charset=utf-8;' });
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.setAttribute('download', `Reporte_Calidad_Ocupacion_${rep.anoLectivo}.csv`);
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    };
+                }
+            } else {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-3 text-center text-rose-500">Error al cargar el reporte de calidad.</td></tr>';
+            }
+        } catch (err) {
+            console.error('Error al obtener reporte de calidad:', err);
+            tbody.innerHTML = '<tr><td colspan="5" class="p-3 text-center text-rose-500">Error de comunicación con el servidor.</td></tr>';
+        }
+    };
+
+    // [TAREA-F7-IMP-09] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de consulta de versiones de horarios, comparación diff y restauración controlada
+    window.openScheduleVersionsModal = async function() {
+        const modal = document.getElementById('modal-schedule-versions');
+        if (modal) modal.classList.remove('hidden');
+
+        const container = document.getElementById('schedule-versions-list-container');
+        if (!container) return;
+        container.innerHTML = '<p class="text-slate-400 italic text-center">Cargando versiones de horarios...</p>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getScheduleVersions', {});
+            if (res && res.status === 'success' && Array.isArray(res.data)) {
+                if (res.data.length === 0) {
+                    container.innerHTML = '<p class="text-slate-400 italic text-center p-4 bg-slate-50 rounded-2xl border border-slate-200">No hay versiones publicadas registradas. Al publicar una matriz de horarios se guardará automáticamente una versión.</p>';
+                    return;
+                }
+
+                container.innerHTML = res.data.map(v => `
+                    <div class="p-3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-2 hover:border-cyan-200 transition">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-black text-cyan-700 text-xs">${v.versionId}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-100 text-cyan-800">${v.anoLectivo || '2026'}</span>
+                                <span class="text-[11px] text-slate-400">${v.timestamp ? new Date(v.timestamp).toLocaleString() : ''}</span>
+                            </div>
+                            <p class="text-slate-600 text-xs mt-0.5">${v.descripcion || 'Versión de horarios'}</p>
+                            <p class="text-[10px] text-slate-400">Total bloques: ${v.totalBloques || 0} | Creado por: ${v.creadoPor || 'Admin'}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button class="btn-diff-ver px-2.5 py-1 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl font-bold text-[11px]" data-version="${v.versionId}">
+                                <i class="fa-solid fa-code-compare mr-1"></i> Comparar
+                            </button>
+                            <button class="btn-restore-ver px-2.5 py-1 bg-rose-600 text-white hover:bg-rose-700 rounded-xl font-bold text-[11px]" data-version="${v.versionId}">
+                                <i class="fa-solid fa-rotate-left mr-1"></i> Restaurar
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+                document.querySelectorAll('.btn-diff-ver').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const versionId = btn.getAttribute('data-version');
+                        await compareScheduleVersionsAction(versionId);
+                    });
+                });
+
+                document.querySelectorAll('.btn-restore-ver').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const versionId = btn.getAttribute('data-version');
+                        await restoreScheduleVersionAction(versionId);
+                    });
+                });
+            } else {
+                container.innerHTML = '<p class="text-rose-500 italic text-center">Error al cargar el historial de versiones.</p>';
+            }
+        } catch (err) {
+            console.error('Error al consultar versiones:', err);
+            container.innerHTML = '<p class="text-rose-500 italic text-center">Error de comunicación con el servidor.</p>';
+        }
+    };
+
+    async function compareScheduleVersionsAction(versionId) {
+        try {
+            if (window.showLoading) window.showLoading('Comparando versión con el horario actual...');
+            const res = await fetchApi('ACADEMIC', 'compareScheduleVersions', { versionIdA: versionId });
+            if (window.hideLoading) window.hideLoading();
+
+            if (res && res.status === 'success' && res.diff) {
+                const diff = res.diff;
+                alert(`Comparación Diff para ${versionId}:\n\n` +
+                      `Agregados: ${diff.resumen?.totalAgregados || 0}\n` +
+                      `Modificados: ${diff.resumen?.totalModificados || 0}\n` +
+                      `Eliminados: ${diff.resumen?.totalEliminados || 0}`);
+            } else {
+                alert('Error al comparar versiones: ' + (res ? res.message : 'Error desconocido'));
+            }
+        } catch (err) {
+            if (window.hideLoading) window.hideLoading();
+            alert('Error de comunicación: ' + err.message);
+        }
+    }
+
+    async function restoreScheduleVersionAction(versionId) {
+        const confirmCode = prompt(`ADVERTENCIA: ¿Está seguro de restaurar la versión ${versionId}?\n\nEsta acción sobrescribirá la matriz de horarios activa. Para confirmar, ingrese 'RESTORE-SCHEDULE-CONFIRMED':`);
+        if (confirmCode !== 'RESTORE-SCHEDULE-CONFIRMED') {
+            if (confirmCode !== null) alert('Código de confirmación incorrecto. Restauración cancelada.');
+            return;
+        }
+
+        try {
+            if (window.showLoading) window.showLoading('Restaurando versión de horario...');
+            const res = await fetchApi('ACADEMIC', 'restoreScheduleVersion', {
+                versionId,
+                codigoConfirmacion: 'RESTORE-SCHEDULE-CONFIRMED'
+            });
+            if (window.hideLoading) window.hideLoading();
+
+            if (res && res.status === 'success') {
+                alert(`¡Matriz de horarios restaurada exitosamente a la versión ${versionId}!\nNueva versión generada: ${res.newVersionId}`);
+                document.getElementById('modal-schedule-versions')?.classList.add('hidden');
+                loadMasterSchedules();
+            } else {
+                alert('Error al restaurar versión: ' + (res ? res.message : 'Error desconocido'));
+            }
+        } catch (err) {
+            if (window.hideLoading) window.hideLoading();
+            alert('Error de comunicación: ' + err.message);
+        }
+    }
+
+    // [TAREA-F7-IMP-08] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de excepciones puntuales de sesiones de clase
+    window.openSessionExceptionModal = function() {
+        const modal = document.getElementById('modal-session-exception');
+        if (modal) modal.classList.remove('hidden');
+
+        const formExc = document.getElementById('form-session-exception');
+        if (formExc && !formExc.dataset.listener) {
+            formExc.dataset.listener = 'true';
+            formExc.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const horarioId = document.getElementById('exc-horario-id').value.trim();
+                const fechaAfectada = document.getElementById('exc-fecha-afectada').value;
+                const tipoExcepcion = document.getElementById('exc-tipo').value;
+                const nuevaFecha = document.getElementById('exc-nueva-fecha').value;
+                const nuevoAula = document.getElementById('exc-nuevo-aula').value.trim();
+                const nuevaHoraInicio = document.getElementById('exc-nueva-hora-inicio').value;
+                const nuevaHoraFin = document.getElementById('exc-nueva-hora-fin').value;
+                const motivo = document.getElementById('exc-motivo').value.trim();
+
+                try {
+                    if (window.showLoading) window.showLoading('Registrando excepción de sesión...');
+                    const res = await fetchApi('ACADEMIC', 'createSessionException', {
+                        horarioId,
+                        fechaAfectada,
+                        tipoExcepcion,
+                        nuevaFecha,
+                        nuevoAula,
+                        nuevaHoraInicio,
+                        nuevaHoraFin,
+                        motivo
+                    });
+                    if (window.hideLoading) window.hideLoading();
+
+                    if (res && res.status === 'success') {
+                        alert(`¡Excepción puntual (${tipoExcepcion}) registrada correctamente! ID: ${res.excepcionId}`);
+                        modal.classList.add('hidden');
+                        formExc.reset();
+                    } else {
+                        alert('Error al registrar excepción: ' + (res ? res.message : 'Error desconocido'));
+                    }
+                } catch (err) {
+                    if (window.hideLoading) window.hideLoading();
+                    console.error('Error al registrar excepción:', err);
+                    alert('Error de comunicación con el servidor.');
+                }
+            });
+        }
+    };
+
+    // [TAREA-F7-IMP-07] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de validación de sobrecarga evaluativa y simulación de reprogramación
+    window.openExamScheduleValidationModal = function() {
+        const modal = document.getElementById('modal-exam-schedule-validation');
+        if (modal) modal.classList.remove('hidden');
+
+        const formSim = document.getElementById('form-exam-reschedule-simulation');
+        if (formSim && !formSim.dataset.listener) {
+            formSim.dataset.listener = 'true';
+            formSim.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const examenId = document.getElementById('sim-exam-id').value.trim();
+                const nuevaSeccion = document.getElementById('sim-exam-seccion').value.trim();
+                const nuevaFecha = document.getElementById('sim-exam-fecha').value;
+
+                const resultBox = document.getElementById('sim-exam-result-box');
+                if (resultBox) {
+                    resultBox.classList.remove('hidden');
+                    resultBox.className = 'p-4 rounded-2xl border bg-slate-50 text-slate-600 border-slate-200';
+                    resultBox.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Simulando reprogramación...';
+                }
+
+                try {
+                    const res = await fetchApi('EXAM', 'simulateExamReschedule', {
+                        examenId,
+                        nuevaSeccion,
+                        nuevaFecha
+                    });
+
+                    if (res && res.status === 'success' && res.simulacion) {
+                        const sim = res.simulacion;
+                        if (sim.tieneConflicto) {
+                            resultBox.className = 'p-4 rounded-2xl border bg-rose-50 border-rose-200 text-rose-800';
+                            resultBox.innerHTML = `
+                                <div class="flex items-center gap-2 font-bold mb-1">
+                                    <i class="fa-solid fa-triangle-exclamation text-rose-600 text-base"></i>
+                                    <span>Conflicto / Sobrecarga Detectada</span>
+                                </div>
+                                <p class="text-xs mb-2">${sim.motivoConflicto}</p>
+                                <div class="text-[11px] text-rose-700 bg-white/80 p-2 rounded-xl border border-rose-100">
+                                    <strong>Evaluación:</strong> ${sim.titulo} (${sim.asignatura})<br>
+                                    <strong>Sección:</strong> ${sim.seccionDestino}<br>
+                                    <strong>Fecha Propuesta:</strong> ${sim.fechaPropuesta}
+                                </div>
+                            `;
+                        } else {
+                            resultBox.className = 'p-4 rounded-2xl border bg-emerald-50 border-emerald-200 text-emerald-800';
+                            resultBox.innerHTML = `
+                                <div class="flex items-center gap-2 font-bold mb-1">
+                                    <i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>
+                                    <span>Simulación Exitosa - Sin Sobrecarga</span>
+                                </div>
+                                <p class="text-xs mb-2">La nueva fecha está libre y cumple con el límite diario de evaluaciones (máximo 2 por día).</p>
+                                <div class="text-[11px] text-emerald-700 bg-white/80 p-2 rounded-xl border border-emerald-100">
+                                    <strong>Evaluación:</strong> ${sim.titulo} (${sim.asignatura})<br>
+                                    <strong>Sección:</strong> ${sim.seccionDestino}<br>
+                                    <strong>Fecha Propuesta:</strong> ${sim.fechaPropuesta}
+                                </div>
+                            `;
+                        }
+                    } else {
+                        resultBox.className = 'p-4 rounded-2xl border bg-amber-50 border-amber-200 text-amber-800';
+                        resultBox.innerHTML = `<p class="font-bold">Error:</p><p>${res ? res.message : 'Error al simular'}</p>`;
+                    }
+                } catch (err) {
+                    if (resultBox) {
+                        resultBox.className = 'p-4 rounded-2xl border bg-rose-50 border-rose-200 text-rose-800';
+                        resultBox.innerHTML = `<p class="font-bold">Error de comunicación:</p><p>${err.message}</p>`;
+                    }
+                }
+            });
+        }
+    };
+
+    // [TAREA-F7-IMP-05] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de límites de carga laboral y preferencias horarias por docente
+    window.openTeacherWorkLoadPreferencesModal = async function() {
+        const docenteUserId = prompt("Ingrese el UserId o correo del Docente para configurar carga/preferencias:", currentUser.userId);
+        if (!docenteUserId) return;
+
+        const maxHorasStr = prompt("Límite máximo de horas lectivas semanales para el docente:", "40");
+        if (!maxHorasStr) return;
+        const maxHorasSemanales = parseFloat(maxHorasStr) || 40;
+
+        const horaEntrada = prompt("Hora de entrada autorizada (HH:MM):", "07:00");
+        const horaSalida = prompt("Hora de salida autorizada (HH:MM):", "16:00");
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'saveTeacherWorkLoadPreferences', {
+                docenteUserId,
+                maxHorasSemanales,
+                horaEntrada,
+                horaSalida,
+                diasLaboralesJSON: JSON.stringify(["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"])
+            });
+
+            if (res && res.status === 'success') {
+                alert(`¡Límite de carga laboral (${maxHorasSemanales}h/semana) y preferencias guardadas para ${docenteUserId}!`);
+                loadMasterSchedules();
+            } else {
+                alert("Error al guardar preferencias: " + (res ? res.message : "Error desconocido"));
+            }
+        } catch (err) {
+            alert("Error de comunicación: " + err.message);
+        }
+    };
+
+    // [TAREA-F7-IMP-04] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de generación y previsualización de escenarios masivos de planificación en borrador
+    window.openScheduleScenarioModal = async function() {
+        const ano = prompt("Ingrese el Año Lectivo para el escenario de planificación masiva:", "2026");
+        if (!ano) return;
+
+        const escenarioNombre = prompt("Nombre descriptivo para el escenario de prueba (borrador):", `Escenario de Planificación ${ano}`);
+        if (!escenarioNombre) return;
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'generateAutoSchedules', {
+                anoLectivo: ano,
+                escenarioNombre
+            });
+
+            if (res && res.status === 'success') {
+                alert(`¡Escenario de planificación masiva generado en borrador!\n\nID: ${res.resumen?.escenarioId || 'OK'}\nProgramadas: ${res.resumen?.programadas || 0}\nPendientes: ${res.resumen?.pendientes || 0}`);
+                loadMasterSchedules();
+            } else {
+                alert("Error al generar escenario: " + (res ? res.message : "Error desconocido"));
+            }
+        } catch (err) {
+            alert("Error de comunicación: " + err.message);
+        }
+    };
+
+    window.applyConflictAlternative = async function(ofertaId, diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId) {
+        try {
+            const res = await fetchApi('ACADEMIC', 'createClassSchedule', {
+                ofertaId,
+                diaSemana,
+                horaInicio,
+                horaFin,
+                aulaCodigo,
+                docenteUserId
+            });
+            if (res && res.status === 'success') {
+                alert("¡Alternativa de horario aplicada con éxito!");
+                document.getElementById('modal-schedule-conflict-resolution')?.classList.add('hidden');
+                loadMasterSchedules();
+            } else {
+                alert("Error al aplicar alternativa: " + (res ? res.message : "Error desconocido"));
+            }
+        } catch (err) {
+            alert("Error al guardar alternativa: " + err.message);
+        }
+    };
 
     document.getElementById('btn-load-schedules-list')?.addEventListener('click', loadMasterSchedules);
 
@@ -741,24 +1485,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const motivo = prompt("Motivo de la sustitución temporal:", "Licencia Médica / Permiso");
 
-        try {
-            const res = await fetchApi('ACADEMIC', 'createTeacherSubstitution', {
-                ofertaId,
-                sustitutoUserId,
-                fechaInicio: new Date().toISOString().split('T')[0],
-                fechaFin: "",
-                motivo,
-                autorizadoPor: currentUser.nombre
-            });
-
-            if (res.status === 'success') {
-                alert(`Sustitución docente registrada exitosamente para ${sustitutoUserId}.`);
-            } else {
-                alert("Error: " + res.message);
-            }
-        } catch (e) {
-            alert("Error registrando sustitución: " + e.message);
-        }
+        window.openTeacherSubstitutionModal(ofertaId, sustitutoUserId);
     });
 
     // Handler para Publicador de Aula Virtual (Fase 8)
@@ -874,6 +1601,92 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+
+    /*
+     * [TAREA-F7-IMP-16] Ampliar la gestión de sustituciones y la reasignación de clases afectadas
+     * Interfaz y controladores frontend para el registro y consulta de sustituciones docentes temporales.
+     */
+    window.openTeacherSubstitutionModal = function(ofertaId = "", sustitutoId = "") {
+        const modal = document.getElementById('modal-teacher-substitution');
+        if (!modal) return;
+
+        const ofertaInput = document.getElementById('subst-oferta-id');
+        const docenteInput = document.getElementById('subst-docente-id');
+        const inicioInput = document.getElementById('subst-fecha-inicio');
+        const alertBox = document.getElementById('subst-conflict-alert');
+
+        if (ofertaInput) ofertaInput.value = ofertaId || "";
+        if (docenteInput) docenteInput.value = sustitutoId || "";
+        if (inicioInput) inicioInput.value = new Date().toISOString().split('T')[0];
+        if (alertBox) alertBox.classList.add('hidden');
+
+        modal.classList.remove('hidden');
+    };
+
+    window.handleCreateTeacherSubstitutionSubmit = async function(e) {
+        if (e) e.preventDefault();
+
+        const ofertaId = document.getElementById('subst-oferta-id')?.value?.trim();
+        const sustitutoUserId = document.getElementById('subst-docente-id')?.value?.trim();
+        const fechaInicio = document.getElementById('subst-fecha-inicio')?.value;
+        const fechaFin = document.getElementById('subst-fecha-fin')?.value;
+        const motivo = document.getElementById('subst-motivo')?.value?.trim();
+        const alertBox = document.getElementById('subst-conflict-alert');
+
+        if (!ofertaId || !sustitutoUserId) {
+            alert("Por favor complete los campos requeridos.");
+            return;
+        }
+
+        try {
+            if (window.showLoading) window.showLoading("Verificando disponibilidad y registrando sustitución...");
+            const res = await fetchApi('ACADEMIC', 'createTeacherSubstitution', {
+                ofertaId,
+                sustitutoUserId,
+                fechaInicio,
+                fechaFin,
+                motivo,
+                autorizadoPor: currentUser ? currentUser.nombre || currentUser.userId : 'Secretaría'
+            });
+            if (window.hideLoading) window.hideLoading();
+
+            if (res && res.status === 'warning' && res.hasConflict) {
+                if (alertBox) {
+                    alertBox.innerHTML = `<span class="font-bold">Conflicto de horario:</span> ${res.message}`;
+                    alertBox.classList.remove('hidden');
+                }
+                if (confirm(`${res.message}\n¿Desea forzar el registro de la sustitución de todos modos?`)) {
+                    if (window.showLoading) window.showLoading("Forzando registro de sustitución...");
+                    const forceRes = await fetchApi('ACADEMIC', 'createTeacherSubstitution', {
+                        ofertaId,
+                        sustitutoUserId,
+                        fechaInicio,
+                        fechaFin,
+                        motivo,
+                        autorizadoPor: currentUser ? currentUser.nombre || currentUser.userId : 'Secretaría',
+                        forzarSustitucion: true
+                    });
+                    if (window.hideLoading) window.hideLoading();
+                    if (forceRes && forceRes.status === 'success') {
+                        alert("Sustitución forzada registrada exitosamente.");
+                        document.getElementById('modal-teacher-substitution')?.classList.add('hidden');
+                    } else {
+                        alert(forceRes?.message || "No se pudo registrar la sustitución.");
+                    }
+                }
+            } else if (res && res.status === 'success') {
+                alert(`Sustitución docente registrada exitosamente. ${res.data?.clasesAfectadasCount || 0} clase(s) reasignadas.`);
+                document.getElementById('modal-teacher-substitution')?.classList.add('hidden');
+            } else {
+                alert(res?.message || "Ocurrió un error al registrar la sustitución.");
+            }
+        } catch (err) {
+            if (window.hideLoading) window.hideLoading();
+            console.error("Error al registrar sustitución:", err);
+            alert("Error al procesar la solicitud: " + err.message);
+        }
+    };
 
     // [TAREA-F6-027] [Fase 6: Expediente Institucional y Ciclo de Vida] - Controlador de inspección de integridad y vista previa de impacto de restauración
     window.previewAndVerifyBackupRestore = async function(fileId) {
@@ -1234,7 +2047,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // [TAREA 3.3] [Fase 3: Planificación Académica y Horarios] - Controlador de interfaz para la gestión de aulas, laboratorios y recursos físicos (#modal-classroom-manager).
+    // [TAREA-F7-IMP-06] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de interfaz para la gestión de aulas, equipamiento e indisponibilidad (#modal-classroom-manager).
     window.openClassroomManagerModal = async function() {
         const modal = document.getElementById('modal-classroom-manager');
         if (!modal) return;
@@ -1245,13 +2058,13 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadClassroomResourcesTable() {
         const tbody = document.getElementById('tbl-classroom-resources-body');
         if (!tbody) return;
-        tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-center text-slate-400">Cargando espacios...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-slate-400">Cargando espacios...</td></tr>';
 
         try {
             const res = await fetchApi('ACADEMIC', 'getClassroomResources', {});
             if (res && res.status === 'success' && Array.isArray(res.data)) {
                 if (res.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-center text-slate-400">No hay espacios registrados.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-slate-400">No hay espacios registrados.</td></tr>';
                     return;
                 }
                 tbody.innerHTML = res.data.map(cls => `
@@ -1260,19 +2073,25 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td class="p-2.5">${cls.nombreAula}</td>
                         <td class="p-2.5"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-700">${cls.tipoEspacio || 'Aula'}</span></td>
                         <td class="p-2.5 font-medium">${cls.capacidad || 30} est.</td>
+                        <td class="p-2.5 text-[11px] text-slate-600">${cls.equipamiento || 'Básico'}</td>
                         <td class="p-2.5">
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${cls.estado === 'Inactivo' ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${cls.estado === 'Inactivo' ? 'bg-red-100 text-red-700' : cls.estado === 'Indisponible' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}">
                                 ${cls.estado || 'Activo'}
                             </span>
                         </td>
-                        <td class="p-2.5 text-right">
+                        <td class="p-2.5 text-right space-x-1">
                             <button class="btn-edit-clsr text-blue-600 hover:text-blue-800 font-bold text-[11px]"
                                 data-codigo="${cls.aulaCodigo}"
                                 data-nombre="${cls.nombreAula}"
                                 data-capacidad="${cls.capacidad || 30}"
                                 data-tipo="${cls.tipoEspacio || 'Aula'}"
+                                data-equipamiento="${cls.equipamiento || ''}"
                                 data-estado="${cls.estado || 'Activo'}">
                                 <i class="fa-solid fa-pen-to-square mr-0.5"></i> Editar
+                            </button>
+                            <button class="btn-maint-clsr text-amber-600 hover:text-amber-800 font-bold text-[11px]"
+                                data-codigo="${cls.aulaCodigo}">
+                                <i class="fa-solid fa-screwdriver-wrench mr-0.5"></i> Mantenimiento
                             </button>
                         </td>
                     </tr>
@@ -1285,14 +2104,53 @@ document.addEventListener('DOMContentLoaded', () => {
                         document.getElementById('clsr-capacidad').value = btn.getAttribute('data-capacidad');
                         document.getElementById('clsr-tipo').value = btn.getAttribute('data-tipo');
                         document.getElementById('clsr-estado').value = btn.getAttribute('data-estado');
+                        const eqInput = document.getElementById('clsr-equipamiento');
+                        if (eqInput) eqInput.value = btn.getAttribute('data-equipamiento');
+                    });
+                });
+
+                document.querySelectorAll('.btn-maint-clsr').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const aulaCodigo = btn.getAttribute('data-codigo');
+                        await openClassroomMaintenanceModal(aulaCodigo);
                     });
                 });
             } else {
-                tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-center text-red-500">Error al cargar espacios.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-red-500">Error al cargar espacios.</td></tr>';
             }
         } catch (err) {
             console.error('Error al obtener recursos de aulas:', err);
-            tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-center text-red-500">Error de comunicación con el servidor.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-red-500">Error de comunicación con el servidor.</td></tr>';
+        }
+    }
+
+    // [TAREA-F7-IMP-06] Registrar mantenimiento o indisponibilidad para un aula
+    async function openClassroomMaintenanceModal(aulaCodigo) {
+        const motivo = prompt(`Ingrese el motivo del mantenimiento/indisponibilidad para el aula ${aulaCodigo}:`, 'Mantenimiento preventivo de equipos y climatización');
+        if (!motivo) return;
+
+        const hoyStr = new Date().toISOString().split('T')[0];
+        try {
+            if (window.showLoading) window.showLoading('Registrando mantenimiento...');
+            const res = await fetchApi('ACADEMIC', 'saveClassroomMaintenance', {
+                aulaCodigo,
+                fechaInicio: hoyStr,
+                fechaFin: hoyStr,
+                motivo,
+                estado: 'Programado'
+            });
+            if (window.hideLoading) window.hideLoading();
+
+            if (res && res.status === 'success') {
+                alert(`Mantenimiento registrado para el aula ${aulaCodigo}.`);
+                await loadClassroomResourcesTable();
+            } else {
+                alert(res && res.message ? res.message : 'Error al registrar mantenimiento.');
+            }
+        } catch (err) {
+            if (window.hideLoading) window.hideLoading();
+            console.error('Error al registrar mantenimiento:', err);
+            alert('Error al comunicar con el servidor.');
         }
     }
 
@@ -1313,6 +2171,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const capacidad = parseInt(document.getElementById('clsr-capacidad').value, 10);
             const tipoEspacio = document.getElementById('clsr-tipo').value;
             const estado = document.getElementById('clsr-estado').value;
+            const eqInput = document.getElementById('clsr-equipamiento');
+            const equipamiento = eqInput ? eqInput.value.trim() : '';
 
             if (!aulaCodigo || !nombreAula) {
                 alert('Código y Nombre del espacio son obligatorios.');
@@ -1326,12 +2186,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     nombreAula,
                     capacidad,
                     tipoEspacio,
-                    estado
+                    estado,
+                    equipamiento
                 });
                 if (window.hideLoading) window.hideLoading();
 
                 if (res && res.status === 'success') {
-                    alert('Espacio guardado correctamente.');
+                    alert('Espacio y equipamiento guardado correctamente.');
                     formClassroomResource.reset();
                     await loadClassroomResourcesTable();
                 } else {

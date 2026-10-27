@@ -1787,3 +1787,271 @@ Archivos Modificados:
   - En `runFullArchitectureIntegrationAndPerformanceSuite`, verificada la ejecución de pruebas integrales multi-servicio que evalúan descubrimiento, resiliencia, tolerancia a fallos, comandos operativos y permisos multi-rol.
 - Pendientes.md:
   - Marcada TAREA-F6-040 como completada [X] en Pendientes.md.
+
+
+Fecha: 2026-03-29
+Archivos modificados:
+- dashboard-secretaria.html (Líneas 227-238)
+- js/secretary.js (Líneas 673-745)
+- Pendientes.md (Línea 575)
+Descripción objetiva:
+- Agregado botón UI y controlador `promptRegisterCustodyRestriction` para el registro de restricciones judiciales de custodia legal sobre expedientes estudiantiles.
+- Implementada la función `loadStudentGuardianConsolidatedList` para consultar y renderizar la lista consolidada de tutores con categorización de estado, vinculación y distintivo de restricción judicial activa.
+- Actualizado el estado de [TAREA-F6-018] a Completado en Pendientes.md.
+
+
+Fecha: 2026-03-29
+Archivos modificados:
+- backend/user-service/Code.gs (Líneas 6078-6150)
+- js/ui-common.js (Líneas 5010-5040)
+- Pendientes.md (Línea 645)
+Descripción objetiva:
+- Actualizada la función `searchGlobalOmnibox` en `backend/user-service/Code.gs` para admitir parámetros de filtrado opcionales (`filterAnoLectivo`, `filterGrado`, `filterSeccion`, `filterEstado`) y priorizar ordenamiento por coincidencias exactas.
+- Modificada la función `executeOmniboxSearch` en `js/ui-common.js` para enviar parámetros de filtrado e inyectar insignia visual de coincidencia exacta (`exactMatch`).
+- Actualizado el estado de [TAREA-F6-020] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- Pendientes.md (Anexo de tareas Fase 7)
+- Auditoria.txt (Bitácora de registro de tareas Fase 7)
+Descripción objetiva:
+- Registradas 25 nuevas tareas de la Fase 7 (TAREA-F7-IMP-01 a TAREA-F7-IMP-25) en Pendientes.md con metadatos completos y formato según METODOLOGIA_DESARROLLO.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 5220-5230, 5532-5550)
+- js/teacher.js (Líneas 682-725)
+- Pendientes.md (Líneas 1390-1430)
+Descripción objetiva:
+- Modificada la función `checkScheduleConflict` en `backend/academic-service/Code.gs` para consultar la hoja `ExcepcionesHorarios` y registrar excepciones justificadas autorizadas explícitamente sin bloquear la asignación.
+- Actualizado `createClassSchedule` en `backend/academic-service/Code.gs` para recibir `excepcionJustificacion` y procesar el guardado con autorización de excepción.
+- Actualizado el controlador de eventos UI en `js/teacher.js` para capturar el conflicto y solicitar la justificación del usuario cuando decida registrar una excepción explícita.
+- Actualizado el estado de [TAREA-F7-IMP-01] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- teacher-dashboard.html (Líneas 612-632)
+- js/teacher.js (Líneas 588-662)
+- Pendientes.md (Líneas 1432-1475)
+Descripción objetiva:
+- Incorporada la barra de filtros de perspectiva (Institucional, Docente, Sección, Aula) y de estado (Todos, Activo, Borrador) con búsqueda dinámica en `teacher-dashboard.html`.
+- Creadas las funciones `renderSchedulePlanningMatrix` y `filterScheduleMatrix` en `js/teacher.js` con el encabezado identificativo `[TAREA-F7-IMP-02]` para renderizar la matriz de disponibilidad multi-perspectiva.
+- Actualizado el estado de [TAREA-F7-IMP-02] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 652, 5955-6030)
+- teacher-dashboard.html (Líneas 2792-2815)
+- js/teacher.js (Líneas 738-870)
+- Pendientes.md (Líneas 1476-1512)
+Descripción objetiva:
+- Creada la función `getScheduleConflictResolutionAlternatives` en `backend/academic-service/Code.gs` para analizar traslapes y proponer automáticamente aulas alternativas y franjas de horario libres.
+- Incorporado el modal `#modal-schedule-conflict-resolution` en `teacher-dashboard.html`.
+- Creadas las funciones UI `openAssistedConflictResolutionModal` y `applyConflictAlternative` en `js/teacher.js` antecedidas por el comentario identificativo `[TAREA-F7-IMP-03]` para evaluar y aplicar soluciones asistidas ante conflictos de horarios.
+- Actualizado el estado de [TAREA-F7-IMP-03] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 168, 623-625, 5043-5100)
+- teacher-dashboard.html (Líneas 543-548)
+- js/teacher.js (Líneas 848-875)
+- Pendientes.md (Líneas 1513-1550)
+Descripción objetiva:
+- Actualizada la función `generateAutoSchedules` en `backend/academic-service/Code.gs` para registrar la propuesta en la hoja `EscenariosHorarios` asignando identificador `escenarioId` único.
+- Creadas las funciones `saveScheduleScenario` y `getScheduleScenarios` en `backend/academic-service/Code.gs` e integradas en `doPost` y `ROLE_PERMISSIONS`.
+- Incorporado el botón UI "Escenarios Masivos" en `teacher-dashboard.html` y la función `openScheduleScenarioModal` en `js/teacher.js` antecedida por el comentario identificativo `[TAREA-F7-IMP-04]`.
+- Actualizado el estado de [TAREA-F7-IMP-04] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 171, 662, 5186-5285)
+- teacher-dashboard.html (Línea 546)
+- js/teacher.js (Líneas 880-925)
+- Pendientes.md (Línea 1552)
+Descripción objetiva:
+- Actualizada la función `getTeacherTeachingLoad` en `backend/academic-service/Code.gs` para consultar límites dinámicos personalizados por docente en la hoja `HorariosLaborales` e incorporar desglose de distribución de horas por día.
+- Implementada la función `saveTeacherWorkLoadPreferences` en `backend/academic-service/Code.gs` e integrada en `ROLE_PERMISSIONS` y enrutador `doPost`.
+- Añadido botón UI "Preferencias Carga" en `teacher-dashboard.html` e implementada la función `openTeacherWorkLoadPreferencesModal` en `js/teacher.js` antecedida por la etiqueta identificativa `[TAREA-F7-IMP-05]`.
+- Actualizado el estado de [TAREA-F7-IMP-05] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 171, 656, 5725-5880)
+- teacher-dashboard.html (Líneas 2790-2820)
+- js/teacher.js (Líneas 1470-1615)
+- Pendientes.md (Línea 1586)
+Descripción objetiva:
+- Actualizadas las funciones `getClassroomResources` y `saveClassroomResource` en `backend/academic-service/Code.gs` para consultar e incluir equipamiento específico de aulas e indisponibilidad.
+- Creada la función `saveClassroomMaintenance` en `backend/academic-service/Code.gs` e integrada en `ROLE_PERMISSIONS` y dispatcher `doPost`.
+- Modificada la función `checkScheduleConflict` en `backend/academic-service/Code.gs` para validar si el aula cuenta con mantenimiento o indisponibilidad activa en `MantenimientoAulas`.
+- Incorporados campo de equipamiento y función `openClassroomMaintenanceModal` en `teacher-dashboard.html` y `js/teacher.js` con la etiqueta identificativa `[TAREA-F7-IMP-06]`.
+- Actualizado el estado de [TAREA-F7-IMP-06] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/exam-service/Code.gs (Líneas 92, 385, 663-735)
+- teacher-dashboard.html (Líneas 552, 1564-1602)
+- js/teacher.js (Líneas 863-935)
+- Pendientes.md (Línea 1625)
+Descripción objetiva:
+- Creadas las funciones `checkExamSchedulingConflict` y `simulateExamReschedule` en `backend/exam-service/Code.gs` e integradas en `ROLE_PERMISSIONS` y enrutador `doPost` para validar límites diarios de evaluaciones por sección (máximo 2/día) y simular reprogramaciones previa confirmación.
+- Incorporado el botón UI "Validar Evaluaciones", el modal `#modal-exam-schedule-validation` y la función `openExamScheduleValidationModal` en `teacher-dashboard.html` y `js/teacher.js` con la etiqueta identificativa `[TAREA-F7-IMP-07]`.
+- Actualizado el estado de [TAREA-F7-IMP-07] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 171, 667, 2262-2298)
+- teacher-dashboard.html (Líneas 552, 1564-1618)
+- js/teacher.js (Líneas 863-905)
+- Pendientes.md (Línea 1662)
+Descripción objetiva:
+- Creada la función `createSessionException` en `backend/academic-service/Code.gs` e integrada en `ROLE_PERMISSIONS` y dispatcher `doPost` para registrar cancelaciones o reprogramaciones puntuales de una sesión individual en `ExcepcionesSesiones` sin alterar la serie recurrente de horarios.
+- Incorporado el botón UI "Excepción Sesión", el modal `#modal-session-exception` y la función `openSessionExceptionModal` en `teacher-dashboard.html` y `js/teacher.js` con la etiqueta identificativa `[TAREA-F7-IMP-08]`.
+- Actualizado el estado de [TAREA-F7-IMP-08] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 171, 668, 5490-5715)
+- teacher-dashboard.html (Líneas 558, 1570-1596)
+- js/teacher.js (Líneas 863-970)
+- Pendientes.md (Línea 1696)
+Descripción objetiva:
+- Creadas las funciones `getScheduleVersions`, `compareScheduleVersions` y `restoreScheduleVersion` en `backend/academic-service/Code.gs` e integradas en `ROLE_PERMISSIONS` y enrutador `doPost` para el control de versiones de horarios, comparación diff (agregados, modificados, eliminados) y restauración controlada exigiendo confirmación `RESTORE-SCHEDULE-CONFIRMED`.
+- Actualizada la función `publishClassSchedules` en `backend/academic-service/Code.gs` para registrar automáticamente una instantánea de versión publicada en `VersionesHorarios`.
+- Incorporados el botón UI "Versiones Horario", el modal `#modal-schedule-versions` y las funciones `openScheduleVersionsModal`, `compareScheduleVersionsAction` y `restoreScheduleVersionAction` en `teacher-dashboard.html` y `js/teacher.js` con la etiqueta identificativa `[TAREA-F7-IMP-09]`.
+- Actualizado el estado de [TAREA-F7-IMP-09] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/user-service/Code.gs (Líneas 941, 1316, 6825-6890)
+- js/secretary.js (Líneas 679-696)
+- Pendientes.md (Línea 1732)
+Descripción objetiva:
+- Creadas las funciones `dispatchScheduleChangeNotifications` y `getScheduleChangeNotificationLogs` en `backend/user-service/Code.gs` e integradas en `ROLE_PERMISSIONS` y enrutador `doPost` para el despacho estandarizado de avisos por cambios de horario con deduplicación preventiva (`NOTIF_SCHED_<id>_<timestamp>`), seguimiento de entrega y aislamiento de fallos de correo.
+- Incorporado el controlador UI `window.loadScheduleChangeNotificationLogs` en `js/secretary.js` con la etiqueta identificativa `[TAREA-F7-IMP-10]`.
+- Actualizado el estado de [TAREA-F7-IMP-10] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 6295-6385)
+- js/student.js (Líneas 841-875)
+- Pendientes.md (Línea 1769)
+Descripción objetiva:
+- Actualizada la función `getStudentSchedule` en `backend/academic-service/Code.gs` para inyectar metadatos de sincronización (`lastSyncTime`, `freshnessToken`, `totalActiveSlots`).
+- Ampliada la función `window.fetchAndRenderStudentSchedule` en `js/student.js` con la etiqueta identificativa `[TAREA-F7-IMP-11]`, agregando distintivo visual de tiempo relativo de sincronización y botón de actualización bajo demanda.
+- Actualizado el estado de [TAREA-F7-IMP-11] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 171, 671, 2925-2998)
+- teacher-dashboard.html (Líneas 561, 1573-1635)
+- js/teacher.js (Líneas 863-925)
+- Pendientes.md (Línea 1806)
+Descripción objetiva:
+- Creada la función `getPlanningQualityAndOccupancyReport` en `backend/academic-service/Code.gs` e integrada en `ROLE_PERMISSIONS` y dispatcher `doPost` para calcular la ocupación porcentual física de aulas, distribución de bloques por estado y exportación de datos en CSV.
+- Incorporados el botón UI "Reportes Calidad", el modal `#modal-planning-quality-report` y la función `openPlanningQualityReportModal` con exportación CSV en `teacher-dashboard.html` y `js/teacher.js` antecedida por la etiqueta identificativa `[TAREA-F7-IMP-12]`.
+- Actualizado el estado de [TAREA-F7-IMP-12] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 171, 672, 2928-3038)
+- teacher-dashboard.html (Líneas 564, 1576-1622)
+- js/teacher.js (Líneas 863-988)
+- Pendientes.md (Línea 1842)
+Descripción objetiva:
+- Creadas las funciones `exportBulkClassSchedules` e `importBulkClassSchedules` en `backend/academic-service/Code.gs` e integradas en `ROLE_PERMISSIONS` y dispatcher `doPost` para la exportación e importación masiva de matrices de horario en CSV/JSON con previsualización (`previsualizar: true`), validación estructural de columnas, detección de duplicados y traslapes.
+- Incorporados el botón UI "Importar / Exportar", el modal `#modal-bulk-schedule-import-export` y la función `openBulkScheduleImportExportModal` en `teacher-dashboard.html` y `js/teacher.js` antecedida por la etiqueta identificativa `[TAREA-F7-IMP-13]`.
+- Actualizado el estado de [TAREA-F7-IMP-13] a Completado en Pendientes.md.
+
+================================================================================
+FECHA: 2026-10-27
+TAREA: [TAREA-F7-IMP-14] Fortalecer la publicación y el control de cambios masivos
+================================================================================
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 171, 674, 2930-2979):
+  Se implementó `previewPublishImpact` para calcular bloques en Borrador, docentes/aulas involucrados y conflictos de traslape previo a la publicación. Registrado en ROLE_PERMISSIONS y dispatcher doPost.
+- teacher-dashboard.html (Líneas 82-84, 868-898):
+  Se añadió el botón 'Revisar y Publicar' y la estructura modal '#modal-publish-impact-preview' con contenedor de impacto y botón de confirmación.
+- js/teacher.js (Líneas 990-1076):
+  Se implementó `openPublishImpactPreviewModal` para invocar 'previewPublishImpact', renderizar tarjetas de métricas e impacto, y ejecutar 'publishClassSchedules' tras confirmación.
+- Pendientes.md (Línea 1878):
+  Se actualizó la tarea [TAREA-F7-IMP-14] a marcada '[X]'.
+
+================================================================================
+FECHA: 2026-10-27
+TAREA: [TAREA-F7-IMP-15] Incorporar control de concurrencia y protección de operaciones críticas
+================================================================================
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 5595-5658, 5700-5810, 6375-6455, 3009-3100):
+  Se incorporaron cerrojos de concurrencia de LockService (tryLock con timeout de 8 a 15 segundos) y bloques de liberación segura `finally { lock.releaseLock(); }` en las funciones `createClassSchedule`, `publishClassSchedules`, `saveClassroomResource`, `saveClassroomMaintenance` e `importBulkClassSchedules`. En `createClassSchedule` se añadió la validación Optimistic Concurrency Control comparando el timestamp `lastUpdated` del payload con el registro existente en la hoja.
+- Pendientes.md (Líneas 1911 y 1942):
+  Se actualizó el estado de la tarea [TAREA-F7-IMP-15] a marcado '[X]' y estado '[X] Completado'.
+
+===============================================================================
+REGISTRO DE CAMBIOS - TAREA-F7-IMP-16
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - backend/academic-service/Code.gs
+  - teacher-dashboard.html
+  - js/teacher.js
+  - dashboard-secretaria.html
+  - dashboard-direccion.html
+  - js/secretary.js
+  - Pendientes.md
+  - Auditoria.txt
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. backend/academic-service/Code.gs:
+   - Se amplio createTeacherSubstitution para soportar rango de fechas (fechaInicio, fechaFin), motivo y verificacion previa de traslapes mediante checkScheduleConflict en clases pertenecientes a la oferta.
+   - Se agrego funcion getTeacherSubstitutions para consultar el catalogo de sustituciones con calculo dinmico de caducidad (Activa vs Vencida).
+   - Se declaro getTeacherSubstitutions en ROLE_PERMISSIONS y en el enrutador doPost.
+2. teacher-dashboard.html:
+   - Se agrego interfaz modal #modal-teacher-substitution para el registro de sustituciones docentes con campos para oferta, docente sustituto, fecha inicio, fecha fin y motivo.
+3. js/teacher.js:
+   - Se agregaron controladores window.openTeacherSubstitutionModal y window.handleCreateTeacherSubstitutionSubmit con soporte para confirmacion de sustitucion forzada ante conflictos.
+4. Pendientes.md:
+   - Se marco la tarea [TAREA-F7-IMP-16] como completada [X].
+===============================================================================
+
+===============================================================================
+REGISTRO DE CAMBIOS - TAREA-F7-IMP-17
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - backend/academic-service/Code.gs
+  - teacher-dashboard.html
+  - js/teacher.js
+  - Pendientes.md
+  - Auditoria.txt
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. backend/academic-service/Code.gs:
+   - Se amplió la función createCalendarEvent para aceptar aulaCodigo, recursosReservados, gruposAfectados, responsableUserId y descripcion.
+   - Se integró la pre-validación de reservas contra la hoja MantenimientoAulas para rechazar solicitudes en aulas con mantenimiento activo.
+   - Se amplió getAcademicCalendar para retornar las propiedades de infraestructura y participantes asignados a cada evento.
+2. dashboard-secretaria.html & dashboard-direccion.html:
+   - Se reubicaron los botones de acción e interfaces modales (#modal-academic-event-manager, #modal-classroom-manager, #modal-academic-load-planning, #modal-academic-analytics) a las consolas administrativas de Secretaría, Coordinación y Dirección.
+3. js/secretary.js:
+   - Se trasladaron los controladores frontend (window.openAcademicEventManagerModal, window.handleCreateAcademicEventSubmit, window.openClassroomManagerModal, window.openAcademicLoadPlanningModal, window.openAcademicAnalyticsModal) a js/secretary.js expuestos en window para consumo institucional.
+4. teacher-dashboard.html & js/teacher.js:
+   - Se depuraron las herramientas de gestión de eventos, aulas y planificación administrativa no correspondientes al rol estrictamente docente.
+5. Pendientes.md:
+   - Se marcó la tarea [TAREA-F7-IMP-17] como completada [X].
+===============================================================================

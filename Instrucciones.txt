@@ -370,3 +370,26 @@ TAREAS PENDIENTES DE REVISIÓN
 - Fase 2: Arquitectura Institucional, Identidad, Interoperabilidad y Comunicación entre Servicios - Desacoplamiento Persona/Cuenta, Matriz de Propiedad de Datos, Resolutor de Fuentes, Contratos Unificados de API, Idempotencia y Códigos de Error Estandarizados
 - Fase 3: Experiencia de Usuario, Navegación Unificada y Diseño Centrado en las Personas - Sistema de Diseño Institucional, Portal Familiar Prioritario, Navegación por Rol, Ayudas Contextuales y Lenguaje No Técnico
 - Implementación de Código para Fase 2 (Arquitectura, Identidad Persona/Cuenta, Errores Estandarizados e Idempotencia) y Fase 3 (UX, Tokens de Diseño, Portal Familiar, Ayudas Contextuales y Navegación Unificada)
+- TAREA-F6-018: Completar la gestión de autorizaciones, responsables legales y contactos de emergencia (Restricciones de Custodia Legal y Consolidado de Tutores)
+- TAREA-F6-020: Mejorar la búsqueda global y la navegación operativa del expediente (Filtros contextuales omnibox y prioridad por coincidencia exacta)
+- TAREA-F7-IMP-01: Ampliar la validación integral de horarios y asignaciones (Soporte de excepciones justificadas y motor de traslapes en checkScheduleConflict)
+- TAREA-F7-IMP-02: Implementar una matriz visual de planificación y disponibilidad (Matriz unificada multi-perspectiva y filtros por estado)
+- TAREA-F7-IMP-03: Desarrollar una herramienta de resolución asistida de conflictos (Propuesta de aulas y bloques libres alternativos con comparación)
+- TAREA-F7-IMP-04: Incorporar planificación masiva y optimización de horarios (Gestión y almacenamiento de escenarios en borrador)
+- TAREA-F7-IMP-05: Ampliar el control de carga laboral y las preferencias docentes (Configuración de límites de jornada por contrato y preferencias por docente)
+- TAREA-F7-IMP-06: Ampliar la gestión de disponibilidad, equipamiento y capacidad de espacios (Equipamiento de aulas e indisponibilidad por mantenimiento)
+- TAREA-F7-IMP-08: Ampliar las excepciones del calendario y la gestión de sesiones (Excepciones de sesión puntual sin alterar serie recurrente)
+- TAREA-F7-IMP-09: Desarrollar versiones de horarios, comparación y restauración controlada (Historial de versiones, comparación diff y restauración RESTORE-SCHEDULE-CONFIRMED)
+- TAREA-F7-IMP-10: Fortalecer las notificaciones y la trazabilidad de cambios académicos (Despacho de avisos por cambio de horario, deduplicación y estado de entrega)
+- TAREA-F7-IMP-11: Fortalecer la coherencia y actualización de los portales relacionados (Metadatos de sincronización de horario y frescura de datos en Portal Familiar)
+- TAREA-F7-IMP-12: Ampliar los reportes de carga docente, ocupación y calidad de planificación (Reporte de ocupación de aulas y exportación CSV de métricas de calidad)
+- TAREA-F7-IMP-13: Incorporar importación, exportación y validación masiva de horarios (Importación CSV/JSON con previsualización y validación atómica de traslapes)
+- TAREA-F7-IMP-14: Fortalecer la publicación y el control de cambios masivos (Previsualización de impacto, conteo de bloques/docentes/aulas y publicación masiva confirmada)
+- TAREA-F7-IMP-15: Incorporar control de concurrencia y protección de operaciones críticas (Cerrojos LockService y validación Optimistic Locking por timestamp)
+
+===============================================================================
+TAREAS PENDIENTES DE REVISIÓN
+===============================================================================
+- [TAREA-F7-IMP-16] Ampliar la gestión de sustituciones y la reasignación de clases afectadas
+- [TAREA-F7-IMP-17] Ampliar la gestión de eventos y actividades con participantes y recursos
+===============================================================================

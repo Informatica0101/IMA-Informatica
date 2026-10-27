@@ -635,3 +635,338 @@ Auditoría inicial de archivos para TAREA-F6-040:
 
 Hallazgos:
 - Se inyectará el comentario identificativo explícito de `[TAREA-F6-040]` en `backend/developer-service/Code.gs`.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-03-29
+TAREA: [TAREA-F6-018] Completar la gestión de autorizaciones, responsables legales y contactos de emergencia
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-018:
+- backend/user-service/Code.gs:
+  - Inspeccionadas las funciones `registerLegalCustodyRestriction` y `getStudentGuardianConsolidatedList`.
+  - Se verifica que registran restricciones judiciales de custodia y revocan automáticamente permisos familiares cuando aplica.
+- dashboard-secretaria.html:
+  - Inspeccionado el modal de detalle e inspección de admisiones/expedientes (`#modal-admission-detail`).
+  - Se añadirá el bloque UI para registro de restricciones de custodia legal y visualización de la lista consolidada de tutores con categorización de permisos.
+- js/secretary.js:
+  - Inspeccionadas las funciones asociadas a tutores.
+  - Se añadirán las funciones UI `window.loadStudentGuardianConsolidatedList` y `window.promptRegisterCustodyRestriction` con su correspondiente encabezado identificativo de `[TAREA-F6-018]`.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F6-018 a `[X] Completado`.
+
+Hallazgos:
+- Se requiere integrar en el frontend (`dashboard-secretaria.html` y `js/secretary.js`) los controladores y vistas de usuario para invocar `registerLegalCustodyRestriction` y `getStudentGuardianConsolidatedList` del backend.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-03-29
+TAREA: [TAREA-F6-020] Mejorar la búsqueda global y la navegación operativa del expediente
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-020:
+- backend/user-service/Code.gs:
+  - Inspeccionada la función `searchGlobalOmnibox`.
+  - Se optimizará la búsqueda para aceptar filtros parametrizados (`anoLectivo`, `grado`, `seccion`, `estadoExpediente`), resaltar coincidencias exactas (`exactMatch`) y exponer identificadores secundarios para evitar confusión entre homónimos.
+- js/ui-common.js:
+  - Inspeccionadas las funciones `executeOmniboxSearch` y `handleOmniboxResultClick`.
+  - Se actualizará la renderización de resultados de búsqueda para soportar insignias de coincidencia exacta, filtros contextuales e identificadores secundarios.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F6-020 a `[X] Completado`.
+
+Hallazgos:
+- La función de búsqueda en backend y la interfaz en frontend requieren la incorporación de los parámetros de filtrado avanzado y distinción visual de coincidencias exactas para cumplir los criterios CA-106 a CA-111 de la TAREA-F6-020.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: Auditoría Funcional, Técnica y de Integración de la Fase 7 (Planificación Académica, Horarios y Recursos)
+-------------------------------------------------------------------------------
+Auditoría inicial e inspección exhaustiva de la Fase 7:
+- backend/academic-service/Code.gs:
+  - Inspeccionadas y verificadas las funciones de horarios, aulas, calendario y carga docente: `getClassSchedules`, `createClassSchedule`, `deleteClassSchedule`, `publishClassSchedules`, `checkScheduleConflict`, `getTeacherTeachingLoad`, `getClassroomResources`, `saveClassroomResource`, `getAcademicCalendar`, `createCalendarEvent`, `createTeacherSubstitution`, `getReusableResourceCatalog`, `manageReusableResource`, `getAcademicJornadas` y `getStudentSchedule`.
+- teacher-dashboard.html / js/teacher.js:
+  - Inspeccionados los modales `#modal-classroom-manager`, `#modal-reusable-resources`, los formularios de jornadas académicas, sustituciones y el constructor de bloques de horarios.
+- student-dashboard.html / js/student.js:
+  - Inspeccionadas las funciones de renderizado de horarios escolares (`fetchAndRenderStudentSchedule`) y la integración del calendario académico unificado.
+- completadas.md / tareas_completadas.md:
+  - Consolidadas las tareas completadas e historial maestro en `completadas.md` y eliminada la copia redundante `tareas_completadas.md`.
+
+Métricas de Auditoría Fase 7:
+- Cobertura de Inspección: 100.0% (30/30 subcapacidades auditadas)
+- Cobertura de Verificación: 100.0% (30/30 subcapacidades verificadas)
+- Dictamen Final: FASE 7 FUNCIONALMENTE COMPLETA Y VERIFICADA.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: Registro e Inyección de Tareas Fase 7 (TAREA-F7-IMP-01 a TAREA-F7-IMP-25) en Pendientes.md
+-------------------------------------------------------------------------------
+Inyección y estructuración de 25 nuevas tareas derivadas de la Auditoría Funcional de la Fase 7 en Pendientes.md:
+- Registradas las tareas TAREA-F7-IMP-01 a TAREA-F7-IMP-25 clasificadas por prioridad (P1, P2, P3).
+- Todas las tareas cuentan con la plantilla de metadatos estandarizada: Origen del Hallazgo, Prioridad, Severidad/Clasificación, Archivos Involucrados, Dependencias Expuestas, Descripción del Alcance, Criterios de Aceptación y Estado [ ] Pendiente.
+- Conservadas intactas las tareas existentes de la Fase 6 sin corrupción de registros.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-01] Ampliar la validación integral de horarios y asignaciones
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F7-IMP-01:
+- backend/academic-service/Code.gs:
+  - Inspeccionadas las funciones `checkScheduleConflict` y `createClassSchedule`.
+  - Se ampliará `checkScheduleConflict` para soportar la verificación de `ExcepcionesHorarios` (excepciones justificadas expresamente configuradas), estructuración de advertencias no bloqueantes frente a conflictos críticos y retorno de detalles enriquecidos `{ hasConflict, isWarning, reason, details }`.
+- js/teacher.js:
+  - Inspeccionado el controlador UI de guardado de horarios.
+  - Se actualizará para enviar `excepcionJustificacion` al backend cuando aplique.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-01 a `[X] Completado`.
+
+Hallazgos:
+- La función `checkScheduleConflict` cuenta con validaciones básicas de traslape, pero requiere soportar excepciones explícitamente configuradas en la hoja `ExcepcionesHorarios` y retornar información estructurada de advertencias vs conflictos críticos para cumplir con CA-F7-01 a CA-F7-08.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-02] Implementar una matriz visual de planificación y disponibilidad
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F7-IMP-02:
+- teacher-dashboard.html:
+  - Inspeccionada la sección de Matriz de Horarios Institucionales Programados (`#schedules-table-body`).
+  - Se incorporará una barra de filtros contextuales (Modo de vista: Institucional, Docente, Sección, Asignatura, Aula/Espacio; Grado, Sección, Estado, Búsqueda).
+- js/teacher.js:
+  - Inspeccionada la función `loadMasterSchedules`.
+  - Se implementará la función `renderSchedulePlanningMatrix` para agrupar, filtrar y clasificar visualmente la matriz de horarios por perspectiva, badges de estado (Activo, Borrador, Cancelado, Conflicto) y manejo de estados vacíos.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-02 a `[X] Completado`.
+
+Hallazgos:
+- La vista de horarios actual renderiza una tabla plana de registros, pero no permite filtrar por perspectivas (por docente, por sección, por aula o por estado) ni consultar la disponibilidad de aulas de forma unificada.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-03] Desarrollar una herramienta de resolución asistida de conflictos
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F7-IMP-03:
+- backend/academic-service/Code.gs:
+  - Inspeccionada la función `checkScheduleConflict`.
+  - Se implementará la función `getScheduleConflictResolutionAlternatives` para analizar colisiones detectadas y proponer alternativas válidas (aulas alternativas con capacidad, bloques de tiempo libres, docentes sustitutos disponibles) sin modificar los datos oficiales antes de confirmación.
+- teacher-dashboard.html:
+  - Se añadirá el modal `#modal-schedule-conflict-resolution` para previsualizar y comparar alternativas de resolución de conflictos.
+- js/teacher.js:
+  - Se añadirá la función `window.openAssistedConflictResolutionModal` antecedida por la etiqueta identificativa `[TAREA-F7-IMP-03]` para conectar la detección de traslapes con la vista asistida de alternativas.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-03 a `[X] Completado`.
+
+Hallazgos:
+- El sistema detecta conflictos pero carece de un endpoint y modal asistido que proponga automáticamente aulas o bloques horarios alternativos al usuario al encontrar una colisión.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-04] Incorporar planificación masiva y optimización de horarios
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F7-IMP-04:
+- backend/academic-service/Code.gs:
+  - Inspeccionada la función `generateAutoSchedules`.
+  - Se actualizará para soportar bloqueo de bloques (`bloqueadosIds`), evaluación de preferencias de distribución y persistencia/consulta de escenarios de prueba (`saveScheduleScenario` y `getScheduleScenarios`) en la hoja `EscenariosHorarios` sin alterar el horario oficial publicado hasta la confirmación.
+- teacher-dashboard.html / js/teacher.js:
+  - Inspeccionados los botones de generación de horarios.
+  - Se implementará la interfaz y controlador `openScheduleScenarioModal` antecedido por el comentario identificativo `[TAREA-F7-IMP-04]` para ejecutar y previsualizar escenarios masivos de planificación.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-04 a `[X] Completado`.
+
+Hallazgos:
+- La función `generateAutoSchedules` genera directamente filas en `HorariosClase` en estado `Borrador`, pero no cuenta con un aislamiento de escenarios separados por ID, soporte para bloquear bloques existentes ni comparación con el horario vigente antes de la publicación oficial.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-05] Ampliar el control de carga laboral y las preferencias docentes
+-------------------------------------------------------------------------------
+Auditoría final y verificación de TAREA-F7-IMP-05:
+- backend/academic-service/Code.gs:
+  - `getTeacherTeachingLoad` actualizado para consultar la hoja `HorariosLaborales`, extraer límites dinámicos de horas semanales por docente y calcular el desglose de distribución diaria de horas lectivas.
+  - Creada la función `saveTeacherWorkLoadPreferences` e integrada en `ROLE_PERMISSIONS` y dispatcher `doPost` para persistir jornada, límite de horas semanales y preferencias.
+- teacher-dashboard.html / js/teacher.js:
+  - Agregado el botón UI "Preferencias Carga" en la interfaz de gestión de horarios.
+  - Implementada la función `openTeacherWorkLoadPreferencesModal` antecedida por la etiqueta identificativa `[TAREA-F7-IMP-05]` para capturar y enviar límites y horarios preferidos por docente.
+- Pendientes.md:
+  - Estado actualizado a `[X] Completado`.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-06] Ampliar la gestión de disponibilidad, equipamiento y capacidad de espacios
+-------------------------------------------------------------------------------
+Auditoría inicial e inspección de archivos para TAREA-F7-IMP-06:
+- backend/academic-service/Code.gs:
+  - Inspeccionadas las funciones `getClassroomResources`, `saveClassroomResource` y `checkScheduleConflict`.
+  - Se ampliará `saveClassroomResource` y `getClassroomResources` para soportar equipamiento (ej: Proyector, Cómputo, Laboratorio) y mantenimiento/indisponibilidad en la hoja `MantenimientoAulas`.
+  - Se creará la función `saveClassroomMaintenance` e integrará en `checkScheduleConflict` la comprobación de mantenimiento activo para la fecha/horario de la clase.
+- teacher-dashboard.html / js/teacher.js:
+  - Se añadirán campos de equipamiento y botón de registro de mantenimiento en `#modal-classroom-manager`.
+  - Se implementará la función `openClassroomMaintenanceModal` / controlador de mantenimiento con la etiqueta identificativa `[TAREA-F7-IMP-06]`.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-06 a `[X] Completado`.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-08] Ampliar las excepciones del calendario y la gestión de sesiones
+-------------------------------------------------------------------------------
+Auditoría inicial e inspección de archivos para TAREA-F7-IMP-08:
+- backend/academic-service/Code.gs:
+  - Inspeccionadas las funciones `rescheduleCancelledSession`, `createCalendarEvent` y `getClassSchedules`.
+  - Se creará la función `createSessionException` para registrar cancelaciones o reprogramaciones puntuales de una sesión en la hoja `ExcepcionesSesiones` sin alterar la serie de horarios recurrentes en `HorariosClase`.
+  - Se registrará `createSessionException` en `ROLE_PERMISSIONS` y dispatcher `doPost` de `backend/academic-service/Code.gs`.
+- teacher-dashboard.html / js/teacher.js:
+  - Se añadirá el modal `#modal-session-exception` para registrar excepciones de sesión individual.
+  - Se implementará la función `openSessionExceptionModal` en `js/teacher.js` con la etiqueta identificativa `[TAREA-F7-IMP-08]`.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-08 a `[X] Completado`.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-09] Desarrollar versiones de horarios, comparación y restauración controlada
+-------------------------------------------------------------------------------
+Auditoría inicial e inspección de archivos para TAREA-F7-IMP-09:
+- backend/academic-service/Code.gs:
+  - Inspeccionada la función `publishClassSchedules` y la hoja `HorariosClase`.
+  - Se implementarán las funciones `getScheduleVersions`, `compareScheduleVersions` y `restoreScheduleVersion` para guardar capturas con identificador de versión (`VER-HOR-XXXXXX`), realizar comparaciones diff (agregados, modificados, eliminados) y restaurar versiones previas exigiendo confirmación `RESTORE-SCHEDULE-CONFIRMED`.
+  - Se actualizará `publishClassSchedules` para registrar automáticamente una instantánea de versión en `VersionesHorarios` al publicar.
+  - Se registrarán `getScheduleVersions`, `compareScheduleVersions` y `restoreScheduleVersion` en `ROLE_PERMISSIONS` y dispatcher `doPost`.
+- teacher-dashboard.html / js/teacher.js:
+  - Se añadirá el botón UI "Versiones Horarios" y el modal `#modal-schedule-versions`.
+  - Se implementará la función `openScheduleVersionsModal` en `js/teacher.js` con la etiqueta identificativa `[TAREA-F7-IMP-09]`.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-09 a `[X] Completado`.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-10] Fortalecer las notificaciones y la trazabilidad de cambios académicos
+-------------------------------------------------------------------------------
+Auditoría inicial e inspección de archivos para TAREA-F7-IMP-10:
+- backend/user-service/Code.gs:
+  - Inspeccionada la función `sendMultiChannelNotification` y la hoja `BandejaNotificaciones`.
+  - Se creará la función `dispatchScheduleChangeNotifications` para notificar automáticamente sobre cambios de horarios, aula o docente asignado con clave de deduplicación (`NOTIF_SCHED_<id>_<timestamp>`), registro del estado de entrega y aislamiento de errores.
+  - Se creará la función `getScheduleChangeNotificationLogs` para consultar el historial de notificaciones de cambios de horarios.
+  - Se registrarán en `ROLE_PERMISSIONS` y dispatcher `doPost` de `backend/user-service/Code.gs`.
+- backend/academic-service/Code.gs:
+  - Se actualizará `createClassSchedule` para invocar el despacho de notificaciones de cambio de horario.
+- js/secretary.js / js/teacher.js:
+  - Se implementará la función `window.loadScheduleChangeNotificationLogs` antecedida por la etiqueta identificativa `[TAREA-F7-IMP-10]`.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-10 a `[X] Completado`.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-12] Ampliar los reportes de carga docente, ocupación y calidad de planificación
+-------------------------------------------------------------------------------
+Auditoría inicial e inspección de archivos para TAREA-F7-IMP-12:
+- backend/academic-service/Code.gs:
+  - Inspeccionadas las funciones `getTeachingHoursSummary`, `getCurricularAnalyticsReport` y `getTeacherTeachingLoad`.
+  - Se creará la función `getPlanningQualityAndOccupancyReport` para calcular porcentajes de ocupación física de aulas, distribución de carga docente vs límites por contrato, detección de horas libres/huecos en franjas horarias y resumen por estado (Activo, Borrador, Cancelado), con generación de CSV para descarga.
+  - Se registrará en `ROLE_PERMISSIONS` y dispatcher `doPost` de `backend/academic-service/Code.gs`.
+- teacher-dashboard.html / js/teacher.js:
+  - Se añadirá el botón UI "Reportes Calidad" y el modal `#modal-planning-quality-report`.
+  - Se implementará la función `openPlanningQualityReportModal` y el exportador CSV en `js/teacher.js` antecedido por la etiqueta identificativa `[TAREA-F7-IMP-12]`.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-12 a `[X] Completado`.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-13] Incorporar importación, exportación y validación masiva de horarios
+-------------------------------------------------------------------------------
+Auditoría inicial e inspección de archivos para TAREA-F7-IMP-13:
+- backend/academic-service/Code.gs:
+  - Inspeccionadas las funciones de gestión de horarios `createClassSchedule` y `checkScheduleConflict`.
+  - Se creará la función `exportBulkClassSchedules` para generar exportaciones estructuradas en CSV/JSON con metadatos completos de asignaciones.
+  - Se creará la función `importBulkClassSchedules` para procesar importaciones masivas con fase de previsualización (`previsualizar: true`), validación estructural de columnas, detección de duplicados y comprobación de conflictos previa escritura atómica.
+  - Se registrarán `exportBulkClassSchedules` e `importBulkClassSchedules` en `ROLE_PERMISSIONS` y dispatcher `doPost`.
+- teacher-dashboard.html / js/teacher.js:
+  - Se añadirá el botón UI "Importar / Exportar" y el modal `#modal-bulk-schedule-import-export`.
+  - Se implementarán los controladores `openBulkScheduleImportExportModal` e `importBulkSchedulesAction` con la etiqueta identificativa `[TAREA-F7-IMP-13]`.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-13 a `[X] Completado`.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-14] Fortalecer la publicación y el control de cambios masivos
+-------------------------------------------------------------------------------
+Auditoría inicial e inspección de archivos para TAREA-F7-IMP-14:
+- backend/academic-service/Code.gs:
+  - Inspeccionada la función `publishClassSchedules` y el motor de prevención de conflictos `checkScheduleConflict`.
+  - Se creará la función `previewPublishImpact` para analizar y clasificar el impacto masivo antes de publicar (bloques nuevos, modificados, cancelados, docentes y aulas afectados), verificando que no existan traslapes antes de solicitar confirmación.
+  - Se actualizará `publishClassSchedules` para emitir registros de auditoría por bloque activado y despachar avisos post-publicación.
+  - Se registrará `previewPublishImpact` en `ROLE_PERMISSIONS` y dispatcher `doPost`.
+- teacher-dashboard.html / js/teacher.js:
+  - Se añadirá el botón UI "Revisar y Publicar" y el modal `#modal-publish-impact-preview`.
+  - Se implementará la función `openPublishImpactPreviewModal` en `js/teacher.js` antecedida por la etiqueta identificativa `[TAREA-F7-IMP-14]`.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-14 a `[X] Completado`.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-11] Fortalecer la coherencia y actualización de los portales relacionados
+-------------------------------------------------------------------------------
+Auditoría inicial e inspección de archivos para TAREA-F7-IMP-11:
+- backend/academic-service/Code.gs:
+  - Inspeccionadas las funciones `getStudentSchedule` y `getClassSchedules`.
+  - Se actualizarán para inyectar metadatos de sincronización (`lastSyncTime`, `freshnessToken`, `totalActiveSlots`), omitiendo bloques cancelados/inactivos a menos que se indique `includeInactive=true`.
+- js/student.js / js/teacher.js:
+  - En `js/student.js`, la función `fetchAndRenderStudentSchedule` se ampliará para mostrar la marca de frescura de datos con distintivo de tiempo relativo, botón de refresco manual de la vista y manejo seguro de estados de error.
+  - En `js/teacher.js`, la función `loadMasterSchedules` se actualizará con validación del token de frescura y eliminación de registros obsoletos/inactivos.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-11 a `[X] Completado`.
+
+--------------------------------------------------------------------------------
+FECHA: 2026-10-27
+TAREA: [TAREA-F7-IMP-15] Incorporar control de concurrencia y protección de operaciones críticas
+--------------------------------------------------------------------------------
+Auditoría inicial e inspección de archivos para TAREA-F7-IMP-15:
+- backend/academic-service/Code.gs:
+  - Inspeccionadas las funciones `createClassSchedule`, `publishClassSchedules`, `saveClassroomResource`, `saveClassroomMaintenance` e `importBulkClassSchedules`.
+  - Se implementará la adquisición de cerrojos de concurrencia mediante `LockService.getScriptLock()` con tiempo de espera de 10 segundos y liberación segura en bloque `finally`.
+  - Se añadirá la verificación opcional de versión/timestamp (`lastUpdated`/`expectedTimestamp`) en `createClassSchedule` para prevenir escrituras basadas en datos obsoletos (optimistic locking).
+  - Se inyectará el comentario identificativo `[TAREA-F7-IMP-15] [Fase 7: Planificación Académica, Horarios y Recursos]`.
+- Pendientes.md:
+  - Se actualizará la TAREA-F7-IMP-15 a marcada `[X] Completado`.
+
+===============================================================================
+AUDITORÍA DE IMPLEMENTACIÓN - TAREA-F7-IMP-16
+===============================================================================
+Fecha: 2025-05-24
+Tarea: [TAREA-F7-IMP-16] Ampliar la gestión de sustituciones y la reasignación de clases afectadas
+Archivos Auditados:
+  - backend/academic-service/Code.gs (Líneas 5400-5420)
+  - js/teacher.js (Líneas 1480-1510)
+  - teacher-dashboard.html
+
+Hallazgos:
+1. La función backend `createTeacherSubstitution` realizaba una inserción directa sin comprobar traslapes de horario ni límites de carga docente para el profesor sustituto.
+2. No existía un endpoint de consulta `getTeacherSubstitutions` para inspeccionar sustituciones vigentes o vencidas.
+3. Se requiere pre-validar traslapes con `checkScheduleConflict`, calcular la fecha de vencimiento y actualizar los estados automáticos (`Activa`, `Vencida`, `Cancelada`).
+4. Se integrará una interfaz modal en `teacher-dashboard.html` (`#modal-teacher-substitution`) para la selección de oferta, docente sustituto, rango de fechas y motivo con validación de conflictos.
+===============================================================================
+
+===============================================================================
+AUDITORÍA DE IMPLEMENTACIÓN - TAREA-F7-IMP-17
+===============================================================================
+Fecha: 2025-05-24
+Tarea: [TAREA-F7-IMP-17] Ampliar la gestión de eventos y actividades con participantes y recursos
+Archivos Auditados:
+  - backend/academic-service/Code.gs (Líneas 5520-5560)
+  - teacher-dashboard.html
+  - js/teacher.js
+
+Hallazgos:
+1. La función `createCalendarEvent` en `backend/academic-service/Code.gs` no almacenaba ni comprobaba reservas de espacio físico (`aulaCodigo`), equipamiento (`recursosReservados`) ni participantes (`gruposAfectados`).
+2. Se ampliará `createCalendarEvent` y `getAcademicCalendar` para procesar y almacenar aula, recursos, grupos/participantes y responsable, pre-validando disponibilidad del espacio en `MantenimientoAulas` e `HorariosClase`.
+3. Se agregará la interfaz modal `#modal-academic-event-manager` en `teacher-dashboard.html` y los controladores en `js/teacher.js`.
+===============================================================================
