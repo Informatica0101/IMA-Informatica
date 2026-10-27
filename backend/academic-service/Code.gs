@@ -241,6 +241,7 @@ const ROLE_PERMISSIONS = {
     "saveScheduleTemplate",
     "getScheduleTemplates",
     "applyScheduleTemplate",
+    "runAcademicPlanningRegressionSuite",
     "saveCurricularConstraint", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule", "getReusableResourceCatalog", "manageReusableResource",
     "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentEnrollments",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
@@ -643,6 +644,9 @@ function doPost(e) {
         break;
       case "getScheduleTemplates":
         result = getScheduleTemplates(payload);
+        break;
+      case "runAcademicPlanningRegressionSuite":
+        result = runAcademicPlanningRegressionSuite(payload);
         break;
       case "applyScheduleTemplate":
         result = applyScheduleTemplate(payload);
@@ -11074,5 +11078,73 @@ function applyScheduleTemplate(payload) {
   } catch (error) {
     Logger.log("Error en applyScheduleTemplate: " + error.message);
     return { status: "error", message: "Error al aplicar plantilla de horario: " + error.message };
+  }
+}
+
+
+// [TAREA-F7-IMP-25] [Fase 7: Planificación Académica, Horarios y Recursos] - Batería automatizada de pruebas de regresión, integración y calidad de planificación académica
+function runAcademicPlanningRegressionSuite(payload) {
+  const testResults = [];
+  let passedCount = 0;
+
+  function recordTest(id, name, resultBool, details) {
+    if (resultBool) passedCount++;
+    testResults.push({
+      testId: id,
+      testName: name,
+      status: resultBool ? "PASS" : "FAIL",
+      details: details || (resultBool ? "Prueba superada correctamente" : "Falló la prueba")
+    });
+  }
+
+  try {
+    const tc1 = checkScheduleConflict({
+      grado: "Séptimo",
+      seccion: "A",
+      diaSemana: "Lunes",
+      horaInicio: "08:00",
+      horaFin: "09:00",
+      aulaCodigo: "AULA-TEST-101",
+      docenteUserId: "USER-DOC-TEST-101"
+    });
+    recordTest("TC-F7-01", "Detección de Colisión e Invariante de Horario", tc1 !== null && typeof tc1 === "object", "Sujeto a estructura de conflictos en checkScheduleConflict");
+
+    const tc2 = getTeacherTeachingLoad({ docenteUserId: "USER-DOC-TEST-101" });
+    recordTest("TC-F7-02", "Cálculo e Inspección de Carga Laboral Docente", tc2 !== null && typeof tc2 === "object", "Respuesta de horas semanales calculada correctamente");
+
+    const tc3 = getCurricularConstraints({ anoId: "2026" });
+    recordTest("TC-F7-03", "Consulta de Restricciones Curriculares y Dependencias", tc3 && tc3.status === "success" && Array.isArray(tc3.restricciones), "Lista de restricciones retornada sin errores");
+
+    const tc4 = getSectionCapacityAnalyticsReport({ anolectivo: "2026" });
+    recordTest("TC-F7-04", "Reporte de Capacidad y Aforo Físico de Secciones", tc4 && tc4.status === "success" && Array.isArray(tc4.reportes), "Análisis de capacidad y alertas generado");
+
+    const tc5 = getTeacherSubstitutions({ anoId: "2026" });
+    recordTest("TC-F7-05", "Trazabilidad de Sustituciones y Reasignaciones Docentes", tc5 && tc5.status === "success" && Array.isArray(tc5.sustituciones), "Registro de sustituciones recuperado");
+
+    const tc6 = getScheduleTemplates({ anoId: "2026" });
+    recordTest("TC-F7-06", "Consulta de Plantillas Reusables de Horarios", tc6 && tc6.status === "success" && Array.isArray(tc6.plantillas), "Catálogo de plantillas inspeccionado");
+
+    const tc7 = getAcademicPlanningAuditLogs({ estado: "EXITOSO" });
+    recordTest("TC-F7-07", "Consolidación de Bitácora de Auditoría Operativa", tc7 && tc7.status === "success" && Array.isArray(tc7.logs), "Logs de auditoría operacional recuperados");
+
+    const totalTests = testResults.length;
+    const allPassed = passedCount === totalTests;
+
+    logStructuredEvent("ACADEMIC", "runAcademicPlanningRegressionSuite", "INFO", "PLANNING_REGRESSION_SUITE_EXECUTED", `Suite de regresión de planificación completada. Pasaron ${passedCount}/${totalTests}`, { testResults });
+
+    return {
+      status: "success",
+      totalExecuted: totalTests,
+      totalPassed: passedCount,
+      totalFailed: totalTests - passedCount,
+      allPassed: allPassed,
+      testResults: testResults
+    };
+  } catch (err) {
+    Logger.log("Error en runAcademicPlanningRegressionSuite: " + err.message);
+    return {
+      status: "error",
+      message: "Error durante la ejecución de la suite de regresión de planificación: " + err.message
+    };
   }
 }

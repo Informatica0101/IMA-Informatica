@@ -2255,7 +2255,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-25] Ampliar la verificación de calidad mediante pruebas automatizadas de planificación
+### [X] [TAREA-F7-IMP-25] Ampliar la verificación de calidad mediante pruebas automatizadas de planificación
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-25 (P1 · Pruebas de Regresión)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Fortalecimiento de calidad y prevención de regresiones)

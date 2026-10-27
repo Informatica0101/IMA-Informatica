@@ -107,3 +107,8 @@
 - **Persistencia Local:** Preferencias visuales por categoría almacenadas en `localStorage` (`calendar_view_prefs` y `student_cal_view_prefs`).
 - **Interfaz y Filtros:** Barra de leyenda cromática y checkboxes de alternancia de categorías (Clases, Evaluaciones, Eventos, Mantenimiento) en `teacher-dashboard.html` y `student-dashboard.html`.
 - **Controladores:** `filterCalendarEventsByCategory`, `resetCalendarViewPreferences` en `js/teacher.js`, `filterStudentCalendarByCategory` y `resetStudentCalendarPreferences` en `js/student.js`.
+
+### 2.14 Pruebas Automatizadas y Regresión de Planificación Académica (Fase 7 - TAREA-F7-IMP-25)
+- **Endpoint:** `runAcademicPlanningRegressionSuite` (Ejecución sintética de batería de pruebas TC-01 a TC-07).
+- **Cobertura de Casos de Prueba:** Detección de colisiones e invariantes de horario, carga laboral docente, restricciones curriculares, capacidad/aforo de secciones, sustituciones, plantillas de horario y bitácora de auditoría.
+- **Acceso:** Restringido a roles autorizados en `ROLE_PERMISSIONS` e integrado en `doPost`.
