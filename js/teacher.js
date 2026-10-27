@@ -987,6 +987,93 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // [TAREA-F7-IMP-14] [Fase 7: Planificación Académica, Horarios y Recursos] - UI Modal para previsualización del impacto de publicación y control de cambios masivos
+    window.openPublishImpactPreviewModal = async function() {
+        const modal = document.getElementById('modal-publish-impact-preview');
+        if (modal) modal.classList.remove('hidden');
+
+        const summaryBox = document.getElementById('publish-impact-summary-box');
+        const detailsContainer = document.getElementById('publish-impact-details');
+        const btnConfirmPublish = document.getElementById('btn-confirm-publish-schedules');
+
+        if (summaryBox) summaryBox.innerHTML = '<p class="text-xs text-slate-500"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Analizando bloques en Borrador e impacto de publicación...</p>';
+        if (detailsContainer) detailsContainer.innerHTML = '';
+        if (btnConfirmPublish) btnConfirmPublish.classList.add('hidden');
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'previewPublishImpact', {});
+            if (res && res.status === 'success' && res.impacto) {
+                const imp = res.impacto;
+                if (summaryBox) {
+                    summaryBox.innerHTML = `
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+                            <div class="p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
+                                <p class="text-[10px] uppercase tracking-wider text-indigo-700 font-bold">Bloques en Borrador</p>
+                                <p class="text-xl font-bold text-indigo-900">${imp.bloquesBorradorCount}</p>
+                            </div>
+                            <div class="p-3 bg-purple-50 border border-purple-100 rounded-xl">
+                                <p class="text-[10px] uppercase tracking-wider text-purple-700 font-bold">Docentes Afectados</p>
+                                <p class="text-xl font-bold text-purple-900">${imp.docentesAfectadosCount}</p>
+                            </div>
+                            <div class="p-3 bg-blue-50 border border-blue-100 rounded-xl">
+                                <p class="text-[10px] uppercase tracking-wider text-blue-700 font-bold">Aulas Involucradas</p>
+                                <p class="text-xl font-bold text-blue-900">${imp.aulasInvolucradasCount}</p>
+                            </div>
+                            <div class="p-3 ${imp.conflictosCount > 0 ? 'bg-amber-50 border-amber-200 text-amber-900' : 'bg-emerald-50 border-emerald-200 text-emerald-900'} border rounded-xl">
+                                <p class="text-[10px] uppercase tracking-wider font-bold">${imp.conflictosCount > 0 ? 'Conflictos Detectados' : 'Sin Conflictos'}</p>
+                                <p class="text-xl font-bold">${imp.conflictosCount}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (detailsContainer) {
+                    let detailsHtml = '';
+                    if (imp.conflictosCount > 0) {
+                        detailsHtml += `<div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs font-semibold mb-3"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Atención: Hay ${imp.conflictosCount} traslapes de docente o aula detectados. Resuelva estos conflictos antes de publicar.</div>`;
+                    }
+                    detailsHtml += `<p class="text-xs font-bold text-slate-700 mb-2">Resumen de Notificaciones y Sincronización:</p>` +
+                        `<ul class="text-xs text-slate-600 space-y-1 list-disc pl-4 mb-3">` +
+                        `<li>Se enviarán notificaciones multicanal a <strong>${imp.docentesAfectadosCount} docentes</strong> notificando sus nuevos horarios asignados.</li>` +
+                        `<li>El token de sincronización del portal familiar se actualizará automáticamente.</li>` +
+                        `<li>Se registrará una versión inmutable en el historial de versiones con estado 'Publicado'.</li>` +
+                        `</ul>`;
+                    detailsContainer.innerHTML = detailsHtml;
+                }
+
+                if (btnConfirmPublish && imp.bloquesBorradorCount > 0 && imp.conflictosCount === 0) {
+                    btnConfirmPublish.classList.remove('hidden');
+                    btnConfirmPublish.onclick = async () => {
+                        if (!confirm(`¿Está seguro de publicar ${imp.bloquesBorradorCount} bloques de horario? Esta acción notificará a los docentes y actualizará la oferta académica activa.`)) return;
+                        try {
+                            if (window.showLoading) window.showLoading('Publicando horarios masivamente...');
+                            const pubRes = await fetchApi('ACADEMIC', 'publishClassSchedules', {
+                                modo: 'masivo',
+                                notificarCambios: true
+                            });
+                            if (window.hideLoading) window.hideLoading();
+
+                            if (pubRes && pubRes.status === 'success') {
+                                alert(`¡Publicación masiva completada! Se publicaron ${pubRes.countPublished || pubRes.countUpdated || 'los'} bloques exitosamente.`);
+                                modal.classList.add('hidden');
+                                loadMasterSchedules();
+                            } else {
+                                alert('Error al publicar horarios: ' + (pubRes ? pubRes.message : 'Error desconocido'));
+                            }
+                        } catch (pErr) {
+                            if (window.hideLoading) window.hideLoading();
+                            alert('Error al publicar: ' + pErr.message);
+                        }
+                    };
+                }
+            } else {
+                if (summaryBox) summaryBox.innerHTML = '<p class="text-xs text-rose-600 font-medium">Error al calcular impacto: ' + (res ? res.message : 'Respuesta no válida') + '</p>';
+            }
+        } catch (err) {
+            if (summaryBox) summaryBox.innerHTML = '<p class="text-xs text-rose-600 font-medium">Error de red/servidor: ' + err.message + '</p>';
+        }
+    };
+
     // [TAREA-F7-IMP-12] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador UI de reportes de calidad de planificación y ocupación de aulas
     window.openPlanningQualityReportModal = async function() {
         const modal = document.getElementById('modal-planning-quality-report');

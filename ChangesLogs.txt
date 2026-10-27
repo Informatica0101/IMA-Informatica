@@ -1976,3 +1976,17 @@ Descripción objetiva:
 - Creadas las funciones `exportBulkClassSchedules` e `importBulkClassSchedules` en `backend/academic-service/Code.gs` e integradas en `ROLE_PERMISSIONS` y dispatcher `doPost` para la exportación e importación masiva de matrices de horario en CSV/JSON con previsualización (`previsualizar: true`), validación estructural de columnas, detección de duplicados y traslapes.
 - Incorporados el botón UI "Importar / Exportar", el modal `#modal-bulk-schedule-import-export` y la función `openBulkScheduleImportExportModal` en `teacher-dashboard.html` y `js/teacher.js` antecedida por la etiqueta identificativa `[TAREA-F7-IMP-13]`.
 - Actualizado el estado de [TAREA-F7-IMP-13] a Completado en Pendientes.md.
+
+================================================================================
+FECHA: 2026-10-27
+TAREA: [TAREA-F7-IMP-14] Fortalecer la publicación y el control de cambios masivos
+================================================================================
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 171, 674, 2930-2979):
+  Se implementó `previewPublishImpact` para calcular bloques en Borrador, docentes/aulas involucrados y conflictos de traslape previo a la publicación. Registrado en ROLE_PERMISSIONS y dispatcher doPost.
+- teacher-dashboard.html (Líneas 82-84, 868-898):
+  Se añadió el botón 'Revisar y Publicar' y la estructura modal '#modal-publish-impact-preview' con contenedor de impacto y botón de confirmación.
+- js/teacher.js (Líneas 990-1076):
+  Se implementó `openPublishImpactPreviewModal` para invocar 'previewPublishImpact', renderizar tarjetas de métricas e impacto, y ejecutar 'publishClassSchedules' tras confirmación.
+- Pendientes.md (Línea 1878):
+  Se actualizó la tarea [TAREA-F7-IMP-14] a marcada '[X]'.

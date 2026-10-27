@@ -564,6 +564,9 @@
                                 <button onclick="window.openBulkScheduleImportExportModal()" class="bg-orange-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-orange-700 transition-all shadow-md">
                                     <i class="fa-solid fa-file-csv mr-1"></i> Importar / Exportar
                                 </button>
+                                <button onclick="window.openPublishImpactPreviewModal()" class="bg-indigo-700 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-indigo-800 transition-all shadow-md">
+                                    <i class="fa-solid fa-paper-plane mr-1"></i> Revisar y Publicar
+                                </button>
                                 <button id="btn-load-schedules-list" class="bg-indigo-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md">
                                     <i class="fas fa-sync-alt mr-1"></i> Actualizar
                                 </button>
@@ -1569,6 +1572,29 @@
             </div>
             <div class="flex justify-center bg-gray-50 rounded-2xl overflow-hidden">
                 <img id="lightbox-image" src="" alt="Vista previa" class="max-w-full max-h-[70vh] object-contain">
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA-F7-IMP-14] [Fase 7: Planificación Académica, Horarios y Recursos] - Modal de Revisión de Impacto Masivo y Publicación de Horarios (#modal-publish-impact-preview) -->
+    <div id="modal-publish-impact-preview" class="fixed inset-0 z-[110] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-100 animate-fade-in">
+            <div class="p-5 bg-indigo-50 border-b border-indigo-100 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-lg shadow-md">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Revisión de Impacto y Publicación Oficial</h3>
+                        <p class="text-[10px] text-slate-500 font-medium">Pre-validación de traslapes y activación de matriz de borradores</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('modal-publish-impact-preview').classList.add('hidden')" class="w-8 h-8 rounded-full bg-white/80 text-slate-500 hover:text-slate-800 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="publish-impact-content-box" class="p-6 space-y-4 max-h-[70vh] overflow-y-auto text-xs">
+                <p class="text-slate-400 italic text-center">Analizando impacto de publicación de borradores...</p>
             </div>
         </div>
     </div>

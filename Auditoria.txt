@@ -896,6 +896,23 @@ Auditoría inicial e inspección de archivos para TAREA-F7-IMP-13:
 
 -------------------------------------------------------------------------------
 FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-14] Fortalecer la publicación y el control de cambios masivos
+-------------------------------------------------------------------------------
+Auditoría inicial e inspección de archivos para TAREA-F7-IMP-14:
+- backend/academic-service/Code.gs:
+  - Inspeccionada la función `publishClassSchedules` y el motor de prevención de conflictos `checkScheduleConflict`.
+  - Se creará la función `previewPublishImpact` para analizar y clasificar el impacto masivo antes de publicar (bloques nuevos, modificados, cancelados, docentes y aulas afectados), verificando que no existan traslapes antes de solicitar confirmación.
+  - Se actualizará `publishClassSchedules` para emitir registros de auditoría por bloque activado y despachar avisos post-publicación.
+  - Se registrará `previewPublishImpact` en `ROLE_PERMISSIONS` y dispatcher `doPost`.
+- teacher-dashboard.html / js/teacher.js:
+  - Se añadirá el botón UI "Revisar y Publicar" y el modal `#modal-publish-impact-preview`.
+  - Se implementará la función `openPublishImpactPreviewModal` en `js/teacher.js` antecedida por la etiqueta identificativa `[TAREA-F7-IMP-14]`.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-14 a `[X] Completado`.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
 TAREA: [TAREA-F7-IMP-11] Fortalecer la coherencia y actualización de los portales relacionados
 -------------------------------------------------------------------------------
 Auditoría inicial e inspección de archivos para TAREA-F7-IMP-11:

@@ -384,3 +384,4 @@ TAREAS PENDIENTES DE REVISIÓN
 - TAREA-F7-IMP-11: Fortalecer la coherencia y actualización de los portales relacionados (Metadatos de sincronización de horario y frescura de datos en Portal Familiar)
 - TAREA-F7-IMP-12: Ampliar los reportes de carga docente, ocupación y calidad de planificación (Reporte de ocupación de aulas y exportación CSV de métricas de calidad)
 - TAREA-F7-IMP-13: Incorporar importación, exportación y validación masiva de horarios (Importación CSV/JSON con previsualización y validación atómica de traslapes)
+- TAREA-F7-IMP-14: Fortalecer la publicación y el control de cambios masivos (Previsualización de impacto, conteo de bloques/docentes/aulas y publicación masiva confirmada)

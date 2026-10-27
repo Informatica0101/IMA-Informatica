@@ -168,7 +168,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicPeriods", "manageAcademicPeriod", "getSubjectCatalog", "createSubjectCatalogItem", "getStudyPlans", "createStudyPlan",
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
-    "getClassroomResources", "saveClassroomResource", "saveClassroomMaintenance", "getStudentSchedule", "getScheduleConflictResolutionAlternatives", "saveScheduleScenario", "getScheduleScenarios", "saveTeacherWorkLoadPreferences", "createSessionException", "getScheduleVersions", "compareScheduleVersions", "restoreScheduleVersion", "getPlanningQualityAndOccupancyReport", "exportBulkClassSchedules", "importBulkClassSchedules",
+    "getClassroomResources", "saveClassroomResource", "saveClassroomMaintenance", "getStudentSchedule", "getScheduleConflictResolutionAlternatives", "saveScheduleScenario", "getScheduleScenarios", "saveTeacherWorkLoadPreferences", "createSessionException", "getScheduleVersions", "compareScheduleVersions", "restoreScheduleVersion", "getPlanningQualityAndOccupancyReport", "exportBulkClassSchedules", "importBulkClassSchedules", "previewPublishImpact",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate", "getAdmissionAnalyticsReport",
     "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles", "getMergePreviewComparison", "unmergeStudentFiles", "getStudentFileAdministrativeReports", "initializeDirectionSecretaryDriveStructure",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion", "checkAndNotifyExpiringStudentDocuments",
@@ -671,6 +671,7 @@ function doPost(e) {
       case "getPlanningQualityAndOccupancyReport": result = getPlanningQualityAndOccupancyReport(payload); break;
       case "exportBulkClassSchedules": result = exportBulkClassSchedules(payload); break;
       case "importBulkClassSchedules": result = importBulkClassSchedules(payload); break;
+      case "previewPublishImpact": result = previewPublishImpact(payload); break;
       case "getPendingSessionRecoveries": result = getPendingSessionRecoveries(payload); break;
       case "publishClassSchedules": result = publishClassSchedules(payload); break;
       case "getIndividualCalendar": result = getIndividualCalendar(payload); break;
@@ -2923,6 +2924,58 @@ function generateInstitutionalUUID(payload) {
     uuid: uuidPart,
     institutionalId: fullId,
     timestamp: new Date().toISOString()
+  };
+}
+
+// [TAREA-F7-IMP-14] [Fase 7: Planificación Académica, Horarios y Recursos] - Previsualización de impacto masivo antes de publicar borradores de horarios.
+function previewPublishImpact(payload) {
+  const { anoLectivo } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "HorariosClase");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    return { status: "success", impacto: { anoLectivo: anoLectivo || "2026", bloquesBorradorCount: 0, docentesAfectadosCount: 0, aulasInvolucradasCount: 0, conflictosCount: 0, conflictos: [] } };
+  }
+
+  const rows = data.slice(1);
+  const drafts = rows.filter(r => r[7] === "Borrador" && (!anoLectivo || String(r[1]).includes(String(anoLectivo))));
+
+  const docentesSet = new Set();
+  const aulasSet = new Set();
+  const conflictos = [];
+
+  drafts.forEach(r => {
+    if (r[6]) docentesSet.add(r[6]);
+    if (r[5]) aulasSet.add(r[5]);
+
+    const c = checkScheduleConflict({
+      diaSemana: r[2],
+      horaInicio: r[3],
+      horaFin: r[4],
+      aulaCodigo: r[5],
+      docenteUserId: r[6],
+      ofertaId: r[1],
+      excludeHorarioId: r[0]
+    });
+
+    if (c.hasConflict) {
+      conflictos.push({ horarioId: r[0], ofertaId: r[1], diaSemana: r[2], reason: c.reason });
+    }
+  });
+
+  logStructuredEvent("ACADEMIC", "previewPublishImpact", "INFO", "PUBLISH_IMPACT_PREVIEWED", `Impacto de publicación analizado para ${drafts.length} borradores.`, { totalBorradores: drafts.length, conflictosCount: conflictos.length }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    impacto: {
+      anoLectivo: anoLectivo || "2026",
+      bloquesBorradorCount: drafts.length,
+      docentesAfectadosCount: docentesSet.size,
+      aulasInvolucradasCount: aulasSet.size,
+      conflictosCount: conflictos.length,
+      conflictos
+    }
   };
 }
 

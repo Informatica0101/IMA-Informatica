@@ -1875,7 +1875,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-14] Fortalecer la publicación y el control de cambios masivos
+### [X] [TAREA-F7-IMP-14] Fortalecer la publicación y el control de cambios masivos
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-14 (P1 · Flujo de Publicación)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Ampliación del flujo de publicación)
@@ -1907,7 +1907,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-90: La confirmación publica únicamente los cambios incluidos en la operación.
   - CA-F7-91: Si la publicación falla, el sistema identifica el estado efectivo y permite completar o resolver la operación sin duplicaciones.
   - CA-F7-92: Las notificaciones se generan a partir de los cambios realmente publicados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
