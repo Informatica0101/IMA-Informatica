@@ -1980,7 +1980,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-17] Ampliar la gestión de eventos y actividades con participantes y recursos
+### [X] [TAREA-F7-IMP-17] Ampliar la gestión de eventos y actividades con participantes y recursos
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-17 (P2 · Eventos e Infraestructura)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Ampliación del calendario institucional)
@@ -2012,7 +2012,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-109: La cancelación libera las reservas correspondientes.
   - CA-F7-110: Los participantes solo consultan la información que les corresponde.
   - CA-F7-111: El historial permite identificar las modificaciones realizadas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

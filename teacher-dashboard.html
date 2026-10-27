@@ -3257,6 +3257,95 @@
         </div>
     </div>
 
+    <!-- [TAREA-F7-IMP-17] [Fase 7: Planificación Académica, Horarios y Recursos] - Modal de Gestión de Eventos y Recursos (#modal-academic-event-manager) -->
+    <div id="modal-academic-event-manager" class="fixed inset-0 z-[110] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-xl w-full p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid font-bold fa-calendar-plus"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">Reserva de Eventos e Infraestructura</h3>
+                        <p class="text-xs text-slate-500">Programación unificada de actos, deportes y reuniones con asignación de aulas y equipos</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('modal-academic-event-manager').classList.add('hidden')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="form-academic-event-manager" onsubmit="window.handleCreateAcademicEventSubmit(event)" class="space-y-4">
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-700 uppercase">Nombre del Evento / Actividad</label>
+                    <input type="text" id="evm-nombre" required placeholder="Ej: Reunión Docente / Torneo Deportivo / Acto Cívico" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Tipo de Actividad</label>
+                        <select id="evm-tipo-dia" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                            <option value="Academico">Académico</option>
+                            <option value="Institucional">Institucional</option>
+                            <option value="Deportivo">Deportivo / Extracurricular</option>
+                            <option value="Suspension">Feriado / Suspensión</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Visibilidad</label>
+                        <select id="evm-visibilidad" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                            <option value="Todos">Público / Todos</option>
+                            <option value="Profesor">Docentes</option>
+                            <option value="Estudiante">Estudiantes y Familias</option>
+                            <option value="Administrador">Solo Administración</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Fecha Inicio</label>
+                        <input type="date" id="evm-fecha-inicio" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Fecha Fin</label>
+                        <input type="date" id="evm-fecha-fin" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Aula / Espacio Reservado</label>
+                        <input type="text" id="evm-aula-codigo" placeholder="Ej: AULA-101 / AUDITORIO-A" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Equipamiento / Recursos</label>
+                        <input type="text" id="evm-recursos" placeholder="Ej: Proyector / Audio / Sillas" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-700 uppercase">Grupos / Participantes Afectados</label>
+                    <input type="text" id="evm-grupos" placeholder="Ej: Todos los docentes / 10mo Grado A y B" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-700 uppercase">Descripción / Observaciones</label>
+                    <textarea id="evm-descripcion" rows="2" placeholder="Detalles de logística, agenda o requerimientos especiales" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-purple-500 focus:outline-none"></textarea>
+                </div>
+
+                <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                    <button type="button" onclick="document.getElementById('modal-academic-event-manager').classList.add('hidden')" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-xs font-bold uppercase hover:bg-slate-200">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="px-5 py-2 bg-purple-600 text-white rounded-xl text-xs font-bold uppercase hover:bg-purple-700 shadow-md">
+                        <i class="fa-solid fa-check mr-1"></i> Reservar Evento
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- [TAREA-F7-IMP-16] [Fase 7: Planificación Académica, Horarios y Recursos] - Modal de Gestión de Sustituciones Docentes (#modal-teacher-substitution) -->
     <div id="modal-teacher-substitution" class="fixed inset-0 z-[110] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-xl w-full p-6 space-y-4">

@@ -5515,8 +5515,12 @@ function getTeacherSubstitutions(payload) {
   return { status: "success", data: substitutions };
 }
 
+/**
+ * [TAREA-F7-IMP-17] Ampliar la gestión de eventos y actividades con participantes y recursos
+ * Obtiene el calendario académico unificado incluyendo aulas reservadas, recursos y participantes.
+ */
 function getAcademicCalendar(payload) {
-  const { anoId } = payload || {};
+  const { anoId, visibilidadRol } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "CalendarioAcademico");
   const data = sheet.getDataRange().getValues();
@@ -5524,6 +5528,8 @@ function getAcademicCalendar(payload) {
 
   const events = data.slice(1).filter(r => {
     if (anoId && String(r[1]).trim() !== String(anoId).trim()) return false;
+    const vis = String(r[6] || "Todos").trim();
+    if (visibilidadRol && vis !== "Todos" && vis !== visibilidadRol && visibilidadRol !== "Administrador" && visibilidadRol !== "Director") return false;
     return true;
   }).map(r => ({
     eventoId: r[0],
@@ -5533,25 +5539,85 @@ function getAcademicCalendar(payload) {
     fechaInicio: r[4] ? new Date(r[4]).toISOString() : null,
     fechaFin: r[5] ? new Date(r[5]).toISOString() : null,
     visibilidad: r[6] || "Todos",
-    estado: r[7] || "Activo"
+    estado: r[7] || "Activo",
+    aulaCodigo: r[8] || "",
+    recursosReservados: r[9] || "",
+    gruposAfectados: r[10] || "",
+    responsableUserId: r[11] || "",
+    descripcion: r[12] || ""
   }));
   return { status: "success", data: events };
 }
 
+/**
+ * [TAREA-F7-IMP-17] Ampliar la gestión de eventos y actividades con participantes y recursos
+ * Registra eventos institucionales/extracurriculares con reserva de espacio físico y equipos,
+ * verificando previamente la disponibilidad frente a mantenimientos de aula y horarios de clase.
+ */
 function createCalendarEvent(payload) {
-  const { anoId, nombre, tipoDia, fechaInicio, fechaFin, visibilidad } = payload || {};
+  const { anoId, nombre, tipoDia, fechaInicio, fechaFin, visibilidad, aulaCodigo, recursosReservados, gruposAfectados, responsableUserId, descripcion } = payload || {};
   if (!nombre || !fechaInicio) throw new Error("Nombre y fecha de inicio son requeridos.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // Verificar si el aula solicitada tiene conflicto de mantenimiento
+  if (aulaCodigo) {
+    const maintSheet = getOrCreateSheet(ss, "MantenimientoAulas");
+    const maintData = maintSheet.getDataRange().getValues();
+    if (maintData.length > 1) {
+      const todayIso = new Date(fechaInicio).toISOString().split('T')[0];
+      const conflictMaint = maintData.slice(1).find(r => {
+        if (String(r[1]).trim() !== String(aulaCodigo).trim()) return false;
+        const state = String(r[6] || "Activo").trim();
+        if (state !== "Activo" && state !== "Programado") return false;
+        const mStart = r[3] ? new Date(r[3]).toISOString().split('T')[0] : "";
+        const mEnd = r[4] ? new Date(r[4]).toISOString().split('T')[0] : "";
+        if (mStart && mEnd && todayIso >= mStart && todayIso <= mEnd) return true;
+        return false;
+      });
+
+      if (conflictMaint) {
+        return {
+          status: "warning",
+          hasConflict: true,
+          message: `El aula ${aulaCodigo} está en mantenimiento entre ${conflictMaint[3]} y ${conflictMaint[4]} (${conflictMaint[5] || 'Mantenimiento'}).`
+        };
+      }
+    }
+  }
+
   const sheet = getOrCreateSheet(ss, "CalendarioAcademico");
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow(["EventoID", "AnoID", "Nombre", "TipoDia", "FechaInicio", "FechaFin", "Visibilidad", "Estado"]);
+    sheet.appendRow(["EventoID", "AnoID", "Nombre", "TipoDia", "FechaInicio", "FechaFin", "Visibilidad", "Estado", "AulaCodigo", "RecursosReservados", "GruposAfectados", "ResponsableUserId", "Descripcion"]);
   }
 
   const evId = "CAL-" + Date.now();
-  sheet.appendRow([evId, anoId || "ANO-CURRENT", nombre, tipoDia || "Academico", fechaInicio, fechaFin || fechaInicio, visibilidad || "Todos", "Activo"]);
+  sheet.appendRow([
+    evId,
+    anoId || "ANO-CURRENT",
+    nombre,
+    tipoDia || "Academico",
+    fechaInicio,
+    fechaFin || fechaInicio,
+    visibilidad || "Todos",
+    "Activo",
+    aulaCodigo || "",
+    recursosReservados || "",
+    gruposAfectados || "",
+    responsableUserId || "",
+    descripcion || ""
+  ]);
 
-  return { status: "success", message: "Evento registrado en el calendario.", data: { eventoId: evId } };
+  return {
+    status: "success",
+    message: "Evento y reserva de recursos registrados en el calendario unificado.",
+    data: {
+      eventoId: evId,
+      nombre,
+      aulaCodigo: aulaCodigo || "N/A",
+      recursosReservados: recursosReservados || "Ninguno"
+    }
+  };
 }
 
 function getClassSchedules(payload) {

@@ -954,3 +954,19 @@ Hallazgos:
 3. Se requiere pre-validar traslapes con `checkScheduleConflict`, calcular la fecha de vencimiento y actualizar los estados automáticos (`Activa`, `Vencida`, `Cancelada`).
 4. Se integrará una interfaz modal en `teacher-dashboard.html` (`#modal-teacher-substitution`) para la selección de oferta, docente sustituto, rango de fechas y motivo con validación de conflictos.
 ===============================================================================
+
+===============================================================================
+AUDITORÍA DE IMPLEMENTACIÓN - TAREA-F7-IMP-17
+===============================================================================
+Fecha: 2025-05-24
+Tarea: [TAREA-F7-IMP-17] Ampliar la gestión de eventos y actividades con participantes y recursos
+Archivos Auditados:
+  - backend/academic-service/Code.gs (Líneas 5520-5560)
+  - teacher-dashboard.html
+  - js/teacher.js
+
+Hallazgos:
+1. La función `createCalendarEvent` en `backend/academic-service/Code.gs` no almacenaba ni comprobaba reservas de espacio físico (`aulaCodigo`), equipamiento (`recursosReservados`) ni participantes (`gruposAfectados`).
+2. Se ampliará `createCalendarEvent` y `getAcademicCalendar` para procesar y almacenar aula, recursos, grupos/participantes y responsable, pre-validando disponibilidad del espacio en `MantenimientoAulas` e `HorariosClase`.
+3. Se agregará la interfaz modal `#modal-academic-event-manager` en `teacher-dashboard.html` y los controladores en `js/teacher.js`.
+===============================================================================

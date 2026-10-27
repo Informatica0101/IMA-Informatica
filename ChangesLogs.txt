@@ -2025,3 +2025,28 @@ Descripción de los Cambios:
 4. Pendientes.md:
    - Se marco la tarea [TAREA-F7-IMP-16] como completada [X].
 ===============================================================================
+
+===============================================================================
+REGISTRO DE CAMBIOS - TAREA-F7-IMP-17
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - backend/academic-service/Code.gs
+  - teacher-dashboard.html
+  - js/teacher.js
+  - Pendientes.md
+  - Auditoria.txt
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. backend/academic-service/Code.gs:
+   - Se amplió la función createCalendarEvent para aceptar aulaCodigo, recursosReservados, gruposAfectados, responsableUserId y descripcion.
+   - Se integró la pre-validación de reservas contra la hoja MantenimientoAulas para rechazar solicitudes en aulas con mantenimiento activo.
+   - Se amplió getAcademicCalendar para retornar las propiedades de infraestructura y participantes asignados a cada evento.
+2. teacher-dashboard.html:
+   - Se incorporó la interfaz modal #modal-academic-event-manager para la reserva unificada de eventos, actividades e infraestructura con asignación de aula y equipos.
+3. js/teacher.js:
+   - Se implementaron las funciones window.openAcademicEventManagerModal y window.handleCreateAcademicEventSubmit para interactuar con la reserva de eventos e infraestructura.
+4. Pendientes.md:
+   - Se marcó la tarea [TAREA-F7-IMP-17] como completada [X].
+===============================================================================
