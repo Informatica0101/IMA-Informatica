@@ -981,3 +981,14 @@ HALLAZGO / REQUERIMIENTO:
 - Se requiere detección de contradicciones entre reglas antes de guardar una nueva restricción.
 - Se requiere una interfaz gráfica modal (#modal-curricular-constraints) en teacher-dashboard.html y controladores JavaScript en js/teacher.js para consultar y gestionar estas restricciones.
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-05-18
+ARCHIVO AUDITADO: backend/academic-service/Code.gs, teacher-dashboard.html, js/teacher.js
+TAREA: [TAREA-F7-IMP-19] Ampliar el control de capacidad y distribución de estudiantes por sección
+HALLAZGO / REQUERIMIENTO:
+- Se requiere implementar getSectionCapacityAnalyticsReport en backend/academic-service/Code.gs que compare el conteo dinámico de matrícula activa por sección (Matriculas) contra el límite administrativo de la sección (OfertaAcademica) y la capacidad física del aula asignada (SedesAulas vía HorariosClase).
+- Se requiere generar alertas preventivas cuando la inscripción supere el cupo físico del espacio o el límite administrativo, y listar aulas alternativas compatibles (con capacidad >= matrícula activa).
+- Se requiere registrar el permiso en ROLE_PERMISSIONS y la ruta en doPost.
+- Se requiere maquetar el modal #modal-section-capacity-control en teacher-dashboard.html y agregar los controladores JavaScript openSectionCapacityControlModal y loadSectionCapacityControlData en js/teacher.js.
+===============================================================================

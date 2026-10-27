@@ -1164,10 +1164,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="flex items-center gap-2">
                                 <span class="font-black text-indigo-700 text-xs">${c.restriccionId}</span>
                                 <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${c.tipoRestriccion === 'CoRequisitoSimultaneo' ? 'bg-purple-100 text-purple-800' : (c.tipoRestriccion === 'ExclusividadHoraria' ? 'bg-rose-100 text-rose-800' : 'bg-indigo-100 text-indigo-800')}">${c.tipoRestriccion}</span>
-                                <span class="text-[10px] text-slate-400">${c.reglaRegimen || 'Obligatorio'}</span>
+                                <span class="text-[10px] text-slate-400">${c.regimen || c.reglaRegimen || 'Obligatorio'}</span>
                             </div>
                             <p class="text-slate-700 text-xs font-semibold mt-1">
-                                <span class="text-indigo-600">${c.asignaturaIdOrigen}</span> ↔ <span class="text-indigo-600">${c.asignaturaIdDestino}</span>
+                                <span class="text-indigo-600">${c.asignaturaOrigenId || c.asignaturaIdOrigen}</span> ↔ <span class="text-indigo-600">${c.asignaturaDestinoId || c.asignaturaIdDestino}</span>
                             </p>
                             <p class="text-[10px] text-slate-400">Ámbito: ${c.ambito || 'Seccion'} ${c.grado ? '| ' + c.grado : ''} ${c.seccion ? 'Sección ' + c.seccion : ''}</p>
                         </div>
