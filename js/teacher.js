@@ -1139,6 +1139,100 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // [TAREA-F7-IMP-22] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de modal de plantillas de horarios y reutilización controlada
+    window.openScheduleTemplatesModal = function() {
+        const modal = document.getElementById('modal-schedule-templates');
+        if (modal) modal.classList.remove('hidden');
+        window.loadScheduleTemplatesList();
+    };
+
+    window.loadScheduleTemplatesList = async function() {
+        const container = document.getElementById('schedule-templates-list-container');
+        if (!container) return;
+        container.innerHTML = '<p class="text-slate-400 italic text-center p-3">Cargando plantillas de horarios...</p>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getScheduleTemplates', {});
+            const tplList = res && res.status === 'success' ? (res.plantillas || res.data || []) : [];
+            if (res && res.status === 'success' && Array.isArray(tplList)) {
+                if (tplList.length === 0) {
+                    container.innerHTML = '<p class="text-slate-400 italic text-center p-3 bg-slate-50 rounded-2xl border border-slate-200">No hay plantillas de horario guardadas.</p>';
+                    return;
+                }
+
+                container.innerHTML = tplList.map(t => `
+                    <div class="p-3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 hover:border-teal-200 transition">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-black text-teal-700 text-xs">${t.nombrePlantilla}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-100 text-teal-800">${t.grado} - ${t.seccion}</span>
+                            </div>
+                            <p class="text-[10px] text-slate-400 mt-1">ID: ${t.plantillaId} | Creado por: ${t.usuarioCreacion || 'Sistema'}</p>
+                        </div>
+                        <button onclick="window.promptApplyScheduleTemplate('${t.plantillaId}', '${t.grado}', '${t.seccion}')" class="px-3 py-1 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-[11px] font-bold shadow-sm">
+                            <i class="fa-solid fa-clone mr-1"></i> Aplicar Plantilla
+                        </button>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<p class="text-rose-500 italic text-center p-3">Error al recuperar plantillas.</p>';
+            }
+        } catch (err) {
+            console.error('Error al cargar plantillas:', err);
+            container.innerHTML = '<p class="text-rose-500 italic text-center p-3">Error de comunicación con el servicio.</p>';
+        }
+    };
+
+    window.handleSaveScheduleTemplateSubmit = async function(e) {
+        if (e) e.preventDefault();
+        const payload = {
+            nombrePlantilla: document.getElementById('tpl-name')?.value,
+            grado: document.getElementById('tpl-grado')?.value,
+            seccion: document.getElementById('tpl-seccion')?.value,
+            anolectivo: '2026'
+        };
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'saveScheduleTemplate', payload);
+            if (res && res.status === 'success') {
+                alert('Plantilla guardada exitosamente.');
+                document.getElementById('form-save-schedule-template')?.reset();
+                window.loadScheduleTemplatesList();
+            } else {
+                alert('Error al guardar plantilla: ' + (res?.message || 'Error desconocido'));
+            }
+        } catch (err) {
+            console.error('Error al guardar plantilla:', err);
+            alert('Error de conexión: ' + err.message);
+        }
+    };
+
+    window.promptApplyScheduleTemplate = async function(plantillaId, defaultGrado, defaultSeccion) {
+        const targetGrado = prompt('Ingrese el grado de destino:', defaultGrado);
+        if (!targetGrado) return;
+        const targetSeccion = prompt('Ingrese la sección de destino:', defaultSeccion);
+        if (!targetSeccion) return;
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'applyScheduleTemplate', {
+                plantillaId,
+                targetGrado,
+                targetSeccion,
+                previsualizar: false
+            });
+
+            if (res && res.status === 'success') {
+                alert(res.message || 'Plantilla aplicada exitosamente.');
+                if (typeof window.loadTeacherSchedulesList === 'function') window.loadTeacherSchedulesList();
+            } else {
+                alert('Error al aplicar plantilla: ' + (res?.message || 'Error desconocido'));
+            }
+        } catch (err) {
+            console.error('Error al aplicar plantilla:', err);
+            alert('Error de conexión: ' + err.message);
+        }
+    };
+
     // [TAREA-F7-IMP-21] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de modal de bitácora de auditoría operativa y trazabilidad
     window.openAcademicAuditLogsModal = function() {
         const modal = document.getElementById('modal-academic-audit-logs');

@@ -1015,3 +1015,14 @@ HALLAZGO / REQUERIMIENTO:
 - Se deben ofrecer filtros multi-criterio por usuario actor, tipo de operación, estado (Exitosa/Fallida/Conflicto), período y rango de fechas.
 - Se requiere maquetar el modal #modal-academic-audit-logs en teacher-dashboard.html y los controladores openAcademicAuditLogsModal y loadAcademicPlanningAuditLogs en js/teacher.js.
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-05-18
+ARCHIVO AUDITADO: backend/academic-service/Code.gs, teacher-dashboard.html, js/teacher.js
+TAREA: [TAREA-F7-IMP-22] Ampliar la planificación mediante plantillas y reutilización controlada de horarios
+HALLAZGO / REQUERIMIENTO:
+- Se requiere la creación de la tabla PlantillasHorarios en Google Sheets y la implementación de los endpoints saveScheduleTemplate, getScheduleTemplates y applyScheduleTemplate en backend/academic-service/Code.gs.
+- Se debe permitir guardar la estructura de bloques horarios semanales por grado/sección/período como plantilla reusable sin alterar la versión original.
+- Se requiere pre-validar las asignaciones de aula y docente contra el período de destino con modo previsualización (previsualizar: true) e identificar conflictos o recursos no disponibles antes de confirmar.
+- Se requiere maquetar el modal #modal-schedule-templates en teacher-dashboard.html y los controladores JS en js/teacher.js.
+===============================================================================

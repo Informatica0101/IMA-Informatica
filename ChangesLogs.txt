@@ -2156,3 +2156,29 @@ Descripción de los Cambios:
 4. Pendientes.md:
    - Se actualizó el estado de [TAREA-F7-IMP-21] a completado [X].
 ===============================================================================
+
+REGISTRO DE CAMBIOS - TAREA-F7-IMP-22
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - backend/academic-service/Code.gs
+  - teacher-dashboard.html
+  - js/teacher.js
+  - Pendientes.md
+  - Auditoria.txt
+  - MapaDependencias.md
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. backend/academic-service/Code.gs:
+   - Se implementaron las funciones saveScheduleTemplate, getScheduleTemplates y applyScheduleTemplate con la tabla PlantillasHorarios para almacenar estructuras horarias semanales reusables.
+   - Se integró la previsualización y pre-validación de conflictos (previsualizar: true) antes de crear bloques clonados en borrador.
+   - Se registraron las acciones en ROLE_PERMISSIONS y las rutas en doPost.
+2. teacher-dashboard.html:
+   - Se agregó el botón "Plantillas" en la botonera del panel de horarios.
+   - Se maquetó el modal #modal-schedule-templates.
+3. js/teacher.js:
+   - Se agregaron los controladores openScheduleTemplatesModal, loadScheduleTemplatesList, handleSaveScheduleTemplateSubmit y promptApplyScheduleTemplate.
+4. Pendientes.md:
+   - Se actualizó el estado de [TAREA-F7-IMP-22] a completado [X].
+===============================================================================

@@ -238,6 +238,9 @@ const ROLE_PERMISSIONS = {
     "getSectionCapacityAnalyticsReport",
     "invalidateScheduleCache",
     "getAcademicPlanningAuditLogs",
+    "saveScheduleTemplate",
+    "getScheduleTemplates",
+    "applyScheduleTemplate",
     "saveCurricularConstraint", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule", "getReusableResourceCatalog", "manageReusableResource",
     "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentEnrollments",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
@@ -635,6 +638,15 @@ function doPost(e) {
       case "createTeacherSubstitution": result = createTeacherSubstitution(payload); break;
       case "getTeacherSubstitutions": result = getTeacherSubstitutions(payload); break;
       case "getDepartmentAcademicPlanning": result = getDepartmentAcademicPlanning(payload); break;
+      case "saveScheduleTemplate":
+        result = saveScheduleTemplate(payload);
+        break;
+      case "getScheduleTemplates":
+        result = getScheduleTemplates(payload);
+        break;
+      case "applyScheduleTemplate":
+        result = applyScheduleTemplate(payload);
+        break;
       case "getAcademicPlanningAuditLogs":
         result = getAcademicPlanningAuditLogs(payload);
         break;
@@ -10838,5 +10850,219 @@ function getAcademicPlanningAuditLogs(payload) {
       status: "error",
       message: "Error al consultar bitácora de auditoría de planificación: " + error.message
     };
+  }
+}
+
+
+// [TAREA-F7-IMP-22] [Fase 7: Planificación Académica, Horarios y Recursos] - Guardar estructura de distribución horaria semanal como plantilla reusable
+function saveScheduleTemplate(payload) {
+  try {
+    if (!payload || !payload.nombrePlantilla || !payload.grado || !payload.seccion) {
+      return { status: "error", message: "Faltan parámetros requeridos (nombrePlantilla, grado, seccion)." };
+    }
+
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheetT = ss.getSheetByName("PlantillasHorarios");
+    if (!sheetT) {
+      sheetT = ss.insertSheet("PlantillasHorarios");
+      sheetT.appendRow(["PlantillaID", "NombrePlantilla", "Grado", "Seccion", "AnoBase", "EstructuraJSON", "Estado", "FechaCreacion", "UsuarioCreacion"]);
+      sheetT.getRange(1, 1, 1, 9).setFontWeight("bold").setBackground("#e2e8f0");
+      sheetT.setFrozenRows(1);
+    }
+
+    var sheetH = ss.getSheetByName("HorariosClase");
+    var bloques = [];
+    if (sheetH) {
+      var dataH = sheetH.getDataRange().getValues();
+      for (var h = 1; h < dataH.length; h++) {
+        var rowH = dataH[h];
+        var gr = (rowH[7] || rowH[8] || "").toString().trim();
+        var sec = (rowH[8] || rowH[9] || "").toString().trim();
+        var st = (rowH[9] || rowH[10] || "Activo").toString().trim();
+
+        if (st !== "Cancelado" && gr === payload.grado && sec === payload.seccion) {
+          bloques.push({
+            materia: rowH[1],
+            diaSemana: rowH[2],
+            horaInicio: rowH[3],
+            horaFin: rowH[4],
+            aulaCodigo: rowH[5],
+            docenteUserId: rowH[6]
+          });
+        }
+      }
+    }
+
+    var plantillaId = "PLANT_SCHED_" + Date.now();
+    var nowIso = new Date().toISOString();
+
+    sheetT.appendRow([
+      plantillaId,
+      payload.nombrePlantilla.toString().trim(),
+      payload.grado.toString().trim(),
+      payload.seccion.toString().trim(),
+      (payload.anolectivo || "2026").toString().trim(),
+      JSON.stringify(bloques),
+      "Activo",
+      nowIso,
+      (payload.userId || payload.usuario || "Sistema").toString().trim()
+    ]);
+
+    return {
+      status: "success",
+      message: "Plantilla de horario guardada exitosamente con " + bloques.length + " bloques.",
+      plantillaId: plantillaId,
+      bloquesContados: bloques.length
+    };
+  } catch (error) {
+    Logger.log("Error en saveScheduleTemplate: " + error.message);
+    return { status: "error", message: "Error al guardar plantilla de horario: " + error.message };
+  }
+}
+
+// [TAREA-F7-IMP-22] [Fase 7: Planificación Académica, Horarios y Recursos] - Consultar plantillas de horario registradas
+function getScheduleTemplates(payload) {
+  try {
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheetT = ss.getSheetByName("PlantillasHorarios");
+    var plantillas = [];
+
+    if (sheetT) {
+      var dataT = sheetT.getDataRange().getValues();
+      for (var i = 1; i < dataT.length; i++) {
+        var row = dataT[i];
+        if (row[0] && row[6] === "Activo") {
+          plantillas.push({
+            plantillaId: row[0],
+            nombrePlantilla: row[1],
+            grado: row[2],
+            seccion: row[3],
+            anoBase: row[4],
+            estructuraJson: row[5],
+            estado: row[6],
+            fechaCreacion: row[7],
+            usuarioCreacion: row[8]
+          });
+        }
+      }
+    }
+
+    return {
+      status: "success",
+      plantillas: plantillas,
+      data: plantillas,
+      totalCount: plantillas.length
+    };
+  } catch (error) {
+    Logger.log("Error en getScheduleTemplates: " + error.message);
+    return { status: "error", message: "Error al consultar plantillas de horario: " + error.message };
+  }
+}
+
+// [TAREA-F7-IMP-22] [Fase 7: Planificación Académica, Horarios y Recursos] - Aplicar plantilla de horario con previsualización y validación en período de destino
+function applyScheduleTemplate(payload) {
+  try {
+    if (!payload || !payload.plantillaId || !payload.targetGrado || !payload.targetSeccion) {
+      return { status: "error", message: "Faltan parámetros requeridos (plantillaId, targetGrado, targetSeccion)." };
+    }
+
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheetT = ss.getSheetByName("PlantillasHorarios");
+    if (!sheetT) return { status: "error", message: "No existen plantillas de horario registradas." };
+
+    var dataT = sheetT.getDataRange().getValues();
+    var targetTemplate = null;
+    for (var i = 1; i < dataT.length; i++) {
+      if (dataT[i][0] === payload.plantillaId) {
+        targetTemplate = dataT[i];
+        break;
+      }
+    }
+
+    if (!targetTemplate) return { status: "error", message: "Plantilla no encontrada." };
+
+    var bloques = JSON.parse(targetTemplate[5] || "[]");
+    var previsualizar = Boolean(payload.previsualizar);
+    var conflictos = [];
+    var bloquesClonados = [];
+
+    for (var b = 0; b < bloques.length; b++) {
+      var blk = bloques[b];
+      var confCheck = checkScheduleConflict({
+        grado: payload.targetGrado,
+        seccion: payload.targetSeccion,
+        diaSemana: blk.diaSemana,
+        horaInicio: blk.horaInicio,
+        horaFin: blk.horaFin,
+        aulaCodigo: blk.aulaCodigo,
+        docenteUserId: blk.docenteUserId,
+        materia: blk.materia
+      });
+
+      if (confCheck && confCheck.hasConflict) {
+        conflictos.push({
+          bloqueIndex: b,
+          materia: blk.materia,
+          diaSemana: blk.diaSemana,
+          horaInicio: blk.horaInicio,
+          detalles: confCheck.conflictos
+        });
+      }
+
+      bloquesClonados.push({
+        materia: blk.materia,
+        diaSemana: blk.diaSemana,
+        horaInicio: blk.horaInicio,
+        horaFin: blk.horaFin,
+        aulaCodigo: blk.aulaCodigo,
+        docenteUserId: blk.docenteUserId,
+        grado: payload.targetGrado,
+        seccion: payload.targetSeccion,
+        estado: "Borrador"
+      });
+    }
+
+    if (previsualizar) {
+      return {
+        status: "success",
+        modo: "previsualizacion",
+        conflictosCount: conflictos.length,
+        conflictos: conflictos,
+        bloquesAClonarCount: bloquesClonados.length,
+        bloquesClonados: bloquesClonados
+      };
+    }
+
+    var sheetH = ss.getSheetByName("HorariosClase");
+    if (!sheetH) sheetH = ss.insertSheet("HorariosClase");
+
+    for (var c = 0; c < bloquesClonados.length; c++) {
+      var itemC = bloquesClonados[c];
+      sheetH.appendRow([
+        "HOR_" + Date.now() + "_" + c,
+        itemC.materia,
+        itemC.diaSemana,
+        itemC.horaInicio,
+        itemC.horaFin,
+        itemC.aulaCodigo,
+        itemC.docenteUserId,
+        itemC.grado,
+        itemC.seccion,
+        "Borrador",
+        new Date().toISOString()
+      ]);
+    }
+
+    invalidateScheduleCache();
+
+    return {
+      status: "success",
+      message: "Plantilla aplicada exitosamente. Se crearon " + bloquesClonados.length + " bloques en borrador.",
+      conflictosCount: conflictos.length,
+      bloquesClonadosCount: bloquesClonados.length
+    };
+  } catch (error) {
+    Logger.log("Error en applyScheduleTemplate: " + error.message);
+    return { status: "error", message: "Error al aplicar plantilla de horario: " + error.message };
   }
 }

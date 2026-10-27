@@ -2154,7 +2154,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-22] Ampliar la planificación mediante plantillas y reutilización controlada de horarios
+### [X] [TAREA-F7-IMP-22] Ampliar la planificación mediante plantillas y reutilización controlada de horarios
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-22 (P2 · Plantillas de Horario)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Nueva herramienta de productividad)

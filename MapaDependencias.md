@@ -92,3 +92,8 @@
 - **Endpoint:** `getAcademicPlanningAuditLogs` (Consolidación de trazabilidad operacional desde `HistorialCambiosEntidad` y `BitacoraTraceability`).
 - **Control de Acceso:** Restricción a roles autorizados (Administrador, Director, Subdirector, Coordinador, Desarrollador) en `ROLE_PERMISSIONS`.
 - **Interfaz y Modal:** `#modal-academic-audit-logs` en `teacher-dashboard.html` y controladores `openAcademicAuditLogsModal` y `loadAcademicPlanningAuditLogs` en `js/teacher.js`.
+
+### 2.11 Plantillas de Horarios y Reutilización Controlada (Fase 7 - TAREA-F7-IMP-22)
+- **Tabla PlantillasHorarios:** Almacenamiento de estructuras semanales de distribución de asignaturas (`PlantillaID`, `NombrePlantilla`, `Grado`, `Seccion`, `AnoBase`, `EstructuraJSON`, `Estado`).
+- **Endpoints:** `saveScheduleTemplate`, `getScheduleTemplates`, `applyScheduleTemplate` (con modo previsualización y verificación de conflictos sin sobreescribir la plantilla original).
+- **Interfaz y Modal:** `#modal-schedule-templates` en `teacher-dashboard.html` y controladores `openScheduleTemplatesModal`, `loadScheduleTemplatesList`, `handleSaveScheduleTemplateSubmit` y `promptApplyScheduleTemplate` en `js/teacher.js`.
