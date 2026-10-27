@@ -859,3 +859,18 @@ Auditoría inicial e inspección de archivos para TAREA-F7-IMP-10:
   - Se implementará la función `window.loadScheduleChangeNotificationLogs` antecedida por la etiqueta identificativa `[TAREA-F7-IMP-10]`.
 - Pendientes.md:
   - Se actualizará el estado de la TAREA-F7-IMP-10 a `[X] Completado`.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-11] Fortalecer la coherencia y actualización de los portales relacionados
+-------------------------------------------------------------------------------
+Auditoría inicial e inspección de archivos para TAREA-F7-IMP-11:
+- backend/academic-service/Code.gs:
+  - Inspeccionadas las funciones `getStudentSchedule` y `getClassSchedules`.
+  - Se actualizarán para inyectar metadatos de sincronización (`lastSyncTime`, `freshnessToken`, `totalActiveSlots`), omitiendo bloques cancelados/inactivos a menos que se indique `includeInactive=true`.
+- js/student.js / js/teacher.js:
+  - En `js/student.js`, la función `fetchAndRenderStudentSchedule` se ampliará para mostrar la marca de frescura de datos con distintivo de tiempo relativo, botón de refresco manual de la vista y manejo seguro de estados de error.
+  - En `js/teacher.js`, la función `loadMasterSchedules` se actualizará con validación del token de frescura y eliminación de registros obsoletos/inactivos.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-11 a `[X] Completado`.

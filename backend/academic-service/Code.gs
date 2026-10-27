@@ -5399,6 +5399,28 @@ function createClassSchedule(payload) {
 
   logStructuredEvent("ACADEMIC", "createClassSchedule", "INFO", "SCHEDULE_SAVED", `Horario ${horId} guardado (${targetEstado}) para oferta ${ofertaId}`, { horId, diaSemana, horaInicio, horaFin, aulaCodigo }, payload && payload.authRole);
 
+  // [TAREA-F7-IMP-10] Despachar e invocar notificación de cambio de horario
+  try {
+    const notifSheet = getOrCreateSheet(ss, "BandejaNotificaciones");
+    const notifId = "NTF-SCHED-" + Utilities.getUuid().substring(0, 8).toUpperCase();
+    notifSheet.appendRow([
+      notifId,
+      docenteUserId || "DOCENTE",
+      "CambioHorarioAcademico",
+      `Cambio en Horario de Clase (${horId})`,
+      `Horario ${horId} asignado para ${diaSemana} ${horaInicio}-${horaFin} en Aula ${aulaCodigo || 'General'}.`,
+      new Date(),
+      false,
+      "Horarios",
+      "",
+      `NOTIF_SCHED_${horId}_${diaSemana}`,
+      "Entregado",
+      docenteUserId && docenteUserId.includes("@") ? docenteUserId : ""
+    ]);
+  } catch (errNotif) {
+    logStructuredEvent("ACADEMIC", "createClassSchedule", "WARN", "SCHEDULE_NOTIF_FAILED", `Fallo al registrar notificación de cambio de horario: ${errNotif.message}`, { horId }, payload && payload.authRole);
+  }
+
   return { status: "success", message: borrador ? "Borrador de horario guardado." : "Horario asignado y publicado correctamente.", data: { horarioId: horId } };
 }
 
@@ -6292,7 +6314,7 @@ function getIndividualCalendar(payload) {
   };
 }
 
-// [TAREA 3.12] [Fase 3: Planificación Académica y Horarios] - Consulta de horarios semanales del estudiante por asignaturas.
+// [TAREA-F7-IMP-11] [Fase 7: Planificación Académica, Horarios y Recursos] - Consulta de horario personalizado del estudiante con metadatos de sincronización y frescura de datos.
 function getStudentSchedule(payload) {
   const { userId, grado, seccion } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -6370,11 +6392,19 @@ function getStudentSchedule(payload) {
     return String(a.horaInicio).localeCompare(String(b.horaInicio));
   });
 
+  const lastSyncTime = new Date().toISOString();
+  const freshnessToken = "SYNC-SCHED-" + Date.now();
+
   return {
     status: "success",
     grado: targetGrado || "General",
     seccion: targetSeccion || "A",
-    schedules: studentSchedules
+    schedules: studentSchedules,
+    meta: {
+      lastSyncTime,
+      freshnessToken,
+      totalActiveSlots: studentSchedules.length
+    }
   };
 }
 

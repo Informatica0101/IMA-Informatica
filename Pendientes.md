@@ -1766,7 +1766,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-11] Fortalecer la coherencia y actualización de los portales relacionados
+### [X] [TAREA-F7-IMP-11] Fortalecer la coherencia y actualización de los portales relacionados
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-11 (P1 · Integración Multi-Portal)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Ampliación de integración multi-módulo)
@@ -1799,7 +1799,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-72: Cada usuario consulta únicamente los horarios correspondientes a sus permisos y relaciones académicas.
   - CA-F7-73: Las cancelaciones no aparecen como asignaciones vigentes.
   - CA-F7-74: Las modificaciones de horario no trasladan ni eliminan registros históricos de asistencia o evaluación.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

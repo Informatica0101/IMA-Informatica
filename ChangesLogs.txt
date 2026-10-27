@@ -1941,3 +1941,14 @@ Descripción objetiva:
 - Creadas las funciones `dispatchScheduleChangeNotifications` y `getScheduleChangeNotificationLogs` en `backend/user-service/Code.gs` e integradas en `ROLE_PERMISSIONS` y enrutador `doPost` para el despacho estandarizado de avisos por cambios de horario con deduplicación preventiva (`NOTIF_SCHED_<id>_<timestamp>`), seguimiento de entrega y aislamiento de fallos de correo.
 - Incorporado el controlador UI `window.loadScheduleChangeNotificationLogs` en `js/secretary.js` con la etiqueta identificativa `[TAREA-F7-IMP-10]`.
 - Actualizado el estado de [TAREA-F7-IMP-10] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 6295-6385)
+- js/student.js (Líneas 841-875)
+- Pendientes.md (Línea 1769)
+Descripción objetiva:
+- Actualizada la función `getStudentSchedule` en `backend/academic-service/Code.gs` para inyectar metadatos de sincronización (`lastSyncTime`, `freshnessToken`, `totalActiveSlots`).
+- Ampliada la función `window.fetchAndRenderStudentSchedule` en `js/student.js` con la etiqueta identificativa `[TAREA-F7-IMP-11]`, agregando distintivo visual de tiempo relativo de sincronización y botón de actualización bajo demanda.
+- Actualizado el estado de [TAREA-F7-IMP-11] a Completado en Pendientes.md.

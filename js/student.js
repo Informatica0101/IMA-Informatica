@@ -840,7 +840,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function fetchAndRenderStudentSchedule() {
+    // [TAREA-F7-IMP-11] [Fase 7: Planificación Académica, Horarios y Recursos] - Sincronización coherente de horarios en el Portal Familiar con frescura de datos y actualización bajo demanda.
+    window.fetchAndRenderStudentSchedule = function fetchAndRenderStudentSchedule() {
         var container = document.getElementById('student-schedule-container');
         if (!container || !currentUser || !currentUser.userId) return;
 
@@ -853,18 +854,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }).then(function(res) {
             if (res && res.status === 'success' && Array.isArray(res.schedules)) {
                 var schedules = res.schedules;
+                var meta = res.meta || {};
                 var days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
 
                 if (schedules.length === 0) {
                     container.innerHTML = `
                         <div class="col-span-5 text-center py-8 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
-                            No hay bloques de horario oficial publicados para ${currentUser.grado} Sección ${currentUser.seccion}.
+                            No hay bloques de horario oficial publicados para ${currentUser.grado || 'Estudiante'} Sección ${currentUser.seccion || ''}.
                         </div>
                     `;
                     return;
                 }
 
-                var html = '';
+                var syncTimeStr = meta.lastSyncTime ? new Date(meta.lastSyncTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Ahora';
+                var html = `
+                    <div class="col-span-5 flex justify-between items-center mb-2 px-2 py-1 bg-indigo-50/60 rounded-xl border border-indigo-100 text-[10px] font-bold text-indigo-700">
+                        <span><i class="fa-solid fa-rotate mr-1"></i>Sincronizado: ${syncTimeStr} (${schedules.length} clases activas)</span>
+                        <button onclick="window.fetchAndRenderStudentSchedule()" class="hover:text-indigo-900 transition"><i class="fa-solid fa-arrows-rotate mr-1"></i> Actualizar Horario</button>
+                    </div>
+                `;
+
                 days.forEach(function(day) {
                     var daySchedules = schedules.filter(function(s) {
                         return s.diaSemana.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") === day.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
