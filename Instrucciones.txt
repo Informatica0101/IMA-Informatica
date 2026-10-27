@@ -428,3 +428,20 @@ ANEXO DE TAREAS REGISTRADO EN PENDIENTES.MD
 - [TAREA-CAL-01] Accesibilidad y usabilidad WCAG
 - [TAREA-CAL-02] Rendimiento y mantenibilidad
 ===============================================================================
+
+===============================================================================
+ANEXO TÉCNICO DE ARQUITECTURA REGISTRADO EN PENDIENTES.MD
+- [TAREA-ARQ-01] Independencia funcional y comunicación entre roles
+- [TAREA-ARQ-02] Identificadores estables y columnas comunes de control
+- [TAREA-ARQ-03] Hojas estandarizadas de eventos, errores y auditoría
+- [TAREA-ARQ-04] Spreadsheet central de configuración y aprovisionamiento
+- [TAREA-ARQ-05] Catálogo de Spreadsheets funcionales por rol
+- [TAREA-ARQ-06] Modelo común de comunicaciones institucionales
+- [TAREA-ARQ-07] Aprovisionamiento automático y migración de esquemas
+- [TAREA-ARQ-08] Independencia de servicios, seguridad Drive y límites
+===============================================================================
+
+===============================================================================
+DOCUMENTACIÓN DE ESQUEMAS DE SPREADSHEETS ACTUALES
+- Registrado esquema de tablas de Spreadsheets en docs/architecture/spreadsheets-schema.md y MapaDependencias.md.
+===============================================================================

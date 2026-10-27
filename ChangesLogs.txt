@@ -2284,3 +2284,39 @@ Descripción de los Cambios:
 3. Instrucciones.txt:
    - Se registraron los identificadores del anexo en la lista de seguimiento.
 ===============================================================================
+
+REGISTRO DE CAMBIOS - INTEGRACIÓN DE ANEXO TÉCNICO EN PENDIENTES.MD
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - Pendientes.md
+  - Auditoria.txt
+  - ChangesLogs.txt
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. Pendientes.md:
+   - Se registraron e integraron las 8 tareas del anexo técnico de arquitectura (TAREA-ARQ-01 a TAREA-ARQ-08) estructuradas en prioridad P1.
+   - Se incluyó la nota explícita de arquitectura aclarando el carácter de ejemplo recomendable para las estructuras de carpetas y spreadsheets en TAREA-MOD-02, TAREA-ARQ-05 y TAREA-ARQ-07.
+2. Auditoria.txt:
+   - Se agregó la entrada de auditoría para la integración del anexo técnico.
+3. Instrucciones.txt:
+   - Se agregaron los identificadores TAREA-ARQ-01 a TAREA-ARQ-08 a la lista de seguimiento.
+===============================================================================
+
+REGISTRO DE CAMBIOS - DOCUMENTACIÓN DE ESQUEMAS DE SPREADSHEETS ACTUALES
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - docs/architecture/spreadsheets-schema.md
+  - MapaDependencias.md
+  - Auditoria.txt
+  - ChangesLogs.txt
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. docs/architecture/spreadsheets-schema.md:
+   - Se creó el documento con el inventario completo de tablas, esquemas y columnas de los Spreadsheets de los 6 microservicios (ACADEMIC, USER, TASK, EXAM, ACCOUNTING, DEVELOPER) previo a la ejecución del anexo.
+2. MapaDependencias.md:
+   - Se añadió la sección de esquemas actuales con la nota aclaratoria de arquitectura.
+===============================================================================

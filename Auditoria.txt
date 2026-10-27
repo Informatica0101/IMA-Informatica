@@ -31,3 +31,27 @@ DESCRIPCIÓN DE REGISTRO:
   * Fase E (Calidad y rendimiento): TAREA-CAL-01, TAREA-CAL-02.
 - Clasificación ordenada por prioridades (P1, P2) con requerimientos y criterios de aceptación estandarizados.
 ===============================================================================
+===============================================================================
+FECHA: 2025-05-24
+REGISTRO DE BACKLOG - ANEXO TÉCNICO DE ARQUITECTURA DE ROLES Y BASES DE DATOS
+ARCHIVOS AFECTADOS: Pendientes.md, Auditoria.txt, ChangesLogs.txt, Instrucciones.txt
+DESCRIPCIÓN DE REGISTRO:
+- Se registraron e integraron las 8 tareas del anexo técnico de arquitectura a Pendientes.md:
+  * TAREA-ARQ-01: Principios de independencia funcional y comunicación entre roles.
+  * TAREA-ARQ-02: Convenciones de identificadores estables y columnas comunes de control.
+  * TAREA-ARQ-03: Hojas estandarizadas de EventosSistema, ErroresSistema y AuditoriaCambios.
+  * TAREA-ARQ-04: Spreadsheet central de configuración y aprovisionamiento.
+  * TAREA-ARQ-05: Catálogo de Spreadsheets funcionales por rol institucional.
+  * TAREA-ARQ-06: Modelo común de comunicaciones institucionales y solicitudes.
+  * TAREA-ARQ-07: Aprovisionamiento automático, versionado de esquemas y migración.
+  * TAREA-ARQ-08: Independencia de servicios backend, seguridad Drive y límites.
+- Incorporación de nota aclaratoria de arquitectura obligatoria en TAREA-MOD-02, TAREA-ARQ-05 y TAREA-ARQ-07.
+===============================================================================
+===============================================================================
+FECHA: 2025-05-24
+DOCUMENTACIÓN DE ESQUEMAS ACTUALES DE SPREADSHEETS
+ARCHIVOS AFECTADOS: docs/architecture/spreadsheets-schema.md, MapaDependencias.md, Auditoria.txt, ChangesLogs.txt, Instrucciones.txt
+DESCRIPCIÓN DE REGISTRO:
+- Se documentaron de manera exhaustiva las estructuras de tablas y columnas actualmente operativas en la plataforma antes de la ejecución de las tareas del anexo técnico.
+- Se creó el documento de referencia docs/architecture/spreadsheets-schema.md y se actualizó MapaDependencias.md incorporando la aclaración de arquitectura obligatoria sobre el carácter recomendable y no obligatorio de las estructuras de los anexos.
+===============================================================================
