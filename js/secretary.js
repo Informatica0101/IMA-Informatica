@@ -451,6 +451,270 @@ window.recordInterviewOutcomeAction = async function(entrevistaId, estado) {
     }
 };
 
+/*
+ * [TAREA-F7-IMP-17] [Fase 7: Planificación Académica, Horarios y Recursos]
+ * Módulo de Gestión de Eventos, Actividades e Infraestructura para Secretaría, Coordinación y Dirección.
+ */
+window.openAcademicEventManagerModal = function(defaultTipo = "Academico") {
+    const modal = document.getElementById('modal-academic-event-manager');
+    if (!modal) return;
+
+    const tipoSelect = document.getElementById('evm-tipo-dia');
+    const inicioInput = document.getElementById('evm-fecha-inicio');
+
+    if (tipoSelect) tipoSelect.value = defaultTipo || "Academico";
+    if (inicioInput) inicioInput.value = new Date().toISOString().split('T')[0];
+
+    modal.classList.remove('hidden');
+};
+
+window.handleCreateAcademicEventSubmit = async function(e) {
+    if (e) e.preventDefault();
+
+    const nombre = document.getElementById('evm-nombre')?.value?.trim();
+    const tipoDia = document.getElementById('evm-tipo-dia')?.value;
+    const visibilidad = document.getElementById('evm-visibilidad')?.value;
+    const fechaInicio = document.getElementById('evm-fecha-inicio')?.value;
+    const fechaFin = document.getElementById('evm-fecha-fin')?.value;
+    const aulaCodigo = document.getElementById('evm-aula-codigo')?.value?.trim();
+    const recursosReservados = document.getElementById('evm-recursos')?.value?.trim();
+    const gruposAfectados = document.getElementById('evm-grupos')?.value?.trim();
+    const descripcion = document.getElementById('evm-descripcion')?.value?.trim();
+
+    if (!nombre || !fechaInicio) {
+        alert("Por favor ingrese el nombre del evento y la fecha de inicio.");
+        return;
+    }
+
+    try {
+        if (window.showLoading) window.showLoading("Procesando reserva de evento y recursos...");
+        const res = await window.fetchApi('ACADEMIC', 'createCalendarEvent', {
+            anoId: 'ANO-CURRENT',
+            nombre,
+            tipoDia,
+            fechaInicio,
+            fechaFin: fechaFin || fechaInicio,
+            visibilidad,
+            aulaCodigo,
+            recursosReservados,
+            gruposAfectados,
+            responsableUserId: (window.currentUser ? window.currentUser.nombre || window.currentUser.userId : 'Secretaría'),
+            descripcion
+        });
+        if (window.hideLoading) window.hideLoading();
+
+        if (res && res.status === 'warning' && res.hasConflict) {
+            alert(`Advertencia de Reserva:\n${res.message}`);
+        } else if (res && res.status === 'success') {
+            alert(`Evento y reserva registrados exitosamente. ID: ${res.data?.eventoId || 'N/A'}`);
+            document.getElementById('modal-academic-event-manager')?.classList.add('hidden');
+            if (window.loadAcademicCalendar) window.loadAcademicCalendar();
+        } else {
+            alert(res?.message || "Ocurrió un error al registrar el evento.");
+        }
+    } catch (err) {
+        if (window.hideLoading) window.hideLoading();
+        console.error("Error al registrar evento:", err);
+        alert("Error al procesar la solicitud: " + err.message);
+    }
+};
+
+/*
+ * [TAREA-F7-IMP-06] [Fase 7: Planificación Académica, Horarios y Recursos]
+ * Gestión de Aulas, Espacios Físicos, Equipamiento e Indisponibilidad.
+ */
+window.openClassroomManagerModal = async function() {
+    const modal = document.getElementById('modal-classroom-manager');
+    if (!modal) return;
+    modal.classList.remove('hidden');
+    await window.loadClassroomResourcesTable();
+};
+
+window.loadClassroomResourcesTable = async function() {
+    const tbody = document.getElementById('tbl-classroom-resources-body');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-slate-400">Cargando espacios...</td></tr>';
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'getClassroomResources', {});
+        if (res && res.status === 'success' && Array.isArray(res.data)) {
+            if (res.data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-slate-400">No hay espacios registrados.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = res.data.map(cls => `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-2.5 font-bold text-slate-800">${cls.aulaCodigo}</td>
+                    <td class="p-2.5">${cls.nombreAula}</td>
+                    <td class="p-2.5"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-700">${cls.tipoEspacio || 'Aula'}</span></td>
+                    <td class="p-2.5 font-medium">${cls.capacidad || 30} est.</td>
+                    <td class="p-2.5 text-[11px] text-slate-600">${cls.equipamiento || 'Básico'}</td>
+                    <td class="p-2.5">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${cls.estado === 'Inactivo' ? 'bg-red-100 text-red-700' : cls.estado === 'Indisponible' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}">
+                            ${cls.estado || 'Activo'}
+                        </span>
+                    </td>
+                    <td class="p-2.5 text-right space-x-1">
+                        <button class="btn-edit-clsr text-blue-600 hover:text-blue-800 font-bold text-[11px]"
+                            data-codigo="${cls.aulaCodigo}"
+                            data-nombre="${cls.nombreAula}"
+                            data-capacidad="${cls.capacidad || 30}"
+                            data-tipo="${cls.tipoEspacio || 'Aula'}"
+                            data-equipamiento="${cls.equipamiento || ''}"
+                            data-estado="${cls.estado || 'Activo'}">
+                            <i class="fa-solid fa-pen-to-square mr-0.5"></i> Editar
+                        </button>
+                        <button class="btn-maint-clsr text-amber-600 hover:text-amber-800 font-bold text-[11px]"
+                            data-codigo="${cls.aulaCodigo}">
+                            <i class="fa-solid fa-screwdriver-wrench mr-0.5"></i> Mantenimiento
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.querySelectorAll('.btn-edit-clsr').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('clsr-codigo').value = btn.getAttribute('data-codigo');
+                    document.getElementById('clsr-nombre').value = btn.getAttribute('data-nombre');
+                    document.getElementById('clsr-capacidad').value = btn.getAttribute('data-capacidad');
+                    document.getElementById('clsr-tipo').value = btn.getAttribute('data-tipo');
+                    document.getElementById('clsr-estado').value = btn.getAttribute('data-estado');
+                    const eqInput = document.getElementById('clsr-equipamiento');
+                    if (eqInput) eqInput.value = btn.getAttribute('data-equipamiento');
+                });
+            });
+
+            document.querySelectorAll('.btn-maint-clsr').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const aulaCodigo = btn.getAttribute('data-codigo');
+                    await window.openClassroomMaintenanceModal(aulaCodigo);
+                });
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-red-500">Error al cargar espacios.</td></tr>';
+        }
+    } catch (err) {
+        console.error('Error al obtener recursos de aulas:', err);
+        tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-red-500">Error de comunicación con el servidor.</td></tr>';
+    }
+};
+
+window.openClassroomMaintenanceModal = async function(aulaCodigo) {
+    const motivo = prompt(`Ingrese el motivo del mantenimiento/indisponibilidad para el aula ${aulaCodigo}:`, 'Mantenimiento preventivo de equipos y climatización');
+    if (!motivo) return;
+
+    const hoyStr = new Date().toISOString().split('T')[0];
+    try {
+        if (window.showLoading) window.showLoading('Registrando mantenimiento de aula...');
+        const res = await window.fetchApi('ACADEMIC', 'saveClassroomMaintenance', {
+            aulaCodigo,
+            motivo,
+            fechaInicio: hoyStr,
+            fechaFin: hoyStr,
+            estado: 'Indisponible'
+        });
+        if (window.hideLoading) window.hideLoading();
+
+        if (res && res.status === 'success') {
+            alert(`Mantenimiento registrado e indisponibilidad aplicada al aula ${aulaCodigo}.`);
+            await window.loadClassroomResourcesTable();
+        } else {
+            alert(res && res.message ? res.message : 'Error al registrar mantenimiento.');
+        }
+    } catch (err) {
+        if (window.hideLoading) window.hideLoading();
+        console.error('Error al guardar mantenimiento de aula:', err);
+        alert('Error al conectar con el servidor.');
+    }
+};
+
+/*
+ * [TAREA-13] [Fase 1 - Planificación de Carga Académica]
+ * Controlador del modal de planificación de carga académica, jefaturas y vacantes.
+ */
+window.openAcademicLoadPlanningModal = function() {
+    const modalAcademicPlanning = document.getElementById('modal-academic-load-planning');
+    if (modalAcademicPlanning) {
+        modalAcademicPlanning.classList.remove('hidden');
+        window.refreshAcademicPlanningData();
+    }
+};
+
+window.refreshAcademicPlanningData = async function() {
+    const tableBody = document.getElementById('table-academic-planning-vacancies');
+    if (!tableBody) return;
+
+    try {
+        tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Cargando planificación y vacantes...</td></tr>';
+        const res = await window.fetchApi('ACADEMIC', 'getDepartmentAcademicPlanning', {});
+        if (res && res.status === 'success' && res.data) {
+            const vacantes = res.data.vacantes || [];
+            if (vacantes.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-emerald-600 font-bold">¡Todas las ofertas académicas tienen docente asignado! No hay vacantes.</td></tr>';
+            } else {
+                tableBody.innerHTML = vacantes.map(v => `
+                    <tr>
+                        <td class="p-2.5 font-bold text-slate-800">${v.ofertaId}</td>
+                        <td class="p-2.5">${v.asignatura}</td>
+                        <td class="p-2.5">${v.grado} ${v.seccion || 'A'}</td>
+                        <td class="p-2.5">${v.departamento || 'General'}</td>
+                        <td class="p-2.5"><span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full font-bold text-[10px]">VACANTE</span></td>
+                    </tr>
+                `).join('');
+            }
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-red-500">Error al cargar la planificación.</td></tr>';
+        }
+    } catch (err) {
+        console.error('Error al obtener planificación:', err);
+        tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-red-500">Error de conexión con el servidor.</td></tr>';
+    }
+};
+
+/*
+ * [TAREA-F6-019] Analítica y Reportes de Rendimiento y Cobertura Académica.
+ */
+window.openAcademicAnalyticsModal = function() {
+    const modal = document.getElementById('modal-academic-analytics');
+    if (!modal) return;
+    modal.classList.remove('hidden');
+    window.loadAcademicAnalyticsData();
+};
+
+window.loadAcademicAnalyticsData = async function() {
+    const container = document.getElementById('academic-analytics-content');
+    if (!container) return;
+    container.innerHTML = '<div class="p-6 text-center text-slate-400 font-bold text-xs uppercase"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Cargando analíticas de rendimiento...</div>';
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'getCurricularAnalyticsReport', {});
+        if (res && res.status === 'success' && res.data) {
+            const d = res.data;
+            container.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                    <div class="bg-blue-50 p-4 rounded-xl text-center border border-blue-100">
+                        <span class="text-[10px] font-bold text-blue-600 uppercase block">Promedio Institucional</span>
+                        <span class="text-2xl font-black text-blue-900">${d.promedioGeneral || '0.0'}%</span>
+                    </div>
+                    <div class="bg-emerald-50 p-4 rounded-xl text-center border border-emerald-100">
+                        <span class="text-[10px] font-bold text-emerald-600 uppercase block">Aprobación Ponderada</span>
+                        <span class="text-2xl font-black text-emerald-900">${d.porcentajeAprobados || '0'}%</span>
+                    </div>
+                    <div class="bg-amber-50 p-4 rounded-xl text-center border border-amber-100">
+                        <span class="text-[10px] font-bold text-amber-600 uppercase block">Alertas Acompañamiento</span>
+                        <span class="text-2xl font-black text-amber-900">${d.alertasConde || 0}</span>
+                    </div>
+                </div>
+            `;
+        } else {
+            container.innerHTML = '<div class="p-6 text-center text-slate-500 font-bold text-xs uppercase">No hay datos analíticos disponibles.</div>';
+        }
+    } catch (err) {
+        console.error("Error al cargar analíticas:", err);
+        container.innerHTML = '<div class="p-6 text-center text-red-500 font-bold text-xs uppercase">Error de comunicación con el servidor.</div>';
+    }
+};
+
 // [TAREA-F6-026] [Fase 6: Expediente Institucional y Ciclo de Vida] - Consulta y exportación controlada de informes administrativos del expediente
 window.loadStudentAdministrativeReport = async function(reporteTipo, filters) {
     try {
