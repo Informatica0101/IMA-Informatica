@@ -393,3 +393,4 @@ TAREAS PENDIENTES DE REVISIÓN
 - [TAREA-F7-IMP-16] Ampliar la gestión de sustituciones y la reasignación de clases afectadas
 - [TAREA-F7-IMP-17] Ampliar la gestión de eventos y actividades con participantes y recursos
 ===============================================================================
+- [TAREA-F7-IMP-18] Ampliar la gestión de restricciones académicas y dependencias entre asignaturas

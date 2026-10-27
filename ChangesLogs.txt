@@ -2055,3 +2055,30 @@ Descripción de los Cambios:
 5. Pendientes.md:
    - Se marcó la tarea [TAREA-F7-IMP-17] como completada [X].
 ===============================================================================
+
+REGISTRO DE CAMBIOS - TAREA-F7-IMP-18
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - backend/academic-service/Code.gs
+  - teacher-dashboard.html
+  - js/teacher.js
+  - Pendientes.md
+  - Auditoria.txt
+  - MapaDependencias.md
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. backend/academic-service/Code.gs:
+   - Se añadió la inicialización de la tabla RestriccionesCurriculares en getOrCreateSheet.
+   - Se implementaron las funciones getCurricularConstraints y saveCurricularConstraint con validación de contradicciones entre reglas.
+   - Se registró el permiso en ROLE_PERMISSIONS y el ruteo de endpoints en doPost.
+   - Se integró la evaluación de CoRequisitoSimultaneo, BloqueConsecutivo y ExclusividadHoraria dentro de checkScheduleConflict.
+2. teacher-dashboard.html:
+   - Se incorporó el botón "Restricciones Curriculares" en la botonera de acciones del panel de horarios.
+   - Se maquetó el modal #modal-curricular-constraints para el registro y consulta de dependencias académicas entre asignaturas.
+3. js/teacher.js:
+   - Se implementaron los controladores window.openCurricularConstraintsModal, window.loadCurricularConstraintsList y window.handleSaveCurricularConstraintSubmit.
+4. Pendientes.md:
+   - Se actualizó el estado de [TAREA-F7-IMP-18] a completado [X].
+===============================================================================

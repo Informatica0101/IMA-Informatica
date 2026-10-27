@@ -567,6 +567,9 @@
                                 <button onclick="window.openPublishImpactPreviewModal()" class="bg-indigo-700 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-indigo-800 transition-all shadow-md">
                                     <i class="fa-solid fa-paper-plane mr-1"></i> Revisar y Publicar
                                 </button>
+                                <button onclick="window.openCurricularConstraintsModal()" class="bg-violet-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-violet-700 transition-all shadow-md">
+                                    <i class="fa-solid fa-diagram-project mr-1"></i> Restricciones Curriculares
+                                </button>
                                 <button id="btn-load-schedules-list" class="bg-indigo-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md">
                                     <i class="fas fa-sync-alt mr-1"></i> Actualizar
                                 </button>
@@ -1714,6 +1717,95 @@
                             <tr><td colspan="5" class="p-3 text-center text-slate-400">Cargando reporte...</td></tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA-F7-IMP-18] [Fase 7: Planificación Académica, Horarios y Recursos] - Modal de Restricciones Curriculares y Dependencias entre Asignaturas (#modal-curricular-constraints) -->
+    <div id="modal-curricular-constraints" class="fixed inset-0 z-[110] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full overflow-hidden border border-slate-100 animate-fade-in">
+            <div class="p-5 bg-indigo-50 border-b border-indigo-100 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-lg shadow-md">
+                        <i class="fa-solid fa-diagram-project"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Restricciones Curriculares y Dependencias</h3>
+                        <p class="text-[10px] text-slate-500 font-medium">Configuración de co-requisitos, bloques consecutivos y exclusividades horarias</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('modal-curricular-constraints').classList.add('hidden')" class="w-8 h-8 rounded-full bg-white/80 text-slate-500 hover:text-slate-800 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
+                <!-- Formulario de Nueva Restricción -->
+                <form id="form-save-curricular-constraint" onsubmit="window.handleSaveCurricularConstraintSubmit(event)" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                    <div class="font-bold text-slate-700 text-xs border-b pb-1">Registrar Nueva Restricción Curricular</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Tipo de Restricción</label>
+                            <select id="curr-constraint-type" class="w-full text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-indigo-500" required>
+                                <option value="CoRequisitoSimultaneo">Co-Requisito Simultáneo (Misma hora/día)</option>
+                                <option value="BloqueConsecutivo">Bloque Consecutivo (Horas continuas)</option>
+                                <option value="ExclusividadHoraria">Exclusividad Horaria (No solapar)</option>
+                                <option value="SecuenciaObligatoria">Secuencia Obligatoria (Origen antes de Destino)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Ámbito de Aplicación</label>
+                            <select id="curr-constraint-scope" class="w-full text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-indigo-500">
+                                <option value="Seccion">Por Sección/Grupo</option>
+                                <option value="Grado">Por Grado Académico</option>
+                                <option value="Global">Institucional Global</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Asignatura Origen (ID / Nombre)</label>
+                            <input type="text" id="curr-constraint-orig" placeholder="Ej: ASIG-ESP-101 o Español" class="w-full text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-indigo-500" required />
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Asignatura Destino (ID / Nombre)</label>
+                            <input type="text" id="curr-constraint-dest" placeholder="Ej: ASIG-ORT-101 o Ortografía" class="w-full text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-indigo-500" required />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Grado / Sección (Opcional)</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="curr-constraint-grado" placeholder="Décimo" class="w-1/2 text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none" />
+                                <input type="text" id="curr-constraint-seccion" placeholder="A" class="w-1/2 text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Régimen / Carácter</label>
+                            <select id="curr-constraint-regimen" class="w-full text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-indigo-500">
+                                <option value="Obligatorio">Obligatorio (Bloqueante)</option>
+                                <option value="Preferencia">Preferencia (Advertencia)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex justify-end pt-1">
+                        <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs shadow-sm transition">
+                            <i class="fa-solid fa-plus mr-1"></i> Guardar Restricción
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Listado de Restricciones Activas -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-slate-700 text-xs">Restricciones Curriculares Registradas</span>
+                        <button onclick="window.loadCurricularConstraintsList()" class="text-[11px] text-indigo-600 hover:underline">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Actualizar
+                        </button>
+                    </div>
+                    <div id="curricular-constraints-container" class="space-y-2">
+                        <div class="text-center py-4 text-slate-400 text-xs">Cargando restricciones curriculares...</div>
+                    </div>
                 </div>
             </div>
         </div>

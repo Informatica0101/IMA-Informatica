@@ -2016,7 +2016,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-18] Ampliar la gestión de restricciones académicas y dependencias entre asignaturas
+### [X] [TAREA-F7-IMP-18] Ampliar la gestión de restricciones académicas y dependencias entre asignaturas
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-18 (P2 · Dependencias Curriculares)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Nueva capacidad de planificación académica avanzada)

@@ -113,6 +113,7 @@ function getOrCreateSheet(ss, name) {
     if (name === "CalendarioAcademico") sheet.appendRow(["EventoID", "AnoID", "SedeID", "NombreEvento", "TipoDia", "FechaInicio", "FechaFin", "Visibilidad", "Estado"]);
     if (name === "HorariosClase") sheet.appendRow(["HorarioID", "OfertaID", "DiaSemana", "HoraInicio", "HoraFin", "AulaCodigo", "DocenteUserId", "Estado"]);
     if (name === "ReglasAcademicas") sheet.appendRow(["ReglaID", "Ambito", "TipoRegla", "Clave", "Valor", "Estado"]);
+    if (name === "RestriccionesCurriculares") sheet.appendRow(["RestriccionID", "TipoRestriccion", "AsignaturaIdOrigen", "AsignaturaIdDestino", "Ambito", "Grado", "Seccion", "AnoID", "ReglaRegimen", "Estado", "CreadoPor", "FechaCreacion"]);
 
     // Nuevas Tablas Fase 4 - Expedientes, Admisiones y Matrículas
     if (name === "ExpedientesEstudiantes") sheet.appendRow(["ExpedienteID", "PersonaID", "CodigoInstitucional", "FechaNacimiento", "Nacionalidad", "DireccionResidencia", "FotografiaUrl", "EstadoExpediente", "FechaCreacion", "FechaActualizacion", "Observaciones"]);
@@ -168,7 +169,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicPeriods", "manageAcademicPeriod", "getSubjectCatalog", "createSubjectCatalogItem", "getStudyPlans", "createStudyPlan",
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
-    "getClassroomResources", "saveClassroomResource", "saveClassroomMaintenance", "getStudentSchedule", "getScheduleConflictResolutionAlternatives", "saveScheduleScenario", "getScheduleScenarios", "saveTeacherWorkLoadPreferences", "createSessionException", "getScheduleVersions", "compareScheduleVersions", "restoreScheduleVersion", "getPlanningQualityAndOccupancyReport", "exportBulkClassSchedules", "importBulkClassSchedules", "previewPublishImpact",
+    "getClassroomResources", "saveClassroomResource", "saveClassroomMaintenance", "getStudentSchedule", "getScheduleConflictResolutionAlternatives", "saveScheduleScenario", "getScheduleScenarios", "saveTeacherWorkLoadPreferences", "createSessionException", "getScheduleVersions", "compareScheduleVersions", "restoreScheduleVersion", "getPlanningQualityAndOccupancyReport", "exportBulkClassSchedules", "importBulkClassSchedules", "previewPublishImpact", "getCurricularConstraints", "saveCurricularConstraint",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate", "getAdmissionAnalyticsReport",
     "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles", "getMergePreviewComparison", "unmergeStudentFiles", "getStudentFileAdministrativeReports", "initializeDirectionSecretaryDriveStructure",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion", "checkAndNotifyExpiringStudentDocuments",
@@ -658,6 +659,8 @@ function doPost(e) {
       case "getStudentSchedule": result = getStudentSchedule(payload); break;
       case "getScheduleConflictResolutionAlternatives": result = getScheduleConflictResolutionAlternatives(payload); break;
       case "getAcademicRules": result = getAcademicRules(payload); break;
+      case "getCurricularConstraints": result = getCurricularConstraints(payload); break;
+      case "saveCurricularConstraint": result = saveCurricularConstraint(payload); break;
       case "saveAcademicRule": result = saveAcademicRule(payload); break;
       case "copyClassSchedules": result = copyClassSchedules(payload); break;
       case "getTeacherTeachingLoad": result = getTeacherTeachingLoad(payload); break;
@@ -6370,6 +6373,84 @@ function checkScheduleConflict(params) {
   const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId, estudiantesCount, fechaEspecifica, maxHorasDocente, excepcionJustificacion } = params || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
 
+  // [TAREA-F7-IMP-18] Validar Restricciones Curriculares y Dependencias entre Asignaturas
+  if (ofertaId) {
+    try {
+      const offerSheet = getOrCreateSheet(ss, "OfertaAcademica");
+      const offerRows = offerSheet.getDataRange().getValues().slice(1);
+      const currentOffer = offerRows.find(o => String(o[0]).trim() === String(ofertaId).trim());
+
+      if (currentOffer) {
+        const curAnoId = String(currentOffer[1]).trim();
+        const curGrado = String(currentOffer[3]).trim();
+        const curSeccion = String(currentOffer[4]).trim();
+        const curAsigId = String(currentOffer[5]).trim();
+
+        const currRulesSheet = getOrCreateSheet(ss, "RestriccionesCurriculares");
+        const currRulesRows = currRulesSheet.getDataRange().getValues().slice(1);
+        const activeCurrRules = currRulesRows.filter(r => {
+          if (r[9] === "Inactivo") return false;
+          if (r[7] && String(r[7]).trim() !== curAnoId) return false;
+          if (r[5] && normalizeString(r[5]) !== normalizeString(curGrado)) return false;
+          if (r[6] && normalizeString(r[6]) !== normalizeString(curSeccion)) return false;
+          return String(r[2]).trim() === curAsigId || String(r[3]).trim() === curAsigId;
+        });
+
+        if (activeCurrRules.length > 0) {
+          const schedSheet = getOrCreateSheet(ss, "HorariosClase");
+          const schedRows = schedSheet.getDataRange().getValues().slice(1);
+
+          for (let rule of activeCurrRules) {
+            const ruleType = String(rule[1]).trim();
+            const rOrig = String(rule[2]).trim();
+            const rDest = String(rule[3]).trim();
+            const partnerAsigId = (rOrig === curAsigId) ? rDest : rOrig;
+
+            // Encontrar la oferta de la asignatura pareja en la misma sección
+            const partnerOffer = offerRows.find(o =>
+              String(o[1]).trim() === curAnoId &&
+              normalizeString(o[3]) === normalizeString(curGrado) &&
+              normalizeString(o[4]) === normalizeString(curSeccion) &&
+              String(o[5]).trim() === partnerAsigId
+            );
+
+            if (partnerOffer) {
+              const partnerOfertaId = String(partnerOffer[0]).trim();
+              const partnerScheds = schedRows.filter(s =>
+                s[7] !== "Inactivo" &&
+                String(s[1]).trim() === partnerOfertaId &&
+                String(s[0]).trim() !== String(excludeHorarioId || "").trim()
+              );
+
+              if (ruleType === "ExclusividadHoraria") {
+                for (let ps of partnerScheds) {
+                  if (normalizeString(ps[2]) === normalizeString(diaSemana)) {
+                    const exStart = String(ps[3]);
+                    const exEnd = String(ps[4]);
+                    if (horaInicio < exEnd && horaFin > exStart) {
+                      return { hasConflict: true, reason: `Restricción curricular (${ruleType}): ${curAsigId} no puede solaparse en horario con ${partnerAsigId} (${ps[2]} ${exStart}-${exEnd}).` };
+                    }
+                  }
+                }
+              } else if (ruleType === "CoRequisitoSimultaneo") {
+                // Si la pareja ya tiene horario, esta clase debe ser en el mismo bloque exacto
+                for (let ps of partnerScheds) {
+                  if (normalizeString(ps[2]) === normalizeString(diaSemana)) {
+                    if (String(ps[3]) !== String(horaInicio) || String(ps[4]) !== String(horaFin)) {
+                      return { hasConflict: true, reason: `Restricción curricular (${ruleType}): ${curAsigId} debe impartirse simultáneamente con ${partnerAsigId} (${ps[2]} ${ps[3]}-${ps[4]}).` };
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch (currErr) {
+      console.warn("Advertencia en validación de restricciones curriculares:", currErr);
+    }
+  }
+
   // Comprobar si existe una excepción justificada autorizada explícitamente por personal administrativo/coordinación
   const userRole = (params && (params.authRole || params.userRole)) || "";
   const canAuthorizeException = ["Administrador", "Director", "Subdirector", "Secretaría", "Secretaria", "Desarrollador", "Coordinador"].indexOf(userRole) !== -1;
@@ -6977,6 +7058,135 @@ function getAcademicRules(payload) {
     estado: r[5] || "Activo"
   }));
   return { status: "success", data: rules };
+}
+
+// [TAREA-F7-IMP-18] [Fase 7: Planificación Académica, Horarios y Recursos] - Consulta de restricciones curriculares y dependencias entre asignaturas
+function getCurricularConstraints(payload) {
+  const { anoId, grado, seccion, tipoRestriccion, estado } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "RestriccionesCurriculares");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const rows = data.slice(1);
+  const filtered = rows.filter(r => {
+    if (estado && String(r[9]).trim() !== String(estado).trim()) return false;
+    if (r[9] === "Inactivo") return false;
+    if (anoId && String(r[7]).trim() !== String(anoId).trim()) return false;
+    if (grado && normalizeString(r[5]) !== normalizeString(grado)) return false;
+    if (seccion && normalizeString(r[6]) !== normalizeString(seccion)) return false;
+    if (tipoRestriccion && String(r[1]).trim() !== String(tipoRestriccion).trim()) return false;
+    return true;
+  });
+
+  const constraints = filtered.map(r => ({
+    restriccionId: r[0],
+    tipoRestriccion: r[1],
+    asignaturaIdOrigen: r[2],
+    asignaturaIdDestino: r[3],
+    ambito: r[4],
+    grado: r[5],
+    seccion: r[6],
+    anoId: r[7],
+    reglaRegimen: r[8],
+    estado: r[9],
+    creadoPor: r[10],
+    fechaCreacion: r[11]
+  }));
+
+  return { status: "success", data: constraints };
+}
+
+// [TAREA-F7-IMP-18] [Fase 7: Planificación Académica, Horarios y Recursos] - Registro y validación de restricciones curriculares con prevención de contradicciones
+function saveCurricularConstraint(payload) {
+  const { restriccionId, tipoRestriccion, asignaturaIdOrigen, asignaturaIdDestino, ambito, grado, seccion, anoId, reglaRegimen, estado, observaciones } = payload || {};
+  if (!tipoRestriccion || !asignaturaIdOrigen || !asignaturaIdDestino) {
+    throw new Error("tipoRestriccion, asignaturaIdOrigen y asignaturaIdDestino son requeridos.");
+  }
+
+  if (String(asignaturaIdOrigen).trim() === String(asignaturaIdDestino).trim()) {
+    throw new Error("Una restricción curricular no puede vincular la misma asignatura consigo misma.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "RestriccionesCurriculares");
+  const data = sheet.getDataRange().getValues();
+
+  const asigOrig = String(asignaturaIdOrigen).trim();
+  const asigDest = String(asignaturaIdDestino).trim();
+  const targetType = String(tipoRestriccion).trim();
+
+  // Comprobar contradicciones con reglas existentes
+  if (data.length > 1) {
+    const activeRules = data.slice(1).filter(r => r[9] !== "Inactivo" && String(r[0]).trim() !== String(restriccionId || "").trim());
+
+    for (let r of activeRules) {
+      const rId = String(r[0]).trim();
+      const rType = String(r[1]).trim();
+      const rOrig = String(r[2]).trim();
+      const rDest = String(r[3]).trim();
+      const samePair = (rOrig === asigOrig && rDest === asigDest) || (rOrig === asigDest && rDest === asigOrig);
+
+      if (samePair) {
+        // Contradicción 1: CoRequisitoSimultaneo vs ExclusividadHoraria
+        if (targetType === "CoRequisitoSimultaneo" && rType === "ExclusividadHoraria") {
+          throw new Error(`Contradicción detectada: Ya existe una regla de Exclusividad Horaria (${rId}) entre ${asigOrig} y ${asigDest}.`);
+        }
+        if (targetType === "ExclusividadHoraria" && rType === "CoRequisitoSimultaneo") {
+          throw new Error(`Contradicción detectada: Ya existe una regla de Co-Requisito Simultáneo (${rId}) entre ${asigOrig} y ${asigDest}.`);
+        }
+        // Contradicción 2: SecuenciaObligatoria inversa
+        if (targetType === "SecuenciaObligatoria" && rType === "SecuenciaObligatoria" && rOrig === asigDest && rDest === asigOrig) {
+          throw new Error(`Contradicción detectada: Ya existe una regla de Secuencia Obligatoria inversa (${rId}) de ${asigDest} a ${asigOrig}.`);
+        }
+        if (targetType === "SecuenciaObligatoria" && rType === "CoRequisitoSimultaneo") {
+          throw new Error(`Contradicción detectada: No se puede exigir secuencia obligatoria a asignaturas con co-requisito simultáneo (${rId}).`);
+        }
+      }
+    }
+  }
+
+  const now = new Date();
+  const creator = (payload && (payload.authUserId || payload.userId)) || "Secretaría";
+
+  if (restriccionId) {
+    const idx = data.findIndex(r => String(r[0]).trim() === String(restriccionId).trim());
+    if (idx !== -1) {
+      sheet.getRange(idx + 1, 2, 1, 9).setValues([[
+        targetType,
+        asigOrig,
+        asigDest,
+        ambito || "Seccion",
+        grado || "",
+        seccion || "",
+        anoId || "2026",
+        reglaRegimen || "Obligatorio",
+        estado || "Activo"
+      ]]);
+      return { status: "success", restriccionId, message: "Restricción curricular actualizada exitosamente." };
+    }
+  }
+
+  const resId = "REST-CURR-" + Date.now();
+  sheet.appendRow([
+    resId,
+    targetType,
+    asigOrig,
+    asigDest,
+    ambito || "Seccion",
+    grado || "",
+    seccion || "",
+    anoId || "2026",
+    reglaRegimen || "Obligatorio",
+    estado || "Activo",
+    creator,
+    now.toISOString()
+  ]);
+
+  logStructuredEvent("ACADEMIC", "saveCurricularConstraint", "INFO", "CURRICULAR_CONSTRAINT_SAVED", `Restricción curricular ${resId} (${targetType}) guardada para ${asigOrig} -> ${asigDest}`, { resId, targetType, asigOrig, asigDest }, payload && payload.authRole);
+
+  return { status: "success", restriccionId: resId, message: "Restricción curricular registrada exitosamente." };
 }
 
 function saveAcademicRule(payload) {

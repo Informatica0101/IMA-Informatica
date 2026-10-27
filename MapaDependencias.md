@@ -71,3 +71,9 @@
 - **Finanzas y Recursos Humanos:** Administración exclusiva de cuentas por cobrar, recibos, facturas fiscales, contabilidad general, expedientes de personal y planillas.
 - **Aulas Virtuales y Tareas:** Gestión de guías, proyectos, asignaciones y entregas estudiantiles.
 - **Evaluaciones y Exámenes:** Banco de preguntas y evaluaciones en línea.
+
+### 2.7 Restricciones Curriculares y Dependencias entre Asignaturas (Fase 7 - TAREA-F7-IMP-18)
+- **Tabla RestriccionesCurriculares:** Persistencia de reglas de dependencia entre asignaturas (`RestriccionID`, `TipoRestriccion`, `AsignaturaIdOrigen`, `AsignaturaIdDestino`, `Ambito`, `Grado`, `Seccion`, `AnoID`, `ReglaRegimen`, `Estado`, `CreadoPor`, `FechaCreacion`).
+- **Endpoints:** `getCurricularConstraints` (Consulta de restricciones filtradas por año, grado y sección), `saveCurricularConstraint` (Registro y validación de reglas con detección de contradicciones).
+- **Integración con checkScheduleConflict:** Evaluación automática de co-requisitos simultáneos, bloques consecutivos, exclusividad horaria y secuencia obligatoria durante la asignación y publicación de horarios.
+- **Interfaz y Modal:** `#modal-curricular-constraints` en `teacher-dashboard.html` y controladores `openCurricularConstraintsModal`, `loadCurricularConstraintsList`, `handleSaveCurricularConstraintSubmit` en `js/teacher.js`.

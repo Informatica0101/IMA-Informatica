@@ -1138,6 +1138,91 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // [TAREA-F7-IMP-18] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de modal de restricciones curriculares y dependencias entre asignaturas
+    window.openCurricularConstraintsModal = function() {
+        const modal = document.getElementById('modal-curricular-constraints');
+        if (modal) modal.classList.remove('hidden');
+        window.loadCurricularConstraintsList();
+    };
+
+    window.loadCurricularConstraintsList = async function() {
+        const container = document.getElementById('curricular-constraints-container');
+        if (!container) return;
+        container.innerHTML = '<p class="text-slate-400 italic text-center p-3">Cargando restricciones curriculares...</p>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getCurricularConstraints', { anoId: '2026' });
+            if (res && res.status === 'success' && Array.isArray(res.data)) {
+                if (res.data.length === 0) {
+                    container.innerHTML = '<p class="text-slate-400 italic text-center p-3 bg-slate-50 rounded-2xl border border-slate-200">No hay restricciones curriculares registradas.</p>';
+                    return;
+                }
+
+                container.innerHTML = res.data.map(c => `
+                    <div class="p-3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 hover:border-indigo-200 transition">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-black text-indigo-700 text-xs">${c.restriccionId}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${c.tipoRestriccion === 'CoRequisitoSimultaneo' ? 'bg-purple-100 text-purple-800' : (c.tipoRestriccion === 'ExclusividadHoraria' ? 'bg-rose-100 text-rose-800' : 'bg-indigo-100 text-indigo-800')}">${c.tipoRestriccion}</span>
+                                <span class="text-[10px] text-slate-400">${c.reglaRegimen || 'Obligatorio'}</span>
+                            </div>
+                            <p class="text-slate-700 text-xs font-semibold mt-1">
+                                <span class="text-indigo-600">${c.asignaturaIdOrigen}</span> ↔ <span class="text-indigo-600">${c.asignaturaIdDestino}</span>
+                            </p>
+                            <p class="text-[10px] text-slate-400">Ámbito: ${c.ambito || 'Seccion'} ${c.grado ? '| ' + c.grado : ''} ${c.seccion ? 'Sección ' + c.seccion : ''}</p>
+                        </div>
+                        <span class="px-2 py-1 rounded-lg text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Activo</span>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<p class="text-rose-500 italic text-center p-3">Error al recuperar restricciones curriculares.</p>';
+            }
+        } catch (err) {
+            console.error('Error al cargar restricciones curriculares:', err);
+            container.innerHTML = '<p class="text-rose-500 italic text-center p-3">Error de comunicación con el servicio.</p>';
+        }
+    };
+
+    window.handleSaveCurricularConstraintSubmit = async function(e) {
+        if (e) e.preventDefault();
+        const tipoRestriccion = document.getElementById('curr-constraint-type')?.value;
+        const ambito = document.getElementById('curr-constraint-scope')?.value;
+        const asignaturaIdOrigen = document.getElementById('curr-constraint-orig')?.value?.trim();
+        const asignaturaIdDestino = document.getElementById('curr-constraint-dest')?.value?.trim();
+        const grado = document.getElementById('curr-constraint-grado')?.value?.trim();
+        const seccion = document.getElementById('curr-constraint-seccion')?.value?.trim();
+        const reglaRegimen = document.getElementById('curr-constraint-regimen')?.value;
+
+        if (!tipoRestriccion || !asignaturaIdOrigen || !asignaturaIdDestino) {
+            alert('Por favor complete los campos obligatorios.');
+            return;
+        }
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'saveCurricularConstraint', {
+                tipoRestriccion,
+                asignaturaIdOrigen,
+                asignaturaIdDestino,
+                ambito,
+                grado,
+                seccion,
+                reglaRegimen,
+                anoId: '2026'
+            });
+
+            if (res && res.status === 'success') {
+                alert('Restricción curricular registrada exitosamente.');
+                document.getElementById('form-save-curricular-constraint')?.reset();
+                window.loadCurricularConstraintsList();
+            } else {
+                alert('Error al guardar la restricción: ' + (res?.message || 'Error desconocido'));
+            }
+        } catch (err) {
+            console.error('Error al guardar restricción curricular:', err);
+            alert('Error de conexión o validación: ' + err.message);
+        }
+    };
+
     // [TAREA-F7-IMP-09] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de consulta de versiones de horarios, comparación diff y restauración controlada
     window.openScheduleVersionsModal = async function() {
         const modal = document.getElementById('modal-schedule-versions');

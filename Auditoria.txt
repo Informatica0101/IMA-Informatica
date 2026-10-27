@@ -970,3 +970,14 @@ Hallazgos:
 2. Se ampliará `createCalendarEvent` y `getAcademicCalendar` para procesar y almacenar aula, recursos, grupos/participantes y responsable, pre-validando disponibilidad del espacio en `MantenimientoAulas` e `HorariosClase`.
 3. Se agregará la interfaz modal `#modal-academic-event-manager` en `teacher-dashboard.html` y los controladores en `js/teacher.js`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-05-18
+ARCHIVO AUDITADO: backend/academic-service/Code.gs, teacher-dashboard.html, js/teacher.js
+TAREA: [TAREA-F7-IMP-18] Ampliar la gestión de restricciones académicas y dependencias entre asignaturas
+HALLAZGO / REQUERIMIENTO:
+- Se requiere la creación de la tabla "RestriccionesCurriculares" en Google Sheets y los endpoints backend getCurricularConstraints y saveCurricularConstraint.
+- Se debe integrar la validación de restricciones curriculares (CoRequisitoSimultaneo, BloqueConsecutivo, ExclusividadHoraria, SecuenciaObligatoria) en la función checkScheduleConflict de backend/academic-service/Code.gs.
+- Se requiere detección de contradicciones entre reglas antes de guardar una nueva restricción.
+- Se requiere una interfaz gráfica modal (#modal-curricular-constraints) en teacher-dashboard.html y controladores JavaScript en js/teacher.js para consultar y gestionar estas restricciones.
+===============================================================================
