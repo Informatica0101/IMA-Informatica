@@ -2131,3 +2131,28 @@ Descripción de los Cambios:
 3. Pendientes.md:
    - Se actualizó el estado de [TAREA-F7-IMP-20] a completado [X].
 ===============================================================================
+
+REGISTRO DE CAMBIOS - TAREA-F7-IMP-21
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - backend/academic-service/Code.gs
+  - teacher-dashboard.html
+  - js/teacher.js
+  - Pendientes.md
+  - Auditoria.txt
+  - MapaDependencias.md
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. backend/academic-service/Code.gs:
+   - Se implementó la función getAcademicPlanningAuditLogs para consultar y consolidar la bitácora de trazabilidad operativa desde HistorialCambiosEntidad y BitacoraTraceability.
+   - Se registró la acción en ROLE_PERMISSIONS y se agregó la ruta en doPost.
+2. teacher-dashboard.html:
+   - Se agregó el botón "Bitácora Auditoría" en la botonera del panel de horarios.
+   - Se maquetó el modal #modal-academic-audit-logs.
+3. js/teacher.js:
+   - Se agregaron los controladores window.openAcademicAuditLogsModal y window.loadAcademicPlanningAuditLogs.
+4. Pendientes.md:
+   - Se actualizó el estado de [TAREA-F7-IMP-21] a completado [X].
+===============================================================================

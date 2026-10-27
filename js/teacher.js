@@ -1139,6 +1139,50 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // [TAREA-F7-IMP-21] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de modal de bitácora de auditoría operativa y trazabilidad
+    window.openAcademicAuditLogsModal = function() {
+        const modal = document.getElementById('modal-academic-audit-logs');
+        if (modal) modal.classList.remove('hidden');
+        window.loadAcademicPlanningAuditLogs();
+    };
+
+    window.loadAcademicPlanningAuditLogs = async function() {
+        const container = document.getElementById('academic-audit-logs-container');
+        if (!container) return;
+        container.innerHTML = '<p class="text-slate-400 italic text-center p-4">Cargando registros de auditoría...</p>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getAcademicPlanningAuditLogs', {});
+            const logsList = res && res.status === 'success' ? (res.logs || res.data || []) : [];
+            if (res && res.status === 'success' && Array.isArray(logsList)) {
+                if (logsList.length === 0) {
+                    container.innerHTML = '<p class="text-slate-400 italic text-center p-4 bg-slate-50 rounded-2xl border border-slate-200">No hay registros de auditoría de planificación.</p>';
+                    return;
+                }
+
+                container.innerHTML = logsList.map(l => `
+                    <div class="p-3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 hover:border-slate-300 transition">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-black text-slate-800 text-xs">${l.logId || 'LOG'}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">${l.tipoOperacion || 'MUTACION'}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${l.estadoOperacion === 'FALLIDO' ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}">${l.estadoOperacion || 'EXITOSO'}</span>
+                            </div>
+                            <p class="text-slate-600 text-xs font-medium">${l.detallesPayload || 'Operación realizada en planificación académica'}</p>
+                            <p class="text-[10px] text-slate-400">Actor: <strong class="text-slate-600">${l.usuarioActor || 'Sistema'}</strong> | Entidad: ${l.entidad} (${l.entidadId})</p>
+                        </div>
+                        <div class="text-[10px] text-slate-400 font-semibold whitespace-nowrap">${l.fechaHora ? l.fechaHora.substring(0, 19).replace('T', ' ') : '--'}</div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<p class="text-rose-500 italic text-center p-4">Error al recuperar bitácora de auditoría.</p>';
+            }
+        } catch (err) {
+            console.error('Error al cargar bitácora de auditoría:', err);
+            container.innerHTML = '<p class="text-rose-500 italic text-center p-4">Error de comunicación con el servicio de auditoría.</p>';
+        }
+    };
+
     // [TAREA-F7-IMP-19] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de modal de control de capacidad y distribución por sección
     window.openSectionCapacityControlModal = function() {
         const modal = document.getElementById('modal-section-capacity-control');

@@ -87,3 +87,8 @@
 - **Mecanismo de Caché:** `CacheService` de Google Apps Script con claves compuestas por año lectivo, grado, sección y docente ID (`schedules_...`).
 - **Mecanismo de Involución/Purga:** Endpoint `invalidateScheduleCache` invocado en mutaciones para garantizar coherencia sin lecturas obsoletas.
 - **Control Cliente:** Soporte para parámetro `bypassCache` en `js/teacher.js` y `js/student.js` para recargas forzadas bajo demanda.
+
+### 2.10 Auditoría Operativa y Trazabilidad de Planificación (Fase 7 - TAREA-F7-IMP-21)
+- **Endpoint:** `getAcademicPlanningAuditLogs` (Consolidación de trazabilidad operacional desde `HistorialCambiosEntidad` y `BitacoraTraceability`).
+- **Control de Acceso:** Restricción a roles autorizados (Administrador, Director, Subdirector, Coordinador, Desarrollador) en `ROLE_PERMISSIONS`.
+- **Interfaz y Modal:** `#modal-academic-audit-logs` en `teacher-dashboard.html` y controladores `openAcademicAuditLogsModal` y `loadAcademicPlanningAuditLogs` en `js/teacher.js`.

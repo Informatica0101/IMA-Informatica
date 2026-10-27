@@ -2121,7 +2121,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-21] Ampliar la auditoría operativa y la trazabilidad de la planificación
+### [X] [TAREA-F7-IMP-21] Ampliar la auditoría operativa y la trazabilidad de la planificación
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-21 (P2 · Trazabilidad de Planificación)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Ampliación de observabilidad y control administrativo)

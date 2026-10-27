@@ -1004,3 +1004,14 @@ HALLAZGO / REQUERIMIENTO:
 - Se requiere implementar un mecanismo de invalidación automática de caché (invalidateScheduleCache) invocado ante operaciones de escritura, edición, eliminación o publicación de horarios.
 - Se debe permitir forzar la omisión de caché (bypassCache: true) en consultas críticas desde el cliente.
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-05-18
+ARCHIVO AUDITADO: backend/academic-service/Code.gs, teacher-dashboard.html, js/teacher.js
+TAREA: [TAREA-F7-IMP-21] Ampliar la auditoría operativa y la trazabilidad de la planificación
+HALLAZGO / REQUERIMIENTO:
+- Se requiere implementar getAcademicPlanningAuditLogs en backend/academic-service/Code.gs para consultar y consolidar la bitácora de trazabilidad operativa desde HistorialCambiosEntidad y BitacoraTraceability.
+- Se debe restringir el acceso únicamente a roles autorizados (Administrador, Director, Subdirector, Coordinador, Desarrollador) evitando que roles no administrativos alteren o borren la bitácora.
+- Se deben ofrecer filtros multi-criterio por usuario actor, tipo de operación, estado (Exitosa/Fallida/Conflicto), período y rango de fechas.
+- Se requiere maquetar el modal #modal-academic-audit-logs en teacher-dashboard.html y los controladores openAcademicAuditLogsModal y loadAcademicPlanningAuditLogs en js/teacher.js.
+===============================================================================

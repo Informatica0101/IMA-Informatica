@@ -237,6 +237,7 @@ const ROLE_PERMISSIONS = {
     "getCurricularConstraints",
     "getSectionCapacityAnalyticsReport",
     "invalidateScheduleCache",
+    "getAcademicPlanningAuditLogs",
     "saveCurricularConstraint", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule", "getReusableResourceCatalog", "manageReusableResource",
     "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentEnrollments",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
@@ -634,6 +635,9 @@ function doPost(e) {
       case "createTeacherSubstitution": result = createTeacherSubstitution(payload); break;
       case "getTeacherSubstitutions": result = getTeacherSubstitutions(payload); break;
       case "getDepartmentAcademicPlanning": result = getDepartmentAcademicPlanning(payload); break;
+      case "getAcademicPlanningAuditLogs":
+        result = getAcademicPlanningAuditLogs(payload);
+        break;
       case "invalidateScheduleCache":
         invalidateScheduleCache();
         result = { status: "success", message: "Caché de planificación invalidada exitosamente." };
@@ -5671,15 +5675,15 @@ function getClassSchedules(payload) {
   }).map(r => ({
     horarioId: r[0],
     ofertaId: r[1],
-    materia: r[1] || r[3],
-    diaSemana: r[4] || r[2],
-    horaInicio: r[5] || r[3],
-    horaFin: r[6] || r[4],
-    aulaCodigo: r[2] || r[5],
-    docenteUserId: r[7] || r[6],
-    grado: r[8] || "",
-    seccion: r[9] || "",
-    estado: r[10] || r[7] || "Activo"
+    materia: r[1],
+    diaSemana: r[2],
+    horaInicio: r[3],
+    horaFin: r[4],
+    aulaCodigo: r[5],
+    docenteUserId: r[6],
+    grado: r[7] || r[8] || "",
+    seccion: r[8] || r[9] || "",
+    estado: r[9] || r[10] || r[7] || "Activo"
   }));
 
   try {
@@ -6537,12 +6541,12 @@ function checkScheduleConflict(params) {
             var dataHor = sheetHor.getDataRange().getValues();
             for (var h = 1; h < dataHor.length; h++) {
               var rowH = dataHor[h];
-              var hAsig = (rowH[3] || "").toString().trim().toLowerCase();
-              var hDia = (rowH[4] || "").toString().trim().toLowerCase();
-              var hHoraIni = (rowH[5] || "").toString().trim();
-              var hGrado = (rowH[8] || "").toString().trim().toLowerCase();
-              var hSecc = (rowH[9] || "").toString().trim().toLowerCase();
-              var hEstado = (rowH[10] || "").toString().trim();
+              var hAsig = (rowH[1] || "").toString().trim().toLowerCase();
+              var hDia = (rowH[2] || "").toString().trim().toLowerCase();
+              var hHoraIni = (rowH[3] || "").toString().trim();
+              var hGrado = (rowH[7] || rowH[8] || "").toString().trim().toLowerCase();
+              var hSecc = (rowH[8] || rowH[9] || "").toString().trim().toLowerCase();
+              var hEstado = (rowH[9] || rowH[10] || "").toString().trim();
 
               if (hEstado === "Cancelado") continue;
               if (hGrado === regGrado && hSecc === regSeccion) {
@@ -10776,5 +10780,63 @@ function invalidateScheduleCache() {
     cache.remove("schedules_2026_all_all_all");
   } catch (err) {
     Logger.log("Error al invalidar caché de horarios: " + err.message);
+  }
+}
+
+
+// [TAREA-F7-IMP-21] [Fase 7: Planificación Académica, Horarios y Recursos] - Consulta y consolidación de bitácora de auditoría y trazabilidad operativa de planificación
+function getAcademicPlanningAuditLogs(payload) {
+  try {
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var filterUsuario = (payload && payload.usuario) ? payload.usuario.toString().trim().toLowerCase() : "";
+    var filterOperacion = (payload && payload.operacion) ? payload.operacion.toString().trim().toLowerCase() : "";
+    var filterEstado = (payload && payload.estado) ? payload.estado.toString().trim().toLowerCase() : "";
+
+    var sheetHist = getOrCreateSheet(ss, "HistorialCambiosEntidad");
+    var logs = [];
+
+    if (sheetHist) {
+      var dataH = sheetHist.getDataRange().getValues();
+      for (var i = 1; i < dataH.length; i++) {
+        var row = dataH[i];
+        var entType = (row[1] || "").toString().trim().toLowerCase();
+
+        if (entType === "horarioclase" || entType === "planificacion" || entType === "horarios" || entType === "restriccionescurriculares" || entType === "aulas" || entType === "solicitudadmision" || entType === "matricula") {
+          var userActor = (row[7] || row[6] || "Sistema").toString().trim();
+          var opType = (row[3] || row[2] || "MUTACION").toString().trim();
+          var statusVal = (row[8] || "EXITOSO").toString().trim();
+          var timestamp = (row[6] || row[0] || new Date().toISOString()).toString().trim();
+          var details = (row[5] || row[4] || "").toString().trim();
+
+          if (filterUsuario && userActor.toLowerCase().indexOf(filterUsuario) === -1) continue;
+          if (filterOperacion && opType.toLowerCase().indexOf(filterOperacion) === -1) continue;
+          if (filterEstado && statusVal.toLowerCase().indexOf(filterEstado) === -1) continue;
+
+          logs.push({
+            logId: row[0] || ("LOG_AUDIT_" + i),
+            entidad: row[1] || "HorarioClase",
+            entidadId: row[2] || "N/A",
+            tipoOperacion: opType,
+            detallesPayload: details,
+            usuarioActor: userActor,
+            estadoOperacion: statusVal,
+            fechaHora: timestamp
+          });
+        }
+      }
+    }
+
+    return {
+      status: "success",
+      logs: logs,
+      data: logs,
+      totalCount: logs.length
+    };
+  } catch (error) {
+    Logger.log("Error en getAcademicPlanningAuditLogs: " + error.message);
+    return {
+      status: "error",
+      message: "Error al consultar bitácora de auditoría de planificación: " + error.message
+    };
   }
 }
