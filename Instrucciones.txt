@@ -394,3 +394,4 @@ TAREAS PENDIENTES DE REVISIÓN
 - [TAREA-F7-IMP-17] Ampliar la gestión de eventos y actividades con participantes y recursos
 ===============================================================================
 - [TAREA-F7-IMP-18] Ampliar la gestión de restricciones académicas y dependencias entre asignaturas
+- [TAREA-F7-IMP-19] Ampliar el control de capacidad y distribución de estudiantes por sección

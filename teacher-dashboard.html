@@ -570,6 +570,9 @@
                                 <button onclick="window.openCurricularConstraintsModal()" class="bg-violet-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-violet-700 transition-all shadow-md">
                                     <i class="fa-solid fa-diagram-project mr-1"></i> Restricciones Curriculares
                                 </button>
+                                <button onclick="window.openSectionCapacityControlModal()" class="bg-sky-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-sky-700 transition-all shadow-md">
+                                    <i class="fa-solid fa-users-rectangle mr-1"></i> Capacidad Secciones
+                                </button>
 
                                 <button id="btn-load-schedules-list" class="bg-indigo-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md">
                                     <i class="fas fa-sync-alt mr-1"></i> Actualizar
@@ -1718,6 +1721,37 @@
                             <tr><td colspan="5" class="p-3 text-center text-slate-400">Cargando reporte...</td></tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA-F7-IMP-19] [Fase 7: Planificación Académica, Horarios y Recursos] - Modal de Control de Capacidad y Distribución de Estudiantes por Sección (#modal-section-capacity-control) -->
+    <div id="modal-section-capacity-control" class="fixed inset-0 z-[110] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full overflow-hidden border border-slate-100 animate-fade-in">
+            <div class="p-5 bg-sky-50 border-b border-sky-100 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-sky-600 text-white flex items-center justify-center text-lg shadow-md">
+                        <i class="fa-solid fa-users-rectangle"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Control de Capacidad y Aforo de Secciones</h3>
+                        <p class="text-[10px] text-slate-500 font-medium">Comparación de matrícula activa vs aforo físico de aulas y alertas preventivas</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('modal-section-capacity-control').classList.add('hidden')" class="w-8 h-8 rounded-full bg-white/80 text-slate-500 hover:text-slate-800 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
+                <div class="flex justify-between items-center bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                    <span class="font-bold text-slate-700 text-xs">Análisis de Capacidad por Sección</span>
+                    <button onclick="window.loadSectionCapacityControlData()" class="px-3 py-1 bg-sky-600 text-white rounded-xl font-bold text-[11px] hover:bg-sky-700 shadow-sm">
+                        <i class="fa-solid fa-sync mr-1"></i> Actualizar Reporte
+                    </button>
+                </div>
+                <div id="section-capacity-control-container" class="space-y-3">
+                    <div class="text-center py-6 text-slate-400 italic">Cargando análisis de capacidad por sección...</div>
                 </div>
             </div>
         </div>

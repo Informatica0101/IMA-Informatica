@@ -1138,6 +1138,84 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // [TAREA-F7-IMP-19] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de modal de control de capacidad y distribución por sección
+    window.openSectionCapacityControlModal = function() {
+        const modal = document.getElementById('modal-section-capacity-control');
+        if (modal) modal.classList.remove('hidden');
+        window.loadSectionCapacityControlData();
+    };
+
+    window.loadSectionCapacityControlData = async function() {
+        const container = document.getElementById('section-capacity-control-container');
+        if (!container) return;
+        container.innerHTML = '<p class="text-slate-400 italic text-center p-4">Cargando reporte de capacidad por sección...</p>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getSectionCapacityAnalyticsReport', { anolectivo: '2026' });
+            const reportesList = res && res.status === 'success' ? (res.reportes || res.data || []) : [];
+            if (res && res.status === 'success' && Array.isArray(reportesList)) {
+                if (reportesList.length === 0) {
+                    container.innerHTML = '<p class="text-slate-400 italic text-center p-4 bg-slate-50 rounded-2xl border border-slate-200">No hay secciones registradas para el año seleccionado.</p>';
+                    return;
+                }
+
+                container.innerHTML = reportesList.map(r => `
+                    <div class="p-4 bg-white rounded-2xl border ${r.alertaPreventiva ? 'border-rose-300 bg-rose-50/20' : 'border-slate-200'} shadow-sm space-y-2">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="font-black text-slate-800 text-xs">${r.grado} - Sección ${r.seccion}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${r.excedeCapacidadFisica || r.excedeLimiteAdministrativo ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}">
+                                    ${r.excedeCapacidadFisica || r.excedeLimiteAdministrativo ? 'Atención Requerida' : 'Capacidad Normal'}
+                                </span>
+                            </div>
+                            <span class="text-[11px] text-slate-500">Aulas: <strong class="text-slate-700">${r.aulasAsignadas}</strong></span>
+                        </div>
+
+                        ${r.alertaPreventiva ? `
+                            <div class="p-2.5 bg-rose-100/80 text-rose-800 rounded-xl text-[11px] font-semibold flex items-center gap-2 border border-rose-200">
+                                <i class="fa-solid fa-triangle-exclamation text-rose-600"></i>
+                                <span>${r.alertaPreventiva}</span>
+                            </div>
+                        ` : ''}
+
+                        <div class="grid grid-cols-3 gap-2 text-center pt-1">
+                            <div class="bg-slate-50 p-2 rounded-xl border border-slate-200">
+                                <div class="text-[10px] text-slate-500 font-bold uppercase">Matrícula Activa</div>
+                                <div class="text-sm font-black text-slate-800">${r.matriculaActiva}</div>
+                            </div>
+                            <div class="bg-slate-50 p-2 rounded-xl border border-slate-200">
+                                <div class="text-[10px] text-slate-500 font-bold uppercase">Aforo Físico Aula</div>
+                                <div class="text-sm font-black ${r.excedeCapacidadFisica ? 'text-rose-600' : 'text-slate-800'}">${r.capacidadFisicaAula}</div>
+                            </div>
+                            <div class="bg-slate-50 p-2 rounded-xl border border-slate-200">
+                                <div class="text-[10px] text-slate-500 font-bold uppercase">Cupo Administrativo</div>
+                                <div class="text-sm font-black ${r.excedeLimiteAdministrativo ? 'text-amber-600' : 'text-slate-800'}">${r.limiteAdministrativo}</div>
+                            </div>
+                        </div>
+
+                        ${r.aulasAlternativasCompatibles && r.aulasAlternativasCompatibles.length > 0 ? `
+                            <div class="pt-2 border-t text-[11px]">
+                                <span class="font-bold text-slate-700">Aulas Alternativas Disponibles (Aforo Aceptable):</span>
+                                <div class="flex flex-wrap gap-1 mt-1">
+                                    ${r.aulasAlternativasCompatibles.map(a => `
+                                        <span class="px-2 py-0.5 bg-sky-50 text-sky-700 border border-sky-200 rounded-lg text-[10px] font-medium">
+                                            ${a.aulaCodigo} (${a.capacidad} pers.)
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<p class="text-rose-500 italic text-center p-4">Error al recuperar reporte de capacidad.</p>';
+            }
+        } catch (err) {
+            console.error('Error al cargar reporte de capacidad:', err);
+            container.innerHTML = '<p class="text-rose-500 italic text-center p-4">Error de comunicación con el servicio.</p>';
+        }
+    };
+
     // [TAREA-F7-IMP-18] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de modal de restricciones curriculares y dependencias entre asignaturas
     window.openCurricularConstraintsModal = function() {
         const modal = document.getElementById('modal-curricular-constraints');

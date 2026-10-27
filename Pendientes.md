@@ -2054,7 +2054,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-19] Ampliar el control de capacidad y distribución de estudiantes por sección
+### [X] [TAREA-F7-IMP-19] Ampliar el control de capacidad y distribución de estudiantes por sección
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-19 (P2 · Capacidad de Sección)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Ampliación de planificación y administración de secciones)

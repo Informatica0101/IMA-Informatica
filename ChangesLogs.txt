@@ -2082,3 +2082,29 @@ Descripción de los Cambios:
 4. Pendientes.md:
    - Se actualizó el estado de [TAREA-F7-IMP-18] a completado [X].
 ===============================================================================
+
+REGISTRO DE CAMBIOS - TAREA-F7-IMP-19
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - backend/academic-service/Code.gs
+  - teacher-dashboard.html
+  - js/teacher.js
+  - Pendientes.md
+  - Auditoria.txt
+  - MapaDependencias.md
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. backend/academic-service/Code.gs:
+   - Se implementó la función getSectionCapacityAnalyticsReport para comparar matrícula activa vs aforo físico de aulas y cupo administrativo.
+   - Se configuraron alertas preventivas para excesos de aforo y búsqueda de aulas alternativas compatibles.
+   - Se registró la acción en ROLE_PERMISSIONS y se agregó la ruta en doPost.
+2. teacher-dashboard.html:
+   - Se agregó el botón "Capacidad Secciones" en la botonera del panel de horarios.
+   - Se maquetó el modal #modal-section-capacity-control.
+3. js/teacher.js:
+   - Se agregaron los controladores window.openSectionCapacityControlModal y window.loadSectionCapacityControlData.
+4. Pendientes.md:
+   - Se actualizó el estado de [TAREA-F7-IMP-19] a completado [X].
+===============================================================================

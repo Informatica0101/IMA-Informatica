@@ -982,6 +982,7 @@ HALLAZGO / REQUERIMIENTO:
 - Se requiere una interfaz gráfica modal (#modal-curricular-constraints) en teacher-dashboard.html y controladores JavaScript en js/teacher.js para consultar y gestionar estas restricciones.
 ===============================================================================
 
+
 ===============================================================================
 FECHA: 2025-05-18
 ARCHIVO AUDITADO: backend/academic-service/Code.gs, teacher-dashboard.html, js/teacher.js

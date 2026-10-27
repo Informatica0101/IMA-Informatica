@@ -235,6 +235,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicConfig", "updateAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "updateAsignaturasActivas", "saveWhatsAppLink", "getWhatsAppLink", "getQuestionBank", "saveQuestion", "generateMigrationReport",
     "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getAcademicOffers", "getTeacherAssignments", "createTeacherSubstitution", "getTeacherSubstitutions",
     "getCurricularConstraints",
+    "getSectionCapacityAnalyticsReport",
     "saveCurricularConstraint", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule", "getReusableResourceCatalog", "manageReusableResource",
     "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentEnrollments",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
@@ -632,6 +633,9 @@ function doPost(e) {
       case "createTeacherSubstitution": result = createTeacherSubstitution(payload); break;
       case "getTeacherSubstitutions": result = getTeacherSubstitutions(payload); break;
       case "getDepartmentAcademicPlanning": result = getDepartmentAcademicPlanning(payload); break;
+      case "getSectionCapacityAnalyticsReport":
+        result = getSectionCapacityAnalyticsReport(payload);
+        break;
       case "getCurricularConstraints":
         result = getCurricularConstraints(payload);
         break;
@@ -6493,29 +6497,30 @@ function checkScheduleConflict(params) {
         if (scopeR === "Grado" && regGrado !== gradoR) continue;
 
         if (regAsigId === origR || regAsigId === destR) {
-          if (tipoR === "ExclusividadHoraria") {
-            var sheetHor = ss.getSheetByName("HorariosClase");
-            if (sheetHor) {
-              var dataHor = sheetHor.getDataRange().getValues();
-              for (var h = 1; h < dataHor.length; h++) {
-                var rowH = dataHor[h];
-                var hAsig = (rowH[3] || "").toString().trim().toLowerCase();
-                var hDia = (rowH[4] || "").toString().trim().toLowerCase();
-                var hHoraIni = (rowH[5] || "").toString().trim();
-                var hGrado = (rowH[8] || "").toString().trim().toLowerCase();
-                var hSecc = (rowH[9] || "").toString().trim().toLowerCase();
-                var hEstado = (rowH[10] || "").toString().trim();
+          var sheetHor = ss.getSheetByName("HorariosClase");
+          if (sheetHor) {
+            var dataHor = sheetHor.getDataRange().getValues();
+            for (var h = 1; h < dataHor.length; h++) {
+              var rowH = dataHor[h];
+              var hAsig = (rowH[3] || "").toString().trim().toLowerCase();
+              var hDia = (rowH[4] || "").toString().trim().toLowerCase();
+              var hHoraIni = (rowH[5] || "").toString().trim();
+              var hGrado = (rowH[8] || "").toString().trim().toLowerCase();
+              var hSecc = (rowH[9] || "").toString().trim().toLowerCase();
+              var hEstado = (rowH[10] || "").toString().trim();
 
-                if (hEstado === "Cancelado") continue;
-                if (hGrado === regGrado && hSecc === regSeccion && hDia === regDia && hHoraIni === regHoraIni) {
-                  var otraAsig = (regAsigId === origR) ? destR : origR;
-                  if (hAsig === otraAsig) {
-                    conflictos.push({
-                      tipo: "RESTRICCION_CURRICULAR_EXCLUSIVIDAD",
-                      mensaje: "Conflicto por restricción curricular de Exclusividad Horaria entre " + origR + " y " + destR + " (" + regimenR + ").",
-                      regimen: regimenR
-                    });
-                  }
+              if (hEstado === "Cancelado") continue;
+              if (hGrado === regGrado && hSecc === regSeccion) {
+                var otraAsig = (regAsigId === origR) ? destR : origR;
+
+                if (tipoR === "ExclusividadHoraria" && hDia === regDia && hHoraIni === regHoraIni && hAsig === otraAsig) {
+                  conflictos.push({
+                    tipo: "RESTRICCION_CURRICULAR_EXCLUSIVIDAD",
+                    mensaje: "Conflicto de Exclusividad Horaria entre " + origR + " y " + destR + " (" + regimenR + ").",
+                    regimen: regimenR
+                  });
+                } else if (tipoR === "CoRequisitoSimultaneo" && hAsig === otraAsig && (hDia !== regDia || hHoraIni !== regHoraIni)) {
+                  // Debe programarse simultáneamente
                 }
               }
             }
@@ -10474,7 +10479,9 @@ function getCurricularConstraints(payload) {
 // [TAREA-F7-IMP-18] [Fase 7: Planificación Académica, Horarios y Recursos] - Registrar o actualizar restricción curricular y dependencia entre asignaturas
 function saveCurricularConstraint(payload) {
   try {
-    if (!payload || !payload.tipoRestriccion || !payload.asignaturaOrigenId || !payload.asignaturaDestinoId) {
+    var origCheck = payload ? (payload.asignaturaOrigenId || payload.asignaturaIdOrigen) : "";
+    var destCheck = payload ? (payload.asignaturaDestinoId || payload.asignaturaIdDestino) : "";
+    if (!payload || !payload.tipoRestriccion || !origCheck || !destCheck) {
       return {
         status: "error",
         message: "Faltan parámetros obligatorios (tipoRestriccion, asignaturaOrigenId, asignaturaDestinoId)."
@@ -10558,6 +10565,161 @@ function saveCurricularConstraint(payload) {
     return {
       status: "error",
       message: "Error al guardar restricción curricular: " + error.message
+    };
+  }
+}
+
+
+// [TAREA-F7-IMP-19] [Fase 7: Planificación Académica, Horarios y Recursos] - Reporte de capacidad de sección, comparación de matrícula activa vs aforo físico de aula y alertas preventivas
+function getSectionCapacityAnalyticsReport(payload) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var anolectivoVal = (payload && payload.anolectivo) ? payload.anolectivo.toString().trim() : "2026";
+
+    var sheetMat = ss.getSheetByName("Matriculas");
+    var matCounts = {};
+    if (sheetMat) {
+      var dataMat = sheetMat.getDataRange().getValues();
+      for (var m = 1; m < dataMat.length; m++) {
+        var rM = dataMat[m];
+        var anoM = (rM[4] || "").toString().trim();
+        var estM = (rM[5] || "").toString().trim();
+        var grM = (rM[2] || "").toString().trim();
+        var secM = (rM[3] || "").toString().trim();
+
+        if (anoM === anolectivoVal && (estM === "Activo" || estM === "Matriculado")) {
+          var key = grM + "_" + secM;
+          matCounts[key] = (matCounts[key] || 0) + 1;
+        }
+      }
+    }
+
+    var sheetOferta = ss.getSheetByName("OfertaAcademica");
+    var ofertas = [];
+    if (sheetOferta) {
+      var dataOf = sheetOferta.getDataRange().getValues();
+      for (var o = 1; o < dataOf.length; o++) {
+        var rO = dataOf[o];
+        var grO = (rO[1] || "").toString().trim();
+        var secO = (rO[2] || "").toString().trim();
+        var cupoAdmin = parseInt(rO[8] || 35, 10);
+        var estadoO = (rO[9] || "Activo").toString().trim();
+
+        if (grO && secO && estadoO === "Activo") {
+          ofertas.push({
+            grado: grO,
+            seccion: secO,
+            cupoAdmin: cupoAdmin
+          });
+        }
+      }
+    }
+
+    var sheetHor = ss.getSheetByName("HorariosClase");
+    var horAulas = {};
+    if (sheetHor) {
+      var dataH = sheetHor.getDataRange().getValues();
+      for (var h = 1; h < dataH.length; h++) {
+        var rH = dataH[h];
+        var hAula = (rH[2] || "").toString().trim();
+        var hGrado = (rH[8] || "").toString().trim();
+        var hSecc = (rH[9] || "").toString().trim();
+        var hEstado = (rH[10] || "Activo").toString().trim();
+
+        if (hGrado && hSecc && hAula && hEstado !== "Cancelado") {
+          var kH = hGrado + "_" + hSecc;
+          if (!horAulas[kH]) horAulas[kH] = [];
+          if (horAulas[kH].indexOf(hAula) === -1) {
+            horAulas[kH].push(hAula);
+          }
+        }
+      }
+    }
+
+    var sheetAulas = ss.getSheetByName("SedesAulas");
+    var aulasMap = {};
+    var todasAulas = [];
+    if (sheetAulas) {
+      var dataA = sheetAulas.getDataRange().getValues();
+      for (var a = 1; a < dataA.length; a++) {
+        var rA = dataA[a];
+        var codA = (rA[1] || "").toString().trim();
+        var capA = parseInt(rA[3] || 30, 10);
+        var estA = (rA[6] || "Activo").toString().trim();
+
+        if (codA) {
+          aulasMap[codA] = capA;
+          if (estA === "Activo") {
+            todasAulas.push({ aulaCodigo: codA, capacidad: capA });
+          }
+        }
+      }
+    }
+
+    var reportes = [];
+    for (var i = 0; i < ofertas.length; i++) {
+      var ofItem = ofertas[i];
+      var keyOS = ofItem.grado + "_" + ofItem.seccion;
+      var matActiva = matCounts[keyOS] || 0;
+      var aulasAsignadas = horAulas[keyOS] || [];
+
+      var capFisicaMin = 999;
+      if (aulasAsignadas.length > 0) {
+        for (var idxA = 0; idxA < aulasAsignadas.length; idxA++) {
+          var cA = aulasMap[aulasAsignadas[idxA]] || 30;
+          if (cA < capFisicaMin) capFisicaMin = cA;
+        }
+      } else {
+        capFisicaMin = 30;
+      }
+
+      var excedeFisica = matActiva > capFisicaMin;
+      var excedeAdmin = matActiva > ofItem.cupoAdmin;
+
+      var alerta = null;
+      if (excedeFisica && excedeAdmin) {
+        alerta = "Alerta Crítica: La matrícula activa (" + matActiva + ") excede el aforo físico del aula (" + capFisicaMin + ") y el cupo administrativo (" + ofItem.cupoAdmin + ").";
+      } else if (excedeFisica) {
+        alerta = "Alerta Aforo Físico: La matrícula activa (" + matActiva + ") supera la capacidad física del aula asignada (" + capFisicaMin + ").";
+      } else if (excedeAdmin) {
+        alerta = "Advertencia Cupo Administrativo: La matrícula activa (" + matActiva + ") excede el límite administrativo configurado (" + ofItem.cupoAdmin + ").";
+      }
+
+      var alternativas = [];
+      if (excedeFisica) {
+        for (var idxAlt = 0; idxAlt < todasAulas.length; idxAlt++) {
+          var itemAlt = todasAulas[idxAlt];
+          if (itemAlt.capacidad >= matActiva && aulasAsignadas.indexOf(itemAlt.aulaCodigo) === -1) {
+            alternativas.push(itemAlt);
+          }
+        }
+      }
+
+      reportes.push({
+        grado: ofItem.grado,
+        seccion: ofItem.seccion,
+        matriculaActiva: matActiva,
+        limiteAdministrativo: ofItem.cupoAdmin,
+        capacidadFisicaAula: capFisicaMin,
+        aulasAsignadas: aulasAsignadas.join(", ") || "Sin Asignar",
+        excedeCapacidadFisica: excedeFisica,
+        excedeLimiteAdministrativo: excedeAdmin,
+        alertaPreventiva: alerta,
+        aulasAlternativasCompatibles: alternativas
+      });
+    }
+
+    return {
+      status: "success",
+      reportes: reportes,
+      data: reportes,
+      totalCount: reportes.length
+    };
+  } catch (error) {
+    Logger.log("Error en getSectionCapacityAnalyticsReport: " + error.message);
+    return {
+      status: "error",
+      message: "Error al generar reporte de capacidad por sección: " + error.message
     };
   }
 }

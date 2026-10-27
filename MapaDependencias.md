@@ -77,3 +77,8 @@
 - **Endpoints:** `getCurricularConstraints` (Consulta de restricciones filtradas por año, grado y sección), `saveCurricularConstraint` (Registro y validación de reglas con detección de contradicciones).
 - **Integración con checkScheduleConflict:** Evaluación automática de co-requisitos simultáneos, bloques consecutivos, exclusividad horaria y secuencia obligatoria durante la asignación y publicación de horarios.
 - **Interfaz y Modal:** `#modal-curricular-constraints` en `teacher-dashboard.html` y controladores `openCurricularConstraintsModal`, `loadCurricularConstraintsList`, `handleSaveCurricularConstraintSubmit` en `js/teacher.js`.
+
+### 2.8 Control de Capacidad y Distribución de Estudiantes por Sección (Fase 7 - TAREA-F7-IMP-19)
+- **Endpoint:** `getSectionCapacityAnalyticsReport` (Análisis dinámico de matrícula activa por sección vs aforo físico de aulas y cupos administrativos).
+- **Integración:** Evaluación cruzada con `Matriculas`, `OfertaAcademica` y `SedesAulas` vía `HorariosClase` para generar alertas preventivas y proponer aulas alternativas con aforo suficiente.
+- **Interfaz y Modal:** `#modal-section-capacity-control` en `teacher-dashboard.html` y controladores `openSectionCapacityControlModal` y `loadSectionCapacityControlData` en `js/teacher.js`.
