@@ -567,6 +567,22 @@
                                 <button onclick="window.openPublishImpactPreviewModal()" class="bg-indigo-700 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-indigo-800 transition-all shadow-md">
                                     <i class="fa-solid fa-paper-plane mr-1"></i> Revisar y Publicar
                                 </button>
+                                <button onclick="window.openCurricularConstraintsModal()" class="bg-violet-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-violet-700 transition-all shadow-md">
+                                    <i class="fa-solid fa-diagram-project mr-1"></i> Restricciones Curriculares
+                                </button>
+                                <button onclick="window.openSectionCapacityControlModal()" class="bg-sky-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-sky-700 transition-all shadow-md">
+                                    <i class="fa-solid fa-users-rectangle mr-1"></i> Capacidad Secciones
+                                </button>
+                                <button onclick="window.openAcademicAuditLogsModal()" class="bg-slate-700 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-slate-800 transition-all shadow-md">
+                                    <i class="fa-solid fa-list-check mr-1"></i> Bitácora Auditoría
+                                </button>
+                                <button onclick="window.openScheduleTemplatesModal()" class="bg-teal-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-teal-700 transition-all shadow-md">
+                                    <i class="fa-solid fa-copy mr-1"></i> Plantillas
+                                </button>
+                                <button onclick="window.openPrintScheduleModal()" class="bg-emerald-700 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-emerald-800 transition-all shadow-md">
+                                    <i class="fa-solid fa-print mr-1"></i> Imprimir Horario
+                                </button>
+
                                 <button id="btn-load-schedules-list" class="bg-indigo-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md">
                                     <i class="fas fa-sync-alt mr-1"></i> Actualizar
                                 </button>
@@ -657,7 +673,33 @@
                                     <span id="schedule-count-badge" class="px-2.5 py-1 bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-bold">0 Bloques</span>
                                 </div>
                             </div>
-                            <div class="overflow-x-auto">
+                            <!-- [TAREA-F7-IMP-24] [Fase 7: Planificación Académica, Horarios y Recursos] - Barra de Leyenda Cromática y Filtros por Categoría de Evento de Calendario -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3 text-xs mb-4">
+                    <div class="flex flex-wrap items-center gap-4">
+                        <span class="font-bold text-slate-700"><i class="fa-solid fa-palette mr-1 text-indigo-600"></i> Leyenda y Categorías:</span>
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" value="clases" class="cal-cat-checkbox rounded text-indigo-600 focus:ring-indigo-500" checked onchange="window.filterCalendarEventsByCategory('clases', this.checked)" />
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800">Clases</span>
+                        </label>
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" value="evaluaciones" class="cal-cat-checkbox rounded text-purple-600 focus:ring-purple-500" checked onchange="window.filterCalendarEventsByCategory('evaluaciones', this.checked)" />
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800">Evaluaciones</span>
+                        </label>
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" value="eventos" class="cal-cat-checkbox rounded text-amber-600 focus:ring-amber-500" checked onchange="window.filterCalendarEventsByCategory('eventos', this.checked)" />
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">Eventos Institucionales</span>
+                        </label>
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" value="mantenimiento" class="cal-cat-checkbox rounded text-rose-600 focus:ring-rose-500" checked onchange="window.filterCalendarEventsByCategory('mantenimiento', this.checked)" />
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800">Mantenimiento / Cancelaciones</span>
+                        </label>
+                    </div>
+                    <button onclick="window.resetCalendarViewPreferences()" class="text-[11px] text-slate-500 hover:text-slate-800 font-bold underline">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Restablecer Vista
+                    </button>
+                </div>
+
+<div class="overflow-x-auto">
                                 <table class="w-full text-left border-collapse">
                                     <thead>
                                         <tr class="bg-gray-50/50 text-[9px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">
@@ -1714,6 +1756,246 @@
                             <tr><td colspan="5" class="p-3 text-center text-slate-400">Cargando reporte...</td></tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA-F7-IMP-23] [Fase 7: Planificación Académica, Horarios y Recursos] - Modal de Configuración e Impresión Formateada de Horarios (#modal-print-schedule) -->
+    <div id="modal-print-schedule" class="fixed inset-0 z-[110] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full overflow-hidden border border-slate-100 animate-fade-in">
+            <div class="p-5 bg-emerald-50 border-b border-emerald-100 flex justify-between items-center no-print">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-lg shadow-md">
+                        <i class="fa-solid fa-print"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Herramienta de Impresión y Exportación</h3>
+                        <p class="text-[10px] text-slate-500 font-medium">Formato oficial con membrete institucional e indicador de versión publicada</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('modal-print-schedule').classList.add('hidden')" class="w-8 h-8 rounded-full bg-white/80 text-slate-500 hover:text-slate-800 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 text-xs">
+                <div class="flex justify-between items-center bg-slate-50 p-3 rounded-2xl border border-slate-200 no-print">
+                    <span class="font-bold text-slate-700 text-xs">Previsualización de Documento Imprimible</span>
+                    <button onclick="window.executePrintSchedule()" class="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-xs hover:bg-emerald-700 shadow-sm">
+                        <i class="fa-solid fa-print mr-1"></i> Imprimir / Guardar PDF
+                    </button>
+                </div>
+                <div id="print-schedule-preview-area" class="border rounded-2xl p-4 bg-white max-h-[60vh] overflow-y-auto">
+                    <p class="text-slate-400 italic text-center p-4">Haga clic en "Imprimir / Guardar PDF" para generar la vista oficial con membrete institucional.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA-F7-IMP-22] [Fase 7: Planificación Académica, Horarios y Recursos] - Modal de Plantillas de Horarios y Reutilización Controlada (#modal-schedule-templates) -->
+    <div id="modal-schedule-templates" class="fixed inset-0 z-[110] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full overflow-hidden border border-slate-100 animate-fade-in">
+            <div class="p-5 bg-teal-50 border-b border-teal-100 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-teal-600 text-white flex items-center justify-center text-lg shadow-md">
+                        <i class="fa-solid fa-copy"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Plantillas de Horarios y Clonación</h3>
+                        <p class="text-[10px] text-slate-500 font-medium">Reutilización de estructuras semanales con previsualización y validación de recursos</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('modal-schedule-templates').classList.add('hidden')" class="w-8 h-8 rounded-full bg-white/80 text-slate-500 hover:text-slate-800 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
+                <!-- Formulario para Guardar Nueva Plantilla -->
+                <form id="form-save-schedule-template" onsubmit="window.handleSaveScheduleTemplateSubmit(event)" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                    <div class="font-bold text-slate-700 text-xs border-b pb-1">Guardar Estructura Actual como Plantilla</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Nombre Plantilla</label>
+                            <input type="text" id="tpl-name" placeholder="Ej: Plantilla Básica Séptimo" class="w-full text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-teal-500" required />
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Grado Origen</label>
+                            <input type="text" id="tpl-grado" placeholder="Séptimo" class="w-full text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-teal-500" required />
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Sección Origen</label>
+                            <input type="text" id="tpl-seccion" placeholder="A" class="w-full text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-teal-500" required />
+                        </div>
+                    </div>
+                    <div class="flex justify-end pt-1">
+                        <button type="submit" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl text-xs shadow-sm transition">
+                            <i class="fa-solid fa-plus mr-1"></i> Guardar Plantilla
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Listado de Plantillas -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-slate-700 text-xs">Plantillas Registradas</span>
+                        <button onclick="window.loadScheduleTemplatesList()" class="text-[11px] text-teal-600 hover:underline font-bold">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Actualizar
+                        </button>
+                    </div>
+                    <div id="schedule-templates-list-container" class="space-y-2">
+                        <div class="text-center py-4 text-slate-400 text-xs">Cargando plantillas de horarios...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA-F7-IMP-21] [Fase 7: Planificación Académica, Horarios y Recursos] - Modal de Bitácora de Auditoría Operativa y Trazabilidad de Planificación (#modal-academic-audit-logs) -->
+    <div id="modal-academic-audit-logs" class="fixed inset-0 z-[110] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full overflow-hidden border border-slate-100 animate-fade-in">
+            <div class="p-5 bg-slate-800 text-white flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-slate-700 flex items-center justify-center text-lg shadow-md">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm">Bitácora de Auditoría Operativa y Trazabilidad</h3>
+                        <p class="text-[10px] text-slate-300 font-medium">Historial de mutaciones, publicaciones y resoluciones de conflictos de planificación</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('modal-academic-audit-logs').classList.add('hidden')" class="w-8 h-8 rounded-full bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
+                <div class="flex justify-between items-center bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                    <span class="font-bold text-slate-700 text-xs">Registros de Trazabilidad Operativa</span>
+                    <button onclick="window.loadAcademicPlanningAuditLogs()" class="px-3 py-1 bg-slate-800 text-white rounded-xl font-bold text-[11px] hover:bg-slate-900 shadow-sm">
+                        <i class="fa-solid fa-rotate-right mr-1"></i> Actualizar Bitácora
+                    </button>
+                </div>
+                <div id="academic-audit-logs-container" class="space-y-2">
+                    <div class="text-center py-6 text-slate-400 italic">Cargando registros de auditoría de planificación...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA-F7-IMP-19] [Fase 7: Planificación Académica, Horarios y Recursos] - Modal de Control de Capacidad y Distribución de Estudiantes por Sección (#modal-section-capacity-control) -->
+    <div id="modal-section-capacity-control" class="fixed inset-0 z-[110] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full overflow-hidden border border-slate-100 animate-fade-in">
+            <div class="p-5 bg-sky-50 border-b border-sky-100 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-sky-600 text-white flex items-center justify-center text-lg shadow-md">
+                        <i class="fa-solid fa-users-rectangle"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Control de Capacidad y Aforo de Secciones</h3>
+                        <p class="text-[10px] text-slate-500 font-medium">Comparación de matrícula activa vs aforo físico de aulas y alertas preventivas</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('modal-section-capacity-control').classList.add('hidden')" class="w-8 h-8 rounded-full bg-white/80 text-slate-500 hover:text-slate-800 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
+                <div class="flex justify-between items-center bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                    <span class="font-bold text-slate-700 text-xs">Análisis de Capacidad por Sección</span>
+                    <button onclick="window.loadSectionCapacityControlData()" class="px-3 py-1 bg-sky-600 text-white rounded-xl font-bold text-[11px] hover:bg-sky-700 shadow-sm">
+                        <i class="fa-solid fa-sync mr-1"></i> Actualizar Reporte
+                    </button>
+                </div>
+                <div id="section-capacity-control-container" class="space-y-3">
+                    <div class="text-center py-6 text-slate-400 italic">Cargando análisis de capacidad por sección...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA-F7-IMP-18] [Fase 7: Planificación Académica, Horarios y Recursos] - Modal de Restricciones Curriculares y Dependencias entre Asignaturas (#modal-curricular-constraints) -->
+    <div id="modal-curricular-constraints" class="fixed inset-0 z-[110] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full overflow-hidden border border-slate-100 animate-fade-in">
+            <div class="p-5 bg-indigo-50 border-b border-indigo-100 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-lg shadow-md">
+                        <i class="fa-solid fa-diagram-project"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Restricciones Curriculares y Dependencias</h3>
+                        <p class="text-[10px] text-slate-500 font-medium">Configuración de co-requisitos, bloques consecutivos y exclusividades horarias</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('modal-curricular-constraints').classList.add('hidden')" class="w-8 h-8 rounded-full bg-white/80 text-slate-500 hover:text-slate-800 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
+                <!-- Formulario de Nueva Restricción -->
+                <form id="form-save-curricular-constraint" onsubmit="window.handleSaveCurricularConstraintSubmit(event)" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                    <div class="font-bold text-slate-700 text-xs border-b pb-1">Registrar Nueva Restricción Curricular</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Tipo de Restricción</label>
+                            <select id="curr-constraint-type" class="w-full text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-indigo-500" required>
+                                <option value="CoRequisitoSimultaneo">Co-Requisito Simultáneo (Misma hora/día)</option>
+                                <option value="BloqueConsecutivo">Bloque Consecutivo (Horas continuas)</option>
+                                <option value="ExclusividadHoraria">Exclusividad Horaria (No solapar)</option>
+                                <option value="SecuenciaObligatoria">Secuencia Obligatoria (Origen antes de Destino)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Ámbito de Aplicación</label>
+                            <select id="curr-constraint-scope" class="w-full text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-indigo-500">
+                                <option value="Seccion">Por Sección/Grupo</option>
+                                <option value="Grado">Por Grado Académico</option>
+                                <option value="Global">Institucional Global</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Asignatura Origen (ID / Nombre)</label>
+                            <input type="text" id="curr-constraint-orig" placeholder="Ej: ASIG-ESP-101 o Español" class="w-full text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-indigo-500" required />
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Asignatura Destino (ID / Nombre)</label>
+                            <input type="text" id="curr-constraint-dest" placeholder="Ej: ASIG-ORT-101 o Ortografía" class="w-full text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-indigo-500" required />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Grado / Sección (Opcional)</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="curr-constraint-grado" placeholder="Décimo" class="w-1/2 text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none" />
+                                <input type="text" id="curr-constraint-seccion" placeholder="A" class="w-1/2 text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-600 mb-1">Régimen / Carácter</label>
+                            <select id="curr-constraint-regimen" class="w-full text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-indigo-500">
+                                <option value="Obligatorio">Obligatorio (Bloqueante)</option>
+                                <option value="Preferencia">Preferencia (Advertencia)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex justify-end pt-1">
+                        <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs shadow-sm transition">
+                            <i class="fa-solid fa-plus mr-1"></i> Guardar Restricción
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Listado de Restricciones Activas -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-slate-700 text-xs">Restricciones Curriculares Registradas</span>
+                        <button onclick="window.loadCurricularConstraintsList()" class="text-[11px] text-indigo-600 hover:underline">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Actualizar
+                        </button>
+                    </div>
+                    <div id="curricular-constraints-container" class="space-y-2">
+                        <div class="text-center py-4 text-slate-400 text-xs">Cargando restricciones curriculares...</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -3379,5 +3661,53 @@
             if (window.renderCommonNav) window.renderCommonNav();
         });
     </script>
+
+<!-- [TAREA-F8-OPT-01] [Fase 8: Aula Virtual y Gestión Avanzada del Aprendizaje] - Visor Integrado de Previsualización PDF de Entregas -->
+    <div id="modal-grade-submission" class="fixed inset-0 z-[110] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full overflow-hidden border border-slate-100 animate-fade-in">
+            <div class="p-5 bg-indigo-50 border-b border-indigo-100 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-lg shadow-md">
+                        <i class="fa-solid fa-file-pen"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Revisión y Calificación de Entrega</h3>
+                        <p class="text-[10px] text-slate-500 font-medium">Previsualización integrada de documentos, rúbricas y retroalimentación</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('modal-grade-submission').classList.add('hidden')" class="w-8 h-8 rounded-full bg-white/80 text-slate-500 hover:text-slate-800 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 max-h-[80vh] overflow-y-auto text-xs">
+                <!-- Visor PDF Embed -->
+                <div id="pdf-preview-wrapper" class="hidden bg-slate-900 rounded-2xl p-4 border border-slate-700 space-y-3">
+                    <div class="flex justify-between items-center text-white border-b border-slate-700 pb-2">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-file-pdf text-rose-500 text-base"></i>
+                            <span id="pdf-preview-filename" class="font-bold text-xs">Documento.pdf</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs">
+                            <a id="pdf-preview-download-link" href="#" target="_blank" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition">
+                                <i class="fa-solid fa-download mr-1"></i> Descargar Original
+                            </a>
+                            <button type="button" onclick="document.getElementById('pdf-preview-wrapper').classList.add('hidden')" class="text-slate-400 hover:text-white">
+                                <i class="fa-solid fa-xmark text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="pdf-preview-iframe-container" class="w-full h-80 bg-white rounded-xl overflow-hidden shadow-inner flex items-center justify-center">
+                        <p class="text-slate-400 italic text-xs">Cargando previsualización del documento...</p>
+                    </div>
+                </div>
+
+                <div id="grade-submission-content" class="space-y-3">
+                    <p class="text-slate-400 italic text-center p-4">Seleccione una entrega para iniciar la revisión.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </body>
 </html>

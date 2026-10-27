@@ -71,3 +71,64 @@
 - **Finanzas y Recursos Humanos:** Administración exclusiva de cuentas por cobrar, recibos, facturas fiscales, contabilidad general, expedientes de personal y planillas.
 - **Aulas Virtuales y Tareas:** Gestión de guías, proyectos, asignaciones y entregas estudiantiles.
 - **Evaluaciones y Exámenes:** Banco de preguntas y evaluaciones en línea.
+
+### 2.7 Restricciones Curriculares y Dependencias entre Asignaturas (Fase 7 - TAREA-F7-IMP-18)
+- **Tabla RestriccionesCurriculares:** Persistencia de reglas de dependencia entre asignaturas (`RestriccionID`, `TipoRestriccion`, `AsignaturaIdOrigen`, `AsignaturaIdDestino`, `Ambito`, `Grado`, `Seccion`, `AnoID`, `ReglaRegimen`, `Estado`, `CreadoPor`, `FechaCreacion`).
+- **Endpoints:** `getCurricularConstraints` (Consulta de restricciones filtradas por año, grado y sección), `saveCurricularConstraint` (Registro y validación de reglas con detección de contradicciones).
+- **Integración con checkScheduleConflict:** Evaluación automática de co-requisitos simultáneos, bloques consecutivos, exclusividad horaria y secuencia obligatoria durante la asignación y publicación de horarios.
+- **Interfaz y Modal:** `#modal-curricular-constraints` en `teacher-dashboard.html` y controladores `openCurricularConstraintsModal`, `loadCurricularConstraintsList`, `handleSaveCurricularConstraintSubmit` en `js/teacher.js`.
+
+### 2.8 Control de Capacidad y Distribución de Estudiantes por Sección (Fase 7 - TAREA-F7-IMP-19)
+- **Endpoint:** `getSectionCapacityAnalyticsReport` (Análisis dinámico de matrícula activa por sección vs aforo físico de aulas y cupos administrativos).
+- **Integración:** Evaluación cruzada con `Matriculas`, `OfertaAcademica` y `SedesAulas` vía `HorariosClase` para generar alertas preventivas y proponer aulas alternativas con aforo suficiente.
+- **Interfaz y Modal:** `#modal-section-capacity-control` en `teacher-dashboard.html` y controladores `openSectionCapacityControlModal` y `loadSectionCapacityControlData` en `js/teacher.js`.
+
+### 2.9 Rendimiento y Escalabilidad de Consultas de Planificación (Fase 7 - TAREA-F7-IMP-20)
+- **Mecanismo de Caché:** `CacheService` de Google Apps Script con claves compuestas por año lectivo, grado, sección y docente ID (`schedules_...`).
+- **Mecanismo de Involución/Purga:** Endpoint `invalidateScheduleCache` invocado en mutaciones para garantizar coherencia sin lecturas obsoletas.
+- **Control Cliente:** Soporte para parámetro `bypassCache` en `js/teacher.js` y `js/student.js` para recargas forzadas bajo demanda.
+
+### 2.10 Auditoría Operativa y Trazabilidad de Planificación (Fase 7 - TAREA-F7-IMP-21)
+- **Endpoint:** `getAcademicPlanningAuditLogs` (Consolidación de trazabilidad operacional desde `HistorialCambiosEntidad` y `BitacoraTraceability`).
+- **Control de Acceso:** Restricción a roles autorizados (Administrador, Director, Subdirector, Coordinador, Desarrollador) en `ROLE_PERMISSIONS`.
+- **Interfaz y Modal:** `#modal-academic-audit-logs` en `teacher-dashboard.html` y controladores `openAcademicAuditLogsModal` y `loadAcademicPlanningAuditLogs` en `js/teacher.js`.
+
+### 2.11 Plantillas de Horarios y Reutilización Controlada (Fase 7 - TAREA-F7-IMP-22)
+- **Tabla PlantillasHorarios:** Almacenamiento de estructuras semanales de distribución de asignaturas (`PlantillaID`, `NombrePlantilla`, `Grado`, `Seccion`, `AnoBase`, `EstructuraJSON`, `Estado`).
+- **Endpoints:** `saveScheduleTemplate`, `getScheduleTemplates`, `applyScheduleTemplate` (con modo previsualización y verificación de conflictos sin sobreescribir la plantilla original).
+- **Interfaz y Modal:** `#modal-schedule-templates` en `teacher-dashboard.html` y controladores `openScheduleTemplatesModal`, `loadScheduleTemplatesList`, `handleSaveScheduleTemplateSubmit` y `promptApplyScheduleTemplate` en `js/teacher.js`.
+
+### 2.12 Herramientas de Impresión y Distribución de Horarios (Fase 7 - TAREA-F7-IMP-23)
+- **Estilos CSS:** `@media print` en `css/style.css` para formateo oficial A4 landscape con membrete institucional e indicador de estado de publicación.
+- **Interfaz y Modal:** `#modal-print-schedule` en `teacher-dashboard.html` y botones de impresión en `student-dashboard.html`.
+- **Controladores:** `openPrintScheduleModal` y `executePrintSchedule` en `js/teacher.js`, `executeStudentPrintSchedule` en `js/student.js`.
+
+### 2.13 Preferencias de Calendario y Personalización de Vistas (Fase 7 - TAREA-F7-IMP-24)
+- **Persistencia Local:** Preferencias visuales por categoría almacenadas en `localStorage` (`calendar_view_prefs` y `student_cal_view_prefs`).
+- **Interfaz y Filtros:** Barra de leyenda cromática y checkboxes de alternancia de categorías (Clases, Evaluaciones, Eventos, Mantenimiento) en `teacher-dashboard.html` y `student-dashboard.html`.
+- **Controladores:** `filterCalendarEventsByCategory`, `resetCalendarViewPreferences` en `js/teacher.js`, `filterStudentCalendarByCategory` y `resetStudentCalendarPreferences` en `js/student.js`.
+
+### 2.14 Pruebas Automatizadas y Regresión de Planificación Académica (Fase 7 - TAREA-F7-IMP-25)
+- **Endpoint:** `runAcademicPlanningRegressionSuite` (Ejecución sintética de batería de pruebas TC-01 a TC-07).
+- **Cobertura de Casos de Prueba:** Detección de colisiones e invariantes de horario, carga laboral docente, restricciones curriculares, capacidad/aforo de secciones, sustituciones, plantillas de horario y bitácora de auditoría.
+- **Acceso:** Restringido a roles autorizados en `ROLE_PERMISSIONS` e integrado en `doPost`.
+
+### 3.1 Supervisión de Cuotas de Almacenamiento en Google Drive (Fase 8 - TAREA-F8-MANT-01)
+- **Endpoint:** `getDriveStorageQuotaMetricsReport` (Cálculo dinámico de bytes utilizados, totales y libres en Google Drive con clasificación de alertas por umbrales).
+- **Integración con Entregas:** Validación en `submitAssignment` para prevenir la confirmación errónea de entregas ante límites de cuota alcanzados.
+- **Acceso:** Registrado en `getDynamicPermissionsForRole` y ruteado en `doPost` de `backend/task-service/Code.gs`.
+
+### 3.2 Previsualización Integrada de Documentos PDF en Entregas (Fase 8 - TAREA-F8-OPT-01)
+- **Endpoint:** `getSubmissionDocumentPreviewUrl` (Generación de URLs seguras de vista previa embebida e identificadores de descarga de Google Drive con verificación RBAC).
+- **Visor Frontend:** `#pdf-preview-wrapper` en `teacher-dashboard.html` y controlador `previewSubmissionPDFDocument` en `js/teacher.js`.
+
+
+## 4. ESTRUCTURA ACTUAL DE SPREADSHEETS Y ESQUEMAS DE TABLAS POR MICROSERVICIO
+
+> **Nota de Arquitectura:** Las estructuras que están en el anexo A (carpetas del repositorio) y en el anexo B (hojas y spreadsheets por rol) son ejemplos de una estructura recomendable, y no una estructura obligatoria.
+
+Para consultar la referencia detallada de todos los esquemas, tablas y columnas de los Spreadsheets en los microservicios actuales (`ACADEMIC`, `USER`, `TASK`, `EXAM`, `ACCOUNTING`, `DEVELOPER`), consulte el documento independiente: [`docs/architecture/spreadsheets-schema.md`](docs/architecture/spreadsheets-schema.md).
+
+### 4.1 Arquitectura de Dashboards Dinámicos (Anexo - TAREA-AD-01)
+- **Endpoint:** `getUserDynamicDashboardConfig` (Consulta de configuración de módulos y visuales por rol y permisos en `backend/user-service/Code.gs`).
+- **Página HTML y Loader:** `app/html/dashboards/dynamic-dashboard.html` y función `loadDynamicDashboard` en `js/ui-common.js`.

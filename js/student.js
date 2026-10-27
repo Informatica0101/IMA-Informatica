@@ -840,6 +840,47 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // [TAREA-F7-IMP-24] [Fase 7: Planificación Académica, Horarios y Recursos] - Personalización de vista de calendario estudiantil, filtros por categoría de evento y leyenda cromática
+    window.filterStudentCalendarByCategory = function(categoria, isChecked) {
+        let prefs = {};
+        try {
+            prefs = JSON.parse(localStorage.getItem('student_cal_view_prefs') || '{}');
+        } catch (e) {
+            prefs = {};
+        }
+
+        prefs[categoria] = Boolean(isChecked);
+        localStorage.setItem('student_cal_view_prefs', JSON.stringify(prefs));
+
+        const elements = document.querySelectorAll(`[data-category="${categoria}"]`);
+        elements.forEach(el => {
+            if (isChecked) {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        });
+    };
+
+    window.resetStudentCalendarPreferences = function() {
+        localStorage.removeItem('student_cal_view_prefs');
+        const checkboxes = document.querySelectorAll('.student-cal-cat-checkbox');
+        checkboxes.forEach(cb => {
+            cb.checked = true;
+            window.filterStudentCalendarByCategory(cb.value, true);
+        });
+    };
+
+    // [TAREA-F7-IMP-23] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de impresión e exportación de horario del estudiante
+    window.openStudentPrintScheduleModal = function() {
+        const modal = document.getElementById('modal-student-print-schedule');
+        if (modal) modal.classList.remove('hidden');
+    };
+
+    window.executeStudentPrintSchedule = function() {
+        window.print();
+    };
+
     // [TAREA-F7-IMP-11] [Fase 7: Planificación Académica, Horarios y Recursos] - Sincronización coherente de horarios en el Portal Familiar con frescura de datos y actualización bajo demanda.
     window.fetchAndRenderStudentSchedule = function fetchAndRenderStudentSchedule() {
         var container = document.getElementById('student-schedule-container');
@@ -850,7 +891,8 @@ document.addEventListener('DOMContentLoaded', function() {
         fetchApi('ACADEMIC', 'getStudentSchedule', {
             userId: currentUser.userId,
             grado: currentUser.grado,
-            seccion: currentUser.seccion
+            seccion: currentUser.seccion,
+            bypassCache: Boolean(window.forceStudentScheduleBypass)
         }).then(function(res) {
             if (res && res.status === 'success' && Array.isArray(res.schedules)) {
                 var schedules = res.schedules;

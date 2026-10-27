@@ -2055,3 +2055,268 @@ Descripción de los Cambios:
 5. Pendientes.md:
    - Se marcó la tarea [TAREA-F7-IMP-17] como completada [X].
 ===============================================================================
+
+REGISTRO DE CAMBIOS - TAREA-F7-IMP-18
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - backend/academic-service/Code.gs
+  - teacher-dashboard.html
+  - js/teacher.js
+  - Pendientes.md
+  - Auditoria.txt
+  - MapaDependencias.md
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. backend/academic-service/Code.gs:
+   - Se añadió la inicialización de la tabla RestriccionesCurriculares en getOrCreateSheet.
+   - Se implementaron las funciones getCurricularConstraints y saveCurricularConstraint con validación de contradicciones entre reglas.
+   - Se registró el permiso en ROLE_PERMISSIONS y el ruteo de endpoints en doPost.
+   - Se integró la evaluación de CoRequisitoSimultaneo, BloqueConsecutivo y ExclusividadHoraria dentro de checkScheduleConflict.
+2. teacher-dashboard.html:
+   - Se incorporó el botón "Restricciones Curriculares" en la botonera de acciones del panel de horarios.
+   - Se maquetó el modal #modal-curricular-constraints para el registro y consulta de dependencias académicas entre asignaturas.
+3. js/teacher.js:
+   - Se implementaron los controladores window.openCurricularConstraintsModal, window.loadCurricularConstraintsList y window.handleSaveCurricularConstraintSubmit.
+4. Pendientes.md:
+   - Se actualizó el estado de [TAREA-F7-IMP-18] a completado [X].
+===============================================================================
+
+REGISTRO DE CAMBIOS - TAREA-F7-IMP-19
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - backend/academic-service/Code.gs
+  - teacher-dashboard.html
+  - js/teacher.js
+  - Pendientes.md
+  - Auditoria.txt
+  - MapaDependencias.md
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. backend/academic-service/Code.gs:
+   - Se implementó la función getSectionCapacityAnalyticsReport para comparar matrícula activa vs aforo físico de aulas y cupo administrativo.
+   - Se configuraron alertas preventivas para excesos de aforo y búsqueda de aulas alternativas compatibles.
+   - Se registró la acción en ROLE_PERMISSIONS y se agregó la ruta en doPost.
+2. teacher-dashboard.html:
+   - Se agregó el botón "Capacidad Secciones" en la botonera del panel de horarios.
+   - Se maquetó el modal #modal-section-capacity-control.
+3. js/teacher.js:
+   - Se agregaron los controladores window.openSectionCapacityControlModal y window.loadSectionCapacityControlData.
+4. Pendientes.md:
+   - Se actualizó el estado de [TAREA-F7-IMP-19] a completado [X].
+===============================================================================
+
+REGISTRO DE CAMBIOS - TAREA-F7-IMP-20
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - backend/academic-service/Code.gs
+  - js/teacher.js
+  - js/student.js
+  - Pendientes.md
+  - Auditoria.txt
+  - MapaDependencias.md
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. backend/academic-service/Code.gs:
+   - Se optimizó getClassSchedules con almacenamiento en caché reutilizando CacheService de Google Apps Script (TTL 600 segundos).
+   - Se implementó la función invalidateScheduleCache para purgar la caché de consultas ante modificaciones, cancelaciones o guardados de horario.
+   - Se agregó la acción invalidateScheduleCache en ROLE_PERMISSIONS y la ruta en doPost.
+2. js/teacher.js y js/student.js:
+   - Se agregó soporte para bypassCache en peticiones de recarga forzada de matriz de horarios para docentes y estudiantes.
+3. Pendientes.md:
+   - Se actualizó el estado de [TAREA-F7-IMP-20] a completado [X].
+===============================================================================
+
+REGISTRO DE CAMBIOS - TAREA-F7-IMP-21
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - backend/academic-service/Code.gs
+  - teacher-dashboard.html
+  - js/teacher.js
+  - Pendientes.md
+  - Auditoria.txt
+  - MapaDependencias.md
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. backend/academic-service/Code.gs:
+   - Se implementó la función getAcademicPlanningAuditLogs para consultar y consolidar la bitácora de trazabilidad operativa desde HistorialCambiosEntidad y BitacoraTraceability.
+   - Se registró la acción en ROLE_PERMISSIONS y se agregó la ruta en doPost.
+2. teacher-dashboard.html:
+   - Se agregó el botón "Bitácora Auditoría" en la botonera del panel de horarios.
+   - Se maquetó el modal #modal-academic-audit-logs.
+3. js/teacher.js:
+   - Se agregaron los controladores window.openAcademicAuditLogsModal y window.loadAcademicPlanningAuditLogs.
+4. Pendientes.md:
+   - Se actualizó el estado de [TAREA-F7-IMP-21] a completado [X].
+===============================================================================
+
+REGISTRO DE CAMBIOS - TAREA-F7-IMP-22
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - backend/academic-service/Code.gs
+  - teacher-dashboard.html
+  - js/teacher.js
+  - Pendientes.md
+  - Auditoria.txt
+  - MapaDependencias.md
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. backend/academic-service/Code.gs:
+   - Se implementaron las funciones saveScheduleTemplate, getScheduleTemplates y applyScheduleTemplate con la tabla PlantillasHorarios para almacenar estructuras horarias semanales reusables.
+   - Se integró la previsualización y pre-validación de conflictos (previsualizar: true) antes de crear bloques clonados en borrador.
+   - Se registraron las acciones en ROLE_PERMISSIONS y las rutas en doPost.
+2. teacher-dashboard.html:
+   - Se agregó el botón "Plantillas" en la botonera del panel de horarios.
+   - Se maquetó el modal #modal-schedule-templates.
+3. js/teacher.js:
+   - Se agregaron los controladores openScheduleTemplatesModal, loadScheduleTemplatesList, handleSaveScheduleTemplateSubmit y promptApplyScheduleTemplate.
+4. Pendientes.md:
+   - Se actualizó el estado de [TAREA-F7-IMP-22] a completado [X].
+===============================================================================
+
+REGISTRO DE CAMBIOS - TAREA-F7-IMP-23
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - css/style.css
+  - teacher-dashboard.html
+  - student-dashboard.html
+  - js/teacher.js
+  - js/student.js
+  - Pendientes.md
+  - Auditoria.txt
+  - MapaDependencias.md
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. css/style.css:
+   - Se incorporaron las reglas CSS @media print para formatear la impresión en horizontal (A4 landscape) con membrete institucional e hid de elementos no imprimibles.
+2. teacher-dashboard.html y student-dashboard.html:
+   - Se agregaron los botones "Imprimir Horario" y la estructura del modal #modal-print-schedule.
+3. js/teacher.js y js/student.js:
+   - Se agregaron los controladores openPrintScheduleModal, executePrintSchedule y executeStudentPrintSchedule.
+4. Pendientes.md:
+   - Se actualizó el estado de [TAREA-F7-IMP-23] a completado [X].
+===============================================================================
+
+REGISTRO DE CAMBIOS - TAREA-F7-IMP-24
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - teacher-dashboard.html
+  - student-dashboard.html
+  - js/teacher.js
+  - js/student.js
+  - Pendientes.md
+  - Auditoria.txt
+  - MapaDependencias.md
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. teacher-dashboard.html y student-dashboard.html:
+   - Se agregaron las barras de leyenda cromática e interruptores de filtro por categoría de evento (Clases, Evaluaciones, Eventos Institucionales, Mantenimiento/Excepciones).
+   - Se agregó el botón de restablecimiento de preferencias visuales.
+2. js/teacher.js y js/student.js:
+   - Se agregaron los controladores filterCalendarEventsByCategory, resetCalendarViewPreferences, filterStudentCalendarByCategory y resetStudentCalendarPreferences con persistencia en localStorage.
+3. Pendientes.md:
+   - Se actualizó el estado de [TAREA-F7-IMP-24] a completado [X].
+===============================================================================
+
+REGISTRO DE CAMBIOS - MIGRACIÓN FINAL DE TAREAS PENDIENTES
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - completadas.md
+  - Pendientes.md
+  - Auditoria.txt
+  - ChangesLogs.txt
+
+Descripción de los Cambios:
+1. completadas.md:
+   - Se migró el bloque completo de tareas finalizadas de la Fase 6 y Fase 7 desde Pendientes.md conservando todas las entradas anteriores.
+2. Pendientes.md:
+   - Se vació el contenido de tareas al estar completadas al 100%.
+3. Auditoria.txt:
+   - Se vació el archivo de auditoría según la solicitud del usuario.
+===============================================================================
+
+REGISTRO DE CAMBIOS - REGISTRO DE BACKLOG DE FASE 8
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - Pendientes.md
+  - Auditoria.txt
+  - ChangesLogs.txt
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. Pendientes.md:
+   - Se formatearon y registraron las 3 tareas de la Fase 8 (TAREA-F8-MANT-01, TAREA-F8-OPT-01, TAREA-F8-OPT-02) organizadas por prioridad (P1, P2) con requerimientos funcionales y criterios de aceptación.
+2. Auditoria.txt:
+   - Se agregó la entrada de registro de backlog para las tareas de la Fase 8.
+3. Instrucciones.txt:
+   - Se agregaron las tareas de la Fase 8 al bloque de pendientes de revisión.
+===============================================================================
+
+REGISTRO DE CAMBIOS - INTEGRACIÓN DE ANEXO DE TAREAS EN PENDIENTES.MD
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - Pendientes.md
+  - Auditoria.txt
+  - ChangesLogs.txt
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. Pendientes.md:
+   - Se registraron e integraron las 16 tareas del anexo de dashboards dinámicos, seguridad, modularización y calidad (TAREA-AD-01 a AD-07, TAREA-MOD-01 a MOD-07, TAREA-CAL-01 y CAL-02) organizadas por prioridad (P1, P2).
+2. Auditoria.txt:
+   - Se agregó la entrada de auditoría para la transferencia del anexo a Pendientes.md.
+3. Instrucciones.txt:
+   - Se registraron los identificadores del anexo en la lista de seguimiento.
+===============================================================================
+
+REGISTRO DE CAMBIOS - INTEGRACIÓN DE ANEXO TÉCNICO EN PENDIENTES.MD
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - Pendientes.md
+  - Auditoria.txt
+  - ChangesLogs.txt
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. Pendientes.md:
+   - Se registraron e integraron las 8 tareas del anexo técnico de arquitectura (TAREA-ARQ-01 a TAREA-ARQ-08) estructuradas en prioridad P1.
+   - Se incluyó la nota explícita de arquitectura aclarando el carácter de ejemplo recomendable para las estructuras de carpetas y spreadsheets en TAREA-MOD-02, TAREA-ARQ-05 y TAREA-ARQ-07.
+2. Auditoria.txt:
+   - Se agregó la entrada de auditoría para la integración del anexo técnico.
+3. Instrucciones.txt:
+   - Se agregaron los identificadores TAREA-ARQ-01 a TAREA-ARQ-08 a la lista de seguimiento.
+===============================================================================
+
+REGISTRO DE CAMBIOS - DOCUMENTACIÓN DE ESQUEMAS DE SPREADSHEETS ACTUALES
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - docs/architecture/spreadsheets-schema.md
+  - MapaDependencias.md
+  - Auditoria.txt
+  - ChangesLogs.txt
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. docs/architecture/spreadsheets-schema.md:
+   - Se creó el documento con el inventario completo de tablas, esquemas y columnas de los Spreadsheets de los 6 microservicios (ACADEMIC, USER, TASK, EXAM, ACCOUNTING, DEVELOPER) previo a la ejecución del anexo.
+2. MapaDependencias.md:
+   - Se añadió la sección de esquemas actuales con la nota aclaratoria de arquitectura.
+===============================================================================

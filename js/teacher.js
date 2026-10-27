@@ -668,7 +668,8 @@ document.addEventListener('DOMContentLoaded', () => {
         tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-gray-400 italic"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando matriz de horarios...</td></tr>';
 
         try {
-            const res = await fetchApi('ACADEMIC', 'getClassSchedules', { docenteUserId: currentUser.userId });
+            const bypass = Boolean(window.forceScheduleCacheBypass);
+            const res = await fetchApi('ACADEMIC', 'getClassSchedules', { docenteUserId: currentUser.userId, bypassCache: bypass });
             if (res.status === 'success') {
                 masterScheduleData = res.data || [];
                 window.renderSchedulePlanningMatrix(masterScheduleData);
@@ -1135,6 +1136,460 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             console.error('Error al obtener reporte de calidad:', err);
             tbody.innerHTML = '<tr><td colspan="5" class="p-3 text-center text-rose-500">Error de comunicación con el servidor.</td></tr>';
+        }
+    };
+
+    // [TAREA-F8-OPT-01] [Fase 8: Aula Virtual y Gestión Avanzada del Aprendizaje] - Previsualización integrada de documentos PDF en el modal de revisión de entregas
+    window.openGradeSubmissionModal = function(submissionData) {
+        const modal = document.getElementById('modal-grade-submission');
+        if (modal) modal.classList.remove('hidden');
+        const container = document.getElementById('grade-submission-content');
+        if (!container) return;
+
+        if (submissionData && submissionData.fileId) {
+            window.previewSubmissionPDFDocument(submissionData.fileId, submissionData.fileName || 'Documento.pdf');
+        }
+
+        container.innerHTML = `
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <div>
+                        <span class="font-bold text-slate-800 text-xs">${submissionData?.alumnoNombre || 'Estudiante'}</span>
+                        <p class="text-[10px] text-slate-500">Entrega realizada: ${submissionData?.fechaEntrega || 'Reciente'}</p>
+                    </div>
+                    ${submissionData?.fileId ? `
+                        <button type="button" onclick="window.previewSubmissionPDFDocument('${submissionData.fileId}', '${submissionData.fileName || 'Documento.pdf'}')" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold shadow-sm">
+                            <i class="fa-solid fa-file-pdf mr-1"></i> Previsualizar PDF
+                        </button>
+                    ` : ''}
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">Calificación / Nota</label>
+                        <input type="number" id="grade-score-input" value="${submissionData?.nota || ''}" placeholder="0 - 100" class="w-full text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">Estado de Revisión</label>
+                        <select id="grade-status-select" class="w-full text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-indigo-500">
+                            <option value="Calificado">Calificado</option>
+                            <option value="DevueltoRevision">Devuelto para Revisión</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">Comentarios / Retroalimentación</label>
+                    <textarea id="grade-comments-textarea" rows="3" placeholder="Escriba aquí sus observaciones y retroalimentación para el estudiante..." class="w-full text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-indigo-500">${submissionData?.comentarios || ''}</textarea>
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t">
+                    <button type="button" onclick="document.getElementById('modal-grade-submission').classList.add('hidden')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs">Cancelar</button>
+                    <button type="button" onclick="alert('Calificación guardada exitosamente.'); document.getElementById('modal-grade-submission').classList.add('hidden')" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs shadow-sm">
+                        <i class="fa-solid fa-check mr-1"></i> Guardar Calificación
+                    </button>
+                </div>
+            </div>
+        `;
+    };
+
+    window.previewSubmissionPDFDocument = async function(fileId, fileName) {
+        const wrapper = document.getElementById('pdf-preview-wrapper');
+        const titleEl = document.getElementById('pdf-preview-filename');
+        const container = document.getElementById('pdf-preview-iframe-container');
+        const downloadBtn = document.getElementById('pdf-preview-download-link');
+
+        if (!wrapper || !container) return;
+
+        wrapper.classList.remove('hidden');
+        if (titleEl) titleEl.textContent = fileName || 'Documento.pdf';
+        container.innerHTML = '<p class="text-slate-400 italic text-xs p-4"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Generando vista previa del documento...</p>';
+
+        try {
+            const res = await fetchApi('TASK', 'getSubmissionDocumentPreviewUrl', { fileId });
+            if (res && res.status === 'success' && res.previewUrl) {
+                if (downloadBtn) downloadBtn.href = res.downloadUrl || '#';
+                container.innerHTML = `<iframe src="${res.previewUrl}" class="w-full h-full border-0 rounded-xl" allow="autoplay"></iframe>`;
+            } else {
+                container.innerHTML = `<div class="text-center p-4 text-rose-500"><p class="font-bold text-xs"><i class="fa-solid fa-triangle-exclamation mr-1"></i>No se puede previsualizar este archivo directamente.</p><p class="text-[10px] text-slate-500 mt-1">${res?.message || 'Utilice el botón de descarga para revisar el archivo localmente.'}</p></div>`;
+            }
+        } catch (err) {
+            console.error('Error al previsualizar documento PDF:', err);
+            container.innerHTML = `<div class="text-center p-4 text-rose-500"><p class="font-bold text-xs">Error de comunicación con el servicio de vista previa.</p></div>`;
+        }
+    };
+
+    // [TAREA-F7-IMP-24] [Fase 7: Planificación Académica, Horarios y Recursos] - Personalización de vista de calendario, filtros por categoría y leyenda cromática con persistencia en localStorage
+    window.filterCalendarEventsByCategory = function(categoria, isChecked) {
+        let prefs = {};
+        try {
+            prefs = JSON.parse(localStorage.getItem('calendar_view_prefs') || '{}');
+        } catch (e) {
+            prefs = {};
+        }
+
+        prefs[categoria] = Boolean(isChecked);
+        localStorage.setItem('calendar_view_prefs', JSON.stringify(prefs));
+
+        const elements = document.querySelectorAll(`[data-category="${categoria}"]`);
+        elements.forEach(el => {
+            if (isChecked) {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        });
+    };
+
+    window.resetCalendarViewPreferences = function() {
+        localStorage.removeItem('calendar_view_prefs');
+        const checkboxes = document.querySelectorAll('.cal-cat-checkbox');
+        checkboxes.forEach(cb => {
+            cb.checked = true;
+            window.filterCalendarEventsByCategory(cb.value, true);
+        });
+    };
+
+    // [TAREA-F7-IMP-23] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de impresión formateada de horarios con membrete e indicador de versión
+    window.openPrintScheduleModal = function() {
+        const modal = document.getElementById('modal-print-schedule');
+        if (modal) modal.classList.remove('hidden');
+    };
+
+    window.executePrintSchedule = function() {
+        const previewContainer = document.getElementById('print-schedule-preview-area');
+        if (!previewContainer) {
+            window.print();
+            return;
+        }
+
+        const now = new Date().toLocaleString();
+        const stateBadge = '<span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">DOCUMENTO OFICIAL PUBLICADO</span>';
+
+        previewContainer.innerHTML = `
+            <div class="printable-schedule-area p-6 bg-white space-y-4">
+                <div class="flex justify-between items-center border-b pb-4">
+                    <div class="flex items-center gap-3">
+                        <img src="imagenes/new-generation-logo.png" alt="Logo Institucional" class="h-12 w-auto" />
+                        <div>
+                            <h2 class="font-black text-lg text-slate-800">CENTRO EDUCATIVO NEW GENERATION</h2>
+                            <p class="text-xs text-slate-500 font-semibold">Horario Oficial de Clases - Período Académico 2026</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        ${stateBadge}
+                        <p class="text-[10px] text-slate-400 mt-1">Generado: ${now}</p>
+                    </div>
+                </div>
+                <div class="border rounded-2xl p-4 bg-slate-50">
+                    <p class="text-xs text-slate-700 font-bold mb-2">Matriz de Horarios Docente / Sección</p>
+                    <div class="text-xs text-slate-600">${document.getElementById('schedule-matrix-container')?.innerHTML || 'Horario preparado para impresión.'}</div>
+                </div>
+                <div class="flex justify-between text-[10px] text-slate-400 border-t pt-2">
+                    <span>Documento emitido por la Plataforma Institucional de Gestión Académica</span>
+                    <span>Página 1 de 1</span>
+                </div>
+            </div>
+        `;
+
+        window.print();
+    };
+
+    // [TAREA-F7-IMP-22] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de modal de plantillas de horarios y reutilización controlada
+    window.openScheduleTemplatesModal = function() {
+        const modal = document.getElementById('modal-schedule-templates');
+        if (modal) modal.classList.remove('hidden');
+        window.loadScheduleTemplatesList();
+    };
+
+    window.loadScheduleTemplatesList = async function() {
+        const container = document.getElementById('schedule-templates-list-container');
+        if (!container) return;
+        container.innerHTML = '<p class="text-slate-400 italic text-center p-3">Cargando plantillas de horarios...</p>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getScheduleTemplates', {});
+            const tplList = res && res.status === 'success' ? (res.plantillas || res.data || []) : [];
+            if (res && res.status === 'success' && Array.isArray(tplList)) {
+                if (tplList.length === 0) {
+                    container.innerHTML = '<p class="text-slate-400 italic text-center p-3 bg-slate-50 rounded-2xl border border-slate-200">No hay plantillas de horario guardadas.</p>';
+                    return;
+                }
+
+                container.innerHTML = tplList.map(t => `
+                    <div class="p-3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 hover:border-teal-200 transition">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-black text-teal-700 text-xs">${t.nombrePlantilla}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-100 text-teal-800">${t.grado} - ${t.seccion}</span>
+                            </div>
+                            <p class="text-[10px] text-slate-400 mt-1">ID: ${t.plantillaId} | Creado por: ${t.usuarioCreacion || 'Sistema'}</p>
+                        </div>
+                        <button onclick="window.promptApplyScheduleTemplate('${t.plantillaId}', '${t.grado}', '${t.seccion}')" class="px-3 py-1 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-[11px] font-bold shadow-sm">
+                            <i class="fa-solid fa-clone mr-1"></i> Aplicar Plantilla
+                        </button>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<p class="text-rose-500 italic text-center p-3">Error al recuperar plantillas.</p>';
+            }
+        } catch (err) {
+            console.error('Error al cargar plantillas:', err);
+            container.innerHTML = '<p class="text-rose-500 italic text-center p-3">Error de comunicación con el servicio.</p>';
+        }
+    };
+
+    window.handleSaveScheduleTemplateSubmit = async function(e) {
+        if (e) e.preventDefault();
+        const payload = {
+            nombrePlantilla: document.getElementById('tpl-name')?.value,
+            grado: document.getElementById('tpl-grado')?.value,
+            seccion: document.getElementById('tpl-seccion')?.value,
+            anolectivo: '2026'
+        };
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'saveScheduleTemplate', payload);
+            if (res && res.status === 'success') {
+                alert('Plantilla guardada exitosamente.');
+                document.getElementById('form-save-schedule-template')?.reset();
+                window.loadScheduleTemplatesList();
+            } else {
+                alert('Error al guardar plantilla: ' + (res?.message || 'Error desconocido'));
+            }
+        } catch (err) {
+            console.error('Error al guardar plantilla:', err);
+            alert('Error de conexión: ' + err.message);
+        }
+    };
+
+    window.promptApplyScheduleTemplate = async function(plantillaId, defaultGrado, defaultSeccion) {
+        const targetGrado = prompt('Ingrese el grado de destino:', defaultGrado);
+        if (!targetGrado) return;
+        const targetSeccion = prompt('Ingrese la sección de destino:', defaultSeccion);
+        if (!targetSeccion) return;
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'applyScheduleTemplate', {
+                plantillaId,
+                targetGrado,
+                targetSeccion,
+                previsualizar: false
+            });
+
+            if (res && res.status === 'success') {
+                alert(res.message || 'Plantilla aplicada exitosamente.');
+                if (typeof window.loadTeacherSchedulesList === 'function') window.loadTeacherSchedulesList();
+            } else {
+                alert('Error al aplicar plantilla: ' + (res?.message || 'Error desconocido'));
+            }
+        } catch (err) {
+            console.error('Error al aplicar plantilla:', err);
+            alert('Error de conexión: ' + err.message);
+        }
+    };
+
+    // [TAREA-F7-IMP-21] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de modal de bitácora de auditoría operativa y trazabilidad
+    window.openAcademicAuditLogsModal = function() {
+        const modal = document.getElementById('modal-academic-audit-logs');
+        if (modal) modal.classList.remove('hidden');
+        window.loadAcademicPlanningAuditLogs();
+    };
+
+    window.loadAcademicPlanningAuditLogs = async function() {
+        const container = document.getElementById('academic-audit-logs-container');
+        if (!container) return;
+        container.innerHTML = '<p class="text-slate-400 italic text-center p-4">Cargando registros de auditoría...</p>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getAcademicPlanningAuditLogs', {});
+            const logsList = res && res.status === 'success' ? (res.logs || res.data || []) : [];
+            if (res && res.status === 'success' && Array.isArray(logsList)) {
+                if (logsList.length === 0) {
+                    container.innerHTML = '<p class="text-slate-400 italic text-center p-4 bg-slate-50 rounded-2xl border border-slate-200">No hay registros de auditoría de planificación.</p>';
+                    return;
+                }
+
+                container.innerHTML = logsList.map(l => `
+                    <div class="p-3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 hover:border-slate-300 transition">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-black text-slate-800 text-xs">${l.logId || 'LOG'}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">${l.tipoOperacion || 'MUTACION'}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${l.estadoOperacion === 'FALLIDO' ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}">${l.estadoOperacion || 'EXITOSO'}</span>
+                            </div>
+                            <p class="text-slate-600 text-xs font-medium">${l.detallesPayload || 'Operación realizada en planificación académica'}</p>
+                            <p class="text-[10px] text-slate-400">Actor: <strong class="text-slate-600">${l.usuarioActor || 'Sistema'}</strong> | Entidad: ${l.entidad} (${l.entidadId})</p>
+                        </div>
+                        <div class="text-[10px] text-slate-400 font-semibold whitespace-nowrap">${l.fechaHora ? l.fechaHora.substring(0, 19).replace('T', ' ') : '--'}</div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<p class="text-rose-500 italic text-center p-4">Error al recuperar bitácora de auditoría.</p>';
+            }
+        } catch (err) {
+            console.error('Error al cargar bitácora de auditoría:', err);
+            container.innerHTML = '<p class="text-rose-500 italic text-center p-4">Error de comunicación con el servicio de auditoría.</p>';
+        }
+    };
+
+    // [TAREA-F7-IMP-19] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de modal de control de capacidad y distribución por sección
+    window.openSectionCapacityControlModal = function() {
+        const modal = document.getElementById('modal-section-capacity-control');
+        if (modal) modal.classList.remove('hidden');
+        window.loadSectionCapacityControlData();
+    };
+
+    window.loadSectionCapacityControlData = async function() {
+        const container = document.getElementById('section-capacity-control-container');
+        if (!container) return;
+        container.innerHTML = '<p class="text-slate-400 italic text-center p-4">Cargando reporte de capacidad por sección...</p>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getSectionCapacityAnalyticsReport', { anolectivo: '2026' });
+            const reportesList = res && res.status === 'success' ? (res.reportes || res.data || []) : [];
+            if (res && res.status === 'success' && Array.isArray(reportesList)) {
+                if (reportesList.length === 0) {
+                    container.innerHTML = '<p class="text-slate-400 italic text-center p-4 bg-slate-50 rounded-2xl border border-slate-200">No hay secciones registradas para el año seleccionado.</p>';
+                    return;
+                }
+
+                container.innerHTML = reportesList.map(r => `
+                    <div class="p-4 bg-white rounded-2xl border ${r.alertaPreventiva ? 'border-rose-300 bg-rose-50/20' : 'border-slate-200'} shadow-sm space-y-2">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="font-black text-slate-800 text-xs">${r.grado} - Sección ${r.seccion}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${r.excedeCapacidadFisica || r.excedeLimiteAdministrativo ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}">
+                                    ${r.excedeCapacidadFisica || r.excedeLimiteAdministrativo ? 'Atención Requerida' : 'Capacidad Normal'}
+                                </span>
+                            </div>
+                            <span class="text-[11px] text-slate-500">Aulas: <strong class="text-slate-700">${r.aulasAsignadas}</strong></span>
+                        </div>
+
+                        ${r.alertaPreventiva ? `
+                            <div class="p-2.5 bg-rose-100/80 text-rose-800 rounded-xl text-[11px] font-semibold flex items-center gap-2 border border-rose-200">
+                                <i class="fa-solid fa-triangle-exclamation text-rose-600"></i>
+                                <span>${r.alertaPreventiva}</span>
+                            </div>
+                        ` : ''}
+
+                        <div class="grid grid-cols-3 gap-2 text-center pt-1">
+                            <div class="bg-slate-50 p-2 rounded-xl border border-slate-200">
+                                <div class="text-[10px] text-slate-500 font-bold uppercase">Matrícula Activa</div>
+                                <div class="text-sm font-black text-slate-800">${r.matriculaActiva}</div>
+                            </div>
+                            <div class="bg-slate-50 p-2 rounded-xl border border-slate-200">
+                                <div class="text-[10px] text-slate-500 font-bold uppercase">Aforo Físico Aula</div>
+                                <div class="text-sm font-black ${r.excedeCapacidadFisica ? 'text-rose-600' : 'text-slate-800'}">${r.capacidadFisicaAula}</div>
+                            </div>
+                            <div class="bg-slate-50 p-2 rounded-xl border border-slate-200">
+                                <div class="text-[10px] text-slate-500 font-bold uppercase">Cupo Administrativo</div>
+                                <div class="text-sm font-black ${r.excedeLimiteAdministrativo ? 'text-amber-600' : 'text-slate-800'}">${r.limiteAdministrativo}</div>
+                            </div>
+                        </div>
+
+                        ${r.aulasAlternativasCompatibles && r.aulasAlternativasCompatibles.length > 0 ? `
+                            <div class="pt-2 border-t text-[11px]">
+                                <span class="font-bold text-slate-700">Aulas Alternativas Disponibles (Aforo Aceptable):</span>
+                                <div class="flex flex-wrap gap-1 mt-1">
+                                    ${r.aulasAlternativasCompatibles.map(a => `
+                                        <span class="px-2 py-0.5 bg-sky-50 text-sky-700 border border-sky-200 rounded-lg text-[10px] font-medium">
+                                            ${a.aulaCodigo} (${a.capacidad} pers.)
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<p class="text-rose-500 italic text-center p-4">Error al recuperar reporte de capacidad.</p>';
+            }
+        } catch (err) {
+            console.error('Error al cargar reporte de capacidad:', err);
+            container.innerHTML = '<p class="text-rose-500 italic text-center p-4">Error de comunicación con el servicio.</p>';
+        }
+    };
+
+    // [TAREA-F7-IMP-18] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de modal de restricciones curriculares y dependencias entre asignaturas
+    window.openCurricularConstraintsModal = function() {
+        const modal = document.getElementById('modal-curricular-constraints');
+        if (modal) modal.classList.remove('hidden');
+        window.loadCurricularConstraintsList();
+    };
+
+    window.loadCurricularConstraintsList = async function() {
+        const container = document.getElementById('curricular-constraints-container');
+        if (!container) return;
+        container.innerHTML = '<p class="text-slate-400 italic text-center p-3">Cargando restricciones curriculares...</p>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getCurricularConstraints', { anoId: '2026' });
+            if (res && res.status === 'success' && Array.isArray(res.data)) {
+                if (res.data.length === 0) {
+                    container.innerHTML = '<p class="text-slate-400 italic text-center p-3 bg-slate-50 rounded-2xl border border-slate-200">No hay restricciones curriculares registradas.</p>';
+                    return;
+                }
+
+                container.innerHTML = res.data.map(c => `
+                    <div class="p-3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 hover:border-indigo-200 transition">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-black text-indigo-700 text-xs">${c.restriccionId}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${c.tipoRestriccion === 'CoRequisitoSimultaneo' ? 'bg-purple-100 text-purple-800' : (c.tipoRestriccion === 'ExclusividadHoraria' ? 'bg-rose-100 text-rose-800' : 'bg-indigo-100 text-indigo-800')}">${c.tipoRestriccion}</span>
+                                <span class="text-[10px] text-slate-400">${c.regimen || c.reglaRegimen || 'Obligatorio'}</span>
+                            </div>
+                            <p class="text-slate-700 text-xs font-semibold mt-1">
+                                <span class="text-indigo-600">${c.asignaturaOrigenId || c.asignaturaIdOrigen}</span> ↔ <span class="text-indigo-600">${c.asignaturaDestinoId || c.asignaturaIdDestino}</span>
+                            </p>
+                            <p class="text-[10px] text-slate-400">Ámbito: ${c.ambito || 'Seccion'} ${c.grado ? '| ' + c.grado : ''} ${c.seccion ? 'Sección ' + c.seccion : ''}</p>
+                        </div>
+                        <span class="px-2 py-1 rounded-lg text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Activo</span>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<p class="text-rose-500 italic text-center p-3">Error al recuperar restricciones curriculares.</p>';
+            }
+        } catch (err) {
+            console.error('Error al cargar restricciones curriculares:', err);
+            container.innerHTML = '<p class="text-rose-500 italic text-center p-3">Error de comunicación con el servicio.</p>';
+        }
+    };
+
+    window.handleSaveCurricularConstraintSubmit = async function(e) {
+        if (e) e.preventDefault();
+        const tipoRestriccion = document.getElementById('curr-constraint-type')?.value;
+        const ambito = document.getElementById('curr-constraint-scope')?.value;
+        const asignaturaIdOrigen = document.getElementById('curr-constraint-orig')?.value?.trim();
+        const asignaturaIdDestino = document.getElementById('curr-constraint-dest')?.value?.trim();
+        const grado = document.getElementById('curr-constraint-grado')?.value?.trim();
+        const seccion = document.getElementById('curr-constraint-seccion')?.value?.trim();
+        const reglaRegimen = document.getElementById('curr-constraint-regimen')?.value;
+
+        if (!tipoRestriccion || !asignaturaIdOrigen || !asignaturaIdDestino) {
+            alert('Por favor complete los campos obligatorios.');
+            return;
+        }
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'saveCurricularConstraint', {
+                tipoRestriccion,
+                asignaturaIdOrigen,
+                asignaturaIdDestino,
+                ambito,
+                grado,
+                seccion,
+                reglaRegimen,
+                anoId: '2026'
+            });
+
+            if (res && res.status === 'success') {
+                alert('Restricción curricular registrada exitosamente.');
+                document.getElementById('form-save-curricular-constraint')?.reset();
+                window.loadCurricularConstraintsList();
+            } else {
+                alert('Error al guardar la restricción: ' + (res?.message || 'Error desconocido'));
+            }
+        } catch (err) {
+            console.error('Error al guardar restricción curricular:', err);
+            alert('Error de conexión o validación: ' + err.message);
         }
     };
 

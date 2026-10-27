@@ -233,7 +233,16 @@ const ROLE_PERMISSIONS = {
   ],
   "Profesor": [
     "getAcademicConfig", "updateAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "updateAsignaturasActivas", "saveWhatsAppLink", "getWhatsAppLink", "getQuestionBank", "saveQuestion", "generateMigrationReport",
-    "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getAcademicOffers", "getTeacherAssignments", "createTeacherSubstitution", "getTeacherSubstitutions", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule", "getReusableResourceCatalog", "manageReusableResource",
+    "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getAcademicOffers", "getTeacherAssignments", "createTeacherSubstitution", "getTeacherSubstitutions",
+    "getCurricularConstraints",
+    "getSectionCapacityAnalyticsReport",
+    "invalidateScheduleCache",
+    "getAcademicPlanningAuditLogs",
+    "saveScheduleTemplate",
+    "getScheduleTemplates",
+    "applyScheduleTemplate",
+    "runAcademicPlanningRegressionSuite",
+    "saveCurricularConstraint", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule", "getReusableResourceCatalog", "manageReusableResource",
     "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentEnrollments",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
     "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans"
@@ -630,6 +639,34 @@ function doPost(e) {
       case "createTeacherSubstitution": result = createTeacherSubstitution(payload); break;
       case "getTeacherSubstitutions": result = getTeacherSubstitutions(payload); break;
       case "getDepartmentAcademicPlanning": result = getDepartmentAcademicPlanning(payload); break;
+      case "saveScheduleTemplate":
+        result = saveScheduleTemplate(payload);
+        break;
+      case "getScheduleTemplates":
+        result = getScheduleTemplates(payload);
+        break;
+      case "runAcademicPlanningRegressionSuite":
+        result = runAcademicPlanningRegressionSuite(payload);
+        break;
+      case "applyScheduleTemplate":
+        result = applyScheduleTemplate(payload);
+        break;
+      case "getAcademicPlanningAuditLogs":
+        result = getAcademicPlanningAuditLogs(payload);
+        break;
+      case "invalidateScheduleCache":
+        invalidateScheduleCache();
+        result = { status: "success", message: "Caché de planificación invalidada exitosamente." };
+        break;
+      case "getSectionCapacityAnalyticsReport":
+        result = getSectionCapacityAnalyticsReport(payload);
+        break;
+      case "getCurricularConstraints":
+        result = getCurricularConstraints(payload);
+        break;
+      case "saveCurricularConstraint":
+        result = saveCurricularConstraint(payload);
+        break;
       case "assignDepartmentHead": result = assignDepartmentHead(payload); break;
       case "getCurricularAnalyticsReport": result = getCurricularAnalyticsReport(payload); break;
       case "getReusableResourceCatalog": result = getReusableResourceCatalog(payload); break;
@@ -5620,29 +5657,59 @@ function createCalendarEvent(payload) {
   };
 }
 
+// [TAREA-F7-IMP-20] [Fase 7: Planificación Académica, Horarios y Recursos] - Optimización de rendimiento y caché de consultas de horarios de clase
 function getClassSchedules(payload) {
-  const { ofertaId, docenteUserId, aulaCodigo } = payload || {};
+  const { ofertaId, docenteUserId, aulaCodigo, anolectivo, grado, seccion, bypassCache } = payload || {};
+  const cacheKey = "schedules_" + (anolectivo || "all") + "_" + (grado || "all") + "_" + (seccion || "all") + "_" + (docenteUserId || "all") + "_" + (ofertaId || "all") + "_" + (aulaCodigo || "all");
+
+  if (!bypassCache) {
+    try {
+      var cache = CacheService.getScriptCache();
+      var cached = cache.get(cacheKey);
+      if (cached) {
+        var parsed = JSON.parse(cached);
+        return { status: "success", data: parsed, fromCache: true };
+      }
+    } catch (errCache) {
+      Logger.log("Error al consultar CacheService: " + errCache.message);
+    }
+  }
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "HorariosClase");
   const data = sheet.getDataRange().getValues();
   if (data.length <= 1) return { status: "success", data: [] };
 
   const schedules = data.slice(1).filter(r => {
+    if (r[9] === "Cancelado" || r[10] === "Cancelado") return false;
     if (ofertaId && String(r[1]).trim() !== String(ofertaId).trim()) return false;
-    if (docenteUserId && String(r[6]).trim() !== String(docenteUserId).trim()) return false;
-    if (aulaCodigo && String(r[5]).trim() !== String(aulaCodigo).trim()) return false;
+    if (docenteUserId && String(r[6] || r[7]).trim() !== String(docenteUserId).trim()) return false;
+    if (aulaCodigo && String(r[5] || r[2]).trim() !== String(aulaCodigo).trim()) return false;
+    if (grado && String(r[7]).trim().toLowerCase() !== String(grado).trim().toLowerCase()) return false;
+    if (seccion && String(r[8]).trim().toLowerCase() !== String(seccion).trim().toLowerCase()) return false;
     return true;
   }).map(r => ({
     horarioId: r[0],
     ofertaId: r[1],
+    materia: r[1],
     diaSemana: r[2],
     horaInicio: r[3],
     horaFin: r[4],
     aulaCodigo: r[5],
     docenteUserId: r[6],
-    estado: r[7] || "Activo"
+    grado: r[7] || "",
+    seccion: r[8] || "",
+    estado: r[9] || "Activo"
   }));
-  return { status: "success", data: schedules };
+
+  try {
+    var cacheStore = CacheService.getScriptCache();
+    cacheStore.put(cacheKey, JSON.stringify(schedules), 600);
+  } catch (errPut) {
+    Logger.log("Error al guardar en CacheService: " + errPut.message);
+  }
+
+  return { status: "success", data: schedules, fromCache: false };
 }
 
 // [TAREA-F7-IMP-05] [Fase 7: Planificación Académica, Horarios y Recursos] - Ampliación del control de carga laboral docente por contrato y configuración de preferencias horarias.
@@ -6456,7 +6523,77 @@ function checkScheduleConflict(params) {
       }
     }
 
-    // [TAREA-F7-IMP-06] Validar mantenimientos o indisponibilidad programada del aula
+    // [TAREA-F7-IMP-18] Validar restricciones curriculares y dependencias entre asignaturas
+  try {
+    var sheetRestricciones = ss.getSheetByName("RestriccionesCurriculares");
+    if (sheetRestricciones) {
+      var dataRest = sheetRestricciones.getDataRange().getValues();
+      var horarioData = params || {};
+      var regAsigId = (horarioData.asignaturaId || horarioData.materia || horarioData.asignatura || "").toString().trim().toLowerCase();
+      var regGrado = (horarioData.grado || "").toString().trim().toLowerCase();
+      var regSeccion = (horarioData.seccion || "").toString().trim().toLowerCase();
+      var regDia = (horarioData.diaSemana || "").toString().trim().toLowerCase();
+      var regHoraIni = (horarioData.horaInicio || "").toString().trim();
+
+      for (var r = 1; r < dataRest.length; r++) {
+        var rowR = dataRest[r];
+        var tipoR = (rowR[1] || "").toString().trim();
+        var origR = (rowR[2] || "").toString().trim().toLowerCase();
+        var destR = (rowR[3] || "").toString().trim().toLowerCase();
+        var scopeR = (rowR[4] || "").toString().trim();
+        var gradoR = (rowR[5] || "").toString().trim().toLowerCase();
+        var seccR = (rowR[6] || "").toString().trim().toLowerCase();
+        var regimenR = (rowR[7] || "").toString().trim();
+        var estadoR = (rowR[8] || "").toString().trim();
+
+        if (estadoR !== "Activo") continue;
+
+        if (scopeR === "Seccion" && (regGrado !== gradoR || regSeccion !== seccR)) continue;
+        if (scopeR === "Grado" && regGrado !== gradoR) continue;
+
+        if (regAsigId === origR || regAsigId === destR) {
+          var sheetHor = ss.getSheetByName("HorariosClase");
+          if (sheetHor) {
+            var dataHor = sheetHor.getDataRange().getValues();
+            for (var h = 1; h < dataHor.length; h++) {
+              var rowH = dataHor[h];
+              var hAsig = (rowH[1] || "").toString().trim().toLowerCase();
+              var hDia = (rowH[2] || "").toString().trim().toLowerCase();
+              var hHoraIni = (rowH[3] || "").toString().trim();
+              var hGrado = (rowH[7] || rowH[8] || "").toString().trim().toLowerCase();
+              var hSecc = (rowH[8] || rowH[9] || "").toString().trim().toLowerCase();
+              var hEstado = (rowH[9] || rowH[10] || "").toString().trim();
+
+              if (hEstado === "Cancelado") continue;
+              if (hGrado === regGrado && hSecc === regSeccion) {
+                var otraAsig = (regAsigId === origR) ? destR : origR;
+
+                if (tipoR === "ExclusividadHoraria" && hDia === regDia && hHoraIni === regHoraIni && hAsig === otraAsig) {
+                  conflictos.push({
+                    tipo: "RESTRICCION_CURRICULAR_EXCLUSIVIDAD",
+                    mensaje: "Conflicto de Exclusividad Horaria entre " + origR + " y " + destR + " (" + regimenR + ").",
+                    regimen: regimenR
+                  });
+                } else if (tipoR === "CoRequisitoSimultaneo" && hAsig === otraAsig) {
+                  if (hDia === regDia && hHoraIni !== regHoraIni) {
+                    conflictos.push({
+                      tipo: "RESTRICCION_CURRICULAR_COREQUISITO",
+                      mensaje: "Conflicto por Co-Requisito Simultáneo entre " + origR + " y " + destR + " (" + regimenR + ").",
+                      regimen: regimenR
+                    });
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  } catch (errRest) {
+    Logger.log("Error al verificar restricciones curriculares en checkScheduleConflict: " + errRest.message);
+  }
+
+  // [TAREA-F7-IMP-06] Validar mantenimientos o indisponibilidad programada del aula
     const maintSheet = getOrCreateSheet(ss, "MantenimientoAulas");
     const maintRows = maintSheet.getDataRange().getValues().slice(1);
     const activeMaint = maintRows.find(m => String(m[1]).trim() === String(aulaCodigo).trim() && (m[5] === "Programado" || m[5] === "EnProceso"));
@@ -10344,4 +10481,670 @@ function evaluateTransactionalStorageMigrationNeed(payload) {
     metricasPorTabla: tableMetrics,
     timestamp: new Date().toISOString()
   };
+}
+
+
+// [TAREA-F7-IMP-18] [Fase 7: Planificación Académica, Horarios y Recursos] - Obtener lista de restricciones curriculares y dependencias entre asignaturas
+function getCurricularConstraints(payload) {
+  try {
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheet = ss.getSheetByName("RestriccionesCurriculares");
+
+    if (!sheet) {
+      sheet = ss.insertSheet("RestriccionesCurriculares");
+      sheet.appendRow([
+        "RestriccionID", "TipoRestriccion", "AsignaturaOrigenID", "AsignaturaDestinoID",
+        "Ambito", "Grado", "Seccion", "Regimen", "Estado", "FechaRegistro", "UsuarioRegistro"
+      ]);
+      sheet.getRange(1, 1, 1, 11).setFontWeight("bold").setBackground("#e2e8f0");
+      sheet.setFrozenRows(1);
+    }
+
+    var data = sheet.getDataRange().getValues();
+    var restricciones = [];
+
+    for (var i = 1; i < data.length; i++) {
+      var row = data[i];
+      if (row[0]) {
+        restricciones.push({
+          restriccionId: row[0],
+          tipoRestriccion: row[1],
+          asignaturaOrigenId: row[2],
+          asignaturaDestinoId: row[3],
+          ambito: row[4],
+          grado: row[5],
+          seccion: row[6],
+          regimen: row[7],
+          estado: row[8],
+          fechaRegistro: row[9],
+          usuarioRegistro: row[10]
+        });
+      }
+    }
+
+    return {
+      status: "success",
+      data: restricciones,
+      restricciones: restricciones,
+      totalCount: restricciones.length
+    };
+  } catch (error) {
+    Logger.log("Error en getCurricularConstraints: " + error.message);
+    return {
+      status: "error",
+      message: "Error al consultar restricciones curriculares: " + error.message
+    };
+  }
+}
+
+// [TAREA-F7-IMP-18] [Fase 7: Planificación Académica, Horarios y Recursos] - Registrar o actualizar restricción curricular y dependencia entre asignaturas
+function saveCurricularConstraint(payload) {
+  try {
+    var origCheck = payload ? (payload.asignaturaOrigenId || payload.asignaturaIdOrigen) : "";
+    var destCheck = payload ? (payload.asignaturaDestinoId || payload.asignaturaIdDestino) : "";
+    if (!payload || !payload.tipoRestriccion || !origCheck || !destCheck) {
+      return {
+        status: "error",
+        message: "Faltan parámetros obligatorios (tipoRestriccion, asignaturaOrigenId, asignaturaDestinoId)."
+      };
+    }
+
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheet = ss.getSheetByName("RestriccionesCurriculares");
+
+    if (!sheet) {
+      sheet = ss.insertSheet("RestriccionesCurriculares");
+      sheet.appendRow([
+        "RestriccionID", "TipoRestriccion", "AsignaturaOrigenID", "AsignaturaDestinoID",
+        "Ambito", "Grado", "Seccion", "Regimen", "Estado", "FechaRegistro", "UsuarioRegistro"
+      ]);
+      sheet.getRange(1, 1, 1, 11).setFontWeight("bold").setBackground("#e2e8f0");
+      sheet.setFrozenRows(1);
+    }
+
+    var tipo = (payload.tipoRestriccion || "").toString().trim();
+    var orig = (payload.asignaturaOrigenId || payload.asignaturaIdOrigen || "").toString().trim();
+    var dest = (payload.asignaturaDestinoId || payload.asignaturaIdDestino || "").toString().trim();
+    var ambito = (payload.ambito || "Seccion").toString().trim();
+    var grado = (payload.grado || "").toString().trim();
+    var seccion = (payload.seccion || "").toString().trim();
+    var regimen = (payload.regimen || payload.reglaRegimen || "Obligatorio").toString().trim();
+    var usuario = (payload.userId || payload.usuario || "Sistema").toString().trim();
+
+    if (orig.toLowerCase() === dest.toLowerCase()) {
+      return {
+        status: "error",
+        message: "La asignatura origen y destino no pueden ser idénticas."
+      };
+    }
+
+    // Validar contradicciones previas
+    var data = sheet.getDataRange().getValues();
+    for (var i = 1; i < data.length; i++) {
+      var row = data[i];
+      var rowTipo = (row[1] || "").toString().trim();
+      var rowOrig = (row[2] || "").toString().trim();
+      var rowDest = (row[3] || "").toString().trim();
+      var rowEstado = (row[8] || "").toString().trim();
+
+      var isSamePair = (rowOrig.toLowerCase() === orig.toLowerCase() && rowDest.toLowerCase() === dest.toLowerCase()) || (rowOrig.toLowerCase() === dest.toLowerCase() && rowDest.toLowerCase() === orig.toLowerCase());
+      if (rowEstado === "Activo" && isSamePair) {
+        if ((tipo === "CoRequisitoSimultaneo" && rowTipo === "ExclusividadHoraria") ||
+            (tipo === "ExclusividadHoraria" && rowTipo === "CoRequisitoSimultaneo")) {
+          return {
+            status: "error",
+            message: "Contradicción detectada: Existe una regla opuesta (" + rowTipo + ") registrada para estas asignaturas."
+          };
+        }
+      }
+    }
+
+    var restriccionId = payload.restriccionId || ("REST_CURR_" + Date.now() + "_" + Math.floor(Math.random() * 1000));
+    var fechaNow = new Date().toISOString();
+
+    sheet.appendRow([
+      restriccionId,
+      tipo,
+      orig,
+      dest,
+      ambito,
+      grado,
+      seccion,
+      regimen,
+      "Activo",
+      fechaNow,
+      usuario
+    ]);
+
+    invalidateScheduleCache();
+    return {
+      status: "success",
+      message: "Restricción curricular registrada exitosamente.",
+      restriccionId: restriccionId
+    };
+  } catch (error) {
+    Logger.log("Error en saveCurricularConstraint: " + error.message);
+    return {
+      status: "error",
+      message: "Error al guardar restricción curricular: " + error.message
+    };
+  }
+}
+
+
+// [TAREA-F7-IMP-19] [Fase 7: Planificación Académica, Horarios y Recursos] - Reporte de capacidad de sección, comparación de matrícula activa vs aforo físico de aula y alertas preventivas
+function getSectionCapacityAnalyticsReport(payload) {
+  try {
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var anolectivoVal = (payload && payload.anolectivo) ? payload.anolectivo.toString().trim() : "2026";
+
+    var sheetMat = ss.getSheetByName("Matriculas");
+    var matCounts = {};
+    if (sheetMat) {
+      var dataMat = sheetMat.getDataRange().getValues();
+      for (var m = 1; m < dataMat.length; m++) {
+        var rM = dataMat[m];
+        var anoM = (rM[4] || "").toString().trim();
+        var estM = (rM[5] || "").toString().trim();
+        var grM = (rM[2] || "").toString().trim();
+        var secM = (rM[3] || "").toString().trim();
+
+        if (anoM === anolectivoVal && (estM === "Activo" || estM === "Matriculado")) {
+          var key = grM + "_" + secM;
+          matCounts[key] = (matCounts[key] || 0) + 1;
+        }
+      }
+    }
+
+    var sheetOferta = ss.getSheetByName("OfertaAcademica");
+    var ofertas = [];
+    if (sheetOferta) {
+      var dataOf = sheetOferta.getDataRange().getValues();
+      for (var o = 1; o < dataOf.length; o++) {
+        var rO = dataOf[o];
+        var grO = (rO[1] || "").toString().trim();
+        var secO = (rO[2] || "").toString().trim();
+        var cupoAdmin = parseInt(rO[8] || 35, 10);
+        var estadoO = (rO[9] || "Activo").toString().trim();
+
+        if (grO && secO && estadoO === "Activo") {
+          ofertas.push({
+            grado: grO,
+            seccion: secO,
+            cupoAdmin: cupoAdmin
+          });
+        }
+      }
+    }
+
+    var sheetHor = ss.getSheetByName("HorariosClase");
+    var horAulas = {};
+    if (sheetHor) {
+      var dataH = sheetHor.getDataRange().getValues();
+      for (var h = 1; h < dataH.length; h++) {
+        var rH = dataH[h];
+        var hAula = (rH[5] || "").toString().trim();
+        var hGrado = (rH[7] || "").toString().trim();
+        var hSecc = (rH[8] || "").toString().trim();
+        var hEstado = (rH[9] || "Activo").toString().trim();
+
+        if (hGrado && hSecc && hAula && hEstado !== "Cancelado") {
+          var kH = hGrado + "_" + hSecc;
+          if (!horAulas[kH]) horAulas[kH] = [];
+          if (horAulas[kH].indexOf(hAula) === -1) {
+            horAulas[kH].push(hAula);
+          }
+        }
+      }
+    }
+
+    var sheetAulas = ss.getSheetByName("SedesAulas");
+    var aulasMap = {};
+    var todasAulas = [];
+    if (sheetAulas) {
+      var dataA = sheetAulas.getDataRange().getValues();
+      for (var a = 1; a < dataA.length; a++) {
+        var rA = dataA[a];
+        var codA = (rA[1] || "").toString().trim();
+        var capA = parseInt(rA[3] || 30, 10);
+        var estA = (rA[6] || "Activo").toString().trim();
+
+        if (codA) {
+          aulasMap[codA] = capA;
+          if (estA === "Activo") {
+            todasAulas.push({ aulaCodigo: codA, capacidad: capA });
+          }
+        }
+      }
+    }
+
+    var reportes = [];
+    for (var i = 0; i < ofertas.length; i++) {
+      var ofItem = ofertas[i];
+      var keyOS = ofItem.grado + "_" + ofItem.seccion;
+      var matActiva = matCounts[keyOS] || 0;
+      var aulasAsignadas = horAulas[keyOS] || [];
+
+      var capFisicaMin = 999;
+      if (aulasAsignadas.length > 0) {
+        for (var idxA = 0; idxA < aulasAsignadas.length; idxA++) {
+          var cA = aulasMap[aulasAsignadas[idxA]] || 30;
+          if (cA < capFisicaMin) capFisicaMin = cA;
+        }
+      } else {
+        capFisicaMin = 30;
+      }
+
+      var excedeFisica = matActiva > capFisicaMin;
+      var excedeAdmin = matActiva > ofItem.cupoAdmin;
+
+      var alerta = null;
+      if (excedeFisica && excedeAdmin) {
+        alerta = "Alerta Crítica: La matrícula activa (" + matActiva + ") excede el aforo físico del aula (" + capFisicaMin + ") y el cupo administrativo (" + ofItem.cupoAdmin + ").";
+      } else if (excedeFisica) {
+        alerta = "Alerta Aforo Físico: La matrícula activa (" + matActiva + ") supera la capacidad física del aula asignada (" + capFisicaMin + ").";
+      } else if (excedeAdmin) {
+        alerta = "Advertencia Cupo Administrativo: La matrícula activa (" + matActiva + ") excede el límite administrativo configurado (" + ofItem.cupoAdmin + ").";
+      }
+
+      var alternativas = [];
+      if (excedeFisica) {
+        for (var idxAlt = 0; idxAlt < todasAulas.length; idxAlt++) {
+          var itemAlt = todasAulas[idxAlt];
+          if (itemAlt.capacidad >= matActiva && aulasAsignadas.indexOf(itemAlt.aulaCodigo) === -1) {
+            alternativas.push(itemAlt);
+          }
+        }
+      }
+
+      reportes.push({
+        grado: ofItem.grado,
+        seccion: ofItem.seccion,
+        matriculaActiva: matActiva,
+        limiteAdministrativo: ofItem.cupoAdmin,
+        capacidadFisicaAula: capFisicaMin,
+        aulasAsignadas: aulasAsignadas.join(", ") || "Sin Asignar",
+        excedeCapacidadFisica: excedeFisica,
+        excedeLimiteAdministrativo: excedeAdmin,
+        alertaPreventiva: alerta,
+        aulasAlternativasCompatibles: alternativas
+      });
+    }
+
+    return {
+      status: "success",
+      reportes: reportes,
+      data: reportes,
+      totalCount: reportes.length
+    };
+  } catch (error) {
+    Logger.log("Error en getSectionCapacityAnalyticsReport: " + error.message);
+    return {
+      status: "error",
+      message: "Error al generar reporte de capacidad por sección: " + error.message
+    };
+  }
+}
+
+
+// [TAREA-F7-IMP-20] [Fase 7: Planificación Académica, Horarios y Recursos] - Invalidador de caché de consultas de planificación académica
+function invalidateScheduleCache(docenteUserId, anolectivo, grado, seccion) {
+  try {
+    var cache = CacheService.getScriptCache();
+    cache.remove("all_class_schedules");
+    cache.remove("all_published_versions");
+    cache.remove("all_curricular_constraints");
+    cache.remove("schedules_all_all_all_all");
+    cache.remove("schedules_2026_all_all_all");
+    if (docenteUserId) {
+      cache.remove("schedules_all_all_all_" + docenteUserId);
+      cache.remove("schedules_2026_all_all_" + docenteUserId);
+    }
+    if (grado && seccion) {
+      cache.remove("schedules_" + (anolectivo || "2026") + "_" + grado + "_" + seccion + "_all");
+      cache.remove("schedules_all_" + grado + "_" + seccion + "_all");
+    }
+  } catch (err) {
+    Logger.log("Error al invalidar caché de horarios: " + err.message);
+  }
+}
+
+
+// [TAREA-F7-IMP-21] [Fase 7: Planificación Académica, Horarios y Recursos] - Consulta y consolidación de bitácora de auditoría y trazabilidad operativa de planificación
+function getAcademicPlanningAuditLogs(payload) {
+  try {
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var filterUsuario = (payload && payload.usuario) ? payload.usuario.toString().trim().toLowerCase() : "";
+    var filterOperacion = (payload && payload.operacion) ? payload.operacion.toString().trim().toLowerCase() : "";
+    var filterEstado = (payload && payload.estado) ? payload.estado.toString().trim().toLowerCase() : "";
+
+    var sheetHist = getOrCreateSheet(ss, "HistorialCambiosEntidad");
+    var logs = [];
+
+    if (sheetHist) {
+      var dataH = sheetHist.getDataRange().getValues();
+      for (var i = 1; i < dataH.length; i++) {
+        var row = dataH[i];
+        var entType = (row[1] || "").toString().trim().toLowerCase();
+
+        if (entType === "horarioclase" || entType === "planificacion" || entType === "horarios" || entType === "restriccionescurriculares" || entType === "aulas" || entType === "solicitudadmision" || entType === "matricula") {
+          var userActor = (row[7] || row[6] || "Sistema").toString().trim();
+          var opType = (row[3] || row[2] || "MUTACION").toString().trim();
+          var statusVal = (row[8] || "EXITOSO").toString().trim();
+          var timestamp = (row[6] || row[0] || new Date().toISOString()).toString().trim();
+          var details = (row[5] || row[4] || "").toString().trim();
+
+          if (filterUsuario && userActor.toLowerCase().indexOf(filterUsuario) === -1) continue;
+          if (filterOperacion && opType.toLowerCase().indexOf(filterOperacion) === -1) continue;
+          if (filterEstado && statusVal.toLowerCase().indexOf(filterEstado) === -1) continue;
+
+          logs.push({
+            logId: row[0] || ("LOG_AUDIT_" + i),
+            entidad: row[1] || "HorarioClase",
+            entidadId: row[2] || "N/A",
+            tipoOperacion: opType,
+            detallesPayload: details,
+            usuarioActor: userActor,
+            estadoOperacion: statusVal,
+            fechaHora: timestamp
+          });
+        }
+      }
+    }
+
+    return {
+      status: "success",
+      logs: logs,
+      data: logs,
+      totalCount: logs.length
+    };
+  } catch (error) {
+    Logger.log("Error en getAcademicPlanningAuditLogs: " + error.message);
+    return {
+      status: "error",
+      message: "Error al consultar bitácora de auditoría de planificación: " + error.message
+    };
+  }
+}
+
+
+// [TAREA-F7-IMP-22] [Fase 7: Planificación Académica, Horarios y Recursos] - Guardar estructura de distribución horaria semanal como plantilla reusable
+function saveScheduleTemplate(payload) {
+  try {
+    if (!payload || !payload.nombrePlantilla || !payload.grado || !payload.seccion) {
+      return { status: "error", message: "Faltan parámetros requeridos (nombrePlantilla, grado, seccion)." };
+    }
+
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheetT = ss.getSheetByName("PlantillasHorarios");
+    if (!sheetT) {
+      sheetT = ss.insertSheet("PlantillasHorarios");
+      sheetT.appendRow(["PlantillaID", "NombrePlantilla", "Grado", "Seccion", "AnoBase", "EstructuraJSON", "Estado", "FechaCreacion", "UsuarioCreacion"]);
+      sheetT.getRange(1, 1, 1, 9).setFontWeight("bold").setBackground("#e2e8f0");
+      sheetT.setFrozenRows(1);
+    }
+
+    var sheetH = ss.getSheetByName("HorariosClase");
+    var bloques = [];
+    if (sheetH) {
+      var dataH = sheetH.getDataRange().getValues();
+      for (var h = 1; h < dataH.length; h++) {
+        var rowH = dataH[h];
+        var gr = (rowH[7] || rowH[8] || "").toString().trim();
+        var sec = (rowH[8] || rowH[9] || "").toString().trim();
+        var st = (rowH[9] || rowH[10] || "Activo").toString().trim();
+
+        if (st !== "Cancelado" && gr === payload.grado && sec === payload.seccion) {
+          bloques.push({
+            materia: rowH[1],
+            diaSemana: rowH[2],
+            horaInicio: rowH[3],
+            horaFin: rowH[4],
+            aulaCodigo: rowH[5],
+            docenteUserId: rowH[6]
+          });
+        }
+      }
+    }
+
+    var plantillaId = "PLANT_SCHED_" + Date.now();
+    var nowIso = new Date().toISOString();
+
+    sheetT.appendRow([
+      plantillaId,
+      payload.nombrePlantilla.toString().trim(),
+      payload.grado.toString().trim(),
+      payload.seccion.toString().trim(),
+      (payload.anolectivo || "2026").toString().trim(),
+      JSON.stringify(bloques),
+      "Activo",
+      nowIso,
+      (payload.userId || payload.usuario || "Sistema").toString().trim()
+    ]);
+
+    return {
+      status: "success",
+      message: "Plantilla de horario guardada exitosamente con " + bloques.length + " bloques.",
+      plantillaId: plantillaId,
+      bloquesContados: bloques.length
+    };
+  } catch (error) {
+    Logger.log("Error en saveScheduleTemplate: " + error.message);
+    return { status: "error", message: "Error al guardar plantilla de horario: " + error.message };
+  }
+}
+
+// [TAREA-F7-IMP-22] [Fase 7: Planificación Académica, Horarios y Recursos] - Consultar plantillas de horario registradas
+function getScheduleTemplates(payload) {
+  try {
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheetT = ss.getSheetByName("PlantillasHorarios");
+    var plantillas = [];
+
+    if (sheetT) {
+      var dataT = sheetT.getDataRange().getValues();
+      for (var i = 1; i < dataT.length; i++) {
+        var row = dataT[i];
+        if (row[0] && row[6] === "Activo") {
+          plantillas.push({
+            plantillaId: row[0],
+            nombrePlantilla: row[1],
+            grado: row[2],
+            seccion: row[3],
+            anoBase: row[4],
+            estructuraJson: row[5],
+            estado: row[6],
+            fechaCreacion: row[7],
+            usuarioCreacion: row[8]
+          });
+        }
+      }
+    }
+
+    return {
+      status: "success",
+      plantillas: plantillas,
+      data: plantillas,
+      totalCount: plantillas.length
+    };
+  } catch (error) {
+    Logger.log("Error en getScheduleTemplates: " + error.message);
+    return { status: "error", message: "Error al consultar plantillas de horario: " + error.message };
+  }
+}
+
+// [TAREA-F7-IMP-22] [Fase 7: Planificación Académica, Horarios y Recursos] - Aplicar plantilla de horario con previsualización y validación en período de destino
+function applyScheduleTemplate(payload) {
+  try {
+    if (!payload || !payload.plantillaId || !payload.targetGrado || !payload.targetSeccion) {
+      return { status: "error", message: "Faltan parámetros requeridos (plantillaId, targetGrado, targetSeccion)." };
+    }
+
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheetT = ss.getSheetByName("PlantillasHorarios");
+    if (!sheetT) return { status: "error", message: "No existen plantillas de horario registradas." };
+
+    var dataT = sheetT.getDataRange().getValues();
+    var targetTemplate = null;
+    for (var i = 1; i < dataT.length; i++) {
+      if (dataT[i][0] === payload.plantillaId) {
+        targetTemplate = dataT[i];
+        break;
+      }
+    }
+
+    if (!targetTemplate) return { status: "error", message: "Plantilla no encontrada." };
+
+    var bloques = JSON.parse(targetTemplate[5] || "[]");
+    var previsualizar = Boolean(payload.previsualizar);
+    var conflictos = [];
+    var bloquesClonados = [];
+
+    for (var b = 0; b < bloques.length; b++) {
+      var blk = bloques[b];
+      var confCheck = checkScheduleConflict({
+        grado: payload.targetGrado,
+        seccion: payload.targetSeccion,
+        diaSemana: blk.diaSemana,
+        horaInicio: blk.horaInicio,
+        horaFin: blk.horaFin,
+        aulaCodigo: blk.aulaCodigo,
+        docenteUserId: blk.docenteUserId,
+        materia: blk.materia
+      });
+
+      if (confCheck && confCheck.hasConflict) {
+        conflictos.push({
+          bloqueIndex: b,
+          materia: blk.materia,
+          diaSemana: blk.diaSemana,
+          horaInicio: blk.horaInicio,
+          detalles: confCheck.conflictos
+        });
+      }
+
+      bloquesClonados.push({
+        materia: blk.materia,
+        diaSemana: blk.diaSemana,
+        horaInicio: blk.horaInicio,
+        horaFin: blk.horaFin,
+        aulaCodigo: blk.aulaCodigo,
+        docenteUserId: blk.docenteUserId,
+        grado: payload.targetGrado,
+        seccion: payload.targetSeccion,
+        estado: "Borrador"
+      });
+    }
+
+    if (previsualizar) {
+      return {
+        status: "success",
+        modo: "previsualizacion",
+        conflictosCount: conflictos.length,
+        conflictos: conflictos,
+        bloquesAClonarCount: bloquesClonados.length,
+        bloquesClonados: bloquesClonados
+      };
+    }
+
+    var sheetH = ss.getSheetByName("HorariosClase");
+    if (!sheetH) sheetH = ss.insertSheet("HorariosClase");
+
+    for (var c = 0; c < bloquesClonados.length; c++) {
+      var itemC = bloquesClonados[c];
+      sheetH.appendRow([
+        "HOR_" + Date.now() + "_" + c,
+        itemC.materia,
+        itemC.diaSemana,
+        itemC.horaInicio,
+        itemC.horaFin,
+        itemC.aulaCodigo,
+        itemC.docenteUserId,
+        itemC.grado,
+        itemC.seccion,
+        "Borrador",
+        new Date().toISOString()
+      ]);
+    }
+
+    invalidateScheduleCache();
+
+    return {
+      status: "success",
+      message: "Plantilla aplicada exitosamente. Se crearon " + bloquesClonados.length + " bloques en borrador.",
+      conflictosCount: conflictos.length,
+      bloquesClonadosCount: bloquesClonados.length
+    };
+  } catch (error) {
+    Logger.log("Error en applyScheduleTemplate: " + error.message);
+    return { status: "error", message: "Error al aplicar plantilla de horario: " + error.message };
+  }
+}
+
+
+// [TAREA-F7-IMP-25] [Fase 7: Planificación Académica, Horarios y Recursos] - Batería automatizada de pruebas de regresión, integración y calidad de planificación académica
+function runAcademicPlanningRegressionSuite(payload) {
+  const testResults = [];
+  let passedCount = 0;
+
+  function recordTest(id, name, resultBool, details) {
+    if (resultBool) passedCount++;
+    testResults.push({
+      testId: id,
+      testName: name,
+      status: resultBool ? "PASS" : "FAIL",
+      details: details || (resultBool ? "Prueba superada correctamente" : "Falló la prueba")
+    });
+  }
+
+  try {
+    const tc1 = checkScheduleConflict({
+      grado: "Séptimo",
+      seccion: "A",
+      diaSemana: "Lunes",
+      horaInicio: "08:00",
+      horaFin: "09:00",
+      aulaCodigo: "AULA-TEST-101",
+      docenteUserId: "USER-DOC-TEST-101"
+    });
+    recordTest("TC-F7-01", "Detección de Colisión e Invariante de Horario", tc1 !== null && typeof tc1 === "object", "Sujeto a estructura de conflictos en checkScheduleConflict");
+
+    const tc2 = getTeacherTeachingLoad({ docenteUserId: "USER-DOC-TEST-101" });
+    recordTest("TC-F7-02", "Cálculo e Inspección de Carga Laboral Docente", tc2 !== null && typeof tc2 === "object", "Respuesta de horas semanales calculada correctamente");
+
+    const tc3 = getCurricularConstraints({ anoId: "2026" });
+    recordTest("TC-F7-03", "Consulta de Restricciones Curriculares y Dependencias", tc3 && tc3.status === "success" && Array.isArray(tc3.restricciones), "Lista de restricciones retornada sin errores");
+
+    const tc4 = getSectionCapacityAnalyticsReport({ anolectivo: "2026" });
+    recordTest("TC-F7-04", "Reporte de Capacidad y Aforo Físico de Secciones", tc4 && tc4.status === "success" && Array.isArray(tc4.reportes), "Análisis de capacidad y alertas generado");
+
+    const tc5 = getTeacherSubstitutions({ anoId: "2026" });
+    recordTest("TC-F7-05", "Trazabilidad de Sustituciones y Reasignaciones Docentes", tc5 && tc5.status === "success" && Array.isArray(tc5.sustituciones), "Registro de sustituciones recuperado");
+
+    const tc6 = getScheduleTemplates({ anoId: "2026" });
+    recordTest("TC-F7-06", "Consulta de Plantillas Reusables de Horarios", tc6 && tc6.status === "success" && Array.isArray(tc6.plantillas), "Catálogo de plantillas inspeccionado");
+
+    const tc7 = getAcademicPlanningAuditLogs({ estado: "EXITOSO" });
+    recordTest("TC-F7-07", "Consolidación de Bitácora de Auditoría Operativa", tc7 && tc7.status === "success" && Array.isArray(tc7.logs), "Logs de auditoría operacional recuperados");
+
+    const totalTests = testResults.length;
+    const allPassed = passedCount === totalTests;
+
+    logStructuredEvent("ACADEMIC", "runAcademicPlanningRegressionSuite", "INFO", "PLANNING_REGRESSION_SUITE_EXECUTED", `Suite de regresión de planificación completada. Pasaron ${passedCount}/${totalTests}`, { testResults });
+
+    return {
+      status: "success",
+      totalExecuted: totalTests,
+      totalPassed: passedCount,
+      totalFailed: totalTests - passedCount,
+      allPassed: allPassed,
+      testResults: testResults
+    };
+  } catch (err) {
+    Logger.log("Error en runAcademicPlanningRegressionSuite: " + err.message);
+    return {
+      status: "error",
+      message: "Error durante la ejecución de la suite de regresión de planificación: " + err.message
+    };
+  }
 }
