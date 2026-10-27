@@ -43,6 +43,30 @@ La plataforma constituye una solución tecnológica centralizada que integra la 
 * **Evaluación Formativa Independiente:** Valoración separada de conducta, presentación personal e higiene que no altera los promedios académicos.
 * **Compatibilidad con Secretaría de Educación (SACE):** Exportación de reportes académicos en el formato oficial requerido por la Secretaría de Educación de Honduras.
 
+### 4. Planificación Académica, Horarios y Gestión de Recursos
+* **Matriz Interactiva de Planificación Horaria:** Visualización y edición dinámica de la distribución semanal de clases con perspectivas por docente, grado, sección y aula.
+* **Detección e Invariantes de Conflictos:** Validación en tiempo real para prevenir colisiones de horario, sobreposición de docentes, aulas ocupadas y choques de infraestructura.
+* **Resolución Asistida de Conflictos:** Propuesta automática de alternativas disponibles de aulas libres, franjas de tiempo desocupadas y docentes sustitutos.
+* **Escenarios Borrador de Planificación Masiva:** Generación y evaluación de alternativas de distribución horaria sin alterar el calendario oficial publicado.
+* **Capacidad y Carga Laboral Docente:** Configuración de topes semanales de horas de clase por contrato y preferencias de jornada laboral.
+* **Disponibilidad, Equipamiento y Mantenimiento de Aulas:** Gestión de capacidad física, inventario de recursos tecnológicos en aula y ventanas de indisponibilidad por mantenimiento.
+* **Control de Sobrecarga de Evaluaciones:** Validación preventiva para evitar la programación excesiva de exámenes el mismo día para un grupo estudiantil.
+* **Excepciones de Sesión Única:** Registro de cancelaciones o reprogramaciones puntuales de una fecha sin alterar la serie de clases recurrentes.
+* **Historial de Versiones y Restauración Controlada:** Registro de versiones de horarios publicados, comparación visual de cambios y restauración garantizada de matrices.
+* **Notificaciones Automatizadas de Cambio de Horario:** Avisos en tiempo real a docentes, padres y estudiantes ante reprogramaciones, cambios de aula o docentes sustitutos.
+* **Sincronización en Tiempo Real del Horario Familiar:** Visualización del horario actualizado en el Portal Estudiantil y Familiar con indicador de frescura de información.
+* **Reportes Analíticos de Calidad y Ocupación:** Métricas de porcentaje de uso de aulas, equidad en la distribución de carga docente y balance de bloques lectivos.
+* **Importación y Exportación Masiva de Horarios:** Carga e inserción masiva de planes horarios en formatos CSV y JSON con pre-validación de formato y conflictos.
+* **Previsualización de Impacto de Publicación:** Evaluación de bloques afectados, aulas involucradas y alertas previas a la publicación oficial de horarios.
+* **Protección y Control de Concurrencia:** Garantía de coherencia de datos ante ediciones simultáneas en la matriz de planificación.
+* **Sustituciones y Reasignaciones Docentes:** Registro de coberturas temporales con asignación de docentes sustitutos y control de vigencia.
+* **Reserva de Eventos y Recursos Institucionales:** Solicitud y apartado de aulas, laboratorios, auditorios y equipos para actividades especiales.
+* **Restricciones Curriculares y Dependencias entre Asignaturas:** Configuración de co-requisitos simultáneos, bloques consecutivos de clases y exclusividades de horario.
+* **Control de Aforo y Capacidad de Secciones:** Comparación continua entre la matrícula activa, el límite administrativo y la capacidad física del aula con sugerencia de espacios alternativos.
+* **Herramientas de Impresión y Exportación Oficial:** Formateo especial para impresión A4 con membrete institucional, sello de versión publicada y marca de agua oficial.
+* **Personalización de Vistas de Calendario:** Filtros por categoría de evento (clases, exámenes, actos institucionales, mantenimiento) y leyenda cromática adaptativa.
+* **Verificación Automatizada de Calidad de Planificación:** Batería de pruebas continuas que aseguran la consistencia y ausencia de regresiones en la programación académica.
+
 ### 5. Portal Familiar y Comunicación Multicanal
 * **Consola Multiestudiante para Padres:** Vista consolidada para tutores con múltiples hijos inscritos, permitiendo alternar fácilmente entre expedientes, calificaciones y avisos.
 * **Comunicación Institucional Segura:** Circulares, noticias, avisos generales y mensajería interna entre padres, docentes y dirección.
