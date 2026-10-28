@@ -77,13 +77,13 @@
 
 ---
 
-### [ ] [F8-Task04] Crear pruebas de regresión para la modularización y los dashboards dinámicos
+### [X] [F8-Task04] Crear pruebas de regresión para la modularización y los dashboards dinámicos
 - **ID Anterior:** `[TAREA-MOD-06]`
 - **Origen del Hallazgo:** Anexo de Tareas: Regresión / Tarea MOD-06 (P1 · Suite de Regresión Arquitectónica)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Crítica (Pruebas de regresión)
 - **Archivos Involucrados:**
-  - `tests/regression/`
+  - `tests/regression/modular-dashboard-suite.js`
   - `backend/developer-service/Code.gs`
 - **Dependencias Expuestas:** Flujos de autenticación, dashboards, seguridad, operaciones académicas
 - **Descripción del Alcance:**
@@ -97,7 +97,7 @@
 - **Criterios de Aceptación:**
   - CA-MOD-110: La suite de regresión ejecuta el 100% de las pruebas con resultado PASS sin degradación de funciones.
   - CA-MOD-111: Los bloqueos de seguridad y restricciones de ámbito son confirmados por las pruebas.
-- **Estado:** [] No Completado
+- **Estado:** [X] Completado
 
 ---
 

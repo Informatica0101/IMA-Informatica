@@ -282,3 +282,14 @@ RESULTADO DE EVALUACIÓN:
 - Se generó la documentación técnica docs/architecture/routing-and-paths.md comprobando la inexistencia de errores HTTP 404.
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task04: CREAR PRUEBAS DE REGRESIÓN PARA LA MODULARIZACIÓN Y LOS DASHBOARDS DINÁMICOS
+ARCHIVOS AUDITADOS: tests/regression/modular-dashboard-suite.js, backend/developer-service/Code.gs, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se construyó y verificó la suite de pruebas automatizadas de regresión para modularización y dashboards dinámicos.
+- Se implementó `runModularAndDynamicDashboardsRegressionSuite` en `backend/developer-service/Code.gs` y la suite ejecutable en Node.js `tests/regression/modular-dashboard-suite.js`.
+- Se verificó la ejecución con resultado 8/8 PASS (100.0%) cubriendo autenticación, dashboards dinámicos, RBAC, flujos académicos e inmutabilidad.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================

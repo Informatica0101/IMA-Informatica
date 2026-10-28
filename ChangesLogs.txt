@@ -2489,3 +2489,21 @@ Archivos Creados y Modificados:
 
 4. Auditoria.txt
    - Registro de la auditoría y verificación de la tarea [F8-Task03].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task04] Crear pruebas de regresión para la modularización y los dashboards dinámicos
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. tests/regression/modular-dashboard-suite.js
+   - Creación del script ejecutable en Node.js para la suite de regresión arquitectónica de modularización y dashboards dinámicos.
+
+2. backend/developer-service/Code.gs
+   - Implementación de la función `runModularAndDynamicDashboardsRegressionSuite` para ejecución de suite de regresión con verificación de token HMAC, catálogo dinámico, RBAC por defecto y contratos API.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task04].
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task04].
