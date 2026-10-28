@@ -289,6 +289,7 @@ function validateStableIdentifiersAndControlColumns(payload) {
 
   var targetColumns = (payload && payload.columnsToCheck) || [];
   var nonCompliantColumns = [];
+  var immutabilityViolations = [];
 
   if (Array.isArray(targetColumns) && targetColumns.length > 0) {
     targetColumns.forEach(function(col) {
@@ -300,7 +301,11 @@ function validateStableIdentifiersAndControlColumns(payload) {
     });
   }
 
-  var isCompliant = nonCompliantColumns.length === 0;
+  if (payload && payload.mutableAuditLog === true) {
+    immutabilityViolations.push("Historical audit log immutability check failed");
+  }
+
+  var isCompliant = nonCompliantColumns.length === 0 && immutabilityViolations.length === 0;
 
   return {
     status: isCompliant ? "success" : "error",
@@ -310,8 +315,9 @@ function validateStableIdentifiersAndControlColumns(payload) {
     standardEntityIds: standardEntityIds,
     standardControlColumns: standardControlColumns,
     nonCompliantColumns: nonCompliantColumns,
-    relationalByEmailProhibited: isCompliant,
-    historicalAuditImmutabilityVerified: true,
+    immutabilityViolations: immutabilityViolations,
+    relationalByEmailProhibited: nonCompliantColumns.length === 0,
+    historicalAuditImmutabilityVerified: immutabilityViolations.length === 0,
     timestamp: new Date().toISOString()
   };
 }
@@ -361,6 +367,8 @@ function auditRoleIndependenceAndMasterDataIntegrity(payload) {
   });
 
   var activeSS = null;
+  var duplicatesFound = (payload && typeof payload.duplicatedMasterRecordsFound === "number") ? payload.duplicatedMasterRecordsFound : 0;
+
   try {
     if (SPREADSHEET_ID && !SPREADSHEET_ID.includes("SPREADSHEET-ID")) {
       activeSS = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -369,22 +377,40 @@ function auditRoleIndependenceAndMasterDataIntegrity(payload) {
 
   var missingMasterSheets = [];
   masterSheets.forEach(function(sheetName) {
-    if (activeSS && !activeSS.getSheetByName(sheetName)) {
-      missingMasterSheets.push(sheetName);
+    if (activeSS) {
+      var sheet = activeSS.getSheetByName(sheetName);
+      if (!sheet) {
+        missingMasterSheets.push(sheetName);
+      } else {
+        var data = sheet.getDataRange().getValues();
+        if (data && data.length > 1) {
+          var seenIds = {};
+          for (var i = 1; i < data.length; i++) {
+            var rowId = data[i][0];
+            if (rowId) {
+              if (seenIds[rowId]) {
+                duplicatesFound++;
+              } else {
+                seenIds[rowId] = true;
+              }
+            }
+          }
+        }
+      }
     }
   });
 
   return {
-    status: hasViolations ? "error" : "success",
+    status: (hasViolations || duplicatesFound > 0) ? "error" : "success",
     service: "DEVELOPER",
     masterSheetsTotal: masterSheets.length,
     missingMasterSheets: missingMasterSheets,
     auditedRolesCount: rolesToAudit.length,
     roleIsolationDetails: checkResults,
     masterSheetsIsolated: !hasViolations,
-    duplicatedMasterRecordsFound: 0,
+    duplicatedMasterRecordsFound: duplicatesFound,
     interRoleEventsEnabled: true,
-    complianceStatus: (!hasViolations && missingMasterSheets.length === 0) ? "PASS" : "WARN",
+    complianceStatus: (!hasViolations && missingMasterSheets.length === 0 && duplicatesFound === 0) ? "PASS" : "WARN",
     timestamp: new Date().toISOString()
   };
 }
@@ -422,6 +448,12 @@ function getArchitectureAndDependencyMapReport(payload) {
 
 // [F8-Task14] [TAREA-MOD-03] [Anexo Tareas: Modularización - Descomposición de Archivos Monolíticos] - Validación programática de la conservación de contratos públicos, prevención de duplicados y compatibilidad de namespaces
 function validateMonolithDecompositionContracts(payload) {
+  var knownGlobalFunctions = [
+    "loadDynamicDashboard", "filterDataByScope", "validateUserScopeContext",
+    "initCoordinatorDashboard", "openRoleResponsibilityConfigModal", "loadRoleConfigAdminData",
+    "previewSubmissionPDFDocument", "openExamGradeDistributionModal", "executeDynamicModuleContract"
+  ];
+
   var expectedContracts = (payload && payload.contractsToCheck) || [
     { module: "js/ui-common.js", contract: "loadDynamicDashboard" },
     { module: "js/ui-common.js", contract: "filterDataByScope" },
@@ -434,20 +466,32 @@ function validateMonolithDecompositionContracts(payload) {
 
   var validatedContracts = [];
   var missingContracts = [];
+  var seenContracts = {};
+  var duplicateCount = 0;
 
   expectedContracts.forEach(function(item) {
     if (item && item.contract) {
+      if (seenContracts[item.contract]) {
+        duplicateCount++;
+      } else {
+        seenContracts[item.contract] = true;
+      }
+
+      var existsInScope = knownGlobalFunctions.includes(item.contract);
       validatedContracts.push({
         module: item.module || "GLOBAL",
         contract: item.contract,
-        status: "VALIDATED"
+        status: existsInScope ? "VALIDATED" : "NOT_FOUND"
       });
+      if (!existsInScope) {
+        missingContracts.push(item);
+      }
     } else {
       missingContracts.push(item);
     }
   });
 
-  var isValid = missingContracts.length === 0;
+  var isValid = missingContracts.length === 0 && duplicateCount === 0;
 
   return {
     status: isValid ? "success" : "error",
@@ -455,8 +499,8 @@ function validateMonolithDecompositionContracts(payload) {
     totalContracts: validatedContracts.length,
     missingContractsCount: missingContracts.length,
     contractsValid: isValid,
-    duplicatedFunctionsFound: 0,
-    globalCollisionsFound: 0,
+    duplicatedFunctionsFound: duplicateCount,
+    globalCollisionsFound: duplicateCount,
     publicContracts: validatedContracts,
     timestamp: new Date().toISOString()
   };
@@ -485,17 +529,22 @@ function validateModularFolderStructure(payload) {
     });
   }
 
+  var indexHtmPreserved = (payload && typeof payload.indexHtmPreserved === "boolean") ? payload.indexHtmPreserved : true;
+  var publicExposingRisk = (payload && typeof payload.publicExposingRisk === "boolean") ? payload.publicExposingRisk : false;
+
   var rootPreserved = {
-    indexHtmPreserved: true,
-    publicExposingRisk: false
+    indexHtmPreserved: indexHtmPreserved,
+    publicExposingRisk: publicExposingRisk
   };
 
+  var structureValid = unverifiedFolders.length === 0 && indexHtmPreserved && !publicExposingRisk;
+
   return {
-    status: unverifiedFolders.length === 0 ? "success" : "error",
+    status: structureValid ? "success" : "error",
     service: "DEVELOPER",
     totalRequiredFolders: requiredFolders.length,
     unverifiedFolders: unverifiedFolders,
-    structureValid: unverifiedFolders.length === 0,
+    structureValid: structureValid,
     rootPreserved: rootPreserved,
     requiredFolders: requiredFolders,
     architectureNote: "Nota de Arquitectura: Las estructuras que están en el anexo A (carpetas del repositorio) y en el anexo B (hojas y spreadsheets por rol) son ejemplos de una estructura recomendable, y no una estructura obligatoria.",
