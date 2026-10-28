@@ -2364,3 +2364,21 @@ Archivos Modificados:
 
 5. Auditoria.txt
    - Registro de auditoría y verificación técnica de [TAREA-AD-03].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [TAREA-AD-04] Desarrollar el dashboard de coordinador académico como implementación de referencia
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. dashboard-coordinacion.html
+   - Creación del dashboard de referencia para Coordinadores Académicos con tarjetas de métricas, controles de ámbito contextual por nivel y departamento, lista de supervisión de docentes coordinados y revisión de jornalizaciones y sílabos.
+
+2. js/secretary.js
+   - Líneas 454-522: Implementación de los controladores de interfaz `initCoordinatorDashboard` y `loadCoordinatorDashboardData` antecedidos por el comentario identificativo `[TAREA-AD-04]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para [TAREA-AD-04].
+
+4. Auditoria.txt
+   - Registro de auditoría y verificación de la tarea [TAREA-AD-04].

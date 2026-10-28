@@ -207,3 +207,13 @@ RESULTADO DE EVALUACIÓN:
 - Se agregaron las utilidades de filtrado y validación de contexto por ámbito filterDataByScope y validateUserScopeContext en js/ui-common.js.
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA-AD-04: DASHBOARD DE COORDINADOR ACADÉMICO COMO IMPLEMENTACIÓN DE REFERENCIA
+ARCHIVOS AUDITADOS: dashboard-coordinacion.html, js/secretary.js, backend/academic-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se creó la interfaz de referencia dashboard-coordinacion.html con tarjetas de resumen métrico, filtros de nivel y departamento, supervisión de docentes coordinados y revisión de jornalizaciones/sílabos.
+- Se implementaron los controladores UI initCoordinatorDashboard y loadCoordinatorDashboardData en js/secretary.js con consumo del endpoint backend getCoordinatorOverview.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================

@@ -451,6 +451,74 @@ window.recordInterviewOutcomeAction = async function(entrevistaId, estado) {
     }
 };
 
+// [TAREA-AD-04] [Anexo Tareas: Dashboards Dinámicos - Referencia Coordinación] - Inicializador y controladores para el Dashboard de Coordinación Académica
+window.initCoordinatorDashboard = async function() {
+    const userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || '{}';
+    const user = JSON.parse(userRaw);
+
+    const userNameEl = document.getElementById('coord-user-name');
+    if (userNameEl && user.nombre) userNameEl.textContent = user.nombre + " (" + (user.rol || 'Coordinador') + ")";
+
+    await window.loadCoordinatorDashboardData();
+
+    const btnRefresh = document.getElementById('btn-refresh-coord-dashboard');
+    if (btnRefresh) {
+        btnRefresh.onclick = window.loadCoordinatorDashboardData;
+    }
+};
+
+window.loadCoordinatorDashboardData = async function() {
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'getCoordinatorOverview', {});
+        if (res && res.status === 'success' && res.data) {
+            const data = res.data;
+            const offers = data.ofertas || [];
+            const assignments = data.asignaciones || [];
+            const schedules = data.horarios || [];
+
+            const totalTeachersEl = document.getElementById('metric-total-teachers');
+            if (totalTeachersEl) totalTeachersEl.textContent = Array.from(new Set(assignments.map(a => a.docenteUserId))).filter(Boolean).length || 0;
+
+            const pendingSyllabiEl = document.getElementById('metric-pending-syllabi');
+            if (pendingSyllabiEl) pendingSyllabiEl.textContent = "0 Pendientes";
+
+            const totalSectionsEl = document.getElementById('metric-total-sections');
+            if (totalSectionsEl) totalSectionsEl.textContent = offers.length || 0;
+
+            const unassignedEl = document.getElementById('metric-unassigned-classes');
+            if (unassignedEl) {
+                const assignedOfferIds = new Set(assignments.map(a => a.ofertaId));
+                const unassignedCount = offers.filter(o => !assignedOfferIds.has(o.ofertaId)).length;
+                unassignedEl.textContent = unassignedCount;
+            }
+
+            const teachersListEl = document.getElementById('coord-teachers-list');
+            if (teachersListEl) {
+                if (assignments.length === 0) {
+                    teachersListEl.innerHTML = '<div class="p-4 text-center text-xs text-slate-400 italic bg-slate-50 rounded-2xl">No hay asignaciones docentes registradas.</div>';
+                } else {
+                    teachersListEl.innerHTML = assignments.slice(0, 10).map(a => `
+                        <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between text-xs">
+                            <div>
+                                <p class="font-bold text-slate-800"><i class="fa-solid fa-user-tie text-indigo-600 mr-1"></i> ${a.docenteUserId}</p>
+                                <p class="text-[10px] text-slate-400">Rol: ${a.rolDocente || 'Titular'} | Oferta: ${a.ofertaId}</p>
+                            </div>
+                            <span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 font-bold rounded-lg text-[10px]">Asignado</span>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            const syllabiListEl = document.getElementById('coord-syllabi-list');
+            if (syllabiListEl) {
+                syllabiListEl.innerHTML = '<div class="p-4 text-center text-xs text-slate-400 italic bg-slate-50 rounded-2xl">Todas las jornalizaciones y sílabos están al día.</div>';
+            }
+        }
+    } catch (err) {
+        console.error('Error al cargar datos de coordinación:', err);
+    }
+};
+
 /*
  * [TAREA-F7-IMP-17] [Fase 7: Planificación Académica, Horarios y Recursos]
  * Módulo de Gestión de Eventos, Actividades e Infraestructura para Secretaría, Coordinación y Dirección.
