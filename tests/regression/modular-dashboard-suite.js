@@ -26,6 +26,7 @@ assert(fs.existsSync(path.join(__dirname, '../../docs/architecture/repository-in
 assert(fs.existsSync(path.join(__dirname, '../../docs/architecture/routing-and-paths.md')), "Existe docs/architecture/routing-and-paths.md");
 assert(fs.existsSync(path.join(__dirname, '../../docs/architecture/staged-migration-procedure.md')), "Existe docs/architecture/staged-migration-procedure.md [F8-Task05]");
 assert(fs.existsSync(path.join(__dirname, '../../docs/architecture/folder-structure.md')), "Existe docs/architecture/folder-structure.md [F8-Task13]");
+assert(fs.existsSync(path.join(__dirname, '../../docs/architecture/monolith-decomposition-plan.md')), "Existe docs/architecture/monolith-decomposition-plan.md [F8-Task14]");
 
 // 2. Verificación de definiciones en js/config.js
 const configContent = fs.readFileSync(path.join(__dirname, '../../js/config.js'), 'utf8');
@@ -38,6 +39,7 @@ const devServiceContent = fs.readFileSync(path.join(__dirname, '../../backend/de
 assert(devServiceContent.includes('runModularAndDynamicDashboardsRegressionSuite'), "backend/developer-service/Code.gs contiene suite runModularAndDynamicDashboardsRegressionSuite");
 assert(devServiceContent.includes('validateStagedMigrationProgress'), "backend/developer-service/Code.gs contiene función validateStagedMigrationProgress [F8-Task05]");
 assert(devServiceContent.includes('validateModularFolderStructure'), "backend/developer-service/Code.gs contiene función validateModularFolderStructure [F8-Task13]");
+assert(devServiceContent.includes('validateMonolithDecompositionContracts'), "backend/developer-service/Code.gs contiene función validateMonolithDecompositionContracts [F8-Task14]");
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {

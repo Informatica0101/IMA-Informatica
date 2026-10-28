@@ -2549,3 +2549,24 @@ Archivos Creados y Modificados:
 
 5. Auditoria.txt
    - Registro de la auditoría y verificación de la tarea [F8-Task13].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task14] Modularizar los archivos grandes sin eliminar ni duplicar funciones
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. docs/architecture/monolith-decomposition-plan.md
+   - Creación del documento de plan de descomposición de monolitos y preservación de contratos públicos expuestos.
+
+2. backend/developer-service/Code.gs
+   - Implementación de la función `validateMonolithDecompositionContracts` con la etiqueta identificativa `[F8-Task14] [TAREA-MOD-03]`.
+
+3. tests/regression/modular-dashboard-suite.js
+   - Inclusión de comprobaciones para `monolith-decomposition-plan.md` y `validateMonolithDecompositionContracts`.
+
+4. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task14].
+
+5. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task14].

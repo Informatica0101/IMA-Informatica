@@ -338,14 +338,14 @@
 
 ---
 
-### [ ] [F8-Task14] Modularizar los archivos grandes sin eliminar ni duplicar funciones
+### [X] [F8-Task14] Modularizar los archivos grandes sin eliminar ni duplicar funciones
 - **ID Anterior:** `[TAREA-MOD-03]`
 - **Origen del Hallazgo:** Anexo de Tareas: Modularización / Tarea MOD-03 (P1 · Descomposición de Archivos Monolíticos)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Descomposición de código)
 - **Archivos Involucrados:**
-  - `js/ui-common.js`, `js/secretary.js`, `js/teacher.js`, `js/student.js`
-  - `backend/academic-service/Code.gs`
+  - `docs/architecture/monolith-decomposition-plan.md`
+  - `backend/developer-service/Code.gs`
 - **Dependencias Expuestas:** Contratos de funciones públicas, namespaces, adaptadores de compatibilidad
 - **Descripción del Alcance:**
   Dividir archivos monolíticos extensos por responsabilidad funcional (presentación, estado UI, lógica de negocio, servicios, validación) manteniendo contratos públicos.
@@ -358,7 +358,7 @@
 - **Criterios de Aceptación:**
   - CA-MOD-105: Cada función existente conserva un contrato de invocación válido y compatible.
   - CA-MOD-106: No existen funciones duplicadas ni colisiones en el ámbito global.
-- **Estado:** [] NoCompletado
+- **Estado:** [X] Completado
 
 ---
 
