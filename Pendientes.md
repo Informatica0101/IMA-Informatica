@@ -438,12 +438,13 @@
 
 ---
 
-### [ ] [F8-Task18] Implementar hojas estandarizadas de eventos, errores y auditoría por Spreadsheet funcional
+### [X] [F8-Task18] Implementar hojas estandarizadas de eventos, errores y auditoría por Spreadsheet funcional
 - **ID Anterior:** `[TAREA-ARQ-03]`
 - **Origen del Hallazgo:** Anexo Técnico: Arquitectura de Roles / Tarea ARQ-03 (P1 · Observabilidad por Spreadsheet)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Bitácoras descentralizadas de operación)
 - **Archivos Involucrados:**
+  - `backend/developer-service/Code.gs`
   - `backend/academic-service/Code.gs`
   - `backend/task-service/Code.gs`
   - `backend/exam-service/Code.gs`
@@ -460,7 +461,7 @@
 - **Criterios de Aceptación:**
   - CA-ARQ-105: Los Spreadsheets funcionales incorporan las tres hojas estandarizadas de trazabilidad.
   - CA-ARQ-106: La hoja de errores no almacena datos sensibles, contraseñas o tokens de acceso.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

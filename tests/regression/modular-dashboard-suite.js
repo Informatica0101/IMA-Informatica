@@ -45,6 +45,8 @@ assert(devServiceContent.includes('getArchitectureAndDependencyMapReport'), "bac
 assert(devServiceContent.includes('getRoleFunctionalSpaceConfig'), "backend/developer-service/Code.gs contiene función getRoleFunctionalSpaceConfig [F8-Task16]");
 assert(devServiceContent.includes('auditRoleIndependenceAndMasterDataIntegrity'), "backend/developer-service/Code.gs contiene función auditRoleIndependenceAndMasterDataIntegrity [F8-Task16]");
 assert(devServiceContent.includes('validateStableIdentifiersAndControlColumns'), "backend/developer-service/Code.gs contiene función validateStableIdentifiersAndControlColumns [F8-Task17]");
+assert(devServiceContent.includes('ensureStandardObservabilitySheets'), "backend/developer-service/Code.gs contiene función ensureStandardObservabilitySheets [F8-Task18]");
+assert(devServiceContent.includes('validateObservabilitySheetsIntegrity'), "backend/developer-service/Code.gs contiene función validateObservabilitySheetsIntegrity [F8-Task18]");
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {

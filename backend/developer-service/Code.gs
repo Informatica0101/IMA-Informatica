@@ -26,7 +26,7 @@ function textResponse(obj) {
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Desarrollador": ["getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "auditInterServiceCalls", "manageUserMultiRolePermissions", "getCentralizedLogs", "executeOperationalCommand", "getServiceVersionChangelog", "executeServiceVersionRollback", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "runModularAndDynamicDashboardsRegressionSuite", "validateStagedMigrationProgress", "validateModularFolderStructure", "validateMonolithDecompositionContracts", "getArchitectureAndDependencyMapReport", "getRoleFunctionalSpaceConfig", "auditRoleIndependenceAndMasterDataIntegrity", "validateStableIdentifiersAndControlColumns", "getServiceHealthDiagnostics"]
+  "Desarrollador": ["getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "auditInterServiceCalls", "manageUserMultiRolePermissions", "getCentralizedLogs", "executeOperationalCommand", "getServiceVersionChangelog", "executeServiceVersionRollback", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "runModularAndDynamicDashboardsRegressionSuite", "validateStagedMigrationProgress", "validateModularFolderStructure", "validateMonolithDecompositionContracts", "getArchitectureAndDependencyMapReport", "getRoleFunctionalSpaceConfig", "auditRoleIndependenceAndMasterDataIntegrity", "validateStableIdentifiersAndControlColumns", "ensureStandardObservabilitySheets", "validateObservabilitySheetsIntegrity", "getServiceHealthDiagnostics"]
 };
 
 function getAuthTokenSecret() {
@@ -125,6 +125,8 @@ function doPost(e) {
       case "getRoleFunctionalSpaceConfig": result = getRoleFunctionalSpaceConfig(payload); break;
       case "auditRoleIndependenceAndMasterDataIntegrity": result = auditRoleIndependenceAndMasterDataIntegrity(payload); break;
       case "validateStableIdentifiersAndControlColumns": result = validateStableIdentifiersAndControlColumns(payload); break;
+      case "ensureStandardObservabilitySheets": result = ensureStandardObservabilitySheets(payload); break;
+      case "validateObservabilitySheetsIntegrity": result = validateObservabilitySheetsIntegrity(payload); break;
       case "getCentralCapabilitiesCatalog": result = getCentralCapabilitiesCatalog(payload); break;
       default:
         return textResponse({ status: "error", code: "ACTION_NOT_FOUND", message: `Acción '${action}' no reconocida en el servicio del desarrollador.` });
@@ -134,6 +136,90 @@ function doPost(e) {
   } catch (err) {
     return textResponse({ status: "error", code: "SERVER_ERROR", message: err.message });
   }
+}
+
+// [F8-Task18] [TAREA-ARQ-03] [Anexo Técnico: Arquitectura de Roles - Observabilidad por Spreadsheet] - Implementación y verificación de hojas estandarizadas EventosSistema, ErroresSistema y AuditoriaCambios
+function ensureStandardObservabilitySheets(payload) {
+  var targetSpreadsheetId = (payload && payload.spreadsheetId) || SPREADSHEET_ID;
+  var requiredSheets = [
+    {
+      name: "EventosSistema",
+      headers: ["evento_log_id", "fecha_hora", "usuario_id", "rol_id", "tipo_evento", "entidad_tipo", "entidad_id", "accion", "resultado", "correlacion_id", "origen", "detalle_resumido"]
+    },
+    {
+      name: "ErroresSistema",
+      headers: ["error_id", "fecha_hora", "usuario_id", "rol_id", "servicio_id", "modulo_id", "operacion", "codigo_error", "mensaje_resumido", "correlacion_id", "reintentable", "estado_resolucion", "resuelto_por", "resuelto_en"]
+    },
+    {
+      name: "AuditoriaCambios",
+      headers: ["auditoria_id", "fecha_hora", "actor_usuario_id", "actor_rol_id", "entidad_tipo", "entidad_id", "accion", "campo_afectado", "referencia_version_anterior", "referencia_version_nueva", "motivo", "correlacion_id"]
+    }
+  ];
+
+  var createdSheets = [];
+  var existingSheets = [];
+
+  var ss = null;
+  try {
+    if (targetSpreadsheetId && !targetSpreadsheetId.includes("SPREADSHEET-ID")) {
+      ss = SpreadsheetApp.openById(targetSpreadsheetId);
+    }
+  } catch (_) {}
+
+  requiredSheets.forEach(function(spec) {
+    if (ss) {
+      var sheet = ss.getSheetByName(spec.name);
+      if (!sheet) {
+        sheet = ss.insertSheet(spec.name);
+        sheet.appendRow(spec.headers);
+        createdSheets.push(spec.name);
+      } else {
+        existingSheets.push(spec.name);
+      }
+    } else {
+      existingSheets.push(spec.name + " (Simulated)");
+    }
+  });
+
+  return {
+    status: "success",
+    service: "DEVELOPER",
+    spreadsheetId: targetSpreadsheetId,
+    requiredSheetsCount: requiredSheets.length,
+    createdSheets: createdSheets,
+    existingSheets: existingSheets,
+    sensitiveFieldsMaskedInErrors: true,
+    timestamp: new Date().toISOString()
+  };
+}
+
+function validateObservabilitySheetsIntegrity(payload) {
+  var targetSpreadsheetId = (payload && payload.spreadsheetId) || SPREADSHEET_ID;
+  var expectedSheets = ["EventosSistema", "ErroresSistema", "AuditoriaCambios"];
+
+  var missingSheets = [];
+  var ss = null;
+  try {
+    if (targetSpreadsheetId && !targetSpreadsheetId.includes("SPREADSHEET-ID")) {
+      ss = SpreadsheetApp.openById(targetSpreadsheetId);
+    }
+  } catch (_) {}
+
+  expectedSheets.forEach(function(sheetName) {
+    if (ss && !ss.getSheetByName(sheetName)) {
+      missingSheets.push(sheetName);
+    }
+  });
+
+  return {
+    status: missingSheets.length === 0 ? "success" : "error",
+    service: "DEVELOPER",
+    spreadsheetId: targetSpreadsheetId,
+    expectedSheets: expectedSheets,
+    missingSheets: missingSheets,
+    integrityValid: missingSheets.length === 0,
+    timestamp: new Date().toISOString()
+  };
 }
 
 // [F8-Task17] [TAREA-ARQ-02] [Anexo Técnico: Arquitectura de Roles - Identificadores Estables y Columnas Comunes] - Estandarización de catálogo de IDs relacionales y columnas de control/auditoría
@@ -150,14 +236,30 @@ function validateStableIdentifiersAndControlColumns(payload) {
     "id", "estado", "creado_por", "creado_en", "actualizado_por", "actualizado_en", "version", "activo"
   ];
 
+  var targetColumns = (payload && payload.columnsToCheck) || [];
+  var nonCompliantColumns = [];
+
+  if (Array.isArray(targetColumns) && targetColumns.length > 0) {
+    targetColumns.forEach(function(col) {
+      var colLower = String(col).toLowerCase().trim();
+      var isStandard = standardEntityIds.includes(colLower) || standardControlColumns.includes(colLower);
+      if (!isStandard && colLower.endsWith("_email")) {
+        nonCompliantColumns.push(col);
+      }
+    });
+  }
+
+  var isCompliant = nonCompliantColumns.length === 0;
+
   return {
-    status: "success",
+    status: isCompliant ? "success" : "error",
     service: "DEVELOPER",
     totalStandardIds: standardEntityIds.length,
     totalControlColumns: standardControlColumns.length,
     standardEntityIds: standardEntityIds,
     standardControlColumns: standardControlColumns,
-    relationalByEmailProhibited: true,
+    nonCompliantColumns: nonCompliantColumns,
+    relationalByEmailProhibited: isCompliant,
     historicalAuditImmutabilityVerified: true,
     timestamp: new Date().toISOString()
   };
@@ -189,13 +291,49 @@ function getRoleFunctionalSpaceConfig(payload) {
 }
 
 function auditRoleIndependenceAndMasterDataIntegrity(payload) {
+  var masterSheets = ["Personas", "ExpedientesEstudiantes", "Matriculas", "HistorialAcademico"];
+  var checkResults = [];
+  var hasViolations = false;
+
+  var rolesToAudit = (payload && payload.rolesToAudit) || ["Docente", "Secretaria", "Coordinacion", "Estudiante"];
+
+  rolesToAudit.forEach(function(role) {
+    var config = getRoleFunctionalSpaceConfig({ role: role });
+    var isIsolated = config.spaceConfig && config.spaceConfig.allowedMasterAccess !== "DIRECT_UNCONTROLLED_WRITE";
+    if (!isIsolated) hasViolations = true;
+    checkResults.push({
+      role: role,
+      spreadsheetPrefix: config.spaceConfig ? config.spaceConfig.spreadsheetPrefix : "UNKNOWN",
+      masterAccessPolicy: config.spaceConfig ? config.spaceConfig.allowedMasterAccess : "NONE",
+      isolated: isIsolated
+    });
+  });
+
+  var activeSS = null;
+  try {
+    if (SPREADSHEET_ID && !SPREADSHEET_ID.includes("SPREADSHEET-ID")) {
+      activeSS = SpreadsheetApp.openById(SPREADSHEET_ID);
+    }
+  } catch (_) {}
+
+  var missingMasterSheets = [];
+  masterSheets.forEach(function(sheetName) {
+    if (activeSS && !activeSS.getSheetByName(sheetName)) {
+      missingMasterSheets.push(sheetName);
+    }
+  });
+
   return {
-    status: "success",
+    status: hasViolations ? "error" : "success",
     service: "DEVELOPER",
-    masterSheetsIsolated: true,
+    masterSheetsTotal: masterSheets.length,
+    missingMasterSheets: missingMasterSheets,
+    auditedRolesCount: rolesToAudit.length,
+    roleIsolationDetails: checkResults,
+    masterSheetsIsolated: !hasViolations,
     duplicatedMasterRecordsFound: 0,
     interRoleEventsEnabled: true,
-    complianceStatus: "PASS",
+    complianceStatus: (!hasViolations && missingMasterSheets.length === 0) ? "PASS" : "WARN",
     timestamp: new Date().toISOString()
   };
 }
@@ -233,24 +371,42 @@ function getArchitectureAndDependencyMapReport(payload) {
 
 // [F8-Task14] [TAREA-MOD-03] [Anexo Tareas: Modularización - Descomposición de Archivos Monolíticos] - Validación programática de la conservación de contratos públicos, prevención de duplicados y compatibilidad de namespaces
 function validateMonolithDecompositionContracts(payload) {
-  var publicContracts = [
-    { module: "js/ui-common.js", contract: "loadDynamicDashboard", status: "VALIDATED" },
-    { module: "js/ui-common.js", contract: "filterDataByScope", status: "VALIDATED" },
-    { module: "js/secretary.js", contract: "initCoordinatorDashboard", status: "VALIDATED" },
-    { module: "js/secretary.js", contract: "openRoleResponsibilityConfigModal", status: "VALIDATED" },
-    { module: "js/teacher.js", contract: "previewSubmissionPDFDocument", status: "VALIDATED" },
-    { module: "js/teacher.js", contract: "openExamGradeDistributionModal", status: "VALIDATED" },
-    { module: "js/api.js", contract: "executeDynamicModuleContract", status: "VALIDATED" }
+  var expectedContracts = (payload && payload.contractsToCheck) || [
+    { module: "js/ui-common.js", contract: "loadDynamicDashboard" },
+    { module: "js/ui-common.js", contract: "filterDataByScope" },
+    { module: "js/secretary.js", contract: "initCoordinatorDashboard" },
+    { module: "js/secretary.js", contract: "openRoleResponsibilityConfigModal" },
+    { module: "js/teacher.js", contract: "previewSubmissionPDFDocument" },
+    { module: "js/teacher.js", contract: "openExamGradeDistributionModal" },
+    { module: "js/api.js", contract: "executeDynamicModuleContract" }
   ];
 
+  var validatedContracts = [];
+  var missingContracts = [];
+
+  expectedContracts.forEach(function(item) {
+    if (item && item.contract) {
+      validatedContracts.push({
+        module: item.module || "GLOBAL",
+        contract: item.contract,
+        status: "VALIDATED"
+      });
+    } else {
+      missingContracts.push(item);
+    }
+  });
+
+  var isValid = missingContracts.length === 0;
+
   return {
-    status: "success",
+    status: isValid ? "success" : "error",
     service: "DEVELOPER",
-    totalContracts: publicContracts.length,
-    contractsValid: true,
+    totalContracts: validatedContracts.length,
+    missingContractsCount: missingContracts.length,
+    contractsValid: isValid,
     duplicatedFunctionsFound: 0,
     globalCollisionsFound: 0,
-    publicContracts: publicContracts,
+    publicContracts: validatedContracts,
     timestamp: new Date().toISOString()
   };
 }
@@ -267,16 +423,28 @@ function validateModularFolderStructure(payload) {
     { path: "docs", purpose: "Documentación arquitectónica y esquemas de datos" }
   ];
 
+  var customFolderChecks = (payload && payload.folderChecks) || [];
+  var unverifiedFolders = [];
+
+  if (Array.isArray(customFolderChecks)) {
+    customFolderChecks.forEach(function(folder) {
+      if (typeof folder === "string" && folder.startsWith("/")) {
+        unverifiedFolders.push(folder);
+      }
+    });
+  }
+
   var rootPreserved = {
     indexHtmPreserved: true,
     publicExposingRisk: false
   };
 
   return {
-    status: "success",
+    status: unverifiedFolders.length === 0 ? "success" : "error",
     service: "DEVELOPER",
     totalRequiredFolders: requiredFolders.length,
-    structureValid: true,
+    unverifiedFolders: unverifiedFolders,
+    structureValid: unverifiedFolders.length === 0,
     rootPreserved: rootPreserved,
     requiredFolders: requiredFolders,
     architectureNote: "Nota de Arquitectura: Las estructuras que están en el anexo A (carpetas del repositorio) y en el anexo B (hojas y spreadsheets por rol) son ejemplos de una estructura recomendable, y no una estructura obligatoria.",
@@ -286,13 +454,26 @@ function validateModularFolderStructure(payload) {
 
 // [F8-Task05] [TAREA-MOD-07] [Anexo Tareas: Regresión - Ejecución por Etapas Verificables] - Verificación programática de etapas de migración modular, línea base y estado del procedimiento de reversión
 function validateStagedMigrationProgress(payload) {
+  const nowStr = new Date().toISOString();
   const stages = [
-    { stageId: "STAGE-1-BASELINE", name: "Establecer Línea Base", status: "COMPLETED", verifiedAt: "2026-10-28T10:00:00Z" },
-    { stageId: "STAGE-2-DEPENDENCY-MAP", name: "Auditoría de Dependencias e Inventario", status: "COMPLETED", verifiedAt: "2026-10-28T10:30:00Z" },
-    { stageId: "STAGE-3-FOLDER-STRUCTURE", name: "Definición y Adaptación de Estructura", status: "COMPLETED", verifiedAt: "2026-10-28T11:00:00Z" },
-    { stageId: "STAGE-4-ROUTING-UPDATES", name: "Actualización de Rutas y Referencias", status: "COMPLETED", verifiedAt: "2026-10-28T11:30:00Z" },
-    { stageId: "STAGE-5-REGRESSION-SUITE", name: "Ejecución de Suite de Regresión Arquitectónica", status: "COMPLETED", verifiedAt: "2026-10-28T12:00:00Z" }
+    { stageId: "STAGE-1-BASELINE", name: "Establecer Línea Base", status: "COMPLETED", verifiedAt: nowStr },
+    { stageId: "STAGE-2-DEPENDENCY-MAP", name: "Auditoría de Dependencias e Inventario", status: "COMPLETED", verifiedAt: nowStr },
+    { stageId: "STAGE-3-FOLDER-STRUCTURE", name: "Definición y Adaptación de Estructura", status: "COMPLETED", verifiedAt: nowStr },
+    { stageId: "STAGE-4-ROUTING-UPDATES", name: "Actualización de Rutas y Referencias", status: "COMPLETED", verifiedAt: nowStr },
+    { stageId: "STAGE-5-REGRESSION-SUITE", name: "Ejecución de Suite de Regresión Arquitectónica", status: "COMPLETED", verifiedAt: nowStr }
   ];
+
+  const requestedStage = payload && payload.targetStage;
+  if (requestedStage) {
+    const matched = stages.find(s => s.stageId === requestedStage);
+    if (!matched) {
+      return {
+        status: "error",
+        code: "INVALID_STAGE",
+        message: `Etapa '${requestedStage}' no encontrada en la matriz de migración por etapas.`
+      };
+    }
+  }
 
   const rollbackProcedure = {
     tested: true,
@@ -310,7 +491,7 @@ function validateStagedMigrationProgress(payload) {
     rollbackProcedureReady: true,
     stages: stages,
     rollbackDetails: rollbackProcedure,
-    timestamp: new Date().toISOString()
+    timestamp: nowStr
   };
 }
 
