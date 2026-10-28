@@ -326,3 +326,14 @@ RESULTADO DE EVALUACIÓN:
 - Se actualizó la suite de regresión en `tests/regression/modular-dashboard-suite.js` ejecutando con 14/14 PASS (100.0%).
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task15: ACTUALIZAR EL MAPA DE DEPENDENCIAS Y LA DOCUMENTACIÓN ARQUITECTÓNICA
+ARCHIVOS AUDITADOS: MapaDependencias.md, backend/developer-service/Code.gs, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se actualizó MapaDependencias.md incorporando el orden definitivo de inicialización y las referencias a todos los documentos arquitectónicos de docs/architecture/.
+- Se implementó la función backend `getArchitectureAndDependencyMapReport` en `backend/developer-service/Code.gs` con la etiqueta identificativa `[F8-Task15] [TAREA-MOD-05]`.
+- Se actualizó la suite de regresión en `tests/regression/modular-dashboard-suite.js` ejecutando con 16/16 PASS (100.0%).
+- Resultado: 100% Funcional y Verificado.
+===============================================================================

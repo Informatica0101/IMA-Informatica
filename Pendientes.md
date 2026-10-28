@@ -362,7 +362,7 @@
 
 ---
 
-### [ ] [F8-Task15] Actualizar el mapa de dependencias y la documentación arquitectónica
+### [X] [F8-Task15] Actualizar el mapa de dependencias y la documentación arquitectónica
 - **ID Anterior:** `[TAREA-MOD-05]`
 - **Origen del Hallazgo:** Anexo de Tareas: Modularización / Tarea MOD-05 (P1 · Documentación Arquitectónica)
 - **Prioridad:** P1
@@ -370,6 +370,7 @@
 - **Archivos Involucrados:**
   - `MapaDependencias.md`
   - `docs/architecture/`
+  - `backend/developer-service/Code.gs`
 - **Dependencias Expuestas:** Estructura completa del repositorio, contratos de módulos y orden de inicialización
 - **Descripción del Alcance:**
   Documentar el mapa definitivo de dependencias, árbol del repositorio, catálogo de módulos, contratos e inventario de funciones trasladadas.
@@ -380,7 +381,7 @@
   3. Documentar procesos de compilación y reglas para incorporar nuevos archivos.
 - **Criterios de Aceptación:**
   - CA-MOD-109: `MapaDependencias.md` y la documentación de arquitectura corresponden con exactitud a la estructura del código.
-- **Estado:** []No  Completado
+- **Estado:** [X] Completado
 
 ---
 

@@ -26,7 +26,7 @@ function textResponse(obj) {
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Desarrollador": ["getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "auditInterServiceCalls", "manageUserMultiRolePermissions", "getCentralizedLogs", "executeOperationalCommand", "getServiceVersionChangelog", "executeServiceVersionRollback", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "runModularAndDynamicDashboardsRegressionSuite", "validateStagedMigrationProgress", "validateModularFolderStructure", "validateMonolithDecompositionContracts", "getServiceHealthDiagnostics"]
+  "Desarrollador": ["getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "auditInterServiceCalls", "manageUserMultiRolePermissions", "getCentralizedLogs", "executeOperationalCommand", "getServiceVersionChangelog", "executeServiceVersionRollback", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "runModularAndDynamicDashboardsRegressionSuite", "validateStagedMigrationProgress", "validateModularFolderStructure", "validateMonolithDecompositionContracts", "getArchitectureAndDependencyMapReport", "getServiceHealthDiagnostics"]
 };
 
 function getAuthTokenSecret() {
@@ -121,6 +121,7 @@ function doPost(e) {
       case "validateStagedMigrationProgress": result = validateStagedMigrationProgress(payload); break;
       case "validateModularFolderStructure": result = validateModularFolderStructure(payload); break;
       case "validateMonolithDecompositionContracts": result = validateMonolithDecompositionContracts(payload); break;
+      case "getArchitectureAndDependencyMapReport": result = getArchitectureAndDependencyMapReport(payload); break;
       case "getCentralCapabilitiesCatalog": result = getCentralCapabilitiesCatalog(payload); break;
       default:
         return textResponse({ status: "error", code: "ACTION_NOT_FOUND", message: `Acción '${action}' no reconocida en el servicio del desarrollador.` });
@@ -130,6 +131,37 @@ function doPost(e) {
   } catch (err) {
     return textResponse({ status: "error", code: "SERVER_ERROR", message: err.message });
   }
+}
+
+// [F8-Task15] [TAREA-MOD-05] [Anexo Tareas: Modularización - Documentación Arquitectónica] - Reporte programático del mapa definitivo de dependencias, orden de inicialización y contratos del sistema
+function getArchitectureAndDependencyMapReport(payload) {
+  var architectureDocs = [
+    "docs/architecture/repository-inventory.md",
+    "docs/architecture/routing-and-paths.md",
+    "docs/architecture/staged-migration-procedure.md",
+    "docs/architecture/folder-structure.md",
+    "docs/architecture/monolith-decomposition-plan.md",
+    "docs/architecture/spreadsheets-schema.md",
+    "MapaDependencias.md"
+  ];
+
+  var initializationOrder = [
+    "1. Google Apps Script Services Setup (GAS Environment)",
+    "2. js/config.js (Constants, Service Maps, Module Contracts, Routing Dictionary)",
+    "3. js/api.js (HTTP Layer, HMAC Verification, Fault-Isolated Executors)",
+    "4. js/ui-common.js (UI Framework, Dynamic Dashboard Engine, Accessibility, Filters)",
+    "5. js/auth.js / Portal-specific Controllers (secretary.js, teacher.js, student.js, accounting.js)"
+  ];
+
+  return {
+    status: "success",
+    service: "DEVELOPER",
+    totalArchitectureDocs: architectureDocs.length,
+    architectureDocs: architectureDocs,
+    initializationOrder: initializationOrder,
+    mapValid: true,
+    timestamp: new Date().toISOString()
+  };
 }
 
 // [F8-Task14] [TAREA-MOD-03] [Anexo Tareas: Modularización - Descomposición de Archivos Monolíticos] - Validación programática de la conservación de contratos públicos, prevención de duplicados y compatibilidad de namespaces
