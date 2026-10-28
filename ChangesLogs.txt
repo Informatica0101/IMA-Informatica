@@ -2453,3 +2453,21 @@ Archivos Modificados:
 
 4. Auditoria.txt
    - Registro de la auditoría y verificación de la tarea [F8-Task12].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task02] Auditar los archivos existentes y elaborar un inventario de dependencias
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. docs/architecture/repository-inventory.md
+   - Creación del documento maestro de inventario del repositorio detallando paneles HTML, controladores JS, microservicios backend GAS y assets.
+
+2. MapaDependencias.md
+   - Adición del comentario identificativo de primera línea `[F8-Task02]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task02].
+
+4. Auditoria.txt
+   - Registro de auditoría y verificación técnica de [F8-Task02].

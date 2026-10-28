@@ -415,10 +415,12 @@ function validateContextualAccess(action, payload, verifiedUserId, userRole) {
       var sheet = ss.getSheetByName("AsignacionesAmbitosRoles");
       if (sheet && sheet.getLastRow() > 1) {
         var data = sheet.getDataRange().getValues();
+        var userScopeFound = false;
         for (var i = 1; i < data.length; i++) {
           if (String(data[i][1]).trim() === String(verifiedUserId).trim() &&
               String(data[i][3]).trim().toUpperCase() === String(payload.scopeType).trim().toUpperCase() &&
               String(data[i][5]).trim().toLowerCase() === "activo") {
+            userScopeFound = true;
             var vals = [];
             try { vals = JSON.parse(data[i][4]); } catch (_) { vals = [data[i][4]]; }
             var isAllowed = vals.some(function(v) { return String(v).trim().toUpperCase() === String(payload.requestedValue).trim().toUpperCase(); });
@@ -427,6 +429,9 @@ function validateContextualAccess(action, payload, verifiedUserId, userRole) {
             }
             break;
           }
+        }
+        if (!userScopeFound && ["Administrador", "Director", "Desarrollador"].indexOf(userRole) === -1) {
+          return { authorized: false, reason: "Aislamiento de ámbito: no existe una asignación activa de ámbito para '" + payload.scopeType + "'." };
         }
       }
     } catch (_) {}

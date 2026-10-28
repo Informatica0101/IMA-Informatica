@@ -260,3 +260,14 @@ RESULTADO DE EVALUACIÓN:
 - Se implementaron los controladores UI openRoleResponsibilityConfigModal y loadRoleConfigAdminData en js/secretary.js con etiqueta identificativa [F8-Task12].
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task02: AUDITAR LOS ARCHIVOS EXISTENTES Y ELABORAR UN INVENTARIO DE DEPENDENCIAS
+ARCHIVOS AUDITADOS: Todo el repositorio, docs/architecture/repository-inventory.md, MapaDependencias.md
+RESULTADO DE EVALUACIÓN:
+- Se realizó la auditoría integral de todos los archivos del repositorio (HTML, JS, CSS, Apps Script, assets y documentos).
+- Se generó el documento formal de inventario docs/architecture/repository-inventory.md detallando vistas principales, módulos de control JS, microservicios backend y contratos.
+- Se actualizó MapaDependencias.md con el encabezado identificativo [F8-Task02].
+- Resultado: 100% Funcional y Verificado.
+===============================================================================

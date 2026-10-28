@@ -1,3 +1,4 @@
+<!-- [F8-Task02] [Anexo Tareas: Modularización - Inventario de Dependencias] - Mapa de dependencias del repositorio y catálogo de inventario arquitectónico -->
 # Mapa de Dependencias Académicas e Infraestructura Funcional
 **Plataforma Integral de Gestión Educativa — New Generation Christian Academy**
 **Versión Global:** 1.0 Final - Fase 3 Completada

@@ -31,7 +31,7 @@
 
 ---
 
-### [ ] [F8-Task02] Auditar los archivos existentes y elaborar un inventario de dependencias
+### [X] [F8-Task02] Auditar los archivos existentes y elaborar un inventario de dependencias
 - **ID Anterior:** `[TAREA-MOD-01]`
 - **Origen del Hallazgo:** Anexo de Tareas: Modularización / Tarea MOD-01 (P1 · Inventario de Dependencias)
 - **Prioridad:** P1
@@ -50,7 +50,7 @@
 - **Criterios de Aceptación:**
   - CA-MOD-101: El inventario cubre el 100% de los archivos del repositorio y sus dependencias explícitas.
   - CA-MOD-102: Se genera el mapa de dependencias formal antes de iniciar traslados de archivos.
-- **Estado:** [] No Completado
+- **Estado:** [X] Completado
 
 ---
 
