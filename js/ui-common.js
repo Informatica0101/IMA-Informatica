@@ -5789,6 +5789,29 @@ window.openSecurityAndComplianceDashboardModal = function(triggerEl) {
 };
 
 
+// [TAREA-AD-03] [Anexo Tareas: Dashboards Dinámicos - Ámbito de Actuación] - Helpers frontend de filtrado y validación por ámbito contextual
+window.filterDataByScope = function(dataArray, scopeType, allowedValues) {
+    if (!Array.isArray(dataArray) || !scopeType || !Array.isArray(allowedValues) || allowedValues.length === 0) {
+        return dataArray || [];
+    }
+    const allowedUpper = allowedValues.map(v => String(v).trim().toUpperCase());
+    return dataArray.filter(item => {
+        if (!item) return false;
+        const val = item[scopeType] || item[scopeType.toLowerCase()] || item[scopeType.toUpperCase()];
+        if (!val) return true;
+        return allowedUpper.includes(String(val).trim().toUpperCase());
+    });
+};
+
+window.validateUserScopeContext = function(scopeType, requestedValue, userScopeConfig) {
+    if (!scopeType || !requestedValue || !userScopeConfig || !Array.isArray(userScopeConfig.ambitos)) {
+        return false;
+    }
+    const matchedScope = userScopeConfig.ambitos.find(a => String(a.scopeType).trim().toUpperCase() === String(scopeType).trim().toUpperCase());
+    if (!matchedScope || !Array.isArray(matchedScope.scopeValues)) return false;
+    return matchedScope.scopeValues.some(val => String(val).trim().toUpperCase() === String(requestedValue).trim().toUpperCase());
+};
+
 // [TAREA-AD-01] [Anexo Tareas: Dashboards Dinámicos] - Controlador de carga de módulos dinámicos y renderizado adaptable por rol
 window.loadDynamicDashboard = async function() {
     const grid = document.getElementById('dynamic-dashboard-modules-grid');

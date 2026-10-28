@@ -4,7 +4,7 @@
 
 ---
 
-### [] [TAREA-F8-MANT-01] Implementar el seguimiento preventivo de las cuotas y la disponibilidad de almacenamiento en Google Drive
+### [X] [TAREA-F8-MANT-01] Implementar el seguimiento preventivo de las cuotas y la disponibilidad de almacenamiento en Google Drive
 - **Origen del Hallazgo:** `AUDITORIA_FASE_8_AULA_VIRTUAL_APRENDIZAJE.md` / Tarea F8-MANT-01 (P1 · Supervisión de Almacenamiento Drive)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Mantenimiento preventivo y observabilidad)
@@ -26,11 +26,11 @@
   - CA-F8-010: Se identifican y monitorean las ubicaciones de almacenamiento utilizadas por el aula virtual.
   - CA-F8-011: La simulación de cuota cercana al límite genera alertas preventivas para administradores.
   - CA-F8-012: Las cargas fallidas por espacio no se confirman como entregas registradas exitosamente.
-- **Estado:** [] No Completado
+- **Estado:** [X] Completado
 
 ---
 
-### [] [TAREA-AD-01] Crear una arquitectura de dashboards dinámicos para roles configurables
+### [X] [TAREA-AD-01] Crear una arquitectura de dashboards dinámicos para roles configurables
 - **Origen del Hallazgo:** Anexo de Tareas: Dashboards dinámicos / Tarea AD-01 (P1 · Arquitectura de Dashboards)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Arquitectura base de interfaz adaptable)
@@ -53,11 +53,11 @@
   - CA-AD-101: Se puede crear un rol nuevo desde la interfaz administrativa autorizada.
   - CA-AD-102: El dashboard presenta únicamente los módulos correspondientes a la configuración efectiva del usuario.
   - CA-AD-103: Los roles desconocidos o sin permisos no obtienen acceso por defecto.
-- **Estado:** [] No Completado
+- **Estado:** [X] Completado
 
 ---
 
-### [] [TAREA-AD-02] Implementar un catálogo central de responsabilidades, capacidades y módulos
+### [X] [TAREA-AD-02] Implementar un catálogo central de responsabilidades, capacidades y módulos
 - **Origen del Hallazgo:** Anexo de Tareas: Dashboards dinámicos / Tarea AD-02 (P1 · Catálogo de Responsabilidades)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Catálogo de capacidades reutilizables)
@@ -79,11 +79,11 @@
   - CA-AD-104: Una misma capacidad se reutiliza en diferentes roles con permisos y ámbitos independientes.
   - CA-AD-105: Retirar permisos de una responsabilidad no elimina funciones compartidas por otros roles.
   - CA-AD-106: Las asignaciones de roles y responsabilidades registran trazabilidad completa.
-- **Estado:** []
+- **Estado:** [X] Completado
 
 ---
 
-### [] [TAREA-AD-03] Implementar la gestión del ámbito de actuación de los roles
+### [X] [TAREA-AD-03] Implementar la gestión del ámbito de actuación de los roles
 - **Origen del Hallazgo:** Anexo de Tareas: Dashboards dinámicos / Tarea AD-03 (P1 · Ámbito de Actuación)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Aislamiento contextual de datos)
@@ -103,7 +103,7 @@
 - **Criterios de Aceptación:**
   - CA-AD-107: Los filtros, listas y búsquedas respetan estrictamente los ámbitos asignados al usuario.
   - CA-AD-108: Intentos de consultar o modificar registros fuera del ámbito autorizado son rechazados por el backend.
-- **Estado:** [] No Completado
+- **Estado:** [X] Completado
 
 ---
 

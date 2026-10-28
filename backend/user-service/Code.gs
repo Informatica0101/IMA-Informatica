@@ -1416,6 +1416,15 @@ function doPost(e) {
       case "saveInstitutionalResponsibility":
         result = saveInstitutionalResponsibility(payload);
         break;
+      case "assignRoleScope":
+        result = assignRoleScope(payload);
+        break;
+      case "getUserScopeConfig":
+        result = getUserScopeConfig(payload);
+        break;
+      case "validateRoleScopeAccess":
+        result = validateRoleScopeAccess(payload);
+        break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -7089,6 +7098,139 @@ function saveInstitutionalResponsibility(payload) {
     };
   } catch (error) {
     logStructuredEvent("USER", "saveInstitutionalResponsibility", "ERROR", "RESPONSIBILITY_SAVE_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+// [TAREA-AD-03] [Anexo Tareas: Dashboards Dinámicos - Ámbito de Actuación] - Gestión y validación contextual de ámbitos de actuación por rol y usuario
+function assignRoleScope(payload) {
+  try {
+    var verifiedRole = getUserVerifiedRole(payload);
+    if (["Administrador", "Director", "Desarrollador"].indexOf(verifiedRole) === -1) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "Solo personal administrativo autorizado puede asignar ámbitos de actuación a roles." };
+    }
+
+    var userId = payload.userId;
+    var roleId = payload.roleId || payload.rolId;
+    var scopeType = payload.scopeType || payload.tipoAmbito; // NIVEL, DEPARTAMENTO, CARRERA, ASIGNATURA, GRADO, SECCION, PERIODO
+    var scopeValues = payload.scopeValues || payload.valoresAmbito || []; // Arreglo de valores permitidos
+    var estado = payload.estado || "Activo";
+    var actor = payload.actor || verifiedRole;
+
+    if (!userId || !scopeType) {
+      return { status: "error", message: "userId y scopeType son requeridos para asignar ámbito de actuación." };
+    }
+
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheet = getOrCreateSheet(ss, "AsignacionesAmbitosRoles");
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["AsignacionAmbitoID", "UserID", "RoleID", "ScopeType", "ScopeValues", "Estado", "CreadoPor", "FechaCreacion"]);
+    }
+
+    var assignmentId = "AMB-" + Utilities.getUuid().substring(0, 8).toUpperCase();
+    var valuesJSON = JSON.stringify(scopeValues);
+    var now = new Date().toISOString();
+
+    var data = sheet.getDataRange().getValues();
+    var foundIdx = -1;
+    for (var i = 1; i < data.length; i++) {
+      if (String(data[i][1]).trim() === String(userId).trim() && String(data[i][3]).trim().toUpperCase() === String(scopeType).trim().toUpperCase()) {
+        foundIdx = i;
+        break;
+      }
+    }
+
+    if (foundIdx !== -1) {
+      assignmentId = data[foundIdx][0];
+      sheet.getRange(foundIdx + 1, 5).setValue(valuesJSON);
+      sheet.getRange(foundIdx + 1, 6).setValue(estado);
+    } else {
+      sheet.appendRow([assignmentId, userId, roleId || "", scopeType, valuesJSON, estado, actor, now]);
+    }
+
+    recordEntityChangeLog("AsignacionAmbitoRol", assignmentId, foundIdx !== -1 ? { scopeValues: data[foundIdx][4] } : {}, { userId: userId, scopeType: scopeType, scopeValues: scopeValues, estado: estado }, "SCOPE_ASSIGNED", actor);
+    logStructuredEvent("USER", "assignRoleScope", "INFO", "SCOPE_ASSIGNED", `Ámbito ${scopeType} asignado al usuario ${userId}.`, { userId: userId, scopeType: scopeType, scopeValues: scopeValues }, verifiedRole);
+
+    return {
+      status: "success",
+      assignmentId: assignmentId,
+      userId: userId,
+      scopeType: scopeType,
+      scopeValues: scopeValues,
+      message: `Ámbito de actuación '${scopeType}' asignado correctamente al usuario ${userId}.`
+    };
+  } catch (error) {
+    logStructuredEvent("USER", "assignRoleScope", "ERROR", "SCOPE_ASSIGN_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function getUserScopeConfig(payload) {
+  try {
+    var userId = payload && payload.userId ? payload.userId : (payload && payload._verifiedUserId ? payload._verifiedUserId : null);
+    if (!userId) {
+      return { status: "error", message: "userId es requerido para consultar ámbitos del usuario." };
+    }
+
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheet = getOrCreateSheet(ss, "AsignacionesAmbitosRoles");
+    var ámbitos = [];
+
+    if (sheet && sheet.getLastRow() > 1) {
+      var data = sheet.getDataRange().getValues();
+      for (var i = 1; i < data.length; i++) {
+        if (String(data[i][1]).trim() === String(userId).trim() && String(data[i][5]).trim().toLowerCase() === "activo") {
+          var vals = [];
+          try { vals = JSON.parse(data[i][4]); } catch (_) { vals = [data[i][4]]; }
+          ámbitos.push({
+            assignmentId: data[i][0],
+            roleId: data[i][2],
+            scopeType: data[i][3],
+            scopeValues: vals,
+            fechaCreacion: data[i][7]
+          });
+        }
+      }
+    }
+
+    return {
+      status: "success",
+      userId: userId,
+      ambitos: ámbitos,
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function validateRoleScopeAccess(payload) {
+  try {
+    var userId = payload && (payload.userId || payload._verifiedUserId);
+    var scopeType = payload && payload.scopeType;
+    var requestedValue = payload && payload.requestedValue;
+
+    if (!userId || !scopeType || !requestedValue) {
+      return { status: "error", message: "userId, scopeType y requestedValue son requeridos para validar ámbito." };
+    }
+
+    var configRes = getUserScopeConfig({ userId: userId });
+    if (configRes.status !== "success") return configRes;
+
+    var matchedScope = (configRes.ambitos || []).find(a => String(a.scopeType).trim().toUpperCase() === String(scopeType).trim().toUpperCase());
+    if (!matchedScope) {
+      return { authorized: false, reason: `El usuario no tiene ámbito configurado para '${scopeType}'.` };
+    }
+
+    var isAllowed = (matchedScope.scopeValues || []).some(val => String(val).trim().toUpperCase() === String(requestedValue).trim().toUpperCase());
+    return {
+      status: "success",
+      authorized: isAllowed,
+      scopeType: scopeType,
+      requestedValue: requestedValue,
+      reason: isAllowed ? "Acceso al ámbito autorizado." : `El valor '${requestedValue}' está fuera del ámbito autorizado para ${scopeType}.`
+    };
+  } catch (error) {
     return { status: "error", message: error.message };
   }
 }

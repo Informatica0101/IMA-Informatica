@@ -408,6 +408,22 @@ function validateContextualAccess(action, payload, verifiedUserId, userRole) {
     }
   }
 
+  // [TAREA-AD-03] [Anexo Tareas: Dashboards Dinámicos - Ámbito de Actuación] - Validación server-side de ámbito contextual
+  if (payload && payload.scopeType && payload.requestedValue && verifiedUserId) {
+    try {
+      var configRes = getUserScopeConfig({ userId: verifiedUserId });
+      if (configRes && configRes.status === "success" && Array.isArray(configRes.ambitos)) {
+        var matchedScope = configRes.ambitos.find(function(a) { return String(a.scopeType).trim().toUpperCase() === String(payload.scopeType).trim().toUpperCase(); });
+        if (matchedScope && Array.isArray(matchedScope.scopeValues)) {
+          var isAllowed = matchedScope.scopeValues.some(function(val) { return String(val).trim().toUpperCase() === String(payload.requestedValue).trim().toUpperCase(); });
+          if (!isAllowed) {
+            return { authorized: false, reason: "Aislamiento de ámbito: el valor '" + payload.requestedValue + "' está fuera del ámbito autorizado para " + payload.scopeType };
+          }
+        }
+      }
+    } catch (_) {}
+  }
+
   // [TAREA-F6-012] [Fase 6: Reestructuración en microservicios independientes] - Validación de aislamiento y ámbito de supervisión por área para Coordinadores
   if (userRole === "Coordinador") {
     const targetAreaId = payload && payload.areaId;
