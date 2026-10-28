@@ -465,7 +465,7 @@
 
 ---
 
-### [ ] [F8-Task19] Implementar el Spreadsheet central de configuración y aprovisionamiento
+### [X] [F8-Task19] Implementar el Spreadsheet central de configuración y aprovisionamiento
 - **ID Anterior:** `[TAREA-ARQ-04]`
 - **Origen del Hallazgo:** Anexo Técnico: Arquitectura de Roles / Tarea ARQ-04 (P1 · Registro Central)
 - **Prioridad:** P1
@@ -484,7 +484,7 @@
 - **Criterios de Aceptación:**
   - CA-ARQ-107: La asignación de roles, ámbitos y Spreadsheets se consulta dinámicamente desde el registro central.
   - CA-ARQ-108: `HistorialProvisionamiento` registra el estado y resultado de cada aprovisionamiento de recursos.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

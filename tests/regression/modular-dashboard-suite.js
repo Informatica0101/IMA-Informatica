@@ -47,6 +47,8 @@ assert(devServiceContent.includes('auditRoleIndependenceAndMasterDataIntegrity')
 assert(devServiceContent.includes('validateStableIdentifiersAndControlColumns'), "backend/developer-service/Code.gs contiene función validateStableIdentifiersAndControlColumns [F8-Task17]");
 assert(devServiceContent.includes('ensureStandardObservabilitySheets'), "backend/developer-service/Code.gs contiene función ensureStandardObservabilitySheets [F8-Task18]");
 assert(devServiceContent.includes('validateObservabilitySheetsIntegrity'), "backend/developer-service/Code.gs contiene función validateObservabilitySheetsIntegrity [F8-Task18]");
+assert(devServiceContent.includes('getCentralSpreadsheetConfigRegistry'), "backend/developer-service/Code.gs contiene función getCentralSpreadsheetConfigRegistry [F8-Task19]");
+assert(devServiceContent.includes('recordProvisioningHistory'), "backend/developer-service/Code.gs contiene función recordProvisioningHistory [F8-Task19]");
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {

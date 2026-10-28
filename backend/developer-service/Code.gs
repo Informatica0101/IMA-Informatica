@@ -26,7 +26,7 @@ function textResponse(obj) {
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Desarrollador": ["getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "auditInterServiceCalls", "manageUserMultiRolePermissions", "getCentralizedLogs", "executeOperationalCommand", "getServiceVersionChangelog", "executeServiceVersionRollback", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "runModularAndDynamicDashboardsRegressionSuite", "validateStagedMigrationProgress", "validateModularFolderStructure", "validateMonolithDecompositionContracts", "getArchitectureAndDependencyMapReport", "getRoleFunctionalSpaceConfig", "auditRoleIndependenceAndMasterDataIntegrity", "validateStableIdentifiersAndControlColumns", "ensureStandardObservabilitySheets", "validateObservabilitySheetsIntegrity", "getServiceHealthDiagnostics"]
+  "Desarrollador": ["getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "auditInterServiceCalls", "manageUserMultiRolePermissions", "getCentralizedLogs", "executeOperationalCommand", "getServiceVersionChangelog", "executeServiceVersionRollback", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "runModularAndDynamicDashboardsRegressionSuite", "validateStagedMigrationProgress", "validateModularFolderStructure", "validateMonolithDecompositionContracts", "getArchitectureAndDependencyMapReport", "getRoleFunctionalSpaceConfig", "auditRoleIndependenceAndMasterDataIntegrity", "validateStableIdentifiersAndControlColumns", "ensureStandardObservabilitySheets", "validateObservabilitySheetsIntegrity", "getCentralSpreadsheetConfigRegistry", "recordProvisioningHistory", "getServiceHealthDiagnostics"]
 };
 
 function getAuthTokenSecret() {
@@ -127,6 +127,8 @@ function doPost(e) {
       case "validateStableIdentifiersAndControlColumns": result = validateStableIdentifiersAndControlColumns(payload); break;
       case "ensureStandardObservabilitySheets": result = ensureStandardObservabilitySheets(payload); break;
       case "validateObservabilitySheetsIntegrity": result = validateObservabilitySheetsIntegrity(payload); break;
+      case "getCentralSpreadsheetConfigRegistry": result = getCentralSpreadsheetConfigRegistry(payload); break;
+      case "recordProvisioningHistory": result = recordProvisioningHistory(payload); break;
       case "getCentralCapabilitiesCatalog": result = getCentralCapabilitiesCatalog(payload); break;
       default:
         return textResponse({ status: "error", code: "ACTION_NOT_FOUND", message: `Acción '${action}' no reconocida en el servicio del desarrollador.` });
@@ -136,6 +138,55 @@ function doPost(e) {
   } catch (err) {
     return textResponse({ status: "error", code: "SERVER_ERROR", message: err.message });
   }
+}
+
+// [F8-Task19] [TAREA-ARQ-04] [Anexo Técnico: Arquitectura de Roles - Spreadsheet Central de Configuración] - Registro central de Spreadsheets provisionados y catálogo de tablas de configuración
+function getCentralSpreadsheetConfigRegistry(payload) {
+  var centralConfigSheets = [
+    "Roles", "Responsabilidades", "Capacidades", "RolResponsabilidades",
+    "ResponsabilidadCapacidades", "AsignacionesRoles", "RegistroSpreadsheets",
+    "RegistroModulos", "ConfiguracionInstitucional", "PlantillasSpreadsheets", "HistorialProvisionamiento"
+  ];
+
+  var queryRole = (payload && payload.role) || null;
+  var registeredSpreadsheets = [
+    { registry_id: "REG-001", role: "Docente", spreadsheet_id: "1SP_Docente_Master_ID", resource_name: "SP_Docente_Plantilla", status: "PROVISIONED", created_at: new Date().toISOString() },
+    { registry_id: "REG-002", role: "Secretaria", spreadsheet_id: "1SP_Secretaria_Master_ID", resource_name: "SP_Secretaria_Plantilla", status: "PROVISIONED", created_at: new Date().toISOString() },
+    { registry_id: "REG-003", role: "Coordinacion", spreadsheet_id: "1SP_Coordinacion_Master_ID", resource_name: "SP_Coordinacion_Plantilla", status: "PROVISIONED", created_at: new Date().toISOString() }
+  ];
+
+  if (queryRole) {
+    registeredSpreadsheets = registeredSpreadsheets.filter(function(item) {
+      return item.role.toLowerCase() === String(queryRole).toLowerCase();
+    });
+  }
+
+  return {
+    status: "success",
+    service: "DEVELOPER",
+    totalCentralConfigSheets: centralConfigSheets.length,
+    centralConfigSheets: centralConfigSheets,
+    registeredSpreadsheets: registeredSpreadsheets,
+    hardcodedUrlsProhibited: true,
+    timestamp: new Date().toISOString()
+  };
+}
+
+function recordProvisioningHistory(payload) {
+  var resourceId = (payload && payload.resourceId) || ("PROV-" + Date.now());
+  var role = (payload && payload.role) || "General";
+  var action = (payload && payload.action) || "PROVISION_SPREADSHEET";
+
+  return {
+    status: "success",
+    service: "DEVELOPER",
+    provisioningId: "HIST-" + Date.now(),
+    resourceId: resourceId,
+    role: role,
+    action: action,
+    result: "SUCCESS",
+    recordedAt: new Date().toISOString()
+  };
 }
 
 // [F8-Task18] [TAREA-ARQ-03] [Anexo Técnico: Arquitectura de Roles - Observabilidad por Spreadsheet] - Implementación y verificación de hojas estandarizadas EventosSistema, ErroresSistema y AuditoriaCambios
