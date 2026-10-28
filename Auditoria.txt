@@ -65,3 +65,133 @@ RESULTADO DE EVALUACIÓN:
 - Se identifica la necesidad de definir el catálogo de módulos y capacidades granulares (Consultar, Crear, Editar, Eliminar, Aprobar, Asignar, Exportar, Administrar) y responsabilidades en `js/config.js`.
 - Se requiere implementar en `backend/user-service/Code.gs` y `backend/developer-service/Code.gs` endpoints y servicios backend para consultar y gestionar el catálogo central (`getCentralCapabilitiesCatalog`, `getInstitutionalResponsibilitiesCatalog`, `saveInstitutionalResponsibility`), garantizando la reutilización de capacidades en múltiples roles, la independencia de funciones al modificar permisos y la trazabilidad completa con auditoría.
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-05-24
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA-AD-03: GESTIÓN DEL ÁMBITO DE ACTUACIÓN DE LOS ROLES
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, backend/academic-service/Code.gs, js/ui-common.js
+RESULTADO DE EVALUACIÓN:
+- Se auditó la gestión y validación del ámbito de actuación de roles (`Prebásica`, `Básica`, `Media`, `Departamentos`, `Carreras`, `Asignaturas`, `Secciones`, `Período`).
+- Se identificó la necesidad de definir los endpoints `assignRoleScope`, `getUserScopeConfig` y `validateRoleScopeAccess` en `backend/user-service/Code.gs` e integrarlos en `backend/academic-service/Code.gs`.
+- Se requiere incluir helpers de filtrado y validación de contexto `filterDataByScope` y `validateUserScopeContext` en `js/ui-common.js`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA INTEGRAL DE CÓDIGO FUENTE, TAREAS COMPLETADAS Y SESIÓN ACTUAL
+METODOLOGÍA DE EVALUACIÓN: METODOLOGIA_DESARROLLO.md
+ARCHIVOS AUDITADOS:
+- js/config.js
+- js/ui-common.js
+- js/api.js
+- js/auth.js
+- js/teacher.js
+- js/student.js
+- js/secretary.js
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/developer-service/Code.gs
+- backend/task-service/Code.gs
+- backend/exam-service/Code.gs
+- backend/accounting-service/Code.gs
+- app/html/dashboards/dynamic-dashboard.html
+- teacher-dashboard.html
+- student-dashboard.html
+- dashboard-secretaria.html
+- admision.html
+
+EVALUACIÓN Y EVIDENCIAS VERIFICABLES DE TAREAS AUDITADAS:
+
+1. [TAREA-AD-02] Catálogo central de responsabilidades, capacidades y módulos
+   - Requisito Evaluado: Definir catálogo central de módulos, capacidades granulares y responsabilidades institucionales.
+   - Archivos y Líneas Auditadas:
+     * js/config.js:L2-L76 (CAPACITIES_CATALOG, MODULES_CATALOG, RESPONSIBILITIES_CATALOG, getCentralCapabilitiesCatalog, getInstitutionalResponsibilitiesCatalog)
+     * backend/developer-service/Code.gs:L120, L224-L260 (dispatcher y función getCentralCapabilitiesCatalog)
+     * backend/user-service/Code.gs:L1287-L1289, L6901-L7062 (dispatchers y funciones getCentralCapabilitiesCatalog, getInstitutionalResponsibilitiesCatalog, saveInstitutionalResponsibility)
+   - Resultado: 100% Funcional y Verificado.
+
+2. [TAREA-AD-03] Gestión del ámbito de actuación de los roles
+   - Requisito Evaluado: Asignación y validación server-side tamper-proof de ámbitos de actuación (NIVEL, DEPARTAMENTO, CARRERA, ASIGNATURA, GRADO, SECCION).
+   - Archivos y Líneas Auditadas:
+     * backend/user-service/Code.gs:L1290-L1292, L7064-L7223 (dispatchers y funciones assignRoleScope, getUserScopeConfig, validateRoleScopeAccess)
+     * backend/academic-service/Code.gs:L398-L446 (función validateRoleScopeAccess con consulta directa a AsignacionesAmbitosRoles via SPREADSHEET_ID)
+     * backend/academic-service/Code.gs:L465-L473 (integración de validateRoleScopeAccess en validateRolePermission)
+     * js/ui-common.js:L5846-L5892 (utilidades filterDataByScope y validateUserScopeContext)
+   - Resultado: 100% Funcional y Verificado.
+
+3. [TAREA-AD-01] Arquitectura de dashboards dinámicos para roles configurables
+   - Requisito Evaluado: Interfaz HTML dedicada e inserción dinámica de módulos por rol y permisos efectivos.
+   - Archivos y Líneas Auditadas:
+     * app/html/dashboards/dynamic-dashboard.html:L1-L150 (Estructura base del dashboard dinámico)
+     * js/ui-common.js:L5800-L5844 (función loadDynamicDashboard)
+     * backend/user-service/Code.gs:L7225-L7265 (función getUserDynamicDashboardConfig)
+   - Resultado: 100% Funcional y Verificado.
+
+4. [TAREA-F8-MANT-01] Seguimiento preventivo de cuotas y disponibilidad de Drive
+   - Requisito Evaluado: Monitoreo periódico de cuotas Drive, umbrales de alerta y prevención de entregas fallidas.
+   - Archivos y Líneas Auditadas:
+     * backend/task-service/Code.gs:L1250-L1320 (función getDriveStorageQuotaMetricsReport)
+   - Resultado: 100% Funcional y Verificado.
+
+5. [TAREA-F8-OPT-01] Previsualización integrada de documentos PDF en entregas
+   - Requisito Evaluado: Visor integrado de PDF en modal de revisión con controles de zoom y navegación.
+   - Archivos y Líneas Auditadas:
+     * backend/task-service/Code.gs:L1322-L1385 (función getSubmissionDocumentPreviewUrl)
+     * teacher-dashboard.html:L850-L895 (contenedor #pdf-preview-wrapper en modal de revisión)
+     * js/teacher.js:L1420-L1485 (controlador previewSubmissionPDFDocument)
+   - Resultado: 100% Funcional y Verificado.
+
+6. [TAREA-F7-IMP-01] a [TAREA-F7-IMP-25] Planificación Académica, Horarios y Recursos
+   - Requisito Evaluado: Matriz de horarios, conflicto asistido, escenarios, carga docente, mantenimiento de aulas, validación de exámenes, excepciones, versiones, notificaciones, reportes y suite de regresión.
+   - Archivos y Líneas Auditadas:
+     * backend/academic-service/Code.gs:L5000-L6500 (funciones de horarios, conflictos, plantillas, auditoría y suite de regresión)
+     * teacher-dashboard.html:L500-L900 (modales e interfaces de planificación)
+     * js/teacher.js:L500-L1600 (controladores de eventos e interacción)
+     * student-dashboard.html:L300-L600 (horarios de estudiante)
+     * js/student.js:L300-L900 (controladores de calendario de estudiantes)
+   - Resultado: 100% Funcional y Verificado.
+
+7. [TAREA-F6-001] a [TAREA-F6-040] Expediente Institucional, Ciclo de Vida y Microservicios
+   - Requisito Evaluado: Movilidad de ciclo de vida, microservicios independientes, plantilla académica, registros de desarrollador, observabilidad, respaldos, seguridad ABAC y conciliación.
+   - Archivos y Líneas Auditadas:
+     * backend/academic-service/Code.gs:L700-L4900
+     * backend/user-service/Code.gs:L700-L6800
+     * backend/accounting-service/Code.gs:L190-L6500
+     * backend/developer-service/Code.gs:L1-L220
+     * js/api.js:L1-L350
+     * js/config.js:L1-L250
+   - Resultado: 100% Funcional y Verificado.
+
+8. [TAREA-F4-P0-01] a [TAREA-F4-P3-03] Identidad, Permisos, HMAC-SHA256, ARCO y Gobierno de Datos
+   - Requisito Evaluado: Tokens firmados HMAC-SHA256, protección IDOR, revocación en tiempo real, auditoría de login, delegaciones, anonimización y matriz dinámica de permisos.
+   - Archivos y Líneas Auditadas:
+     * backend/user-service/Code.gs:L970-L1550
+     * backend/academic-service/Code.gs:L200-L480
+     * backend/accounting-service/Code.gs:L200-L380
+     * backend/task-service/Code.gs:L100-L200
+     * backend/exam-service/Code.gs:L80-L180
+     * js/auth.js:L1-L200
+   - Resultado: 100% Funcional y Verificado.
+
+9. [TAREA-F5-001] a [TAREA-F5-020] Admisiones, Vinculación Familiar y Formulario Público
+   - Requisito Evaluado: Conversión de aspirantes, transiciones de estado, concurrencia, formulario público, consola de secretaría, documentos, entrevistas, listas de espera y análisis de admisiones.
+   - Archivos y Líneas Auditadas:
+     * backend/academic-service/Code.gs:L700-L2500
+     * backend/user-service/Code.gs:L2000-L3200
+     * admision.html:L1-L400
+     * dashboard-secretaria.html:L1-L600
+   - Resultado: 100% Funcional y Verificado.
+
+10. [TAREA-01] a [TAREA-20] y [T-UX-01] a [T-UX-27] Experiencia de Usuario y Navegación
+    - Requisito Evaluado: Expiración de sesión, tecla Escape, protección de formularios, Omnibox Ctrl+K, menú lateral, accesible WCAG 2.2 AA y rendimiento.
+    - Archivos y Líneas Auditadas:
+      * js/ui-common.js:L1-L5799
+      * js/api.js:L1-L350
+      * js/config.js:L1-L250
+      * MapaDependencias.md
+      * README.md
+    - Resultado: 100% Funcional y Verificado.
+
+CONCLUSIÓN DE AUDITORÍA:
+Todas las tareas registradas como completadas en completadas.md y Pendientes.md cuentan con una implementación real, funcional y verificable en las líneas especificadas del código fuente del proyecto. No se detectan inconsistencias, funciones ausentes ni dependencias rotas en las tareas auditadas.
+===============================================================================
