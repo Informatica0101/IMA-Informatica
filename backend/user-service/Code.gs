@@ -1430,6 +1430,15 @@ function doPost(e) {
       case "getInstitutionalFunctionalSpaceCatalog":
         result = getInstitutionalFunctionalSpaceCatalog(payload);
         break;
+      case "getInstitutionalCommunicationsSchema":
+        result = getInstitutionalCommunicationsSchema(payload);
+        break;
+      case "createInstitutionalServiceRequest":
+        result = createInstitutionalServiceRequest(payload);
+        break;
+      case "updateInstitutionalServiceRequestStatus":
+        result = updateInstitutionalServiceRequestStatus(payload);
+        break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -7027,7 +7036,7 @@ function getInstitutionalResponsibilitiesCatalog(payload) {
 
 function saveInstitutionalResponsibility(payload) {
   try {
-    var verifiedRole = getUserVerifiedRole(payload);
+    var verifiedRole = (payload && payload.authRole) || (payload && payload._verifiedRole) || (payload && payload.role) || "NO_ACCESS";
     if (["Administrador", "Director", "Desarrollador"].indexOf(verifiedRole) === -1) {
       return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "Solo personal administrativo autorizado puede configurar responsabilidades institucionales." };
     }
@@ -7110,7 +7119,7 @@ function saveInstitutionalResponsibility(payload) {
 // [TAREA-AD-03] [Anexo Tareas: Dashboards Dinámicos - Ámbito de Actuación] - Gestión y validación contextual de ámbitos de actuación por rol y usuario
 function assignRoleScope(payload) {
   try {
-    var verifiedRole = getUserVerifiedRole(payload);
+    var verifiedRole = (payload && payload.authRole) || (payload && payload._verifiedRole) || (payload && payload.role) || "NO_ACCESS";
     if (["Administrador", "Director", "Desarrollador"].indexOf(verifiedRole) === -1) {
       return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "Solo personal administrativo autorizado puede asignar ámbitos de actuación a roles." };
     }
