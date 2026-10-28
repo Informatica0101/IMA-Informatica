@@ -2342,3 +2342,25 @@ Archivos Modificados:
 
 5. Auditoria.txt
    - Registro de la auditoría y verificación de la tarea [TAREA-AD-02].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [TAREA-AD-03] Implementar la gestión del ámbito de actuación de los roles
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/user-service/Code.gs
+   - Líneas 1419-1426: Adición de dispatchers en `doPost` para las acciones `assignRoleScope`, `getUserScopeConfig` y `validateRoleScopeAccess`.
+   - Líneas 7105-7235: Implementación de las funciones backend `assignRoleScope`, `getUserScopeConfig` y `validateRoleScopeAccess` para la asignación y validación de ámbitos de actuación (NIVEL, DEPARTAMENTO, CARRERA, ASIGNATURA, GRADO, SECCION, PERIODO), persistencia en `AsignacionesAmbitosRoles` e historial en `recordEntityChangeLog`.
+
+2. backend/academic-service/Code.gs
+   - Líneas 410-430: Integración de la validación de ámbito contextual en `validateRolePermission` con verificación directa sobre la hoja `AsignacionesAmbitosRoles`.
+
+3. js/ui-common.js
+   - Líneas 5790-5815: Implementación de las utilidades de filtrado y validación de contexto `filterDataByScope` y `validateUserScopeContext`.
+
+4. Pendientes.md
+   - Actualización del estado a [X] Completado para [TAREA-AD-03].
+
+5. Auditoria.txt
+   - Registro de auditoría y verificación técnica de [TAREA-AD-03].

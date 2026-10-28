@@ -411,13 +411,21 @@ function validateContextualAccess(action, payload, verifiedUserId, userRole) {
   // [TAREA-AD-03] [Anexo Tareas: Dashboards Dinámicos - Ámbito de Actuación] - Validación server-side de ámbito contextual
   if (payload && payload.scopeType && payload.requestedValue && verifiedUserId) {
     try {
-      var configRes = getUserScopeConfig({ userId: verifiedUserId });
-      if (configRes && configRes.status === "success" && Array.isArray(configRes.ambitos)) {
-        var matchedScope = configRes.ambitos.find(function(a) { return String(a.scopeType).trim().toUpperCase() === String(payload.scopeType).trim().toUpperCase(); });
-        if (matchedScope && Array.isArray(matchedScope.scopeValues)) {
-          var isAllowed = matchedScope.scopeValues.some(function(val) { return String(val).trim().toUpperCase() === String(payload.requestedValue).trim().toUpperCase(); });
-          if (!isAllowed) {
-            return { authorized: false, reason: "Aislamiento de ámbito: el valor '" + payload.requestedValue + "' está fuera del ámbito autorizado para " + payload.scopeType };
+      var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+      var sheet = ss.getSheetByName("AsignacionesAmbitosRoles");
+      if (sheet && sheet.getLastRow() > 1) {
+        var data = sheet.getDataRange().getValues();
+        for (var i = 1; i < data.length; i++) {
+          if (String(data[i][1]).trim() === String(verifiedUserId).trim() &&
+              String(data[i][3]).trim().toUpperCase() === String(payload.scopeType).trim().toUpperCase() &&
+              String(data[i][5]).trim().toLowerCase() === "activo") {
+            var vals = [];
+            try { vals = JSON.parse(data[i][4]); } catch (_) { vals = [data[i][4]]; }
+            var isAllowed = vals.some(function(v) { return String(v).trim().toUpperCase() === String(payload.requestedValue).trim().toUpperCase(); });
+            if (!isAllowed) {
+              return { authorized: false, reason: "Aislamiento de ámbito: el valor '" + payload.requestedValue + "' está fuera del ámbito autorizado para " + payload.scopeType };
+            }
+            break;
           }
         }
       }

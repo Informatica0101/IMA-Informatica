@@ -195,3 +195,15 @@ EVALUACIÓN Y EVIDENCIAS VERIFICABLES DE TAREAS AUDITADAS:
 CONCLUSIÓN DE AUDITORÍA:
 Todas las tareas registradas como completadas en completadas.md y Pendientes.md cuentan con una implementación real, funcional y verificable en las líneas especificadas del código fuente del proyecto. No se detectan inconsistencias, funciones ausentes ni dependencias rotas en las tareas auditadas.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA-AD-03: GESTIÓN DEL ÁMBITO DE ACTUACIÓN DE LOS ROLES
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, backend/academic-service/Code.gs, js/ui-common.js
+RESULTADO DE EVALUACIÓN:
+- Se auditó la gestión y validación del ámbito de actuación de roles (NIVEL, DEPARTAMENTO, CARRERA, ASIGNATURA, GRADO, SECCION, PERIODO).
+- Se implementaron y verificaron los endpoints assignRoleScope, getUserScopeConfig y validateRoleScopeAccess en backend/user-service/Code.gs con persistencia en AsignacionesAmbitosRoles y registro de auditoría en HistorialCambiosEntidad.
+- Se integró la validación server-side contextual de ámbito en validateRolePermission dentro de backend/academic-service/Code.gs.
+- Se agregaron las utilidades de filtrado y validación de contexto por ámbito filterDataByScope y validateUserScopeContext en js/ui-common.js.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================

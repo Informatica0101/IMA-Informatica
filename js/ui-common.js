@@ -5791,8 +5791,11 @@ window.openSecurityAndComplianceDashboardModal = function(triggerEl) {
 
 // [TAREA-AD-03] [Anexo Tareas: Dashboards Dinámicos - Ámbito de Actuación] - Helpers frontend de filtrado y validación por ámbito contextual
 window.filterDataByScope = function(dataArray, scopeType, allowedValues) {
-    if (!Array.isArray(dataArray) || !scopeType || !Array.isArray(allowedValues) || allowedValues.length === 0) {
+    if (!Array.isArray(dataArray) || !scopeType) {
         return dataArray || [];
+    }
+    if (!Array.isArray(allowedValues) || allowedValues.length === 0) {
+        return [];
     }
     const allowedUpper = allowedValues.map(v => String(v).trim().toUpperCase());
     return dataArray.filter(item => {
