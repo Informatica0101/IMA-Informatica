@@ -39,6 +39,10 @@
                 <button id="btn-user-management-admin" class="p-2 text-blue-600 hover:text-blue-800 rounded-xl hover:bg-blue-50 text-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500" title="Gestión Administrativa de Usuarios y Permisos" aria-label="Gestión de Usuarios">
                     <i class="fa-solid fa-users-gear"></i>
                 </button>
+                <!-- [F8-Task12] Consola Administrativa de Configuración de Roles y Responsabilidades -->
+                <button id="btn-role-config-admin" class="p-2 text-indigo-600 hover:text-indigo-800 rounded-xl hover:bg-indigo-50 text-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500" title="Configuración de Roles, Responsabilidades y Dashboards" aria-label="Configuración de Roles">
+                    <i class="fa-solid fa-user-shield"></i>
+                </button>
                 <button id="btn-security-compliance-dashboard" class="p-2 text-red-600 hover:text-red-800 rounded-xl hover:bg-red-50 text-lg transition-all focus:outline-none focus:ring-2 focus:ring-red-500" title="Panel de Seguridad, Auditoría y Cumplimiento" aria-label="Panel de Seguridad">
                     <i class="fa-solid fa-shield-halved"></i>
                 </button>
@@ -409,6 +413,27 @@
                         </table>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [F8-Task12] Modal de Configuración Administrativa de Roles, Responsabilidades y Dashboards (#modal-role-responsibility-config) -->
+    <div id="modal-role-responsibility-config" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[95] flex items-center justify-center p-2 md:p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl border border-slate-100 max-w-4xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <div class="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
+                        <i class="fa-solid fa-user-shield text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-slate-900 text-base uppercase tracking-tight">Consola Administrativa de Roles & Responsabilidades</h3>
+                        <p class="text-[11px] text-slate-500">Configuración dinámica de cargos institucionales, capacidades y módulos por rol</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('modal-role-responsibility-config').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div id="role-config-admin-content" class="space-y-4">
+                <div class="p-6 text-center text-slate-400 font-bold text-xs uppercase"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Cargando catálogo de responsabilidades y roles...</div>
             </div>
         </div>
     </div>

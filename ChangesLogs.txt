@@ -2421,3 +2421,35 @@ Archivos Modificados:
 
 5. Auditoria.txt
    - Registro de auditoría y verificación técnica de [TAREA-AD-06].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: Reorganización y renombrado de tareas de Pendientes.md por importancia y severidad
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. Pendientes.md
+   - Inserción de la regla del backlog en la primera línea del archivo.
+   - Reordenamiento de las 27 tareas en orden descendente de importancia y severidad (Crítica -> Alta -> Media).
+   - Renombrado consecutivo de identificadores en formato F8-Task01 a F8-Task27 conservando íntegramente todo el contenido y detalle de cada tarea.
+
+2. Auditoria.txt
+   - Registro de la auditoría y reorganización técnica del backlog en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task12] Crear una interfaz administrativa para configurar los dashboards y las responsabilidades
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. dashboard-direccion.html
+   - Adición de botón gatillador `#btn-role-config-admin` en la barra principal y estructura modal `#modal-role-responsibility-config`.
+
+2. js/secretary.js
+   - Líneas 454-515: Implementación de controladores UI `openRoleResponsibilityConfigModal` y `loadRoleConfigAdminData` con etiqueta identificativa `[F8-Task12]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task12].
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task12].

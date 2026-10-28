@@ -238,3 +238,25 @@ RESULTADO DE EVALUACIÓN:
 - Se agregaron eventos estructurados de auditoría UNAUTHORIZED_ACCESS_ATTEMPT en validateRolePermission en user-service, academic-service y task-service para registrar todo rechazo por defecto.
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y REORGANIZACIÓN DE BACKLOG DE TAREAS PENDIENTES
+ARCHIVOS AUDITADOS: Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se reorganizaron y renombraron las 27 tareas de Pendientes.md en orden descendente de importancia y severidad (Crítica -> Alta -> Media).
+- Se asignaron identificadores consecutivos en formato F8-Task01 a F8-Task27 conservando íntegramente todo el contenido, detalles, requerimientos y criterios de aceptación.
+- Se incorporó la regla del backlog en la primera línea de Pendientes.md.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task12: CREAR UNA INTERFAZ ADMINISTRATIVA PARA CONFIGURAR LOS DASHBOARDS Y LAS RESPONSABILIDADES
+ARCHIVOS AUDITADOS: dashboard-direccion.html, js/secretary.js, backend/user-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se auditó la consola administrativa de configuración de roles y dashboards.
+- Se agregaron el botón gatillador #btn-role-config-admin y la estructura modal #modal-role-responsibility-config en dashboard-direccion.html.
+- Se implementaron los controladores UI openRoleResponsibilityConfigModal y loadRoleConfigAdminData en js/secretary.js con etiqueta identificativa [F8-Task12].
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
