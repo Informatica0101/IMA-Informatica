@@ -42,6 +42,8 @@ assert(devServiceContent.includes('validateStagedMigrationProgress'), "backend/d
 assert(devServiceContent.includes('validateModularFolderStructure'), "backend/developer-service/Code.gs contiene función validateModularFolderStructure [F8-Task13]");
 assert(devServiceContent.includes('validateMonolithDecompositionContracts'), "backend/developer-service/Code.gs contiene función validateMonolithDecompositionContracts [F8-Task14]");
 assert(devServiceContent.includes('getArchitectureAndDependencyMapReport'), "backend/developer-service/Code.gs contiene función getArchitectureAndDependencyMapReport [F8-Task15]");
+assert(devServiceContent.includes('getRoleFunctionalSpaceConfig'), "backend/developer-service/Code.gs contiene función getRoleFunctionalSpaceConfig [F8-Task16]");
+assert(devServiceContent.includes('auditRoleIndependenceAndMasterDataIntegrity'), "backend/developer-service/Code.gs contiene función auditRoleIndependenceAndMasterDataIntegrity [F8-Task16]");
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {

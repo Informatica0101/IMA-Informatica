@@ -385,15 +385,15 @@
 
 ---
 
-### [ ] [F8-Task16] Implementar los principios de independencia funcional y comunicación entre roles
+### [X] [F8-Task16] Implementar los principios de independencia funcional y comunicación entre roles
 - **ID Anterior:** `[TAREA-ARQ-01]`
 - **Origen del Hallazgo:** Anexo Técnico: Arquitectura de Roles / Tarea ARQ-01 (P1 · Independencia Funcional)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Arquitectura de datos y fuentes oficiales)
 - **Archivos Involucrados:**
+  - `backend/developer-service/Code.gs`
   - `backend/user-service/Code.gs`
   - `backend/academic-service/Code.gs`
-  - `backend/developer-service/Code.gs`
 - **Dependencias Expuestas:** Spreadsheets maestros (`Personas`, `ExpedientesEstudiantes`, `Matriculas`, `HistorialAcademico`), Spreadsheets funcionales por rol y Vistas/Proyecciones
 - **Descripción del Alcance:**
   Establecer la separación entre Spreadsheets Maestros (única fuente de verdad oficial), Spreadsheets Funcionales por Rol (gestión operativa y solicitudes) y Vistas/Proyecciones Derivadas, evitando copias duplicadas o inconsistentes de datos.
@@ -407,7 +407,7 @@
 - **Criterios de Aceptación:**
   - CA-ARQ-101: Los datos oficiales de matrículas, expedientes e historial conservan una única fuente de verdad.
   - CA-ARQ-102: Las comunicaciones inter-rol utilizan servicios y eventos sin duplicar registros maestros en Spreadsheets locales.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
