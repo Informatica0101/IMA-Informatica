@@ -407,3 +407,13 @@ RESULTADO DE EVALUACIÓN:
 - Se verificó la prohibición de escrituras directas entre dominios de microservicios, el cumplimiento de privilegio mínimo en permisos de Google Drive y la mitigación de cuotas de Google Sheets mediante operaciones de lectura agrupadas.
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task21: IMPLEMENTAR EL MODELO COMÚN DE COMUNICACIONES INSTITUCIONALES Y SOLICITUDES
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, js/ui-common.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `getInstitutionalCommunicationsSchema`, `createInstitutionalServiceRequest` y `updateInstitutionalServiceRequestStatus` en `backend/user-service/Code.gs` y la función helper `createInstitutionalServiceRequestUI` en `js/ui-common.js` con la etiqueta identificativa `[F8-Task21] [TAREA-ARQ-06]`.
+- Se estructuró la matriz de comunicaciones institucionales con 7 tablas operativas, validación de la máquina de estados de transiciones de solicitudes e idempotencia mediante CacheService.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================

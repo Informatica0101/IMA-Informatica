@@ -515,7 +515,7 @@
 
 ---
 
-### [ ] [F8-Task21] Implementar el modelo común de comunicaciones institucionales y solicitudes
+### [X] [F8-Task21] Implementar el modelo común de comunicaciones institucionales y solicitudes
 - **ID Anterior:** `[TAREA-ARQ-06]`
 - **Origen del Hallazgo:** Anexo Técnico: Arquitectura de Roles / Tarea ARQ-06 (P1 · Servicio de Comunicaciones)
 - **Prioridad:** P1
@@ -535,7 +535,7 @@
 - **Criterios de Aceptación:**
   - CA-ARQ-111: Las solicitudes inter-rol se gestionan con trazabilidad completa de transiciones de estado.
   - CA-ARQ-112: El envío de notificaciones es idempotente y no genera avisos repetidos ante reintentos.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

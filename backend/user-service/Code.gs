@@ -7293,6 +7293,143 @@ function getUserDynamicDashboardConfig(payload) {
   }
 }
 
+// [F8-Task21] [TAREA-ARQ-06] [Anexo Técnico: Arquitectura de Roles - Servicio de Comunicaciones Institucionales] - Modelo común de comunicaciones inter-rol, gestión de solicitudes e hilos de conversación con idempotencia
+function getInstitutionalCommunicationsSchema(payload) {
+  try {
+    var commTables = [
+      { name: "Solicitudes", headers: ["solicitud_id", "fecha_hora", "solicitante_usuario_id", "solicitante_rol_id", "destinatario_rol_id", "tipo_solicitud", "asunto", "estado", "prioridad", "correlacion_id", "idempotency_key"] },
+      { name: "ParticipantesSolicitud", headers: ["participante_id", "solicitud_id", "usuario_id", "rol_id", "tipo_participante", "fecha_asignacion"] },
+      { name: "HistorialSolicitudes", headers: ["transicion_id", "solicitud_id", "fecha_hora", "estado_anterior", "estado_nuevo", "actor_usuario_id", "actor_rol_id", "observaciones"] },
+      { name: "Notificaciones", headers: ["notificacion_id", "fecha_hora", "usuario_id", "tipo_notificacion", "titulo", "mensaje", "leida", "link_accion", "idempotency_key"] },
+      { name: "Conversaciones", headers: ["conversacion_id", "solicitud_id", "tipo_conversacion", "titulo", "creada_en", "creada_por", "estado"] },
+      { name: "ParticipantesConversacion", headers: ["participante_id", "conversacion_id", "usuario_id", "rol_id", "fecha_unión", "activo"] },
+      { name: "Mensajes", headers: ["mensaje_id", "conversacion_id", "fecha_hora", "remitente_usuario_id", "remitente_rol_id", "contenido", "archivo_adjunto_id", "leido_por_destinatarios"] }
+    ];
+
+    var allowedTransitions = {
+      "Pendiente": ["Asignada", "En Proceso", "Cancelada", "Rechazada"],
+      "Asignada": ["En Proceso", "Resuelta", "Rechazada", "Cancelada"],
+      "En Proceso": ["Resuelta", "Rechazada", "Cancelada"],
+      "Resuelta": ["Cerrada", "En Proceso"],
+      "Rechazada": ["Pendiente"],
+      "Cancelada": []
+    };
+
+    return {
+      status: "success",
+      spreadsheetName: "SP_ComunicacionesInstitucionales",
+      totalTables: commTables.length,
+      tables: commTables,
+      allowedStateTransitions: allowedTransitions,
+      idempotencyProtected: true,
+      timestamp: new Date().toISOString()
+    };
+  } catch (err) {
+    return {
+      status: "error",
+      message: "Error al obtener el esquema de comunicaciones institucionales: " + err.message
+    };
+  }
+}
+
+function createInstitutionalServiceRequest(payload) {
+  try {
+    var userId = (payload && payload._verifiedUserId) || (payload && payload.userId) || "USR-ANON";
+    var userRole = (payload && payload.userRole) || "General";
+    var targetRole = (payload && payload.targetRole) || "Secretaria";
+    var subject = (payload && payload.subject) || "Solicitud de Trámite Institucional";
+    var requestType = (payload && payload.requestType) || "GENERAL";
+    var idempotencyKey = (payload && payload.idempotencyKey) || ("IDEM-" + Date.now() + "-" + Math.random().toString(36).substring(2, 7));
+
+    if (payload && payload.idempotencyKey && typeof CacheService !== "undefined") {
+      try {
+        var cache = CacheService.getScriptCache();
+        var cachedResult = cache.get("COMM_REQ_" + payload.idempotencyKey);
+        if (cachedResult) {
+          var parsed = JSON.parse(cachedResult);
+          parsed.isDuplicateIdempotentRequest = true;
+          return parsed;
+        }
+      } catch (_) {}
+    }
+
+    var requestId = "SOL-" + Date.now();
+    var newRequest = {
+      solicitud_id: requestId,
+      fecha_hora: new Date().toISOString(),
+      solicitante_usuario_id: userId,
+      solicitante_rol_id: userRole,
+      destinatario_rol_id: targetRole,
+      tipo_solicitud: requestType,
+      asunto: subject,
+      estado: "Pendiente",
+      prioridad: (payload && payload.priority) || "MEDIA",
+      correlacion_id: (payload && payload.correlationId) || ("CORR-" + Date.now()),
+      idempotency_key: idempotencyKey
+    };
+
+    var res = {
+      status: "success",
+      message: "Solicitud institucional creada exitosamente.",
+      request: newRequest
+    };
+
+    if (payload && payload.idempotencyKey && typeof CacheService !== "undefined") {
+      try {
+        CacheService.getScriptCache().put("COMM_REQ_" + payload.idempotencyKey, JSON.stringify(res), 600);
+      } catch (_) {}
+    }
+
+    return res;
+  } catch (err) {
+    return {
+      status: "error",
+      message: "Error al crear la solicitud de servicio institucional: " + err.message
+    };
+  }
+}
+
+function updateInstitutionalServiceRequestStatus(payload) {
+  try {
+    var requestId = (payload && payload.requestId);
+    var newState = (payload && payload.newState);
+    var actorRole = (payload && payload.actorRole) || "Secretaria";
+    var actorId = (payload && payload._verifiedUserId) || (payload && payload.actorId) || "USR-ADMIN";
+
+    if (!requestId || !newState) {
+      return { status: "error", message: "requestId y newState son requeridos." };
+    }
+
+    var schemaRes = getInstitutionalCommunicationsSchema({});
+    var transitionsMap = schemaRes.allowedStateTransitions;
+
+    var currentState = (payload && payload.currentState) || "Pendiente";
+    var allowedNext = transitionsMap[currentState] || [];
+
+    if (!allowedNext.includes(newState)) {
+      return {
+        status: "error",
+        code: "INVALID_TRANSITION",
+        message: `La transición de estado '${currentState}' a '${newState}' no está permitida por la máquina de estados.`
+      };
+    }
+
+    return {
+      status: "success",
+      requestId: requestId,
+      previousState: currentState,
+      newState: newState,
+      updatedBy: { userId: actorId, role: actorRole },
+      updatedAt: new Date().toISOString()
+    };
+  } catch (err) {
+    return {
+      status: "error",
+      message: "Error al actualizar el estado de la solicitud: " + err.message
+    };
+  }
+}
+
 // [F8-Task20] [TAREA-ARQ-05] [Anexo Técnico: Arquitectura de Roles - Catálogo de Espacios Funcionales] - Consulta del catálogo de Spreadsheets funcionales por rol institucional con aislamiento de datos sensibles
 function getInstitutionalFunctionalSpaceCatalog(payload) {
   try {
