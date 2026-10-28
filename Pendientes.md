@@ -4,7 +4,7 @@
 
 ---
 
-### [X] [TAREA-F8-MANT-01] Implementar el seguimiento preventivo de las cuotas y la disponibilidad de almacenamiento en Google Drive
+### [] [TAREA-F8-MANT-01] Implementar el seguimiento preventivo de las cuotas y la disponibilidad de almacenamiento en Google Drive
 - **Origen del Hallazgo:** `AUDITORIA_FASE_8_AULA_VIRTUAL_APRENDIZAJE.md` / Tarea F8-MANT-01 (P1 · Supervisión de Almacenamiento Drive)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Mantenimiento preventivo y observabilidad)
@@ -26,11 +26,11 @@
   - CA-F8-010: Se identifican y monitorean las ubicaciones de almacenamiento utilizadas por el aula virtual.
   - CA-F8-011: La simulación de cuota cercana al límite genera alertas preventivas para administradores.
   - CA-F8-012: Las cargas fallidas por espacio no se confirman como entregas registradas exitosamente.
-- **Estado:** [X] Completado
+- **Estado:** [] No Completado
 
 ---
 
-### [X] [TAREA-AD-01] Crear una arquitectura de dashboards dinámicos para roles configurables
+### [] [TAREA-AD-01] Crear una arquitectura de dashboards dinámicos para roles configurables
 - **Origen del Hallazgo:** Anexo de Tareas: Dashboards dinámicos / Tarea AD-01 (P1 · Arquitectura de Dashboards)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Arquitectura base de interfaz adaptable)
@@ -53,11 +53,11 @@
   - CA-AD-101: Se puede crear un rol nuevo desde la interfaz administrativa autorizada.
   - CA-AD-102: El dashboard presenta únicamente los módulos correspondientes a la configuración efectiva del usuario.
   - CA-AD-103: Los roles desconocidos o sin permisos no obtienen acceso por defecto.
-- **Estado:** [X] Completado
+- **Estado:** [] No Completado
 
 ---
 
-### [X] [TAREA-AD-02] Implementar un catálogo central de responsabilidades, capacidades y módulos
+### [] [TAREA-AD-02] Implementar un catálogo central de responsabilidades, capacidades y módulos
 - **Origen del Hallazgo:** Anexo de Tareas: Dashboards dinámicos / Tarea AD-02 (P1 · Catálogo de Responsabilidades)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Catálogo de capacidades reutilizables)
@@ -79,11 +79,11 @@
   - CA-AD-104: Una misma capacidad se reutiliza en diferentes roles con permisos y ámbitos independientes.
   - CA-AD-105: Retirar permisos de una responsabilidad no elimina funciones compartidas por otros roles.
   - CA-AD-106: Las asignaciones de roles y responsabilidades registran trazabilidad completa.
-- **Estado:** [X] Completado
+- **Estado:** []
 
 ---
 
-### [X] [TAREA-AD-03] Implementar la gestión del ámbito de actuación de los roles
+### [] [TAREA-AD-03] Implementar la gestión del ámbito de actuación de los roles
 - **Origen del Hallazgo:** Anexo de Tareas: Dashboards dinámicos / Tarea AD-03 (P1 · Ámbito de Actuación)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Aislamiento contextual de datos)
@@ -103,11 +103,11 @@
 - **Criterios de Aceptación:**
   - CA-AD-107: Los filtros, listas y búsquedas respetan estrictamente los ámbitos asignados al usuario.
   - CA-AD-108: Intentos de consultar o modificar registros fuera del ámbito autorizado son rechazados por el backend.
-- **Estado:** [X] Completado
+- **Estado:** [] No Completado
 
 ---
 
-### [X] [TAREA-AD-04] Desarrollar el dashboard de coordinador académico como implementación de referencia
+### [] [TAREA-AD-04] Desarrollar el dashboard de coordinador académico como implementación de referencia
 - **Origen del Hallazgo:** Anexo de Tareas: Dashboards dinámicos / Tarea AD-04 (P1 · Referencia Coordinación)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Caso de referencia funcional)
@@ -128,11 +128,11 @@
   - CA-AD-109: El dashboard se adapta dinámicamente a las responsabilidades y ámbitos configurados para el coordinador.
   - CA-AD-110: Es posible crear coordinadores por nivel, departamento o carrera sin duplicar código.
   - CA-AD-111: Todas las aprobaciones y revisiones conservan trazabilidad institucional.
-- **Estado:** [X] Completado
+- **Estado:** [] No Completado
 
 ---
 
-### [X] [TAREA-AD-05] Integrar los dashboards dinámicos con los módulos y servicios existentes
+### [] [TAREA-AD-05] Integrar los dashboards dinámicos con los módulos y servicios existentes
 - **Origen del Hallazgo:** Anexo de Tareas: Dashboards dinámicos / Tarea AD-05 (P1 · Integración de Módulos)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Reutilización de servicios)
@@ -152,11 +152,11 @@
 - **Criterios de Aceptación:**
   - CA-AD-112: Los módulos dinámicos reutilizan las operaciones backend existentes sin fuentes de datos duplicadas.
   - CA-AD-113: Los errores en módulos individuales son aislados sin impedir la navegación en otros componentes.
-- **Estado:** [X] Completado
+- **Estado:** [] No Completado
 
 ---
 
-### [X] [TAREA-AD-06] Centralizar y verificar la autorización efectiva de cada operación
+### [] [TAREA-AD-06] Centralizar y verificar la autorización efectiva de cada operación
 - **Origen del Hallazgo:** Anexo de Tareas: Seguridad y roles / Tarea AD-06 (P1 · Verificación Backend)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Crítica (Seguridad y denegación por defecto)
@@ -177,11 +177,11 @@
 - **Criterios de Aceptación:**
   - CA-AD-114: Intentos de invocar endpoints directamente sin autorización son rechazados en el backend.
   - CA-AD-115: Manipulación de parámetros en el navegador no permite acceder a datos fuera del ámbito autorizado.
-- **Estado:** [X] Completado
+- **Estado:** [] No Completado
 
 ---
 
-### [X] [TAREA-AD-07] Crear una interfaz administrativa para configurar los dashboards y las responsabilidades
+### [] [TAREA-AD-07] Crear una interfaz administrativa para configurar los dashboards y las responsabilidades
 - **Origen del Hallazgo:** Anexo de Tareas: Seguridad y roles / Tarea AD-07 (P1 · Consola Administrativa de Roles)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Administración de roles)
@@ -201,11 +201,11 @@
 - **Criterios de Aceptación:**
   - CA-AD-116: Administradores autorizados pueden configurar nuevos roles sin modificar archivos HTML fuente.
   - CA-AD-117: Las configuraciones inválidas son rechazadas en el servidor antes de guardarse como activas.
-- **Estado:** [X] Completado
+- **Estado:** [] No Completado
 
 ---
 
-### [X] [TAREA-MOD-01] Auditar los archivos existentes y elaborar un inventario de dependencias
+### [] [TAREA-MOD-01] Auditar los archivos existentes y elaborar un inventario de dependencias
 - **Origen del Hallazgo:** Anexo de Tareas: Modularización / Tarea MOD-01 (P1 · Inventario de Dependencias)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Crítica (Análisis de dependencias)
@@ -223,11 +223,11 @@
 - **Criterios de Aceptación:**
   - CA-MOD-101: El inventario cubre el 100% de los archivos del repositorio y sus dependencias explícitas.
   - CA-MOD-102: Se genera el mapa de dependencias formal antes de iniciar traslados de archivos.
-- **Estado:** [X] Completado
+- **Estado:** [] No Completado
 
 ---
 
-### [X] [TAREA-MOD-02] Definir y aplicar una estructura modular de carpetas
+### [] [TAREA-MOD-02] Definir y aplicar una estructura modular de carpetas
 - **Origen del Hallazgo:** Anexo de Tareas: Modularización / Tarea MOD-02 (P1 · Estructura Modular)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Organización de código)
@@ -247,11 +247,11 @@
   - CA-MOD-104: `index.htm` permanece en la raíz y la plataforma carga correctamente todos sus recursos.
 
 > **Nota de Arquitectura:** Las estructuras que están en el anexo A (carpetas del repositorio) y en el anexo B (hojas y spreadsheets por rol) son ejemplos de una estructura recomendable, y no una estructura obligatoria.
-- **Estado:** [X] Completado
+- **Estado:** [] No Completado
 
 ---
 
-### [X] [TAREA-MOD-03] Modularizar los archivos grandes sin eliminar ni duplicar funciones
+### [] [TAREA-MOD-03] Modularizar los archivos grandes sin eliminar ni duplicar funciones
 - **Origen del Hallazgo:** Anexo de Tareas: Modularización / Tarea MOD-03 (P1 · Descomposición de Archivos Monolíticos)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Descomposición de código)
@@ -270,11 +270,11 @@
 - **Criterios de Aceptación:**
   - CA-MOD-105: Cada función existente conserva un contrato de invocación válido y compatible.
   - CA-MOD-106: No existen funciones duplicadas ni colisiones en el ámbito global.
-- **Estado:** [X] Completado
+- **Estado:** [] NoCompletado
 
 ---
 
-### [X] [TAREA-MOD-04] Actualizar todas las rutas y dependencias después de reorganizar el repositorio
+### [] [TAREA-MOD-04] Actualizar todas las rutas y dependencias después de reorganizar el repositorio
 - **Origen del Hallazgo:** Anexo de Tareas: Modularización / Tarea MOD-04 (P1 · Actualización de Rutas)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Crítica (Integridad de referencias)
@@ -292,11 +292,11 @@
 - **Criterios de Aceptación:**
   - CA-MOD-107: No existen errores HTTP 404 ni cargas fallidas de scripts o assets en consola.
   - CA-MOD-108: Todos los módulos estáticos y dinámicos se resuelven correctamente en producción.
-- **Estado:** [X] Completado
+- **Estado:** [] No Completado
 
 ---
 
-### [X] [TAREA-MOD-05] Actualizar el mapa de dependencias y la documentación arquitectónica
+### [] [TAREA-MOD-05] Actualizar el mapa de dependencias y la documentación arquitectónica
 - **Origen del Hallazgo:** Anexo de Tareas: Modularización / Tarea MOD-05 (P1 · Documentación Arquitectónica)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Documentación de arquitectura)
@@ -313,11 +313,11 @@
   3. Documentar procesos de compilación y reglas para incorporar nuevos archivos.
 - **Criterios de Aceptación:**
   - CA-MOD-109: `MapaDependencias.md` y la documentación de arquitectura corresponden con exactitud a la estructura del código.
-- **Estado:** [X] Completado
+- **Estado:** []No  Completado
 
 ---
 
-### [X] [TAREA-MOD-06] Crear pruebas de regresión para la modularización y los dashboards dinámicos
+### [] [TAREA-MOD-06] Crear pruebas de regresión para la modularización y los dashboards dinámicos
 - **Origen del Hallazgo:** Anexo de Tareas: Regresión / Tarea MOD-06 (P1 · Suite de Regresión Arquitectónica)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Crítica (Pruebas de regresión)
@@ -336,11 +336,11 @@
 - **Criterios de Aceptación:**
   - CA-MOD-110: La suite de regresión ejecuta el 100% de las pruebas con resultado PASS sin degradación de funciones.
   - CA-MOD-111: Los bloqueos de seguridad y restricciones de ámbito son confirmados por las pruebas.
-- **Estado:** [X] Completado
+- **Estado:** [] No Completado
 
 ---
 
-### [X] [TAREA-MOD-07] Ejecutar la reorganización mediante etapas verificables
+### [] [TAREA-MOD-07] Ejecutar la reorganización mediante etapas verificables
 - **Origen del Hallazgo:** Anexo de Tareas: Regresión / Tarea MOD-07 (P1 · Ejecución por Etapas)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Crítica (Control de migración segura)
@@ -358,7 +358,7 @@
 - **Criterios de Aceptación:**
   - CA-MOD-112: Cada etapa de reorganización se ejecuta y verifica de forma aislada sin romper la aplicación.
   - CA-MOD-113: Existe trazabilidad completa y procedimiento de reversión validado.
-- **Estado:** [X] Completado
+- **Estado:** [ ] Completado
 
 ---
 
@@ -366,7 +366,7 @@
 
 ---
 
-### [X] [TAREA-F8-OPT-01] Implementar la previsualización integrada de documentos PDF en la revisión de entregas
+### [] [TAREA-F8-OPT-01] Implementar la previsualización integrada de documentos PDF en la revisión de entregas
 - **Origen del Hallazgo:** `AUDITORIA_FASE_8_AULA_VIRTUAL_APRENDIZAJE.md` / Tarea F8-OPT-01 (P2 · Previsualización PDF)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Mejora de usabilidad y eficiencia docente)
@@ -389,11 +389,11 @@
   - CA-F8-013: Al abrir una entrega con un PDF válido, se muestra el visor directamente dentro del modal.
   - CA-F8-014: Un PDF dañado o no compatible produce un mensaje claro y mantiene la opción de descarga.
   - CA-F8-015: La previsualización no altera la evaluación, rúbrica ni el historial de entregas.
-- **Estado:** [X] Completado
+- **Estado:** [ ] NoCompletado
 
 ---
 
-### [X] [TAREA-F8-OPT-02] Incorporar estadísticas descriptivas y una visualización de la distribución de calificaciones de exámenes
+### [] [TAREA-F8-OPT-02] Incorporar estadísticas descriptivas y una visualización de la distribución de calificaciones de exámenes
 - **Origen del Hallazgo:** `AUDITORIA_FASE_8_AULA_VIRTUAL_APRENDIZAJE.md` / Tarea F8-OPT-02 (P2 · Analítica de Exámenes)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Ampliación analítica)
@@ -416,7 +416,7 @@
   - CA-F8-016: El informe estadístico y gráfico corresponde exactamente al examen y grupo seleccionado.
   - CA-F8-017: La generación del gráfico de distribución no modifica ni recalcula las notas oficiales.
   - CA-F8-018: Un grupo sin calificaciones muestra un estado vacío comprensible en lugar de un gráfico erróneo.
-- **Estado:** [X] Completado
+- **Estado:** [ ] No Completado
 
 ---
 
