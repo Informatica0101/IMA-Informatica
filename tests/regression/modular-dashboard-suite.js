@@ -24,6 +24,7 @@ assert(fs.existsSync(path.join(__dirname, '../../app/html/dashboards/dynamic-das
 assert(fs.existsSync(path.join(__dirname, '../../dashboard-coordinacion.html')), "Existe dashboard-coordinacion.html");
 assert(fs.existsSync(path.join(__dirname, '../../docs/architecture/repository-inventory.md')), "Existe docs/architecture/repository-inventory.md");
 assert(fs.existsSync(path.join(__dirname, '../../docs/architecture/routing-and-paths.md')), "Existe docs/architecture/routing-and-paths.md");
+assert(fs.existsSync(path.join(__dirname, '../../docs/architecture/staged-migration-procedure.md')), "Existe docs/architecture/staged-migration-procedure.md [F8-Task05]");
 
 // 2. Verificación de definiciones en js/config.js
 const configContent = fs.readFileSync(path.join(__dirname, '../../js/config.js'), 'utf8');
@@ -34,6 +35,7 @@ assert(configContent.includes('MODULE_ROUTING_DICTIONARY'), "js/config.js contie
 // 3. Verificación del backend developer-service Code.gs
 const devServiceContent = fs.readFileSync(path.join(__dirname, '../../backend/developer-service/Code.gs'), 'utf8');
 assert(devServiceContent.includes('runModularAndDynamicDashboardsRegressionSuite'), "backend/developer-service/Code.gs contiene suite runModularAndDynamicDashboardsRegressionSuite");
+assert(devServiceContent.includes('validateStagedMigrationProgress'), "backend/developer-service/Code.gs contiene función validateStagedMigrationProgress [F8-Task05]");
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {

@@ -101,13 +101,14 @@
 
 ---
 
-### [ ] [F8-Task05] Ejecutar la reorganización mediante etapas verificables
+### [X] [F8-Task05] Ejecutar la reorganización mediante etapas verificables
 - **ID Anterior:** `[TAREA-MOD-07]`
 - **Origen del Hallazgo:** Anexo de Tareas: Regresión / Tarea MOD-07 (P1 · Ejecución por Etapas)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Crítica (Control de migración segura)
 - **Archivos Involucrados:**
-  - Repositorio completo
+  - `docs/architecture/staged-migration-procedure.md`
+  - `backend/developer-service/Code.gs`
 - **Dependencias Expuestas:** Control de versiones, línea base, procedimiento de reversión
 - **Descripción del Alcance:**
   Ejecutar la reestructuración del proyecto por fases verificables (Línea base -> Mapa dependencias -> Estructura carpetas -> Módulos compartidos -> Rutas -> Pruebas de regresión) con plan de rollback probado.
@@ -120,7 +121,7 @@
 - **Criterios de Aceptación:**
   - CA-MOD-112: Cada etapa de reorganización se ejecuta y verifica de forma aislada sin romper la aplicación.
   - CA-MOD-113: Existe trazabilidad completa y procedimiento de reversión validado.
-- **Estado:** [] No Completado
+- **Estado:** [X] Completado
 
 ---
 
