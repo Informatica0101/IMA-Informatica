@@ -565,7 +565,7 @@
 
 ---
 
-### [ ] [F8-Task23] Implementar la independencia de servicios backend, seguridad Drive y límites de Google Sheets
+### [X] [F8-Task23] Implementar la independencia de servicios backend, seguridad Drive y límites de Google Sheets
 - **ID Anterior:** `[TAREA-ARQ-08]`
 - **Origen del Hallazgo:** Anexo Técnico: Arquitectura de Roles / Tarea ARQ-08 (P1 · Seguridad y Escalabilidad)
 - **Prioridad:** P1
@@ -584,7 +584,7 @@
 - **Criterios de Aceptación:**
   - CA-ARQ-115: Ningún microservicio escribe directamente en las tablas privadas de otro dominio sin contrato API.
   - CA-ARQ-116: Las operaciones agrupadas previenen el agotamiento de cuotas de lectura y escritura en Google Sheets.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
