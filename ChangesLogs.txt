@@ -2320,3 +2320,25 @@ Descripción de los Cambios:
 2. MapaDependencias.md:
    - Se añadió la sección de esquemas actuales con la nota aclaratoria de arquitectura.
 ===============================================================================
+
+-------------------------------------------------------------------------------
+FECHA: 2025-05-24
+TAREA: [TAREA-AD-02] Implementar un catálogo central de responsabilidades, capacidades y módulos
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/config.js
+   - Líneas 1-77: Definición del catálogo central de capacidades (`CAPACITIES_CATALOG`), módulos reutilizables (`MODULES_CATALOG`) y responsabilidades institucionales (`RESPONSIBILITIES_CATALOG`). Exportación en `window` de funciones helper `getCentralCapabilitiesCatalog` y `getInstitutionalResponsibilitiesCatalog`.
+
+2. backend/user-service/Code.gs
+   - Líneas 1410-1418: Adición de dispatchers en `doPost` para las acciones `getCentralCapabilitiesCatalog`, `getInstitutionalResponsibilitiesCatalog` y `saveInstitutionalResponsibility`.
+   - Líneas 6907-7095: Implementación de las funciones backend `getCentralCapabilitiesCatalog`, `getInstitutionalResponsibilitiesCatalog` y `saveInstitutionalResponsibility` para la consulta y administración de responsabilidades institucionales con permisos RBAC, persistencia en la hoja `ResponsabilidadesInstitucionales` y trazabilidad en `recordEntityChangeLog`.
+
+3. backend/developer-service/Code.gs
+   - Líneas 120, 223-259: Adición de la acción `getCentralCapabilitiesCatalog` en `doPost` switch y función backend `getCentralCapabilitiesCatalog` para consulta del catálogo centralizado de capacidades y módulos en el microservicio desarrollador.
+
+4. Pendientes.md
+   - Actualización del estado a [X] Completado para [TAREA-AD-02].
+
+5. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [TAREA-AD-02].

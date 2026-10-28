@@ -1407,6 +1407,15 @@ function doPost(e) {
       case "getUserDynamicDashboardConfig":
         result = getUserDynamicDashboardConfig(payload);
         break;
+      case "getCentralCapabilitiesCatalog":
+        result = getCentralCapabilitiesCatalog(payload);
+        break;
+      case "getInstitutionalResponsibilitiesCatalog":
+        result = getInstitutionalResponsibilitiesCatalog(payload);
+        break;
+      case "saveInstitutionalResponsibility":
+        result = saveInstitutionalResponsibility(payload);
+        break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -6894,6 +6903,195 @@ function getScheduleChangeNotificationLogs(payload) {
   return { status: "success", data: notifs };
 }
 
+
+// [TAREA-AD-02] [Anexo Tareas: Dashboards Dinámicos - Catálogo de Responsabilidades] - Funciones backend para consultar y gestionar el catálogo central de capacidades, responsabilidades y módulos
+function getCentralCapabilitiesCatalog(payload) {
+  try {
+    var capabilities = [
+      { capacityId: "CAP_CONSULTAR", name: "Consultar", operation: "READ", description: "Permiso para visualizar y consultar registros del módulo o área." },
+      { capacityId: "CAP_CREAR", name: "Crear", operation: "CREATE", description: "Permiso para registrar nuevos elementos en el módulo." },
+      { capacityId: "CAP_EDITAR", name: "Editar", operation: "UPDATE", description: "Permiso para modificar registros existentes." },
+      { capacityId: "CAP_ELIMINAR", name: "Eliminar", operation: "DELETE", description: "Permiso para desactivar o eliminar registros." },
+      { capacityId: "CAP_APROBAR", name: "Aprobar", operation: "APPROVE", description: "Permiso para autorizar, aprobar o rechazar solicitudes y entregas." },
+      { capacityId: "CAP_ASIGNAR", name: "Asignar", operation: "ASSIGN", description: "Permiso para asignar recursos, cargas académicas o responsabilidades." },
+      { capacityId: "CAP_EXPORTAR", name: "Exportar", operation: "EXPORT", description: "Permiso para descargar y exportar reportes o datos." },
+      { capacityId: "CAP_ADMINISTRAR", name: "Administrar", operation: "ADMIN", description: "Permiso de control total sobre el módulo o configuración." }
+    ];
+
+    var modules = [
+      { moduleId: "mod_gestion_usuarios", name: "Gestión de Usuarios e Identidades", service: "USER" },
+      { moduleId: "mod_planificacion_horarios", name: "Planificación de Horarios y Aulas", service: "ACADEMIC" },
+      { moduleId: "mod_coordinacion_academica", name: "Coordinación Académica", service: "ACADEMIC" },
+      { moduleId: "mod_supervision_silabos", name: "Supervisión de Jornalizaciones y Sílabos", service: "ACADEMIC" },
+      { moduleId: "mod_horarios_area", name: "Horarios y Cargas por Departamento", service: "ACADEMIC" },
+      { moduleId: "mod_asistencia_docente", name: "Supervisión de Asistencia Docente", service: "ACADEMIC" },
+      { moduleId: "mod_expedientes_estudiantiles", name: "Expedientes Estudiantiles y Matrícula", service: "ACADEMIC" },
+      { moduleId: "mod_mis_clases", name: "Gestión de Clases Docentes", service: "ACADEMIC" },
+      { moduleId: "mod_aula_virtual_tareas", name: "Aula Virtual y Tareas", service: "TASK" },
+      { moduleId: "mod_mis_horarios", name: "Consulta de Horarios Personalizados", service: "ACADEMIC" },
+      { moduleId: "mod_libro_calificaciones", name: "Libro de Calificaciones", service: "ACADEMIC" },
+      { moduleId: "mod_finanzas", name: "Gestión Financiera y Cobranzas", service: "ACCOUNTING" },
+      { moduleId: "mod_auditoria_sistema", name: "Auditoria y Trazabilidad", service: "USER" }
+    ];
+
+    return {
+      status: "success",
+      capacidades: capabilities,
+      modulos: modules,
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function getInstitutionalResponsibilitiesCatalog(payload) {
+  try {
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheet = getOrCreateSheet(ss, "ResponsabilidadesInstitucionales");
+    var data = sheet.getDataRange().getValues();
+
+    var responsabilidades = [];
+    if (data.length > 1) {
+      for (var i = 1; i < data.length; i++) {
+        var r = data[i];
+        if (r[5] === true || String(r[5]).toLowerCase() === "true" || r[5] === "Activa" || r[5] === "Activo") {
+          var modulos = [];
+          var caps = [];
+          try { modulos = JSON.parse(r[3]); } catch (_) { modulos = String(r[3] || "").split(","); }
+          try { caps = JSON.parse(r[4]); } catch (_) { caps = String(r[4] || "").split(","); }
+          responsabilidades.push({
+            responsibilityId: r[0],
+            name: r[1],
+            description: r[2],
+            modules: modulos,
+            capabilities: caps,
+            estado: "Activa"
+          });
+        }
+      }
+    }
+
+    if (responsabilidades.length === 0) {
+      responsabilidades = [
+        {
+          responsibilityId: "RESP_COORDINACION",
+          name: "Coordinación Académica",
+          description: "Supervisión de docentes, revisión de sílabos y cargas de área.",
+          modules: ["mod_coordinacion_academica", "mod_supervision_silabos", "mod_horarios_area", "mod_asistencia_docente"],
+          capabilities: ["CAP_CONSULTAR", "CAP_CREAR", "CAP_EDITAR", "CAP_APROBAR", "CAP_ASIGNAR", "CAP_EXPORTAR"],
+          estado: "Activa"
+        },
+        {
+          responsibilityId: "RESP_PLANIFICACION",
+          name: "Planificación y Horarios",
+          description: "Diseño y asignación de horarios de clase, docentes y aulas.",
+          modules: ["mod_planificacion_horarios", "mod_horarios_area"],
+          capabilities: ["CAP_CONSULTAR", "CAP_CREAR", "CAP_EDITAR", "CAP_ASIGNAR", "CAP_EXPORTAR"],
+          estado: "Activa"
+        },
+        {
+          responsibilityId: "RESP_SUPERVISION_DOCENTE",
+          name: "Supervisión Docente",
+          description: "Evaluación y acompañamiento de jornalizaciones y desempeño.",
+          modules: ["mod_supervision_silabos", "mod_asistencia_docente"],
+          capabilities: ["CAP_CONSULTAR", "CAP_EDITAR", "CAP_APROBAR", "CAP_EXPORTAR"],
+          estado: "Activa"
+        }
+      ];
+    }
+
+    return {
+      status: "success",
+      responsabilidades: responsabilidades,
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function saveInstitutionalResponsibility(payload) {
+  try {
+    var verifiedRole = getUserVerifiedRole(payload);
+    if (["Administrador", "Director", "Desarrollador"].indexOf(verifiedRole) === -1) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "Solo personal administrativo autorizado puede configurar responsabilidades institucionales." };
+    }
+
+    var responsibilityId = payload.responsibilityId;
+    var name = payload.name;
+    var description = payload.description || "";
+    var modules = payload.modules || [];
+    var capabilities = payload.capabilities || [];
+    var estado = payload.estado || "Activa";
+
+    if (!name) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "El nombre de la responsabilidad es obligatorio." };
+    }
+
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheet = getOrCreateSheet(ss, "ResponsabilidadesInstitucionales");
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["ResponsibilityID", "Nombre", "Descripcion", "ModulosJSON", "CapacidadesJSON", "Estado", "CreadoPor", "FechaActualizacion"]);
+    }
+
+    var data = sheet.getDataRange().getValues();
+    var foundIdx = -1;
+    if (!responsibilityId) {
+      responsibilityId = "RESP-" + Date.now();
+    } else {
+      for (var i = 1; i < data.length; i++) {
+        if (String(data[i][0]).trim() === String(responsibilityId).trim()) {
+          foundIdx = i;
+          break;
+        }
+      }
+    }
+
+    var modulesJSON = typeof modules === "object" ? JSON.stringify(modules) : String(modules);
+    var capsJSON = typeof capabilities === "object" ? JSON.stringify(capabilities) : String(capabilities);
+    var now = new Date().toISOString();
+    var actor = payload._verifiedUserId || verifiedRole;
+
+    if (foundIdx !== -1) {
+      sheet.getRange(foundIdx + 1, 2, 1, 7).setValues([[
+        name,
+        description,
+        modulesJSON,
+        capsJSON,
+        estado,
+        actor,
+        now
+      ]]);
+    } else {
+      sheet.appendRow([
+        responsibilityId,
+        name,
+        description,
+        modulesJSON,
+        capsJSON,
+        estado,
+        actor,
+        now
+      ]);
+    }
+
+    recordEntityChangeLog("ResponsabilidadInstitucional", responsibilityId, foundIdx !== -1 ? { name: data[foundIdx][1] } : {}, { name: name, modules: modules, capabilities: capabilities, estado: estado }, "RESPONSIBILITY_SAVED", actor);
+
+    logStructuredEvent("USER", "saveInstitutionalResponsibility", "INFO", "RESPONSIBILITY_SAVED", `Responsabilidad ${responsibilityId} (${name}) guardada correctamente.`, { responsibilityId: responsibilityId, name: name, estado: estado }, verifiedRole);
+
+    return {
+      status: "success",
+      responsibilityId: responsibilityId,
+      name: name,
+      estado: estado,
+      message: `Responsabilidad institucional '${name}' guardada correctamente.`
+    };
+  } catch (error) {
+    logStructuredEvent("USER", "saveInstitutionalResponsibility", "ERROR", "RESPONSIBILITY_SAVE_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
 
 // [TAREA-AD-01] [Anexo Tareas: Dashboards Dinámicos] - Consulta de configuración dinámica de módulos, responsabilidades y ámbitos por usuario
 function getUserDynamicDashboardConfig(payload) {
