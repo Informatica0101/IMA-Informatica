@@ -730,6 +730,64 @@ window.isContentAuthorized = function(contentUnit, contentSubject, contentTopic,
     return true;
 };
 
+// [TAREA-AD-05] [Anexo Tareas: Dashboards Dinámicos - Integración de Módulos] - Contratos de integración por módulo para dashboards dinámicos
+window.DYNAMIC_DASHBOARD_MODULE_CONTRACTS = {
+    "mod_gestion_usuarios": {
+        moduleId: "mod_gestion_usuarios",
+        name: "Gestión de Usuarios y Cuentas",
+        targetService: "USER",
+        readAction: "getStudents",
+        writeAction: "updateUserProfile",
+        requiredCapabilities: ["CAP_CONSULTAR", "CAP_CREAR", "CAP_EDITAR"],
+        defaultParams: {}
+    },
+    "mod_planificacion_horarios": {
+        moduleId: "mod_planificacion_horarios",
+        name: "Planificación de Horarios y Recursos",
+        targetService: "ACADEMIC",
+        readAction: "getClassSchedules",
+        writeAction: "createClassSchedule",
+        requiredCapabilities: ["CAP_CONSULTAR", "CAP_CREAR"],
+        defaultParams: {}
+    },
+    "mod_coordinacion_academica": {
+        moduleId: "mod_coordinacion_academica",
+        name: "Resumen de Coordinación Académica",
+        targetService: "ACADEMIC",
+        readAction: "getCoordinatorOverview",
+        writeAction: "assignTeacherToSection",
+        requiredCapabilities: ["CAP_CONSULTAR", "CAP_ASIGNAR"],
+        defaultParams: {}
+    },
+    "mod_mis_clases": {
+        moduleId: "mod_mis_clases",
+        name: "Clases y Asignaciones Docentes",
+        targetService: "ACADEMIC",
+        readAction: "getTeacherAssignments",
+        writeAction: "assignTeacherToClass",
+        requiredCapabilities: ["CAP_CONSULTAR"],
+        defaultParams: {}
+    },
+    "mod_aula_virtual_tareas": {
+        moduleId: "mod_aula_virtual_tareas",
+        name: "Aula Virtual y Tareas",
+        targetService: "TASK",
+        readAction: "getStudentTasks",
+        writeAction: "submitAssignment",
+        requiredCapabilities: ["CAP_CONSULTAR", "CAP_CREAR"],
+        defaultParams: {}
+    },
+    "mod_libro_calificaciones": {
+        moduleId: "mod_libro_calificaciones",
+        name: "Libro de Calificaciones Exámenes",
+        targetService: "EXAM",
+        readAction: "getStudentExams",
+        writeAction: "gradeSubmission",
+        requiredCapabilities: ["CAP_CONSULTAR", "CAP_APROBAR"],
+        defaultParams: {}
+    }
+};
+
 // [FASE2-T04] [Fase 2 - Fuente de Verdad Institucional de Catálogos] - Sincronización del cliente con el catálogo centralizado de la institución.
 window.fetchInstitutionalCatalog = function(catalogType) {
     if (typeof fetchApi !== 'function') {

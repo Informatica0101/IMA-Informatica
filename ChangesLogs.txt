@@ -2382,3 +2382,42 @@ Archivos Creados y Modificados:
 
 4. Auditoria.txt
    - Registro de auditoría y verificación de la tarea [TAREA-AD-04].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [TAREA-AD-05] Integrar los dashboards dinámicos con los módulos y servicios existentes
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/config.js
+   - Líneas 733-788: Definición del catálogo de contratos de integración `DYNAMIC_DASHBOARD_MODULE_CONTRACTS` asociando IDs de módulos dinámicos, servicios responsables (`USER`, `ACADEMIC`, `TASK`, `EXAM`), operaciones de lectura/escritura y capacidades requeridas.
+
+2. js/api.js
+   - Líneas 355-380: Implementación de la función ejecutora `executeDynamicModuleContract` para invocación dinámica de contratos con captura de excepciones e inyección de aislamiento de fallos por módulo.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para [TAREA-AD-05].
+
+4. Auditoria.txt
+   - Registro de auditoría y verificación técnica de [TAREA-AD-05].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [TAREA-AD-06] Centralizar y verificar la autorización efectiva de cada operación
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/user-service/Code.gs
+   - Líneas 1228: Adición de evento estructurado de auditoría `UNAUTHORIZED_ACCESS_ATTEMPT` con `logStructuredEvent` al denegar acceso por defecto en `validateRolePermission`.
+
+2. backend/academic-service/Code.gs
+   - Líneas 505: Adición de evento estructurado de auditoría `UNAUTHORIZED_ACCESS_ATTEMPT` en `validateRolePermission` ante solicitudes no autorizadas.
+
+3. backend/task-service/Code.gs
+   - Líneas 274: Adición de registro de auditoría `UNAUTHORIZED_ACCESS_ATTEMPT` en `validateRolePermission` al rechazar acceso por defecto.
+
+4. Pendientes.md
+   - Actualización del estado a [X] Completado para [TAREA-AD-06].
+
+5. Auditoria.txt
+   - Registro de auditoría y verificación técnica de [TAREA-AD-06].

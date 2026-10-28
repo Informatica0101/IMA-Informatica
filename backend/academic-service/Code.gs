@@ -502,6 +502,10 @@ function validateRolePermission(action, payload) {
     }
   }
 
+  // [TAREA-AD-06] [Anexo Tareas: Seguridad y Roles] - Registro de auditoría de rechazo por defecto ante peticiones no autorizadas
+  try {
+    logStructuredEvent("ACADEMIC", "validateRolePermission", "WARN", "UNAUTHORIZED_ACCESS_ATTEMPT", `Acceso no autorizado rechazado por defecto para rol '${userRole}' en acción '${action}'.`, { action: action, userId: verifiedUserId }, userRole);
+  } catch (_) {}
   return { authorized: false, role: userRole };
 }
 

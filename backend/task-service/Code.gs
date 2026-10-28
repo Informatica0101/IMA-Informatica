@@ -271,6 +271,11 @@ function validateRolePermission(action, payload) {
     }
   }
 
+  // [TAREA-AD-06] [Anexo Tareas: Seguridad y Roles] - Registro de auditoría de denegación por defecto
+  try {
+    const actorId = verifiedUserId || verifiedId || "Desconocido";
+    Logger.log(`[TAREA-AD-06] UNAUTHORIZED_ACCESS_ATTEMPT: Acción '${action}' rechazada por defecto para usuario '${actorId}' (rol '${userRole}').`);
+  } catch (_) {}
   return { authorized: false, role: userRole };
 }
 

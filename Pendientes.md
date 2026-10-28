@@ -132,7 +132,7 @@
 
 ---
 
-### [] [TAREA-AD-05] Integrar los dashboards dinámicos con los módulos y servicios existentes
+### [X] [TAREA-AD-05] Integrar los dashboards dinámicos con los módulos y servicios existentes
 - **Origen del Hallazgo:** Anexo de Tareas: Dashboards dinámicos / Tarea AD-05 (P1 · Integración de Módulos)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Reutilización de servicios)
@@ -152,11 +152,11 @@
 - **Criterios de Aceptación:**
   - CA-AD-112: Los módulos dinámicos reutilizan las operaciones backend existentes sin fuentes de datos duplicadas.
   - CA-AD-113: Los errores en módulos individuales son aislados sin impedir la navegación en otros componentes.
-- **Estado:** [] No Completado
+- **Estado:** [X] Completado
 
 ---
 
-### [] [TAREA-AD-06] Centralizar y verificar la autorización efectiva de cada operación
+### [X] [TAREA-AD-06] Centralizar y verificar la autorización efectiva de cada operación
 - **Origen del Hallazgo:** Anexo de Tareas: Seguridad y roles / Tarea AD-06 (P1 · Verificación Backend)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Crítica (Seguridad y denegación por defecto)
@@ -177,7 +177,7 @@
 - **Criterios de Aceptación:**
   - CA-AD-114: Intentos de invocar endpoints directamente sin autorización son rechazados en el backend.
   - CA-AD-115: Manipulación de parámetros en el navegador no permite acceder a datos fuera del ámbito autorizado.
-- **Estado:** [] No Completado
+- **Estado:** [X] Completado
 
 ---
 

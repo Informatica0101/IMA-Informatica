@@ -1226,6 +1226,8 @@ function validateRolePermission(action, payload) {
     }
   }
 
+  // [TAREA-AD-06] [Anexo Tareas: Seguridad y Roles] - Registro de denegación por defecto
+  logStructuredEvent("USER", "validateRolePermission", "WARN", "UNAUTHORIZED_ACCESS_ATTEMPT", `Acceso no autorizado rechazado por defecto para rol '${userRole}' en acción '${action}'.`, { action: action, userId: verifiedId }, userRole);
   return { authorized: false, role: userRole };
 }
 

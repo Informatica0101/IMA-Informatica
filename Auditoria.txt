@@ -217,3 +217,24 @@ RESULTADO DE EVALUACIÓN:
 - Se implementaron los controladores UI initCoordinatorDashboard y loadCoordinatorDashboardData en js/secretary.js con consumo del endpoint backend getCoordinatorOverview.
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA-AD-05: INTEGRACIÓN DE DASHBOARDS DINÁMICOS CON MÓDULOS Y SERVICIOS EXISTENTES
+ARCHIVOS AUDITADOS: js/config.js, js/api.js, backend/academic-service/Code.gs, backend/user-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se auditó la integración de dashboards dinámicos mediante contratos de integración y conectores adaptadores.
+- Se definieron los contratos estables en DYNAMIC_DASHBOARD_MODULE_CONTRACTS dentro de js/config.js especificando ID de módulo, servicio responsable, acciones de lectura/escritura y capacidades requeridas.
+- Se implementó el ejecutor universal executeDynamicModuleContract en js/api.js con aislamiento de fallos por módulo y tratamiento estandarizado de excepciones.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA-AD-06: CENTRALIZAR Y VERIFICAR LA AUTORIZACIÓN EFECTIVA DE CADA OPERACIÓN
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, backend/academic-service/Code.gs, backend/task-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se auditó la verificación server-side de autorización y denegación por defecto.
+- Se agregaron eventos estructurados de auditoría UNAUTHORIZED_ACCESS_ATTEMPT en validateRolePermission en user-service, academic-service y task-service para registrar todo rechazo por defecto.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
