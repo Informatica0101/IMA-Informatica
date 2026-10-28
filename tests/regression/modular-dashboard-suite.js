@@ -44,6 +44,7 @@ assert(devServiceContent.includes('validateMonolithDecompositionContracts'), "ba
 assert(devServiceContent.includes('getArchitectureAndDependencyMapReport'), "backend/developer-service/Code.gs contiene función getArchitectureAndDependencyMapReport [F8-Task15]");
 assert(devServiceContent.includes('getRoleFunctionalSpaceConfig'), "backend/developer-service/Code.gs contiene función getRoleFunctionalSpaceConfig [F8-Task16]");
 assert(devServiceContent.includes('auditRoleIndependenceAndMasterDataIntegrity'), "backend/developer-service/Code.gs contiene función auditRoleIndependenceAndMasterDataIntegrity [F8-Task16]");
+assert(devServiceContent.includes('validateStableIdentifiersAndControlColumns'), "backend/developer-service/Code.gs contiene función validateStableIdentifiersAndControlColumns [F8-Task17]");
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {

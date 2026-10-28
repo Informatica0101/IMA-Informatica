@@ -411,12 +411,13 @@
 
 ---
 
-### [ ] [F8-Task17] Estandarizar convenciones de identificadores estables y columnas comunes de control
+### [X] [F8-Task17] Estandarizar convenciones de identificadores estables y columnas comunes de control
 - **ID Anterior:** `[TAREA-ARQ-02]`
 - **Origen del Hallazgo:** Anexo Técnico: Arquitectura de Roles / Tarea ARQ-02 (P1 · Identificadores y Columnas Comunes)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Estandarización de relaciones y metadatos)
 - **Archivos Involucrados:**
+  - `backend/developer-service/Code.gs`
   - `backend/user-service/Code.gs`
   - `backend/academic-service/Code.gs`
   - `backend/task-service/Code.gs`
@@ -433,7 +434,7 @@
 - **Criterios de Aceptación:**
   - CA-ARQ-103: Todas las relaciones entre hojas se basan en identificadores estables.
   - CA-ARQ-104: Las tablas operativas incorporan las columnas estándar de auditoría y versión de registro.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

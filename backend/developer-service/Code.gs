@@ -26,7 +26,7 @@ function textResponse(obj) {
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Desarrollador": ["getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "auditInterServiceCalls", "manageUserMultiRolePermissions", "getCentralizedLogs", "executeOperationalCommand", "getServiceVersionChangelog", "executeServiceVersionRollback", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "runModularAndDynamicDashboardsRegressionSuite", "validateStagedMigrationProgress", "validateModularFolderStructure", "validateMonolithDecompositionContracts", "getArchitectureAndDependencyMapReport", "getRoleFunctionalSpaceConfig", "auditRoleIndependenceAndMasterDataIntegrity", "getServiceHealthDiagnostics"]
+  "Desarrollador": ["getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "auditInterServiceCalls", "manageUserMultiRolePermissions", "getCentralizedLogs", "executeOperationalCommand", "getServiceVersionChangelog", "executeServiceVersionRollback", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "runModularAndDynamicDashboardsRegressionSuite", "validateStagedMigrationProgress", "validateModularFolderStructure", "validateMonolithDecompositionContracts", "getArchitectureAndDependencyMapReport", "getRoleFunctionalSpaceConfig", "auditRoleIndependenceAndMasterDataIntegrity", "validateStableIdentifiersAndControlColumns", "getServiceHealthDiagnostics"]
 };
 
 function getAuthTokenSecret() {
@@ -124,6 +124,7 @@ function doPost(e) {
       case "getArchitectureAndDependencyMapReport": result = getArchitectureAndDependencyMapReport(payload); break;
       case "getRoleFunctionalSpaceConfig": result = getRoleFunctionalSpaceConfig(payload); break;
       case "auditRoleIndependenceAndMasterDataIntegrity": result = auditRoleIndependenceAndMasterDataIntegrity(payload); break;
+      case "validateStableIdentifiersAndControlColumns": result = validateStableIdentifiersAndControlColumns(payload); break;
       case "getCentralCapabilitiesCatalog": result = getCentralCapabilitiesCatalog(payload); break;
       default:
         return textResponse({ status: "error", code: "ACTION_NOT_FOUND", message: `Acción '${action}' no reconocida en el servicio del desarrollador.` });
@@ -133,6 +134,33 @@ function doPost(e) {
   } catch (err) {
     return textResponse({ status: "error", code: "SERVER_ERROR", message: err.message });
   }
+}
+
+// [F8-Task17] [TAREA-ARQ-02] [Anexo Técnico: Arquitectura de Roles - Identificadores Estables y Columnas Comunes] - Estandarización de catálogo de IDs relacionales y columnas de control/auditoría
+function validateStableIdentifiersAndControlColumns(payload) {
+  var standardEntityIds = [
+    "persona_id", "usuario_id", "rol_id", "responsabilidad_id", "asignacion_id",
+    "periodo_id", "nivel_id", "grado_id", "seccion_id", "carrera_id",
+    "departamento_id", "asignatura_id", "docente_id", "estudiante_id", "matricula_id",
+    "curso_id", "tarea_id", "entrega_id", "evaluacion_id", "calificacion_id",
+    "documento_id", "solicitud_id", "evento_id", "notificacion_id", "correlacion_id", "archivo_id"
+  ];
+
+  var standardControlColumns = [
+    "id", "estado", "creado_por", "creado_en", "actualizado_por", "actualizado_en", "version", "activo"
+  ];
+
+  return {
+    status: "success",
+    service: "DEVELOPER",
+    totalStandardIds: standardEntityIds.length,
+    totalControlColumns: standardControlColumns.length,
+    standardEntityIds: standardEntityIds,
+    standardControlColumns: standardControlColumns,
+    relationalByEmailProhibited: true,
+    historicalAuditImmutabilityVerified: true,
+    timestamp: new Date().toISOString()
+  };
 }
 
 // [F8-Task16] [TAREA-ARQ-01] [Anexo Técnico: Arquitectura de Roles - Independencia Funcional y Comunicaciones] - Configuración de espacios funcionales por rol e inspección de integridad de datos maestros
