@@ -2528,3 +2528,24 @@ Archivos Creados y Modificados:
 
 5. Auditoria.txt
    - Registro de la auditoría y verificación de la tarea [F8-Task05].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task13] Definir y aplicar una estructura modular de carpetas
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. docs/architecture/folder-structure.md
+   - Creación de la documentación de jerarquía modular de carpetas (app/html, app/js, app/css, app/assets, backend/, tests/, docs/) con nota de arquitectura obligatoria.
+
+2. backend/developer-service/Code.gs
+   - Implementación de la función `validateModularFolderStructure` con la etiqueta identificativa `[F8-Task13] [TAREA-MOD-02]`.
+
+3. tests/regression/modular-dashboard-suite.js
+   - Inclusión de comprobaciones para `folder-structure.md` y `validateModularFolderStructure`.
+
+4. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task13].
+
+5. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task13].

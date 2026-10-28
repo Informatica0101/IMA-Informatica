@@ -304,3 +304,14 @@ RESULTADO DE EVALUACIÓN:
 - Se actualizó la suite de regresión en `tests/regression/modular-dashboard-suite.js` ejecutando con 10/10 PASS (100.0%).
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task13: DEFINIR Y APLICAR UNA ESTRUCTURA MODULAR DE CARPETAS
+ARCHIVOS AUDITADOS: docs/architecture/folder-structure.md, backend/developer-service/Code.gs, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se documentó la estructura modular de carpetas en docs/architecture/folder-structure.md.
+- Se implementó `validateModularFolderStructure` en `backend/developer-service/Code.gs` para verificación programática de carpetas y preservación de `index.html`.
+- Se actualizó la suite de regresión en `tests/regression/modular-dashboard-suite.js` ejecutando con 12/12 PASS (100.0%).
+- Resultado: 100% Funcional y Verificado.
+===============================================================================

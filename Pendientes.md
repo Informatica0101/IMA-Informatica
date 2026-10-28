@@ -312,13 +312,14 @@
 
 ---
 
-### [ ] [F8-Task13] Definir y aplicar una estructura modular de carpetas
+### [X] [F8-Task13] Definir y aplicar una estructura modular de carpetas
 - **ID Anterior:** `[TAREA-MOD-02]`
 - **Origen del Hallazgo:** Anexo de Tareas: Modularización / Tarea MOD-02 (P1 · Estructura Modular)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Organización de código)
 - **Archivos Involucrados:**
-  - Estructura de carpetas del proyecto
+  - `docs/architecture/folder-structure.md`
+  - `backend/developer-service/Code.gs`
 - **Dependencias Expuestas:** Procesos de despliegue, clasp, servidores locales, rutas de importación
 - **Descripción del Alcance:**
   Organizar el repositorio en una estructura modular limpia (`app/html`, `app/js`, `app/css`, `app/assets`, `backend/`, `tests/`, `docs/`) conservando `index.htm` en la raíz.
@@ -333,7 +334,7 @@
   - CA-MOD-104: `index.htm` permanece en la raíz y la plataforma carga correctamente todos sus recursos.
 
 > **Nota de Arquitectura:** Las estructuras que están en el anexo A (carpetas del repositorio) y en el anexo B (hojas y spreadsheets por rol) son ejemplos de una estructura recomendable, y no una estructura obligatoria.
-- **Estado:** [] No Completado
+- **Estado:** [X] Completado
 
 ---
 

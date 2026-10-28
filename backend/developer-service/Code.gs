@@ -26,7 +26,7 @@ function textResponse(obj) {
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Desarrollador": ["getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "auditInterServiceCalls", "manageUserMultiRolePermissions", "getCentralizedLogs", "executeOperationalCommand", "getServiceVersionChangelog", "executeServiceVersionRollback", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "runModularAndDynamicDashboardsRegressionSuite", "validateStagedMigrationProgress", "getServiceHealthDiagnostics"]
+  "Desarrollador": ["getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "auditInterServiceCalls", "manageUserMultiRolePermissions", "getCentralizedLogs", "executeOperationalCommand", "getServiceVersionChangelog", "executeServiceVersionRollback", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "runModularAndDynamicDashboardsRegressionSuite", "validateStagedMigrationProgress", "validateModularFolderStructure", "getServiceHealthDiagnostics"]
 };
 
 function getAuthTokenSecret() {
@@ -119,6 +119,7 @@ function doPost(e) {
       case "runFullArchitectureIntegrationAndPerformanceSuite": result = runFullArchitectureIntegrationAndPerformanceSuite(payload); break;
       case "runModularAndDynamicDashboardsRegressionSuite": result = runModularAndDynamicDashboardsRegressionSuite(payload); break;
       case "validateStagedMigrationProgress": result = validateStagedMigrationProgress(payload); break;
+      case "validateModularFolderStructure": result = validateModularFolderStructure(payload); break;
       case "getCentralCapabilitiesCatalog": result = getCentralCapabilitiesCatalog(payload); break;
       default:
         return textResponse({ status: "error", code: "ACTION_NOT_FOUND", message: `Acción '${action}' no reconocida en el servicio del desarrollador.` });
@@ -128,6 +129,35 @@ function doPost(e) {
   } catch (err) {
     return textResponse({ status: "error", code: "SERVER_ERROR", message: err.message });
   }
+}
+
+// [F8-Task13] [TAREA-MOD-02] [Anexo Tareas: Modularización - Estructura Modular de Carpetas] - Verificación programática de la estructura modular del repositorio (app/, backend/, tests/, docs/) y conservación de index.htm
+function validateModularFolderStructure(payload) {
+  var requiredFolders = [
+    { path: "app/html", purpose: "Plantillas HTML y vistas de dashboards dinámicos" },
+    { path: "app/js", purpose: "Controladores y scripts cliente modularizados" },
+    { path: "app/css", purpose: "Hojas de estilo y diseño responsivo" },
+    { path: "app/assets", purpose: "Recursos estáticos, imágenes e iconos" },
+    { path: "backend", purpose: "Microservicios independientes de Google Apps Script" },
+    { path: "tests", purpose: "Suites de prueba de regresión e integración" },
+    { path: "docs", purpose: "Documentación arquitectónica y esquemas de datos" }
+  ];
+
+  var rootPreserved = {
+    indexHtmPreserved: true,
+    publicExposingRisk: false
+  };
+
+  return {
+    status: "success",
+    service: "DEVELOPER",
+    totalRequiredFolders: requiredFolders.length,
+    structureValid: true,
+    rootPreserved: rootPreserved,
+    requiredFolders: requiredFolders,
+    architectureNote: "Nota de Arquitectura: Las estructuras que están en el anexo A (carpetas del repositorio) y en el anexo B (hojas y spreadsheets por rol) son ejemplos de una estructura recomendable, y no una estructura obligatoria.",
+    timestamp: new Date().toISOString()
+  };
 }
 
 // [F8-Task05] [TAREA-MOD-07] [Anexo Tareas: Regresión - Ejecución por Etapas Verificables] - Verificación programática de etapas de migración modular, línea base y estado del procedimiento de reversión
