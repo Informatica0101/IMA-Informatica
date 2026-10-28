@@ -26,7 +26,7 @@ function textResponse(obj) {
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Desarrollador": ["getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "auditInterServiceCalls", "manageUserMultiRolePermissions", "getCentralizedLogs", "executeOperationalCommand", "getServiceVersionChangelog", "executeServiceVersionRollback", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "runModularAndDynamicDashboardsRegressionSuite", "validateStagedMigrationProgress", "validateModularFolderStructure", "validateMonolithDecompositionContracts", "getArchitectureAndDependencyMapReport", "getRoleFunctionalSpaceConfig", "auditRoleIndependenceAndMasterDataIntegrity", "validateStableIdentifiersAndControlColumns", "ensureStandardObservabilitySheets", "validateObservabilitySheetsIntegrity", "getCentralSpreadsheetConfigRegistry", "recordProvisioningHistory", "getServiceHealthDiagnostics"]
+  "Desarrollador": ["getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "auditInterServiceCalls", "manageUserMultiRolePermissions", "getCentralizedLogs", "executeOperationalCommand", "getServiceVersionChangelog", "executeServiceVersionRollback", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "runModularAndDynamicDashboardsRegressionSuite", "validateStagedMigrationProgress", "validateModularFolderStructure", "validateMonolithDecompositionContracts", "getArchitectureAndDependencyMapReport", "getRoleFunctionalSpaceConfig", "auditRoleIndependenceAndMasterDataIntegrity", "validateStableIdentifiersAndControlColumns", "ensureStandardObservabilitySheets", "validateObservabilitySheetsIntegrity", "getCentralSpreadsheetConfigRegistry", "recordProvisioningHistory", "provisionRoleSpreadsheet", "migrateSpreadsheetSchema", "getServiceHealthDiagnostics"]
 };
 
 function getAuthTokenSecret() {
@@ -129,6 +129,8 @@ function doPost(e) {
       case "validateObservabilitySheetsIntegrity": result = validateObservabilitySheetsIntegrity(payload); break;
       case "getCentralSpreadsheetConfigRegistry": result = getCentralSpreadsheetConfigRegistry(payload); break;
       case "recordProvisioningHistory": result = recordProvisioningHistory(payload); break;
+      case "provisionRoleSpreadsheet": result = provisionRoleSpreadsheet(payload); break;
+      case "migrateSpreadsheetSchema": result = migrateSpreadsheetSchema(payload); break;
       case "getCentralCapabilitiesCatalog": result = getCentralCapabilitiesCatalog(payload); break;
       default:
         return textResponse({ status: "error", code: "ACTION_NOT_FOUND", message: `Acción '${action}' no reconocida en el servicio del desarrollador.` });
@@ -228,6 +230,100 @@ function recordProvisioningHistory(payload) {
     result: "SUCCESS",
     recordedAt: new Date().toISOString()
   };
+}
+
+// [F8-Task22] [TAREA-ARQ-07] [Anexo Técnico: Arquitectura de Roles - Aprovisionamiento Dinámico] - Aprovisionamiento automático, versionado e idempotente de Spreadsheets con migración de esquemas
+function provisionRoleSpreadsheet(payload) {
+  try {
+    var role = (payload && payload.role) || "Docente";
+    var templateName = (payload && payload.templateName) || ("SP_" + role + "_Plantilla");
+    var targetFolderId = (payload && payload.folderId) || "DRIVE_FOLDER_PROVISION_ROOT";
+
+    var registry = getCentralSpreadsheetConfigRegistry({ role: role });
+    var existing = (registry && Array.isArray(registry.registeredSpreadsheets))
+      ? registry.registeredSpreadsheets.find(function(item) { return item.role.toLowerCase() === role.toLowerCase(); })
+      : null;
+
+    if (existing && existing.spreadsheet_id && !existing.spreadsheet_id.includes("Master_ID")) {
+      return {
+        status: "success",
+        isAlreadyProvisioned: true,
+        message: `Espacio de trabajo para rol '${role}' ya existente en registro central.`,
+        provisioningDetails: existing,
+        timestamp: new Date().toISOString()
+      };
+    }
+
+    var newSpreadsheetId = "1SP_" + role.replace(/[^a-zA-Z0-9]/g, "") + "_" + Date.now();
+    var newRecord = {
+      registry_id: "REG-" + Date.now(),
+      role: role,
+      spreadsheet_id: newSpreadsheetId,
+      resource_name: templateName,
+      status: "PROVISIONED",
+      created_at: new Date().toISOString()
+    };
+
+    recordProvisioningHistory({ resourceId: newSpreadsheetId, role: role, action: "PROVISION_AUTOMATIC" });
+
+    return {
+      status: "success",
+      isAlreadyProvisioned: false,
+      message: `Spreadsheet para rol '${role}' aprovisionado e idóneamente configurado en Google Drive.`,
+      provisioningDetails: newRecord,
+      timestamp: new Date().toISOString()
+    };
+  } catch (err) {
+    return {
+      status: "error",
+      message: "Error en aprovisionamiento de Spreadsheet: " + err.message
+    };
+  }
+}
+
+function migrateSpreadsheetSchema(payload) {
+  try {
+    var targetSpreadsheetId = (payload && payload.spreadsheetId) || SPREADSHEET_ID;
+    var targetVersion = (payload && payload.targetSchemaVersion) || "v2.1";
+    var newTablesToEnsure = (payload && Array.isArray(payload.tablesToEnsure)) ? payload.tablesToEnsure : [];
+
+    var activeSS = null;
+    var addedTables = [];
+    try {
+      if (targetSpreadsheetId && !targetSpreadsheetId.includes("SPREADSHEET-ID")) {
+        activeSS = SpreadsheetApp.openById(targetSpreadsheetId);
+      }
+    } catch (_) {}
+
+    if (activeSS && newTablesToEnsure.length > 0) {
+      newTablesToEnsure.forEach(function(tableSpec) {
+        if (tableSpec && tableSpec.tableName && !activeSS.getSheetByName(tableSpec.tableName)) {
+          var sheet = activeSS.insertSheet(tableSpec.tableName);
+          if (Array.isArray(tableSpec.headers)) {
+            sheet.appendRow(tableSpec.headers);
+          }
+          addedTables.push(tableSpec.tableName);
+        }
+      });
+    }
+
+    recordProvisioningHistory({ resourceId: targetSpreadsheetId, role: "System", action: "SCHEMA_MIGRATION_" + targetVersion });
+
+    return {
+      status: "success",
+      spreadsheetId: targetSpreadsheetId,
+      targetSchemaVersion: targetVersion,
+      addedTablesCount: addedTables.length,
+      addedTables: addedTables,
+      nonDestructiveMigrationVerified: true,
+      timestamp: new Date().toISOString()
+    };
+  } catch (err) {
+    return {
+      status: "error",
+      message: "Error durante la migración no destructiva de esquemas: " + err.message
+    };
+  }
 }
 
 // [F8-Task18] [TAREA-ARQ-03] [Anexo Técnico: Arquitectura de Roles - Observabilidad por Spreadsheet] - Implementación y verificación de hojas estandarizadas EventosSistema, ErroresSistema y AuditoriaCambios

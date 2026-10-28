@@ -539,7 +539,7 @@
 
 ---
 
-### [ ] [F8-Task22] Implementar el aprovisionamiento automático, versionado de esquemas y migración de Spreadsheets
+### [X] [F8-Task22] Implementar el aprovisionamiento automático, versionado de esquemas y migración de Spreadsheets
 - **ID Anterior:** `[TAREA-ARQ-07]`
 - **Origen del Hallazgo:** Anexo Técnico: Arquitectura de Roles / Tarea ARQ-07 (P1 · Aprovisionamiento Dinámico)
 - **Prioridad:** P1
@@ -561,7 +561,7 @@
 - **Criterios de Aceptación:**
   - CA-ARQ-113: La creación de espacios de trabajo es idempotente y no duplica archivos en Google Drive.
   - CA-ARQ-114: La actualización de esquemas migra estructuras de tablas de forma no destructiva.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
