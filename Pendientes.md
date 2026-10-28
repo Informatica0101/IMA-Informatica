@@ -488,7 +488,7 @@
 
 ---
 
-### [ ] [F8-Task20] Implementar el catálogo de Spreadsheets funcionales por rol institucional
+### [X] [F8-Task20] Implementar el catálogo de Spreadsheets funcionales por rol institucional
 - **ID Anterior:** `[TAREA-ARQ-05]`
 - **Origen del Hallazgo:** Anexo Técnico: Arquitectura de Roles / Tarea ARQ-05 (P1 · Catalogo de Espacios Funcionales)
 - **Prioridad:** P1
@@ -511,7 +511,7 @@
 - **Criterios de Aceptación:**
   - CA-ARQ-109: Cada espacio funcional cuenta con su esquema de tablas operativas para la gestión propia del rol.
   - CA-ARQ-110: Los datos sensibles conservan aislamiento y permisos restrictivos por dominio de responsabilidad.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

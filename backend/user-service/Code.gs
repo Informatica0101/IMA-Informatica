@@ -1427,6 +1427,9 @@ function doPost(e) {
       case "validateRoleScopeAccess":
         result = validateRoleScopeAccess(payload);
         break;
+      case "getInstitutionalFunctionalSpaceCatalog":
+        result = getInstitutionalFunctionalSpaceCatalog(payload);
+        break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -7286,6 +7289,53 @@ function getUserDynamicDashboardConfig(payload) {
     return {
       status: "error",
       message: "Error al consultar configuración del dashboard dinámico: " + error.message
+    };
+  }
+}
+
+// [F8-Task20] [TAREA-ARQ-05] [Anexo Técnico: Arquitectura de Roles - Catálogo de Espacios Funcionales] - Consulta del catálogo de Spreadsheets funcionales por rol institucional con aislamiento de datos sensibles
+function getInstitutionalFunctionalSpaceCatalog(payload) {
+  try {
+    var functionalSpacesCatalog = [
+      { roleKey: "Administrador", spreadsheetName: "SP_AdminPlataforma", confidentialityLevel: "ALTA", sensitivityDomain: "PLATFORM_ADMIN", tables: ["ConfiguracionGlobal", "AuditoriaCentral", "Backups"] },
+      { roleKey: "Direccion", spreadsheetName: "SP_Direccion", confidentialityLevel: "INSTITUCIONAL", sensitivityDomain: "EXECUTIVE", tables: ["PlanesEstrategicos", "ResumenEjecutivo", "AprobacionesDireccion"] },
+      { roleKey: "DireccionAcademica", spreadsheetName: "SP_DireccionAcademica", confidentialityLevel: "ACADEMICA", sensitivityDomain: "ACADEMIC_ADMIN", tables: ["PlanesEstudio", "SupervisionPlanificaciones", "IndicesRendimiento"] },
+      { roleKey: "Secretaria", spreadsheetName: "SP_Secretaria", confidentialityLevel: "CONFIDENCIAL", sensitivityDomain: "STUDENT_RECORDS", tables: ["SolicitudesTramite", "BorradoresAdmision", "Certificados"] },
+      { roleKey: "CoordinacionNivel", spreadsheetName: "SP_CoordinacionNivel", confidentialityLevel: "ACADEMICA", sensitivityDomain: "LEVEL_COORDINATION", tables: ["SupervisionNivel", "RevisionesSilabos", "EventosNivel"] },
+      { roleKey: "CoordinacionDepartamento", spreadsheetName: "SP_CoordinacionDepartamento", confidentialityLevel: "ACADEMICA", sensitivityDomain: "DEPT_COORDINATION", tables: ["HorariosDepartamento", "CargasDocentesArea", "EquipamientoDep"] },
+      { roleKey: "Docente", spreadsheetName: "SP_Docente", confidentialityLevel: "RESTRINGIDA", sensitivityDomain: "TEACHING_OPS", tables: ["CargasAcademicas", "AsistenciasClase", "EntregasTareas"] },
+      { roleKey: "Estudiante", spreadsheetName: "SP_Estudiante", confidentialityLevel: "PERSONAL", sensitivityDomain: "STUDENT_SELF", tables: ["MisTareas", "MisCalificaciones", "MisAsistencias"] },
+      { roleKey: "Tutor", spreadsheetName: "SP_Tutores", confidentialityLevel: "CONFIDENCIAL", sensitivityDomain: "GUARDIAN_OPS", tables: ["EstudiantesA Cargo", "ComunicacionesTutores", "Autorizaciones"] },
+      { roleKey: "Admisiones", spreadsheetName: "SP_Admisiones", confidentialityLevel: "CONFIDENCIAL", sensitivityDomain: "ADMISSIONS", tables: ["SolicitudesAdmision", "Entrevistas", "EvaluacionesIngreso"] },
+      { roleKey: "Finanzas", spreadsheetName: "SP_Finanzas", confidentialityLevel: "ESTRICTAMENTE_CONFIDENCIAL", sensitivityDomain: "FINANCIAL", tables: ["Cobranzas", "Pagos", "Becas", "EstadoCuenta"] },
+      { roleKey: "Orientacion", spreadsheetName: "SP_Orientacion", confidentialityLevel: "EXTREMA_CONFIDENCIALIDAD", sensitivityDomain: "PSYCHOPEDAGOGICAL", tables: ["ExpedientesPsicopedagogicos", "SesionesOrientacion", "CasosEspeciales"] },
+      { roleKey: "Biblioteca", spreadsheetName: "SP_Biblioteca", confidentialityLevel: "OPERATIVA", sensitivityDomain: "LIBRARY", tables: ["CatalogoLibros", "Prestamos", "SancionesBiblioteca"] },
+      { roleKey: "RecursosHumanos", spreadsheetName: "SP_RecursosHumanos", confidentialityLevel: "ESTRICTAMENTE_CONFIDENCIAL", sensitivityDomain: "HUMAN_RESOURCES", tables: ["ExpedientesPersonal", "Planillas", "PermisosDocentes"] },
+      { roleKey: "Eventos", spreadsheetName: "SP_Eventos", confidentialityLevel: "INSTITUCIONAL", sensitivityDomain: "EVENTS", tables: ["CalendarioInstitucional", "ReservasEspacios", "Logistica"] },
+      { roleKey: "Soporte", spreadsheetName: "SP_Soporte", confidentialityLevel: "TECNICA", sensitivityDomain: "TECH_SUPPORT", tables: ["TicketsSoporte", "InventarioEquipos", "Mantenimientos"] },
+      { roleKey: "Auditoria", spreadsheetName: "SP_Auditoria", confidentialityLevel: "CONFIDENCIAL", sensitivityDomain: "AUDIT", tables: ["BitacoraAuditoria", "AccesoSensibles", "MétricasSeguridad"] }
+    ];
+
+    var queryRole = (payload && payload.role) || null;
+    var resultCatalog = functionalSpacesCatalog;
+
+    if (queryRole) {
+      resultCatalog = functionalSpacesCatalog.filter(function(item) {
+        return item.roleKey.toLowerCase() === String(queryRole).toLowerCase();
+      });
+    }
+
+    return {
+      status: "success",
+      totalFunctionalSpaces: resultCatalog.length,
+      functionalSpaces: resultCatalog,
+      architectureNote: "Nota de Arquitectura: Las estructuras que están en el anexo A (carpetas del repositorio) y en el anexo B (hojas y spreadsheets por rol) son ejemplos de una estructura recomendable, y no una estructura obligatoria.",
+      timestamp: new Date().toISOString()
+    };
+  } catch (err) {
+    return {
+      status: "error",
+      message: "Error al consultar el catálogo de espacios funcionales: " + err.message
     };
   }
 }

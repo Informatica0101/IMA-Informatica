@@ -377,3 +377,13 @@ RESULTADO DE EVALUACIÓN:
 - Se actualizó la suite de regresión en `tests/regression/modular-dashboard-suite.js` ejecutando con 23/23 PASS (100.0%).
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task20: IMPLEMENTAR EL CATÁLOGO DE SPREADSHEETS FUNCIONALES POR ROL INSTITUCIONAL
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `getInstitutionalFunctionalSpaceCatalog` en `backend/user-service/Code.gs` con la etiqueta identificativa `[F8-Task20] [TAREA-ARQ-05]`.
+- Se catalogó la totalidad de los 17 espacios funcionales institucionales (`SP_AdminPlataforma`, `SP_Direccion`, `SP_DireccionAcademica`, `SP_Secretaria`, `SP_CoordinacionNivel`, `SP_CoordinacionDepartamento`, `SP_Docente`, `SP_Estudiante`, `SP_Tutores`, `SP_Admisiones`, `SP_Finanzas`, `SP_Orientacion`, `SP_Biblioteca`, `SP_RecursosHumanos`, `SP_Eventos`, `SP_Soporte`, `SP_Auditoria`) manteniendo aislamiento de datos confidenciales y niveles de sensibilidad.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
