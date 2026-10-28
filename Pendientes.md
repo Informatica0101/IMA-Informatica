@@ -54,7 +54,7 @@
 
 ---
 
-### [ ] [F8-Task03] Actualizar todas las rutas y dependencias después de reorganizar el repositorio
+### [X] [F8-Task03] Actualizar todas las rutas y dependencias después de reorganizar el repositorio
 - **ID Anterior:** `[TAREA-MOD-04]`
 - **Origen del Hallazgo:** Anexo de Tareas: Modularización / Tarea MOD-04 (P1 · Actualización de Rutas)
 - **Prioridad:** P1
@@ -73,7 +73,7 @@
 - **Criterios de Aceptación:**
   - CA-MOD-107: No existen errores HTTP 404 ni cargas fallidas de scripts o assets en consola.
   - CA-MOD-108: Todos los módulos estáticos y dinámicos se resuelven correctamente en producción.
-- **Estado:** [] No Completado
+- **Estado:** [X] Completado
 
 ---
 

@@ -2471,3 +2471,21 @@ Archivos Creados y Modificados:
 
 4. Auditoria.txt
    - Registro de auditoría y verificación técnica de [F8-Task02].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task03] Actualizar todas las rutas y dependencias después de reorganizar el repositorio
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. docs/architecture/routing-and-paths.md
+   - Creación de la documentación de enrutamiento, rutas relativas y verificación de dependencias sin errores 404.
+
+2. js/config.js
+   - Líneas 733-745: Adición de `MODULE_ROUTING_DICTIONARY` con la definición central de rutas con encabezado identificativo `[F8-Task03]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task03].
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task03].

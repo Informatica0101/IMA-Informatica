@@ -730,6 +730,20 @@ window.isContentAuthorized = function(contentUnit, contentSubject, contentTopic,
     return true;
 };
 
+// [F8-Task03] [Anexo Tareas: Modularización - Actualización de Rutas] - Diccionario y verificador de rutas relativas y endpoints de microservicios
+window.MODULE_ROUTING_DICTIONARY = {
+    home: "index.html",
+    login: "login.html",
+    studentDashboard: "student-dashboard.html",
+    teacherDashboard: "teacher-dashboard.html",
+    coordinatorDashboard: "dashboard-coordinacion.html",
+    directorDashboard: "dashboard-direccion.html",
+    secretaryDashboard: "dashboard-secretaria.html",
+    hrDashboard: "dashboard-recursos-humanos.html",
+    accountingDashboard: "dashboard-contabilidad.html",
+    dynamicDashboard: "app/html/dashboards/dynamic-dashboard.html"
+};
+
 // [TAREA-AD-05] [Anexo Tareas: Dashboards Dinámicos - Integración de Módulos] - Contratos de integración por módulo para dashboards dinámicos
 window.DYNAMIC_DASHBOARD_MODULE_CONTRACTS = {
     "mod_gestion_usuarios": {

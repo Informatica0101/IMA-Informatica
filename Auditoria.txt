@@ -271,3 +271,14 @@ RESULTADO DE EVALUACIÓN:
 - Se actualizó MapaDependencias.md con el encabezado identificativo [F8-Task02].
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task03: ACTUALIZAR TODAS LAS RUTAS Y DEPENDENCIAS DESPUÉS DE REORGANIZAR EL REPOSOTORIO
+ARCHIVOS AUDITADOS: docs/architecture/routing-and-paths.md, js/config.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se verificaron y mapearon todas las rutas relativas de dashboards, portales, estilos CSS, assets gráficos e importaciones de scripts.
+- Se definió el diccionario de enrutamiento MODULE_ROUTING_DICTIONARY en js/config.js con el encabezado identificativo [F8-Task03].
+- Se generó la documentación técnica docs/architecture/routing-and-paths.md comprobando la inexistencia de errores HTTP 404.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
