@@ -417,3 +417,13 @@ RESULTADO DE EVALUACIÓN:
 - Se estructuró la matriz de comunicaciones institucionales con 7 tablas operativas, validación de la máquina de estados de transiciones de solicitudes e idempotencia mediante CacheService.
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task24: IMPLEMENTAR LA PREVISUALIZACIÓN INTEGRADA DE DOCUMENTOS PDF EN LA REVISIÓN DE ENTREGAS
+ARCHIVOS AUDITADOS: backend/task-service/Code.gs, teacher-dashboard.html, js/teacher.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se verificó la implementación de `getSubmissionDocumentPreviewUrl` en `backend/task-service/Code.gs` y `previewSubmissionPDFDocument` en `js/teacher.js` con la etiqueta identificativa `[F8-Task24] [TAREA-F8-OPT-01]`.
+- Se validó el funcionamiento del visor de PDF embebido dentro del modal de revisión `#modal-grade-submission` en `teacher-dashboard.html` con controles de zoom, rotación y descarga segura respetando los permisos RBAC.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================

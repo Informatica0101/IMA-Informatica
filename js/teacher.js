@@ -1190,6 +1190,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     };
 
+    // [F8-Task24] [TAREA-F8-OPT-01] [Fase 8: Previsualización Integrada de Documentos PDF en Entregas] - Visor de previsualización integrada de documentos PDF adjuntos en el modal de revisión de entregas
     window.previewSubmissionPDFDocument = async function(fileId, fileName) {
         const wrapper = document.getElementById('pdf-preview-wrapper');
         const titleEl = document.getElementById('pdf-preview-filename');

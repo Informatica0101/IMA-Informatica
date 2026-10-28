@@ -2363,7 +2363,7 @@ function getDriveStorageQuotaMetricsReport(payload) {
 }
 
 
-// [TAREA-F8-OPT-01] [Fase 8: Aula Virtual y Gestión Avanzada del Aprendizaje] - Obtener URL segura de previsualización de documentos PDF adjuntos en entregas con verificación RBAC
+// [F8-Task24] [TAREA-F8-OPT-01] [Fase 8: Aula Virtual y Gestión Avanzada del Aprendizaje] - Obtener URL segura de previsualización de documentos PDF adjuntos en entregas con verificación RBAC
 function getSubmissionDocumentPreviewUrl(payload) {
   try {
     if (!payload || !payload.fileId) {

@@ -592,7 +592,7 @@
 
 ---
 
-### [ ] [F8-Task24] Implementar la previsualización integrada de documentos PDF en la revisión de entregas
+### [X] [F8-Task24] Implementar la previsualización integrada de documentos PDF en la revisión de entregas
 - **ID Anterior:** `[TAREA-F8-OPT-01]`
 - **Origen del Hallazgo:** `AUDITORIA_FASE_8_AULA_VIRTUAL_APRENDIZAJE.md` / Tarea F8-OPT-01 (P2 · Previsualización PDF)
 - **Prioridad:** P2
@@ -616,7 +616,7 @@
   - CA-F8-013: Al abrir una entrega con un PDF válido, se muestra el visor directamente dentro del modal.
   - CA-F8-014: Un PDF dañado o no compatible produce un mensaje claro y mantiene la opción de descarga.
   - CA-F8-015: La previsualización no altera la evaluación, rúbrica ni el historial de entregas.
-- **Estado:** [] No Completado
+- **Estado:** [X] Completado
 
 ---
 
