@@ -209,12 +209,10 @@ function getCentralSpreadsheetConfigRegistry(payload) {
 
   return {
     status: "success",
-    service: "DEVELOPER",
-    totalPruebas: testCases.length,
-    pruebasExitosas: passedCount,
-    todasPruebasPasaron: allPassed,
-    duracionTotalMs: totalDurationMs,
-    resultadosSuiteRegresion: testResults
+    totalSpreadsheets: registeredSpreadsheets.length,
+    registeredSpreadsheets: registeredSpreadsheets,
+    rawUrlViolations: rawUrlViolations.length,
+    auditStatus: rawUrlViolations.length === 0 ? "PASSED" : "FAILED"
   };
 }
 
