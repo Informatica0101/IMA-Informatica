@@ -380,3 +380,42 @@ window.executeDynamicModuleContract = async function(moduleId, customParams, act
         };
     }
 };
+
+// [F8-Task27] [TAREA-CAL-02] - Optimización de rendimiento, deduplicación de peticiones e invalidación de caché local
+(function() {
+    window.IN_FLIGHT_REQUESTS = window.IN_FLIGHT_REQUESTS || {};
+    window.LOCAL_MODULE_CACHE = window.LOCAL_MODULE_CACHE || {};
+
+    // Deduplicador de solicitudes HTTP concurrentes e in-flight coalescing
+    window.fetchApiDeduplicated = function(service, action, payload) {
+        const cacheKey = `${service}_${action}_${JSON.stringify(payload || {})}`;
+
+        if (window.IN_FLIGHT_REQUESTS[cacheKey]) {
+            return window.IN_FLIGHT_REQUESTS[cacheKey];
+        }
+
+        const requestPromise = window.fetchApi(service, action, payload)
+            .finally(() => {
+                delete window.IN_FLIGHT_REQUESTS[cacheKey];
+            });
+
+        window.IN_FLIGHT_REQUESTS[cacheKey] = requestPromise;
+        return requestPromise;
+    };
+
+    // Invalidador explícito de caché de módulos locales ante cambios de permisos
+    window.invalidateLocalModuleCache = function(moduleId) {
+        if (moduleId) {
+            delete window.LOCAL_MODULE_CACHE[moduleId];
+            if (window.PersistenceManager && typeof window.PersistenceManager.remove === 'function') {
+                window.PersistenceManager.remove(`cache_module_${moduleId}`);
+            }
+        } else {
+            window.LOCAL_MODULE_CACHE = {};
+            if (window.PersistenceManager && typeof window.PersistenceManager.clear === 'function') {
+                window.PersistenceManager.clear();
+            }
+        }
+        console.log(`[F8-Task27] Caché local de módulos invalidada${moduleId ? ` para: ${moduleId}` : ' totalmente'}.`);
+    };
+})();

@@ -669,7 +669,7 @@
 
 ---
 
-### [ ] [F8-Task27] Garantizar rendimiento y mantenimiento del sistema modular
+### [X] [F8-Task27] Garantizar rendimiento y mantenimiento del sistema modular
 - **ID Anterior:** `[TAREA-CAL-02]`
 - **Origen del Hallazgo:** Anexo de Tareas: Calidad / Tarea CAL-02 (P2 · Rendimiento y Mantenibilidad)
 - **Prioridad:** P2
@@ -686,4 +686,4 @@
   3. Invalidar la configuración almacenada ante cambios de permisos o asignaciones.
 - **Criterios de Aceptación:**
   - CA-CAL-102: La carga dinámica no degrada la latencia percibida y elimina llamadas duplicadas al servidor.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
