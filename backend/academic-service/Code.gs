@@ -245,7 +245,8 @@ const ROLE_PERMISSIONS = {
     "saveCurricularConstraint", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule", "getReusableResourceCatalog", "manageReusableResource",
     "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentEnrollments",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
-    "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans"
+    "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans",
+    "calculateUnifiedAcademicGrade", "previewAcademicGradeCalculation", "auditAcademicGradesIntegrity"
   ],
   "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentTimeline", "getClassAttendance", "getStudentAttendanceSummary"],
   "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "calculateUnifiedAcademicGrade"],
@@ -647,6 +648,7 @@ function doPost(e) {
       case "getSectionEquivalences": result = getSectionEquivalences(payload); break;
       case "calculateUnifiedAcademicGrade": result = calculateUnifiedAcademicGrade(payload); break;
       case "previewAcademicGradeCalculation": result = previewAcademicGradeCalculation(payload); break;
+      case "auditAcademicGradesIntegrity": result = auditAcademicGradesIntegrity(payload); break;
 
       // Endpoints Fase 3
       case "getInstitutionParams": result = getInstitutionParams(payload); break;
@@ -10517,6 +10519,86 @@ function calculateUnifiedAcademicGrade(payload) {
 
 function previewAcademicGradeCalculation(payload) {
   return calculateUnifiedAcademicGrade(payload);
+}
+
+// [F9-Task04] [P0] - Fortalecer la precisión de los cálculos y la detección de inconsistencias académicas
+function auditAcademicGradesIntegrity(payload) {
+  const { grado, seccion, asignaturaId, periodoId, muestraCalificaciones } = payload || {};
+
+  const items = Array.isArray(muestraCalificaciones) ? muestraCalificaciones : [];
+  const inconsistencias = [];
+  let totalEvaluados = 0;
+  let fueraDeRango = 0;
+  let discrepanciasCalculo = 0;
+
+  items.forEach((item, idx) => {
+    const filaNum = idx + 1;
+    const uid = item.userId || item.estudianteId || `EST-${filaNum}`;
+    totalEvaluados++;
+
+    const actividades = Array.isArray(item.actividades) ? item.actividades : [];
+
+    actividades.forEach((act, actIdx) => {
+      let notaRaw = act.notaObtenida;
+      if (notaRaw === undefined || notaRaw === null || notaRaw === "") notaRaw = act.nota;
+
+      if (notaRaw !== null && notaRaw !== undefined && notaRaw !== "" && String(notaRaw).toUpperCase() !== "PENDIENTE" && String(notaRaw).toUpperCase() !== "EXENTO" && String(notaRaw).toUpperCase() !== "AUSENTE") {
+        const parsed = parseFloat(notaRaw);
+        if (isNaN(parsed) || parsed < 0 || parsed > 100) {
+          fueraDeRango++;
+          inconsistencias.push({
+            fila: filaNum,
+            userId: uid,
+            tipo: "RANGO_INVALIDO",
+            mensaje: `Actividad ${actIdx + 1} (${act.nombre || 'Evaluación'}): Calificación fuera del rango 0-100 (${notaRaw}).`
+          });
+        }
+      }
+    });
+
+    if (actividades.length > 0 && item.notaFinalGuardada !== undefined && item.notaFinalGuardada !== null) {
+      const calcRes = calculateUnifiedAcademicGrade({
+        userId: uid,
+        asignaturaId: asignaturaId || "GENERIC",
+        periodoId: periodoId || "P1",
+        actividades: actividades,
+        metodoEvaluacion: item.metodoEvaluacion || "PromedioPonderado"
+      });
+
+      const notaGuardada = parseFloat(item.notaFinalGuardada);
+      if (!isNaN(notaGuardada) && Math.abs(notaGuardada - calcRes.notaFinal) > 0.01) {
+        discrepanciasCalculo++;
+        inconsistencias.push({
+          fila: filaNum,
+          userId: uid,
+          tipo: "DISCREPANCIA_CALCULO",
+          mensaje: `Nota final guardada (${notaGuardada}) no coincide con el cálculo unificado reproducible (${calcRes.notaFinal}).`
+        });
+      }
+    }
+  });
+
+  const esIntegro = inconsistencias.length === 0;
+
+  return {
+    status: "success",
+    esIntegro,
+    diagnosticoIntegridad: {
+      grado: grado || "Todos",
+      seccion: seccion || "Todas",
+      asignaturaId: asignaturaId || "Todas",
+      periodoId: periodoId || "Actual",
+      totalMuestrasAnalizadas: items.length,
+      totalEvaluados,
+      fueraDeRango,
+      discrepanciasCalculo,
+      totalInconsistencias: inconsistencias.length,
+      inconsistencias
+    },
+    message: esIntegro
+      ? "Diagnóstico de integridad completado: No se detectaron inconsistencias en las calificaciones."
+      : `Diagnóstico completado con ${inconsistencias.length} inconsistencia(s) detectada(s).`
+  };
 }
 
 // [FASE2-T12] [Fase 2 - Criterios para Almacenamiento Transaccional] - Evaluación de métricas de almacenamiento, volumen de filas, latencia de consulta y umbrales de migración a RDBMS/SQL.

@@ -513,3 +513,14 @@ RESULTADO DE EVALUACIÓN:
 - Etiquetada la función `saveEvaluationCategory` en `backend/exam-service/Code.gs`.
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F9-Task04: FORTALECER LA PRECISIÓN DE LOS CÁLCULOS Y LA DETECCIÓN DE INCONSISTENCIAS ACADÉMICAS
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `auditAcademicGradesIntegrity` en `backend/academic-service/Code.gs` antecedida por la etiqueta identificativa `[F9-Task04]`.
+- Se verificó el diagnóstico automatizado de notas fuera de rango (0-100), la detección de discrepancias entre notas finales guardadas y cálculos reproducibles, y la verificación de redondeo a 2 decimales.
+- Registrada la acción en `ROLE_PERMISSIONS` para el rol Profesor y agregada al enrutador `doPost`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================

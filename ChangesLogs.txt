@@ -2880,3 +2880,20 @@ Archivos Modificados:
 
 4. Auditoria.txt
    - Registro de la auditoría y verificación de la tarea `[F9-Task03]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F9-Task04] Fortalecer la precisión de los cálculos y la detección de inconsistencias académicas
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Linea 249: Adición del permiso "auditAcademicGradesIntegrity" en ROLE_PERMISSIONS para rol Profesor.
+   - Linea 650: Adición de dispatcher "auditAcademicGradesIntegrity" en doPost switch.
+   - Lineas 10523-10588: Implementación de la función backend `auditAcademicGradesIntegrity` con comentario identificativo `[F9-Task04]`. Diagnóstico de notas fuera del rango 0-100, validación de discrepancias entre notas finales guardadas y cálculos reproducibles de `calculateUnifiedAcademicGrade`, e informe de estado de integridad.
+
+2. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task04]`.
+
+3. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task04]`.
