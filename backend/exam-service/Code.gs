@@ -88,15 +88,15 @@ const ROLE_PERMISSIONS = {
     "createExam", "updateExam", "updateExamStatus", "deleteExam", "gradeExamSubmission", "deleteExamSubmission",
     "getAllExams", "getTeacherExamActivity", "getExamQuestions", "getStudentExams", "getExamResult",
     "getGradebookData", "saveGradebookGrades", "bulkApplyGradebookGrades", "copyEvaluationSetupBetweenGroups", "getEvaluationCategories", "saveEvaluationCategory",
-    "getRubrics", "saveRubric", "saveStudentRecovery", "getStudentRecoveries", "closePeriodGradebook", "reopenPeriodGradebook", "submitGradebookForReview", "reviewPeriodGradebook", "rectifyStudentGrade", "getGradeRectificationHistory", "getStudentAcademicReport",
+    "getRubrics", "saveRubric", "saveCompetencyEvaluation", "getCompetencyEvaluations", "saveStudentRecovery", "getStudentRecoveries", "closePeriodGradebook", "reopenPeriodGradebook", "submitGradebookForReview", "reviewPeriodGradebook", "rectifyStudentGrade", "getGradeRectificationHistory", "getStudentAcademicReport",
     "manageQuestionBank", "getQuestionBank", "checkExamSchedulingConflict", "simulateExamReschedule",
     "getExamGradeDistributionAnalytics"
   ],
   "Estudiante": [
-    "getStudentExams", "getExamQuestions", "submitExam", "getExamResult", "getEvaluationCategories", "getRubrics", "getStudentRecoveries", "getStudentAcademicReport"
+    "getStudentExams", "getExamQuestions", "submitExam", "getExamResult", "getEvaluationCategories", "getRubrics", "getCompetencyEvaluations", "getStudentRecoveries", "getStudentAcademicReport"
   ],
   "Alumno": [
-    "getStudentExams", "getExamQuestions", "submitExam", "getExamResult", "getEvaluationCategories", "getRubrics", "getStudentRecoveries", "getStudentAcademicReport"
+    "getStudentExams", "getExamQuestions", "submitExam", "getExamResult", "getEvaluationCategories", "getRubrics", "getCompetencyEvaluations", "getStudentRecoveries", "getStudentAcademicReport"
   ]
 };
 
@@ -378,6 +378,8 @@ function doPost(e) {
       case "saveEvaluationCategory": result = saveEvaluationCategory(payload); break;
       case "getRubrics": result = getRubrics(payload); break;
       case "saveRubric": result = saveRubric(payload); break;
+      case "saveCompetencyEvaluation": result = saveCompetencyEvaluation(payload); break;
+      case "getCompetencyEvaluations": result = getCompetencyEvaluations(payload); break;
       case "saveStudentRecovery": result = saveStudentRecovery(payload); break;
       case "getStudentRecoveries": result = getStudentRecoveries(payload); break;
       case "closePeriodGradebook": result = closePeriodGradebook(payload); break;
@@ -1324,6 +1326,75 @@ function saveRubric(payload) {
   }
 
   return { status: "success", message: "Rúbrica guardada correctamente.", data: { rubricaId: rid } };
+}
+
+// [F9-Task12] [P1] - Ampliar la evaluación por competencias, rúbricas e indicadores de logro
+function saveCompetencyEvaluation(payload) {
+  const { competenciaId, indicadorId, userId, asignaturaId, periodoId, nivelDesempeno, observaciones, rubricaId } = payload || {};
+  if (!competenciaId || !userId || !nivelDesempeno) {
+    return { status: "error", message: "competenciaId, userId y nivelDesempeno son requeridos para evaluar competencias." };
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "EvaluacionesCompetencias");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["ID", "CompetenciaID", "IndicadorID", "UserID", "AsignaturaID", "PeriodoID", "NivelDesempeno", "Observaciones", "RubricaID", "FechaRegistro"]);
+  }
+
+  const cid = "COMP-EVAL-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+  const now = new Date();
+
+  sheet.appendRow([
+    cid,
+    competenciaId,
+    indicadorId || "IND-GENERIC",
+    userId,
+    asignaturaId || "ASIG-GENERIC",
+    periodoId || "P1",
+    String(nivelDesempeno).trim(),
+    observaciones || "",
+    rubricaId || "",
+    now
+  ]);
+
+  return {
+    status: "success",
+    evaluacionCompetenciaId: cid,
+    competenciaId,
+    userId,
+    nivelDesempeno,
+    message: "Evaluación cualitativa por competencias e indicadores registrada exitosamente."
+  };
+}
+
+function getCompetencyEvaluations(payload) {
+  const { userId, asignaturaId, periodoId, competenciaId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "EvaluacionesCompetencias");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const filtered = data.slice(1).filter(r => {
+    if (userId && String(r[3]).trim() !== String(userId).trim()) return false;
+    if (asignaturaId && String(r[4]).trim() !== String(asignaturaId).trim()) return false;
+    if (periodoId && String(r[5]).trim() !== String(periodoId).trim()) return false;
+    if (competenciaId && String(r[1]).trim() !== String(competenciaId).trim()) return false;
+    return true;
+  }).map(r => ({
+    evaluacionCompetenciaId: r[0],
+    competenciaId: r[1],
+    indicadorId: r[2],
+    userId: r[3],
+    asignaturaId: r[4],
+    periodoId: r[5],
+    nivelDesempeno: r[6],
+    observaciones: r[7],
+    rubricaId: r[8],
+    fechaRegistro: r[9] ? new Date(r[9]).toISOString() : null
+  }));
+
+  return { status: "success", total: filtered.length, data: filtered };
 }
 
 function getGradebookData(payload) {

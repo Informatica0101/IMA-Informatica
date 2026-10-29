@@ -414,7 +414,7 @@
 
 ---
 
-### [ ] [F9-Task12] Ampliar la evaluación por competencias, rúbricas e indicadores de logro
+### [X] [F9-Task12] Ampliar la evaluación por competencias, rúbricas e indicadores de logro
 - **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task09 (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Evaluación formativa y seguimiento del aprendizaje)
@@ -446,7 +446,7 @@
   - Las rúbricas reutilizadas mantienen su configuración sin mezclar las notas de diferentes grupos.
   - Las consolidaciones coinciden con las reglas configuradas.
   - Los resultados se muestran únicamente a los perfiles autorizados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
