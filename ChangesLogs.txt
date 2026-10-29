@@ -2886,6 +2886,24 @@ Archivos Modificados:
 
 -------------------------------------------------------------------------------
 FECHA: 2026-10-29
+TAREA: [F9-Task10] Ampliar el libro de calificaciones para mejorar el registro individual y masivo
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/exam-service/Code.gs
+   - Lineas 90, 375, 1478-1588: Adición de permisos "bulkApplyGradebookGrades" y "copyEvaluationSetupBetweenGroups" en ROLE_PERMISSIONS, dispatchers en doPost e implementación con la etiqueta identificativa `[F9-Task10]`.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `bulkApplyGradebookGrades` y `copyEvaluationSetupBetweenGroups`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task10]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task10]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
 TAREA: [F9-Task02] Fortalecer la validación y el diagnóstico de archivos SACE antes de generar las calificaciones
 -------------------------------------------------------------------------------
 

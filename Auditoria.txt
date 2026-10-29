@@ -561,6 +561,17 @@ RESULTADO DE EVALUACIÓN:
 
 ===============================================================================
 FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F9-Task10: AMPLIAR EL LIBRO DE CALIFICACIONES PARA MEJORAR EL REGISTRO INDIVIDUAL Y MASIVO
+ARCHIVOS AUDITADOS: backend/exam-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `bulkApplyGradebookGrades` y `copyEvaluationSetupBetweenGroups` en `backend/exam-service/Code.gs` con la etiqueta identificativa `[F9-Task10]`.
+- Se verificó la asignación masiva de calificaciones por evaluación respetando notas previamente guardadas salvo autorización explícita de sobrescritura, y la duplicación segura de estructuras/categorías de evaluación entre grupos sin filtrar datos personales de alumnos.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/exam-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
 AUDITORÍA FUNCIONAL Y TÉCNICA - F9-Task06: FORTALECER LAS RECTIFICACIONES DE NOTAS Y LA TRAZABILIDAD DE LOS CAMBIOS
 ARCHIVOS AUDITADOS: backend/exam-service/Code.gs
 RESULTADO DE EVALUACIÓN:

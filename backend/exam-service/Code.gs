@@ -87,7 +87,7 @@ const ROLE_PERMISSIONS = {
   "Profesor": [
     "createExam", "updateExam", "updateExamStatus", "deleteExam", "gradeExamSubmission", "deleteExamSubmission",
     "getAllExams", "getTeacherExamActivity", "getExamQuestions", "getStudentExams", "getExamResult",
-    "getGradebookData", "saveGradebookGrades", "getEvaluationCategories", "saveEvaluationCategory",
+    "getGradebookData", "saveGradebookGrades", "bulkApplyGradebookGrades", "copyEvaluationSetupBetweenGroups", "getEvaluationCategories", "saveEvaluationCategory",
     "getRubrics", "saveRubric", "saveStudentRecovery", "getStudentRecoveries", "closePeriodGradebook", "reopenPeriodGradebook", "submitGradebookForReview", "reviewPeriodGradebook", "rectifyStudentGrade", "getGradeRectificationHistory", "getStudentAcademicReport",
     "manageQuestionBank", "getQuestionBank", "checkExamSchedulingConflict", "simulateExamReschedule",
     "getExamGradeDistributionAnalytics"
@@ -372,6 +372,8 @@ function doPost(e) {
       case "deleteExamSubmission": result = deleteExamSubmission(payload); break;
       case "getGradebookData": result = getGradebookData(payload); break;
       case "saveGradebookGrades": result = saveGradebookGrades(payload); break;
+      case "bulkApplyGradebookGrades": result = bulkApplyGradebookGrades(payload); break;
+      case "copyEvaluationSetupBetweenGroups": result = copyEvaluationSetupBetweenGroups(payload); break;
       case "getEvaluationCategories": result = getEvaluationCategories(payload); break;
       case "saveEvaluationCategory": result = saveEvaluationCategory(payload); break;
       case "getRubrics": result = getRubrics(payload); break;
@@ -1471,6 +1473,120 @@ function saveGradebookGrades(payload) {
   }
 
   return { status: "success", message: `Se guardaron ${savedCount} calificaciones exitosamente.` };
+}
+
+// [F9-Task10] [P1] - Ampliar el libro de calificaciones para mejorar el registro individual y masivo
+function bulkApplyGradebookGrades(payload) {
+  const { evaluacionId, estudiantes, nota, observaciones, sobrescribirExistentes } = payload || {};
+  if (!evaluacionId || !Array.isArray(estudiantes) || estudiantes.length === 0) {
+    return { status: "error", message: "Se requiere evaluacionId y una lista de IDs de estudiantes para aplicación masiva." };
+  }
+
+  const notaNum = parseFloat(nota);
+  if (isNaN(notaNum) || notaNum < 0 || notaNum > 100) {
+    return { status: "error", message: "La calificación a aplicar masivamente debe estar entre 0 y 100." };
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CalificacionesEstudiantes");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["ID", "EvaluacionID", "UserID", "NotaObtenida", "PuntajePonderado", "EsBorrador", "EsPublicada", "Observaciones", "FechaRegistro"]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+  let aplicados = 0;
+  let omitidos = 0;
+
+  const indexMap = {};
+  for (let i = 1; i < data.length; i++) {
+    const key = `${String(data[i][1]).trim()}_${String(data[i][2]).trim()}`;
+    indexMap[key] = i;
+  }
+
+  estudiantes.forEach(uId => {
+    const studentIdStr = String(uId).trim();
+    if (!studentIdStr) return;
+
+    const key = `${String(evaluacionId).trim()}_${studentIdStr}`;
+    if (key in indexMap) {
+      const idx = indexMap[key];
+      const notaActual = parseFloat(data[idx][3]);
+      if (!sobrescribirExistentes && !isNaN(notaActual) && notaActual > 0) {
+        omitidos++;
+        return;
+      }
+      data[idx][3] = notaNum;
+      data[idx][5] = true; // EsBorrador
+      data[idx][7] = observaciones || data[idx][7] || "Aplicado masivamente";
+      data[idx][8] = now;
+      aplicados++;
+    } else {
+      const cid = "CALIF-BULK-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+      const newRow = [cid, evaluacionId, studentIdStr, notaNum, notaNum, true, false, observaciones || "Aplicado masivamente", now];
+      data.push(newRow);
+      indexMap[key] = data.length - 1;
+      aplicados++;
+    }
+  });
+
+  if (data.length > 1) {
+    sheet.getRange(1, 1, data.length, data[0].length).setValues(data);
+  }
+
+  return {
+    status: "success",
+    evaluacionId,
+    totalProcesados: estudiantes.length,
+    aplicados,
+    omitidos,
+    message: `Calificación masiva (${notaNum}) aplicada a ${aplicados} estudiante(s). ${omitidos} omitido(s) por conservar nota previa.`
+  };
+}
+
+function copyEvaluationSetupBetweenGroups(payload) {
+  const { grupoOrigen, grupoDestino } = payload || {};
+  if (!grupoOrigen || !grupoDestino) {
+    return { status: "error", message: "Se requieren parámetros grupoOrigen y grupoDestino para copiar la configuración de evaluación." };
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheetCat = getOrCreateSheet(ss, "CategoriasEvaluacion");
+  const dataCat = sheetCat.getDataRange().getValues();
+
+  let copiados = 0;
+  if (dataCat.length > 1) {
+    const origAsig = String(grupoOrigen.asignatura || "").trim();
+    const destAsig = String(grupoDestino.asignatura || "").trim();
+    const destGrado = String(grupoDestino.grado || "").trim();
+    const destSec = String(grupoDestino.seccion || "").trim();
+    const destPer = String(grupoDestino.periodo || "").trim();
+
+    for (let i = 1; i < dataCat.length; i++) {
+      const rowAsig = String(dataCat[i][1] || "").trim();
+      if (!origAsig || rowAsig === origAsig) {
+        const newCatId = "CAT-COPY-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+        const newRow = [
+          newCatId,
+          destAsig || rowAsig,
+          dataCat[i][2], // Nombre Categoria
+          dataCat[i][3], // Ponderacion
+          destGrado || dataCat[i][4],
+          destSec || dataCat[i][5],
+          destPer || dataCat[i][6],
+          new Date()
+        ];
+        sheetCat.appendRow(newRow);
+        copiados++;
+      }
+    }
+  }
+
+  return {
+    status: "success",
+    categoriasCopias: copiados,
+    message: `Configuración de evaluación copiada exitosamente (${copiados} categoría(s) duplicadas para el grupo destino sin copiar datos de estudiantes).`
+  };
 }
 
 function saveStudentRecovery(payload) {

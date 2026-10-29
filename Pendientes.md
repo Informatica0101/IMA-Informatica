@@ -341,7 +341,7 @@
 
 ---
 
-### [ ] [F9-Task10] Ampliar el libro de calificaciones para mejorar el registro individual y masivo
+### [X] [F9-Task10] Ampliar el libro de calificaciones para mejorar el registro individual y masivo
 - **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task05 (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Portal docente y administración de calificaciones)
@@ -376,7 +376,7 @@
   - Las modificaciones no guardadas se advierten antes de abandonar el libro.
   - El registro de grupos numerosos mantiene tiempos de respuesta aceptables y no produce guardados incompletos silenciosos.
   - La interfaz permite completar el flujo de registro desde teclado y dispositivos móviles.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

@@ -45,9 +45,10 @@ assert(examCode.includes("getGradeRectificationHistory"), "backend/exam-service/
 assert(academicCode.includes("generateStudentReportCard") && academicCode.includes("[F9-Task07]"), "backend/academic-service/Code.gs contiene generateStudentReportCard [F9-Task07]");
 assert(academicCode.includes("validateAcademicResponsibilityAndScopeAccess") && academicCode.includes("[F9-Task08]"), "backend/academic-service/Code.gs contiene validateAcademicResponsibilityAndScopeAccess [F9-Task08]");
 
-// 6. Verificación de la suite de regresión en developer-service (F9-Task09)
+// 6. Verificación de la suite de regresión en developer-service (F9-Task09) y Registro Masivo / Copia de Configuración (F9-Task10)
 const devCode = fs.readFileSync(path.join(__dirname, '../../backend/developer-service/Code.gs'), 'utf8');
 assert(devCode.includes("runAcademicGradingRegressionSuite") && devCode.includes("[F9-Task09]"), "backend/developer-service/Code.gs contiene función runAcademicGradingRegressionSuite [F9-Task09]");
+assert(examCode.includes("bulkApplyGradebookGrades") && examCode.includes("copyEvaluationSetupBetweenGroups") && examCode.includes("[F9-Task10]"), "backend/exam-service/Code.gs contiene bulkApplyGradebookGrades y copyEvaluationSetupBetweenGroups [F9-Task10]");
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
