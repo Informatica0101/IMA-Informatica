@@ -2904,6 +2904,24 @@ Archivos Modificados:
 
 -------------------------------------------------------------------------------
 FECHA: 2026-10-29
+TAREA: [F9-Task11] Ampliar las recuperaciones académicas y su integración con los resultados oficiales
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/exam-service/Code.gs
+   - Lineas 1592-1638: Inserción del comentario identificativo `[F9-Task11]` y refactorización de `saveStudentRecovery` agregando validaciones de rango (0-100) y comprobación de períodos cerrados.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de verificación para `saveStudentRecovery [F9-Task11]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task11]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task11]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
 TAREA: [F9-Task02] Fortalecer la validación y el diagnóstico de archivos SACE antes de generar las calificaciones
 -------------------------------------------------------------------------------
 

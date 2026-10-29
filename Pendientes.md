@@ -380,7 +380,7 @@
 
 ---
 
-### [ ] [F9-Task11] Ampliar las recuperaciones académicas y su integración con los resultados oficiales
+### [X] [F9-Task11] Ampliar las recuperaciones académicas y su integración con los resultados oficiales
 - **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task08 (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Recuperaciones, evaluaciones extraordinarias y promoción académica)
@@ -410,7 +410,7 @@
   - Los cambios se reflejan en los documentos dependientes.
   - Los períodos cerrados mantienen sus restricciones.
   - Las recuperaciones fuera de las condiciones permitidas se rechazan o quedan pendientes de autorización.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

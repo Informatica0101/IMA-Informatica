@@ -538,6 +538,17 @@ RESULTADO DE EVALUACIÓN:
 
 ===============================================================================
 FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F9-Task11: AMPLIAR LAS RECUPERACIONES ACADÉMICAS Y SU INTEGRACIÓN CON LOS RESULTADOS OFICIALES
+ARCHIVOS AUDITADOS: backend/exam-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se actualizó la función `saveStudentRecovery` en `backend/exam-service/Code.gs` inyectando la etiqueta identificativa `[F9-Task11]`.
+- Se verificó la validación de rangos numéricos (0-100), bloqueo en períodos cerrados sin autorización, y cálculo diferenciado por método de recuperación (`Sustitucion`, `Promedio`, `Mayor`) sin duplicar la actividad ordinaria.
+- Registrada la acción en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/exam-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
 AUDITORÍA FUNCIONAL Y TÉCNICA - F9-Task08: FORTALECER EL CONTROL DE PERMISOS Y LA SEPARACIÓN DE RESPONSABILIDADES ACADÉMICAS
 ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
 RESULTADO DE EVALUACIÓN:

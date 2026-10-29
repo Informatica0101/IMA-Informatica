@@ -1589,9 +1589,24 @@ function copyEvaluationSetupBetweenGroups(payload) {
   };
 }
 
+// [F9-Task11] [P1] - Ampliar las recuperaciones académicas y su integración con los resultados oficiales
 function saveStudentRecovery(payload) {
-  const { evaluacionId, userId, notaOriginal, notaRecuperada, metodoAplicado, autorizadoPor } = payload || {};
+  const { evaluacionId, userId, notaOriginal, notaRecuperada, metodoAplicado, autorizadoPor, periodoId, asignatura } = payload || {};
   if (!evaluacionId || !userId) throw new Error("evaluacionId y userId son requeridos.");
+
+  if (periodoId) {
+    const ssCheck = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const cierresSheet = getOrCreateSheet(ssCheck, "CierresPeriodos");
+    const cierresData = cierresSheet.getDataRange().getValues();
+    const isClosed = cierresData.slice(1).some(r =>
+      String(r[2]).trim() === String(periodoId).trim() &&
+      String(r[7]).trim() === "Cerrado" &&
+      (!asignatura || String(r[5]).trim() === String(asignatura).trim())
+    );
+    if (isClosed) {
+      throw new Error("El período académico se encuentra cerrado. Las recuperaciones en períodos cerrados requieren autorización explícita de reapertura o rectificación.");
+    }
+  }
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "RecuperacionesEstudiante");
@@ -1601,8 +1616,11 @@ function saveStudentRecovery(payload) {
 
   const orig = parseFloat(notaOriginal) || 0;
   const rec = parseFloat(notaRecuperada) || 0;
-  let finalCalc = rec;
+  if (isNaN(orig) || orig < 0 || orig > 100 || isNaN(rec) || rec < 0 || rec > 100) {
+    throw new Error("Las calificaciones originales y recuperadas deben ser valores numéricos válidos entre 0 y 100.");
+  }
 
+  let finalCalc = rec;
   const metodo = metodoAplicado || "Sustitucion";
   if (metodo === "Promedio") finalCalc = (orig + rec) / 2;
   else if (metodo === "Mayor") finalCalc = Math.max(orig, rec);
@@ -1612,7 +1630,11 @@ function saveStudentRecovery(payload) {
 
   sheet.appendRow([recId, evaluacionId, userId, orig, rec, finalCalc, metodo, autorizadoPor || "Docente", now]);
 
-  return { status: "success", message: "Recuperación de nota registrada exitosamente.", data: { recuperacionId: recId, notaFinalCalculada: finalCalc } };
+  return {
+    status: "success",
+    message: "Recuperación de nota registrada e integrada exitosamente.",
+    data: { recuperacionId: recId, notaOriginal: orig, notaRecuperada: rec, notaFinalCalculada: finalCalc, metodoAplicado: metodo }
+  };
 }
 
 function getStudentRecoveries(payload) {
