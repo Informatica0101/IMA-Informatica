@@ -1,689 +1,520 @@
-<!-- Regla del Backlog: Las tareas deben estar ordenadas estrictamente por su nivel de importancia y severidad en orden descendente, asignando identificadores consecutivos en formato F8-TaskXX. -->
-# PENDIENTES - FASE 8 Y ANEXO: DASHBOARDS DINÁMICOS, SEGURIDAD, MODULARIZACIÓN Y ARQUITECTURA DE ROLES
+<!-- Regla del Backlog: Las tareas deben estar ordenadas estrictamente por su nivel de importancia y severidad en orden descendente, asignando identificadores consecutivos en formato F9-TaskXX. -->
+# PENDIENTES - FASE 9: EVALUACIONES, CALIFICACIONES Y RESULTADOS ACADÉMICOS
 
-## TAREAS CRÍTICAS (P1 - ALTA SEVERIDAD Y REGLAS DE SEGURIDAD)
+## TAREAS CRÍTICAS (P0 - SEVERIDAD MÁXIMA E INTEGRIDAD DE EXPORTACIÓN Y CÁLCULO)
 
 ---
 
-### [X] [F8-Task01] Centralizar y verificar la autorización efectiva de cada operación
-- **ID Anterior:** `[TAREA-AD-06]`
-- **Origen del Hallazgo:** Anexo de Tareas: Seguridad y roles / Tarea AD-06 (P1 · Verificación Backend)
-- **Prioridad:** P1
-- **Severidad/Clasificación:** Crítica (Seguridad y denegación por defecto)
+### [ ] [F9-Task01] Verificar y fortalecer la compatibilidad de las plantillas oficiales de calificaciones de SACE
+- **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task01 (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Exportación académica, compatibilidad institucional y automatización de calificaciones)
 - **Archivos Involucrados:**
-  - `backend/user-service/Code.gs`
   - `backend/academic-service/Code.gs`
-  - `backend/task-service/Code.gs`
-- **Dependencias Expuestas:** Tokens HMAC-SHA256, verificación de roles, validación de ámbito
-- **Descripción del Alcance:**
-  Garantizar que toda operación protegida en el backend valide la identidad, rol, responsabilidad, operación solicitada y ámbito de datos, aplicando denegación por defecto.
-
-  Requisitos Funcionales:
-  1. Validar identidad, permisos y ámbito en el servidor en cada solicitud HTTP.
-  2. No confiar en parámetros o identificadores enviados por el cliente sin validación en base de datos.
-  3. Aplicar denegación por defecto y rechazar solicitudes ante configuraciones no verificables.
-  4. Invalidate o actualizar permisos efectivos de inmediato al retirar o modificar una responsabilidad.
-  5. Registrar intentos no autorizados y escalamientos de privilegios.
-- **Criterios de Aceptación:**
-  - CA-AD-114: Intentos de invocar endpoints directamente sin autorización son rechazados en el backend.
-  - CA-AD-115: Manipulación de parámetros en el navegador no permite acceder a datos fuera del ámbito autorizado.
-- **Estado:** [X] Completado
-
----
-
-### [X] [F8-Task02] Auditar los archivos existentes y elaborar un inventario de dependencias
-- **ID Anterior:** `[TAREA-MOD-01]`
-- **Origen del Hallazgo:** Anexo de Tareas: Modularización / Tarea MOD-01 (P1 · Inventario de Dependencias)
-- **Prioridad:** P1
-- **Severidad/Clasificación:** Crítica (Análisis de dependencias)
-- **Archivos Involucrados:**
-  - Todo el repositorio (`app/`, `backend/`, `js/`, `css/`, `index.htm`)
-- **Dependencias Expuestas:** Todas las referencias cruzadas de scripts, links, importaciones y endpoints
-- **Descripción del Alcance:**
-  Auditar minuciosamente todos los archivos del repositorio (respetando `index.htm`) y mapear dependencias directas e indirectas, referencias de scripts, llamadas API y funciones compartidas.
-
-  Requisitos Funcionales:
-  1. Inventariar todos los archivos HTML, JS, CSS, motores, servicios, plantillas y assets.
-  2. Identificar funciones duplicadas, dependencias circulares, variables globales y acoplamientos.
-  3. Mapear referencias en etiquetas script, link, importaciones, llamadas backend y rutas.
-  4. Documentar contratos de comunicación y puntos de entrada sin alterar el nombre de `index.htm`.
-- **Criterios de Aceptación:**
-  - CA-MOD-101: El inventario cubre el 100% de los archivos del repositorio y sus dependencias explícitas.
-  - CA-MOD-102: Se genera el mapa de dependencias formal antes de iniciar traslados de archivos.
-- **Estado:** [X] Completado
-
----
-
-### [X] [F8-Task03] Actualizar todas las rutas y dependencias después de reorganizar el repositorio
-- **ID Anterior:** `[TAREA-MOD-04]`
-- **Origen del Hallazgo:** Anexo de Tareas: Modularización / Tarea MOD-04 (P1 · Actualización de Rutas)
-- **Prioridad:** P1
-- **Severidad/Clasificación:** Crítica (Integridad de referencias)
-- **Archivos Involucrados:**
-  - Todos los archivos HTML, JS, CSS y configuraciones de despliegue
-- **Dependencias Expuestas:** Enlaces, etiquetas script/link, importaciones dinámicas, rutas de assets
-- **Descripción del Alcance:**
-  Actualizar y verificar cada ruta, script tag, hoja de estilo, imagen e importación afectada por la reorganización modular.
-
-  Requisitos Funcionales:
-  1. Actualizar rutas de scripts, CSS, imágenes, fuentes e importaciones estáticas/dinámicas.
-  2. Actualizar referencias a plantillas, navegación y endpoints.
-  3. Garantizar compatibilidad de rutas relativas y sensibilidad a mayúsculas/minúsculas.
-  4. Eliminar referencias obsoletas o residuales.
-- **Criterios de Aceptación:**
-  - CA-MOD-107: No existen errores HTTP 404 ni cargas fallidas de scripts o assets en consola.
-  - CA-MOD-108: Todos los módulos estáticos y dinámicos se resuelven correctamente en producción.
-- **Estado:** [X] Completado
-
----
-
-### [X] [F8-Task04] Crear pruebas de regresión para la modularización y los dashboards dinámicos
-- **ID Anterior:** `[TAREA-MOD-06]`
-- **Origen del Hallazgo:** Anexo de Tareas: Regresión / Tarea MOD-06 (P1 · Suite de Regresión Arquitectónica)
-- **Prioridad:** P1
-- **Severidad/Clasificación:** Crítica (Pruebas de regresión)
-- **Archivos Involucrados:**
-  - `tests/regression/modular-dashboard-suite.js`
-  - `backend/developer-service/Code.gs`
-- **Dependencias Expuestas:** Flujos de autenticación, dashboards, seguridad, operaciones académicas
-- **Descripción del Alcance:**
-  Construir y ejecutar suites de prueba automatizadas para verificar que la reorganización modular y los dashboards dinámicos conservan el 100% de la funcionalidad anterior.
-
-  Requisitos Funcionales:
-  1. Pruebas de inicio de sesión, navegación, dashboards, roles configurables y ámbitos.
-  2. Pruebas de seguridad (denegación de acceso no autorizado, IDOR, revocaciones).
-  3. Pruebas de flujos académicos (docentes, jornalizaciones, sílabos, eventos, horarios, tareas).
-  4. Pruebas de carga de scripts, CSS, módulos dinámicos y endpoints backend.
-- **Criterios de Aceptación:**
-  - CA-MOD-110: La suite de regresión ejecuta el 100% de las pruebas con resultado PASS sin degradación de funciones.
-  - CA-MOD-111: Los bloqueos de seguridad y restricciones de ámbito son confirmados por las pruebas.
-- **Estado:** [X] Completado
-
----
-
-### [X] [F8-Task05] Ejecutar la reorganización mediante etapas verificables
-- **ID Anterior:** `[TAREA-MOD-07]`
-- **Origen del Hallazgo:** Anexo de Tareas: Regresión / Tarea MOD-07 (P1 · Ejecución por Etapas)
-- **Prioridad:** P1
-- **Severidad/Clasificación:** Crítica (Control de migración segura)
-- **Archivos Involucrados:**
-  - `docs/architecture/staged-migration-procedure.md`
-  - `backend/developer-service/Code.gs`
-- **Dependencias Expuestas:** Control de versiones, línea base, procedimiento de reversión
-- **Descripción del Alcance:**
-  Ejecutar la reestructuración del proyecto por fases verificables (Línea base -> Mapa dependencias -> Estructura carpetas -> Módulos compartidos -> Rutas -> Pruebas de regresión) con plan de rollback probado.
-
-  Requisitos Funcionales:
-  1. Establecer línea base antes de modificar archivos.
-  2. Separar cambios puramente estructurales de cambios funcionales.
-  3. Validar cada etapa con pruebas de regresión antes de avanzar a la siguiente.
-  4. Mantener procedimiento probado de reversión en caso de fallos.
-- **Criterios de Aceptación:**
-  - CA-MOD-112: Cada etapa de reorganización se ejecuta y verifica de forma aislada sin romper la aplicación.
-  - CA-MOD-113: Existe trazabilidad completa y procedimiento de reversión validado.
-- **Estado:** [X] Completado
-
----
-
-## TAREAS DE ALTA PRIORIDAD (P1 - ARQUITECTURA BASE Y SPREADSHEETS POR ROL)
-
----
-
-### [X] [F8-Task06] Implementar el seguimiento preventivo de las cuotas y la disponibilidad de almacenamiento en Google Drive
-- **ID Anterior:** `[TAREA-F8-MANT-01]`
-- **Origen del Hallazgo:** `AUDITORIA_FASE_8_AULA_VIRTUAL_APRENDIZAJE.md` / Tarea F8-MANT-01 (P1 · Supervisión de Almacenamiento Drive)
-- **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Mantenimiento preventivo y observabilidad)
-- **Archivos Involucrados:**
-  - `backend/task-service/Code.gs`
-  - Componentes de administración, configuración y supervisión
-- **Dependencias Expuestas:** Carga de archivos, almacenamiento de materiales, entregas estudiantiles y servicios de supervisión
-- **Descripción del Alcance:**
-  Verificar periódicamente las cuotas de almacenamiento de Google Drive utilizadas por el aula virtual para materiales, entregas y versiones, detectando riesgos de capacidad antes de que impidan la entrega de trabajos o publicación de contenidos.
-
-  Requisitos Funcionales:
-  1. Identificar las ubicaciones y carpetas de Google Drive utilizadas por el servicio para materiales, tareas, entregas y versiones.
-  2. Implementar un mecanismo de supervisión periódica que consulte capacidad total, espacio utilizado, espacio disponible y tendencia.
-  3. Establecer umbrales configurables de advertencia (e.g. 80%, 90%, 95%) y generar alertas administrativas.
-  4. En cargas fragmentadas o fallos por cuota, no confirmar entregas cuyos archivos no se hayan almacenado correctamente.
-  5. Evitar archivos huérganos y mostrar mensajes explicativos sin eliminar archivos académicos válidos automáticamente.
-  6. Registrar eventos de supervisión distinguiendo entre estado normal, advertencia, riesgo elevado y error confirmado.
-- **Criterios de Aceptación:**
-  - CA-F8-010: Se identifican y monitorean las ubicaciones de almacenamiento utilizadas por el aula virtual.
-  - CA-F8-011: La simulación de cuota cercana al límite genera alertas preventivas para administradores.
-  - CA-F8-012: Las cargas fallidas por espacio no se confirman como entregas registradas exitosamente.
-- **Estado:** [X] Completado
-
----
-
-### [X] [F8-Task07] Crear una arquitectura de dashboards dinámicos para roles configurables
-- **ID Anterior:** `[TAREA-AD-01]`
-- **Origen del Hallazgo:** Anexo de Tareas: Dashboards dinámicos / Tarea AD-01 (P1 · Arquitectura de Dashboards)
-- **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Arquitectura base de interfaz adaptable)
-- **Archivos Involucrados:**
-  - `app/html/dashboards/dynamic-dashboard.html`
-  - `js/ui-common.js`
-  - `backend/user-service/Code.gs`
-- **Dependencias Expuestas:** Autenticación, asignación de roles, contratos de integración y RBAC
-- **Descripción del Alcance:**
-  Permitir incorporar nuevos roles institucionales y asignarles funciones dinámicas adaptadas a sus responsabilidades, permisos y ámbito académico asignado sin desarrollar páginas HTML independientes para cada cargo.
-
-  Requisitos Funcionales:
-  1. Crear una interfaz HTML dedicada a dashboards dinámicos separada de páginas estáticas.
-  2. Implementar una estructura reutilizable que construya la interfaz según la configuración del rol y permisos efectivos.
-  3. Permitir configurar nuevos roles desde herramientas administrativas asignando nombre, descripción, área, capacidades y ámbitos.
-  4. Soportar múltiples roles o responsabilidades simultáneas por usuario y ámbitos variables por asignación individual.
-  5. Permitir desactivar roles conservando el historial institucional.
-  6. Definir comportamiento controlado para roles sin módulos asignados o incompletos sin depender de nombres de roles en código.
-- **Criterios de Aceptación:**
-  - CA-AD-101: Se puede crear un rol nuevo desde la interfaz administrativa autorizada.
-  - CA-AD-102: El dashboard presenta únicamente los módulos correspondientes a la configuración efectiva del usuario.
-  - CA-AD-103: Los roles desconocidos o sin permisos no obtienen acceso por defecto.
-- **Estado:** [X] Completado
-
----
-
-### [X] [F8-Task08] Implementar un catálogo central de responsabilidades, capacidades y módulos
-- **ID Anterior:** `[TAREA-AD-02]`
-- **Origen del Hallazgo:** Anexo de Tareas: Dashboards dinámicos / Tarea AD-02 (P1 · Catálogo de Responsabilidades)
-- **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Catálogo de capacidades reutilizables)
-- **Archivos Involucrados:**
-  - `backend/user-service/Code.gs`
-  - `backend/developer-service/Code.gs`
-  - `js/config.js`
-- **Dependencias Expuestas:** Permisos RBAC, módulos institucionales, control de acceso
-- **Descripción del Alcance:**
-  Construir roles a partir de responsabilidades reutilizables compuestas por capacidades granulares (Consultar, Crear, Editar, Eliminar, Aprobar, Asignar, Exportar, Administrar).
-
-  Requisitos Funcionales:
-  1. Definir un catálogo central de módulos y capacidades representando las funciones reales disponibles.
-  2. Agrupar capacidades en responsabilidades institucionales (Coordinación, Planificación, Gestión de Docentes, Supervisión, Horarios, etc.).
-  3. Asignar responsabilidades a roles y roles a usuarios especificando ámbito de actuación.
-  4. Diferenciar operaciones explícitas (Consultar, Crear, Editar, Eliminar, Aprobar, Asignar, Exportar, Administrar).
-  5. Registrar auditoría de creación y modificación de roles y mantener referencias históricas al desactivar responsabilidades.
-- **Criterios de Aceptación:**
-  - CA-AD-104: Una misma capacidad se reutiliza en diferentes roles con permisos y ámbitos independientes.
-  - CA-AD-105: Retirar permisos de una responsabilidad no elimina funciones compartidas por otros roles.
-  - CA-AD-106: Las asignaciones de roles y responsabilidades registran trazabilidad completa.
-- **Estado:** [X] Completado
-
----
-
-### [X] [F8-Task09] Implementar la gestión del ámbito de actuación de los roles
-- **ID Anterior:** `[TAREA-AD-03]`
-- **Origen del Hallazgo:** Anexo de Tareas: Dashboards dinámicos / Tarea AD-03 (P1 · Ámbito de Actuación)
-- **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Aislamiento contextual de datos)
-- **Archivos Involucrados:**
-  - `backend/user-service/Code.gs`
-  - `backend/academic-service/Code.gs`
-  - `js/ui-common.js`
-- **Dependencias Expuestas:** Unidades académicas, departamentos, grados, secciones y validación de contexto
-- **Descripción del Alcance:**
-  Asignar ámbitos específicos de actuación (nivel educativo, departamento, carrera, asignatura, grado, sección o período) a cada responsabilidad de usuario, verificando el ámbito en lectura y escritura.
-
-  Requisitos Funcionales:
-  1. Permitir asignar un ámbito específico (Prebásica, Básica, Media, Departamentos, Carreras, Asignaturas, Secciones) a cada responsabilidad.
-  2. Soportar coordinaciones por departamento o por carrera de bachillerato.
-  3. Validar el ámbito tanto en consultas frontend/backend como en operaciones de mutación.
-  4. Impedir la inferencia de permisos adicionales fuera del alcance explícito configurado.
-- **Criterios de Aceptación:**
-  - CA-AD-107: Los filtros, listas y búsquedas respetan estrictamente los ámbitos asignados al usuario.
-  - CA-AD-108: Intentos de consultar o modificar registros fuera del ámbito autorizado son rechazados por el backend.
-- **Estado:** [X] Completado
-
----
-
-### [X] [F8-Task10] Desarrollar el dashboard de coordinador académico como implementación de referencia
-- **ID Anterior:** `[TAREA-AD-04]`
-- **Origen del Hallazgo:** Anexo de Tareas: Dashboards dinámicos / Tarea AD-04 (P1 · Referencia Coordinación)
-- **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Caso de referencia funcional)
-- **Archivos Involucrados:**
-  - `dashboard-coordinacion.html`
+  - `backend/exam-service/Code.gs`
   - `js/secretary.js` / `js/teacher.js`
-  - `backend/academic-service/Code.gs`
-- **Dependencias Expuestas:** Asignaciones docentes, jornalizaciones, sílabos, eventos, horarios y reportes
+  - Plantillas oficiales de SACE en el repositorio
+- **Dependencias Expuestas:** Registros oficiales de estudiantes, matrículas, asignaciones docentes, calificaciones consolidadas, período académico y plantillas existentes en el repositorio
 - **Descripción del Alcance:**
-  Construir el dashboard de coordinación académica como primer caso de referencia completo para verificar roles con múltiples responsabilidades, herramientas compartidas y ámbitos variables.
+  La plataforma debe aprovechar las plantillas existentes en el repositorio para completar los archivos oficiales descargados por los docentes, conservando su estructura y evitando que tengan que copiar y pegar manualmente las calificaciones.
 
   Requisitos Funcionales:
-  1. Panel de resumen académico con indicadores reales de docentes coordinados, jornalizaciones, sílabos, eventos y tareas pendientes.
-  2. Supervisión de docentes, cargas académicas y detección de asignaturas sin docente asignado.
-  3. Supervisión, observaciones, solicitudes de corrección, aprobación y rechazo de jornalizaciones y sílabos reutilizando flujos existentes.
-  4. Supervisión de documentación académica, calendario de eventos, revisión de horarios y generación de reportes de cumplimiento.
+  1. Localizar e identificar las plantillas de hojas de cálculo relacionadas con el registro y la carga de calificaciones en SACE que ya existen en el repositorio. Identificar sus formatos, hojas, columnas, encabezados, celdas editables, fórmulas, validaciones, rangos, celdas combinadas y demás elementos relevantes.
+  2. Determinar cuáles de esas plantillas corresponden a cada tipo de registro académico, asignatura, grado, sección, período o nivel educativo. No asumir que todas utilizan una estructura idéntica.
+  3. Permitir que el docente utilice el archivo descargado desde SACE como documento de entrada, sin tener que convertirlo a un formato interno ni reconstruir su estructura.
+  4. Incorporar las calificaciones correspondientes a los estudiantes y las asignaturas que coincidan con los registros institucionales.
+  5. Organizar la generación de archivos por asignatura, sección y docente, respetando los criterios de agrupación y los campos que exija cada plantilla.
+  6. Mantener los identificadores oficiales de estudiantes y los demás campos requeridos por SACE. No sustituirlos por identificadores internos de la plataforma cuando el archivo requiera los oficiales.
+  7. Conservar los encabezados, las hojas, el orden de las columnas, las fórmulas, las validaciones, los formatos de celda y los demás elementos estructurales necesarios para que SACE acepte el archivo.
+  8. Modificar únicamente los campos destinados a recibir información académica. No sobrescribir fórmulas ni celdas protegidas, ni eliminar información que deba conservarse.
+  9. Relacionar las calificaciones con el estudiante correcto mediante identificadores fiables. No depender exclusivamente del nombre del estudiante, porque puede haber nombres iguales, diferencias ortográficas o variaciones en los apellidos.
+  10. Cuando existan diferencias entre los registros institucionales y el archivo descargado, identificarlas y presentar un informe de inconsistencias en lugar de asignar notas por aproximación.
+  11. Si falta una calificación, distinguir entre una nota pendiente, una ausencia, una exención y una calificación numérica de cero, según las reglas académicas aplicables. No convertir automáticamente un dato ausente en cero.
+  12. Generar un archivo independiente para cada combinación de asignatura, sección y docente que corresponda al proceso de carga, evitando mezclar estudiantes, materias o grupos diferentes.
+  13. Permitir que el docente descargue cada archivo generado y lo revise antes de subirlo a SACE.
+  14. Conservar la plantilla original descargada como fuente de referencia y producir una copia completada, sin modificar el archivo de entrada.
+  15. Proporcionar mensajes de error específicos cuando no se pueda identificar la plantilla, reconocer sus encabezados, relacionar estudiantes o determinar las columnas que deben completarse.
+  16. Comparar el funcionamiento esperado con la experiencia de generación de archivos de calificaciones utilizada en Califik, tomando como referencia la automatización del llenado de plantillas y la separación de archivos por contexto académico, sin asumir que ambas plataformas utilizan idénticos formatos internos.
 - **Criterios de Aceptación:**
-  - CA-AD-109: El dashboard se adapta dinámicamente a las responsabilidades y ámbitos configurados para el coordinador.
-  - CA-AD-110: Es posible crear coordinadores por nivel, departamento o carrera sin duplicar código.
-  - CA-AD-111: Todas las aprobaciones y revisiones conservan trazabilidad institucional.
-- **Estado:** [X] Completado
+  - Al proporcionar una plantilla válida descargada desde SACE, la plataforma identifica su estructura y determina qué campos puede completar.
+  - Las calificaciones se asignan a los estudiantes correctos, incluso cuando existen nombres similares.
+  - El archivo generado conserva la estructura original y únicamente modifica los campos autorizados.
+  - Los archivos se separan correctamente por asignatura, sección y docente.
+  - Los registros incompletos, duplicados o incompatibles se informan sin producir asignaciones silenciosamente incorrectas.
+  - Las notas pendientes no se convierten automáticamente en ceros.
+  - El archivo generado puede abrirse en el programa de hojas de cálculo compatible con su formato sin errores estructurales.
+  - Una comparación entre el archivo original y el generado permite comprobar que los encabezados, las hojas, las fórmulas y los campos no editables se han conservado.
+  - Se comprueba la compatibilidad con las plantillas disponibles en el repositorio, incluyendo las variantes existentes.
+  - Cuando no se dispone de una plantilla representativa o de un procedimiento de validación oficial, esa limitación se documenta y no se declara demostrada la aceptación del archivo por SACE.
+- **Estado:** [ ] Pendiente
 
 ---
 
-### [X] [F8-Task11] Integrar los dashboards dinámicos con los módulos y servicios existentes
-- **ID Anterior:** `[TAREA-AD-05]`
-- **Origen del Hallazgo:** Anexo de Tareas: Dashboards dinámicos / Tarea AD-05 (P1 · Integración de Módulos)
-- **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Reutilización de servicios)
+### [ ] [F9-Task02] Fortalecer la validación y el diagnóstico de archivos SACE antes de generar las calificaciones
+- **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task02 (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Validación de datos e integridad de exportaciones)
 - **Archivos Involucrados:**
-  - `js/api.js`
+  - `backend/academic-service/Code.gs`
+  - `js/secretary.js` / `js/teacher.js`
+- **Dependencias Expuestas:** F9-Task01, registros de matrícula y estudiantes, estructura de las plantillas disponibles y reglas de validación académica
+- **Descripción del Alcance:**
+  Garantizar que la generación de archivos identifique errores antes de producir documentos que puedan contener calificaciones incorrectas o resultar incompatibles con el formato esperado.
+
+  Requisitos Funcionales:
+  1. Validar la estructura de cada archivo antes de procesarlo, incluyendo las hojas requeridas, encabezados, columnas obligatorias, identificadores y campos destinados a recibir calificaciones.
+  2. Detectar archivos vacíos, corruptos, incompletos, modificados o correspondientes a una estructura que la plataforma no reconoce.
+  3. Validar que el archivo corresponda al período académico, grado, sección, asignatura y contexto institucional seleccionados, cuando esos datos estén presentes.
+  4. Detectar estudiantes duplicados, identificadores inexistentes, matrículas inactivas, estudiantes faltantes y registros que no correspondan al grupo seleccionado.
+  5. Comparar los datos del archivo con los registros institucionales sin asumir que el orden de las filas permanece constante.
+  6. Identificar columnas con nombres similares, encabezados modificados y campos obligatorios ausentes. No completar automáticamente columnas ambiguas.
+  7. Comprobar que cada calificación cumpla el rango y el tipo de dato requerido por el campo de destino.
+  8. Diferenciar errores bloqueantes, advertencias y diferencias informativas.
+  9. Mostrar un resumen previo a la generación con el número de estudiantes identificados, notas que se incorporarán, registros omitidos, advertencias y errores bloqueantes.
+  10. Permitir corregir los problemas identificados y repetir la validación sin necesidad de reiniciar todo el proceso.
+  11. Generar un informe descargable de inconsistencias que identifique el registro afectado y describa la corrección necesaria.
+  12. Evitar que los errores parciales se oculten detrás de un mensaje genérico de exportación exitosa.
+- **Criterios de Aceptación:**
+  - Un archivo válido se procesa sin alterar su estructura.
+  - Un archivo con columnas obligatorias ausentes no se completa silenciosamente.
+  - Los identificadores duplicados o desconocidos se detectan antes de incorporar calificaciones.
+  - Los registros incompatibles quedan identificados individualmente.
+  - Los errores bloqueantes impiden generar el archivo definitivo.
+  - Las advertencias no bloqueantes se muestran antes de confirmar la operación.
+  - El informe de validación permite identificar cada problema sin consultar manualmente el código.
+  - La validación puede repetirse después de corregir el archivo y produce resultados coherentes con los cambios realizados.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F9-Task03] Consolidar la administración de escalas, ponderaciones y métodos de cálculo académico
+- **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task03 (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Configuración académica y motor de cálculo)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `backend/exam-service/Code.gs`
   - `js/config.js`
-  - Backend microservices (`USER`, `ACADEMIC`, `TASK`, `EXAM`, `ACCOUNTING`)
-- **Dependencias Expuestas:** Descubrimiento de servicios, contratos API, adaptadores frontend
+- **Dependencias Expuestas:** Configuración académica institucional, asignaturas, niveles, períodos, competencias y motor de cálculo existente
 - **Descripción del Alcance:**
-  Conectar los dashboards dinámicos con la lógica y servicios backend existentes mediante adaptadores y contratos de integración estables sin duplicar funciones ni fuentes de datos.
+  Garantizar que las reglas sean configurables, consistentes entre materias y períodos, y compatibles con las distintas modalidades educativas sin introducir valores fijos que puedan resultar incorrectos en otros contextos.
 
   Requisitos Funcionales:
-  1. Inventariar funciones existentes y crear adaptadores de interfaz para invocar operaciones mediante contratos vigentes.
-  2. Definir un contrato de integración por módulo (ID estable, capacidades, servicio responsable, operaciones, parámetros, permisos).
-  3. Garantizar que fallos en un módulo opcional no bloqueen la carga del resto del dashboard.
-  4. Registrar errores de integración con contexto técnico para diagnóstico.
+  1. Permitir configurar métodos de evaluación por nivel educativo, grado, asignatura y período académico, según corresponda.
+  2. Admitir, como mínimo: promedio aritmético, promedio ponderado por categorías, cálculo proporcional por puntos obtenidos respecto a puntos posibles, escalas numéricas, escalas cualitativas, evaluación por competencias e indicadores de logro.
+  3. Permitir configurar pesos por categoría y validar que la suma corresponda al total requerido por el método seleccionado.
+  4. Permitir que las ponderaciones se distribuyan entre categorías y actividades sin duplicar accidentalmente su contribución al resultado final.
+  5. Definir expresamente cómo se tratan las actividades pendientes, las exenciones, las ausencias justificadas y no justificadas, las actividades no calificadas y las calificaciones recuperadas.
+  6. Evitar que una actividad pendiente se interprete automáticamente como cero, salvo que una regla institucional explícita y aplicable determine ese comportamiento.
+  7. Configurar las escalas de calificación con límites, equivalencias, estados de aprobación y reglas de redondeo.
+  8. Evitar que los umbrales de aprobación o las equivalencias institucionales se apliquen universalmente cuando deban variar según el nivel, la modalidad o la normativa aplicable.
+  9. Mantener versiones de las reglas utilizadas en cada período, de modo que los cambios de configuración no modifiquen retroactivamente los resultados históricos.
+  10. Proporcionar una vista previa que muestre cómo cambia el resultado de un estudiante de prueba al modificar las ponderaciones o el método de cálculo.
+  11. Permitir reutilizar configuraciones entre materias o grupos compatibles, conservando la posibilidad de ajustarlas de forma independiente.
+  12. Presentar el desglose del cálculo para que el docente y los responsables autorizados puedan comprender cómo se obtuvo la nota final.
 - **Criterios de Aceptación:**
-  - CA-AD-112: Los módulos dinámicos reutilizan las operaciones backend existentes sin fuentes de datos duplicadas.
-  - CA-AD-113: Los errores en módulos individuales son aislados sin impedir la navegación en otros componentes.
-- **Estado:** [X] Completado
+  - Dos configuraciones independientes pueden utilizar categorías con nombres iguales sin compartir accidentalmente sus ponderaciones.
+  - Una ponderación inválida impide activar la configuración o genera un estado explícito que impide calcular resultados oficiales.
+  - El mismo conjunto de datos y la misma versión de reglas producen el mismo resultado.
+  - Las notas pendientes y las exenciones se procesan según las reglas configuradas.
+  - Cambiar una configuración no modifica silenciosamente las calificaciones históricas.
+  - Los resultados de la vista previa coinciden con los del cálculo definitivo.
+  - Las escalas numéricas y cualitativas se representan correctamente en el libro de calificaciones y en los reportes.
+- **Estado:** [ ] Pendiente
 
 ---
 
-### [X] [F8-Task12] Crear una interfaz administrativa para configurar los dashboards y las responsabilidades
-- **ID Anterior:** `[TAREA-AD-07]`
-- **Origen del Hallazgo:** Anexo de Tareas: Seguridad y roles / Tarea AD-07 (P1 · Consola Administrativa de Roles)
-- **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Administración de roles)
+### [ ] [F9-Task04] Fortalecer la precisión de los cálculos y la detección de inconsistencias académicas
+- **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task04 (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Integridad de las calificaciones y resultados oficiales)
 - **Archivos Involucrados:**
-  - `dashboard-direccion.html` / `dashboard-secretaria.html`
-  - `js/secretary.js`
-  - `backend/user-service/Code.gs`
-- **Dependencias Expuestas:** Gestión de usuarios, catálogo de capacidades, vista previa de interfaz
-- **Descripción del Alcance:**
-  Proporcionar una interfaz administrativa para crear, editar, consultar, activar y desactivar roles, asociar responsabilidades y capacidades, y previsualizar dashboards.
-
-  Requisitos Funcionales:
-  1. Consola visual para crear, editar y desactivar roles asociando responsabilidades y ámbitos.
-  2. Permitir previsualizar el dashboard resultante sin conceder permisos reales ni exponer datos.
-  3. Impedir la eliminación física de configuraciones requeridas por registros históricos.
-  4. Disponer de mecanismo de recuperación a la última configuración válida ante errores de rol.
-- **Criterios de Aceptación:**
-  - CA-AD-116: Administradores autorizados pueden configurar nuevos roles sin modificar archivos HTML fuente.
-  - CA-AD-117: Las configuraciones inválidas son rechazadas en el servidor antes de guardarse como activas.
-- **Estado:** [X] Completado
-
----
-
-### [X] [F8-Task13] Definir y aplicar una estructura modular de carpetas
-- **ID Anterior:** `[TAREA-MOD-02]`
-- **Origen del Hallazgo:** Anexo de Tareas: Modularización / Tarea MOD-02 (P1 · Estructura Modular)
-- **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Organización de código)
-- **Archivos Involucrados:**
-  - `docs/architecture/folder-structure.md`
-  - `backend/developer-service/Code.gs`
-- **Dependencias Expuestas:** Procesos de despliegue, clasp, servidores locales, rutas de importación
-- **Descripción del Alcance:**
-  Organizar el repositorio en una estructura modular limpia (`app/html`, `app/js`, `app/css`, `app/assets`, `backend/`, `tests/`, `docs/`) conservando `index.htm` en la raíz.
-
-  Requisitos Funcionales:
-  1. Mantener `index.htm` en la raíz conservando su comportamiento.
-  2. Separar HTMLs de páginas/componentes, scripts JS, CSS, motores y recursos estáticos en la carpeta `app/`.
-  3. Garantizar que la herramienta de despliegue (e.g. clasp para Google Apps Script) reconozca la estructura.
-  4. Prevenir la exposición de archivos sensibles o credenciales en carpetas públicas.
-- **Criterios de Aceptación:**
-  - CA-MOD-103: Los archivos se agrupan por función y responsabilidad dentro de `app/` y `backend/`.
-  - CA-MOD-104: `index.htm` permanece en la raíz y la plataforma carga correctamente todos sus recursos.
-
-> **Nota de Arquitectura:** Las estructuras que están en el anexo A (carpetas del repositorio) y en el anexo B (hojas y spreadsheets por rol) son ejemplos de una estructura recomendable, y no una estructura obligatoria.
-- **Estado:** [X] Completado
-
----
-
-### [X] [F8-Task14] Modularizar los archivos grandes sin eliminar ni duplicar funciones
-- **ID Anterior:** `[TAREA-MOD-03]`
-- **Origen del Hallazgo:** Anexo de Tareas: Modularización / Tarea MOD-03 (P1 · Descomposición de Archivos Monolíticos)
-- **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Descomposición de código)
-- **Archivos Involucrados:**
-  - `docs/architecture/monolith-decomposition-plan.md`
-  - `backend/developer-service/Code.gs`
-- **Dependencias Expuestas:** Contratos de funciones públicas, namespaces, adaptadores de compatibilidad
-- **Descripción del Alcance:**
-  Dividir archivos monolíticos extensos por responsabilidad funcional (presentación, estado UI, lógica de negocio, servicios, validación) manteniendo contratos públicos.
-
-  Requisitos Funcionales:
-  1. Dividir archivos grandes por responsabilidad funcional sin perder funciones.
-  2. Mantener nombres de operaciones públicas o proveer adaptadores de compatibilidad.
-  3. Centralizar utilidades compartidas evitando redefiniciones duplicadas.
-  4. Eliminar implementaciones antiguas únicamente tras verificar la ausencia de consumidores activos.
-- **Criterios de Aceptación:**
-  - CA-MOD-105: Cada función existente conserva un contrato de invocación válido y compatible.
-  - CA-MOD-106: No existen funciones duplicadas ni colisiones en el ámbito global.
-- **Estado:** [X] Completado
-
----
-
-### [X] [F8-Task15] Actualizar el mapa de dependencias y la documentación arquitectónica
-- **ID Anterior:** `[TAREA-MOD-05]`
-- **Origen del Hallazgo:** Anexo de Tareas: Modularización / Tarea MOD-05 (P1 · Documentación Arquitectónica)
-- **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Documentación de arquitectura)
-- **Archivos Involucrados:**
-  - `MapaDependencias.md`
-  - `docs/architecture/`
-  - `backend/developer-service/Code.gs`
-- **Dependencias Expuestas:** Estructura completa del repositorio, contratos de módulos y orden de inicialización
-- **Descripción del Alcance:**
-  Documentar el mapa definitivo de dependencias, árbol del repositorio, catálogo de módulos, contratos e inventario de funciones trasladadas.
-
-  Requisitos Funcionales:
-  1. Documentar dependencias directas e indirectas entre HTMLs, JS, CSS, microservicios y fuentes de datos.
-  2. Especificar contratos de módulos reutilizables, orden de carga e inicialización.
-  3. Documentar procesos de compilación y reglas para incorporar nuevos archivos.
-- **Criterios de Aceptación:**
-  - CA-MOD-109: `MapaDependencias.md` y la documentación de arquitectura corresponden con exactitud a la estructura del código.
-- **Estado:** [X] Completado
-
----
-
-### [X] [F8-Task16] Implementar los principios de independencia funcional y comunicación entre roles
-- **ID Anterior:** `[TAREA-ARQ-01]`
-- **Origen del Hallazgo:** Anexo Técnico: Arquitectura de Roles / Tarea ARQ-01 (P1 · Independencia Funcional)
-- **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Arquitectura de datos y fuentes oficiales)
-- **Archivos Involucrados:**
-  - `backend/developer-service/Code.gs`
-  - `backend/user-service/Code.gs`
   - `backend/academic-service/Code.gs`
-- **Dependencias Expuestas:** Spreadsheets maestros (`Personas`, `ExpedientesEstudiantes`, `Matriculas`, `HistorialAcademico`), Spreadsheets funcionales por rol y Vistas/Proyecciones
-- **Descripción del Alcance:**
-  Establecer la separación entre Spreadsheets Maestros (única fuente de verdad oficial), Spreadsheets Funcionales por Rol (gestión operativa y solicitudes) y Vistas/Proyecciones Derivadas, evitando copias duplicadas o inconsistentes de datos.
-
-  Requisitos Funcionales:
-  1. Definir catálogo de responsabilidades, permisos, ámbitos y herramientas por rol.
-  2. Garantizar que cada rol disponga de un espacio funcional asociado a su plantilla de trabajo sin duplicar datos maestros.
-  3. Permitir que los usuarios tengan múltiples roles y responsabilidades simultáneas.
-  4. Realizar comunicaciones inter-rol mediante identificadores estables, solicitudes, notificaciones y eventos.
-  5. Asegurar la configurabilidad de roles y ámbitos sin modificar código ante cambios organizacionales.
-- **Criterios de Aceptación:**
-  - CA-ARQ-101: Los datos oficiales de matrículas, expedientes e historial conservan una única fuente de verdad.
-  - CA-ARQ-102: Las comunicaciones inter-rol utilizan servicios y eventos sin duplicar registros maestros en Spreadsheets locales.
-- **Estado:** [X] Completado
-
----
-
-### [X] [F8-Task17] Estandarizar convenciones de identificadores estables y columnas comunes de control
-- **ID Anterior:** `[TAREA-ARQ-02]`
-- **Origen del Hallazgo:** Anexo Técnico: Arquitectura de Roles / Tarea ARQ-02 (P1 · Identificadores y Columnas Comunes)
-- **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Estandarización de relaciones y metadatos)
-- **Archivos Involucrados:**
-  - `backend/developer-service/Code.gs`
-  - `backend/user-service/Code.gs`
-  - `backend/academic-service/Code.gs`
-  - `backend/task-service/Code.gs`
   - `backend/exam-service/Code.gs`
-  - `backend/accounting-service/Code.gs`
-- **Dependencias Expuestas:** Catálogo estandarizado de identificadores y metadatos de control
-- **Descripción del Alcance:**
-  Estandarizar el uso de identificadores estables (`persona_id`, `usuario_id`, `rol_id`, `responsabilidad_id`, `asignacion_id`, `periodo_id`, `nivel_id`, `grado_id`, `seccion_id`, `carrera_id`, `departamento_id`, `asignatura_id`, `docente_id`, `estudiante_id`, `matricula_id`, `curso_id`, `tarea_id`, `entrega_id`, `evaluacion_id`, `calificacion_id`, `documento_id`, `solicitud_id`, `evento_id`, `notificacion_id`, `correlacion_id`, `archivo_id`) y columnas comunes de control (`id`, `estado`, `creado_por`, `creado_en`, `actualizado_por`, `actualizado_en`, `version`, `activo`).
-
-  Requisitos Funcionales:
-  1. Reutilizar la nomenclatura estándar de IDs para todas las entidades del sistema sin establecer relaciones por nombre o correo.
-  2. Incorporar las columnas comunes de control en todas las tablas operativas de la plataforma.
-  3. Preservar la inmutabilidad de registros históricos de auditoría y calificaciones.
-- **Criterios de Aceptación:**
-  - CA-ARQ-103: Todas las relaciones entre hojas se basan en identificadores estables.
-  - CA-ARQ-104: Las tablas operativas incorporan las columnas estándar de auditoría y versión de registro.
-- **Estado:** [X] Completado
-
----
-
-### [X] [F8-Task18] Implementar hojas estandarizadas de eventos, errores y auditoría por Spreadsheet funcional
-- **ID Anterior:** `[TAREA-ARQ-03]`
-- **Origen del Hallazgo:** Anexo Técnico: Arquitectura de Roles / Tarea ARQ-03 (P1 · Observabilidad por Spreadsheet)
-- **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Bitácoras descentralizadas de operación)
-- **Archivos Involucrados:**
-  - `backend/developer-service/Code.gs`
-  - `backend/academic-service/Code.gs`
   - `backend/task-service/Code.gs`
+- **Dependencias Expuestas:** F9-Task03, libro de calificaciones, evaluaciones, recuperaciones e historial académico
+- **Descripción del Alcance:**
+  Garantizar que todos los procesos que generan, modifican o consolidan calificaciones apliquen exactamente el mismo conjunto de reglas y precisión estandarizada.
+
+  Requisitos Funcionales:
+  1. Identificar todos los flujos que producen o modifican notas: exámenes, tareas, proyectos, rúbricas, recuperaciones, competencias y registros manuales.
+  2. Verificar que los resultados oficiales utilicen el mismo conjunto de reglas y que ningún módulo aplique una fórmula incompatible.
+  3. Validar que las puntuaciones obtenidas no excedan los puntos máximos permitidos, salvo que una regla explícita admita bonificaciones.
+  4. Detectar ponderaciones duplicadas, categorías sin configuración, actividades vinculadas a períodos incorrectos y evaluaciones que no correspondan a la asignatura.
+  5. Verificar el tratamiento de los decimales, el redondeo y la precisión intermedia para evitar diferencias entre el libro de notas, el boletín y la exportación.
+  6. Definir el orden de aplicación de las reglas de recuperación, redondeo, equivalencia y aprobación.
+  7. Evitar que una modificación de una actividad altere resultados de estudiantes o períodos que no estén relacionados con ella.
+  8. Detectar resultados imposibles o inconsistentes, como promedios fuera del rango permitido, notas finales incompatibles con las calificaciones de origen o totales que no coincidan con sus componentes.
+  9. Registrar los datos de origen y la versión de las reglas necesarias para reproducir un resultado oficial.
+  10. Proporcionar un diagnóstico que permita distinguir entre un dato de entrada incorrecto, una regla mal configurada y un fallo del cálculo.
+- **Criterios de Aceptación:**
+  - Los cálculos de prueba coinciden con resultados de referencia definidos para cada método.
+  - Las mismas notas no producen promedios diferentes entre los módulos que presentan el resultado oficial.
+  - Los valores fuera de rango se rechazan o se procesan únicamente cuando una regla explícita lo permite.
+  - Los errores de configuración se identifican antes de publicar resultados afectados.
+  - Las modificaciones se propagan a los resultados dependientes sin alterar registros ajenos.
+  - Se pueden reproducir los resultados históricos utilizando sus reglas originales.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F9-Task05] Completar el ciclo de revisión, aprobación, cierre y publicación de calificaciones
+- **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task06 (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Gestión de períodos académicos y publicación oficial)
+- **Archivos Involucrados:**
   - `backend/exam-service/Code.gs`
-  - `backend/accounting-service/Code.gs`
-- **Dependencias Expuestas:** `EventosSistema`, `ErroresSistema`, `AuditoriaCambios`
+  - `teacher-dashboard.html` / `js/teacher.js`
+  - `dashboard-secretaria.html` / `js/secretary.js`
+- **Dependencias Expuestas:** F9-Task03, F9-Task04, F9-Task05 y sistema de permisos
 - **Descripción del Alcance:**
-  Implementar las hojas estandarizadas `EventosSistema`, `ErroresSistema` y `AuditoriaCambios` en todos los Spreadsheets funcionales para registrar eventos operativos, fallos técnicos (sin exponer tokens o contraseñas) y auditoría de cambios.
+  Garantizar que las etapas de revisión, aprobación, cierre y publicación representen estados diferenciados, con controles adecuados para impedir que resultados incompletos o no autorizados lleguen a estudiantes y tutores.
 
   Requisitos Funcionales:
-  1. Crear la hoja `EventosSistema` (`evento_log_id`, `fecha_hora`, `usuario_id`, `rol_id`, `tipo_evento`, `entidad_tipo`, `entidad_id`, `accion`, `resultado`, `correlacion_id`, `origen`, `detalle_resumido`).
-  2. Crear la hoja `ErroresSistema` (`error_id`, `fecha_hora`, `usuario_id`, `rol_id`, `servicio_id`, `modulo_id`, `operacion`, `codigo_error`, `mensaje_resumido`, `correlacion_id`, `reintentable`, `estado_resolucion`, `resuelto_por`, `resuelto_en`).
-  3. Crear la hoja `AuditoriaCambios` (`auditoria_id`, `fecha_hora`, `actor_usuario_id`, `actor_rol_id`, `entidad_tipo`, `entidad_id`, `accion`, `campo_afectado`, `referencia_version_anterior`, `referencia_version_nueva`, `motivo`, `correlacion_id`).
-  4. Garantizar la separación de categorías sin mezclar eventos operativos, fallos técnicos y auditoría de seguridad.
+  1. Diferenciar los estados de borrador, pendiente de revisión, observado, aprobado, cerrado y publicado, según el flujo institucional aplicable.
+  2. Permitir que el docente finalice la preparación de las calificaciones sin publicarlas automáticamente.
+  3. Proporcionar a los responsables autorizados un resumen de las notas pendientes, evaluaciones sin calificar, inconsistencias y excepciones.
+  4. Permitir devolver un período al docente para corregir problemas identificados antes de su aprobación.
+  5. Validar las condiciones de cierre antes de bloquear nuevas modificaciones.
+  6. Identificar las excepciones que requieren autorización, como estudiantes con actividades pendientes o registros sujetos a revisión.
+  7. Exigir una confirmación explícita antes de ejecutar operaciones de cierre o publicación.
+  8. Diferenciar el cierre administrativo de la disponibilidad de las notas en los portales de estudiantes y tutores.
+  9. Garantizar que los borradores no sean visibles como calificaciones oficiales.
+  10. Registrar quién inició, aprobó, cerró y publicó el período, con sus respectivas fechas.
+  11. Si la publicación incluye notificaciones, registrar los intentos de envío y permitir detectar fallos sin repetir innecesariamente avisos ya entregados.
+  12. Evitar que una operación interrumpida deje el período en un estado contradictorio entre el libro de calificaciones, la configuración del período y el portal estudiantil.
 - **Criterios de Aceptación:**
-  - CA-ARQ-105: Los Spreadsheets funcionales incorporan las tres hojas estandarizadas de trazabilidad.
-  - CA-ARQ-106: La hoja de errores no almacena datos sensibles, contraseñas o tokens de acceso.
-- **Estado:** [X] Completado
+  - No se puede publicar un período que no haya cumplido las condiciones de aprobación establecidas.
+  - Las calificaciones en borrador permanecen ocultas para los usuarios que solo tienen acceso a resultados oficiales.
+  - El cierre impide las modificaciones ordinarias no autorizadas.
+  - La publicación actualiza correctamente la visibilidad de los resultados.
+  - Las transiciones de estado quedan registradas y pueden consultarse.
+  - Los errores durante el cierre o la publicación no dejan el período en un estado inconsistente.
+  - Las notificaciones fallidas pueden identificarse y gestionarse sin duplicar las operaciones académicas.
+- **Estado:** [ ] Pendiente
 
 ---
 
-### [X] [F8-Task19] Implementar el Spreadsheet central de configuración y aprovisionamiento
-- **ID Anterior:** `[TAREA-ARQ-04]`
-- **Origen del Hallazgo:** Anexo Técnico: Arquitectura de Roles / Tarea ARQ-04 (P1 · Registro Central)
-- **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Registro de configuración y aprovisionamiento)
-- **Archivos Involucrados:**
-  - `backend/developer-service/Code.gs`
-  - `backend/user-service/Code.gs`
-- **Dependencias Expuestas:** `Roles`, `Responsabilidades`, `Capacidades`, `RolResponsabilidades`, `ResponsabilidadCapacidades`, `AsignacionesRoles`, `RegistroSpreadsheets`, `RegistroModulos`, `ConfiguracionInstitucional`, `PlantillasSpreadsheets`, `HistorialProvisionamiento`
-- **Descripción del Alcance:**
-  Implementar las hojas del Spreadsheet Central de Configuración para administrar la definición de roles, responsabilidades, capacidades, asignaciones por ámbito, registro de archivos Drive provisionados, plantilla de esquemas e historial de aprovisionamiento.
-
-  Requisitos Funcionales:
-  1. Implementar las tablas centrales de configuración y catálogo de permisos.
-  2. Mantener la tabla `RegistroSpreadsheets` para asociar cada rol/usuario/ámbito con su archivo `spreadsheet_id` en Google Drive.
-  3. Consultar identificadores de recursos desde el registro central sin hardcodear URLs o IDs en el código.
-- **Criterios de Aceptación:**
-  - CA-ARQ-107: La asignación de roles, ámbitos y Spreadsheets se consulta dinámicamente desde el registro central.
-  - CA-ARQ-108: `HistorialProvisionamiento` registra el estado y resultado de cada aprovisionamiento de recursos.
-- **Estado:** [X] Completado
-
----
-
-### [X] [F8-Task20] Implementar el catálogo de Spreadsheets funcionales por rol institucional
-- **ID Anterior:** `[TAREA-ARQ-05]`
-- **Origen del Hallazgo:** Anexo Técnico: Arquitectura de Roles / Tarea ARQ-05 (P1 · Catalogo de Espacios Funcionales)
-- **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Estructura de espacios funcionales)
+### [ ] [F9-Task06] Fortalecer las rectificaciones de notas y la trazabilidad de los cambios
+- **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task07 (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Seguridad académica, auditoría e integridad histórica)
 - **Archivos Involucrados:**
   - `backend/user-service/Code.gs`
+  - `backend/exam-service/Code.gs`
   - `backend/academic-service/Code.gs`
-  - `backend/accounting-service/Code.gs`
-- **Dependencias Expuestas:** Espacios funcionales para Administrador, Dirección, Secretaría, Coordinaciones, Docente, Estudiante, Tutores, Admisiones, Finanzas, Orientación, Biblioteca, Recursos Humanos, Eventos, Soporte y Auditoría
+- **Dependencias Expuestas:** F9-Task04, F9-Task06, servicio de usuarios, permisos y bitácora institucional
 - **Descripción del Alcance:**
-  Implementar la estructura de esquemas y tablas operativas para los Spreadsheets funcionales por rol (`SP_AdminPlataforma`, `SP_Direccion`, `SP_DireccionAcademica`, `SP_Secretaria`, `SP_CoordinacionNivel`, `SP_CoordinacionDepartamento`, `SP_Docente`, `SP_Estudiante`, `SP_Tutores`, `SP_Admisiones`, `SP_Finanzas`, `SP_Orientacion`, `SP_Biblioteca`, `SP_RecursosHumanos`, `SP_Eventos`, `SP_Soporte`, `SP_Auditoria`).
+  Garantizar que cada rectificación tenga un motivo documentado, conserve el valor anterior y permita reconstruir qué ocurrió con la calificación desde su registro inicial hasta su publicación definitiva.
 
   Requisitos Funcionales:
-  1. Crear las plantillas de esquemas operativos para cada rol institucional manteniendo la independencia funcional.
-  2. Garantizar que la información personal o confidencial (e.g. orientación, finanzas, recursos humanos) permanezca en su espacio autorizado.
-  3. Prever la configuración de opciones en disputa entre roles mediante parámetros ajustables en la plataforma.
-
-  > **Nota de Arquitectura:** Las estructuras que están en el anexo A (carpetas del repositorio) y en el anexo B (hojas y spreadsheets por rol) son ejemplos de una estructura recomendable, y no una estructura obligatoria.
-
+  1. Registrar cada modificación de una calificación con el valor anterior, el nuevo valor, el usuario responsable, la fecha, el motivo y el contexto académico.
+  2. Identificar el estudiante, la asignatura, la actividad y el período afectados.
+  3. Exigir una justificación para las rectificaciones de resultados oficiales y las reaperturas de períodos cerrados.
+  4. Permitir que los responsables autorizados aprueben o rechacen solicitudes de rectificación, cuando el flujo institucional lo requiera.
+  5. Diferenciar la solicitud, la autorización, la ejecución y la publicación de una corrección.
+  6. Conservar el historial de modificaciones sin eliminar silenciosamente los registros anteriores.
+  7. Registrar las operaciones realizadas sobre lotes de calificaciones e identificar cada nota efectivamente modificada.
+  8. Recalcular los promedios y documentos dependientes cuando una rectificación aprobada lo requiera.
+  9. Registrar la versión anterior y posterior de los resultados afectados.
+  10. Evitar que un usuario pueda modificar una nota oficial utilizando una operación de actualización ordinaria que omita los controles de rectificación.
+  11. Impedir que usuarios sin autorización alteren o eliminen los registros de auditoría.
+  12. Proporcionar consultas filtrables por estudiante, docente, asignatura, período, usuario responsable y fecha.
 - **Criterios de Aceptación:**
-  - CA-ARQ-109: Cada espacio funcional cuenta con su esquema de tablas operativas para la gestión propia del rol.
-  - CA-ARQ-110: Los datos sensibles conservan aislamiento y permisos restrictivos por dominio de responsabilidad.
-- **Estado:** [X] Completado
+  - Toda rectificación oficial deja un registro completo y consultable.
+  - Los cambios no autorizados se rechazan en el servidor, incluso si se envían solicitudes directamente a la API.
+  - El valor anterior puede recuperarse desde el historial.
+  - Las notas corregidas se reflejan en los cálculos y documentos que dependan de ellas.
+  - Los intentos fallidos de rectificación no modifican el resultado oficial.
+  - Las rectificaciones masivas permiten identificar cada cambio individual.
+  - El historial conserva la relación entre la solicitud, la autorización y la modificación efectuada.
+- **Estado:** [ ] Pendiente
 
 ---
 
-### [X] [F8-Task21] Implementar el modelo común de comunicaciones institucionales y solicitudes
-- **ID Anterior:** `[TAREA-ARQ-06]`
-- **Origen del Hallazgo:** Anexo Técnico: Arquitectura de Roles / Tarea ARQ-06 (P1 · Servicio de Comunicaciones)
+### [ ] [F9-Task07] Fortalecer la generación de boletines, certificados e historiales académicos
+- **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task10 (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Documentación académica y resultados oficiales)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `student-dashboard.html` / `js/student.js`
+- **Dependencias Expuestas:** F9-Task03, F9-Task04, F9-Task06, F9-Task07 y expediente académico
+- **Descripción del Alcance:**
+  Garantizar la consistencia entre las calificaciones oficiales, los documentos emitidos y las versiones históricas de esos documentos.
+
+  Requisitos Funcionales:
+  1. Generar boletines por estudiante, período, grado y año lectivo.
+  2. Incluir las asignaturas correspondientes, las calificaciones, los promedios, los estados de aprobación y las observaciones autorizadas.
+  3. Diferenciar los resultados parciales, los resultados finales y las calificaciones de recuperación.
+  4. Permitir consultar el historial académico agrupado por año lectivo, grado, período y asignatura.
+  5. Generar certificados e historiales a partir de datos oficiales y de las reglas aplicables al período correspondiente.
+  6. Mantener coherencia entre las notas mostradas en el portal y las incluidas en los documentos descargables.
+  7. Evitar que una corrección posterior modifique silenciosamente un documento oficial previamente emitido.
+  8. Permitir reemitir documentos cuando exista una rectificación autorizada, conservando la trazabilidad de la versión anterior.
+  9. Registrar la fecha de emisión, el período cubierto, la versión del documento y el usuario responsable, según corresponda.
+  10. Aplicar permisos para impedir la consulta o descarga de documentos pertenecientes a estudiantes no autorizados.
+  11. Diferenciar entre documentos informativos y documentos oficiales que requieran aprobación, firma o validación institucional.
+  12. Permitir generar reportes individuales y consolidados para los responsables autorizados, sin exponer datos de estudiantes ajenos al ámbito de consulta.
+- **Criterios de Aceptación:**
+  - Los documentos coinciden con los resultados académicos oficiales de su período.
+  - Los promedios y estados de aprobación son coherentes con el libro de calificaciones.
+  - Las rectificaciones generan versiones actualizadas sin borrar la trazabilidad anterior.
+  - Los documentos históricos conservan su contexto académico.
+  - Los usuarios no autorizados no pueden consultar ni descargar documentos ajenos.
+  - Las asignaturas exentas, las recuperaciones y los resultados pendientes se representan de acuerdo con las reglas aplicables.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F9-Task08] Fortalecer el control de permisos y la separación de responsabilidades académicas
+- **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task12 (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Seguridad, privacidad y acceso a calificaciones)
+- **Archivos Involucrados:**
+  - `backend/exam-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** Servicios de usuarios, matrícula, asignaciones docentes, expediente académico y operaciones de exportación
+- **Descripción del Alcance:**
+  Verificar y aplicar estrictamente los controles de seguridad tanto en la interfaz como en cada operación del servidor que consulte, registre, modifique, publique o exporte calificaciones.
+
+  Requisitos Funcionales:
+  1. Verificar los permisos tanto en la interfaz como en cada operación del servidor que consulte, registre, modifique, publique o exporte calificaciones.
+  2. Limitar a los docentes a las asignaturas, grupos y períodos que tengan asignados.
+  3. Permitir a Secretaría, Dirección y Coordinación acceder a las operaciones correspondientes a sus responsabilidades institucionales.
+  4. Restringir a estudiantes y tutores la consulta a los resultados para los que tengan autorización.
+  5. Validar las relaciones entre el usuario, el estudiante, el grupo, la asignatura, el período y la operación solicitada.
+  6. Impedir que la modificación de identificadores en una petición permita consultar o alterar calificaciones de otros estudiantes.
+  7. Aplicar las mismas restricciones a las descargas, los reportes, los boletines, los historiales y los archivos de SACE.
+  8. Evitar que las funciones de administración de permisos permitan ampliar privilegios sin autorización.
+  9. Registrar los accesos denegados y los intentos de operaciones sensibles, sin exponer datos académicos innecesarios en los mensajes de error.
+  10. Mantener los controles de acceso al cambiar la matrícula de un estudiante, las asignaciones de un docente o las relaciones entre tutores y estudiantes.
+- **Criterios de Aceptación:**
+  - Un docente no puede modificar notas de una asignatura que no tiene asignada, aunque envíe una petición directa al servicio.
+  - Un estudiante no puede consultar resultados de otro alumno alterando un identificador.
+  - Un tutor solo puede consultar a los estudiantes vinculados a su perfil y autorizados para esa consulta.
+  - Los permisos se aplican de igual manera a las operaciones individuales, masivas y de exportación.
+  - Los intentos no autorizados se rechazan sin modificar los datos.
+  - Los cambios en las relaciones académicas actualizan los permisos efectivos de manera coherente.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F9-Task09] Completar las pruebas automatizadas de regresión de la Fase 9
+- **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task14 (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Calidad funcional e integridad académica)
+- **Archivos Involucrados:**
+  - `tests/regression/academic-grading-suite.js`
+  - `backend/developer-service/Code.gs`
+- **Dependencias Expuestas:** F9-Task01 a F9-Task13, según las capacidades cubiertas por cada prueba
+- **Descripción del Alcance:**
+  Establecer pruebas reproducibles y automatizadas para verificar el correcto funcionamiento de los cálculos, cierres, rectificaciones, exportaciones SACE y seguridad.
+
+  Requisitos Funcionales:
+  1. Establecer pruebas reproducibles para los métodos de cálculo, las ponderaciones, las escalas, las recuperaciones y los estados de aprobación.
+  2. Crear casos de prueba para notas mínimas, máximas, decimales, valores inválidos, actividades pendientes y estudiantes exentos.
+  3. Verificar que las modificaciones de una calificación se reflejen correctamente en los promedios, los boletines y los historiales.
+  4. Comprobar las restricciones de edición en períodos cerrados y años históricos.
+  5. Probar los flujos de aprobación, publicación, rectificación y reapertura.
+  6. Probar la generación de archivos SACE con las plantillas reales existentes en el repositorio.
+  7. Verificar que las plantillas originales mantengan su estructura después de generar los archivos completados.
+  8. Comprobar el aislamiento entre estudiantes, tutores, docentes, asignaturas y secciones.
+  9. Simular fallos de conexión, reintentos, guardados concurrentes y errores durante la generación de archivos.
+  10. Probar la generación de reportes con estudiantes trasladados, matrículas inactivas, asignaturas exentas y registros históricos.
+  11. Verificar la accesibilidad de las operaciones principales con teclado y pantallas pequeñas.
+  12. Incorporar pruebas de regresión para evitar que una corrección en el cálculo, la exportación o la publicación afecte las funciones existentes.
+- **Criterios de Aceptación:**
+  - Los casos de prueba tienen resultados esperados explícitos y reproducibles.
+  - Los cálculos coinciden con los resultados de referencia.
+  - Las operaciones no autorizadas se rechazan.
+  - Las rectificaciones mantienen la trazabilidad histórica.
+  - Los archivos generados respetan las plantillas utilizadas en las pruebas.
+  - Los fallos simulados no provocan pérdida silenciosa de calificaciones.
+  - Las modificaciones posteriores no reintroducen defectos en los flujos previamente verificados.
+- **Estado:** [ ] Pendiente
+
+---
+
+## TAREAS DE ALTA PRIORIDAD (P1 - MEJORAS OPERATIVAS Y EVALUACIÓN AVANZADA)
+
+---
+
+### [ ] [F9-Task10] Ampliar el libro de calificaciones para mejorar el registro individual y masivo
+- **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task05 (P1)
 - **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Servicio inter-rol de comunicaciones)
+- **Severidad/Clasificación:** Alta (Portal docente y administración de calificaciones)
+- **Archivos Involucrados:**
+  - `teacher-dashboard.html`
+  - `js/teacher.js`
+  - `backend/exam-service/Code.gs`
+- **Dependencias Expuestas:** F9-Task03, permisos docentes, matrícula, servicio de calificaciones y mecanismos de persistencia
+- **Descripción del Alcance:**
+  Asegurar que el registro sea eficiente, claro y resistente a errores, especialmente cuando el docente administra varios grupos, numerosas actividades o cantidades elevadas de estudiantes.
+
+  Requisitos Funcionales:
+  1. Mostrar el grupo, asignatura, sección, período y docente correspondientes al libro abierto.
+  2. Permitir consultar las calificaciones por estudiante, actividad, categoría y período.
+  3. Facilitar la navegación entre celdas mediante teclado, sin exigir el uso constante del ratón.
+  4. Permitir registrar notas y observaciones individualmente y en lotes.
+  5. Admitir la importación de calificaciones desde archivos tabulares cuando se disponga de una estructura reconocible y validable.
+  6. Permitir aplicar una calificación a un conjunto seleccionado de estudiantes, con confirmación previa y sin sobrescribir datos accidentalmente.
+  7. Diferenciar visualmente las notas guardadas, los borradores, las actividades pendientes y los errores de validación.
+  8. Mostrar el estado de guardado de cada lote y permitir identificar qué registros se guardaron y cuáles fallaron.
+  9. Evitar duplicados cuando se repita una petición de guardado o el docente vuelva a intentar una operación tras una desconexión.
+  10. Detectar modificaciones simultáneas y advertir cuando otro usuario haya cambiado los mismos datos.
+  11. Advertir antes de abandonar una página con cambios pendientes y recuperar los borradores cuando sea posible.
+  12. Permitir copiar configuraciones de evaluación entre grupos compatibles sin copiar calificaciones personales ni información que corresponda a otros estudiantes.
+  13. Ofrecer filtros por estado de calificación, actividad y estudiante, además de una búsqueda rápida.
+  14. Mantener la interfaz utilizable en dispositivos móviles y en pantallas pequeñas.
+- **Criterios de Aceptación:**
+  - Un docente solo puede consultar y editar los grupos y asignaturas que tiene autorizados.
+  - Un lote con errores informa los registros afectados sin ocultar el resultado de los demás.
+  - Repetir una operación no duplica calificaciones.
+  - Una actualización concurrente no sobrescribe silenciosamente una modificación ajena.
+  - Las modificaciones no guardadas se advierten antes de abandonar el libro.
+  - El registro de grupos numerosos mantiene tiempos de respuesta aceptables y no produce guardados incompletos silenciosos.
+  - La interfaz permite completar el flujo de registro desde teclado y dispositivos móviles.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F9-Task11] Ampliar las recuperaciones académicas y su integración con los resultados oficiales
+- **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task08 (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Recuperaciones, evaluaciones extraordinarias y promoción académica)
+- **Archivos Involucrados:**
+  - `backend/exam-service/Code.gs`
+  - `teacher-dashboard.html` / `js/teacher.js`
+- **Dependencias Expuestas:** F9-Task03, F9-Task04, F9-Task07 y matrícula académica
+- **Descripción del Alcance:**
+  Garantizar que los métodos de recuperación se apliquen de acuerdo con las reglas institucionales y que el resultado sea coherente con los registros históricos, los boletines y los archivos oficiales.
+
+  Requisitos Funcionales:
+  1. Asociar cada recuperación con el estudiante, la asignatura, el período y la calificación original que pretende recuperar.
+  2. Permitir registrar el motivo, la fecha, el tipo de recuperación y la regla de cálculo utilizada.
+  3. Definir qué métodos están permitidos en cada contexto académico.
+  4. Evitar que la recuperación cree accidentalmente una segunda calificación independiente que se contabilice como una actividad ordinaria adicional.
+  5. Calcular el resultado final de acuerdo con la política aplicable, distinguiendo entre sustitución, promedio y conservación de la nota más alta.
+  6. Validar los rangos y condiciones de las notas originales y recuperadas.
+  7. Conservar las dos calificaciones y el método aplicado, incluso cuando el resultado oficial utilice únicamente una nota final.
+  8. Actualizar los promedios, estados de aprobación, boletines e historiales que dependan de la calificación recuperada.
+  9. Restringir el registro y la aprobación de recuperaciones según las responsabilidades asignadas.
+  10. Evitar que una recuperación posterior altere un período cerrado sin seguir el procedimiento de rectificación o reapertura autorizado.
+  11. Permitir consultar el historial de recuperaciones de un estudiante por período y asignatura.
+- **Criterios de Aceptación:**
+  - Cada recuperación queda vinculada a su calificación original.
+  - El resultado coincide con el método configurado.
+  - Una recuperación no se contabiliza dos veces en el promedio.
+  - Los cambios se reflejan en los documentos dependientes.
+  - Los períodos cerrados mantienen sus restricciones.
+  - Las recuperaciones fuera de las condiciones permitidas se rechazan o quedan pendientes de autorización.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F9-Task12] Ampliar la evaluación por competencias, rúbricas e indicadores de logro
+- **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task09 (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Evaluación formativa y seguimiento del aprendizaje)
 - **Archivos Involucrados:**
   - `backend/user-service/Code.gs`
-  - `js/ui-common.js`
-- **Dependencias Expuestas:** `SP_ComunicacionesInstitucionales` (`Solicitudes`, `ParticipantesSolicitud`, `HistorialSolicitudes`, `Notificaciones`, `Conversaciones`, `ParticipantesConversacion`, `Mensajes`)
+  - `backend/exam-service/Code.gs`
+  - `js/config.js`
+- **Dependencias Expuestas:** F9-Task03, sistema de rúbricas, catálogo de competencias y permisos
 - **Descripción del Alcance:**
-  Implementar el servicio de comunicaciones institucionales para gestionar solicitudes, avisos, notificaciones e hilos de conversación entre diferentes roles con identificadores estables y trazabilidad de transiciones.
+  Garantizar que estas capacidades permitan evaluar competencias e indicadores de logro de manera consistente, sin reducir obligatoriamente todos los resultados a una nota numérica.
 
   Requisitos Funcionales:
-  1. Crear la estructura del Spreadsheet `SP_ComunicacionesInstitucionales`.
-  2. Administrar el flujo de estados de solicitudes (Pendiente, Asignada, En Proceso, Resuelta, Rechazada, Cancelada).
-  3. Validar permisos en la apertura de solicitudes y evitar notificaciones duplicadas mediante claves de idempotencia.
-  4. Mantener la privacidad de conversaciones y archivos adjuntos mediante enlaces de acceso controlado.
+  1. Permitir configurar competencias, indicadores de logro y niveles de desempeño por nivel educativo, grado y asignatura.
+  2. Asociar las actividades y rúbricas con las competencias que evalúan.
+  3. Permitir definir criterios de evaluación con descripciones, niveles de desempeño y puntuaciones opcionales.
+  4. Admitir escalas cualitativas y numéricas, con equivalencias configurables cuando sean necesarias.
+  5. Permitir registrar observaciones específicas por estudiante y criterio evaluado.
+  6. Mostrar el nivel alcanzado en cada competencia y los indicadores que todavía no han sido evaluados.
+  7. Diferenciar entre una competencia no evaluada y una competencia evaluada cuyo resultado sea insuficiente.
+  8. Permitir consolidar resultados de varias actividades sin duplicar la contribución de una misma competencia.
+  9. Mantener la relación entre cada resultado y la rúbrica, la versión de los criterios y la actividad utilizada.
+  10. Permitir reutilizar rúbricas en asignaturas o grupos compatibles sin compartir accidentalmente resultados individuales.
+  11. Presentar al docente un resumen de las competencias que requieren atención y de los criterios con resultados insuficientes.
+  12. Mostrar a estudiantes y tutores únicamente los resultados y observaciones que tengan autorización para consultar.
 - **Criterios de Aceptación:**
-  - CA-ARQ-111: Las solicitudes inter-rol se gestionan con trazabilidad completa de transiciones de estado.
-  - CA-ARQ-112: El envío de notificaciones es idempotente y no genera avisos repetidos ante reintentos.
-- **Estado:** [X] Completado
+  - Cada resultado puede relacionarse con una competencia y un criterio de evaluación.
+  - Las escalas cualitativas se conservan sin conversiones numéricas obligatorias.
+  - Las competencias pendientes se distinguen de las evaluadas.
+  - Las rúbricas reutilizadas mantienen su configuración sin mezclar las notas de diferentes grupos.
+  - Las consolidaciones coinciden con las reglas configuradas.
+  - Los resultados se muestran únicamente a los perfiles autorizados.
+- **Estado:** [ ] Pendiente
 
 ---
 
-### [X] [F8-Task22] Implementar el aprovisionamiento automático, versionado de esquemas y migración de Spreadsheets
-- **ID Anterior:** `[TAREA-ARQ-07]`
-- **Origen del Hallazgo:** Anexo Técnico: Arquitectura de Roles / Tarea ARQ-07 (P1 · Aprovisionamiento Dinámico)
+### [ ] [F9-Task13] Optimizar la exportación académica y los formatos de intercambio
+- **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task11 (P1)
 - **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Aprovisionamiento e historia de esquemas)
+- **Severidad/Clasificación:** Alta (Exportaciones, interoperabilidad y reportes descargables)
 - **Archivos Involucrados:**
-  - `backend/developer-service/Code.gs`
-  - `backend/user-service/Code.gs`
-- **Dependencias Expuestas:** `PlantillasSpreadsheets`, `RegistroSpreadsheets`, `HistorialProvisionamiento`, Google Drive API
+  - `backend/academic-service/Code.gs`
+  - `js/secretary.js` / `js/teacher.js`
+- **Dependencias Expuestas:** F9-Task01, F9-Task02, F9-Task04 y F9-Task10
 - **Descripción del Alcance:**
-  Implementar el aprovisionamiento automático e idempotente de Spreadsheets a partir del catálogo de plantillas, aplicando permisos de Google Drive de privilegio mínimo y control de versión de esquemas para migraciones de tablas.
+  Proporcionar opciones de exportación para análisis interno en formatos adicionales (XLSX, CSV) sin alterar ni sustituir el formato oficial requerido por SACE.
 
   Requisitos Funcionales:
-  1. Verificar si ya existe un Spreadsheet compatible en `RegistroSpreadsheets` antes de crear uno nuevo.
-  2. Aprovisionar automáticamente el archivo en Google Drive, aplicar protecciones de hojas y registrar en `RegistroSpreadsheets` e `HistorialProvisionamiento`.
-  3. Ejecutar migraciones de esquemas agregando columnas u hojas requeridas sin destruir datos existentes.
-
-  > **Nota de Arquitectura:** Las estructuras que están en el anexo A (carpetas del repositorio) y en el anexo B (hojas y spreadsheets por rol) son ejemplos de una estructura recomendable, y no una estructura obligatoria.
-
+  1. Permitir exportar calificaciones por estudiante, asignatura, sección, grupo, docente y período, según los permisos del usuario.
+  2. Mantener la compatibilidad con las plantillas oficiales de SACE y diferenciar esa operación de las exportaciones destinadas a análisis interno.
+  3. Ofrecer formatos adicionales para los reportes internos cuando resulten útiles, como XLSX y CSV, sin sustituir ni modificar el formato oficial requerido.
+  4. Permitir seleccionar las actividades, categorías, calificaciones, observaciones y resultados que se incluirán en los reportes compatibles con cada formato.
+  5. Incluir identificadores fiables para relacionar los registros exportados con los estudiantes y las actividades correspondientes.
+  6. Diferenciar las calificaciones definitivas de los borradores y las notas que todavía no han sido aprobadas.
+  7. Proporcionar una vista previa de los datos que se exportarán antes de generar el archivo.
+  8. Registrar la fecha, el usuario, el contexto académico y el resultado de cada operación de exportación.
+  9. Detectar registros incompletos y ofrecer un informe de errores que permita corregirlos.
+  10. Evitar la duplicación de registros cuando se repita una exportación o se regenere un archivo.
+  11. Permitir exportar únicamente los registros nuevos o modificados cuando el formato y el proceso de destino admitan esa modalidad.
+  12. Conservar los permisos y las restricciones de acceso al exportar datos de varios grupos o estudiantes.
 - **Criterios de Aceptación:**
-  - CA-ARQ-113: La creación de espacios de trabajo es idempotente y no duplica archivos en Google Drive.
-  - CA-ARQ-114: La actualización de esquemas migra estructuras de tablas de forma no destructiva.
-- **Estado:** [X] Completado
+  - Los archivos contienen únicamente los registros incluidos en los filtros seleccionados.
+  - Los valores exportados coinciden con los resultados académicos oficiales.
+  - Los borradores no se presentan como calificaciones definitivas.
+  - Los archivos oficiales conservan la estructura exigida por su plantilla.
+  - Los errores de exportación identifican los registros afectados.
+  - Las exportaciones no permiten acceder a información fuera del ámbito autorizado.
+  - La repetición de una exportación no modifica las calificaciones originales.
+- **Estado:** [ ] Pendiente
 
 ---
 
-### [X] [F8-Task23] Implementar la independencia de servicios backend, seguridad Drive y límites de Google Sheets
-- **ID Anterior:** `[TAREA-ARQ-08]`
-- **Origen del Hallazgo:** Anexo Técnico: Arquitectura de Roles / Tarea ARQ-08 (P1 · Seguridad y Escalabilidad)
+### [ ] [F9-Task14] Mejorar el rendimiento, la persistencia y la recuperación de operaciones de calificación
+- **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task13 (P1)
 - **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Aislamiento de servicios y gestión de límites)
+- **Severidad/Clasificación:** Alta (Estabilidad, rendimiento y almacenamiento)
 - **Archivos Involucrados:**
-  - `backend/developer-service/Code.gs`
+  - `backend/exam-service/Code.gs`
   - `js/api.js`
-- **Dependencias Expuestas:** Contratos entre microservicios, permisos Drive de privilegio mínimo, monitoreo de cuotas
+- **Dependencias Expuestas:** F9-Task04, F9-Task05, servicios de persistencia y mecanismos de auditoría
 - **Descripción del Alcance:**
-  Garantizar la independencia entre microservicios backend proscribiendo la escritura directa en hojas privadas de otros dominios, aplicando el principio de privilegio mínimo en Google Drive y gestionando límites de rendimiento.
+  Optimizar las operaciones masivas de lectura y escritura para reducir el consumo de cuotas, evitar bloqueos y acelerar la respuesta del libro de calificaciones.
 
   Requisitos Funcionales:
-  1. Interceder comunicaciones inter-servicio únicamente a través de endpoints y contratos API stablables.
-  2. Aplicar permisos de privilegio mínimo a archivos y carpetas en Google Drive.
-  3. Implementar estrategias de lecturas agrupadas y cachés invalidables para prevenir el agotamiento de cuotas en Google Sheets.
+  1. Medir los tiempos de respuesta de las consultas y operaciones de guardado del libro de calificaciones.
+  2. Identificar los cuellos de botella asociados a lecturas y escrituras repetidas en Google Sheets, procesamiento masivo y generación de reportes.
+  3. Optimizar las operaciones masivas para evitar consultas repetitivas por cada estudiante cuando sea posible procesar los datos en lotes.
+  4. Validar la integridad de los datos antes de persistirlos.
+  5. Evitar registros duplicados cuando se repitan solicitudes debido a una desconexión, un tiempo de espera agotado o un reintento del usuario.
+  6. Proporcionar resultados claros cuando una operación se complete parcialmente, identificando los registros guardados y los pendientes.
+  7. Implementar mecanismos de concurrencia adecuados para evitar que dos usuarios sobrescriban cambios incompatibles.
+  8. Mantener consistencia entre las calificaciones, los promedios calculados y los estados de publicación.
+  9. Detectar cuándo las limitaciones del almacenamiento actual comienzan a afectar los tiempos de respuesta o la integridad de las operaciones.
+  10. Documentar umbrales medibles para evaluar cuándo se requiere optimizar consultas, introducir procesamiento por lotes o considerar una migración de almacenamiento.
+  11. Evitar migraciones o rediseños de infraestructura sin evidencia de que el almacenamiento actual resulta insuficiente.
+  12. Verificar que los mecanismos de recuperación no restauren datos antiguos sobre calificaciones oficiales más recientes.
 - **Criterios de Aceptación:**
-  - CA-ARQ-115: Ningún microservicio escribe directamente en las tablas privadas de otro dominio sin contrato API.
-  - CA-ARQ-116: Las operaciones agrupadas previenen el agotamiento de cuotas de lectura y escritura en Google Sheets.
-- **Estado:** [X] Completado
-
----
-
-## TAREAS DE PRIORIDAD MEDIA (P2 - PRODUCTIVIDAD, ANALÍTICA Y RENDIMIENTO)
-
----
-
-### [X] [F8-Task24] Implementar la previsualización integrada de documentos PDF en la revisión de entregas
-- **ID Anterior:** `[TAREA-F8-OPT-01]`
-- **Origen del Hallazgo:** `AUDITORIA_FASE_8_AULA_VIRTUAL_APRENDIZAJE.md` / Tarea F8-OPT-01 (P2 · Previsualización PDF)
-- **Prioridad:** P2
-- **Severidad/Clasificación:** Medio (Mejora de usabilidad y eficiencia docente)
-- **Archivos Involucrados:**
-  - `backend/task-service/Code.gs`
-  - `teacher-dashboard.html`
-  - `js/teacher.js`
-- **Dependencias Expuestas:** Sistema existente de entregas, almacenamiento en Google Drive, controles de acceso RBAC
-- **Descripción del Alcance:**
-  Incorporar un visor integrado de documentos PDF dentro del modal de revisión de entregas para permitir al docente examinar los trabajos adjuntos directamente sin necesidad de descargarlos previamente.
-
-  Requisitos Funcionales:
-  1. Abrir la previsualización de archivos PDF adjuntos desde el modal de revisión conservando el contexto del estudiante y la actividad.
-  2. Ofrecer controles del visor: navegación entre páginas, indicador de página, zoom, ajuste a ancho y página completa.
-  3. Detectar el tipo real del archivo PDF mediante metadatos validados.
-  4. Mantener disponibles las opciones de descarga, rúbricas, comentarios cualitativos y asignación de notas.
-  5. Reutilizar la autorización RBAC sin convertir recursos privados en enlaces públicos.
-  6. Liberar recursos de memoria al cerrar el visor o cambiar de estudiante/archivo.
-- **Criterios de Aceptación:**
-  - CA-F8-013: Al abrir una entrega con un PDF válido, se muestra el visor directamente dentro del modal.
-  - CA-F8-014: Un PDF dañado o no compatible produce un mensaje claro y mantiene la opción de descarga.
-  - CA-F8-015: La previsualización no altera la evaluación, rúbrica ni el historial de entregas.
-- **Estado:** [X] Completado
-
----
-
-### [X] [F8-Task25] Incorporar estadísticas descriptivas y una visualización de la distribución de calificaciones de exámenes
-- **ID Anterior:** `[TAREA-F8-OPT-02]`
-- **Origen del Hallazgo:** `AUDITORIA_FASE_8_AULA_VIRTUAL_APRENDIZAJE.md` / Tarea F8-OPT-02 (P2 · Analítica de Exámenes)
-- **Prioridad:** P2
-- **Severidad/Clasificación:** Medio (Ampliación analítica)
-- **Archivos Involucrados:**
-  - `backend/exam-service/Code.gs`
-  - `teacher-dashboard.html`
-  - `js/teacher.js`
-- **Dependencias Expuestas:** Cuestionarios, resultados de exámenes, libro de calificaciones y permisos docentes
-- **Descripción del Alcance:**
-  Proporcionar un resumen estadístico descriptivo y un gráfico de distribución de calificaciones por intervalos para cada examen, permitiendo al docente analizar el desempeño del grupo e incluir opcionalmente una curva normal de referencia.
-
-  Requisitos Funcionales:
-  1. Filtrar resultados por curso, asignatura, examen, grupo y período académico respetando permisos docentes.
-  2. Calcular métricas descriptivas: total de evaluados, pendientes, nota promedio, mediana, mínimo, máximo, desviación estándar y % de aprobación.
-  3. Renderizar gráfico de frecuencia por intervalos de puntuación identificando concentración y dispersión.
-  4. Incluir curva de distribución normal de referencia únicamente cuando sea estadísticamente pertinente.
-  5. Distinguir claramente los datos reales observados de las curvas de referencia.
-  6. Garantizar que la generación de estadísticas sea de solo lectura y no altere las calificaciones del libro oficial.
-- **Criterios de Aceptación:**
-  - CA-F8-016: El informe estadístico y gráfico corresponde exactamente al examen y grupo seleccionado.
-  - CA-F8-017: La generación del gráfico de distribución no modifica ni recalcula las notas oficiales.
-  - CA-F8-018: Un grupo sin calificaciones muestra un estado vacío comprensible en lugar de un gráfico erróneo.
-- **Estado:** [X] Completado
-
----
-
-### [X] [F8-Task26] Garantizar accesibilidad, usabilidad y adaptación de los dashboards
-- **ID Anterior:** `[TAREA-CAL-01]`
-- **Origen del Hallazgo:** Anexo de Tareas: Calidad / Tarea CAL-01 (P2 · Accesibilidad y Adaptación)
-- **Prioridad:** P2
-- **Severidad/Clasificación:** Medio (Usabilidad y accesibilidad WCAG)
-- **Archivos Involucrados:**
-  - Todos los HTMLs de dashboards y `css/style.css`
-- **Dependencias Expuestas:** Normativa WCAG 2.2 AA, diseño responsivo, navegación por teclado
-- **Descripción del Alcance:**
-  Garantizar que todos los dashboards dinámicos y adaptados cumplan los estándares WCAG 2.2 nivel AA en escritorio, tabletas y teléfonos móviles.
-
-  Requisitos Funcionales:
-  1. Diseñar interfaces responsivas adaptadas a diferentes resoluciones de pantalla.
-  2. Operar todas las funciones mediante navegación por teclado e indicadores visibles de foco.
-  3. Mantener contraste, etiquetas accesibles y estados de carga/error descriptivos.
-- **Criterios de Aceptación:**
-  - CA-CAL-101: Los dashboards cumplen con la pauta WCAG 2.2 AA y son navegables íntegramente con teclado y lectores de pantalla.
-- **Estado:** [X] Completado
-
----
-
-### [X] [F8-Task27] Garantizar rendimiento y mantenimiento del sistema modular
-- **ID Anterior:** `[TAREA-CAL-02]`
-- **Origen del Hallazgo:** Anexo de Tareas: Calidad / Tarea CAL-02 (P2 · Rendimiento y Mantenibilidad)
-- **Prioridad:** P2
-- **Severidad/Clasificación:** Medio (Rendimiento y eficiencia)
-- **Archivos Involucrados:**
-  - `js/api.js`, `js/config.js` y motores del frontend
-- **Dependencias Expuestas:** Carga bajo demanda, almacenamiento en caché, optimización de peticiones HTTP
-- **Descripción del Alcance:**
-  Optimizar los tiempos de carga y respuesta de los módulos dinámicos cargando únicamente los componentes autorizados y reutilizando cachés locales.
-
-  Requisitos Funcionales:
-  1. Cargar módulos bajo demanda sin descargar código no autorizado.
-  2. Prevenir solicitudes HTTP duplicadas al backend y reutilizar cachés.
-  3. Invalidar la configuración almacenada ante cambios de permisos o asignaciones.
-- **Criterios de Aceptación:**
-  - CA-CAL-102: La carga dinámica no degrada la latencia percibida y elimina llamadas duplicadas al servidor.
-- **Estado:** [X] Completado
+  - Las operaciones masivas de prueba terminan dentro de los umbrales de rendimiento definidos para el tamaño de grupo esperado.
+  - Los errores de persistencia se notifican de forma clara.
+  - Los reintentos no crean duplicados ni sobrescriben silenciosamente cambios ajenos.
+  - Los datos almacenados permanecen coherentes con los resultados calculados.
+  - Las operaciones interrumpidas pueden identificarse y recuperarse sin alterar registros no relacionados.
+  - Los indicadores de rendimiento permiten detectar degradaciones antes de que afecten significativamente al uso diario.
+- **Estado:** [ ] Pendiente
