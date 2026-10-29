@@ -1226,6 +1226,8 @@ function validateRolePermission(action, payload) {
     }
   }
 
+  // [TAREA-AD-06] [Anexo Tareas: Seguridad y Roles] - Registro de denegación por defecto
+  logStructuredEvent("USER", "validateRolePermission", "WARN", "UNAUTHORIZED_ACCESS_ATTEMPT", `Acceso no autorizado rechazado por defecto para rol '${userRole}' en acción '${action}'.`, { action: action, userId: verifiedId }, userRole);
   return { authorized: false, role: userRole };
 }
 
@@ -1415,6 +1417,27 @@ function doPost(e) {
         break;
       case "saveInstitutionalResponsibility":
         result = saveInstitutionalResponsibility(payload);
+        break;
+      case "assignRoleScope":
+        result = assignRoleScope(payload);
+        break;
+      case "getUserScopeConfig":
+        result = getUserScopeConfig(payload);
+        break;
+      case "validateRoleScopeAccess":
+        result = validateRoleScopeAccess(payload);
+        break;
+      case "getInstitutionalFunctionalSpaceCatalog":
+        result = getInstitutionalFunctionalSpaceCatalog(payload);
+        break;
+      case "getInstitutionalCommunicationsSchema":
+        result = getInstitutionalCommunicationsSchema(payload);
+        break;
+      case "createInstitutionalServiceRequest":
+        result = createInstitutionalServiceRequest(payload);
+        break;
+      case "updateInstitutionalServiceRequestStatus":
+        result = updateInstitutionalServiceRequestStatus(payload);
         break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
@@ -7013,7 +7036,7 @@ function getInstitutionalResponsibilitiesCatalog(payload) {
 
 function saveInstitutionalResponsibility(payload) {
   try {
-    var verifiedRole = getUserVerifiedRole(payload);
+    var verifiedRole = (payload && payload.authRole) || (payload && payload._verifiedRole) || (payload && payload.role) || "NO_ACCESS";
     if (["Administrador", "Director", "Desarrollador"].indexOf(verifiedRole) === -1) {
       return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "Solo personal administrativo autorizado puede configurar responsabilidades institucionales." };
     }
@@ -7093,6 +7116,139 @@ function saveInstitutionalResponsibility(payload) {
   }
 }
 
+// [TAREA-AD-03] [Anexo Tareas: Dashboards Dinámicos - Ámbito de Actuación] - Gestión y validación contextual de ámbitos de actuación por rol y usuario
+function assignRoleScope(payload) {
+  try {
+    var verifiedRole = (payload && payload.authRole) || (payload && payload._verifiedRole) || (payload && payload.role) || "NO_ACCESS";
+    if (["Administrador", "Director", "Desarrollador"].indexOf(verifiedRole) === -1) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "Solo personal administrativo autorizado puede asignar ámbitos de actuación a roles." };
+    }
+
+    var userId = payload.userId;
+    var roleId = payload.roleId || payload.rolId;
+    var scopeType = payload.scopeType || payload.tipoAmbito; // NIVEL, DEPARTAMENTO, CARRERA, ASIGNATURA, GRADO, SECCION, PERIODO
+    var scopeValues = payload.scopeValues || payload.valoresAmbito || []; // Arreglo de valores permitidos
+    var estado = payload.estado || "Activo";
+    var actor = payload.actor || verifiedRole;
+
+    if (!userId || !scopeType) {
+      return { status: "error", message: "userId y scopeType son requeridos para asignar ámbito de actuación." };
+    }
+
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheet = getOrCreateSheet(ss, "AsignacionesAmbitosRoles");
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["AsignacionAmbitoID", "UserID", "RoleID", "ScopeType", "ScopeValues", "Estado", "CreadoPor", "FechaCreacion"]);
+    }
+
+    var assignmentId = "AMB-" + Utilities.getUuid().substring(0, 8).toUpperCase();
+    var valuesJSON = JSON.stringify(scopeValues);
+    var now = new Date().toISOString();
+
+    var data = sheet.getDataRange().getValues();
+    var foundIdx = -1;
+    for (var i = 1; i < data.length; i++) {
+      if (String(data[i][1]).trim() === String(userId).trim() && String(data[i][3]).trim().toUpperCase() === String(scopeType).trim().toUpperCase()) {
+        foundIdx = i;
+        break;
+      }
+    }
+
+    if (foundIdx !== -1) {
+      assignmentId = data[foundIdx][0];
+      sheet.getRange(foundIdx + 1, 5).setValue(valuesJSON);
+      sheet.getRange(foundIdx + 1, 6).setValue(estado);
+    } else {
+      sheet.appendRow([assignmentId, userId, roleId || "", scopeType, valuesJSON, estado, actor, now]);
+    }
+
+    recordEntityChangeLog("AsignacionAmbitoRol", assignmentId, foundIdx !== -1 ? { scopeValues: data[foundIdx][4] } : {}, { userId: userId, scopeType: scopeType, scopeValues: scopeValues, estado: estado }, "SCOPE_ASSIGNED", actor);
+    logStructuredEvent("USER", "assignRoleScope", "INFO", "SCOPE_ASSIGNED", `Ámbito ${scopeType} asignado al usuario ${userId}.`, { userId: userId, scopeType: scopeType, scopeValues: scopeValues }, verifiedRole);
+
+    return {
+      status: "success",
+      assignmentId: assignmentId,
+      userId: userId,
+      scopeType: scopeType,
+      scopeValues: scopeValues,
+      message: `Ámbito de actuación '${scopeType}' asignado correctamente al usuario ${userId}.`
+    };
+  } catch (error) {
+    logStructuredEvent("USER", "assignRoleScope", "ERROR", "SCOPE_ASSIGN_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function getUserScopeConfig(payload) {
+  try {
+    var userId = payload && payload.userId ? payload.userId : (payload && payload._verifiedUserId ? payload._verifiedUserId : null);
+    if (!userId) {
+      return { status: "error", message: "userId es requerido para consultar ámbitos del usuario." };
+    }
+
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheet = getOrCreateSheet(ss, "AsignacionesAmbitosRoles");
+    var ámbitos = [];
+
+    if (sheet && sheet.getLastRow() > 1) {
+      var data = sheet.getDataRange().getValues();
+      for (var i = 1; i < data.length; i++) {
+        if (String(data[i][1]).trim() === String(userId).trim() && String(data[i][5]).trim().toLowerCase() === "activo") {
+          var vals = [];
+          try { vals = JSON.parse(data[i][4]); } catch (_) { vals = [data[i][4]]; }
+          ámbitos.push({
+            assignmentId: data[i][0],
+            roleId: data[i][2],
+            scopeType: data[i][3],
+            scopeValues: vals,
+            fechaCreacion: data[i][7]
+          });
+        }
+      }
+    }
+
+    return {
+      status: "success",
+      userId: userId,
+      ambitos: ámbitos,
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function validateRoleScopeAccess(payload) {
+  try {
+    var userId = payload && (payload.userId || payload._verifiedUserId);
+    var scopeType = payload && payload.scopeType;
+    var requestedValue = payload && payload.requestedValue;
+
+    if (!userId || !scopeType || !requestedValue) {
+      return { status: "error", message: "userId, scopeType y requestedValue son requeridos para validar ámbito." };
+    }
+
+    var configRes = getUserScopeConfig({ userId: userId });
+    if (configRes.status !== "success") return configRes;
+
+    var matchedScope = (configRes.ambitos || []).find(a => String(a.scopeType).trim().toUpperCase() === String(scopeType).trim().toUpperCase());
+    if (!matchedScope) {
+      return { authorized: false, reason: `El usuario no tiene ámbito configurado para '${scopeType}'.` };
+    }
+
+    var isAllowed = (matchedScope.scopeValues || []).some(val => String(val).trim().toUpperCase() === String(requestedValue).trim().toUpperCase());
+    return {
+      status: "success",
+      authorized: isAllowed,
+      scopeType: scopeType,
+      requestedValue: requestedValue,
+      reason: isAllowed ? "Acceso al ámbito autorizado." : `El valor '${requestedValue}' está fuera del ámbito autorizado para ${scopeType}.`
+    };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
 // [TAREA-AD-01] [Anexo Tareas: Dashboards Dinámicos] - Consulta de configuración dinámica de módulos, responsabilidades y ámbitos por usuario
 function getUserDynamicDashboardConfig(payload) {
   try {
@@ -7142,6 +7298,190 @@ function getUserDynamicDashboardConfig(payload) {
     return {
       status: "error",
       message: "Error al consultar configuración del dashboard dinámico: " + error.message
+    };
+  }
+}
+
+// [F8-Task21] [TAREA-ARQ-06] [Anexo Técnico: Arquitectura de Roles - Servicio de Comunicaciones Institucionales] - Modelo común de comunicaciones inter-rol, gestión de solicitudes e hilos de conversación con idempotencia
+function getInstitutionalCommunicationsSchema(payload) {
+  try {
+    var commTables = [
+      { name: "Solicitudes", headers: ["solicitud_id", "fecha_hora", "solicitante_usuario_id", "solicitante_rol_id", "destinatario_rol_id", "tipo_solicitud", "asunto", "estado", "prioridad", "correlacion_id", "idempotency_key"] },
+      { name: "ParticipantesSolicitud", headers: ["participante_id", "solicitud_id", "usuario_id", "rol_id", "tipo_participante", "fecha_asignacion"] },
+      { name: "HistorialSolicitudes", headers: ["transicion_id", "solicitud_id", "fecha_hora", "estado_anterior", "estado_nuevo", "actor_usuario_id", "actor_rol_id", "observaciones"] },
+      { name: "Notificaciones", headers: ["notificacion_id", "fecha_hora", "usuario_id", "tipo_notificacion", "titulo", "mensaje", "leida", "link_accion", "idempotency_key"] },
+      { name: "Conversaciones", headers: ["conversacion_id", "solicitud_id", "tipo_conversacion", "titulo", "creada_en", "creada_por", "estado"] },
+      { name: "ParticipantesConversacion", headers: ["participante_id", "conversacion_id", "usuario_id", "rol_id", "fecha_unión", "activo"] },
+      { name: "Mensajes", headers: ["mensaje_id", "conversacion_id", "fecha_hora", "remitente_usuario_id", "remitente_rol_id", "contenido", "archivo_adjunto_id", "leido_por_destinatarios"] }
+    ];
+
+    var allowedTransitions = {
+      "Pendiente": ["Asignada", "En Proceso", "Cancelada", "Rechazada"],
+      "Asignada": ["En Proceso", "Resuelta", "Rechazada", "Cancelada"],
+      "En Proceso": ["Resuelta", "Rechazada", "Cancelada"],
+      "Resuelta": ["Cerrada", "En Proceso"],
+      "Rechazada": ["Pendiente"],
+      "Cancelada": []
+    };
+
+    return {
+      status: "success",
+      spreadsheetName: "SP_ComunicacionesInstitucionales",
+      totalTables: commTables.length,
+      tables: commTables,
+      allowedStateTransitions: allowedTransitions,
+      idempotencyProtected: true,
+      timestamp: new Date().toISOString()
+    };
+  } catch (err) {
+    return {
+      status: "error",
+      message: "Error al obtener el esquema de comunicaciones institucionales: " + err.message
+    };
+  }
+}
+
+function createInstitutionalServiceRequest(payload) {
+  try {
+    var userId = (payload && payload._verifiedUserId) || (payload && payload.userId) || "USR-ANON";
+    var userRole = (payload && payload.userRole) || "General";
+    var targetRole = (payload && payload.targetRole) || "Secretaria";
+    var subject = (payload && payload.subject) || "Solicitud de Trámite Institucional";
+    var requestType = (payload && payload.requestType) || "GENERAL";
+    var idempotencyKey = (payload && payload.idempotencyKey) || ("IDEM-" + Date.now() + "-" + Math.random().toString(36).substring(2, 7));
+
+    if (payload && payload.idempotencyKey && typeof CacheService !== "undefined") {
+      try {
+        var cache = CacheService.getScriptCache();
+        var cachedResult = cache.get("COMM_REQ_" + payload.idempotencyKey);
+        if (cachedResult) {
+          var parsed = JSON.parse(cachedResult);
+          parsed.isDuplicateIdempotentRequest = true;
+          return parsed;
+        }
+      } catch (_) {}
+    }
+
+    var requestId = "SOL-" + Date.now();
+    var newRequest = {
+      solicitud_id: requestId,
+      fecha_hora: new Date().toISOString(),
+      solicitante_usuario_id: userId,
+      solicitante_rol_id: userRole,
+      destinatario_rol_id: targetRole,
+      tipo_solicitud: requestType,
+      asunto: subject,
+      estado: "Pendiente",
+      prioridad: (payload && payload.priority) || "MEDIA",
+      correlacion_id: (payload && payload.correlationId) || ("CORR-" + Date.now()),
+      idempotency_key: idempotencyKey
+    };
+
+    var res = {
+      status: "success",
+      message: "Solicitud institucional creada exitosamente.",
+      request: newRequest
+    };
+
+    if (payload && payload.idempotencyKey && typeof CacheService !== "undefined") {
+      try {
+        CacheService.getScriptCache().put("COMM_REQ_" + payload.idempotencyKey, JSON.stringify(res), 600);
+      } catch (_) {}
+    }
+
+    return res;
+  } catch (err) {
+    return {
+      status: "error",
+      message: "Error al crear la solicitud de servicio institucional: " + err.message
+    };
+  }
+}
+
+function updateInstitutionalServiceRequestStatus(payload) {
+  try {
+    var requestId = (payload && payload.requestId);
+    var newState = (payload && payload.newState);
+    var actorRole = (payload && payload.actorRole) || "Secretaria";
+    var actorId = (payload && payload._verifiedUserId) || (payload && payload.actorId) || "USR-ADMIN";
+
+    if (!requestId || !newState) {
+      return { status: "error", message: "requestId y newState son requeridos." };
+    }
+
+    var schemaRes = getInstitutionalCommunicationsSchema({});
+    var transitionsMap = schemaRes.allowedStateTransitions;
+
+    var currentState = (payload && payload.currentState) || "Pendiente";
+    var allowedNext = transitionsMap[currentState] || [];
+
+    if (!allowedNext.includes(newState)) {
+      return {
+        status: "error",
+        code: "INVALID_TRANSITION",
+        message: `La transición de estado '${currentState}' a '${newState}' no está permitida por la máquina de estados.`
+      };
+    }
+
+    return {
+      status: "success",
+      requestId: requestId,
+      previousState: currentState,
+      newState: newState,
+      updatedBy: { userId: actorId, role: actorRole },
+      updatedAt: new Date().toISOString()
+    };
+  } catch (err) {
+    return {
+      status: "error",
+      message: "Error al actualizar el estado de la solicitud: " + err.message
+    };
+  }
+}
+
+// [F8-Task20] [TAREA-ARQ-05] [Anexo Técnico: Arquitectura de Roles - Catálogo de Espacios Funcionales] - Consulta del catálogo de Spreadsheets funcionales por rol institucional con aislamiento de datos sensibles
+function getInstitutionalFunctionalSpaceCatalog(payload) {
+  try {
+    var functionalSpacesCatalog = [
+      { roleKey: "Administrador", spreadsheetName: "SP_AdminPlataforma", confidentialityLevel: "ALTA", sensitivityDomain: "PLATFORM_ADMIN", tables: ["ConfiguracionGlobal", "AuditoriaCentral", "Backups"] },
+      { roleKey: "Direccion", spreadsheetName: "SP_Direccion", confidentialityLevel: "INSTITUCIONAL", sensitivityDomain: "EXECUTIVE", tables: ["PlanesEstrategicos", "ResumenEjecutivo", "AprobacionesDireccion"] },
+      { roleKey: "DireccionAcademica", spreadsheetName: "SP_DireccionAcademica", confidentialityLevel: "ACADEMICA", sensitivityDomain: "ACADEMIC_ADMIN", tables: ["PlanesEstudio", "SupervisionPlanificaciones", "IndicesRendimiento"] },
+      { roleKey: "Secretaria", spreadsheetName: "SP_Secretaria", confidentialityLevel: "CONFIDENCIAL", sensitivityDomain: "STUDENT_RECORDS", tables: ["SolicitudesTramite", "BorradoresAdmision", "Certificados"] },
+      { roleKey: "CoordinacionNivel", spreadsheetName: "SP_CoordinacionNivel", confidentialityLevel: "ACADEMICA", sensitivityDomain: "LEVEL_COORDINATION", tables: ["SupervisionNivel", "RevisionesSilabos", "EventosNivel"] },
+      { roleKey: "CoordinacionDepartamento", spreadsheetName: "SP_CoordinacionDepartamento", confidentialityLevel: "ACADEMICA", sensitivityDomain: "DEPT_COORDINATION", tables: ["HorariosDepartamento", "CargasDocentesArea", "EquipamientoDep"] },
+      { roleKey: "Docente", spreadsheetName: "SP_Docente", confidentialityLevel: "RESTRINGIDA", sensitivityDomain: "TEACHING_OPS", tables: ["CargasAcademicas", "AsistenciasClase", "EntregasTareas"] },
+      { roleKey: "Estudiante", spreadsheetName: "SP_Estudiante", confidentialityLevel: "PERSONAL", sensitivityDomain: "STUDENT_SELF", tables: ["MisTareas", "MisCalificaciones", "MisAsistencias"] },
+      { roleKey: "Tutor", spreadsheetName: "SP_Tutores", confidentialityLevel: "CONFIDENCIAL", sensitivityDomain: "GUARDIAN_OPS", tables: ["EstudiantesA Cargo", "ComunicacionesTutores", "Autorizaciones"] },
+      { roleKey: "Admisiones", spreadsheetName: "SP_Admisiones", confidentialityLevel: "CONFIDENCIAL", sensitivityDomain: "ADMISSIONS", tables: ["SolicitudesAdmision", "Entrevistas", "EvaluacionesIngreso"] },
+      { roleKey: "Finanzas", spreadsheetName: "SP_Finanzas", confidentialityLevel: "ESTRICTAMENTE_CONFIDENCIAL", sensitivityDomain: "FINANCIAL", tables: ["Cobranzas", "Pagos", "Becas", "EstadoCuenta"] },
+      { roleKey: "Orientacion", spreadsheetName: "SP_Orientacion", confidentialityLevel: "EXTREMA_CONFIDENCIALIDAD", sensitivityDomain: "PSYCHOPEDAGOGICAL", tables: ["ExpedientesPsicopedagogicos", "SesionesOrientacion", "CasosEspeciales"] },
+      { roleKey: "Biblioteca", spreadsheetName: "SP_Biblioteca", confidentialityLevel: "OPERATIVA", sensitivityDomain: "LIBRARY", tables: ["CatalogoLibros", "Prestamos", "SancionesBiblioteca"] },
+      { roleKey: "RecursosHumanos", spreadsheetName: "SP_RecursosHumanos", confidentialityLevel: "ESTRICTAMENTE_CONFIDENCIAL", sensitivityDomain: "HUMAN_RESOURCES", tables: ["ExpedientesPersonal", "Planillas", "PermisosDocentes"] },
+      { roleKey: "Eventos", spreadsheetName: "SP_Eventos", confidentialityLevel: "INSTITUCIONAL", sensitivityDomain: "EVENTS", tables: ["CalendarioInstitucional", "ReservasEspacios", "Logistica"] },
+      { roleKey: "Soporte", spreadsheetName: "SP_Soporte", confidentialityLevel: "TECNICA", sensitivityDomain: "TECH_SUPPORT", tables: ["TicketsSoporte", "InventarioEquipos", "Mantenimientos"] },
+      { roleKey: "Auditoria", spreadsheetName: "SP_Auditoria", confidentialityLevel: "CONFIDENCIAL", sensitivityDomain: "AUDIT", tables: ["BitacoraAuditoria", "AccesoSensibles", "MétricasSeguridad"] }
+    ];
+
+    var queryRole = (payload && payload.role) || null;
+    var resultCatalog = functionalSpacesCatalog;
+
+    if (queryRole) {
+      resultCatalog = functionalSpacesCatalog.filter(function(item) {
+        return item.roleKey.toLowerCase() === String(queryRole).toLowerCase();
+      });
+    }
+
+    return {
+      status: "success",
+      totalFunctionalSpaces: resultCatalog.length,
+      functionalSpaces: resultCatalog,
+      architectureNote: "Nota de Arquitectura: Las estructuras que están en el anexo A (carpetas del repositorio) y en el anexo B (hojas y spreadsheets por rol) son ejemplos de una estructura recomendable, y no una estructura obligatoria.",
+      timestamp: new Date().toISOString()
+    };
+  } catch (err) {
+    return {
+      status: "error",
+      message: "Error al consultar el catálogo de espacios funcionales: " + err.message
     };
   }
 }

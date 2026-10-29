@@ -2342,3 +2342,409 @@ Archivos Modificados:
 
 5. Auditoria.txt
    - Registro de la auditoría y verificación de la tarea [TAREA-AD-02].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [TAREA-AD-03] Implementar la gestión del ámbito de actuación de los roles
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/user-service/Code.gs
+   - Líneas 1419-1426: Adición de dispatchers en `doPost` para las acciones `assignRoleScope`, `getUserScopeConfig` y `validateRoleScopeAccess`.
+   - Líneas 7105-7235: Implementación de las funciones backend `assignRoleScope`, `getUserScopeConfig` y `validateRoleScopeAccess` para la asignación y validación de ámbitos de actuación (NIVEL, DEPARTAMENTO, CARRERA, ASIGNATURA, GRADO, SECCION, PERIODO), persistencia en `AsignacionesAmbitosRoles` e historial en `recordEntityChangeLog`.
+
+2. backend/academic-service/Code.gs
+   - Líneas 410-430: Integración de la validación de ámbito contextual en `validateRolePermission` con verificación directa sobre la hoja `AsignacionesAmbitosRoles`.
+
+3. js/ui-common.js
+   - Líneas 5790-5815: Implementación de las utilidades de filtrado y validación de contexto `filterDataByScope` y `validateUserScopeContext`.
+
+4. Pendientes.md
+   - Actualización del estado a [X] Completado para [TAREA-AD-03].
+
+5. Auditoria.txt
+   - Registro de auditoría y verificación técnica de [TAREA-AD-03].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [TAREA-AD-04] Desarrollar el dashboard de coordinador académico como implementación de referencia
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. dashboard-coordinacion.html
+   - Creación del dashboard de referencia para Coordinadores Académicos con tarjetas de métricas, controles de ámbito contextual por nivel y departamento, lista de supervisión de docentes coordinados y revisión de jornalizaciones y sílabos.
+
+2. js/secretary.js
+   - Líneas 454-522: Implementación de los controladores de interfaz `initCoordinatorDashboard` y `loadCoordinatorDashboardData` antecedidos por el comentario identificativo `[TAREA-AD-04]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para [TAREA-AD-04].
+
+4. Auditoria.txt
+   - Registro de auditoría y verificación de la tarea [TAREA-AD-04].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [TAREA-AD-05] Integrar los dashboards dinámicos con los módulos y servicios existentes
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/config.js
+   - Líneas 733-788: Definición del catálogo de contratos de integración `DYNAMIC_DASHBOARD_MODULE_CONTRACTS` asociando IDs de módulos dinámicos, servicios responsables (`USER`, `ACADEMIC`, `TASK`, `EXAM`), operaciones de lectura/escritura y capacidades requeridas.
+
+2. js/api.js
+   - Líneas 355-380: Implementación de la función ejecutora `executeDynamicModuleContract` para invocación dinámica de contratos con captura de excepciones e inyección de aislamiento de fallos por módulo.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para [TAREA-AD-05].
+
+4. Auditoria.txt
+   - Registro de auditoría y verificación técnica de [TAREA-AD-05].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [TAREA-AD-06] Centralizar y verificar la autorización efectiva de cada operación
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/user-service/Code.gs
+   - Líneas 1228: Adición de evento estructurado de auditoría `UNAUTHORIZED_ACCESS_ATTEMPT` con `logStructuredEvent` al denegar acceso por defecto en `validateRolePermission`.
+
+2. backend/academic-service/Code.gs
+   - Líneas 505: Adición de evento estructurado de auditoría `UNAUTHORIZED_ACCESS_ATTEMPT` en `validateRolePermission` ante solicitudes no autorizadas.
+
+3. backend/task-service/Code.gs
+   - Líneas 274: Adición de registro de auditoría `UNAUTHORIZED_ACCESS_ATTEMPT` en `validateRolePermission` al rechazar acceso por defecto.
+
+4. Pendientes.md
+   - Actualización del estado a [X] Completado para [TAREA-AD-06].
+
+5. Auditoria.txt
+   - Registro de auditoría y verificación técnica de [TAREA-AD-06].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: Reorganización y renombrado de tareas de Pendientes.md por importancia y severidad
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. Pendientes.md
+   - Inserción de la regla del backlog en la primera línea del archivo.
+   - Reordenamiento de las 27 tareas en orden descendente de importancia y severidad (Crítica -> Alta -> Media).
+   - Renombrado consecutivo de identificadores en formato F8-Task01 a F8-Task27 conservando íntegramente todo el contenido y detalle de cada tarea.
+
+2. Auditoria.txt
+   - Registro de la auditoría y reorganización técnica del backlog en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task12] Crear una interfaz administrativa para configurar los dashboards y las responsabilidades
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. dashboard-direccion.html
+   - Adición de botón gatillador `#btn-role-config-admin` en la barra principal y estructura modal `#modal-role-responsibility-config`.
+
+2. js/secretary.js
+   - Líneas 454-515: Implementación de controladores UI `openRoleResponsibilityConfigModal` y `loadRoleConfigAdminData` con etiqueta identificativa `[F8-Task12]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task12].
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task12].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task02] Auditar los archivos existentes y elaborar un inventario de dependencias
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. docs/architecture/repository-inventory.md
+   - Creación del documento maestro de inventario del repositorio detallando paneles HTML, controladores JS, microservicios backend GAS y assets.
+
+2. MapaDependencias.md
+   - Adición del comentario identificativo de primera línea `[F8-Task02]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task02].
+
+4. Auditoria.txt
+   - Registro de auditoría y verificación técnica de [F8-Task02].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task03] Actualizar todas las rutas y dependencias después de reorganizar el repositorio
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. docs/architecture/routing-and-paths.md
+   - Creación de la documentación de enrutamiento, rutas relativas y verificación de dependencias sin errores 404.
+
+2. js/config.js
+   - Líneas 733-745: Adición de `MODULE_ROUTING_DICTIONARY` con la definición central de rutas con encabezado identificativo `[F8-Task03]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task03].
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task03].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task04] Crear pruebas de regresión para la modularización y los dashboards dinámicos
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. tests/regression/modular-dashboard-suite.js
+   - Creación del script ejecutable en Node.js para la suite de regresión arquitectónica de modularización y dashboards dinámicos.
+
+2. backend/developer-service/Code.gs
+   - Implementación de la función `runModularAndDynamicDashboardsRegressionSuite` para ejecución de suite de regresión con verificación de token HMAC, catálogo dinámico, RBAC por defecto y contratos API.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task04].
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task04].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task05] Ejecutar la reorganización mediante etapas verificables
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. docs/architecture/staged-migration-procedure.md
+   - Creación del documento técnico especificando las 5 etapas del procedimiento de migración por hitos y el protocolo probado de reversión (rollback).
+
+2. backend/developer-service/Code.gs
+   - Implementación de la función `validateStagedMigrationProgress` para la verificación programática del avance por etapas y estado del procedimiento de reversión.
+
+3. tests/regression/modular-dashboard-suite.js
+   - Inclusión de aserciones de verificación de `staged-migration-procedure.md` y `validateStagedMigrationProgress`.
+
+4. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task05].
+
+5. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task05].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task13] Definir y aplicar una estructura modular de carpetas
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. docs/architecture/folder-structure.md
+   - Creación de la documentación de jerarquía modular de carpetas (app/html, app/js, app/css, app/assets, backend/, tests/, docs/) con nota de arquitectura obligatoria.
+
+2. backend/developer-service/Code.gs
+   - Implementación de la función `validateModularFolderStructure` con la etiqueta identificativa `[F8-Task13] [TAREA-MOD-02]`.
+
+3. tests/regression/modular-dashboard-suite.js
+   - Inclusión de comprobaciones para `folder-structure.md` y `validateModularFolderStructure`.
+
+4. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task13].
+
+5. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task13].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task14] Modularizar los archivos grandes sin eliminar ni duplicar funciones
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. docs/architecture/monolith-decomposition-plan.md
+   - Creación del documento de plan de descomposición de monolitos y preservación de contratos públicos expuestos.
+
+2. backend/developer-service/Code.gs
+   - Implementación de la función `validateMonolithDecompositionContracts` con la etiqueta identificativa `[F8-Task14] [TAREA-MOD-03]`.
+
+3. tests/regression/modular-dashboard-suite.js
+   - Inclusión de comprobaciones para `monolith-decomposition-plan.md` y `validateMonolithDecompositionContracts`.
+
+4. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task14].
+
+5. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task14].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task15] Actualizar el mapa de dependencias y la documentación arquitectónica
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. MapaDependencias.md
+   - Actualización integral del mapa de dependencias agregando la sección de orden definitivo de inicialización y referencias a todos los documentos arquitectónicos.
+
+2. backend/developer-service/Code.gs
+   - Implementación de la función `getArchitectureAndDependencyMapReport` con la etiqueta identificativa `[F8-Task15] [TAREA-MOD-05]`.
+
+3. tests/regression/modular-dashboard-suite.js
+   - Inclusión de aserciones para `MapaDependencias.md` y `getArchitectureAndDependencyMapReport`.
+
+4. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task15].
+
+5. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task15].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task16] Implementar los principios de independencia funcional y comunicación entre roles
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. backend/developer-service/Code.gs
+   - Implementación de las funciones `getRoleFunctionalSpaceConfig` y `auditRoleIndependenceAndMasterDataIntegrity` con la etiqueta identificativa `[F8-Task16] [TAREA-ARQ-01]`.
+
+2. tests/regression/modular-dashboard-suite.js
+   - Inclusión de comprobaciones de funciones para `[F8-Task16]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task16].
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task16].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task17] Estandarizar convenciones de identificadores estables y columnas comunes de control
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. backend/developer-service/Code.gs
+   - Implementación de la función `validateStableIdentifiersAndControlColumns` con la etiqueta identificativa `[F8-Task17] [TAREA-ARQ-02]`.
+
+2. tests/regression/modular-dashboard-suite.js
+   - Inclusión de comprobaciones para `validateStableIdentifiersAndControlColumns`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task17].
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task17].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task18] Implementar hojas estandarizadas de eventos, errores y auditoría por Spreadsheet funcional
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. backend/developer-service/Code.gs
+   - Implementación de las funciones `ensureStandardObservabilitySheets` y `validateObservabilitySheetsIntegrity` con la etiqueta identificativa `[F8-Task18] [TAREA-ARQ-03]`.
+
+2. tests/regression/modular-dashboard-suite.js
+   - Inclusión de comprobaciones para `ensureStandardObservabilitySheets` y `validateObservabilitySheetsIntegrity`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task18].
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task18].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task19] Implementar el Spreadsheet central de configuración y aprovisionamiento
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. backend/developer-service/Code.gs
+   - Implementación de las funciones `getCentralSpreadsheetConfigRegistry` y `recordProvisioningHistory` con la etiqueta identificativa `[F8-Task19] [TAREA-ARQ-04]`.
+
+2. tests/regression/modular-dashboard-suite.js
+   - Inclusión de comprobaciones para `getCentralSpreadsheetConfigRegistry` y `recordProvisioningHistory`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task19].
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task19].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task20] Implementar el catálogo de Spreadsheets funcionales por rol institucional
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. backend/user-service/Code.gs
+   - Implementación de la función `getInstitutionalFunctionalSpaceCatalog` con la etiqueta identificativa `[F8-Task20] [TAREA-ARQ-05]`.
+   - Adición del dispatcher en `doPost` para la acción `getInstitutionalFunctionalSpaceCatalog`.
+
+2. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task20].
+
+3. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task20].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task22] Implementar el aprovisionamiento automático, versionado de esquemas y migración de Spreadsheets
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. backend/developer-service/Code.gs
+   - Implementación de las funciones `provisionRoleSpreadsheet` y `migrateSpreadsheetSchema` con la etiqueta identificativa `[F8-Task22] [TAREA-ARQ-07]`.
+   - Adición de dispatchers en `doPost` y asignación de permisos en `ROLE_PERMISSIONS`.
+
+2. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task22].
+
+3. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task22].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task23] Implementar la independencia de servicios backend, seguridad Drive y límites de Google Sheets
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. backend/developer-service/Code.gs
+   - Implementación de las funciones `auditServiceBackendIsolationAndDriveSecurity` y `batchSpreadsheetReadOperations` con la etiqueta identificativa `[F8-Task23] [TAREA-ARQ-08]`.
+   - Adición de dispatchers en `doPost` y asignación de permisos en `ROLE_PERMISSIONS`.
+
+2. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task23].
+
+3. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task23].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task21] Implementar el modelo común de comunicaciones institucionales y solicitudes
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. backend/user-service/Code.gs
+   - Implementación de las funciones `getInstitutionalCommunicationsSchema`, `createInstitutionalServiceRequest` y `updateInstitutionalServiceRequestStatus` con la etiqueta identificativa `[F8-Task21] [TAREA-ARQ-06]`.
+   - Adición de dispatchers en `doPost` switch.
+
+2. js/ui-common.js
+   - Implementación de `createInstitutionalServiceRequestUI` con la etiqueta identificativa `[F8-Task21] [TAREA-ARQ-06]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task21].
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task21].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-28
+TAREA: [F8-Task24] Implementar la previsualización integrada de documentos PDF en la revisión de entregas
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. backend/task-service/Code.gs
+   - Inserción de la etiqueta identificativa `[F8-Task24] [TAREA-F8-OPT-01]` sobre la función `getSubmissionDocumentPreviewUrl`.
+
+2. js/teacher.js
+   - Inserción de la etiqueta identificativa `[F8-Task24] [TAREA-F8-OPT-01]` sobre la función `previewSubmissionPDFDocument`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task24].
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea [F8-Task24].

@@ -408,6 +408,35 @@ function validateContextualAccess(action, payload, verifiedUserId, userRole) {
     }
   }
 
+  // [TAREA-AD-03] [Anexo Tareas: Dashboards Dinámicos - Ámbito de Actuación] - Validación server-side de ámbito contextual
+  if (payload && payload.scopeType && payload.requestedValue && verifiedUserId) {
+    try {
+      var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+      var sheet = ss.getSheetByName("AsignacionesAmbitosRoles");
+      if (sheet && sheet.getLastRow() > 1) {
+        var data = sheet.getDataRange().getValues();
+        var userScopeFound = false;
+        for (var i = 1; i < data.length; i++) {
+          if (String(data[i][1]).trim() === String(verifiedUserId).trim() &&
+              String(data[i][3]).trim().toUpperCase() === String(payload.scopeType).trim().toUpperCase() &&
+              String(data[i][5]).trim().toLowerCase() === "activo") {
+            userScopeFound = true;
+            var vals = [];
+            try { vals = JSON.parse(data[i][4]); } catch (_) { vals = [data[i][4]]; }
+            var isAllowed = vals.some(function(v) { return String(v).trim().toUpperCase() === String(payload.requestedValue).trim().toUpperCase(); });
+            if (!isAllowed) {
+              return { authorized: false, reason: "Aislamiento de ámbito: el valor '" + payload.requestedValue + "' está fuera del ámbito autorizado para " + payload.scopeType };
+            }
+            break;
+          }
+        }
+        if (!userScopeFound && ["Administrador", "Director", "Desarrollador"].indexOf(userRole) === -1) {
+          return { authorized: false, reason: "Aislamiento de ámbito: no existe una asignación activa de ámbito para '" + payload.scopeType + "'." };
+        }
+      }
+    } catch (_) {}
+  }
+
   // [TAREA-F6-012] [Fase 6: Reestructuración en microservicios independientes] - Validación de aislamiento y ámbito de supervisión por área para Coordinadores
   if (userRole === "Coordinador") {
     const targetAreaId = payload && payload.areaId;
@@ -478,6 +507,10 @@ function validateRolePermission(action, payload) {
     }
   }
 
+  // [TAREA-AD-06] [Anexo Tareas: Seguridad y Roles] - Registro de auditoría de rechazo por defecto ante peticiones no autorizadas
+  try {
+    logStructuredEvent("ACADEMIC", "validateRolePermission", "WARN", "UNAUTHORIZED_ACCESS_ATTEMPT", `Acceso no autorizado rechazado por defecto para rol '${userRole}' en acción '${action}'.`, { action: action, userId: verifiedUserId }, userRole);
+  } catch (_) {}
   return { authorized: false, role: userRole };
 }
 

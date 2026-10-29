@@ -351,4 +351,32 @@ var startTime = Date.now();
                 data: []
             };
         });
-}
+};
+
+// [TAREA-AD-05] [Anexo Tareas: Dashboards Dinámicos - Integración de Módulos] - Ejecutor de contratos de módulos dinámicos con aislamiento de fallos
+window.executeDynamicModuleContract = async function(moduleId, customParams, actionType) {
+    try {
+        const contracts = window.DYNAMIC_DASHBOARD_MODULE_CONTRACTS || {};
+        const contract = contracts[moduleId];
+        if (!contract) {
+            return { status: "error", message: `Contrato no encontrado para el módulo dinámico '${moduleId}'.` };
+        }
+
+        const targetService = contract.targetService || "ACADEMIC";
+        const action = (actionType === "write") ? contract.writeAction : contract.readAction;
+        if (!action) {
+            return { status: "error", message: `Operación '${actionType || "read"}' no soportada para el módulo '${moduleId}'.` };
+        }
+
+        const payload = Object.assign({}, contract.defaultParams || {}, customParams || {});
+        const res = await window.fetchApi(targetService, action, payload);
+        return res || { status: "error", message: "Respuesta vacía del microservicio." };
+    } catch (err) {
+        console.error(`[TAREA-AD-05] Error al ejecutar contrato para módulo ${moduleId}:`, err);
+        return {
+            status: "error",
+            moduleId: moduleId,
+            message: `Error aislado en el módulo dinámico '${moduleId}': ${err.message}`
+        };
+    }
+};

@@ -271,6 +271,11 @@ function validateRolePermission(action, payload) {
     }
   }
 
+  // [TAREA-AD-06] [Anexo Tareas: Seguridad y Roles] - Registro de auditoría de denegación por defecto
+  try {
+    const actorId = verifiedUserId || verifiedId || "Desconocido";
+    Logger.log(`[TAREA-AD-06] UNAUTHORIZED_ACCESS_ATTEMPT: Acción '${action}' rechazada por defecto para usuario '${actorId}' (rol '${userRole}').`);
+  } catch (_) {}
   return { authorized: false, role: userRole };
 }
 
@@ -2358,7 +2363,7 @@ function getDriveStorageQuotaMetricsReport(payload) {
 }
 
 
-// [TAREA-F8-OPT-01] [Fase 8: Aula Virtual y Gestión Avanzada del Aprendizaje] - Obtener URL segura de previsualización de documentos PDF adjuntos en entregas con verificación RBAC
+// [F8-Task24] [TAREA-F8-OPT-01] [Fase 8: Aula Virtual y Gestión Avanzada del Aprendizaje] - Obtener URL segura de previsualización de documentos PDF adjuntos en entregas con verificación RBAC
 function getSubmissionDocumentPreviewUrl(payload) {
   try {
     if (!payload || !payload.fileId) {

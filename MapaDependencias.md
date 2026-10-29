@@ -1,6 +1,25 @@
+<!-- [F8-Task15] [TAREA-MOD-05] [Anexo Tareas: Modularización - Documentación Arquitectónica] - Mapa definitivo de dependencias, orden de inicialización y contratos de arquitectura -->
 # Mapa de Dependencias Académicas e Infraestructura Funcional
 **Plataforma Integral de Gestión Educativa — New Generation Christian Academy**
-**Versión Global:** 1.0 Final - Fase 3 Completada
+**Versión Global:** v8.4.0 Modular - Fase 8 y Anexo de Arquitectura
+
+---
+
+## 0. ESTÁNDAR Y ORDEN DEFINITIVO DE CARGA E INICIALIZACIÓN (MODULARIZACIÓN - F8-Task15)
+1. **Punto de Entrada en Raíz:** `index.html` (o `index.htm`).
+2. **Configuración Central y Catalogo (`js/config.js`):** Definiciones globales (`CAPACITIES_CATALOG`, `MODULES_CATALOG`, `RESPONSIBILITIES_CATALOG`), contratos de módulos dinámicos (`DYNAMIC_DASHBOARD_MODULE_CONTRACTS`) y diccionario de rutas modulares (`MODULE_ROUTING_DICTIONARY`).
+3. **Capa de Conexión API y Seguridad (`js/api.js`):** Transporte HTTP, validación HMAC-SHA256, inyección de `correlationId` y ejecutor universal aislado `executeDynamicModuleContract`.
+4. **Marco de Interfaz y UI Común (`js/ui-common.js`):** Motor de dashboards dinámicos (`loadDynamicDashboard`), filtrado contextual por ámbito (`filterDataByScope`, `validateUserScopeContext`), accesibilidad WCAG 2.2 AA y componentes comunes.
+5. **Controladores de Dominio Específico:** `js/secretary.js` (Coordinación y roles), `js/teacher.js` (Docencia y exámenes), `js/student.js` (Portal estudiantil), `js/auth.js` (Autenticación).
+6. **Microservicios GAS Backend:** `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/task-service/Code.gs`, `backend/exam-service/Code.gs`, `backend/accounting-service/Code.gs`, `backend/developer-service/Code.gs`.
+
+## 0.1 DOCUMENTOS TÉCNICOS ARQUITECTÓNICOS COMPLEMENTARIOS
+- [`docs/architecture/repository-inventory.md`](docs/architecture/repository-inventory.md): Inventario 100% completo de archivos y dependencias.
+- [`docs/architecture/routing-and-paths.md`](docs/architecture/routing-and-paths.md): Diccionario de rutas relativas y resolución de recursos.
+- [`docs/architecture/staged-migration-procedure.md`](docs/architecture/staged-migration-procedure.md): Procedimiento de migración por etapas y protocolo de reversión (rollback).
+- [`docs/architecture/folder-structure.md`](docs/architecture/folder-structure.md): Jerarquía modular de carpetas (`app/`, `backend/`, `tests/`, `docs/`).
+- [`docs/architecture/monolith-decomposition-plan.md`](docs/architecture/monolith-decomposition-plan.md): Plan de descomposición de monolitos y preservación de contratos públicos.
+- [`docs/architecture/spreadsheets-schema.md`](docs/architecture/spreadsheets-schema.md): Esquema de tablas y columnas de los Spreadsheets por rol/microservicio.
 
 ---
 

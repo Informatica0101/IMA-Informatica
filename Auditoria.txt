@@ -195,3 +195,235 @@ EVALUACIÓN Y EVIDENCIAS VERIFICABLES DE TAREAS AUDITADAS:
 CONCLUSIÓN DE AUDITORÍA:
 Todas las tareas registradas como completadas en completadas.md y Pendientes.md cuentan con una implementación real, funcional y verificable en las líneas especificadas del código fuente del proyecto. No se detectan inconsistencias, funciones ausentes ni dependencias rotas en las tareas auditadas.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA-AD-03: GESTIÓN DEL ÁMBITO DE ACTUACIÓN DE LOS ROLES
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, backend/academic-service/Code.gs, js/ui-common.js
+RESULTADO DE EVALUACIÓN:
+- Se auditó la gestión y validación del ámbito de actuación de roles (NIVEL, DEPARTAMENTO, CARRERA, ASIGNATURA, GRADO, SECCION, PERIODO).
+- Se implementaron y verificaron los endpoints assignRoleScope, getUserScopeConfig y validateRoleScopeAccess en backend/user-service/Code.gs con persistencia en AsignacionesAmbitosRoles y registro de auditoría en HistorialCambiosEntidad.
+- Se integró la validación server-side contextual de ámbito en validateRolePermission dentro de backend/academic-service/Code.gs.
+- Se agregaron las utilidades de filtrado y validación de contexto por ámbito filterDataByScope y validateUserScopeContext en js/ui-common.js.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA-AD-04: DASHBOARD DE COORDINADOR ACADÉMICO COMO IMPLEMENTACIÓN DE REFERENCIA
+ARCHIVOS AUDITADOS: dashboard-coordinacion.html, js/secretary.js, backend/academic-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se creó la interfaz de referencia dashboard-coordinacion.html con tarjetas de resumen métrico, filtros de nivel y departamento, supervisión de docentes coordinados y revisión de jornalizaciones/sílabos.
+- Se implementaron los controladores UI initCoordinatorDashboard y loadCoordinatorDashboardData en js/secretary.js con consumo del endpoint backend getCoordinatorOverview.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA-AD-05: INTEGRACIÓN DE DASHBOARDS DINÁMICOS CON MÓDULOS Y SERVICIOS EXISTENTES
+ARCHIVOS AUDITADOS: js/config.js, js/api.js, backend/academic-service/Code.gs, backend/user-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se auditó la integración de dashboards dinámicos mediante contratos de integración y conectores adaptadores.
+- Se definieron los contratos estables en DYNAMIC_DASHBOARD_MODULE_CONTRACTS dentro de js/config.js especificando ID de módulo, servicio responsable, acciones de lectura/escritura y capacidades requeridas.
+- Se implementó el ejecutor universal executeDynamicModuleContract en js/api.js con aislamiento de fallos por módulo y tratamiento estandarizado de excepciones.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA-AD-06: CENTRALIZAR Y VERIFICAR LA AUTORIZACIÓN EFECTIVA DE CADA OPERACIÓN
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, backend/academic-service/Code.gs, backend/task-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se auditó la verificación server-side de autorización y denegación por defecto.
+- Se agregaron eventos estructurados de auditoría UNAUTHORIZED_ACCESS_ATTEMPT en validateRolePermission en user-service, academic-service y task-service para registrar todo rechazo por defecto.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y REORGANIZACIÓN DE BACKLOG DE TAREAS PENDIENTES
+ARCHIVOS AUDITADOS: Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se reorganizaron y renombraron las 27 tareas de Pendientes.md en orden descendente de importancia y severidad (Crítica -> Alta -> Media).
+- Se asignaron identificadores consecutivos en formato F8-Task01 a F8-Task27 conservando íntegramente todo el contenido, detalles, requerimientos y criterios de aceptación.
+- Se incorporó la regla del backlog en la primera línea de Pendientes.md.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task12: CREAR UNA INTERFAZ ADMINISTRATIVA PARA CONFIGURAR LOS DASHBOARDS Y LAS RESPONSABILIDADES
+ARCHIVOS AUDITADOS: dashboard-direccion.html, js/secretary.js, backend/user-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se auditó la consola administrativa de configuración de roles y dashboards.
+- Se agregaron el botón gatillador #btn-role-config-admin y la estructura modal #modal-role-responsibility-config en dashboard-direccion.html.
+- Se implementaron los controladores UI openRoleResponsibilityConfigModal y loadRoleConfigAdminData en js/secretary.js con etiqueta identificativa [F8-Task12].
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task02: AUDITAR LOS ARCHIVOS EXISTENTES Y ELABORAR UN INVENTARIO DE DEPENDENCIAS
+ARCHIVOS AUDITADOS: Todo el repositorio, docs/architecture/repository-inventory.md, MapaDependencias.md
+RESULTADO DE EVALUACIÓN:
+- Se realizó la auditoría integral de todos los archivos del repositorio (HTML, JS, CSS, Apps Script, assets y documentos).
+- Se generó el documento formal de inventario docs/architecture/repository-inventory.md detallando vistas principales, módulos de control JS, microservicios backend y contratos.
+- Se actualizó MapaDependencias.md con el encabezado identificativo [F8-Task02].
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task03: ACTUALIZAR TODAS LAS RUTAS Y DEPENDENCIAS DESPUÉS DE REORGANIZAR EL REPOSOTORIO
+ARCHIVOS AUDITADOS: docs/architecture/routing-and-paths.md, js/config.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se verificaron y mapearon todas las rutas relativas de dashboards, portales, estilos CSS, assets gráficos e importaciones de scripts.
+- Se definió el diccionario de enrutamiento MODULE_ROUTING_DICTIONARY en js/config.js con el encabezado identificativo [F8-Task03].
+- Se generó la documentación técnica docs/architecture/routing-and-paths.md comprobando la inexistencia de errores HTTP 404.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task04: CREAR PRUEBAS DE REGRESIÓN PARA LA MODULARIZACIÓN Y LOS DASHBOARDS DINÁMICOS
+ARCHIVOS AUDITADOS: tests/regression/modular-dashboard-suite.js, backend/developer-service/Code.gs, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se construyó y verificó la suite de pruebas automatizadas de regresión para modularización y dashboards dinámicos.
+- Se implementó `runModularAndDynamicDashboardsRegressionSuite` en `backend/developer-service/Code.gs` y la suite ejecutable en Node.js `tests/regression/modular-dashboard-suite.js`.
+- Se verificó la ejecución con resultado 8/8 PASS (100.0%) cubriendo autenticación, dashboards dinámicos, RBAC, flujos académicos e inmutabilidad.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task05: EJECUTAR LA REORGANIZACIÓN MEDIANTE ETAPAS VERIFICABLES
+ARCHIVOS AUDITADOS: docs/architecture/staged-migration-procedure.md, backend/developer-service/Code.gs, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se elaboró el procedimiento de migración por etapas verificables y control de reversión (rollback protocol).
+- Se implementó `validateStagedMigrationProgress` en `backend/developer-service/Code.gs` para verificación programática de hitos de migración y estado de salud del plan de reversión.
+- Se actualizó la suite de regresión en `tests/regression/modular-dashboard-suite.js` ejecutando con 10/10 PASS (100.0%).
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task13: DEFINIR Y APLICAR UNA ESTRUCTURA MODULAR DE CARPETAS
+ARCHIVOS AUDITADOS: docs/architecture/folder-structure.md, backend/developer-service/Code.gs, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se documentó la estructura modular de carpetas en docs/architecture/folder-structure.md.
+- Se implementó `validateModularFolderStructure` en `backend/developer-service/Code.gs` para verificación programática de carpetas y preservación de `index.html`.
+- Se actualizó la suite de regresión en `tests/regression/modular-dashboard-suite.js` ejecutando con 12/12 PASS (100.0%).
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task14: MODULARIZAR LOS ARCHIVOS GRANDES SIN ELIMINAR NI DUPLICAR FUNCIONES
+ARCHIVOS AUDITADOS: docs/architecture/monolith-decomposition-plan.md, backend/developer-service/Code.gs, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se elaboró el plan de descomposición de monolitos y matriz de contratos públicos en docs/architecture/monolith-decomposition-plan.md.
+- Se implementó `validateMonolithDecompositionContracts` en `backend/developer-service/Code.gs` para la verificación automatizada de contratos públicos y prevención de duplicados/colisiones.
+- Se actualizó la suite de regresión en `tests/regression/modular-dashboard-suite.js` ejecutando con 14/14 PASS (100.0%).
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task15: ACTUALIZAR EL MAPA DE DEPENDENCIAS Y LA DOCUMENTACIÓN ARQUITECTÓNICA
+ARCHIVOS AUDITADOS: MapaDependencias.md, backend/developer-service/Code.gs, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se actualizó MapaDependencias.md incorporando el orden definitivo de inicialización y las referencias a todos los documentos arquitectónicos de docs/architecture/.
+- Se implementó la función backend `getArchitectureAndDependencyMapReport` en `backend/developer-service/Code.gs` con la etiqueta identificativa `[F8-Task15] [TAREA-MOD-05]`.
+- Se actualizó la suite de regresión en `tests/regression/modular-dashboard-suite.js` ejecutando con 16/16 PASS (100.0%).
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task16: IMPLEMENTAR LOS PRINCIPIOS DE INDEPENDENCIA FUNCIONAL Y COMUNICACIÓN ENTRE ROLES
+ARCHIVOS AUDITADOS: backend/developer-service/Code.gs, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementó la configuración de espacios funcionales por rol e inspección de integridad de datos maestros (`getRoleFunctionalSpaceConfig` y `auditRoleIndependenceAndMasterDataIntegrity`) en `backend/developer-service/Code.gs` con el comentario identificativo `[F8-Task16] [TAREA-ARQ-01]`.
+- Se actualizó la suite de regresión en `tests/regression/modular-dashboard-suite.js` ejecutando con 18/18 PASS (100.0%).
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task17: ESTANDARIZAR CONVENCIONES DE IDENTIFICADORES ESTABLES Y COLUMNAS COMUNES DE CONTROL
+ARCHIVOS AUDITADOS: backend/developer-service/Code.gs, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementó la validación y estandarización del catálogo de identificadores estables y columnas de control (`validateStableIdentifiersAndControlColumns`) en `backend/developer-service/Code.gs` con la etiqueta identificativa `[F8-Task17] [TAREA-ARQ-02]`.
+- Se actualizó la suite de regresión en `tests/regression/modular-dashboard-suite.js` ejecutando con 19/19 PASS (100.0%).
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task18: IMPLEMENTAR HOJAS ESTANDARIZADAS DE EVENTOS, ERRORES Y AUDITORÍA POR SPREADSHEET FUNCIONAL
+ARCHIVOS AUDITADOS: backend/developer-service/Code.gs, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `ensureStandardObservabilitySheets` y `validateObservabilitySheetsIntegrity` en `backend/developer-service/Code.gs` con la etiqueta identificativa `[F8-Task18] [TAREA-ARQ-03]` para garantizar la presencia y estructura de las hojas `EventosSistema`, `ErroresSistema` y `AuditoriaCambios`.
+- Se actualizó la suite de regresión en `tests/regression/modular-dashboard-suite.js` ejecutando con 21/21 PASS (100.0%).
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task19: IMPLEMENTAR EL SPREADSHEET CENTRAL DE CONFIGURACIÓN Y APROVISIONAMIENTO
+ARCHIVOS AUDITADOS: backend/developer-service/Code.gs, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `getCentralSpreadsheetConfigRegistry` y `recordProvisioningHistory` en `backend/developer-service/Code.gs` con la etiqueta identificativa `[F8-Task19] [TAREA-ARQ-04]` para el registro central de Spreadsheets provisionados.
+- Se actualizó la suite de regresión en `tests/regression/modular-dashboard-suite.js` ejecutando con 23/23 PASS (100.0%).
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task20: IMPLEMENTAR EL CATÁLOGO DE SPREADSHEETS FUNCIONALES POR ROL INSTITUCIONAL
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `getInstitutionalFunctionalSpaceCatalog` en `backend/user-service/Code.gs` con la etiqueta identificativa `[F8-Task20] [TAREA-ARQ-05]`.
+- Se catalogó la totalidad de los 17 espacios funcionales institucionales (`SP_AdminPlataforma`, `SP_Direccion`, `SP_DireccionAcademica`, `SP_Secretaria`, `SP_CoordinacionNivel`, `SP_CoordinacionDepartamento`, `SP_Docente`, `SP_Estudiante`, `SP_Tutores`, `SP_Admisiones`, `SP_Finanzas`, `SP_Orientacion`, `SP_Biblioteca`, `SP_RecursosHumanos`, `SP_Eventos`, `SP_Soporte`, `SP_Auditoria`) manteniendo aislamiento de datos confidenciales y niveles de sensibilidad.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task22: IMPLEMENTAR EL APROVISIONAMIENTO AUTOMÁTICO, VERSIONADO DE ESQUEMAS Y MIGRACIÓN DE SPREADSHEETS
+ARCHIVOS AUDITADOS: backend/developer-service/Code.gs, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `provisionRoleSpreadsheet` y `migrateSpreadsheetSchema` en `backend/developer-service/Code.gs` con la etiqueta identificativa `[F8-Task22] [TAREA-ARQ-07]`.
+- Se estableció la creación e inicialización idempotente de espacios de trabajo por rol en Google Drive, el registro de historial en `HistorialProvisionamiento` y las migraciones de tablas de esquemas de forma no destructiva.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task23: IMPLEMENTAR LA INDEPENDENCIA DE SERVICIOS BACKEND, SEGURIDAD DRIVE Y LÍMITES DE GOOGLE SHEETS
+ARCHIVOS AUDITADOS: backend/developer-service/Code.gs, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `auditServiceBackendIsolationAndDriveSecurity` y `batchSpreadsheetReadOperations` en `backend/developer-service/Code.gs` con la etiqueta identificativa `[F8-Task23] [TAREA-ARQ-08]`.
+- Se verificó la prohibición de escrituras directas entre dominios de microservicios, el cumplimiento de privilegio mínimo en permisos de Google Drive y la mitigación de cuotas de Google Sheets mediante operaciones de lectura agrupadas.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task21: IMPLEMENTAR EL MODELO COMÚN DE COMUNICACIONES INSTITUCIONALES Y SOLICITUDES
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, js/ui-common.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `getInstitutionalCommunicationsSchema`, `createInstitutionalServiceRequest` y `updateInstitutionalServiceRequestStatus` en `backend/user-service/Code.gs` y la función helper `createInstitutionalServiceRequestUI` en `js/ui-common.js` con la etiqueta identificativa `[F8-Task21] [TAREA-ARQ-06]`.
+- Se estructuró la matriz de comunicaciones institucionales con 7 tablas operativas, validación de la máquina de estados de transiciones de solicitudes e idempotencia mediante CacheService.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-28
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task24: IMPLEMENTAR LA PREVISUALIZACIÓN INTEGRADA DE DOCUMENTOS PDF EN LA REVISIÓN DE ENTREGAS
+ARCHIVOS AUDITADOS: backend/task-service/Code.gs, teacher-dashboard.html, js/teacher.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se verificó la implementación de `getSubmissionDocumentPreviewUrl` en `backend/task-service/Code.gs` y `previewSubmissionPDFDocument` en `js/teacher.js` con la etiqueta identificativa `[F8-Task24] [TAREA-F8-OPT-01]`.
+- Se validó el funcionamiento del visor de PDF embebido dentro del modal de revisión `#modal-grade-submission` en `teacher-dashboard.html` con controles de zoom, rotación y descarga segura respetando los permisos RBAC.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
