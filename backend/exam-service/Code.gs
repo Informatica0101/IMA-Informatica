@@ -1243,6 +1243,7 @@ function getEvaluationCategories(payload) {
   return { status: "success", data: categories };
 }
 
+// [F9-Task03] [P0] - Consolidar la administración de escalas, ponderaciones y métodos de cálculo académico
 function saveEvaluationCategory(payload) {
   const { categoriaId, nombre, porcentajePonderacion, ambito, escalaId } = payload || {};
   if (!nombre) throw new Error("Nombre de la categoría es requerido.");

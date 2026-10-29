@@ -646,6 +646,7 @@ function doPost(e) {
       case "generateInstitutionalReport": result = generateInstitutionalReport(payload); break;
       case "getSectionEquivalences": result = getSectionEquivalences(payload); break;
       case "calculateUnifiedAcademicGrade": result = calculateUnifiedAcademicGrade(payload); break;
+      case "previewAcademicGradeCalculation": result = previewAcademicGradeCalculation(payload); break;
 
       // Endpoints Fase 3
       case "getInstitutionParams": result = getInstitutionParams(payload); break;
@@ -10407,9 +10408,10 @@ function getSectionEquivalences(payload) {
   };
 }
 
+// [F9-Task03] [P0] - Consolidar la administración de escalas, ponderaciones y métodos de cálculo académico
 // [TAREA-12] [Fase 1 - Evaluación Unificada] - Unificación de la evaluación académica, rúbricas analíticas, ponderaciones, inalterabilidad de periodos cerrados y compatibilidad SACE / Cuadro de Honor.
 function calculateUnifiedAcademicGrade(payload) {
-  const { userId, asignaturaId, periodoId, actividades, esAnoHistoricoAnterior, periodoCerrado } = payload || {};
+  const { userId, asignaturaId, periodoId, actividades, esAnoHistoricoAnterior, periodoCerrado, metodoEvaluacion } = payload || {};
 
   if (esAnoHistoricoAnterior) {
     throw new Error("Las calificaciones de años escolares anteriores son inalterables.");
@@ -10424,31 +10426,75 @@ function calculateUnifiedAcademicGrade(payload) {
       status: "success",
       notaFinal: 0,
       estadoCalificacion: "Sin Actividades",
-      ponderaciones: {},
+      ponderacionesPorCategoria: {},
       cuadroHonor: false,
+      equivalenciaSACE: "Insuficiente",
       compatibilidadSACE: "Pendiente"
     };
   }
 
+  const metodo = metodoEvaluacion || "PromedioPonderado";
   let acumuladoPonderado = 0;
   let totalPonderacion = 0;
+  let sumaAritmetica = 0;
+  let totalActividadesEvaluadas = 0;
+  let puntosObtenidosTotal = 0;
+  let puntosPosiblesTotal = 0;
   const ponderacionesPorCategoria = {};
 
   actividades.forEach(act => {
-    const nota = parseFloat(act.notaObtenida) || 0;
+    const estado = String(act.estado || "").toUpperCase();
+    if (estado === "EXENTO" || estado === "AUSENTE_JUSTIFICADO") {
+      return;
+    }
+
+    const notaRaw = act.notaObtenida;
+    const esPendiente = notaRaw === null || notaRaw === undefined || notaRaw === "" || estado === "PENDIENTE";
+
+    if (esPendiente) {
+      return;
+    }
+
+    const nota = parseFloat(notaRaw) || 0;
     const peso = parseFloat(act.porcentajePonderacion) || 0;
+    const puntosPosibles = parseFloat(act.puntosPosibles || 100) || 100;
     const cat = act.categoria || "General";
 
     acumuladoPonderado += (nota * (peso / 100));
     totalPonderacion += peso;
+    sumaAritmetica += nota;
+    totalActividadesEvaluadas++;
+    puntosObtenidosTotal += nota;
+    puntosPosiblesTotal += puntosPosibles;
 
     ponderacionesPorCategoria[cat] = (ponderacionesPorCategoria[cat] || 0) + (nota * (peso / 100));
   });
 
-  const notaFinalCalculada = Math.min(100, Math.round(acumuladoPonderado * 100) / 100);
+  let notaFinalCalculada = 0;
+  let ponderacionInvalida = false;
+  let advertenciaPonderacion = null;
+
+  if (metodo === "PromedioPonderado") {
+    if (totalPonderacion > 0 && Math.abs(totalPonderacion - 100) > 0.01) {
+      ponderacionInvalida = true;
+      advertenciaPonderacion = `La suma de ponderaciones activas (${totalPonderacion.toFixed(1)}%) difiere del 100% requerido.`;
+    }
+    notaFinalCalculada = Math.min(100, Math.round(acumuladoPonderado * 100) / 100);
+  } else if (metodo === "PromedioAritmetico") {
+    notaFinalCalculada = totalActividadesEvaluadas > 0
+      ? Math.min(100, Math.round((sumaAritmetica / totalActividadesEvaluadas) * 100) / 100)
+      : 0;
+  } else if (metodo === "PuntosObtenidos") {
+    notaFinalCalculada = puntosPosiblesTotal > 0
+      ? Math.min(100, Math.round((puntosObtenidosTotal / puntosPosiblesTotal) * 10000) / 100)
+      : 0;
+  } else {
+    notaFinalCalculada = Math.min(100, Math.round(acumuladoPonderado * 100) / 100);
+  }
+
   const esCuadroHonor = notaFinalCalculada >= 90;
 
-  let equivalenciaSACE = "Reprobado";
+  let equivalenciaSACE = "Insuficiente";
   if (notaFinalCalculada >= 91) equivalenciaSACE = "Excelente";
   else if (notaFinalCalculada >= 81) equivalenciaSACE = "Muy Bueno";
   else if (notaFinalCalculada >= 70) equivalenciaSACE = "Satisfactorio";
@@ -10458,12 +10504,19 @@ function calculateUnifiedAcademicGrade(payload) {
     userId: userId,
     asignaturaId: asignaturaId,
     periodoId: periodoId,
+    metodoEvaluacion: metodo,
     notaFinal: notaFinalCalculada,
     estadoCalificacion: notaFinalCalculada >= 70 ? "Aprobado" : "Reprobado",
     equivalenciaSACE: equivalenciaSACE,
     esCuadroHonor: esCuadroHonor,
-    ponderacionesPorCategoria: ponderacionesPorCategoria
+    ponderacionesPorCategoria: ponderacionesPorCategoria,
+    ponderacionInvalida: ponderacionInvalida,
+    advertenciaPonderacion: advertenciaPonderacion
   };
+}
+
+function previewAcademicGradeCalculation(payload) {
+  return calculateUnifiedAcademicGrade(payload);
 }
 
 // [FASE2-T12] [Fase 2 - Criterios para Almacenamiento Transaccional] - Evaluación de métricas de almacenamiento, volumen de filas, latencia de consulta y umbrales de migración a RDBMS/SQL.

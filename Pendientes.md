@@ -87,7 +87,7 @@
 
 ---
 
-### [ ] [F9-Task03] Consolidar la administración de escalas, ponderaciones y métodos de cálculo académico
+### [X] [F9-Task03] Consolidar la administración de escalas, ponderaciones y métodos de cálculo académico
 - **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task03 (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Configuración académica y motor de cálculo)
@@ -120,7 +120,7 @@
   - Cambiar una configuración no modifica silenciosamente las calificaciones históricas.
   - Los resultados de la vista previa coinciden con los del cálculo definitivo.
   - Las escalas numéricas y cualitativas se representan correctamente en el libro de calificaciones y en los reportes.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

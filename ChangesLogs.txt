@@ -2862,3 +2862,21 @@ Archivos Modificados:
 
 3. Auditoria.txt
    - Registro de la auditoría y verificación de la tarea `[F9-Task02]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F9-Task03] Consolidar la administración de escalas, ponderaciones y métodos de cálculo académico
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 649, 10410-10515: Adición del dispatcher "previewAcademicGradeCalculation" y reestructuración de `calculateUnifiedAcademicGrade` con comentario identificativo de primera línea `[F9-Task03]`. Soporte para métodos de cálculo (PromedioPonderado, PromedioAritmetico, PuntosObtenidos), validación de ponderaciones al 100%, aislamiento de actividades pendientes/exentas/ausentes y vista previa sin alteración de períodos cerrados.
+
+2. backend/exam-service/Code.gs
+   - Linea 1246: Adición de comentario identificativo `[F9-Task03]` sobre la función `saveEvaluationCategory`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task03]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task03]`.

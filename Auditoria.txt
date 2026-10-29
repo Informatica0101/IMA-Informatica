@@ -502,3 +502,14 @@ RESULTADO DE EVALUACIÓN:
 - Registrada la acción en `ROLE_PERMISSIONS` y en el enrutador `doPost`.
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F9-Task03: CONSOLIDAR LA ADMINISTRACIÓN DE ESCALAS, PONDERACIONES Y MÉTODOS DE CÁLCULO ACADÉMICO
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, backend/exam-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se ampliaron y verificaron las funciones `calculateUnifiedAcademicGrade` y `previewAcademicGradeCalculation` en `backend/academic-service/Code.gs` e inyectada la etiqueta identificativa `[F9-Task03]`.
+- Se validaron los métodos de cálculo académico (PromedioPonderado, PromedioAritmetico, PuntosObtenidos), la detección de ponderaciones que difieren del 100%, el tratamiento explícito de notas pendientes/exentas/ausentes y la generación de vistas previas.
+- Etiquetada la función `saveEvaluationCategory` en `backend/exam-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
