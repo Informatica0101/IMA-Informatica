@@ -2958,6 +2958,24 @@ Archivos Modificados:
 
 -------------------------------------------------------------------------------
 FECHA: 2026-10-29
+TAREA: [F9-Task14] Mejorar el rendimiento, la persistencia y la recuperación de operaciones de calificación
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/exam-service/Code.gs
+   - Lineas 93, 397, 675-730: Adición de permiso "getGradingPerformanceAndPersistenceMetrics" en ROLE_PERMISSIONS, dispatcher en doPost e implementación de la función `getGradingPerformanceAndPersistenceMetrics` con la etiqueta identificativa `[F9-Task14]`.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de verificación para `getGradingPerformanceAndPersistenceMetrics [F9-Task14]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task14]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task14]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
 TAREA: [F9-Task02] Fortalecer la validación y el diagnóstico de archivos SACE antes de generar las calificaciones
 -------------------------------------------------------------------------------
 

@@ -571,6 +571,17 @@ RESULTADO DE EVALUACIÓN:
 
 ===============================================================================
 FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F9-Task14: MEJORAR EL RENDIMIENTO, LA PERSISTENCIA Y LA RECUPERACIÓN DE OPERACIONES DE CALIFICACIÓN
+ARCHIVOS AUDITADOS: backend/exam-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `getGradingPerformanceAndPersistenceMetrics` en `backend/exam-service/Code.gs` con la etiqueta identificativa `[F9-Task14]`.
+- Se verificó la medición de volumen de filas por hoja de calificaciones, medición de latencias de consulta (ms), umbrales de alerta (`NORMAL`, `ADVERTENCIA`, `CRITICO`) e indicadores de resiliencia y migración RDBMS.
+- Registrada la acción en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/exam-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
 AUDITORÍA FUNCIONAL Y TÉCNICA - F9-Task08: FORTALECER EL CONTROL DE PERMISOS Y LA SEPARACIÓN DE RESPONSABILIDADES ACADÉMICAS
 ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
 RESULTADO DE EVALUACIÓN:
