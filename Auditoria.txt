@@ -535,3 +535,15 @@ RESULTADO DE EVALUACIÓN:
 - Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/exam-service/Code.gs`.
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F9-Task06: FORTALECER LAS RECTIFICACIONES DE NOTAS Y LA TRAZABILIDAD DE LOS CAMBIOS
+ARCHIVOS AUDITADOS: backend/exam-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `rectifyStudentGrade` y `getGradeRectificationHistory` e inyectada la etiqueta identificativa `[F9-Task06]` sobre `reopenPeriodGradebook` en `backend/exam-service/Code.gs`.
+- Se verificó el requisito de justificación obligatoria de al menos 10 caracteres para reaperturas de parcial y rectificaciones de notas oficiales.
+- Se verificó la persistencia de diffs (nota anterior, nota nueva, motivo, usuario responsable, fecha) en la hoja `HistorialRectificacionesNotas`.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el enrutador `doPost` en `backend/exam-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================

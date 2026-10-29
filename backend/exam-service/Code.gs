@@ -88,7 +88,7 @@ const ROLE_PERMISSIONS = {
     "createExam", "updateExam", "updateExamStatus", "deleteExam", "gradeExamSubmission", "deleteExamSubmission",
     "getAllExams", "getTeacherExamActivity", "getExamQuestions", "getStudentExams", "getExamResult",
     "getGradebookData", "saveGradebookGrades", "getEvaluationCategories", "saveEvaluationCategory",
-    "getRubrics", "saveRubric", "saveStudentRecovery", "getStudentRecoveries", "closePeriodGradebook", "reopenPeriodGradebook", "submitGradebookForReview", "reviewPeriodGradebook", "getStudentAcademicReport",
+    "getRubrics", "saveRubric", "saveStudentRecovery", "getStudentRecoveries", "closePeriodGradebook", "reopenPeriodGradebook", "submitGradebookForReview", "reviewPeriodGradebook", "rectifyStudentGrade", "getGradeRectificationHistory", "getStudentAcademicReport",
     "manageQuestionBank", "getQuestionBank", "checkExamSchedulingConflict", "simulateExamReschedule",
     "getExamGradeDistributionAnalytics"
   ],
@@ -382,6 +382,8 @@ function doPost(e) {
       case "reopenPeriodGradebook": result = reopenPeriodGradebook(payload); break;
       case "submitGradebookForReview": result = submitGradebookForReview(payload); break;
       case "reviewPeriodGradebook": result = reviewPeriodGradebook(payload); break;
+      case "rectifyStudentGrade": result = rectifyStudentGrade(payload); break;
+      case "getGradeRectificationHistory": result = getGradeRectificationHistory(payload); break;
       case "getStudentAcademicReport": result = getStudentAcademicReport(payload); break;
       case "manageQuestionBank": result = manageQuestionBank(payload); break;
       case "getQuestionBank": result = getQuestionBank(payload); break;
@@ -1639,9 +1641,13 @@ function reviewPeriodGradebook(payload) {
   };
 }
 
+// [F9-Task06] [P0] - Fortalecer las rectificaciones de notas y la trazabilidad de los cambios
 function reopenPeriodGradebook(payload) {
   const { cierreId, motivo, autorizadoPor } = payload || {};
   if (!cierreId) throw new Error("cierreId es requerido.");
+  if (!motivo || String(motivo).trim().length < 10) {
+    throw new Error("Se requiere una justificación detallada (mínimo 10 caracteres) para reabrir un período cerrado.");
+  }
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "CierresPeriodos");
@@ -1650,7 +1656,118 @@ function reopenPeriodGradebook(payload) {
   if (idx === -1) throw new Error("Registro de cierre no encontrado.");
 
   sheet.getRange(idx + 1, 8).setValue("Reabierto");
-  return { status: "success", message: "Período reabierto para rectificaciones autorizadas." };
+
+  try {
+    const rectSheet = getOrCreateSheet(ss, "HistorialRectificacionesNotas");
+    rectSheet.appendRow([
+      "REAP-" + Date.now(),
+      cierreId,
+      payload && payload._verifiedUserId ? payload._verifiedUserId : (autorizadoPor || "Secretaría"),
+      "REAPERTURA_PERIODO",
+      "Cerrado",
+      "Reabierto",
+      String(motivo).trim(),
+      autorizadoPor || "Secretaría",
+      new Date()
+    ]);
+  } catch (e) {
+    logDebug("Error registrando auditoría de reapertura", e.message);
+  }
+
+  return { status: "success", cierreId, estado: "Reabierto", message: "Período reabierto oficialmente para rectificaciones autorizadas." };
+}
+
+function rectifyStudentGrade(payload) {
+  const { evaluacionId, userId, calificacionId, notaNueva, motivo, autorizadoPor, authRole } = payload || {};
+  if ((!calificacionId && (!evaluacionId || !userId)) || notaNueva === undefined || notaNueva === null) {
+    throw new Error("evaluacionId, userId o calificacionId, y notaNueva son requeridos.");
+  }
+
+  if (!motivo || String(motivo).trim().length < 10) {
+    throw new Error("Se requiere un motivo o justificación de al menos 10 caracteres para rectificar una nota oficial.");
+  }
+
+  const notaNum = parseFloat(notaNueva);
+  if (isNaN(notaNum) || notaNum < 0 || notaNum > 100) {
+    throw new Error("La nueva calificación debe ser un número válido dentro del rango 0 a 100.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CalificacionesEstudiantes");
+  const data = sheet.getDataRange().getValues();
+
+  let targetIdx = -1;
+  if (calificacionId) {
+    targetIdx = data.findIndex(r => String(r[0]).trim() === String(calificacionId).trim());
+  } else {
+    targetIdx = data.findIndex(r => String(r[1]).trim() === String(evaluacionId).trim() && String(r[2]).trim() === String(userId).trim());
+  }
+
+  if (targetIdx === -1) throw new Error("Registro de calificación no encontrado para rectificar.");
+
+  const rowData = data[targetIdx];
+  const notaAnterior = parseFloat(rowData[3]) || 0;
+  const now = new Date();
+
+  sheet.getRange(targetIdx + 1, 4).setValue(notaNum); // NotaObtenida
+  sheet.getRange(targetIdx + 1, 6).setValue(false);   // esBorrador = false
+  sheet.getRange(targetIdx + 1, 7).setValue(true);    // esPublicada = true
+  sheet.getRange(targetIdx + 1, 8).setValue(`RECTIFICADO: ${String(motivo).trim()}`);
+  sheet.getRange(targetIdx + 1, 9).setValue(now);
+
+  const rectSheet = getOrCreateSheet(ss, "HistorialRectificacionesNotas");
+  if (rectSheet.getLastRow() === 0) {
+    rectSheet.appendRow(["RectificacionID", "EvaluacionID", "UserID", "Accion", "NotaAnterior", "NotaNueva", "Motivo", "AutorizadoPor", "Fecha"]);
+  }
+
+  const rectId = "RECT-" + Date.now();
+  rectSheet.appendRow([
+    rectId,
+    evaluacionId || rowData[1],
+    userId || rowData[2],
+    "RECTIFICACION_NOTA",
+    notaAnterior,
+    notaNum,
+    String(motivo).trim(),
+    autorizadoPor || (payload && payload._verifiedUserId) || "Secretaría",
+    now
+  ]);
+
+  return {
+    status: "success",
+    rectificacionId: rectId,
+    notaAnterior: notaAnterior,
+    notaNueva: notaNum,
+    autorizadoPor: autorizadoPor || "Secretaría",
+    message: "Calificación rectificada oficialmente con trazabilidad y auditoría de cambios registrada."
+  };
+}
+
+function getGradeRectificationHistory(payload) {
+  const { userId, evaluacionId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "HistorialRectificacionesNotas");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const history = data.slice(1).filter(r => {
+    if (userId && String(r[2]).trim() !== String(userId).trim()) return false;
+    if (evaluacionId && String(r[1]).trim() !== String(evaluacionId).trim()) return false;
+    return true;
+  }).map(r => ({
+    rectificacionId: r[0],
+    evaluacionId: r[1],
+    userId: r[2],
+    accion: r[3],
+    notaAnterior: parseFloat(r[4]) || 0,
+    notaNueva: parseFloat(r[5]) || 0,
+    motivo: r[6],
+    autorizadoPor: r[7],
+    fecha: r[8] ? new Date(r[8]).toISOString() : null
+  }));
+
+  return { status: "success", data: history };
 }
 
 function getStudentAcademicReport(payload) {

@@ -195,7 +195,7 @@
 
 ---
 
-### [ ] [F9-Task06] Fortalecer las rectificaciones de notas y la trazabilidad de los cambios
+### [X] [F9-Task06] Fortalecer las rectificaciones de notas y la trazabilidad de los cambios
 - **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task07 (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Seguridad académica, auditoría e integridad histórica)
@@ -228,7 +228,7 @@
   - Los intentos fallidos de rectificación no modifican el resultado oficial.
   - Las rectificaciones masivas permiten identificar cada cambio individual.
   - El historial conserva la relación entre la solicitud, la autorización y la modificación efectuada.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

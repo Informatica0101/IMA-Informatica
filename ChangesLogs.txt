@@ -2913,3 +2913,19 @@ Archivos Modificados:
 
 3. Auditoria.txt
    - Registro de la auditoría y verificación de la tarea `[F9-Task05]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F9-Task06] Fortalecer las rectificaciones de notas y la trazabilidad de los cambios
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/exam-service/Code.gs
+   - Lineas 91, 385-386: Adición de permisos "rectifyStudentGrade" y "getGradeRectificationHistory" en ROLE_PERMISSIONS y dispatchers en doPost switch.
+   - Lineas 1644-1770: Inserción del comentario identificativo `[F9-Task06]` e implementación de las funciones backend `rectifyStudentGrade` y `getGradeRectificationHistory` y actualización de `reopenPeriodGradebook` exigiendo motivo obligatorio de al menos 10 caracteres y guardado de trazabilidad en `HistorialRectificacionesNotas`.
+
+2. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task06]`.
+
+3. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task06]`.
