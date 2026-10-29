@@ -446,3 +446,4 @@ DOCUMENTACIÓN DE ESQUEMAS DE SPREADSHEETS ACTUALES
 - Registrado esquema de tablas de Spreadsheets en docs/architecture/spreadsheets-schema.md y MapaDependencias.md.
 ===============================================================================
 - [TAREA-AD-01] Crear una arquitectura de dashboards dinámicos para roles configurables
+- [F8-Task25] [TAREA-F8-OPT-02] Incorporar estadísticas descriptivas y una visualización de la distribución de calificaciones de exámenes

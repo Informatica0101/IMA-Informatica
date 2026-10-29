@@ -3708,6 +3708,109 @@
         </div>
     </div>
 
+    <!-- [F8-Task25] [TAREA-F8-OPT-02] - Estadísticas Descriptivas y Distribución de Calificaciones de Exámenes -->
+    <div id="modal-exam-grade-distribution" class="fixed inset-0 z-[110] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full overflow-hidden border border-slate-100 animate-fade-in flex flex-col max-h-[90vh]">
+            <div class="p-5 bg-gradient-to-r from-indigo-700 to-purple-800 text-white flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-white/20 text-white flex items-center justify-center text-lg shadow-md backdrop-blur-md">
+                        <i class="fa-solid fa-chart-column"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-white" id="exam-analytics-title">Distribución de Calificaciones</h3>
+                        <p class="text-[10px] text-indigo-200 font-medium" id="exam-analytics-subtitle">Estadísticas descriptivas y análisis de rendimiento</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('modal-exam-grade-distribution').classList.add('hidden')" class="w-8 h-8 rounded-full bg-white/20 text-white hover:bg-white/30 transition flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-6 overflow-y-auto text-xs flex-1">
+                <!-- Indicadores de Resumen Estadístico (Tarjetas) -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="p-3.5 bg-slate-50 border border-slate-100 rounded-2xl">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Evaluados / Pendientes</span>
+                        <div class="flex items-baseline gap-1 mt-1">
+                            <span class="text-lg font-black text-slate-800" id="stat-evaluados">0</span>
+                            <span class="text-xs text-slate-400">/ <span id="stat-pendientes">0</span> pend.</span>
+                        </div>
+                    </div>
+                    <div class="p-3.5 bg-indigo-50/60 border border-indigo-100 rounded-2xl">
+                        <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-wider block">Promedio General</span>
+                        <div class="flex items-baseline gap-1 mt-1">
+                            <span class="text-lg font-black text-indigo-700" id="stat-promedio">0.00</span>
+                            <span class="text-[10px] text-indigo-400 font-bold">/ 100</span>
+                        </div>
+                    </div>
+                    <div class="p-3.5 bg-purple-50/60 border border-purple-100 rounded-2xl">
+                        <span class="text-[10px] font-bold text-purple-500 uppercase tracking-wider block">Mediana (Central)</span>
+                        <div class="flex items-baseline gap-1 mt-1">
+                            <span class="text-lg font-black text-purple-700" id="stat-mediana">0.00</span>
+                        </div>
+                    </div>
+                    <div class="p-3.5 bg-emerald-50/60 border border-emerald-100 rounded-2xl">
+                        <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider block">% Aprobación</span>
+                        <div class="flex items-baseline gap-1 mt-1">
+                            <span class="text-lg font-black text-emerald-700" id="stat-aprobacion">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Métricas Avanzadas (Mín, Máx, Desviación Estándar) -->
+                <div class="grid grid-cols-3 gap-3 p-3 bg-slate-900 text-white rounded-2xl">
+                    <div class="text-center border-r border-slate-800">
+                        <span class="text-[9px] uppercase font-bold text-slate-400">Nota Mínima</span>
+                        <p class="font-extrabold text-sm text-rose-400 mt-0.5" id="stat-minimo">0.0</p>
+                    </div>
+                    <div class="text-center border-r border-slate-800">
+                        <span class="text-[9px] uppercase font-bold text-slate-400">Nota Máxima</span>
+                        <p class="font-extrabold text-sm text-emerald-400 mt-0.5" id="stat-maximo">0.0</p>
+                    </div>
+                    <div class="text-center">
+                        <span class="text-[9px] uppercase font-bold text-slate-400">Desv. Estándar (σ)</span>
+                        <p class="font-extrabold text-sm text-amber-400 mt-0.5" id="stat-desviacion">0.00</p>
+                    </div>
+                </div>
+
+                <!-- Visualización de Distribución por Intervalos (Histograma / Barras) -->
+                <div class="space-y-3 bg-slate-50 border border-slate-100 p-4 rounded-2xl">
+                    <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+                        <h4 class="font-bold text-slate-800 text-xs flex items-center gap-2">
+                            <i class="fa-solid fa-chart-simple text-indigo-600"></i> Distribución de Frecuencias por Intervalo
+                        </h4>
+                        <span class="text-[10px] text-slate-400 italic">Notas de 0 a 100 ptos.</span>
+                    </div>
+
+                    <div id="exam-distribution-bars" class="space-y-2.5 pt-1">
+                        <!-- Generado dinámicamente -->
+                        <p class="text-slate-400 italic text-center py-4">Cargando gráfico de distribución...</p>
+                    </div>
+                </div>
+
+                <!-- Referencia de Curva Normal -->
+                <div class="bg-indigo-950/90 text-indigo-100 p-4 rounded-2xl space-y-2">
+                    <div class="flex items-center gap-2 text-indigo-300 font-bold text-[11px]">
+                        <i class="fa-solid fa-chart-line text-purple-400"></i> Curva de Distribución Normal de Referencia (Teórica)
+                    </div>
+                    <p class="text-[10px] text-indigo-200/80 leading-relaxed">
+                        Visualización paramétrica orientativa f(x) estimada en función del promedio (μ) y la desviación estándar (σ).
+                        <span class="text-indigo-300 font-semibold">Nota:</span> No modifica ni recalcula las calificaciones oficiales registradas en el libro de notas.
+                    </p>
+                    <div id="exam-normal-curve-container" class="pt-2 text-[10px] text-indigo-300 flex justify-between items-end gap-1 h-16 border-b border-indigo-800/80 pb-1">
+                        <!-- Puntos de la curva normal generados dinámicamente -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+                <button type="button" onclick="document.getElementById('modal-exam-grade-distribution').classList.add('hidden')" class="px-5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs uppercase tracking-wider rounded-xl transition">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
 
 </body>
 </html>
