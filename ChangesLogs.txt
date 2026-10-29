@@ -2849,6 +2849,22 @@ Archivos Modificados:
 
 -------------------------------------------------------------------------------
 FECHA: 2026-10-29
+TAREA: [F9-Task08] Fortalecer el control de permisos y la separación de responsabilidades académicas
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 249-253, 653: Adición de permiso "validateAcademicResponsibilityAndScopeAccess" en ROLE_PERMISSIONS y dispatcher en doPost switch.
+   - Lineas 10605-10745: Inserción del comentario identificativo `[F9-Task08]` e implementación de la función `validateAcademicResponsibilityAndScopeAccess` para verificación de permisos por rol, docente/asignatura, alumno/tutor y registro de `UNAUTHORIZED_ACCESS_ATTEMPT`.
+
+2. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task08]`.
+
+3. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task08]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
 TAREA: [F9-Task02] Fortalecer la validación y el diagnóstico de archivos SACE antes de generar las calificaciones
 -------------------------------------------------------------------------------
 

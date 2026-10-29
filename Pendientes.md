@@ -232,7 +232,7 @@
 
 ---
 
-### [ ] [F9-Task07] Fortalecer la generación de boletines, certificados e historiales académicos
+### [X] [F9-Task07] Fortalecer la generación de boletines, certificados e historiales académicos
 - **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task10 (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Documentación académica y resultados oficiales)
@@ -263,11 +263,11 @@
   - Los documentos históricos conservan su contexto académico.
   - Los usuarios no autorizados no pueden consultar ni descargar documentos ajenos.
   - Las asignaturas exentas, las recuperaciones y los resultados pendientes se representan de acuerdo con las reglas aplicables.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
-### [ ] [F9-Task08] Fortalecer el control de permisos y la separación de responsabilidades académicas
+### [X] [F9-Task08] Fortalecer el control de permisos y la separación de responsabilidades académicas
 - **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task12 (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Seguridad, privacidad y acceso a calificaciones)
@@ -297,7 +297,7 @@
   - Los permisos se aplican de igual manera a las operaciones individuales, masivas y de exportación.
   - Los intentos no autorizados se rechazan sin modificar los datos.
   - Los cambios en las relaciones académicas actualizan los permisos efectivos de manera coherente.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

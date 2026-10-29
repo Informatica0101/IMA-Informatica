@@ -246,11 +246,11 @@ const ROLE_PERMISSIONS = {
     "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentEnrollments",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
     "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans",
-    "calculateUnifiedAcademicGrade", "previewAcademicGradeCalculation", "auditAcademicGradesIntegrity"
+    "calculateUnifiedAcademicGrade", "previewAcademicGradeCalculation", "auditAcademicGradesIntegrity", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess"
   ],
   "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentTimeline", "getClassAttendance", "getStudentAttendanceSummary"],
-  "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "calculateUnifiedAcademicGrade"],
-  "Alumno": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicPeriods", "getAcademicOffers", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents"]
+  "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "calculateUnifiedAcademicGrade", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess"],
+  "Alumno": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicPeriods", "getAcademicOffers", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess"]
 };
 
 const PUBLIC_ACTIONS = ["ping", "createAdmissionRequest", "getPublicAdmissionStatus", "saveAdmissionDraft", "getAdmissionDraft", "getServiceHealthDiagnostics"];
@@ -650,6 +650,7 @@ function doPost(e) {
       case "previewAcademicGradeCalculation": result = previewAcademicGradeCalculation(payload); break;
       case "auditAcademicGradesIntegrity": result = auditAcademicGradesIntegrity(payload); break;
       case "generateStudentReportCard": result = generateStudentReportCard(payload); break;
+      case "validateAcademicResponsibilityAndScopeAccess": result = validateAcademicResponsibilityAndScopeAccess(payload); break;
 
       // Endpoints Fase 3
       case "getInstitutionParams": result = getInstitutionParams(payload); break;
@@ -10599,6 +10600,251 @@ function auditAcademicGradesIntegrity(payload) {
     message: esIntegro
       ? "Diagnóstico de integridad completado: No se detectaron inconsistencias en las calificaciones."
       : `Diagnóstico completado con ${inconsistencias.length} inconsistencia(s) detectada(s).`
+  };
+}
+
+// [F9-Task07] [P0] - Fortalecer la generación de boletines, certificados e historiales académicos
+function generateStudentReportCard(payload) {
+  const { userId, estudianteId, periodoId, incluirObservaciones, formatoOutput } = payload || {};
+  const studentId = userId || estudianteId;
+
+  if (!studentId) {
+    return {
+      status: "error",
+      message: "Se requiere un identificador de estudiante (userId o estudianteId) para generar el boletín."
+    };
+  }
+
+  const ss = getSpreadsheet();
+
+  // Resolve Student Info
+  let estudianteInfo = { userId: studentId, nombreCompleto: "Estudiante " + studentId, grado: "N/A", seccion: "N/A" };
+  const sheetEstud = ss.getSheetByName("Estudiantes") || ss.getSheetByName("Alumnos");
+  if (sheetEstud) {
+    const dataEst = sheetEstud.getDataRange().getValues();
+    if (dataEst.length > 1) {
+      const headers = dataEst[0].map(h => String(h).trim().toLowerCase());
+      const idxId = headers.indexOf("userid") >= 0 ? headers.indexOf("userid") : headers.indexOf("estudianteid");
+      const idxNombre = headers.indexOf("nombrecompleto") >= 0 ? headers.indexOf("nombrecompleto") : headers.indexOf("nombre");
+      const idxGrado = headers.indexOf("grado");
+      const idxSeccion = headers.indexOf("seccion");
+
+      for (let i = 1; i < dataEst.length; i++) {
+        if (String(dataEst[i][idxId]).trim() === String(studentId).trim()) {
+          estudianteInfo.nombreCompleto = idxNombre >= 0 ? dataEst[i][idxNombre] : estudianteInfo.nombreCompleto;
+          estudianteInfo.grado = idxGrado >= 0 ? dataEst[i][idxGrado] : estudianteInfo.grado;
+          estudianteInfo.seccion = idxSeccion >= 0 ? dataEst[i][idxSeccion] : estudianteInfo.seccion;
+          break;
+        }
+      }
+    }
+  }
+
+  // Fetch Grades for period
+  const asignaturasNotas = [];
+  const sheetNotas = ss.getSheetByName("Calificaciones") || ss.getSheetByName("Notas");
+  if (sheetNotas) {
+    const dataNotas = sheetNotas.getDataRange().getValues();
+    if (dataNotas.length > 1) {
+      const headers = dataNotas[0].map(h => String(h).trim().toLowerCase());
+      const idxId = headers.indexOf("userid") >= 0 ? headers.indexOf("userid") : headers.indexOf("estudianteid");
+      const idxAsig = headers.indexOf("asignatura") >= 0 ? headers.indexOf("asignatura") : headers.indexOf("asignaturaid");
+      const idxPer = headers.indexOf("periodo") >= 0 ? headers.indexOf("periodo") : headers.indexOf("periodoid");
+      const idxNota = headers.indexOf("nota") >= 0 ? headers.indexOf("nota") : headers.indexOf("notafinal");
+      const idxObs = headers.indexOf("observaciones") >= 0 ? headers.indexOf("observaciones") : headers.indexOf("observacion");
+      const idxEstado = headers.indexOf("estado") >= 0 ? headers.indexOf("estado") : headers.indexOf("estadoaprobacion");
+
+      for (let i = 1; i < dataNotas.length; i++) {
+        const rowStudent = String(dataNotas[i][idxId] || "").trim();
+        const rowPeriod = idxPer >= 0 ? String(dataNotas[i][idxPer] || "").trim() : "";
+
+        if (rowStudent === String(studentId).trim() && (!periodoId || rowPeriod === String(periodoId).trim())) {
+          const rawNota = idxNota >= 0 ? dataNotas[i][idxNota] : 0;
+          const notaNum = parseFloat(rawNota) || 0;
+          const estado = idxEstado >= 0 ? String(dataNotas[i][idxEstado]) : (notaNum >= 70 ? "APROBADO" : "REPROBADO");
+          const obs = idxObs >= 0 ? String(dataNotas[i][idxObs]) : "";
+
+          asignaturasNotas.push({
+            asignatura: idxAsig >= 0 ? dataNotas[i][idxAsig] : "Asignatura General",
+            periodo: rowPeriod || periodoId || "P1",
+            notaFinal: Math.round(notaNum * 100) / 100,
+            estadoAprobacion: estado,
+            observaciones: incluirObservaciones ? obs : undefined
+          });
+        }
+      }
+    }
+  }
+
+  // Calculate Academic Summary
+  const totalAsignaturas = asignaturasNotas.length;
+  const sumaNotas = asignaturasNotas.reduce((acc, curr) => acc + (curr.notaFinal || 0), 0);
+  const promedioGeneral = totalAsignaturas > 0 ? Math.round((sumaNotas / totalAsignaturas) * 100) / 100 : 0;
+  const asignaturasAprobadas = asignaturasNotas.filter(a => a.estadoAprobacion === "APROBADO").length;
+  const asignaturasReprobadas = totalAsignaturas - asignaturasAprobadas;
+
+  const esOficial = !!periodoId;
+
+  return {
+    status: "success",
+    boletin: {
+      titulo: esOficial ? "Boletín Oficial de Calificaciones" : "Informe Provisorio de Rendimiento Académico",
+      estudiante: estudianteInfo,
+      periodo: periodoId || "Todos los Períodos",
+      fechaGeneracion: new Date().toISOString(),
+      esDocumentoOficial: esOficial,
+      resumenGeneral: {
+        totalAsignaturas,
+        promedioGeneral,
+        asignaturasAprobadas,
+        asignaturasReprobadas,
+        estadoPromocion: promedioGeneral >= 70 ? "PROMOVIDO" : "PENDIENTE"
+      },
+      detalleAsignaturas: asignaturasNotas
+    },
+    message: "Boletín de calificaciones generado exitosamente."
+  };
+}
+
+// [F9-Task08] [P0] - Fortalecer el control de permisos y la separación de responsabilidades académicas
+function validateAcademicResponsibilityAndScopeAccess(payload) {
+  const { userId, role, estudianteId, asignaturaId, grado, seccion, periodoId, operacion } = payload || {};
+
+  if (!userId || !role) {
+    return {
+      status: "error",
+      authorized: false,
+      message: "userId y role son requeridos para la validación de responsabilidades académicas."
+    };
+  }
+
+  const roleUpper = String(role).trim().toUpperCase();
+
+  // Roles de administración institucional tienen acceso completo a los ámbitos académicos
+  if (["ADMINISTRADOR", "ADMIN", "DIRECTOR", "DIRECCION", "SECRETARIA", "COORDINADOR", "COORDINACION"].indexOf(roleUpper) >= 0) {
+    return {
+      status: "success",
+      authorized: true,
+      role: roleUpper,
+      message: "Acceso autorizado por responsabilidad institucional de dirección/administración."
+    };
+  }
+
+  // Validación para Rol Docente / Profesor
+  if (roleUpper === "DOCENTE" || roleUpper === "PROFESOR") {
+    if (asignaturaId || grado || seccion) {
+      const ss = getSpreadsheet();
+      const sheetAsignaciones = ss.getSheetByName("AsignacionesDocentes") || ss.getSheetByName("Docentes");
+      let docenteAsignado = false;
+
+      if (sheetAsignaciones) {
+        const data = sheetAsignaciones.getDataRange().getValues();
+        if (data.length > 1) {
+          const headers = data[0].map(h => String(h).trim().toLowerCase());
+          const idxDocente = headers.indexOf("docenteid") >= 0 ? headers.indexOf("docenteid") : headers.indexOf("userid");
+          const idxAsig = headers.indexOf("asignaturaid") >= 0 ? headers.indexOf("asignaturaid") : headers.indexOf("asignatura");
+          const idxGrado = headers.indexOf("grado");
+          const idxSeccion = headers.indexOf("seccion");
+
+          for (let i = 1; i < data.length; i++) {
+            const rowDocente = String(data[i][idxDocente] || "").trim();
+            if (rowDocente === String(userId).trim()) {
+              const rowAsig = idxAsig >= 0 ? String(data[i][idxAsig]).trim() : "";
+              const rowGrado = idxGrado >= 0 ? String(data[i][idxGrado]).trim() : "";
+              const rowSeccion = idxSeccion >= 0 ? String(data[i][idxSeccion]).trim() : "";
+
+              const matchAsig = !asignaturaId || rowAsig === String(asignaturaId).trim();
+              const matchGrado = !grado || rowGrado === String(grado).trim();
+              const matchSeccion = !seccion || rowSeccion === String(seccion).trim();
+
+              if (matchAsig && matchGrado && matchSeccion) {
+                docenteAsignado = true;
+                break;
+              }
+            }
+          }
+        }
+      } else {
+        docenteAsignado = true;
+      }
+
+      if (!docenteAsignado) {
+        logStructuredEvent("ACADEMIC", "validateAcademicResponsibilityAndScopeAccess", "WARN", "UNAUTHORIZED_ACCESS_ATTEMPT", `Docente '${userId}' intentó acceder a la asignatura '${asignaturaId}' sin asignación activa.`, { userId, asignaturaId, grado, seccion, operacion }, roleUpper);
+        return {
+          status: "success",
+          authorized: false,
+          reason: "El docente no tiene asignación académica activa para la asignatura, grado o sección solicitados.",
+          message: "Acceso denegado: Asignación académica no encontrada."
+        };
+      }
+    }
+
+    return {
+      status: "success",
+      authorized: true,
+      role: roleUpper,
+      message: "Acceso autorizado para el docente dentro de su carga académica."
+    };
+  }
+
+  // Validación para Estudiantes y Tutores / Padres
+  if (roleUpper === "ESTUDIANTE" || roleUpper === "ALUMNO" || roleUpper === "TUTOR" || roleUpper === "PADRE" || roleUpper === "RESPONSABLE") {
+    if (estudianteId && String(estudianteId).trim() !== String(userId).trim()) {
+      let tutorVinculado = false;
+      const ss = getSpreadsheet();
+      const sheetTutores = ss.getSheetByName("RelacionesTutores") || ss.getSheetByName("TutoresEstudiantes");
+
+      if (sheetTutores) {
+        const dataT = sheetTutores.getDataRange().getValues();
+        if (dataT.length > 1) {
+          const headers = dataT[0].map(h => String(h).trim().toLowerCase());
+          const idxTutor = headers.indexOf("tutorid") >= 0 ? headers.indexOf("tutorid") : headers.indexOf("userid");
+          const idxEstud = headers.indexOf("estudianteid") >= 0 ? headers.indexOf("estudianteid") : headers.indexOf("alumnoid");
+
+          for (let i = 1; i < dataT.length; i++) {
+            if (String(dataT[i][idxTutor]).trim() === String(userId).trim() && String(dataT[i][idxEstud]).trim() === String(estudianteId).trim()) {
+              tutorVinculado = true;
+              break;
+            }
+          }
+        }
+      }
+
+      if (!tutorVinculado) {
+        logStructuredEvent("ACADEMIC", "validateAcademicResponsibilityAndScopeAccess", "WARN", "UNAUTHORIZED_ACCESS_ATTEMPT", `Usuario '${userId}' con rol '${roleUpper}' intentó acceder a datos del estudiante '${estudianteId}' sin vínculo autorizado.`, { userId, estudianteId, operacion }, roleUpper);
+        return {
+          status: "success",
+          authorized: false,
+          reason: "No se encontró vinculación autorizada entre el usuario y el estudiante solicitado.",
+          message: "Acceso denegado: Intento de consulta de expediente o calificaciones de un tercero."
+        };
+      }
+    }
+
+    if (operacion && ["EDITAR_NOTA", "REGISTRAR_NOTA", "RECTIFICAR_NOTA", "PUBLICAR_NOTAS", "CERRAR_PERIODO"].indexOf(String(operacion).toUpperCase()) >= 0) {
+      logStructuredEvent("ACADEMIC", "validateAcademicResponsibilityAndScopeAccess", "WARN", "UNAUTHORIZED_ACCESS_ATTEMPT", `Rol '${roleUpper}' intentó ejecutar la operación restringida '${operacion}'.`, { userId, operacion }, roleUpper);
+      return {
+        status: "success",
+        authorized: false,
+        reason: `La operación '${operacion}' requiere permisos de edición o administración académica.`,
+        message: "Acceso denegado: Operación no permitida para el rol del usuario."
+      };
+    }
+
+    return {
+      status: "success",
+      authorized: true,
+      role: roleUpper,
+      message: "Acceso autorizado para consulta de resultados académicos propios o de dependientes vinculados."
+    };
+  }
+
+  logStructuredEvent("ACADEMIC", "validateAcademicResponsibilityAndScopeAccess", "WARN", "UNAUTHORIZED_ACCESS_ATTEMPT", `Rol '${roleUpper}' no reconocido para validación de responsabilidades académicas.`, { userId, role }, roleUpper);
+  return {
+    status: "success",
+    authorized: false,
+    reason: `Rol '${roleUpper}' no reconocido para responsabilidad académica.`,
+    message: "Acceso denegado por defecto."
   };
 }
 
