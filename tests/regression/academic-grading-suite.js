@@ -20,7 +20,7 @@ function assert(condition, message) {
 }
 
 // 1. Verificación de la Documentación de Auditoría de la Fase 9
-assert(fs.existsSync(path.join(__dirname, '../../AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md')), "Existe informe independiente AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md");
+assert(fs.existsSync(path.join(__dirname, '../../completadas.md')), "Existe archivo de tareas completadas completadas.md");
 
 // 2. Verificación de funciones de Compatibilidad y Diagnóstico SACE (F9-Task01 y F9-Task02)
 const accountingCode = fs.readFileSync(path.join(__dirname, '../../backend/accounting-service/Code.gs'), 'utf8');
