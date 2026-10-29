@@ -5,6 +5,24 @@ Plataforma: Ecosistema Educativo New Generation Christian Academy
 
 -------------------------------------------------------------------------------
 FECHA: 2026-10-29
+TAREA: [F10-Task01] Fortalecer la confidencialidad y el control de acceso a expedientes sensibles
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 7512-7568: Inserción de etiqueta identificativa `[F10-Task01]` y refactorización de `getAttendanceFollowupCases` implementando lectura dinámica de `NIVEL_VISIBILIDAD_CONSEJERIA`, aislamiento de casos confidenciales para docentes generales y registro de eventos `UNAUTHORIZED_ACCESS_ATTEMPT`.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `getAttendanceFollowupCases [F10-Task01]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F10-Task01]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F10-Task01]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
 TAREA: UNIFICACIÓN Y CONVERGENCIA DE BACKLOG FASE 10 EN PENDIENTES.MD (F10-TASK01 A F10-TASK18)
 -------------------------------------------------------------------------------
 

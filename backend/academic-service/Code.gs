@@ -7509,15 +7509,46 @@ function saveAttendanceIncident(payload) {
   return { status: "success", message: "Incidencia de asistencia registrada.", data: { incidenciaId: incId } };
 }
 
+// [F10-Task01] [P0] - Fortalecer la confidencialidad y el control de acceso a expedientes sensibles
 function getAttendanceFollowupCases(payload) {
-  const { userId } = payload || {};
+  const { userId, authRole, casoId } = payload || {};
+  const roleUpper = String(authRole || (payload && payload._verifiedRole) || "").toUpperCase();
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  let nivelVisibilidad = "RESTRINGIDO_ROL";
+  try {
+    const configSheet = ss.getSheetByName("ConfiguracionAcademica");
+    if (configSheet) {
+      const configData = configSheet.getDataRange().getValues();
+      const rowVis = configData.slice(1).find(r => String(r[0]).trim() === "NIVEL_VISIBILIDAD_CONSEJERIA");
+      if (rowVis && rowVis[1]) nivelVisibilidad = String(rowVis[1]).trim().toUpperCase();
+    }
+  } catch (e) {
+    logDebug("Error leyendo NIVEL_VISIBILIDAD_CONSEJERIA", e.message);
+  }
+
   const sheet = getOrCreateSheet(ss, "CasosSeguimiento");
   const data = sheet.getDataRange().getValues();
   if (data.length <= 1) return { status: "success", data: [] };
 
+  const isFullAccessRole = ["ADMINISTRADOR", "ADMIN", "DIRECTOR", "DIRECCION", "CONSEJEROS", "CONSEJERO", "ORIENTACION", "ORIENTADOR"].indexOf(roleUpper) >= 0;
+
+  let fueBloqueadoAcceso = false;
+
   const cases = data.slice(1).filter(r => {
+    if (casoId && String(r[0]).trim() !== String(casoId).trim()) return false;
     if (userId && String(r[1]).trim() !== String(userId).trim()) return false;
+
+    const resumen = String(r[3] || "");
+    const responsable = String(r[4] || "");
+    const esCasoConfidencial = resumen.indexOf("Categoría: Consejería") >= 0 || resumen.indexOf("Categoría: Orientación") >= 0 || responsable.indexOf("Consejer") >= 0 || responsable.indexOf("Orientac") >= 0;
+
+    if (esCasoConfidencial && !isFullAccessRole && nivelVisibilidad !== "COMPARTIDO_DOCENTE") {
+      fueBloqueadoAcceso = true;
+      return false;
+    }
+
     return true;
   }).map(r => ({
     casoId: r[0],
@@ -7531,7 +7562,11 @@ function getAttendanceFollowupCases(payload) {
     fechaCierre: r[8] ? new Date(r[8]).toISOString() : null
   }));
 
-  return { status: "success", data: cases };
+  if (fueBloqueadoAcceso && !isFullAccessRole) {
+    logStructuredEvent("ACADEMIC", "getAttendanceFollowupCases", "WARN", "UNAUTHORIZED_ACCESS_ATTEMPT", `Acceso no autorizado o restringido a casos confidenciales para rol '${roleUpper}'.`, { userId, casoId }, roleUpper);
+  }
+
+  return { status: "success", data: cases, nivelVisibilidad };
 }
 
 function saveAttendanceFollowupCase(payload) {

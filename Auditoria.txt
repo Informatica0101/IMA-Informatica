@@ -1,9 +1,9 @@
 ===============================================================================
 FECHA: 2026-10-29
-UNIFICACIÓN Y REGISTRO DE TAREAS BACKLOG DE LA FASE 10 (ASISTENCIA, DISCIPLINA, CONVIVENCIA, ORIENTACIÓN Y ASISTENTES)
-ARCHIVOS AUDITADOS: Pendientes.md, AUDITORIA_FASE_10_ASISTENCIA_DISCIPLINA_CONVIVENCIA.md
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task01: FORTALECER LA CONFIDENCIALIDAD Y EL CONTROL DE ACCESO A EXPEDIENTES SENSIBLES
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
 RESULTADO DE EVALUACIÓN:
-- Se unificaron y registraron las 18 tareas de la Fase 10 (`F10-Task01` a `F10-Task18`) en `Pendientes.md`, formateadas estrictamente por prioridad (P0, P1, P2) y severidad conforme a METODOLOGIA_DESARROLLO.md.
-- Se convergieron en un único backlog unificado preservando el máximo nivel de detalle e incorporando opciones configurables para parámetros de visibilidad o restricciones en disputa.
-- Resultado: 100% Conforme.
+- Se refactorizó la función `getAttendanceFollowupCases` en `backend/academic-service/Code.gs` inyectando la etiqueta identificativa `[F10-Task01]`.
+- Se verificó el aislamiento estricto de casos confidenciales de consejería y orientación respecto a docentes generales y perfiles no autorizados, la consulta dinámica del parámetro de visibilidad `NIVEL_VISIBILIDAD_CONSEJERIA` en `ConfiguracionAcademica`, y el registro de eventos de auditoría `UNAUTHORIZED_ACCESS_ATTEMPT` cuando el acceso es denegado.
+- Resultado: 100% Funcional y Verificado.
 ===============================================================================

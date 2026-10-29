@@ -5,7 +5,7 @@
 
 ---
 
-### [ ] [F10-Task01] Fortalecer la confidencialidad y el control de acceso a expedientes sensibles
+### [X] [F10-Task01] Fortalecer la confidencialidad y el control de acceso a expedientes sensibles
 - **Origen del Hallazgo:** `AUDITORIA_FASE_10_ASISTENCIA_DISCIPLINA_CONVIVENCIA.md` / Tarea F10-Task01 (P0) y Tarea 10.7
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Privacidad, confidencialidad y protección de datos sensibles)
@@ -26,7 +26,7 @@
   - Un docente no puede consultar notas confidenciales de consejería de un alumno.
   - Las consultas no autorizadas registran eventos `UNAUTHORIZED_ACCESS_ATTEMPT`.
   - Las configuraciones de visibilidad disputadas son parametrizables desde la plataforma.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
