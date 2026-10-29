@@ -649,6 +649,7 @@ function doPost(e) {
       case "calculateUnifiedAcademicGrade": result = calculateUnifiedAcademicGrade(payload); break;
       case "previewAcademicGradeCalculation": result = previewAcademicGradeCalculation(payload); break;
       case "auditAcademicGradesIntegrity": result = auditAcademicGradesIntegrity(payload); break;
+      case "generateStudentReportCard": result = generateStudentReportCard(payload); break;
 
       // Endpoints Fase 3
       case "getInstitutionParams": result = getInstitutionParams(payload); break;
