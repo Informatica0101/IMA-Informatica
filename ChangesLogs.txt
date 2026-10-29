@@ -2940,6 +2940,24 @@ Archivos Modificados:
 
 -------------------------------------------------------------------------------
 FECHA: 2026-10-29
+TAREA: [F9-Task13] Optimizar la exportación académica y los formatos de intercambio
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 249, 654, 10852-10922: Adición de permiso "exportAcademicGradesData" en ROLE_PERMISSIONS, dispatcher en doPost switch e implementación de la función `exportAcademicGradesData` con etiqueta `[F9-Task13]`.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de verificación para `exportAcademicGradesData [F9-Task13]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task13]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task13]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
 TAREA: [F9-Task02] Fortalecer la validación y el diagnóstico de archivos SACE antes de generar las calificaciones
 -------------------------------------------------------------------------------
 

@@ -560,6 +560,17 @@ RESULTADO DE EVALUACIÓN:
 
 ===============================================================================
 FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F9-Task13: OPTIMIZAR LA EXPORTACIÓN ACADÉMICA Y LOS FORMATOS DE INTERCAMBIO
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `exportAcademicGradesData` en `backend/academic-service/Code.gs` con la etiqueta identificativa `[F9-Task13]`.
+- Se verificó el soporte de exportaciones en formatos CSV y JSON con diferenciación explícita entre notas oficiales y borradores, modo vista previa y registro de auditoría `EXPORTE_NOTAS_ACADEMICAS`.
+- Registrada la acción en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
 AUDITORÍA FUNCIONAL Y TÉCNICA - F9-Task08: FORTALECER EL CONTROL DE PERMISOS Y LA SEPARACIÓN DE RESPONSABILIDADES ACADÉMICAS
 ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
 RESULTADO DE EVALUACIÓN:

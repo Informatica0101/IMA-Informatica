@@ -246,7 +246,7 @@ const ROLE_PERMISSIONS = {
     "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentEnrollments",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
     "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans",
-    "calculateUnifiedAcademicGrade", "previewAcademicGradeCalculation", "auditAcademicGradesIntegrity", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess"
+    "calculateUnifiedAcademicGrade", "previewAcademicGradeCalculation", "auditAcademicGradesIntegrity", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess", "exportAcademicGradesData"
   ],
   "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentTimeline", "getClassAttendance", "getStudentAttendanceSummary"],
   "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "calculateUnifiedAcademicGrade", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess"],
@@ -651,6 +651,7 @@ function doPost(e) {
       case "auditAcademicGradesIntegrity": result = auditAcademicGradesIntegrity(payload); break;
       case "generateStudentReportCard": result = generateStudentReportCard(payload); break;
       case "validateAcademicResponsibilityAndScopeAccess": result = validateAcademicResponsibilityAndScopeAccess(payload); break;
+      case "exportAcademicGradesData": result = exportAcademicGradesData(payload); break;
 
       // Endpoints Fase 3
       case "getInstitutionParams": result = getInstitutionParams(payload); break;
@@ -10845,6 +10846,78 @@ function validateAcademicResponsibilityAndScopeAccess(payload) {
     authorized: false,
     reason: `Rol '${roleUpper}' no reconocido para responsabilidad académica.`,
     message: "Acceso denegado por defecto."
+  };
+}
+
+// [F9-Task13] [P1] - Optimizar la exportación académica y los formatos de intercambio
+function exportAcademicGradesData(payload) {
+  const { formato, periodoId, asignaturaId, grado, seccion, incluirBorradores, vistaPrevia, userId, authRole } = payload || {};
+
+  const targetFormat = String(formato || "CSV").toUpperCase();
+  const esVistaPrevia = vistaPrevia === true;
+
+  const ss = getSpreadsheet();
+  const sheetNotas = ss.getSheetByName("CalificacionesEstudiantes") || ss.getSheetByName("Calificaciones") || ss.getSheetByName("Notas");
+
+  const records = [];
+  let totalOficiales = 0;
+  let totalBorradores = 0;
+
+  if (sheetNotas) {
+    const data = sheetNotas.getDataRange().getValues();
+    if (data.length > 1) {
+      const headers = data[0].map(h => String(h).trim().toLowerCase());
+      const idxUser = headers.indexOf("userid") >= 0 ? headers.indexOf("userid") : headers.indexOf("estudianteid");
+      const idxNota = headers.indexOf("notaobtenida") >= 0 ? headers.indexOf("notaobtenida") : headers.indexOf("nota");
+      const idxBorrador = headers.indexOf("esborrador");
+      const idxPublicada = headers.indexOf("espublicada");
+      const idxObs = headers.indexOf("observaciones");
+
+      for (let i = 1; i < data.length; i++) {
+        const uId = idxUser >= 0 ? String(data[i][idxUser]).trim() : "";
+        if (!uId) continue;
+
+        const isDraft = idxBorrador >= 0 ? data[i][idxBorrador] === true : false;
+        const isPublished = idxPublicada >= 0 ? data[i][idxPublicada] === true : true;
+
+        if (isDraft && !incluirBorradores) continue;
+
+        if (isDraft) totalBorradores++;
+        else totalOficiales++;
+
+        records.push({
+          userId: uId,
+          nota: idxNota >= 0 ? parseFloat(data[i][idxNota]) || 0 : 0,
+          estadoRegistro: isDraft ? "BORRADOR" : (isPublished ? "OFICIAL" : "PENDIENTE"),
+          observaciones: idxObs >= 0 ? String(data[i][idxObs]) : ""
+        });
+      }
+    }
+  }
+
+  logStructuredEvent("ACADEMIC", "exportAcademicGradesData", "INFO", "EXPORTE_NOTAS_ACADEMICAS", `Exportación de notas académicas realizada en formato '${targetFormat}'. Total registros: ${records.length}.`, { formato: targetFormat, totalRecords: records.length, userId }, authRole || "Docente");
+
+  if (esVistaPrevia) {
+    return {
+      status: "success",
+      esVistaPrevia: true,
+      formato: targetFormat,
+      resumenExportacion: {
+        totalRegistros: records.length,
+        totalOficiales,
+        totalBorradores,
+        muestraRegistros: records.slice(0, 5)
+      },
+      message: `Vista previa de exportación generada en formato ${targetFormat}.`
+    };
+  }
+
+  return {
+    status: "success",
+    formato: targetFormat,
+    totalExportados: records.length,
+    datosExportacion: records,
+    message: `Exportación de calificaciones en formato ${targetFormat} completada exitosamente.`
   };
 }
 

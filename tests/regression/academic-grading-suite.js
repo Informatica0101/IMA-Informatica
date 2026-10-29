@@ -51,6 +51,7 @@ assert(devCode.includes("runAcademicGradingRegressionSuite") && devCode.includes
 assert(examCode.includes("bulkApplyGradebookGrades") && examCode.includes("copyEvaluationSetupBetweenGroups") && examCode.includes("[F9-Task10]"), "backend/exam-service/Code.gs contiene bulkApplyGradebookGrades y copyEvaluationSetupBetweenGroups [F9-Task10]");
 assert(examCode.includes("saveStudentRecovery") && examCode.includes("[F9-Task11]"), "backend/exam-service/Code.gs contiene saveStudentRecovery [F9-Task11]");
 assert(examCode.includes("saveCompetencyEvaluation") && examCode.includes("getCompetencyEvaluations") && examCode.includes("[F9-Task12]"), "backend/exam-service/Code.gs contiene saveCompetencyEvaluation y getCompetencyEvaluations [F9-Task12]");
+assert(academicCode.includes("exportAcademicGradesData") && academicCode.includes("[F9-Task13]"), "backend/academic-service/Code.gs contiene exportAcademicGradesData [F9-Task13]");
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {

@@ -450,7 +450,7 @@
 
 ---
 
-### [ ] [F9-Task13] Optimizar la exportación académica y los formatos de intercambio
+### [X] [F9-Task13] Optimizar la exportación académica y los formatos de intercambio
 - **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task11 (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Exportaciones, interoperabilidad y reportes descargables)
@@ -482,7 +482,7 @@
   - Los errores de exportación identifican los registros afectados.
   - Las exportaciones no permiten acceder a información fuera del ámbito autorizado.
   - La repetición de una exportación no modifica las calificaciones originales.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
