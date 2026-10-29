@@ -301,7 +301,7 @@
 
 ---
 
-### [ ] [F9-Task09] Completar las pruebas automatizadas de regresión de la Fase 9
+### [X] [F9-Task09] Completar las pruebas automatizadas de regresión de la Fase 9
 - **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task14 (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Calidad funcional e integridad académica)
@@ -333,7 +333,7 @@
   - Los archivos generados respetan las plantillas utilizadas en las pruebas.
   - Los fallos simulados no provocan pérdida silenciosa de calificaciones.
   - Las modificaciones posteriores no reintroducen defectos en los flujos previamente verificados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

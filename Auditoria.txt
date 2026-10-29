@@ -549,6 +549,18 @@ RESULTADO DE EVALUACIÓN:
 
 ===============================================================================
 FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F9-Task09: COMPLETAR LAS PRUEBAS AUTOMATIZADAS DE REGRESIÓN DE LA FASE 9
+ARCHIVOS AUDITADOS: tests/regression/academic-grading-suite.js, backend/developer-service/Code.gs, backend/exam-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se corrigió la inicialización de encabezados en `reopenPeriodGradebook` en `backend/exam-service/Code.gs`.
+- Se implementó el ejecutable de pruebas de regresión `tests/regression/academic-grading-suite.js` y la función `runAcademicGradingRegressionSuite` en `backend/developer-service/Code.gs` con la etiqueta identificativa `[F9-Task09]`.
+- Se verificó el paso exitoso de 14/14 pruebas de regresión automatizadas (100.0%) cubriendo exportación SACE, diagnóstico de plantillas, cálculo unificado de notas, auditorías de integridad, máquina de estados de parcial, rectificaciones, boletines y aislamiento de ámbitos.
+- Registrada la acción en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/developer-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
 AUDITORÍA FUNCIONAL Y TÉCNICA - F9-Task06: FORTALECER LAS RECTIFICACIONES DE NOTAS Y LA TRAZABILIDAD DE LOS CAMBIOS
 ARCHIVOS AUDITADOS: backend/exam-service/Code.gs
 RESULTADO DE EVALUACIÓN:

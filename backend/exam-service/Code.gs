@@ -1659,6 +1659,9 @@ function reopenPeriodGradebook(payload) {
 
   try {
     const rectSheet = getOrCreateSheet(ss, "HistorialRectificacionesNotas");
+    if (rectSheet.getLastRow() === 0) {
+      rectSheet.appendRow(["RectificacionID", "EvaluacionID", "UserID", "Accion", "NotaAnterior", "NotaNueva", "Motivo", "AutorizadoPor", "Fecha"]);
+    }
     rectSheet.appendRow([
       "REAP-" + Date.now(),
       cierreId,

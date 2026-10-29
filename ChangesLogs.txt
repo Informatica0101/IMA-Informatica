@@ -2865,6 +2865,27 @@ Archivos Modificados:
 
 -------------------------------------------------------------------------------
 FECHA: 2026-10-29
+TAREA: [F9-Task09] Completar las pruebas automatizadas de regresión de la Fase 9
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/exam-service/Code.gs
+   - Lineas 1660-1665: Adición de verificación `if (rectSheet.getLastRow() === 0)` para inserción previa de encabezados en `reopenPeriodGradebook`.
+
+2. tests/regression/academic-grading-suite.js
+   - Creación del ejecutable Node.js con 14 aserciones de regresión para las capacidades de la Fase 9.
+
+3. backend/developer-service/Code.gs
+   - Lineas 29, 121, 215-300: Adición de permiso "runAcademicGradingRegressionSuite" en ROLE_PERMISSIONS, dispatcher en doPost switch e implementación de la función `runAcademicGradingRegressionSuite`.
+
+4. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task09]`.
+
+5. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task09]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
 TAREA: [F9-Task02] Fortalecer la validación y el diagnóstico de archivos SACE antes de generar las calificaciones
 -------------------------------------------------------------------------------
 
