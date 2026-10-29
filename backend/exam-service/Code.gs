@@ -88,7 +88,7 @@ const ROLE_PERMISSIONS = {
     "createExam", "updateExam", "updateExamStatus", "deleteExam", "gradeExamSubmission", "deleteExamSubmission",
     "getAllExams", "getTeacherExamActivity", "getExamQuestions", "getStudentExams", "getExamResult",
     "getGradebookData", "saveGradebookGrades", "getEvaluationCategories", "saveEvaluationCategory",
-    "getRubrics", "saveRubric", "saveStudentRecovery", "getStudentRecoveries", "closePeriodGradebook", "reopenPeriodGradebook", "getStudentAcademicReport",
+    "getRubrics", "saveRubric", "saveStudentRecovery", "getStudentRecoveries", "closePeriodGradebook", "reopenPeriodGradebook", "submitGradebookForReview", "reviewPeriodGradebook", "getStudentAcademicReport",
     "manageQuestionBank", "getQuestionBank", "checkExamSchedulingConflict", "simulateExamReschedule",
     "getExamGradeDistributionAnalytics"
   ],
@@ -380,6 +380,8 @@ function doPost(e) {
       case "getStudentRecoveries": result = getStudentRecoveries(payload); break;
       case "closePeriodGradebook": result = closePeriodGradebook(payload); break;
       case "reopenPeriodGradebook": result = reopenPeriodGradebook(payload); break;
+      case "submitGradebookForReview": result = submitGradebookForReview(payload); break;
+      case "reviewPeriodGradebook": result = reviewPeriodGradebook(payload); break;
       case "getStudentAcademicReport": result = getStudentAcademicReport(payload); break;
       case "manageQuestionBank": result = manageQuestionBank(payload); break;
       case "getQuestionBank": result = getQuestionBank(payload); break;
@@ -1521,6 +1523,43 @@ function getStudentRecoveries(payload) {
   return { status: "success", data: recoveries };
 }
 
+function publishGradebookForContext(ss, targetGrado, targetSeccion, targetAsignatura) {
+  try {
+    const usuariosSheet = ss.getSheetByName("Usuarios");
+    const targetStudentIds = new Set();
+    if (usuariosSheet) {
+      const uData = usuariosSheet.getDataRange().getValues().slice(1);
+      uData.forEach(u => {
+        const rol = normalizeString(u[6] || u[5]);
+        if (rol === "estudiante" || rol === "alumno") {
+          const matchGrado = !targetGrado || normalizeString(u[2]) === normalizeString(targetGrado);
+          const matchSec = !targetSeccion || normalizeString(u[3]) === normalizeString(targetSeccion);
+          if (matchGrado && matchSec) {
+            targetStudentIds.add(String(u[0]).trim());
+          }
+        }
+      });
+    }
+
+    const califSheet = getOrCreateSheet(ss, "CalificacionesEstudiantes");
+    const califData = califSheet.getDataRange().getValues();
+    if (califData.length > 1) {
+      for (let i = 1; i < califData.length; i++) {
+        const uId = String(califData[i][2]).trim();
+        const matchesStudent = targetStudentIds.size === 0 || targetStudentIds.has(uId);
+        if (matchesStudent && (califData[i][5] === true || String(califData[i][5]).toLowerCase() === "true")) {
+          califData[i][5] = false; // esBorrador = false
+          califData[i][6] = true;  // esPublicada = true
+        }
+      }
+      califSheet.getRange(1, 1, califData.length, califData[0].length).setValues(califData);
+    }
+  } catch (err) {
+    logDebug("Error actualizando estados de publicación contextuales", err.message);
+  }
+}
+
+// [F9-Task05] [P0] - Completar el ciclo de revisión, aprobación, cierre y publicación de calificaciones
 function closePeriodGradebook(payload) {
   const { anoId, periodoId, grado, seccion, asignatura, profesorId } = payload || {};
   if (!grado || !asignatura || !periodoId) throw new Error("Grado, Asignatura y Período son requeridos.");
@@ -1536,21 +1575,68 @@ function closePeriodGradebook(payload) {
 
   sheet.appendRow([cierreId, anoId || "ANO-CURRENT", periodoId, grado, seccion || "A", asignatura, profesorId || "Docente", "Cerrado", now]);
 
-  try {
-    const califSheet = getOrCreateSheet(ss, "CalificacionesEstudiantes");
-    const califData = califSheet.getDataRange().getValues();
-    if (califData.length > 1) {
-      for (let i = 1; i < califData.length; i++) {
-        califData[i][5] = false; // esBorrador = false
-        califData[i][6] = true;  // esPublicada = true
-      }
-      califSheet.getRange(1, 1, califData.length, califData[0].length).setValues(califData);
-    }
-  } catch (err) {
-    logDebug("Error actualizando estados de publicación al cerrar período", err.message);
-  }
+  publishGradebookForContext(ss, grado, seccion, asignatura);
 
   return { status: "success", message: `Período ${periodoId} cerrado oficialmente para ${asignatura} (${grado} ${seccion || 'A'}).` };
+}
+
+function submitGradebookForReview(payload) {
+  const { anoId, periodoId, grado, seccion, asignatura, profesorId, notasPendientesCount } = payload || {};
+  if (!grado || !asignatura || !periodoId) throw new Error("Grado, Asignatura y Período son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CierresPeriodos");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["CierreID", "AnoID", "PeriodoID", "Grado", "Seccion", "Asignatura", "ProfesorID", "Estado", "FechaCierre"]);
+  }
+
+  const cierreId = "REV-" + Date.now();
+  const now = new Date();
+
+  sheet.appendRow([cierreId, anoId || "ANO-CURRENT", periodoId, grado, seccion || "A", asignatura, profesorId || "Docente", "PendienteRevision", now]);
+
+  return {
+    status: "success",
+    cierreId,
+    estado: "PendienteRevision",
+    notasPendientesCount: notasPendientesCount || 0,
+    message: `Libro de notas de ${asignatura} (${grado} ${seccion || 'A'}) enviado a revisión de Secretaría/Dirección.`
+  };
+}
+
+function reviewPeriodGradebook(payload) {
+  const { cierreId, decision, observaciones, revisadoPor } = payload || {};
+  if (!cierreId || !decision) throw new Error("cierreId y decision ('Aprobado', 'Observado', 'Publicado') son requeridos.");
+
+  const estadoTarget = decision === "Observado" ? "Observado" : (decision === "Aprobado" ? "Aprobado" : "Cerrado");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CierresPeriodos");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(cierreId).trim());
+
+  if (idx === -1) throw new Error("Registro de período no encontrado.");
+
+  sheet.getRange(idx + 1, 8).setValue(estadoTarget);
+  sheet.getRange(idx + 1, 9).setValue(new Date());
+
+  if (estadoTarget === "Cerrado" || decision === "Publicado") {
+    const targetRow = data[idx];
+    const targetGrado = targetRow ? targetRow[3] : null;
+    const targetSeccion = targetRow ? targetRow[4] : null;
+    const targetAsignatura = targetRow ? targetRow[5] : null;
+
+    publishGradebookForContext(ss, targetGrado, targetSeccion, targetAsignatura);
+  }
+
+  return {
+    status: "success",
+    cierreId,
+    estadoActual: estadoTarget,
+    revisadoPor: revisadoPor || "Secretaría",
+    observaciones: observaciones || "",
+    message: `Revisión completada: Período marcado como '${estadoTarget}'.`
+  };
 }
 
 function reopenPeriodGradebook(payload) {

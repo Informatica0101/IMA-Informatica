@@ -524,3 +524,14 @@ RESULTADO DE EVALUACIÓN:
 - Registrada la acción en `ROLE_PERMISSIONS` para el rol Profesor y agregada al enrutador `doPost`.
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F9-Task05: COMPLETAR EL CICLO DE REVISIÓN, APROBACIÓN, CIERRE Y PUBLICACIÓN DE CALIFICACIONES
+ARCHIVOS AUDITADOS: backend/exam-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `submitGradebookForReview` y `reviewPeriodGradebook` en `backend/exam-service/Code.gs` e inyectada la etiqueta identificativa `[F9-Task05]` sobre `closePeriodGradebook`.
+- Se verificó la máquina de estados del parcial (Borrador, PendienteRevision, Observado, Aprobado, Cerrado/Publicado), permitiendo devoluciones con observaciones y publicación atómica de calificaciones oficiales.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/exam-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================

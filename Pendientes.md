@@ -158,7 +158,7 @@
 
 ---
 
-### [ ] [F9-Task05] Completar el ciclo de revisión, aprobación, cierre y publicación de calificaciones
+### [X] [F9-Task05] Completar el ciclo de revisión, aprobación, cierre y publicación de calificaciones
 - **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task06 (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Gestión de períodos académicos y publicación oficial)
@@ -191,7 +191,7 @@
   - Las transiciones de estado quedan registradas y pueden consultarse.
   - Los errores durante el cierre o la publicación no dejan el período en un estado inconsistente.
   - Las notificaciones fallidas pueden identificarse y gestionarse sin duplicar las operaciones académicas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

@@ -2897,3 +2897,19 @@ Archivos Modificados:
 
 3. Auditoria.txt
    - Registro de la auditoría y verificación de la tarea `[F9-Task04]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F9-Task05] Completar el ciclo de revisión, aprobación, cierre y publicación de calificaciones
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/exam-service/Code.gs
+   - Lineas 91, 383-384: Adición de permisos "submitGradebookForReview" y "reviewPeriodGradebook" en ROLE_PERMISSIONS para rol Profesor y dispatchers en doPost switch.
+   - Lineas 1525-1620: Adición del comentario identificativo `[F9-Task05]` sobre `closePeriodGradebook` e implementación de las funciones backend `submitGradebookForReview` y `reviewPeriodGradebook` para la máquina de estados del parcial.
+
+2. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task05]`.
+
+3. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task05]`.
