@@ -491,3 +491,14 @@ RESULTADO DE EVALUACIÓN:
 - Inyectada la etiqueta identificativa `[F9-Task01]` en la primera línea de `verifySACETemplateCompatibility`.
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F9-Task02: FORTALECER LA VALIDACIÓN Y EL DIAGNÓSTICO DE ARCHIVOS SACE ANTES DE GENERAR LAS CALIFICACIONES
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `validateSACETemplateFile` en `backend/accounting-service/Code.gs` antecedida por el comentario identificativo `[F9-Task02]`.
+- Se validó la inspección previa de estructura de archivos, detección de columnas requeridas, clasificación de errores bloqueantes (DNI ausente, rango de notas inválido), advertencias (DNI duplicados) e información (notas pendientes preservadas).
+- Registrada la acción en `ROLE_PERMISSIONS` y en el enrutador `doPost`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================

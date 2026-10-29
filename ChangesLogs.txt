@@ -2846,3 +2846,19 @@ Archivos Modificados:
 
 3. Auditoria.txt
    - Registro de la auditoría y verificación de la tarea `[F9-Task01]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F9-Task02] Fortalecer la validación y el diagnóstico de archivos SACE antes de generar las calificaciones
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Lineas 705, 205: Adición de permiso "validateSACETemplateFile" en ROLE_PERMISSIONS para rol Profesor y ruta en dispatcher doPost.
+   - Lineas 10170-10265: Implementación de la función backend `validateSACETemplateFile` con comentario identificativo de primera línea `[F9-Task02]`.
+
+2. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task02]`.
+
+3. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task02]`.

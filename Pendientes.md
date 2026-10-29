@@ -50,7 +50,7 @@
 
 ---
 
-### [ ] [F9-Task02] Fortalecer la validación y el diagnóstico de archivos SACE antes de generar las calificaciones
+### [X] [F9-Task02] Fortalecer la validación y el diagnóstico de archivos SACE antes de generar las calificaciones
 - **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task02 (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Validación de datos e integridad de exportaciones)
@@ -83,7 +83,7 @@
   - Las advertencias no bloqueantes se muestran antes de confirmar la operación.
   - El informe de validación permite identificar cada problema sin consultar manualmente el código.
   - La validación puede repetirse después de corregir el archivo y produce resultados coherentes con los cambios realizados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
