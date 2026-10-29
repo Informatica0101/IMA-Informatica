@@ -648,7 +648,7 @@
 
 ---
 
-### [ ] [F8-Task26] Garantizar accesibilidad, usabilidad y adaptación de los dashboards
+### [X] [F8-Task26] Garantizar accesibilidad, usabilidad y adaptación de los dashboards
 - **ID Anterior:** `[TAREA-CAL-01]`
 - **Origen del Hallazgo:** Anexo de Tareas: Calidad / Tarea CAL-01 (P2 · Accesibilidad y Adaptación)
 - **Prioridad:** P2
@@ -665,7 +665,7 @@
   3. Mantener contraste, etiquetas accesibles y estados de carga/error descriptivos.
 - **Criterios de Aceptación:**
   - CA-CAL-101: Los dashboards cumplen con la pauta WCAG 2.2 AA y son navegables íntegramente con teclado y lectores de pantalla.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

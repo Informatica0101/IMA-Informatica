@@ -438,3 +438,13 @@ RESULTADO DE EVALUACIÓN:
 - Se auditó `js/teacher.js` para añadir los controladores UI `openExamGradeDistributionModal(examenId)` y `loadExamGradeDistributionData(examenId)` con manejo de estado vacío y renderizado dinámico.
 - Resultado: Auditoría completada. Preparado para implementación de código funcional.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task26: GARANTIZAR ACCESIBILIDAD, USABILIDAD Y ADAPTACIÓN DE LOS DASHBOARDS
+ARCHIVOS AUDITADOS: css/style.css, index.html, dashboard-direccion.html, dashboard-secretaria.html, dashboard-coordinacion.html, teacher-dashboard.html, student-dashboard.html, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se auditó `css/style.css` identificando la necesidad de incorporar reglas globales de accesibilidad WCAG 2.2 AA: indicadores claros de enfoque visual (`:focus-visible`), soporte de enlaces de salto para lectores de pantalla (`.skip-link`), estilos para estados de carga e indicadores en vivo (`[aria-live]`), min-height de objetivo táctil (44px) para dispositivos móviles y modo de alto contraste.
+- Se auditó la adaptabilidad responsiva de los dashboards en pantallas móviles, tabletas y escritorio.
+- Resultado: Auditoría completada. Preparado para implementación de normas de accesibilidad y adaptación WCAG 2.2 AA.
+===============================================================================
