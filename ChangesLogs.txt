@@ -2748,3 +2748,71 @@ Archivos Creados y Modificados:
 
 4. Auditoria.txt
    - Registro de la auditoría y verificación de la tarea [F8-Task24].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F8-Task25] Incorporar estadísticas descriptivas y una visualización de la distribución de calificaciones de exámenes
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. backend/exam-service/Code.gs
+   - Implementación de la función `getExamGradeDistributionAnalytics` con la etiqueta identificativa `[F8-Task25] [TAREA-F8-OPT-02]` para el cálculo de estadísticas descriptivas (evaluados, pendientes, promedio, mediana, min, max, desviación estándar, % de aprobación) e intervalos de frecuencia.
+   - Inclusión del permiso `"getExamGradeDistributionAnalytics"` en `ROLE_PERMISSIONS` y enrutamiento en `doPost`.
+
+2. teacher-dashboard.html
+   - Adición de la interfaz modal `#modal-exam-grade-distribution` con la etiqueta identificativa `[F8-Task25] [TAREA-F8-OPT-02]` conteniendo tarjetas de resumen estadístico, histograma de distribución de frecuencias y contenedor de curva normal de referencia.
+
+3. js/teacher.js
+   - Implementación de los controladores UI `openExamGradeDistributionModal` y `loadExamGradeDistributionData` con la etiqueta identificativa `[F8-Task25] [TAREA-F8-OPT-02]`.
+   - Adición del botón de acceso rápido a analítica de distribución en la tabla de gestión de exámenes.
+
+4. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task25].
+
+5. Auditoria.txt
+   - Registro de auditoría y hallazgos técnicos correspondientes a la tarea [F8-Task25].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F8-Task26] Garantizar accesibilidad, usabilidad y adaptación de los dashboards
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. css/style.css
+   - Inserción del bloque de estilos WCAG 2.2 AA con la etiqueta identificativa `[F8-Task26] [TAREA-CAL-01]`.
+   - Adición de estilos para skip-links, indicadores de foco visible (`:focus-visible`), objetivos táctiles mínimos para móviles (44px), anuncios en vivo `[aria-live]`, soporte de alto contraste y reducción de movimiento.
+
+2. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task26].
+
+3. Auditoria.txt
+   - Registro de auditoría para la tarea [F8-Task26].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F8-Task27] Garantizar rendimiento y mantenimiento del sistema modular
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. js/api.js
+   - Inserción de la etiqueta identificativa `[F8-Task27] [TAREA-CAL-02]`.
+   - Implementación de `fetchApiDeduplicated` para coalescencia y deduplicación de peticiones HTTP concurrentes in-flight.
+   - Implementación de `invalidateLocalModuleCache` para la purga controlada de datos de módulos locales ante cambios de permisos.
+
+2. Pendientes.md
+   - Actualización del estado a [X] Completado para [F8-Task27].
+
+3. Auditoria.txt
+   - Registro de auditoría para la tarea [F8-Task27].
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: Auditoría de consistencia de estados en completadas.md conforme a METODOLOGIA_DESARROLLO.md
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. completadas.md
+   - Normalización de metadatos de estado `- **Estado:** [X] Completado` para las tareas registradas previamente con título `[X]`.
+
+2. Auditoria.txt
+   - Registro de la auditoría de consistencia metodológica.

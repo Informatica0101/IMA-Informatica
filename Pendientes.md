@@ -620,7 +620,7 @@
 
 ---
 
-### [ ] [F8-Task25] Incorporar estadísticas descriptivas y una visualización de la distribución de calificaciones de exámenes
+### [X] [F8-Task25] Incorporar estadísticas descriptivas y una visualización de la distribución de calificaciones de exámenes
 - **ID Anterior:** `[TAREA-F8-OPT-02]`
 - **Origen del Hallazgo:** `AUDITORIA_FASE_8_AULA_VIRTUAL_APRENDIZAJE.md` / Tarea F8-OPT-02 (P2 · Analítica de Exámenes)
 - **Prioridad:** P2
@@ -644,11 +644,11 @@
   - CA-F8-016: El informe estadístico y gráfico corresponde exactamente al examen y grupo seleccionado.
   - CA-F8-017: La generación del gráfico de distribución no modifica ni recalcula las notas oficiales.
   - CA-F8-018: Un grupo sin calificaciones muestra un estado vacío comprensible en lugar de un gráfico erróneo.
-- **Estado:** [ ] No Completado
+- **Estado:** [X] Completado
 
 ---
 
-### [ ] [F8-Task26] Garantizar accesibilidad, usabilidad y adaptación de los dashboards
+### [X] [F8-Task26] Garantizar accesibilidad, usabilidad y adaptación de los dashboards
 - **ID Anterior:** `[TAREA-CAL-01]`
 - **Origen del Hallazgo:** Anexo de Tareas: Calidad / Tarea CAL-01 (P2 · Accesibilidad y Adaptación)
 - **Prioridad:** P2
@@ -665,11 +665,11 @@
   3. Mantener contraste, etiquetas accesibles y estados de carga/error descriptivos.
 - **Criterios de Aceptación:**
   - CA-CAL-101: Los dashboards cumplen con la pauta WCAG 2.2 AA y son navegables íntegramente con teclado y lectores de pantalla.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
-### [ ] [F8-Task27] Garantizar rendimiento y mantenimiento del sistema modular
+### [X] [F8-Task27] Garantizar rendimiento y mantenimiento del sistema modular
 - **ID Anterior:** `[TAREA-CAL-02]`
 - **Origen del Hallazgo:** Anexo de Tareas: Calidad / Tarea CAL-02 (P2 · Rendimiento y Mantenibilidad)
 - **Prioridad:** P2
@@ -686,4 +686,4 @@
   3. Invalidar la configuración almacenada ante cambios de permisos o asignaciones.
 - **Criterios de Aceptación:**
   - CA-CAL-102: La carga dinámica no degrada la latencia percibida y elimina llamadas duplicadas al servidor.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado

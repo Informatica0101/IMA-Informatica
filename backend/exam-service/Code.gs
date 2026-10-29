@@ -89,7 +89,8 @@ const ROLE_PERMISSIONS = {
     "getAllExams", "getTeacherExamActivity", "getExamQuestions", "getStudentExams", "getExamResult",
     "getGradebookData", "saveGradebookGrades", "getEvaluationCategories", "saveEvaluationCategory",
     "getRubrics", "saveRubric", "saveStudentRecovery", "getStudentRecoveries", "closePeriodGradebook", "reopenPeriodGradebook", "getStudentAcademicReport",
-    "manageQuestionBank", "getQuestionBank", "checkExamSchedulingConflict", "simulateExamReschedule"
+    "manageQuestionBank", "getQuestionBank", "checkExamSchedulingConflict", "simulateExamReschedule",
+    "getExamGradeDistributionAnalytics"
   ],
   "Estudiante": [
     "getStudentExams", "getExamQuestions", "submitExam", "getExamResult", "getEvaluationCategories", "getRubrics", "getStudentRecoveries", "getStudentAcademicReport"
@@ -384,6 +385,7 @@ function doPost(e) {
       case "getQuestionBank": result = getQuestionBank(payload); break;
       case "checkExamSchedulingConflict": result = checkExamSchedulingConflict(payload); break;
       case "simulateExamReschedule": result = simulateExamReschedule(payload); break;
+      case "getExamGradeDistributionAnalytics": result = getExamGradeDistributionAnalytics(payload); break;
       default:
         result = { status: "error", message: `Acción no válida: ${action}` };
     }
@@ -657,6 +659,148 @@ function getExamQuestions({ examenId }) {
     data: {
       ...examDetails,
       preguntas: preguntas
+    }
+  };
+}
+
+// [F8-Task25] [TAREA-F8-OPT-02] - Estadísticas descriptivas y distribución de calificaciones de exámenes
+function getExamGradeDistributionAnalytics(payload) {
+  const { examenId } = payload || {};
+  if (!examenId) throw new Error("examenId es requerido para generar la analítica de distribución de calificaciones.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const examenesSheet = getSheetOrThrow(ss, "Examenes");
+  const examenesData = examenesSheet.getDataRange().getValues();
+  const examRow = examenesData.slice(1).find(r => String(r[0]).trim() === String(examenId).trim());
+
+  if (!examRow) throw new Error("Examen no encontrado.");
+
+  const entregasSheet = getSheetOrThrow(ss, "EntregasExamen");
+  const entregasData = entregasSheet.getDataRange().getValues();
+
+  const entregasExamen = entregasData.slice(1).filter(r => String(r[1]).trim() === String(examenId).trim());
+
+  const evaluados = [];
+  let pendientesCount = 0;
+
+  entregasExamen.forEach(r => {
+    const estado = String(r[6] || "").trim();
+    const notaRaw = r[5];
+    if (estado === "Pendiente" && (notaRaw === "" || notaRaw === null || notaRaw === undefined)) {
+      pendientesCount++;
+    } else {
+      const notaNum = parseFloat(notaRaw);
+      if (!isNaN(notaNum)) {
+        evaluados.push(notaNum);
+      } else if (estado === "Pendiente") {
+        pendientesCount++;
+      }
+    }
+  });
+
+  const totalEvaluados = evaluados.length;
+
+  if (totalEvaluados === 0) {
+    return {
+      status: "success",
+      sinDatos: true,
+      mensaje: "No hay calificaciones registradas aún para este examen.",
+      data: {
+        examenId,
+        titulo: examRow[1],
+        asignatura: examRow[2],
+        grado: examRow[3],
+        seccion: examRow[4],
+        parcial: examRow[9] || "Primer Parcial",
+        totalEvaluados: 0,
+        totalPendientes: pendientesCount,
+        promedio: 0,
+        mediana: 0,
+        minimo: 0,
+        maximo: 0,
+        desviacionEstandar: 0,
+        porcentajeAprobacion: 0,
+        intervalos: [
+          { rango: "0 - 59", etiqueta: "Insuficiente", cantidad: 0, porcentaje: 0 },
+          { rango: "60 - 69", etiqueta: "Suficiente", cantidad: 0, porcentaje: 0 },
+          { rango: "70 - 79", etiqueta: "Bueno", cantidad: 0, porcentaje: 0 },
+          { rango: "80 - 89", etiqueta: "Muy Bueno", cantidad: 0, porcentaje: 0 },
+          { rango: "90 - 100", etiqueta: "Sobresaliente", cantidad: 0, porcentaje: 0 }
+        ],
+        curvaNormal: []
+      }
+    };
+  }
+
+  evaluados.sort((a, b) => a - b);
+
+  const suma = evaluados.reduce((acc, val) => acc + val, 0);
+  const promedio = parseFloat((suma / totalEvaluados).toFixed(2));
+
+  let mediana = 0;
+  const mid = Math.floor(totalEvaluados / 2);
+  if (totalEvaluados % 2 === 0) {
+    mediana = parseFloat(((evaluados[mid - 1] + evaluados[mid]) / 2).toFixed(2));
+  } else {
+    mediana = parseFloat(evaluados[mid].toFixed(2));
+  }
+
+  const minimo = parseFloat(evaluados[0].toFixed(2));
+  const maximo = parseFloat(evaluados[totalEvaluados - 1].toFixed(2));
+
+  const varianza = evaluados.reduce((acc, val) => acc + Math.pow(val - promedio, 2), 0) / totalEvaluados;
+  const desviacionEstandar = parseFloat(Math.sqrt(varianza).toFixed(2));
+
+  const aprobadosCount = evaluados.filter(n => n >= 60).length;
+  const porcentajeAprobacion = parseFloat(((aprobadosCount / totalEvaluados) * 100).toFixed(2));
+
+  let c0_59 = 0, c60_69 = 0, c70_79 = 0, c80_89 = 0, c90_100 = 0;
+  evaluados.forEach(n => {
+    if (n < 60) c0_59++;
+    else if (n < 70) c60_69++;
+    else if (n < 80) c70_79++;
+    else if (n < 90) c80_89++;
+    else c90_100++;
+  });
+
+  const intervalos = [
+    { rango: "0 - 59", etiqueta: "Insuficiente", cantidad: c0_59, porcentaje: parseFloat(((c0_59 / totalEvaluados) * 100).toFixed(1)) },
+    { rango: "60 - 69", etiqueta: "Suficiente", cantidad: c60_69, porcentaje: parseFloat(((c60_69 / totalEvaluados) * 100).toFixed(1)) },
+    { rango: "70 - 79", etiqueta: "Bueno", cantidad: c70_79, porcentaje: parseFloat(((c70_79 / totalEvaluados) * 100).toFixed(1)) },
+    { rango: "80 - 89", etiqueta: "Muy Bueno", cantidad: c80_89, porcentaje: parseFloat(((c80_89 / totalEvaluados) * 100).toFixed(1)) },
+    { rango: "90 - 100", etiqueta: "Sobresaliente", cantidad: c90_100, porcentaje: parseFloat(((c90_100 / totalEvaluados) * 100).toFixed(1)) }
+  ];
+
+  const curvaNormal = [];
+  if (desviacionEstandar > 0) {
+    for (let x = 0; x <= 100; x += 10) {
+      const exponente = -0.5 * Math.pow((x - promedio) / desviacionEstandar, 2);
+      const densidad = (1 / (desviacionEstandar * Math.sqrt(2 * Math.PI))) * Math.exp(exponente);
+      const valorEstimated = parseFloat((densidad * totalEvaluados * 10).toFixed(2));
+      curvaNormal.push({ x: x, y: valorEstimated });
+    }
+  }
+
+  return {
+    status: "success",
+    sinDatos: false,
+    data: {
+      examenId,
+      titulo: examRow[1],
+      asignatura: examRow[2],
+      grado: examRow[3],
+      seccion: examRow[4],
+      parcial: examRow[9] || "Primer Parcial",
+      totalEvaluados,
+      totalPendientes: pendientesCount,
+      promedio,
+      mediana,
+      minimo,
+      maximo,
+      desviacionEstandar,
+      porcentajeAprobacion,
+      intervalos,
+      curvaNormal
     }
   };
 }

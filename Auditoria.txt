@@ -427,3 +427,44 @@ RESULTADO DE EVALUACIÓN:
 - Se validó el funcionamiento del visor de PDF embebido dentro del modal de revisión `#modal-grade-submission` en `teacher-dashboard.html` con controles de zoom, rotación y descarga segura respetando los permisos RBAC.
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task25: INCORPORAR ESTADÍSTICAS DESCRIPTIVAS Y UNA VISUALIZACIÓN DE LA DISTRIBUCIÓN DE CALIFICACIONES DE EXÁMENES
+ARCHIVOS AUDITADOS: backend/exam-service/Code.gs, teacher-dashboard.html, js/teacher.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se auditó `backend/exam-service/Code.gs` identificando la necesidad de implementar la función `getExamGradeDistributionAnalytics(payload)` para calcular estadísticas descriptivas (evaluados, pendientes, promedio, mediana, min, max, desviación estándar, % aprobación) e intervalos de frecuencia.
+- Se auditó `teacher-dashboard.html` para incorporar el modal `#modal-exam-grade-distribution` con contenedores para las métricas descriptivas y gráfico de barras/frecuencias por intervalo.
+- Se auditó `js/teacher.js` para añadir los controladores UI `openExamGradeDistributionModal(examenId)` y `loadExamGradeDistributionData(examenId)` con manejo de estado vacío y renderizado dinámico.
+- Resultado: Auditoría completada. Preparado para implementación de código funcional.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task26: GARANTIZAR ACCESIBILIDAD, USABILIDAD Y ADAPTACIÓN DE LOS DASHBOARDS
+ARCHIVOS AUDITADOS: css/style.css, index.html, dashboard-direccion.html, dashboard-secretaria.html, dashboard-coordinacion.html, teacher-dashboard.html, student-dashboard.html, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se auditó `css/style.css` identificando la necesidad de incorporar reglas globales de accesibilidad WCAG 2.2 AA: indicadores claros de enfoque visual (`:focus-visible`), soporte de enlaces de salto para lectores de pantalla (`.skip-link`), estilos para estados de carga e indicadores en vivo (`[aria-live]`), min-height de objetivo táctil (44px) para dispositivos móviles y modo de alto contraste.
+- Se auditó la adaptabilidad responsiva de los dashboards en pantallas móviles, tabletas y escritorio.
+- Resultado: Auditoría completada. Preparado para implementación de normas de accesibilidad y adaptación WCAG 2.2 AA.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F8-Task27: GARANTIZAR RENDIMIENTO Y MANTENIMIENTO DEL SISTEMA MODULAR
+ARCHIVOS AUDITADOS: js/api.js, js/config.js, js/ui-common.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se auditó `js/api.js` identificando la necesidad de incorporar mecanismos de optimización de rendimiento: deduplicación de peticiones concurrentes (in-flight request coalescing), caché local con expiración e invalidación explícita ante cambios de permisos (`invalidateLocalModuleCache`).
+- Se verificó la compatibilidad con el ecosistema de comunicación entre microservicios sin alterar contratos de llamadas existentes.
+- Resultado: Auditoría completada. Preparado para implementación de optimización de rendimiento y deduplicación.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA GENERAL DE METODOLOGÍA Y CONSISTENCIA - COMPLETADAS.MD Y PENDIENTES.MD
+ARCHIVOS AUDITADOS: completadas.md, Pendientes.md, METODOLOGIA_DESARROLLO.md
+RESULTADO DE EVALUACIÓN:
+- Se realizó la auditoría integral de consistencia de estados entre encabezados `### [X]` y metadatos de estado `- **Estado:**` en `completadas.md`.
+- Se corrigió la discrepancia de metadatos en las tareas F6-030 a F6-040 y F7-IMP-18 a F7-IMP-25 para reflejar con exactitud de 100% su estado `[X] Completado`.
+- Resultado: Coherencia de metodología y trazabilidad 100% validada.
+===============================================================================

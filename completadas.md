@@ -3510,7 +3510,7 @@ SEGUNDA PARTE: REESTRUCTURACIÓN ARQUITECTÓNICA, ESCALABILIDAD Y ADMINISTRACIÓ
   - CA-148: Un usuario con varios roles puede ejecutar operaciones autorizadas en distintas áreas desde una sola identidad institucional.
   - CA-149: Los permisos de una subárea no se extienden automáticamente a las demás.
   - CA-150: Los documentos y las transacciones conservan su trazabilidad al ser utilizados por usuarios con distintas responsabilidades.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -3569,7 +3569,7 @@ SEGUNDA PARTE: REESTRUCTURACIÓN ARQUITECTÓNICA, ESCALABILIDAD Y ADMINISTRACIÓ
   - CA-151: Las coordinaciones se pueden configurar sin modificar el código.
   - CA-152: Una coordinación puede relacionar asignaturas, docentes, grados, secciones y períodos según su alcance autorizado.
   - CA-153: Un coordinador puede tener otros roles institucionales sin duplicar su cuenta ni ampliar automáticamente sus permisos.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -3602,7 +3602,7 @@ SEGUNDA PARTE: REESTRUCTURACIÓN ARQUITECTÓNICA, ESCALABILIDAD Y ADMINISTRACIÓ
   - CA-078: Las actualizaciones de plantilla no modifican automáticamente todas las instancias.
   - CA-079: Se registra quién solicitó una operación, cuándo se ejecutó y cuál fue el resultado.
   - CA-154: La creación de una instancia permite definir sus coordinaciones y asignaciones iniciales sin modificar la plantilla.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -3636,7 +3636,7 @@ SEGUNDA PARTE: REESTRUCTURACIÓN ARQUITECTÓNICA, ESCALABILIDAD Y ADMINISTRACIÓ
   - CA-155: El registro permite administrar usuarios con múltiples roles y responsabilidades sin duplicar sus identidades.
   - CA-156: Los roles pueden relacionarse con áreas, subáreas, coordinaciones y servicios.
   - CA-157: Los cambios de asignaciones y permisos quedan auditados y se aplican mediante validaciones del servidor.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -3671,7 +3671,7 @@ SEGUNDA PARTE: REESTRUCTURACIÓN ARQUITECTÓNICA, ESCALABILIDAD Y ADMINISTRACIÓ
   - CA-094: Los registros no exponen credenciales ni documentos completos.
   - CA-095: Un error de supervisión no altera los datos operativos ni bloquea las funciones principales.
   - CA-158: El diagnóstico identifica endpoints faltantes, contratos incompatibles y dependencias que impiden completar operaciones.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -3697,7 +3697,7 @@ SEGUNDA PARTE: REESTRUCTURACIÓN ARQUITECTÓNICA, ESCALABILIDAD Y ADMINISTRACIÓ
   - CA-101: Las operaciones pendientes, fallidas y completadas se distinguen.
   - CA-102: Repetir una solicitud no duplica efectos cuando se requiere idempotencia.
   - CA-159: Los comandos administrativos aplican permisos específicos por operación y no se autorizan únicamente por el rol general del usuario.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -3731,7 +3731,7 @@ SEGUNDA PARTE: REESTRUCTURACIÓN ARQUITECTÓNICA, ESCALABILIDAD Y ADMINISTRACIÓ
   - CA-111: Se identifican problemas de capacidad y acumulación cuando existan mediciones fiables.
   - CA-112: El procedimiento de recuperación está documentado y no depende de instrucciones manuales conocidas por una sola persona.
   - CA-160: La restauración conserva las relaciones necesarias entre usuarios, roles, áreas, documentos y datos operativos del servicio recuperado.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -3767,7 +3767,7 @@ SEGUNDA PARTE: REESTRUCTURACIÓN ARQUITECTÓNICA, ESCALABILIDAD Y ADMINISTRACIÓ
   - CA-163: Las coordinaciones pueden relacionarse con asignaturas, docentes supervisados y responsables autorizados.
   - CA-164: Los cambios de roles y responsabilidades no conceden privilegios implícitos en áreas ajenas.
   - CA-165: La autorización se comprueba en cada operación protegida y no depende únicamente del rol seleccionado visualmente en el dashboard.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -3795,7 +3795,7 @@ SEGUNDA PARTE: REESTRUCTURACIÓN ARQUITECTÓNICA, ESCALABILIDAD Y ADMINISTRACIÓ
   - CA-128: Las actualizaciones conservan permisos y relaciones existentes.
   - CA-166: Cada actualización incluye una auditoría de impacto sobre funciones, variables, endpoints, dashboards y dependencias.
   - CA-167: Las migraciones preservan las asignaciones de roles, las relaciones académicas y las referencias entre servicios.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -3821,7 +3821,7 @@ SEGUNDA PARTE: REESTRUCTURACIÓN ARQUITECTÓNICA, ESCALABILIDAD Y ADMINISTRACIÓ
   - CA-135: Se identifican las funciones disponibles cuando falla una dependencia.
   - CA-168: Los endpoints y sus contratos pueden consultarse en un registro central actualizado.
   - CA-169: Los cambios de roles, áreas y coordinaciones se reflejan en los servicios autorizados sin exigir modificaciones manuales dispersas en los dashboards.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -4518,7 +4518,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-114: Las reglas contradictorias se identifican antes de generar un escenario.
   - CA-F7-115: El sistema explica las dependencias que impiden una asignación.
   - CA-F7-116: Los cambios en las reglas no alteran silenciosamente los registros históricos.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -4551,7 +4551,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-119: Los cambios de matrícula permiten detectar asignaciones que ya no cumplen las restricciones.
   - CA-F7-120: Los límites se aplican según las reglas institucionales efectivas.
   - CA-F7-121: La falta de datos se comunica sin presentar una validación incompleta como satisfactoria.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -4585,7 +4585,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-125: La optimización no cambia el significado de los resultados.
   - CA-F7-126: Los informes y las vistas conservan la coherencia con los datos de origen.
   - CA-F7-127: Las pruebas con volúmenes representativos permiten medir el rendimiento antes y después.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -4618,7 +4618,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-130: Los usuarios no autorizados no pueden consultar ni alterar la bitácora.
   - CA-F7-131: Los registros permiten diferenciar un conflicto de planificación de un fallo técnico.
   - CA-F7-132: Las consultas de seguimiento no modifican los datos auditados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -4651,7 +4651,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-135: Las asignaciones resultantes se validan contra la disponibilidad del período de destino.
   - CA-F7-136: El sistema no publica automáticamente un horario generado sin revisión.
   - CA-F7-137: Los cambios aplicados quedan registrados y pueden identificarse posteriormente.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -4685,7 +4685,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-140: Los datos restringidos no se incluyen en la exportación.
   - CA-F7-141: El documento permite identificar su período y estado.
   - CA-F7-142: Las modificaciones posteriores no alteran retroactivamente un documento ya generado.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -4719,7 +4719,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-145: Las cancelaciones y cambios importantes pueden identificarse.
   - CA-F7-146: Las preferencias personales no afectan a otros usuarios.
   - CA-F7-147: La vista continúa mostrando los datos actualizados después de modificaciones confirmadas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -4753,4 +4753,4 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-152: Los fallos no dejan datos inconsistentes.
   - CA-F7-153: Las pruebas de integración comprueban las relaciones entre los módulos implicados.
   - CA-F7-154: Los resultados permiten identificar qué pruebas se ejecutaron, cuáles fallaron y cuáles no pudieron completarse.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado

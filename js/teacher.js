@@ -3325,7 +3325,12 @@ window.triggerRestoreSystemBackup = async function(fileId, fileName) {
                 <td class="p-4 text-[10px] font-semibold ${new Date(item.fechaLimite) < new Date() ? 'text-red-500' : 'text-green-600'} uppercase tracking-widest">
                     ${new Date(item.fechaLimite).toLocaleDateString()}
                 </td>
-                <td class="p-4 text-right">
+                <td class="p-4 text-right flex items-center justify-end gap-1">
+                    ${item.tipoReal === 'Examen' ? `
+                    <button onclick="event.stopPropagation(); window.openExamGradeDistributionModal('${item.examenId}')" title="Ver Distribución de Calificaciones" class="bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white p-2 rounded-xl transition-all">
+                        <i class="fa-solid fa-chart-column"></i>
+                    </button>
+                    ` : ''}
                     <button class="bg-gray-50 text-gray-400 p-2 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-all">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                     </button>
@@ -4342,6 +4347,124 @@ window.triggerRestoreSystemBackup = async function(fileId, fileName) {
             }
         });
     }
+
+// [F8-Task25] [TAREA-F8-OPT-02] - Controlador de analítica de distribución de calificaciones de exámenes
+window.openExamGradeDistributionModal = async function (examenId) {
+    const modal = document.getElementById('modal-exam-grade-distribution');
+    if (!modal) return;
+
+    modal.classList.remove('hidden');
+
+    document.getElementById('stat-evaluados').textContent = '...';
+    document.getElementById('stat-pendientes').textContent = '...';
+    document.getElementById('stat-promedio').textContent = '...';
+    document.getElementById('stat-mediana').textContent = '...';
+    document.getElementById('stat-aprobacion').textContent = '...';
+    document.getElementById('stat-minimo').textContent = '...';
+    document.getElementById('stat-maximo').textContent = '...';
+    document.getElementById('stat-desviacion').textContent = '...';
+    document.getElementById('exam-distribution-bars').innerHTML = '<p class="text-slate-400 italic text-center py-4">Cargando datos de analítica de examen...</p>';
+    document.getElementById('exam-normal-curve-container').innerHTML = '';
+
+    await window.loadExamGradeDistributionData(examenId);
+};
+
+window.loadExamGradeDistributionData = async function (examenId) {
+    try {
+        const res = await fetchApi('EXAM', 'getExamGradeDistributionAnalytics', { examenId });
+
+        if (!res || res.status !== 'success' || !res.data) {
+            document.getElementById('exam-distribution-bars').innerHTML = `
+                <div class="text-rose-500 text-center py-4 font-semibold text-xs">
+                    ${(res && res.message) ? res.message : 'No se pudieron cargar los datos de analítica de examen.'}
+                </div>`;
+            return;
+        }
+
+        const stats = res.data;
+
+        document.getElementById('exam-analytics-title').textContent = stats.titulo || 'Distribución de Calificaciones';
+        document.getElementById('exam-analytics-subtitle').textContent = `${stats.asignatura || ''} | ${stats.grado || ''} ${stats.seccion || ''} (${stats.parcial || ''})`;
+
+        document.getElementById('stat-evaluados').textContent = stats.totalEvaluados || 0;
+        document.getElementById('stat-pendientes').textContent = stats.totalPendientes || 0;
+        document.getElementById('stat-promedio').textContent = (stats.promedio || 0).toFixed(2);
+        document.getElementById('stat-mediana').textContent = (stats.mediana || 0).toFixed(2);
+        document.getElementById('stat-aprobacion').textContent = `${stats.porcentajeAprobacion || 0}%`;
+        document.getElementById('stat-minimo').textContent = (stats.minimo || 0).toFixed(1);
+        document.getElementById('stat-maximo').textContent = (stats.maximo || 0).toFixed(1);
+        document.getElementById('stat-desviacion').textContent = (stats.desviacionEstandar || 0).toFixed(2);
+
+        if (res.sinDatos || stats.totalEvaluados === 0) {
+            document.getElementById('exam-distribution-bars').innerHTML = `
+                <div class="p-6 text-center text-slate-400 bg-white rounded-xl border border-dashed border-slate-200 my-2">
+                    <i class="fa-solid fa-chart-bar text-2xl text-slate-300 mb-2 block"></i>
+                    <p class="font-semibold text-slate-600 text-xs">Sin evaluaciones registradas</p>
+                    <p class="text-[10px] text-slate-400 mt-1">Este examen aún no cuenta con entregas calificadas para calcular la distribución de notas.</p>
+                </div>`;
+            document.getElementById('exam-normal-curve-container').innerHTML = `
+                <div class="w-full text-center text-indigo-300/60 py-2 italic text-[10px]">
+                    Curva normal no disponible por ausencia de muestras
+                </div>`;
+            return;
+        }
+
+        const colorClassMap = {
+            'Insuficiente': { bg: 'bg-rose-500', text: 'text-rose-700' },
+            'Suficiente': { bg: 'bg-amber-500', text: 'text-amber-700' },
+            'Bueno': { bg: 'bg-blue-500', text: 'text-blue-700' },
+            'Muy Bueno': { bg: 'bg-indigo-500', text: 'text-indigo-700' },
+            'Sobresaliente': { bg: 'bg-emerald-500', text: 'text-emerald-700' }
+        };
+
+        const barsHtml = stats.intervalos.map(item => {
+            const styleConf = colorClassMap[item.etiqueta] || { bg: 'bg-indigo-600', text: 'text-slate-700' };
+            const pct = item.porcentaje || 0;
+            return `
+                <div class="space-y-1">
+                    <div class="flex justify-between items-center text-[11px]">
+                        <span class="font-bold text-slate-700">${item.rango} <span class="text-[10px] font-normal ${styleConf.text}">(${item.etiqueta})</span></span>
+                        <span class="font-bold ${styleConf.text}">${item.cantidad} estudiante(s) <span class="text-slate-400 font-normal">(${pct}%)</span></span>
+                    </div>
+                    <div class="w-full h-3.5 bg-slate-200/80 rounded-full overflow-hidden flex">
+                        <div class="h-full ${styleConf.bg} transition-all duration-500 rounded-full" style="width: ${Math.max(pct, item.cantidad > 0 ? 3 : 0)}%"></div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        document.getElementById('exam-distribution-bars').innerHTML = barsHtml;
+
+        if (Array.isArray(stats.curvaNormal) && stats.curvaNormal.length > 0) {
+            const maxVal = Math.max(...stats.curvaNormal.map(p => p.y), 1);
+            const curveHtml = stats.curvaNormal.map(p => {
+                const heightPct = Math.min(Math.round((p.y / maxVal) * 100), 100);
+                return `
+                    <div class="flex-1 flex flex-col items-center justify-end h-full gap-1 group relative">
+                        <div class="w-full bg-purple-400/50 group-hover:bg-purple-300 rounded-t transition-all duration-300" style="height: ${Math.max(heightPct, 8)}%"></div>
+                        <span class="text-[8px] text-indigo-300/80">${p.x}</span>
+                        <div class="absolute bottom-full mb-1 hidden group-hover:block bg-slate-900 text-white text-[9px] px-1.5 py-0.5 rounded shadow whitespace-nowrap z-10">
+                            x=${p.x}: f(x)=${p.y}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('exam-normal-curve-container').innerHTML = curveHtml;
+        } else {
+            document.getElementById('exam-normal-curve-container').innerHTML = `
+                <div class="w-full text-center text-indigo-300/60 py-2 italic text-[10px]">
+                    Curva normal homogénea (desviación estándar cercana a 0)
+                </div>`;
+        }
+
+    } catch (err) {
+        console.error('Error al cargar la analítica de examen:', err);
+        document.getElementById('exam-distribution-bars').innerHTML = `
+            <div class="text-rose-500 text-center py-4 text-xs">
+                Error de conexión al obtener la analítica del examen.
+            </div>`;
+    }
+};
 
     if (submissionsTableBody) {
         submissionsTableBody.addEventListener('click', async (e) => {
