@@ -5,7 +5,7 @@
 
 ---
 
-### [ ] [F9-Task01] Verificar y fortalecer la compatibilidad de las plantillas oficiales de calificaciones de SACE
+### [X] [F9-Task01] Verificar y fortalecer la compatibilidad de las plantillas oficiales de calificaciones de SACE
 - **Origen del Hallazgo:** `AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md` / Tarea F9-Task01 (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Exportación académica, compatibilidad institucional y automatización de calificaciones)
@@ -46,7 +46,7 @@
   - Una comparación entre el archivo original y el generado permite comprobar que los encabezados, las hojas, las fórmulas y los campos no editables se han conservado.
   - Se comprueba la compatibilidad con las plantillas disponibles en el repositorio, incluyendo las variantes existentes.
   - Cuando no se dispone de una plantilla representativa o de un procedimiento de validación oficial, esa limitación se documenta y no se declara demostrada la aceptación del archivo por SACE.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

@@ -480,3 +480,14 @@ RESULTADO DE EVALUACIÓN:
 - Verificada la autocalificación de exámenes, ponderaciones por categorías, libro de calificaciones, cierre/reapertura de parciales, rectificaciones con bitácora AuditoriaCambios, equivalencias SACE de Honduras y seguridad ABAC.
 - Documento independiente de auditoría generado: AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F9-Task01: VERIFICAR Y FORTALECER LA COMPATIBILIDAD DE LAS PLANTILLAS OFICIALES DE CALIFICACIONES DE SACE
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, docs/architecture/Plantillas/SACE/
+RESULTADO DE EVALUACIÓN:
+- Se verificó la implementación de `verifySACETemplateCompatibility` y `generateSACEReportFile` en `backend/accounting-service/Code.gs`.
+- Se validó la presencia de plantillas SACE de ejemplo en `docs/architecture/Plantillas/SACE/` y la verificación de columnas requeridas ("identidad", "nombreAlumno", "calificacionOrdinaria", "recuperacion").
+- Inyectada la etiqueta identificativa `[F9-Task01]` en la primera línea de `verifySACETemplateCompatibility`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
