@@ -5,6 +5,24 @@ Plataforma: Ecosistema Educativo New Generation Christian Academy
 
 -------------------------------------------------------------------------------
 FECHA: 2026-10-29
+TAREA: [F10-Task03] Fortalecer el modelo de asistencia y su configuración institucional
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 174, 851-852, 1073-1132: Adición de permisos "getAttendanceConfig" y "saveAttendanceConfig" en ROLE_PERMISSIONS, dispatchers en doPost switch e implementación de las funciones `getAttendanceConfig` y `saveAttendanceConfig` con etiqueta `[F10-Task03]`.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `getAttendanceConfig` y `saveAttendanceConfig [F10-Task03]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F10-Task03]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F10-Task03]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
 TAREA: [F10-Task02] Completar la verificación integral de los 86 criterios de aceptación de la Fase 10
 -------------------------------------------------------------------------------
 

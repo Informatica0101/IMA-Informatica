@@ -1,10 +1,10 @@
 ===============================================================================
 FECHA: 2026-10-29
-AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task02: COMPLETAR LA VERIFICACIÓN INTEGRAL DE LOS 86 CRITERIOS DE ACEPTACIÓN DE LA FASE 10
-ARCHIVOS AUDITADOS: backend/developer-service/Code.gs, tests/regression/academic-grading-suite.js
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task03: FORTALECER EL MODELO DE ASISTENCIA Y SU CONFIGURACIÓN INSTITUCIONAL
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
 RESULTADO DE EVALUACIÓN:
-- Se implementó la función `runPhase10AttendanceAndCoexistenceRegressionSuite` en `backend/developer-service/Code.gs` inyectando la etiqueta identificativa `[F10-Task02]`.
-- Se verificó la cobertura completa de las capacidades de asistencia diaria y por clase, justificantes, salidas anticipadas, incidencias, seguimiento de casos y confidencialidad.
-- Registrada la acción en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/developer-service/Code.gs`.
+- Se implementaron las funciones `getAttendanceConfig` y `saveAttendanceConfig` en `backend/academic-service/Code.gs` inyectando la etiqueta identificativa `[F10-Task03]`.
+- Se verificó la configuración dinámica de modalidades de asistencia (Diaria, PorClase, DiariaYPorClase), lista de códigos permitidos, límites de tardanza en minutos, porcentaje mínimo de asistencia y aprobación obligatoria de justificantes persistidos en `ConfiguracionAcademica`.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================

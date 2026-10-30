@@ -174,7 +174,7 @@ const ROLE_PERMISSIONS = {
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion", "checkAndNotifyExpiringStudentDocuments",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity", "reconcileInstitutionalModulesMatrix",
-    "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
+    "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "getAttendanceConfig", "saveAttendanceConfig",
     "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches"
   ],
   "Subdirector": [
@@ -848,6 +848,8 @@ function doPost(e) {
       case "saveAttendanceFollowupCase": result = saveAttendanceFollowupCase(payload); break;
       case "addCaseFollowUpNote": result = addCaseFollowUpNote(payload); break;
       case "getStudentAttendanceSummary": result = getStudentAttendanceSummary(payload); break;
+      case "getAttendanceConfig": result = getAttendanceConfig(payload); break;
+      case "saveAttendanceConfig": result = saveAttendanceConfig(payload); break;
 
       // Endpoints Fase 13 - Supervisión Docente y Calidad Educativa
       case "createTeacherSupervision": result = createTeacherSupervision(payload); break;
@@ -1067,6 +1069,67 @@ function getAdmissionRequests(payload) {
       totalPages: totalPages
     }
   };
+}
+
+// [F10-Task03] [P1] - Fortalecer el modelo de asistencia y su configuración institucional
+function getAttendanceConfig(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ConfiguracionAcademica");
+
+  let config = {
+    modalidad: "DiariaYPorClase",
+    codigosPermitidos: ["Presente", "Ausente", "Tardanza", "Justificada", "SalidaAnticipada", "Exento"],
+    minutosTardanzaLimite: 15,
+    porcentajeAsistenciaMinimo: 85,
+    requiereAprobacionJustificacion: true
+  };
+
+  const data = sheet.getDataRange().getValues();
+  if (data.length > 1) {
+    for (let i = 1; i < data.length; i++) {
+      const clave = String(data[i][0] || "").trim();
+      const val = data[i][1];
+      if (clave === "CONFIG_ASISTENCIA_MODALIDAD") config.modalidad = String(val).trim();
+      else if (clave === "CONFIG_ASISTENCIA_CODIGOS") {
+        try { config.codigosPermitidos = JSON.parse(val); } catch (e) {}
+      } else if (clave === "CONFIG_ASISTENCIA_MINUTOS_TARDANZA") config.minutosTardanzaLimite = parseInt(val) || 15;
+      else if (clave === "CONFIG_ASISTENCIA_PORCENTAJE_MIN") config.porcentajeAsistenciaMinimo = parseFloat(val) || 85;
+      else if (clave === "CONFIG_ASISTENCIA_REQUIERE_APROBACION") config.requiereAprobacionJustificacion = val === true || String(val).toLowerCase() === "true";
+    }
+  }
+
+  return { status: "success", config };
+}
+
+function saveAttendanceConfig(payload) {
+  const { modalidad, codigosPermitidos, minutosTardanzaLimite, porcentajeAsistenciaMinimo, requiereAprobacionJustificacion, authRole, userId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ConfiguracionAcademica");
+
+  const settingsToSave = [
+    { clave: "CONFIG_ASISTENCIA_MODALIDAD", val: modalidad || "DiariaYPorClase", mod: "ASISTENCIA", desc: "Modalidad de registro de asistencia" },
+    { clave: "CONFIG_ASISTENCIA_CODIGOS", val: JSON.stringify(codigosPermitidos || ["Presente", "Ausente", "Tardanza", "Justificada", "SalidaAnticipada", "Exento"]), mod: "ASISTENCIA", desc: "Códigos de asistencia válidos" },
+    { clave: "CONFIG_ASISTENCIA_MINUTOS_TARDANZA", val: minutosTardanzaLimite || 15, mod: "ASISTENCIA", desc: "Límite de minutos de tardanza" },
+    { clave: "CONFIG_ASISTENCIA_PORCENTAJE_MIN", val: porcentajeAsistenciaMinimo || 85, mod: "ASISTENCIA", desc: "Porcentaje mínimo de asistencia" },
+    { clave: "CONFIG_ASISTENCIA_REQUIERE_APROBACION", val: requiereAprobacionJustificacion !== false, mod: "ASISTENCIA", desc: "Aprobación obligatoria de justificantes" }
+  ];
+
+  const now = new Date();
+  const data = sheet.getDataRange().getValues();
+
+  settingsToSave.forEach(s => {
+    const idx = data.findIndex(r => String(r[0]).trim() === s.clave);
+    if (idx !== -1) {
+      sheet.getRange(idx + 1, 2).setValue(s.val);
+      sheet.getRange(idx + 1, 5).setValue(now);
+    } else {
+      sheet.appendRow([s.clave, s.val, s.mod, s.desc, now]);
+    }
+  });
+
+  logStructuredEvent("ACADEMIC", "saveAttendanceConfig", "INFO", "ATTENDANCE_CONFIG_SAVED", `Configuración institucional de asistencia guardada. Modalidad: ${modalidad || 'DiariaYPorClase'}`, { modalidad, userId }, authRole || "Administrador");
+
+  return { status: "success", message: "Configuración institucional de asistencia actualizada exitosamente." };
 }
 
 // [TAREA-F6-023] [Fase 6: Expediente Institucional y Ciclo de Vida] - Resumen unificado e institucional del expediente contextualizado por perfil autorizado

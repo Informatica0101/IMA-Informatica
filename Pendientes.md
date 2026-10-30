@@ -51,7 +51,7 @@
 
 ---
 
-### [ ] [F10-Task03] Fortalecer el modelo de asistencia y su configuración institucional
+### [X] [F10-Task03] Fortalecer el modelo de asistencia y su configuración institucional
 - **Origen del Hallazgo:** `AUDITORIA_FASE_10_ASISTENCIA_DISCIPLINA_CONVIVENCIA.md` / Tarea 10.1 (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Configuración institucional de asistencia)
@@ -63,7 +63,7 @@
   Incorporar o completar una configuración institucional de asistencia que permita definir modalidades de registro (diaria, por clase, por período), estados, códigos, categorías y reglas de cómputo de minutos/horas sin modificar el código fuente.
 - **Criterios de Aceptación:**
   - La institución puede configurar códigos y reglas de cómputo de asistencia dinámicamente.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
