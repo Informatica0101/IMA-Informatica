@@ -145,7 +145,7 @@
 
 ---
 
-### [ ] [F10-Task09] Completar el modelo funcional de consejería escolar
+### [X] [F10-Task09] Completar el modelo funcional de consejería escolar
 - **Origen del Hallazgo:** `AUDITORIA_FASE_10_ASISTENCIA_DISCIPLINA_CONVIVENCIA.md` / Tarea 10.8 (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Acompañamiento escolar y consejería)
@@ -157,7 +157,7 @@
   Desarrollar el flujo completo para consejeros escolares: asignación de alumnos, programación de citas, actas de seguimiento, notas de confidencialidad y derivaciones a otros profesionales.
 - **Criterios de Aceptación:**
   - Los consejeros gestionan acompañamientos con privacidad y derivación inmutable.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

@@ -215,7 +215,7 @@ const ROLE_PERMISSIONS = {
   "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope"],
   "Desarrollador": ["getAcademicConfig", "getAcademicHistory", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "configureAcademicLevelsAndDynamicStorage"],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
-  "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"],
+  "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "scheduleCounselingAppointment", "recordCounselingSessionAct", "referCounselingCase", "getStudentAttendanceSummary"],
   "Padre": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory",
     "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
@@ -851,6 +851,9 @@ function doPost(e) {
       case "addCaseFollowUpNote": result = addCaseFollowUpNote(payload); break;
       case "addCaseCommitment": result = addCaseCommitment(payload); break;
       case "updateCaseCommitmentStatus": result = updateCaseCommitmentStatus(payload); break;
+      case "scheduleCounselingAppointment": result = scheduleCounselingAppointment(payload); break;
+      case "recordCounselingSessionAct": result = recordCounselingSessionAct(payload); break;
+      case "referCounselingCase": result = referCounselingCase(payload); break;
       case "getStudentAttendanceSummary": result = getStudentAttendanceSummary(payload); break;
       case "checkAndDispatchAttendanceAlerts": result = checkAndDispatchAttendanceAlerts(payload); break;
       case "getAttendanceConfig": result = getAttendanceConfig(payload); break;
@@ -7927,6 +7930,116 @@ function updateCaseCommitmentStatus(payload) {
     estadoAnterior,
     nuevoEstado: cleanState,
     message: `Estado del compromiso actualizado exitosamente a '${cleanState}'.`
+  };
+}
+
+// [F10-Task09] [P1] - Completar el modelo funcional de consejería escolar
+function scheduleCounselingAppointment(payload) {
+  const { userId, consejeroUserId, fechaHora, motivo, modalidad, observaciones, authRole } = payload || {};
+  if (!userId || !fechaHora || !motivo) throw new Error("userId, fechaHora y motivo son requeridos para agendar cita de consejería.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const citaId = "CITA-CNS-" + Date.now();
+  const now = new Date();
+
+  // Save/Update in CasosSeguimiento as a Counseling Appointment Activity
+  const caseRes = saveAttendanceFollowupCase({
+    userId,
+    motivoApertura: `Cita de Consejería Escolar: ${motivo}`,
+    resumenAsistencia: `Categoría: Consejería | Modalidad: ${modalidad || 'Presencial'} | Fecha: ${fechaHora}`,
+    responsableId: consejeroUserId || "Consejería",
+    estado: "Abierto",
+    categoriaCaso: "Consejería"
+  });
+
+  logStructuredEvent("ACADEMIC", "scheduleCounselingAppointment", "INFO", "COUNSELING_APPOINTMENT_SCHEDULED", `Cita de consejería ${citaId} agendada para ${userId}`, { citaId, userId, fechaHora, motivo }, authRole || "Consejería");
+
+  return {
+    status: "success",
+    citaId,
+    userId,
+    casoId: caseRes.data ? caseRes.data.casoId : null,
+    message: "Cita de consejería escolar agendada exitosamente."
+  };
+}
+
+function recordCounselingSessionAct(payload) {
+  const { casoId, userId, resumenSesion, notasConfidenciales, acuerdos, proximaCita, consejeroUserId, authRole } = payload || {};
+  if (!casoId || !resumenSesion) throw new Error("casoId y resumenSesion son requeridos para registrar acta de consejería.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CasosSeguimiento");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(casoId).trim());
+  if (idx === -1) throw new Error("Caso de seguimiento/consejería no encontrado.");
+
+  const currentAcciones = data[idx][5] ? (typeof data[idx][5] === 'string' ? JSON.parse(data[idx][5]) : data[idx][5]) : [];
+  const actaId = "ACTA-CNS-" + Date.now();
+  const nowStr = new Date().toISOString();
+
+  const newActa = {
+    actaId,
+    tipo: "ActaConsejería",
+    resumenSesion: String(resumenSesion).trim(),
+    notasConfidenciales: notasConfidenciales ? String(notasConfidenciales).trim() : "",
+    acuerdos: acuerdos || [],
+    proximaCita: proximaCita || null,
+    fechaRegistro: nowStr,
+    consejeroUserId: consejeroUserId || "Consejería"
+  };
+
+  currentAcciones.push(newActa);
+  sheet.getRange(idx + 1, 6).setValue(JSON.stringify(currentAcciones));
+
+  logStructuredEvent("ACADEMIC", "recordCounselingSessionAct", "INFO", "COUNSELING_ACT_RECORDED", `Acta de consejería ${actaId} registrada en caso ${casoId}`, { casoId, actaId }, authRole || "Consejería");
+
+  return {
+    status: "success",
+    actaId,
+    casoId,
+    message: "Acta de sesión de consejería registrada de forma inmutable."
+  };
+}
+
+function referCounselingCase(payload) {
+  const { casoId, destinoDerivacion, motivoDerivacion, profesionalExterno, derivadoPor, authRole } = payload || {};
+  if (!casoId || !destinoDerivacion || !motivoDerivacion) {
+    throw new Error("casoId, destinoDerivacion y motivoDerivacion son requeridos para derivar el caso de consejería.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CasosSeguimiento");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(casoId).trim());
+  if (idx === -1) throw new Error("Caso de consejería no encontrado.");
+
+  const currentAcciones = data[idx][5] ? (typeof data[idx][5] === 'string' ? JSON.parse(data[idx][5]) : data[idx][5]) : [];
+  const derivacionId = "DERIV-CNS-" + Date.now();
+  const nowStr = new Date().toISOString();
+
+  const newDerivation = {
+    derivacionId,
+    tipo: "DerivaciónProfesional",
+    destinoDerivacion: String(destinoDerivacion).trim(),
+    motivoDerivacion: String(motivoDerivacion).trim(),
+    profesionalExterno: profesionalExterno || "Especialista Externo / Psicología / Salud",
+    derivadoPor: derivadoPor || "Consejería Escolar",
+    fechaDerivacion: nowStr,
+    estadoDerivacion: "Derivado"
+  };
+
+  currentAcciones.push(newDerivation);
+  sheet.getRange(idx + 1, 6).setValue(JSON.stringify(currentAcciones));
+  sheet.getRange(idx + 1, 7).setValue("Derivado"); // Estado del caso
+
+  logStructuredEvent("ACADEMIC", "referCounselingCase", "INFO", "COUNSELING_CASE_REFERRED", `Caso ${casoId} derivado a ${destinoDerivacion}`, { casoId, derivacionId, destinoDerivacion }, authRole || "Consejería");
+
+  return {
+    status: "success",
+    derivacionId,
+    casoId,
+    destinoDerivacion,
+    message: `Caso de consejería derivado exitosamente a '${destinoDerivacion}'.`
   };
 }
 

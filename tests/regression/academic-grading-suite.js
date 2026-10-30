@@ -61,6 +61,7 @@ assert(academicCode.includes("submitAttendanceJustification") && academicCode.in
 assert(academicCode.includes("checkAndDispatchAttendanceAlerts") && academicCode.includes("[F10-Task06]"), "backend/academic-service/Code.gs contiene checkAndDispatchAttendanceAlerts [F10-Task06]");
 assert(academicCode.includes("saveAttendanceIncident") && academicCode.includes("updateAttendanceIncidentStatus") && academicCode.includes("[F10-Task07]"), "backend/academic-service/Code.gs contiene saveAttendanceIncident y updateAttendanceIncidentStatus [F10-Task07]");
 assert(academicCode.includes("addCaseCommitment") && academicCode.includes("updateCaseCommitmentStatus") && academicCode.includes("[F10-Task08]"), "backend/academic-service/Code.gs contiene addCaseCommitment y updateCaseCommitmentStatus [F10-Task08]");
+assert(academicCode.includes("scheduleCounselingAppointment") && academicCode.includes("recordCounselingSessionAct") && academicCode.includes("referCounselingCase") && academicCode.includes("[F10-Task09]"), "backend/academic-service/Code.gs contiene scheduleCounselingAppointment, recordCounselingSessionAct y referCounselingCase [F10-Task09]");
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
