@@ -26,7 +26,7 @@ function textResponse(obj) {
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Desarrollador": ["getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "auditInterServiceCalls", "manageUserMultiRolePermissions", "getCentralizedLogs", "executeOperationalCommand", "getServiceVersionChangelog", "executeServiceVersionRollback", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "runModularAndDynamicDashboardsRegressionSuite", "runAcademicGradingRegressionSuite", "runPhase10AttendanceAndCoexistenceRegressionSuite", "validateStagedMigrationProgress", "validateModularFolderStructure", "validateMonolithDecompositionContracts", "getArchitectureAndDependencyMapReport", "getRoleFunctionalSpaceConfig", "auditRoleIndependenceAndMasterDataIntegrity", "validateStableIdentifiersAndControlColumns", "ensureStandardObservabilitySheets", "validateObservabilitySheetsIntegrity", "getCentralSpreadsheetConfigRegistry", "recordProvisioningHistory", "provisionRoleSpreadsheet", "migrateSpreadsheetSchema", "auditServiceBackendIsolationAndDriveSecurity", "batchSpreadsheetReadOperations", "getServiceHealthDiagnostics"]
+  "Desarrollador": ["getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "auditInterServiceCalls", "manageUserMultiRolePermissions", "getCentralizedLogs", "executeOperationalCommand", "getServiceVersionChangelog", "executeServiceVersionRollback", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "runModularAndDynamicDashboardsRegressionSuite", "runAcademicGradingRegressionSuite", "runPhase10AttendanceAndCoexistenceRegressionSuite", "getPhase10FunctionalDocumentation", "validateStagedMigrationProgress", "validateModularFolderStructure", "validateMonolithDecompositionContracts", "getArchitectureAndDependencyMapReport", "getRoleFunctionalSpaceConfig", "auditRoleIndependenceAndMasterDataIntegrity", "validateStableIdentifiersAndControlColumns", "ensureStandardObservabilitySheets", "validateObservabilitySheetsIntegrity", "getCentralSpreadsheetConfigRegistry", "recordProvisioningHistory", "provisionRoleSpreadsheet", "migrateSpreadsheetSchema", "auditServiceBackendIsolationAndDriveSecurity", "batchSpreadsheetReadOperations", "getServiceHealthDiagnostics"]
 };
 
 function getAuthTokenSecret() {
@@ -120,6 +120,7 @@ function doPost(e) {
       case "runModularAndDynamicDashboardsRegressionSuite": result = runModularAndDynamicDashboardsRegressionSuite(payload); break;
       case "runAcademicGradingRegressionSuite": result = runAcademicGradingRegressionSuite(payload); break;
       case "runPhase10AttendanceAndCoexistenceRegressionSuite": result = runPhase10AttendanceAndCoexistenceRegressionSuite(payload); break;
+      case "getPhase10FunctionalDocumentation": result = getPhase10FunctionalDocumentation(payload); break;
       case "validateStagedMigrationProgress": result = validateStagedMigrationProgress(payload); break;
       case "validateModularFolderStructure": result = validateModularFolderStructure(payload); break;
       case "validateMonolithDecompositionContracts": result = validateMonolithDecompositionContracts(payload); break;
@@ -312,6 +313,22 @@ function runAcademicGradingRegressionSuite(payload) {
     centralConfigSheets: centralConfigSheets,
     registeredSpreadsheets: registeredSpreadsheets,
     hardcodedUrlsProhibited: rawUrlViolations.length === 0,
+    timestamp: new Date().toISOString()
+  };
+}
+
+// [F10-Task18] [P2] - Completar la documentación funcional y operativa de la Fase 10
+function getPhase10FunctionalDocumentation(payload) {
+  return {
+    status: "success",
+    service: "DEVELOPER",
+    phase: "Fase 10",
+    title: "Documentación Funcional y Operativa — Asistencia, Disciplina, Convivencia Escolar, Orientación y Delegación de Asistentes",
+    documentationFile: "docs/architecture/phase-10-attendance-coexistence-spec.md",
+    modalities: ["Diaria", "PorClase", "DiariaYPorClase"],
+    incidentStates: ["Reportada", "PendienteRevision", "EnInvestigacion", "Confirmada", "Cerrada", "Reabierta"],
+    confidentialCategories: ["Consejería", "Orientación"],
+    assistantDelegation: { doubleIdentityRequired: true, delegationKey: "_delegationId" },
     timestamp: new Date().toISOString()
   };
 }

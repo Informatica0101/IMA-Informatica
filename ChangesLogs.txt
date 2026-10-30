@@ -3382,3 +3382,15 @@ ARCHIVOS MODIFICADOS:
 - tests/regression/academic-grading-suite.js (línea ~76):
   Se agregó la aserción de comprobación para `recordStaffCheckIn` optimizado con la etiqueta `[F10-Task17]`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+TAREA: F10-Task18 - Completar la documentación funcional y operativa de la Fase 10
+ARCHIVOS MODIFICADOS:
+- docs/architecture/phase-10-attendance-coexistence-spec.md:
+  Se redactó la especificación funcional y operativa de la Fase 10 documentando las modalidades de asistencia, transiciones de estado de incidencias de convivencia, modelo de doble identidad para la delegación de asistentes y reglas de confidencialidad para notas de consejería y orientación.
+- backend/developer-service/Code.gs (líneas ~29, ~123, ~318-333):
+  Se creó la función `getPhase10FunctionalDocumentation` para servir metadatos de la documentación funcional de la Fase 10 y se registraron sus permisos en `ROLE_PERMISSIONS` y despachador `doPost`.
+- tests/regression/academic-grading-suite.js (líneas ~78-79):
+  Se agregaron aserciones de comprobación para `getPhase10FunctionalDocumentation` y la existencia del archivo de especificación funcional con etiqueta `[F10-Task18]`.
+===============================================================================

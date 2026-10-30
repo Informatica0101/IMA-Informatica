@@ -137,3 +137,13 @@ HALLAZGOS DETECTADOS:
 2. `reviewAttendanceCorrection` actualizaba el estado de la solicitud en `CorreccionesAsistencia`, pero no sincronizaba automáticamente la hora corregida en la hoja `DeduccionesAsistencia` al ser aprobada.
 3. Se requiere que el registro laboral esté completamente aislado de las tablas de asistencia estudiantil (`RegistrosAsistencia`), con soporte para cálculo automático de minutos de tardanza y auditoría de cambios.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task18: COMPLETAR LA DOCUMENTACIÓN FUNCIONAL Y OPERATIVA DE LA FASE 10
+ARCHIVOS AUDITADOS: docs/architecture/, backend/developer-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. No existía la especificación documental `docs/architecture/phase-10-attendance-coexistence-spec.md` detallando las modalidades de asistencia, la tabla de transiciones de estado de incidencias y la matriz de roles y delegación de asistentes.
+2. No existía la función `getPhase10FunctionalDocumentation` en `backend/developer-service/Code.gs` para servir la documentación funcional y operativa dinámicamente desde el microservicio.
+3. Se requiere registrar la acción en `ROLE_PERMISSIONS` y agregar la comprobación de regresión en `tests/regression/academic-grading-suite.js`.
+===============================================================================
