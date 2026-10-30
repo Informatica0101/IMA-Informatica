@@ -882,6 +882,7 @@ function getOrCreateSheet(ss, name) {
     if (name === "InvitacionesVinculacion") sheet.appendRow(["InvitacionID", "ExpedienteID", "EmailResponsable", "Token", "FechaEmision", "FechaExpiracion", "Estado", "CreadoPor"]);
     if (name === "ComunicadosInstitucionales") sheet.appendRow(["ComunicadoID", "Titulo", "Contenido", "Categoria", "AutorID", "AudienciaJSON", "RequiereFirma", "FechaPublicacion", "Estado"]);
     if (name === "ConfirmacionesLecturaComunicados") sheet.appendRow(["ConfirmacionID", "ComunicadoID", "UserId", "FechaApertura", "FechaConfirmacionExplicit", "EstadoConfirmacion", "IpMetadata"]);
+    if (name === "SolicitudesAutorizacion") sheet.appendRow(["SolicitudAutorizacionID", "ActividadOPermiso", "EstudianteID", "TutorUserId", "DetallesJSON", "FechaLimite", "Estado", "FechaRespuesta", "RespuestaTutor", "IpMetadata", "FechaCreacion", "CreadoPor"]);
     if (name === "ConversacionesMensajes") sheet.appendRow(["MensajeID", "ConversacionID", "RemitenteID", "DestinatarioID", "EstudianteID", "MensajeTexto", "AdjuntoUrl", "FechaEnvio", "EstadoLectura"]);
     if (name === "BandejaNotificaciones") sheet.appendRow(["NotificacionID", "UserId", "Titulo", "Mensaje", "Tipo", "Categoria", "Leido", "EnlaceAccion", "FechaRegistro"]);
     if (name === "SolicitudesTramites") sheet.appendRow(["SolicitudID", "UserId", "EstudianteID", "TipoTramite", "Descripcion", "AdjuntoUrl", "Estado", "AsignadoA", "ObservacionesAdmin", "FechaSolicitud", "FechaResolucion"]);
@@ -925,15 +926,15 @@ const ROLE_PERMISSIONS = {
   "Desarrollador": ["*"],
   "Padre": [
     "getUserInfo", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
-    "acceptLinkInvitation", "getGuardianStudents", "getGuardianApplicants", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "acceptLinkInvitation", "getGuardianStudents", "getGuardianApplicants", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders", "getAuthorizationRequests", "respondToAuthorizationRequest"
   ],
   "Tutor": [
     "getUserInfo", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
-    "acceptLinkInvitation", "getGuardianStudents", "getGuardianApplicants", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "acceptLinkInvitation", "getGuardianStudents", "getGuardianApplicants", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders", "getAuthorizationRequests", "respondToAuthorizationRequest"
   ],
   "Responsable": [
     "getUserInfo", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
-    "acceptLinkInvitation", "getGuardianStudents", "getGuardianApplicants", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "acceptLinkInvitation", "getGuardianStudents", "getGuardianApplicants", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders", "getAuthorizationRequests", "respondToAuthorizationRequest"
   ],
   "Director": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
@@ -1308,6 +1309,9 @@ function doPost(e) {
       case "createInstitutionalAnnouncement": result = createInstitutionalAnnouncement(payload); break;
       case "submitAnnouncementReceiptConfirmation": result = submitAnnouncementReceiptConfirmation(payload); break;
       case "getAnnouncementReadReport": result = getAnnouncementReadReport(payload); break;
+      case "submitAuthorizationRequest": result = submitAuthorizationRequest(payload); break;
+      case "getAuthorizationRequests": result = getAuthorizationRequests(payload); break;
+      case "respondToAuthorizationRequest": result = respondToAuthorizationRequest(payload); break;
       case "getDepartmentalWorkInbox": result = getDepartmentalWorkInbox(payload); break;
       case "getInternalConversations": result = getInternalConversations(payload); break;
       case "getInternalMessages": result = getInternalMessages(payload); break;
@@ -5651,6 +5655,234 @@ function getAnnouncementReadReport(payload) {
 
     return { status: "success", comunicadoId, totalConfirmaciones: confirmaciones.length, confirmaciones: confirmaciones };
   } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+// [F11-Task05] [P1] - Motor de confirmaciones de lectura, respuestas y solicitudes de autorización
+function submitAuthorizationRequest(payload) {
+  try {
+    const verifiedRole = getUserVerifiedRole(payload);
+    const callerId = (payload && payload._verifiedUserId) || "Sistema";
+    const isAuthorized = ["Administrador", "Desarrollador", "Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Profesor", "Consejeros"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "No cuenta con autorización para crear solicitudes de autorización de actividades o permisos." };
+    }
+
+    const { actividadOPermiso, estudianteId, tutorUserId, detalles, detallesJSON, fechaLimite } = payload || {};
+    if (!actividadOPermiso || !estudianteId) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "actividadOPermiso y estudianteId son requeridos." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "SolicitudesAutorizacion");
+
+    const now = new Date();
+    const nowISO = now.toISOString();
+    const solId = "AUT-REQ-" + now.getFullYear() + "-" + Math.floor(100000 + Math.random() * 900000);
+
+    const detStr = typeof (detallesJSON || detalles) === "object" ? JSON.stringify(detallesJSON || detalles) : String(detalles || detallesJSON || "");
+    const limitStr = fechaLimite ? String(fechaLimite).split('T')[0] : "";
+
+    sheet.appendRow([
+      solId,
+      String(actividadOPermiso).trim(),
+      String(estudianteId).trim(),
+      tutorUserId ? String(tutorUserId).trim() : "TODOS",
+      detStr,
+      limitStr,
+      "Pendiente",
+      "",
+      "",
+      "PlataformaWeb",
+      nowISO,
+      callerId
+    ]);
+
+    logStructuredEvent("USER", "submitAuthorizationRequest", "INFO", "AUTHORIZATION_REQUEST_CREATED", `Solicitud de autorización ${solId} creada para estudiante ${estudianteId}`, { solicitudAutorizacionId: solId, estudianteId, tutorUserId }, verifiedRole);
+
+    if (tutorUserId && tutorUserId !== "TODOS") {
+      try {
+        sendMultiChannelNotification({
+          userId: tutorUserId,
+          titulo: `Solicitud de Autorización: ${actividadOPermiso}`,
+          mensaje: `Se requiere su autorización para la actividad/permiso '${actividadOPermiso}' antes del ${limitStr || 'plazo estipulado'}.`,
+          tipo: "SolicitudAutorizacion",
+          categoria: "Autorizaciones",
+          deduplicationKey: `NOTIF_AUT_${solId}`,
+          authRole: verifiedRole
+        });
+      } catch (eNotif) {
+        logStructuredEvent("USER", "submitAuthorizationRequest", "WARN", "NOTIF_AUT_DISPATCH_WARN", eNotif.message, { solicitudAutorizacionId: solId }, verifiedRole);
+      }
+    }
+
+    return {
+      status: "success",
+      solicitudAutorizacionId: solId,
+      estado: "Pendiente",
+      fechaCreacion: nowISO,
+      message: `Solicitud de autorización '${actividadOPermiso}' registrada exitosamente.`
+    };
+  } catch (error) {
+    logStructuredEvent("USER", "submitAuthorizationRequest", "ERROR", "AUTHORIZATION_REQUEST_CREATE_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function getAuthorizationRequests(payload) {
+  try {
+    const verifiedRole = getUserVerifiedRole(payload);
+    const callerId = (payload && payload._verifiedUserId) || "";
+    const isStaff = ["Administrador", "Desarrollador", "Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Profesor"].indexOf(verifiedRole) !== -1;
+
+    const { tutorUserId, estudianteId, estado, solicitudAutorizacionId } = payload || {};
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "SolicitudesAutorizacion");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", solicitudes: [] };
+
+    const nowDate = new Date().toISOString().split('T')[0];
+    const solicitudes = [];
+
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const solId = String(row[0] || "");
+      const actividad = String(row[1] || "");
+      const estId = String(row[2] || "");
+      const tutorId = String(row[3] || "");
+      const detallesRaw = row[4];
+      const fLimite = row[5] ? String(row[5]).split('T')[0] : "";
+      let st = String(row[6] || "Pendiente");
+      const fResp = row[7] ? new Date(row[7]).toISOString() : "";
+      const respTutor = String(row[8] || "");
+      const meta = String(row[9] || "");
+      const fCrea = row[10] ? new Date(row[10]).toISOString() : "";
+      const creadoPor = String(row[11] || "");
+
+      // Expiration check
+      if (st === "Pendiente" && fLimite && nowDate > fLimite) {
+        st = "Vencido";
+        sheet.getRange(i + 1, 7).setValue("Vencido");
+      }
+
+      if (solicitudAutorizacionId && String(solicitudAutorizacionId).trim() !== solId) continue;
+      if (estudianteId && String(estudianteId).trim() !== estId) continue;
+
+      if (!isStaff) {
+        if (tutorId !== "TODOS" && tutorId !== callerId && tutorUserId !== callerId) {
+          continue;
+        }
+      } else if (tutorUserId && tutorUserId !== "TODOS" && String(tutorUserId).trim() !== tutorId) {
+        continue;
+      }
+
+      if (estado && estado !== "Todos" && st !== estado) continue;
+
+      let detallesObj = {};
+      try {
+        detallesObj = typeof detallesRaw === "object" ? detallesRaw : JSON.parse(detallesRaw || "{}");
+      } catch (e) {
+        detallesObj = { text: String(detallesRaw || "") };
+      }
+
+      solicitudes.push({
+        solicitudAutorizacionId: solId,
+        actividadOPermiso: actividad,
+        estudianteId: estId,
+        tutorUserId: tutorId,
+        detalles: detallesObj,
+        fechaLimite: fLimite,
+        estado: st,
+        fechaRespuesta: fResp,
+        respuestaTutor: respTutor,
+        metadata: meta,
+        fechaCreacion: fCrea,
+        creadoPor: creadoPor
+      });
+    }
+
+    solicitudes.reverse();
+    return { status: "success", totalSolicitudes: solicitudes.length, solicitudes: solicitudes };
+  } catch (error) {
+    logStructuredEvent("USER", "getAuthorizationRequests", "ERROR", "GET_AUTHORIZATION_REQUESTS_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function respondToAuthorizationRequest(payload) {
+  try {
+    const verifiedRole = getUserVerifiedRole(payload);
+    const callerId = (payload && payload._verifiedUserId) || "";
+    const { solicitudAutorizacionId, respuesta, observacion } = payload || {};
+
+    if (!solicitudAutorizacionId || !respuesta) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "solicitudAutorizacionId y respuesta ('Aceptado' o 'Rechazado') son requeridos." };
+    }
+
+    const normResp = String(respuesta).trim();
+    if (normResp !== "Aceptado" && normResp !== "Rechazado") {
+      return { status: "error", code: "VALIDATION_ERROR", message: "Respuesta inválida. Debe ser 'Aceptado' o 'Rechazado'." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "SolicitudesAutorizacion");
+    const data = sheet.getDataRange().getValues();
+
+    let foundIdx = -1;
+    let reqRow = null;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(solicitudAutorizacionId).trim()) {
+        foundIdx = i;
+        reqRow = data[i];
+        break;
+      }
+    }
+
+    if (foundIdx === -1) {
+      return { status: "error", code: "NOT_FOUND", message: "Solicitud de autorización no encontrada." };
+    }
+
+    const currentTutorId = String(reqRow[3] || "").trim();
+    const currentStatus = String(reqRow[6] || "Pendiente").trim();
+    const fechaLimite = reqRow[5] ? String(reqRow[5]).split('T')[0] : "";
+    const nowDate = new Date().toISOString().split('T')[0];
+
+    // Impedir modificaciones extemporáneas si ya venció o ya fue respondida
+    if (currentStatus === "Aceptado" || currentStatus === "Rechazado") {
+      return { status: "error", code: "INVALID_STATE", message: "La solicitud ya fue respondida anteriormente y no se permite su modificación extemporánea." };
+    }
+
+    if (currentStatus === "Vencido" || (fechaLimite && nowDate > fechaLimite)) {
+      sheet.getRange(foundIdx + 1, 7).setValue("Vencido");
+      return { status: "error", code: "EXPIRED_REQUEST", message: "La fecha límite de autorización ha expirado y no se permiten respuestas extemporáneas." };
+    }
+
+    const isStaff = ["Administrador", "Desarrollador", "Director", "Subdirector"].indexOf(verifiedRole) !== -1;
+    if (!isStaff && currentTutorId !== "TODOS" && currentTutorId !== callerId) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "No tiene autorización para responder a esta solicitud en representación de otro tutor." };
+    }
+
+    const now = new Date();
+    const nowISO = now.toISOString();
+
+    sheet.getRange(foundIdx + 1, 7).setValue(normResp);
+    sheet.getRange(foundIdx + 1, 8).setValue(nowISO);
+    sheet.getRange(foundIdx + 1, 9).setValue(callerId + (observacion ? `: ${observacion}` : ""));
+
+    logStructuredEvent("USER", "respondToAuthorizationRequest", "INFO", "AUTHORIZATION_REQUEST_RESPONDED", `Solicitud ${solicitudAutorizacionId} ${normResp} por tutor/usuario ${callerId}`, { solicitudAutorizacionId, respuesta: normResp, callerId }, verifiedRole);
+
+    return {
+      status: "success",
+      solicitudAutorizacionId: solicitudAutorizacionId,
+      estado: normResp,
+      fechaRespuesta: nowISO,
+      respondidoPor: callerId,
+      message: `Solicitud de autorización registrada como '${normResp}' con timestamp ${nowISO}.`
+    };
+  } catch (error) {
+    logStructuredEvent("USER", "respondToAuthorizationRequest", "ERROR", "AUTHORIZATION_RESPONSE_FAILED", error.message, payload, payload && payload.authRole);
     return { status: "error", message: error.message };
   }
 }

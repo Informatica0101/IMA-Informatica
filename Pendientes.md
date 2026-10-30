@@ -102,7 +102,7 @@
 
 ---
 
-### [ ] [F11-Task05] Desarrollar el motor de confirmaciones de lectura, respuestas y solicitudes de autorización
+### [X] [F11-Task05] Desarrollar el motor de confirmaciones de lectura, respuestas y solicitudes de autorización
 - **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área I (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Autorizaciones familiares)
@@ -113,7 +113,7 @@
   Gestionar el ciclo de vida de solicitudes de autorización para permisos/actividades (Pendiente, Leído, Aceptado, Rechazado, Vencido), vinculando las respuestas con el apoderado o tutor legal responsable.
 - **Criterios de Aceptación:**
   - La autorización registra timestamp y usuario responsable, impidiendo modificaciones extemporáneas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

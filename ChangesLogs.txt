@@ -3437,3 +3437,15 @@ ARCHIVOS MODIFICADOS:
 - tests/regression/academic-grading-suite.js (línea ~85):
   Se agregó la aserción de comprobación para `getInstitutionalAnnouncements` con la etiqueta `[F11-Task04]`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task05 - Implementar el motor de confirmaciones de lectura, respuestas y solicitudes de autorización
+ARCHIVOS MODIFICADOS:
+- backend/user-service/Code.gs (líneas ~883, ~929-938, ~1312-1314, ~5662-5885):
+  Se creó la hoja `SolicitudesAutorizacion` en `getOrCreateSheet` e implementaron las funciones `submitAuthorizationRequest`, `getAuthorizationRequests` y `respondToAuthorizationRequest` con la etiqueta identificativa `[F11-Task05]`.
+  Se reguló el ciclo de vida de autorizaciones para permisos/actividades (`Pendiente`, `Leído`, `Aceptado`, `Rechazado`, `Vencido`), vinculando respuestas con el apoderado/tutor legal responsable, registrando timestamp e impidiendo modificaciones extemporáneas tras vencer el plazo o haberse respondido.
+  Se registraron los permisos correspondientes en `ROLE_PERMISSIONS` y en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~86):
+  Se agregó la aserción de comprobación para `respondToAuthorizationRequest` y `submitAuthorizationRequest` con la etiqueta `[F11-Task05]`.
+===============================================================================

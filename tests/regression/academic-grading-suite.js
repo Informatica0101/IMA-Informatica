@@ -83,6 +83,7 @@ assert(acctCode.includes("recordAccountingJournalEntry") && acctCode.includes("[
 const updatedUserCode = fs.readFileSync(path.join(__dirname, '../../backend/user-service/Code.gs'), 'utf8');
 assert(updatedUserCode.includes("sendInstitutionalMessage") && updatedUserCode.includes("[F11-Task03]"), "backend/user-service/Code.gs contiene sendInstitutionalMessage y getInstitutionalConversations [F11-Task03]");
 assert(updatedUserCode.includes("getInstitutionalAnnouncements") && updatedUserCode.includes("[F11-Task04]"), "backend/user-service/Code.gs contiene getInstitutionalAnnouncements con vigencia de publicaciones [F11-Task04]");
+assert(updatedUserCode.includes("respondToAuthorizationRequest") && updatedUserCode.includes("[F11-Task05]"), "backend/user-service/Code.gs contiene respondToAuthorizationRequest y submitAuthorizationRequest [F11-Task05]");
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {

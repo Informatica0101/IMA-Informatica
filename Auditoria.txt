@@ -212,3 +212,15 @@ HALLAZGOS DETECTADOS:
 2. Se requiere refactorizar `getInstitutionalAnnouncements` para omitir comunicados programados o vencidos ante consultas de destinatarios generales, permitiendo a roles administrativos consultar borradores y estadísticas.
 3. Se agregará la comprobación de regresión `[F11-Task04]` en `tests/regression/academic-grading-suite.js`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task05: IMPLEMENTAR EL MOTOR DE CONFIRMACIONES DE LECTURA, RESPUESTAS Y SOLICITUDES DE AUTORIZACIÓN
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `submitAuthorizationRequest`, `getAuthorizationRequests` y `respondToAuthorizationRequest` con la etiqueta identificativa `[F11-Task05]` en `backend/user-service/Code.gs`.
+- Se creó la hoja `SolicitudesAutorizacion` para la persistencia del ciclo de vida de autorizaciones (`Pendiente`, `Leído`, `Aceptado`, `Rechazado`, `Vencido`), asociando respuestas con el apoderado/tutor legal responsable.
+- Se garantizó el registro inmutable de timestamp de respuesta e impedimento de modificaciones extemporáneas una vez vencido el plazo o respondida la solicitud.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/user-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
