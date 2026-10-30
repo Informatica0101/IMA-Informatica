@@ -1316,6 +1316,7 @@ function doPost(e) {
       case "getUnifiedNotifications": result = getUnifiedNotifications(payload); break;
       case "getUserNotifications": result = getUserNotifications(payload); break;
       case "sendMultiChannelNotification": result = sendMultiChannelNotification(payload); break;
+      case "retryFailedNotificationsQueue": result = retryFailedNotificationsQueue(payload); break;
       case "dispatchScheduleChangeNotifications": result = dispatchScheduleChangeNotifications(payload); break;
       case "getScheduleChangeNotificationLogs": result = getScheduleChangeNotificationLogs(payload); break;
       case "getAdmissionNotificationLogs": result = getAdmissionNotificationLogs(payload); break;
@@ -4594,7 +4595,64 @@ function retryFailedEventsQueue(payload) {
   };
 }
 
-// [TAREA-F5-011] [Fase 5: Admisiones y Portal de Familias] - Motor multicanal de notificaciones automáticas y seguimiento del proceso de admisión con plantillas, deduplicación e historial
+// [F10-Task12] [P1] - Optimizar las notificaciones y las comunicaciones escolares
+function retryFailedNotificationsQueue(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BandejaNotificaciones");
+  if (!sheet) return { status: "success", retriedCount: 0, resolvedCount: 0 };
+
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", retriedCount: 0, resolvedCount: 0 };
+
+  let retriedCount = 0;
+  let resolvedCount = 0;
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const notifId = row[0];
+    const targetUser = row[1];
+    const titulo = row[3];
+    const mensaje = row[4];
+    const deliveryStatus = String(row[10] || "").trim();
+    const targetEmail = String(row[11] || "").trim();
+
+    if (deliveryStatus === "Pendiente_Reintento" && targetEmail) {
+      retriedCount++;
+      try {
+        if (typeof MailApp !== "undefined") {
+          MailApp.sendEmail({
+            to: targetEmail,
+            subject: `[NGCA Notificación] ${titulo}`,
+            htmlBody: `
+              <div style="font-family: Arial, sans-serif; color: #1f2937; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+                <h2 style="color: #0d6efd; margin-top: 0;">New Generation Christian Academy</h2>
+                <h3 style="color: #111827;">${titulo}</h3>
+                <p style="font-size: 15px; line-height: 1.6;">${mensaje}</p>
+                <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 20px 0;" />
+                <p style="font-size: 12px; color: #6b7280;">Este es un aviso automático de la plataforma escolar.</p>
+              </div>
+            `
+          });
+          sheet.getRange(i + 1, 11).setValue("Entregado");
+          resolvedCount++;
+        }
+      } catch (e) {
+        logStructuredEvent("USER", "retryFailedNotificationsQueue", "WARN", "RETRY_MAIL_SEND_FAILED", `Reintento de correo fallido para ${targetEmail}: ${e.message}`, { notifId, targetEmail }, payload && payload.authRole);
+      }
+    }
+  }
+
+  logStructuredEvent("USER", "retryFailedNotificationsQueue", "INFO", "NOTIFICATIONS_RETRIED", `Reintento de notificaciones fallidas completado. Evaluados: ${retriedCount}, Entregados: ${resolvedCount}`, { retriedCount, resolvedCount }, payload && payload.authRole || "Sistema");
+
+  return {
+    status: "success",
+    retriedCount,
+    resolvedCount,
+    message: `Reintento de notificaciones completado. ${resolvedCount}/${retriedCount} entregadas exitosamente.`
+  };
+}
+
+// [F10-Task12] [P1] - Motor multicanal de notificaciones automáticas con deduplicación estricta y reintentos seguros
 function sendMultiChannelNotification(payload) {
   const { userId, emailRecipient, titulo, mensaje, tipo, categoria, canal, enlaceAccion, deduplicationKey } = payload || {};
   const targetUser = userId || emailRecipient || "INVITADO";

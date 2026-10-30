@@ -65,6 +65,9 @@ assert(academicCode.includes("scheduleCounselingAppointment") && academicCode.in
 assert(academicCode.includes("saveGuidanceFollowupPlan") && academicCode.includes("saveVocationalRecommendation") && academicCode.includes("[F10-Task10]"), "backend/academic-service/Code.gs contiene saveGuidanceFollowupPlan y saveVocationalRecommendation [F10-Task10]");
 assert(academicCode.includes("auditAssistantDelegatedAction") && academicCode.includes("[F10-Task11]"), "backend/academic-service/Code.gs contiene auditAssistantDelegatedAction [F10-Task11]");
 
+const userCode = fs.readFileSync(path.join(__dirname, '../../backend/user-service/Code.gs'), 'utf8');
+assert(userCode.includes("sendMultiChannelNotification") && userCode.includes("retryFailedNotificationsQueue") && userCode.includes("[F10-Task12]"), "backend/user-service/Code.gs contiene sendMultiChannelNotification y retryFailedNotificationsQueue [F10-Task12]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

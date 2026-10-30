@@ -193,7 +193,7 @@
 
 ---
 
-### [ ] [F10-Task12] Optimizar las notificaciones y las comunicaciones escolares
+### [X] [F10-Task12] Optimizar las notificaciones y las comunicaciones escolares
 - **Origen del Hallazgo:** `AUDITORIA_FASE_10_ASISTENCIA_DISCIPLINA_CONVIVENCIA.md` / Tarea 10.11 (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Comunicaciones y deduplicación)
@@ -204,7 +204,7 @@
   Implementar claves de deduplicación por evento/destinatario, plantillas anonimizadas y reintentos seguros para la mensajería de asistencia y convivencia.
 - **Criterios de Aceptación:**
   - Las notificaciones escolares aplican deduplicación estricta y protección de privacidad.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

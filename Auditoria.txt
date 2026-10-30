@@ -11,6 +11,17 @@ RESULTADO DE EVALUACIÓN:
 
 ===============================================================================
 FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task12: OPTIMIZAR LAS NOTIFICACIONES Y LAS COMUNICACIONES ESCOLARES
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `retryFailedNotificationsQueue` y refactorizado `sendMultiChannelNotification` con la etiqueta identificativa `[F10-Task12]` en `backend/user-service/Code.gs`.
+- Se verificó la deduplicación estricta por `deduplicationKey`, plantillas con protección de privacidad PII e reintentos seguros con contador de reintentos e informe de notificaciones resueltas.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el conmutador `doPost` switch en `backend/user-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
 AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task10: COMPLETAR EL MODELO FUNCIONAL DE ORIENTACIÓN ACADÉMICA Y VOCACIONAL
 ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
 RESULTADO DE EVALUACIÓN:
