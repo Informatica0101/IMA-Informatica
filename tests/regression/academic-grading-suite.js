@@ -77,6 +77,7 @@ const acctCode = fs.readFileSync(path.join(__dirname, '../../backend/accounting-
 assert(acctCode.includes("recordStaffCheckIn") && acctCode.includes("[F10-Task17]"), "backend/accounting-service/Code.gs contiene recordStaffCheckIn optimizado con trazabilidad [F10-Task17]");
 assert(devCode.includes("getPhase10FunctionalDocumentation") && devCode.includes("[F10-Task18]"), "backend/developer-service/Code.gs contiene getPhase10FunctionalDocumentation [F10-Task18]");
 assert(fs.existsSync(path.join(__dirname, '../../docs/architecture/phase-10-attendance-coexistence-spec.md')), "Existe documento funcional docs/architecture/phase-10-attendance-coexistence-spec.md [F10-Task18]");
+assert(academicCode.includes("validateStudentWelfareAccess") && academicCode.includes("[F11-Task01]"), "backend/academic-service/Code.gs contiene validateStudentWelfareAccess [F11-Task01]");
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {

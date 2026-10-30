@@ -3394,3 +3394,14 @@ ARCHIVOS MODIFICADOS:
 - tests/regression/academic-grading-suite.js (líneas ~78-79):
   Se agregaron aserciones de comprobación para `getPhase10FunctionalDocumentation` y la existencia del archivo de especificación funcional con etiqueta `[F10-Task18]`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task01 - Fortalecer la seguridad, privacidad y aislamiento de expedientes de bienestar estudiantil
+ARCHIVOS MODIFICADOS:
+- backend/academic-service/Code.gs (líneas ~213, ~218, ~219, ~866, ~8026-8047):
+  Se implementó la función `validateStudentWelfareAccess` para validar permisos y registrar eventos de auditoría `UNAUTHORIZED_ACCESS_ATTEMPT` ante intentos no autorizados de consulta de expedientes de bienestar u orientación.
+  Se registraron los permisos en `ROLE_PERMISSIONS` y en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~80):
+  Se agregó la aserción de comprobación para `validateStudentWelfareAccess` con la etiqueta `[F11-Task01]`.
+===============================================================================

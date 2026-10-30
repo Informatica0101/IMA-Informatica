@@ -210,13 +210,13 @@ const ROLE_PERMISSIONS = {
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite",
-    "openAttendanceSession", "saveClassAttendance", "getBatchAttendanceRecords", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "generateConsolidatedAttendanceAndCoexistenceReport"
+    "openAttendanceSession", "saveClassAttendance", "getBatchAttendanceRecords", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "generateConsolidatedAttendanceAndCoexistenceReport", "validateStudentWelfareAccess"
   ],
   "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "getBatchAttendanceRecords", "generateConsolidatedAttendanceAndCoexistenceReport"],
   "Desarrollador": ["getAcademicConfig", "getAcademicHistory", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "configureAcademicLevelsAndDynamicStorage"],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
-  "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "scheduleCounselingAppointment", "recordCounselingSessionAct", "referCounselingCase", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary"],
-  "Orientacion": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary"],
+  "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "scheduleCounselingAppointment", "recordCounselingSessionAct", "referCounselingCase", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary", "validateStudentWelfareAccess"],
+  "Orientacion": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary", "validateStudentWelfareAccess"],
   "Padre": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory",
     "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
@@ -863,6 +863,7 @@ function doPost(e) {
       case "getStudentAttendanceSummary": result = getStudentAttendanceSummary(payload); break;
       case "getBatchAttendanceRecords": result = getBatchAttendanceRecords(payload); break;
       case "generateConsolidatedAttendanceAndCoexistenceReport": result = generateConsolidatedAttendanceAndCoexistenceReport(payload); break;
+      case "validateStudentWelfareAccess": result = validateStudentWelfareAccess(payload); break;
       case "checkAndDispatchAttendanceAlerts": result = checkAndDispatchAttendanceAlerts(payload); break;
       case "getAttendanceConfig": result = getAttendanceConfig(payload); break;
       case "saveAttendanceConfig": result = saveAttendanceConfig(payload); break;
@@ -8022,7 +8023,31 @@ function updateAttendanceIncidentStatus(payload) {
   };
 }
 
-// [F10-Task01] [P0] - Fortalecer la confidencialidad y el control de acceso a expedientes sensibles
+// [F11-Task01] [P0] - Fortalecer la seguridad, privacidad y aislamiento de expedientes de bienestar estudiantil
+function validateStudentWelfareAccess(payload) {
+  const { userId, authRole, casoId, estudianteId } = payload || {};
+  const roleUpper = String(authRole || (payload && payload._verifiedRole) || "").toUpperCase();
+  const isAuthorizedRole = ["ADMINISTRADOR", "ADMIN", "DIRECTOR", "DIRECCION", "CONSEJEROS", "CONSEJERO", "ORIENTACION", "ORIENTADOR"].indexOf(roleUpper) >= 0;
+
+  if (!isAuthorizedRole) {
+    logStructuredEvent("ACADEMIC", "validateStudentWelfareAccess", "WARN", "UNAUTHORIZED_ACCESS_ATTEMPT", `Intento de acceso no autorizado a expediente de bienestar por rol '${roleUpper}'.`, { userId, estudianteId, casoId }, roleUpper);
+    return {
+      status: "success",
+      authorized: false,
+      reason: "El rol del usuario no dispone de permisos para consultar expedientes confidenciales de bienestar u orientación.",
+      message: "Acceso denegado a expediente confidencial de bienestar."
+    };
+  }
+
+  return {
+    status: "success",
+    authorized: true,
+    role: roleUpper,
+    message: "Acceso autorizado a expediente de bienestar estudiantil."
+  };
+}
+
+// [F10-Task01] [F11-Task01] [P0] - Fortalecer la confidencialidad y el control de acceso a expedientes sensibles
 function getAttendanceFollowupCases(payload) {
   const { userId, authRole, casoId } = payload || {};
   const roleUpper = String(authRole || (payload && payload._verifiedRole) || "").toUpperCase();

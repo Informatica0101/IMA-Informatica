@@ -147,3 +147,38 @@ HALLAZGOS DETECTADOS:
 2. No existía la función `getPhase10FunctionalDocumentation` en `backend/developer-service/Code.gs` para servir la documentación funcional y operativa dinámicamente desde el microservicio.
 3. Se requiere registrar la acción en `ROLE_PERMISSIONS` y agregar la comprobación de regresión en `tests/regression/academic-grading-suite.js`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL INTEGRAL - FASE 11: COMUNICACIÓN, BIENESTAR ESTUDIANTIL, SUPERVISIÓN DOCENTE Y GESTIÓN FINANCIERA
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/task-service/Code.gs, backend/developer-service/Code.gs, js/api.js, js/accounting.js, js/secretary.js, js/teacher.js
+HALLAZGOS DETECTADOS POR ÁREA:
+
+ÁREA I: COMUNICACIÓN Y COLABORACIÓN INSTITUCIONAL
+1. `createUserNotification` y `getNotificationPreferences` en `backend/user-service/Code.gs` gestionan notificaciones en `BandejaNotificaciones`, pero carecen de interfaz unificada para mensajería directa e historial de conversaciones bidireccionales por estudiante/trámite.
+2. `getInstitutionalCalendarEvents` y `bookAppointment` gestionan citas y eventos, pero no cuentan con motor de prevención de conflictos de horario en el backend para reservas simultáneas de docentes o salones.
+3. No existe una función dedicada para la publicación y control de ciclo de vida de noticias, anuncios, circulares y comunicados con fechas de vigencia y prioridades destacadas (`getInstitutionalAnnouncements`, `publishInstitutionalAnnouncement`).
+
+ÁREA II: BIENESTAR ESTUDIANTIL, ORIENTACIÓN Y SEGUIMIENTO DE CASOS
+1. `getAttendanceFollowupCases` en `backend/academic-service/Code.gs` aplica aislamiento por visibilidad `NIVEL_VISIBILIDAD_CONSEJERIA`, pero los endpoints de derivación e intervenciones de seguimiento de bienestar no disponen de un tablero unificado de estatus de derivaciones interdisciplinarias (`getInterdisciplinaryCaseReferrals`).
+2. Las alertas preventivas de deserción y ausentismo (`checkAndDispatchAttendanceAlerts`) operan sobre inasistencias y tardanzas, pero falta consolidar alertas preventivas integradas de rendimiento académico en riesgo de reprobación en una sola matriz de alerta temprana (`getEarlyWarningSystemMetrics`).
+
+ÁREA III: SUPERVISIÓN DOCENTE Y CALIDAD EDUCATIVA
+1. `getTeacherSupervisions` y `getTeacherImprovementPlans` en `backend/academic-service/Code.gs` registran observaciones pedagógicas y planes de mejora, pero no cuentan con un constructor dinámico de rúbricas de supervisión configurables por nivel académico (`configureSupervisionRubric`).
+2. Se requiere consolidar un panel de cumplimiento docente de entrega de planificaciones, jornalizaciones y guiones docentes con indicador de entregas a tiempo vs extemporáneas (`getTeacherPlanningSubmissionStatus`).
+
+ÁREA IV: CONTABILIDAD, PRESUPUESTOS Y CONTROL FINANCIERO
+1. `backend/accounting-service/Code.gs` cuenta con `getChartOfAccounts`, `recordAccountingJournalEntry`, `getBudgets`, `saveBudgetPlan`, `performBankReconciliation`, `createPurchaseOrder` y `approvePurchaseOrder`. Sin embargo, `performBankReconciliation` requiere una herramienta de pareo automático de extractos bancarios con comprobantes de ingreso/egreso.
+2. `getBudgetExecutionReport` calcula la ejecución presupuestaria pero carece de un sistema de alertas automáticas ante desviaciones o sobregiros por centro de costo (`checkBudgetOverrunAlerts`).
+3. El módulo de becas y descuentos (`configureDiscountScholarshipRule`, `submitDiscountScholarshipRequest`) requiere integración directa con la generación automatizada de estados de cuenta estudiantiles para aplicar exoneraciones automáticas en las mensualidades.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task01: FORTALECER LA SEGURIDAD, PRIVACIDAD Y AISLAMIENTO DE EXPEDIENTES DE BIENESTAR ESTUDIANTIL
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, backend/user-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `getAttendanceFollowupCases` en `backend/academic-service/Code.gs` filtraba casos de categoría `Consejería` y `Orientación`, pero requería extender la función de validación de seguridad `validateStudentWelfareAccess` para auditar accesos directos por `casoId` o `userId` solicitados por roles no autorizados (`Profesor`, `Padre`, `Estudiante`), registrando eventos estructurados `UNAUTHORIZED_ACCESS_ATTEMPT`.
+2. Se requiere verificar que las notificaciones e integraciones entre servicios no expongan campos confidenciales (`notasPrivadas`, `detallesClinicos`) a usuarios no autorizados.
+3. Se agregará la comprobación explícita de seguridad `[F11-Task01]` en `tests/regression/academic-grading-suite.js`.
+===============================================================================

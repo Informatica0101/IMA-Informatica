@@ -30,6 +30,293 @@
 
 ---
 
+# PENDIENTES - FASE 11: COMUNICACIÓN, BIENESTAR ESTUDIANTIL, SUPERVISIÓN DOCENTE Y GESTIÓN FINANCIERA
+
+## TAREAS CRÍTICAS (P0 - SEVERIDAD MÁXIMA, SEGURIDAD, CONFIDENCIALIDAD E INTEGRIDAD FINANCIERA)
+
+---
+
+### [X] [F11-Task01] Fortalecer la seguridad, privacidad y aislamiento de expedientes de bienestar estudiantil
+- **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área II (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Privacidad y protección de datos sensibles de menores)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** CasosSeguimiento, RegistrosOrientacion, AsignacionesAmbitosRoles
+- **Descripción del Alcance:**
+  Garantizar el aislamiento estricto de notas confidenciales de orientación y casos de bienestar respecto a docentes generales, bloqueando accesos por identificador manipulado y registrando auditoría `UNAUTHORIZED_ACCESS_ATTEMPT`.
+- **Criterios de Aceptación:**
+  - Un docente sin rol autorizado no puede consultar notas privadas de orientación de un estudiante.
+- **Estado:** [X] Completado
+
+---
+
+### [ ] [F11-Task02] Garantizar la integridad de los registros contables y el flujo de autorizaciones financieras
+- **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área IV (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Integridad contable, prevención de fraude)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+- **Dependencias Expuestas:** AsientosContables, OrdenesCompra, ComprobantesEgresos
+- **Descripción del Alcance:**
+  Asegurar el principio de partida doble, validar el equilibrio entre débitos y créditos en cada asiento contable e implementar autorizaciones financieras multinivel según límites de monto antes de la afectación presupuestaria.
+- **Criterios de Aceptación:**
+  - Todo asiento desequilibrado es rechazado y las compras mayores al umbral requieren aprobación formal de Dirección.
+- **Estado:** [ ] Pendiente
+
+---
+
+## TAREAS DE ALTA PRIORIDAD (P1 - COMUNICACIÓN, CALENDARIOS, ALERTAS, SUPERVISIÓN Y CONTROL FINANCIERO)
+
+---
+
+### [ ] [F11-Task03] Implementar el centro unificado de comunicaciones, mensajes institucionales y avisos
+- **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área I (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Comunicación institucional)
+- **Archivos Involucrados:**
+  - `backend/user-service/Code.gs`
+  - `js/secretary.js` / `js/principal.js`
+- **Dependencias Expuestas:** MensajeriaInstitucional, BandejaNotificaciones
+- **Descripción del Alcance:**
+  Desarrollar la mensajería institucional contextual organizada por estudiante, grupo o trámite, permitiendo conversaciones bidireccionales con trazabilidad y adjuntos seguros.
+- **Criterios de Aceptación:**
+  - Los mensajes quedan vinculados al contexto original (expediente/trámite) y solo son consultables por participantes autorizados.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F11-Task04] Implementar el gestor de noticias, anuncios, circulares y comunicados con vigencia
+- **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área I (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Difusión e información escolar)
+- **Archivos Involucrados:**
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** ComunicadosInstitucionales
+- **Descripción del Alcance:**
+  Permitir publicar avisos, circulares y convocatorias con segmentación por destinatarios, estado de borrador/programado, fechas de vigencia e indicadores visuales de urgencia.
+- **Criterios de Aceptación:**
+  - Los comunicados programados o vencidos no se presentan a usuarios fuera de su rango de vigencia.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F11-Task05] Desarrollar el motor de confirmaciones de lectura, respuestas y solicitudes de autorización
+- **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área I (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Autorizaciones familiares)
+- **Archivos Involucrados:**
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** ConfirmacionesLectura, SolicitudesAutorizacion
+- **Descripción del Alcance:**
+  Gestionar el ciclo de vida de solicitudes de autorización para permisos/actividades (Pendiente, Leído, Aceptado, Rechazado, Vencido), vinculando las respuestas con el apoderado o tutor legal responsable.
+- **Criterios de Aceptación:**
+  - La autorización registra timestamp y usuario responsable, impidiendo modificaciones extemporáneas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F11-Task06] Desarrollar la gestión de calendarios institucionales, convocatorias y prevención de traslapes
+- **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área I (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Planificación y eventos)
+- **Archivos Involucrados:**
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** EventosCalendario
+- **Descripción del Alcance:**
+  Permitir la creación y consulta de eventos institucionales y académicos, previniendo choques de horario para los mismos espacios o participantes.
+- **Criterios de Aceptación:**
+  - El sistema detecta e informa incompatibilidades de horario al agendar reuniones.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F11-Task07] Fortalecer la gestión de citas de orientación y acompañamiento estudiantil
+- **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área II (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Acompañamiento y bienestar)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** CitasOrientacion, CasosSeguimiento
+- **Descripción del Alcance:**
+  Gestionar la programación de citas de orientación estudiantil y entrevistas familiares con estados (Programada, Realizada, Reincidencia, Cancelada) y derivación inmutable.
+- **Criterios de Aceptación:**
+  - Las citas quedan ligadas al caso de seguimiento sin exponer motivos confidenciales en notificaciones públicas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F11-Task08] Desarrollar el sistema de alertas tempranas de rendimiento académico y deserción escolar
+- **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área II (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Prevención de reprobación y deserción)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** AlertasTempranas
+- **Descripción del Alcance:**
+  Evaluar métricas combinadas de ausentismo, reprobación parcial e incumplimiento de tareas para disparar alertas preventivas a coordinadores y orientadores.
+- **Criterios de Aceptación:**
+  - Las alertas de riesgo se generan según umbrales institucionales sin duplicar notificaciones activas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F11-Task09] Completar la gestión de planificación pedagógica, jornalizaciones y guiones docentes
+- **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área III (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Gestión pedagógica)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** PlanificacionesPedagogicas
+- **Descripción del Alcance:**
+  Permitir el registro y estructuración de planes de clase, jornalizaciones y sílabos vinculados con grado, seccion, asignatura y período académico.
+- **Criterios de Aceptación:**
+  - Las planificaciones conservan versión, docente titular y competencias asociadas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F11-Task10] Implementar el flujo de entrega, observaciones y aprobación de documentación docente
+- **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área III (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Supervisión académica)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** RevisionesPlanificacion
+- **Descripción del Alcance:**
+  Gestionar el ciclo de revisión de documentos docentes (Pendiente, EnRevision, RequiereCorrecciones, Aprobado) permitiendo a coordinadores registrar observaciones y evaluar reenvíos.
+- **Criterios de Aceptación:**
+  - Las aprobaciones quedan ligadas a la versión exacta del documento y al coordinador aprobador.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F11-Task11] Desarrollar el sistema de observaciones, rúbricas de supervisión y evaluaciones pedagógicas
+- **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área III (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Calidad docente)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** SupervisiónPedagógica
+- **Descripción del Alcance:**
+  Configurar rúbricas y pautas de observación en aula, registrar evaluaciones pedagógicas a docentes y definir compromisos de desarrollo profesional.
+- **Criterios de Aceptación:**
+  - El docente puede consultar la retroalimentación sin alterar la pauta de evaluación registrada por la dirección.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F11-Task12] Implementar el sistema de suplencias temporales y relevos docentes con alcance acotado
+- **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área III (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Continuidad académica)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** SustitucionesDocentes
+- **Descripción del Alcance:**
+  Asignar suplentes temporales ante ausencias docentes, otorgando acceso acotado a las secciones del titular sin alterar el nombramiento original ni conceder acceso a otros grupos.
+- **Criterios de Aceptación:**
+  - Al concluir el período de suplencia, los accesos temporales son revocados automáticamente.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F11-Task13] Desarrollar la conciliación bancaria asistida y pareo automático de extractos
+- **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área IV (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Control de tesorería)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+- **Dependencias Expuestas:** ConciliacionBancaria
+- **Descripción del Alcance:**
+  Permitir importar movimientos bancarios y compararlos contra ingresos/egresos internos, identificando partidas concilidadas y diferencias pendientes.
+- **Criterios de Aceptación:**
+  - El sistema marca los movimientos pareados y genera la hoja de trabajo de conciliación del mes.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F11-Task14] Desarrollar el control presupuestario y alertas de sobregiro por centro de costo
+- **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área IV (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Gestión presupuestaria)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+- **Dependencias Expuestas:** PresupuestosInstitucionales
+- **Descripción del Alcance:**
+  Comparar montos presupuestados vs ejecutados por departamento/centro de costo, emitiendo alertas cuando un gasto comprometa la partida asignada.
+- **Criterios de Aceptación:**
+  - Se genera una advertencia o bloqueo presupuestario cuando una solicitud excede el presupuesto disponible.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F11-Task15] Integrar la gestión de becas y exoneraciones con los estados de cuenta estudiantiles
+- **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área IV (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Finanzas estudiantiles)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+- **Dependencias Expuestas:** BecasDescuentos, CuentasPorCobrar
+- **Descripción del Alcance:**
+  Aplicar reglas automáticas de becas y descuentos aprobados sobre los cobros periódicos de colegiatura en los estados de cuenta de los estudiantes.
+- **Criterios de Aceptación:**
+  - La mensualidad refleja de forma transparente el arancel base, el descuento/beca aplicado y el saldo neto a pagar.
+- **Estado:** [ ] Pendiente
+
+---
+
+## TAREAS DE PRIORIDAD MEDIA Y COBERTURA (P2 - REPORTES, INDICADORES Y SUITE DE REGRESIÓN)
+
+---
+
+### [ ] [F11-Task16] Ampliar los reportes contables, balance de comprobación y estado de resultados
+- **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área IV (P2)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Informes financieros)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+- **Dependencias Expuestas:** LibroMayor, ReportesFinancieros
+- **Descripción del Alcance:**
+  Generar estados financieros consolidados (Balance General, Estado de Resultados, Libro Diario, Libro Mayor) filtrados por período y ejercicio fiscal.
+- **Criterios de Aceptación:**
+  - Los reportes financieros concuerdan exactamente con las sumas de los asientos contables registrados.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F11-Task17] Ampliar los indicadores de calidad educativa y cumplimiento pedagógico
+- **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área III (P2)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Métricas institucionales)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** IndicadoresCalidad
+- **Descripción del Alcance:**
+  Consolidar métricas agregadas de cumplimiento de planificaciones, cobertura de contenidos por asignatura y avance del calendario académico.
+- **Criterios de Aceptación:**
+  - Los indicadores muestran estadísticas globales por nivel/departamento sin exponer datos confidenciales individuales.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F11-Task18] Desarrollar la suite de pruebas de regresión e integración de la Fase 11
+- **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Fase 11 (P2)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Aseguramiento de calidad)
+- **Archivos Involucrados:**
+  - `backend/developer-service/Code.gs`
+  - `tests/regression/academic-grading-suite.js`
+- **Dependencias Expuestas:** Suites de pruebas del desarrollador
+- **Descripción del Alcance:**
+  Incorporar `runPhase11CommunicationWelfareSupervisionAndFinanceRegressionSuite` para verificar automáticamente los contratos y reglas de las 4 áreas de la Fase 11.
+- **Criterios de Aceptación:**
+  - La suite valida los 18 componentes funcionales de la Fase 11 con 100% de éxito.
+- **Estado:** [ ] Pendiente
+
+---
+
 ## TAREAS DE ALTA PRIORIDAD (P1 - MEJORAS OPERATIVAS, ASISTENCIA, DISCIPLINA, ROLES ESPECIALIZADOS Y REGRESION)
 
 ---
