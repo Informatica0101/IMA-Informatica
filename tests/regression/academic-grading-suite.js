@@ -57,6 +57,7 @@ assert(academicCode.includes("getAttendanceFollowupCases") && academicCode.inclu
 assert(devCode.includes("runPhase10AttendanceAndCoexistenceRegressionSuite") && devCode.includes("[F10-Task02]"), "backend/developer-service/Code.gs contiene función runPhase10AttendanceAndCoexistenceRegressionSuite [F10-Task02]");
 assert(academicCode.includes("getAttendanceConfig") && academicCode.includes("saveAttendanceConfig") && academicCode.includes("[F10-Task03]"), "backend/academic-service/Code.gs contiene getAttendanceConfig y saveAttendanceConfig [F10-Task03]");
 assert(academicCode.includes("bulkApplyAttendanceStatus") && academicCode.includes("[F10-Task04]"), "backend/academic-service/Code.gs contiene bulkApplyAttendanceStatus y saveClassAttendance [F10-Task04]");
+assert(academicCode.includes("submitAttendanceJustification") && academicCode.includes("reviewAttendanceJustification") && academicCode.includes("[F10-Task05]"), "backend/academic-service/Code.gs contiene submitAttendanceJustification y reviewAttendanceJustification [F10-Task05]");
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {

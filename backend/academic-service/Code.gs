@@ -7503,6 +7503,7 @@ function getDailyAttendance(payload) {
   return { status: "success", data: records };
 }
 
+// [F10-Task05] [P1] - Ampliar la gestión de justificaciones, permisos y salidas anticipadas
 function submitAttendanceJustification(payload) {
   const { userId, fechaAfectada, periodo, motivoDeclarado, adjuntoUrl, presentadoPor } = payload || {};
   if (!userId || !fechaAfectada || !motivoDeclarado) throw new Error("userId, fechaAfectada y motivoDeclarado son requeridos.");
@@ -7531,8 +7532,13 @@ function submitAttendanceJustification(payload) {
 }
 
 function reviewAttendanceJustification(payload) {
-  const { justificacionId, nuevoEstado, revisadoPor, observacionesAdmin } = payload || {};
+  const { justificacionId, nuevoEstado, revisadoPor, observacionesAdmin, authRole } = payload || {};
   if (!justificacionId || !nuevoEstado) throw new Error("justificacionId y nuevoEstado son requeridos.");
+
+  const validStates = ["Presentada", "Pendiente", "RequiereInformacion", "Aprobada", "Aprobado", "Rechazada", "Rechazado", "Cancelada"];
+  if (validStates.indexOf(String(nuevoEstado).trim()) === -1) {
+    throw new Error(`Estado de revisión '${nuevoEstado}' no válido. Estados permitidos: ${validStates.join(", ")}`);
+  }
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "JustificacionesAsistencia");
@@ -7548,19 +7554,49 @@ function reviewAttendanceJustification(payload) {
   if (nuevoEstado === "Aprobada" || nuevoEstado === "Aprobado") {
     try {
       const targetUserId = String(data[idx][1]).trim();
+      const rawFechaAf = data[idx][2];
+      const targetFechaStr = rawFechaAf ? (rawFechaAf instanceof Date ? rawFechaAf.toISOString().split('T')[0] : String(rawFechaAf).trim().split('T')[0]) : "";
+
       const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
       const regData = regSheet.getDataRange().getValues();
 
+      const sesSheet = getOrCreateSheet(ss, "SesionesAsistencia");
+      const sesData = sesSheet.getDataRange().getValues();
+      const sesionFechaMap = {};
+      for (let s = 1; s < sesData.length; s++) {
+        const sId = String(sesData[s][0]).trim();
+        const sFecha = sesData[s][1] instanceof Date ? sesData[s][1].toISOString().split('T')[0] : String(sesData[s][1]).trim().split('T')[0];
+        sesionFechaMap[sId] = sFecha;
+      }
+
       for (let i = 1; i < regData.length; i++) {
         if (String(regData[i][2]).trim() === targetUserId) {
-          regSheet.getRange(i + 1, 7).setValue(true); // Justificado = true
-          regSheet.getRange(i + 1, 4).setValue("Justificada"); // EstadoAsistencia = Justificada
+          const sesId = String(regData[i][1]).trim();
+          let regFechaStr = "";
+          if (sesId in sesionFechaMap) {
+            regFechaStr = sesionFechaMap[sesId];
+          } else if (sesId.indexOf("SES-DIARIA-") === 0) {
+            const parts = sesId.split("-");
+            if (parts.length >= 5) {
+              regFechaStr = `${parts[2]}-${parts[3]}-${parts[4]}`;
+            }
+          }
+          if (!regFechaStr && regData[i][8]) {
+            regFechaStr = regData[i][8] instanceof Date ? regData[i][8].toISOString().split('T')[0] : String(regData[i][8]).trim().split('T')[0];
+          }
+
+          if (!targetFechaStr || !regFechaStr || regFechaStr === targetFechaStr) {
+            regSheet.getRange(i + 1, 7).setValue(true); // Justificado = true
+            regSheet.getRange(i + 1, 4).setValue("Justificada"); // EstadoAsistencia = Justificada
+          }
         }
       }
     } catch (e) {
       logDebug("Error actualizando asistencia a Justificada", e.message);
     }
   }
+
+  logStructuredEvent("ACADEMIC", "reviewAttendanceJustification", "INFO", "ATTENDANCE_JUSTIFICATION_REVIEWED", `Justificación ${justificacionId} cambiada a estado ${nuevoEstado}`, { justificacionId, nuevoEstado, revisadoPor }, authRole || "Secretaría");
 
   return { status: "success", message: `Justificación cambiada a ${nuevoEstado}.` };
 }

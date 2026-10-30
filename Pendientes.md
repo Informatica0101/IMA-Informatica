@@ -83,7 +83,7 @@
 
 ---
 
-### [ ] [F10-Task05] Ampliar la gestión de justificaciones, permisos y salidas anticipadas
+### [X] [F10-Task05] Ampliar la gestión de justificaciones, permisos y salidas anticipadas
 - **Origen del Hallazgo:** `AUDITORIA_FASE_10_ASISTENCIA_DISCIPLINA_CONVIVENCIA.md` / Tarea 10.3 (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Justificaciones y salidas)
@@ -95,7 +95,7 @@
   Establecer el ciclo de vida completo de solicitudes (Borrador, Presentada, Pendiente, Requiere información, Aprobada, Rechazada, Cancelada), vincular solicitudes con sesiones afectadas y registrar retiradas de alumnos por adultos autorizados.
 - **Criterios de Aceptación:**
   - Las justificaciones y salidas aplican transiciones de estado estrictas y actualizan dinámicamente la asistencia.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

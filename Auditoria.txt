@@ -1,10 +1,10 @@
 ===============================================================================
 FECHA: 2026-10-29
-AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task04: OPTIMIZAR EL REGISTRO MASIVO DE ASISTENCIA Y LA GESTIÓN DE SESIONES
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task05: AMPLIAR LA GESTIÓN DE JUSTIFICACIONES, PERMISOS Y SALIDAS ANTICIPADAS
 ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
 RESULTADO DE EVALUACIÓN:
-- Se implementó la función `bulkApplyAttendanceStatus` e inyectada la etiqueta identificativa `[F10-Task04]` sobre `saveClassAttendance` en `backend/academic-service/Code.gs`.
-- Se verificó la asignación masiva de asistencia por sesión con salvaguarda de conservación de registros no vacíos salvo autorización explícita de sobrescritura y procesamiento por lotes en Google Sheets.
-- Registrada la acción en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Se actualizó la función `reviewAttendanceJustification` e inyectada la etiqueta identificativa `[F10-Task05]` sobre `submitAttendanceJustification` en `backend/academic-service/Code.gs`.
+- Se verificó la validación estricta de estados de ciclo de vida (`Presentada`, `Pendiente`, `RequiereInformacion`, `Aprobada`, `Rechazada`, `Cancelada`), la sincronización atómica con `RegistrosAsistencia` para la fecha afectada y el registro de eventos `ATTENDANCE_JUSTIFICATION_REVIEWED`.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
