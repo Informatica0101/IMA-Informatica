@@ -4079,34 +4079,109 @@ function configureWorkSchedule(payload) {
   return { status: "success", horarioId: hId, message: "Horario laboral configurado exitosamente." };
 }
 
+// [F10-Task17] [P2] - Optimizar el registro de asistencia laboral del personal
 function recordStaffCheckIn(payload) {
-  const { empleadoId, empleadoNombre, tipoRegistro, observaciones } = payload || {};
-  if (!empleadoId) throw new Error("empleadoId requerido.");
+  const { empleadoId, empleadoNombre, tipoRegistro, horaEntradaEsperada, observaciones } = payload || {};
+  if (!empleadoId) throw new Error("empleadoId es requerido.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "DeduccionesAsistencia");
   const now = new Date();
-  const asistenciaId = "AST-" + now.getTime();
+  const dateStr = now.toISOString().split('T')[0];
   const timeStr = now.toTimeString().split(' ')[0];
 
-  sheet.appendRow([
-    asistenciaId,
-    now,
-    String(empleadoId).trim(),
-    empleadoNombre || "Personal",
-    tipoRegistro === "Salida" ? "" : timeStr,
-    tipoRegistro === "Salida" ? timeStr : "",
-    0,
-    tipoRegistro || "EntradaPuntual",
-    observaciones || "Registro desde Portal RRHH"
-  ]);
+  const data = sheet.getDataRange().getValues();
+  let existingIndex = -1;
 
-  return {
-    status: "success",
-    asistenciaId: asistenciaId,
-    horaRegistrada: timeStr,
-    message: `Marcaje de ${tipoRegistro || 'Entrada'} registrado con éxito a las ${timeStr}.`
-  };
+  for (let i = 1; i < data.length; i++) {
+    const rowEmpId = String(data[i][2]).trim();
+    const rowDate = data[i][1] ? new Date(data[i][1]).toISOString().split('T')[0] : "";
+    if (rowEmpId === String(empleadoId).trim() && rowDate === dateStr) {
+      existingIndex = i;
+      break;
+    }
+  }
+
+  let asistenciaId = "AST-" + now.getTime();
+  let minutosTardanza = 0;
+  let estado = tipoRegistro || "EntradaPuntual";
+
+  if (tipoRegistro === "Salida") {
+    if (existingIndex !== -1) {
+      asistenciaId = data[existingIndex][0];
+      sheet.getRange(existingIndex + 1, 6).setValue(timeStr);
+      sheet.getRange(existingIndex + 1, 8).setValue("JornadaCompleta");
+      if (observaciones) sheet.getRange(existingIndex + 1, 9).setValue(observaciones);
+
+      return {
+        status: "success",
+        asistenciaId: asistenciaId,
+        horaRegistrada: timeStr,
+        tipoRegistro: "Salida",
+        message: `Marcaje de Salida registrado a las ${timeStr}.`
+      };
+    } else {
+      sheet.appendRow([
+        asistenciaId,
+        now,
+        String(empleadoId).trim(),
+        empleadoNombre || "Personal",
+        "",
+        timeStr,
+        0,
+        "MarcaIncompleta",
+        observaciones || "Salida registrada sin marca de entrada previa"
+      ]);
+      return {
+        status: "success",
+        asistenciaId: asistenciaId,
+        horaRegistrada: timeStr,
+        tipoRegistro: "Salida",
+        message: "Salida registrada (Marca incompleta por falta de entrada previa)."
+      };
+    }
+  } else {
+    const expectedTime = horaEntradaEsperada || "07:30";
+    const [expH, expM] = expectedTime.split(':').map(Number);
+    const [nowH, nowM] = timeStr.split(':').map(Number);
+
+    const expTotalMin = expH * 60 + expM;
+    const nowTotalMin = nowH * 60 + nowM;
+
+    if (nowTotalMin > expTotalMin) {
+      minutosTardanza = nowTotalMin - expTotalMin;
+      estado = "Tardanza";
+    }
+
+    if (existingIndex !== -1) {
+      asistenciaId = data[existingIndex][0];
+      sheet.getRange(existingIndex + 1, 5).setValue(timeStr);
+      sheet.getRange(existingIndex + 1, 7).setValue(minutosTardanza);
+      sheet.getRange(existingIndex + 1, 8).setValue(estado);
+      if (observaciones) sheet.getRange(existingIndex + 1, 9).setValue(observaciones);
+    } else {
+      sheet.appendRow([
+        asistenciaId,
+        now,
+        String(empleadoId).trim(),
+        empleadoNombre || "Personal",
+        timeStr,
+        "",
+        minutosTardanza,
+        estado,
+        observaciones || "Registro de Entrada laboral desde Portal RRHH"
+      ]);
+    }
+
+    return {
+      status: "success",
+      asistenciaId: asistenciaId,
+      horaRegistrada: timeStr,
+      minutosTardanza: minutosTardanza,
+      estadoAsistencia: estado,
+      message: `Marcaje de Entrada registrado (${estado}).`
+    };
+  }
 }
 
 function getStaffAttendanceLogs(payload) {
@@ -4158,20 +4233,36 @@ function submitAttendanceCorrection(payload) {
   return { status: "success", correccionId: corrId, message: "Solicitud de corrección de asistencia enviada para revisión." };
 }
 
+// [F10-Task17] [P2] - Aprobar/Rechazar correcciones de asistencia laboral y sincronizar registros
 function reviewAttendanceCorrection(payload) {
   const { correccionId, nuevoEstado, observaciones, authRole } = payload || {};
   if (!correccionId || !nuevoEstado) throw new Error("correccionId y nuevoEstado son requeridos.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getOrCreateSheet(ss, "CorreccionesAsistencia");
-  const data = sheet.getDataRange().getValues();
+  const corrSheet = getOrCreateSheet(ss, "CorreccionesAsistencia");
+  const corrData = corrSheet.getDataRange().getValues();
 
-  const idx = data.findIndex(r => String(r[0]).trim() === String(correccionId).trim());
+  const idx = corrData.findIndex(r => String(r[0]).trim() === String(correccionId).trim());
   if (idx === -1) throw new Error("Solicitud de corrección no encontrada.");
 
-  sheet.getRange(idx + 1, 9).setValue(nuevoEstado);
-  sheet.getRange(idx + 1, 10).setValue(authRole || "RecursosHumanos");
-  if (observaciones) sheet.getRange(idx + 1, 11).setValue(observaciones);
+  corrSheet.getRange(idx + 1, 9).setValue(nuevoEstado);
+  corrSheet.getRange(idx + 1, 10).setValue(authRole || "RecursosHumanos");
+  if (observaciones) corrSheet.getRange(idx + 1, 11).setValue(observaciones);
+
+  if (nuevoEstado === "Aprobado") {
+    const asistenciaId = corrData[idx][1];
+    const horaSolicitada = corrData[idx][5];
+
+    if (asistenciaId && asistenciaId !== "GENERAL") {
+      const attSheet = getOrCreateSheet(ss, "DeduccionesAsistencia");
+      const attData = attSheet.getDataRange().getValues();
+      const attIdx = attData.findIndex(r => String(r[0]).trim() === String(asistenciaId).trim());
+      if (attIdx !== -1) {
+        attSheet.getRange(attIdx + 1, 5).setValue(horaSolicitada);
+        attSheet.getRange(attIdx + 1, 8).setValue("Corregido");
+      }
+    }
+  }
 
   return { status: "success", correccionId: correccionId, estado: nuevoEstado, message: `Corrección de asistencia ${nuevoEstado}.` };
 }

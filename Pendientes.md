@@ -275,7 +275,7 @@
 
 ---
 
-### [ ] [F10-Task17] Optimizar el registro de asistencia laboral del personal
+### [X] [F10-Task17] Optimizar el registro de asistencia laboral del personal
 - **Origen del Hallazgo:** `AUDITORIA_FASE_10_ASISTENCIA_DISCIPLINA_CONVIVENCIA.md` / Tarea 10.13 (P2)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Media (Asistencia de personal laboral)
@@ -286,7 +286,7 @@
   Optimizar el registro de entrada/salida laboral de empleados, gestión de marcas incompletas y correcciones con trazabilidad sin mezclar datos con la asistencia estudiantil.
 - **Criterios de Aceptación:**
   - El registro de asistencia laboral se mantiene aislado e íntegro respecto a los registros académicos.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

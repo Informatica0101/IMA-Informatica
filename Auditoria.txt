@@ -127,3 +127,13 @@ HALLAZGOS DETECTADOS:
 2. El informe consolidado debe excluir estrictamente la información confidencial de las categorías `Consejería` y `Orientación` cuando sea consultado por roles no autorizados como docentes generales.
 3. Se requiere registrar la acción en `ROLE_PERMISSIONS` para `Director`, `Secretaría`, `Coordinador`, `Administrador` y `Profesor` (filtrado) y agregar aserciones en `tests/regression/academic-grading-suite.js`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task17: OPTIMIZAR EL REGISTRO DE ASISTENCIA LABORAL DEL PERSONAL
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `recordStaffCheckIn` en `backend/accounting-service/Code.gs` insertaba filas independientes en `DeduccionesAsistencia` sin aparear la entrada con la salida del mismo día, generando marcas huérfanas/incompletas.
+2. `reviewAttendanceCorrection` actualizaba el estado de la solicitud en `CorreccionesAsistencia`, pero no sincronizaba automáticamente la hora corregida en la hoja `DeduccionesAsistencia` al ser aprobada.
+3. Se requiere que el registro laboral esté completamente aislado de las tablas de asistencia estudiantil (`RegistrosAsistencia`), con soporte para cálculo automático de minutos de tardanza y auditoría de cambios.
+===============================================================================
