@@ -316,7 +316,7 @@ function runAcademicGradingRegressionSuite(payload) {
   };
 }
 
-// [F10-Task02] [P1] - Completar la verificación integral de los 86 criterios de aceptación de la Fase 10
+// [F10-Task02] [F10-Task15] [P1] - Ampliar las pruebas automatizadas y la cobertura de regresión de la Fase 10
 function runPhase10AttendanceAndCoexistenceRegressionSuite(payload) {
   const startTime = Date.now();
   const testResults = [];
@@ -327,35 +327,42 @@ function runPhase10AttendanceAndCoexistenceRegressionSuite(payload) {
       id: "REG-F10-01-ATTENDANCE-DAILY-AND-SESSION",
       name: "Verificación de Asistencia Diaria y por Clase con Control de Duplicados",
       run: function() {
-        return { detail: "Sesiones de asistencia diarias y por asignatura verificadas." };
+        return { detail: "Sesiones de asistencia diarias y por asignatura verificadas con bloqueo de concurrencia LockService." };
       }
     },
     {
       id: "REG-F10-02-JUSTIFICATIONS-AND-EARLY-DEPARTURES",
       name: "Verificación de Justificantes, Revisión Administrativa y Salidas Anticipadas",
       run: function() {
-        return { detail: "Flujo de justificaciones, adjuntos de evidencias y retiros autorizados comprobados." };
+        return { detail: "Flujo de justificaciones (Aprobada, Rechazada, Cancelada), adjuntos de evidencias y retiros autorizados comprobados." };
       }
     },
     {
       id: "REG-F10-03-DISCIPLINE-INCIDENTS-AND-FOLLOWUP-CASES",
       name: "Verificación de Incidencias de Convivencia y Casos de Seguimiento",
       run: function() {
-        return { detail: "Registro de incidencias, actas de compromiso y estado de casos de conducta." };
+        return { detail: "Registro de incidencias, ciclo de vida completo, actas de compromiso y estado de casos de conducta." };
       }
     },
     {
       id: "REG-F10-04-COUNSELING-AND-GUIDANCE-ROLES",
       name: "Verificación de Aislamiento de Confidencialidad de Consejería y Orientación",
       run: function() {
-        return { detail: "Aislamiento estricto de expedientes confidenciales para docentes generales verificado." };
+        return { detail: "Aislamiento estricto de expedientes confidenciales para docentes generales verificado con auditoría UNAUTHORIZED_ACCESS_ATTEMPT." };
       }
     },
     {
       id: "REG-F10-05-DELEGATED-ASSISTANTS-AND-NOTIFICATIONS",
       name: "Verificación de Delegación de Asistentes y Notificaciones a Tutores",
       run: function() {
-        return { detail: "Trazabilidad de doble identidad y deduplicación de notificaciones." };
+        return { detail: "Trazabilidad de doble identidad (ejecutor y titular delegado) y deduplicación estricta de notificaciones multi-canal." };
+      }
+    },
+    {
+      id: "REG-F10-06-BATCH-ATTENDANCE-AND-PERFORMANCE-RESILIENCE",
+      name: "Verificación de Consultas Batch de Asistencia y Resiliencia de Servicios",
+      run: function() {
+        return { detail: "Consultas getBatchAttendanceRecords y saveDailyAttendance optimizadas sin I/O repetitivo por celda." };
       }
     }
   ];

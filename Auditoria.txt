@@ -108,3 +108,12 @@ HALLAZGOS DETECTADOS:
 3. Se requiere protección por concurrencia con `LockService` y control de idempotencia/reintentos exponenciales en operaciones masivas de asistencia en `backend/academic-service/Code.gs` y helper en `js/api.js`.
 4. La suite de regresión `tests/regression/academic-grading-suite.js` requiere aserciones para verificar `[F10-Task14]`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task15: AMPLIAR LAS PRUEBAS AUTOMATIZADAS Y LA COBERTURA DE REGRESIÓN DE LA FASE 10
+ARCHIVOS AUDITADOS: backend/developer-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `runPhase10AttendanceAndCoexistenceRegressionSuite` en `backend/developer-service/Code.gs` contenía casos de prueba básicos stubbed y requería la integración completa de los contratos de validación de asistencia, justificaciones, salidas anticipadas, incidencias de convivencia, consejería confidencial, orientación vocacional, delegación de asistentes, notificaciones y operaciones batch.
+2. `tests/regression/academic-grading-suite.js` requiere aserciones adicionales que validen que `runPhase10AttendanceAndCoexistenceRegressionSuite` abarca integralmente los 86 criterios de la Fase 10.
+===============================================================================

@@ -7528,6 +7528,10 @@ function bulkApplyAttendanceStatus(payload) {
     });
 
     if (data.length > 1) {
+      const maxRows = regSheet.getMaxRows();
+      if (data.length > maxRows) {
+        regSheet.insertRowsAfter(maxRows, data.length - maxRows);
+      }
       regSheet.getRange(1, 1, data.length, data[0].length).setValues(data);
     }
 

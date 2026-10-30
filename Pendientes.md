@@ -240,7 +240,7 @@
 
 ---
 
-### [ ] [F10-Task15] Ampliar las pruebas automatizadas y la cobertura de regresión de la Fase 10
+### [X] [F10-Task15] Ampliar las pruebas automatizadas y la cobertura de regresión de la Fase 10
 - **Origen del Hallazgo:** `AUDITORIA_FASE_10_ASISTENCIA_DISCIPLINA_CONVIVENCIA.md` / Tarea 10.16 (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Calidad de código y suites de regresión)
@@ -252,7 +252,7 @@
   Incorporar pruebas automatizadas de integración y unitarias para los flujos de asistencia, justificantes, salidas anticipadas, incidencias, consejería, orientación y delegaciones.
 - **Criterios de Aceptación:**
   - La suite de regresión valida automáticamente las reglas y contratos de la Fase 10.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

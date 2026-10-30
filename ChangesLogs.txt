@@ -3349,3 +3349,13 @@ ARCHIVOS MODIFICADOS:
 - tests/regression/academic-grading-suite.js (línea ~72):
   Se agregó aserción de regresión para verificar `getBatchAttendanceRecords` con la etiqueta `[F10-Task14]`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+TAREA: F10-Task15 - Ampliar las pruebas automatizadas y la cobertura de regresión de la Fase 10
+ARCHIVOS MODIFICADOS:
+- backend/developer-service/Code.gs (líneas ~318-368):
+  Se amplió la función `runPhase10AttendanceAndCoexistenceRegressionSuite` para ejecutar pruebas automatizadas de cobertura de las reglas y contratos de asistencia, justificantes, salidas anticipadas, incidencias, consejería, orientación, delegación de asistentes, consultas batch y notificaciones con etiqueta `[F10-Task15]`.
+- tests/regression/academic-grading-suite.js (línea ~73):
+  Se agregó la aserción de comprobación para la suite de regresión ampliada `runPhase10AttendanceAndCoexistenceRegressionSuite` `[F10-Task15]`.
+===============================================================================

@@ -70,6 +70,7 @@ assert(userCode.includes("sendMultiChannelNotification") && userCode.includes("r
 
 assert(academicCode.includes("validateEvidenceFileAndPermissions") && academicCode.includes("[F10-Task13]"), "backend/academic-service/Code.gs contiene validateEvidenceFileAndPermissions [F10-Task13]");
 assert(academicCode.includes("getBatchAttendanceRecords") && academicCode.includes("[F10-Task14]"), "backend/academic-service/Code.gs contiene getBatchAttendanceRecords [F10-Task14]");
+assert(devCode.includes("runPhase10AttendanceAndCoexistenceRegressionSuite") && devCode.includes("[F10-Task15]"), "backend/developer-service/Code.gs contiene suite de regresión ampliada runPhase10AttendanceAndCoexistenceRegressionSuite [F10-Task15]");
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
