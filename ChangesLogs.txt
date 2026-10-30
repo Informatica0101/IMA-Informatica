@@ -3405,3 +3405,14 @@ ARCHIVOS MODIFICADOS:
 - tests/regression/academic-grading-suite.js (línea ~80):
   Se agregó la aserción de comprobación para `validateStudentWelfareAccess` con la etiqueta `[F11-Task01]`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task02 - Garantizar la integridad de los registros contables y el flujo de autorizaciones financieras
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (líneas ~4968-4994, ~5365-5390):
+  Se actualizó `approvePurchaseOrder` para requerir aprobación formal de Dirección/Administración en compras mayores a L 50,000.00.
+  Se refactorizó `recordAccountingJournalEntry` con trazabilidad de eventos `UNBALANCED_JOURNAL_ENTRY_REJECTED` al rechazar asientos desequilibrados.
+- tests/regression/academic-grading-suite.js (línea ~81):
+  Se agregó la aserción de comprobación para `recordAccountingJournalEntry` y `approvePurchaseOrder` con la etiqueta `[F11-Task02]`.
+===============================================================================

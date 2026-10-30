@@ -52,7 +52,7 @@
 
 ---
 
-### [ ] [F11-Task02] Garantizar la integridad de los registros contables y el flujo de autorizaciones financieras
+### [X] [F11-Task02] Garantizar la integridad de los registros contables y el flujo de autorizaciones financieras
 - **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área IV (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Integridad contable, prevención de fraude)
@@ -63,7 +63,7 @@
   Asegurar el principio de partida doble, validar el equilibrio entre débitos y créditos en cada asiento contable e implementar autorizaciones financieras multinivel según límites de monto antes de la afectación presupuestaria.
 - **Criterios de Aceptación:**
   - Todo asiento desequilibrado es rechazado y las compras mayores al umbral requieren aprobación formal de Dirección.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

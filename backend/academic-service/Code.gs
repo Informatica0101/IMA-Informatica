@@ -8049,8 +8049,15 @@ function validateStudentWelfareAccess(payload) {
 
 // [F10-Task01] [F11-Task01] [P0] - Fortalecer la confidencialidad y el control de acceso a expedientes sensibles
 function getAttendanceFollowupCases(payload) {
-  const { userId, authRole, casoId } = payload || {};
+  const { userId, authRole, casoId, categoriaCaso } = payload || {};
   const roleUpper = String(authRole || (payload && payload._verifiedRole) || "").toUpperCase();
+
+  if (categoriaCaso === "Consejería" || categoriaCaso === "Orientación") {
+    const welfareCheck = validateStudentWelfareAccess(payload);
+    if (!welfareCheck.authorized) {
+      return { status: "success", data: [], message: welfareCheck.message };
+    }
+  }
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
 

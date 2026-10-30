@@ -4965,7 +4965,7 @@ function createPurchaseOrder(payload) {
   return { status: "success", ordenCompraId: ordenId, message: "Órden de compra emitida en borrador." };
 }
 
-// [T-GOV-04] [Fase Gobernanza y Seguridad] - Prevención de autoaprobaciones en órdenes de compra
+// [T-GOV-04] [F11-Task02] [P0] - Prevención de autoaprobaciones y autorizaciones financieras multinivel por umbral
 function approvePurchaseOrder(payload) {
   const { ordenCompraId, nuevoEstado, observacionesAdmin, authRole } = payload || {};
   if (!ordenCompraId || !nuevoEstado) throw new Error("ordenCompraId y nuevoEstado son requeridos.");
@@ -4977,12 +4977,22 @@ function approvePurchaseOrder(payload) {
   const idx = data.findIndex(r => String(r[0]).trim() === String(ordenCompraId).trim());
   if (idx === -1) throw new Error("Órden de compra no encontrada.");
 
+  const montoTotal = parseFloat(data[idx][7] || 0);
   const solicitanteId = String(data[idx][13] || data[idx][1] || "").trim();
   const aprobadorId = String((payload && (payload.authenticatedUserId || payload.userId || payload.actorId)) || "").trim();
+  const roleUpper = String(authRole || "").toUpperCase();
 
   if (nuevoEstado === "Aprobada" && aprobadorId && solicitanteId && solicitanteId === aprobadorId) {
     logStructuredEvent("ACCOUNTING", "approvePurchaseOrder", "WARN", "AUTO_APPROVAL_BLOCKED", `Auto-aprobación de orden de compra bloqueada para usuario ${solicitanteId}`, payload, authRole);
     return { status: "error", code: "AUTO_APPROVAL_BLOCKED", message: "Acción denegada: Un usuario no puede aprobar su propia orden de compra." };
+  }
+
+  if (nuevoEstado === "Aprobada" && montoTotal > 50000) {
+    const isHighLevelApprover = ["ADMINISTRADOR", "ADMIN", "DIRECTOR", "DIRECCION"].indexOf(roleUpper) >= 0;
+    if (!isHighLevelApprover) {
+      logStructuredEvent("ACCOUNTING", "approvePurchaseOrder", "WARN", "HIGH_VALUE_APPROVAL_REQUIRED", `Intento de aprobación de orden de compra por L ${montoTotal} rechazado por rol insuficiente ${roleUpper}`, payload, authRole);
+      return { status: "error", code: "HIGH_VALUE_APPROVAL_REQUIRED", message: `Órdenes de compra superiores a L 50,000.00 requieren aprobación formal de Dirección o Administración.` };
+    }
   }
 
   sheet.getRange(idx + 1, 10).setValue(nuevoEstado);
@@ -5359,6 +5369,7 @@ function getChartOfAccounts(payload) {
   };
 }
 
+// [F11-Task02] [P0] - Garantizar la integridad de los registros contables y la partida doble
 function recordAccountingJournalEntry(payload) {
   const { descripcion, origenModulo, referenciaId, lineas, creadoPor } = payload || {};
   if (!descripcion || !Array.isArray(lineas) || lineas.length === 0) {
@@ -5374,6 +5385,7 @@ function recordAccountingJournalEntry(payload) {
   });
 
   if (Math.abs(totalDebe - totalHaber) > 0.01) {
+    logStructuredEvent("ACCOUNTING", "recordAccountingJournalEntry", "WARN", "UNBALANCED_JOURNAL_ENTRY_REJECTED", `Asiento desequilibrado rechazado. Debe: ${totalDebe}, Haber: ${totalHaber}`, { descripcion, totalDebe, totalHaber }, creadoPor || "SISTEMA");
     throw new Error(`Asiento contable desequilibrado. Debe: ${totalDebe}, Haber: ${totalHaber}. La partida doble exige igualdad.`);
   }
 

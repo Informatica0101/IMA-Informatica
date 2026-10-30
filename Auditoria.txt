@@ -182,3 +182,13 @@ HALLAZGOS DETECTADOS:
 2. Se requiere verificar que las notificaciones e integraciones entre servicios no expongan campos confidenciales (`notasPrivadas`, `detallesClinicos`) a usuarios no autorizados.
 3. Se agregará la comprobación explícita de seguridad `[F11-Task01]` en `tests/regression/academic-grading-suite.js`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task02: GARANTIZAR LA INTEGRIDAD DE LOS REGISTROS CONTABLES Y EL FLUJO DE AUTORIZACIONES FINANCIERAS
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `recordAccountingJournalEntry` en `backend/accounting-service/Code.gs` valida el balance Debe/Haber, pero requiere etiquetado formal `[F11-Task02]` y registro explícito de eventos `UNBALANCED_JOURNAL_ENTRY_REJECTED` ante intentos de inserción desequilibrada.
+2. `approvePurchaseOrder` en `backend/accounting-service/Code.gs` bloquea autoaprobación, pero carecía de validación de umbrales montos para requerir aprobación formal de Dirección/Administración en órdenes superiores al umbral institucional (`50000.00`).
+3. Se agregará la comprobación de regresión `[F11-Task02]` en `tests/regression/academic-grading-suite.js`.
+===============================================================================
