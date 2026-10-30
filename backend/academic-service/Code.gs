@@ -174,7 +174,7 @@ const ROLE_PERMISSIONS = {
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion", "checkAndNotifyExpiringStudentDocuments",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity", "reconcileInstitutionalModulesMatrix",
-    "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "getAttendanceConfig", "saveAttendanceConfig",
+    "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "getAttendanceConfig", "saveAttendanceConfig",
     "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches"
   ],
   "Subdirector": [
@@ -184,7 +184,7 @@ const ROLE_PERMISSIONS = {
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "getStudentFile", "getStudentTimeline", "findDuplicateStudents",
     "getStudentGuardians", "getStudentDocuments", "getStudentEnrollments", "checkEnrollmentCapacity",
-    "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
+    "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
     "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans"
   ],
   "Secretaría": [
@@ -244,7 +244,7 @@ const ROLE_PERMISSIONS = {
     "runAcademicPlanningRegressionSuite",
     "saveCurricularConstraint", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule", "getReusableResourceCatalog", "manageReusableResource",
     "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentEnrollments",
-    "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
+    "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
     "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans",
     "calculateUnifiedAcademicGrade", "previewAcademicGradeCalculation", "auditAcademicGradesIntegrity", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess", "exportAcademicGradesData"
   ],
@@ -836,6 +836,7 @@ function doPost(e) {
       // Endpoints Fase 7 - Asistencia y Seguimiento Estudiantil
       case "openAttendanceSession": result = openAttendanceSession(payload); break;
       case "saveClassAttendance": result = saveClassAttendance(payload); break;
+      case "bulkApplyAttendanceStatus": result = bulkApplyAttendanceStatus(payload); break;
       case "getClassAttendance": result = getClassAttendance(payload); break;
       case "saveDailyAttendance": result = saveDailyAttendance(payload); break;
       case "getDailyAttendance": result = getDailyAttendance(payload); break;
@@ -7269,6 +7270,7 @@ function openAttendanceSession(payload) {
   return { status: "success", message: "Sesión de asistencia abierta.", data: { sesionId } };
 }
 
+// [F10-Task04] [P1] - Optimizar el registro masivo de asistencia y la gestión de sesiones
 function saveClassAttendance(payload) {
   const { sesionId, registros } = payload || {};
   if (!sesionId || !Array.isArray(registros)) throw new Error("sesionId y lista de registros son requeridos.");
@@ -7325,6 +7327,89 @@ function saveClassAttendance(payload) {
   }
 
   return { status: "success", message: `Asistencia guardada para ${savedCount} estudiantes.` };
+}
+
+function bulkApplyAttendanceStatus(payload) {
+  const { sesionId, estudiantes, estadoAsistencia, observacionDocente, sobrescribirExistentes } = payload || {};
+  if (!sesionId || !Array.isArray(estudiantes) || estudiantes.length === 0 || !estadoAsistencia) {
+    return { status: "error", message: "sesionId, estudiantes y estadoAsistencia son requeridos para aplicación masiva de asistencia." };
+  }
+
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(10000);
+  } catch (e) {
+    return { status: "error", message: "El servidor está ocupado procesando otra actualización masiva de asistencia. Intente de nuevo." };
+  }
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
+    if (regSheet.getLastRow() === 0) {
+      regSheet.appendRow(["RegistroID", "SesionID", "UserId", "EstadoAsistencia", "HoraLlegada", "MinutosTardanza", "Justificado", "ObservacionDocente", "FechaRegistro"]);
+    }
+
+    const data = regSheet.getDataRange().getValues();
+    const now = new Date();
+    let aplicados = 0;
+    let omitidos = 0;
+
+    const indexMap = {};
+    for (let i = 1; i < data.length; i++) {
+      const key = `${String(data[i][1]).trim()}_${String(data[i][2]).trim()}`;
+      indexMap[key] = i;
+    }
+
+    estudiantes.forEach(uId => {
+      const studentIdStr = String(uId).trim();
+      if (!studentIdStr) return;
+
+      const key = `${String(sesionId).trim()}_${studentIdStr}`;
+      if (key in indexMap) {
+        const idx = indexMap[key];
+        const estadoActual = String(data[idx][3] || "").trim();
+        if (!sobrescribirExistentes && estadoActual && estadoActual !== "Presente") {
+          omitidos++;
+          return;
+        }
+        data[idx][3] = estadoAsistencia;
+        if (observacionDocente) data[idx][7] = observacionDocente;
+        data[idx][8] = now;
+        aplicados++;
+      } else {
+        const regId = "REG-AST-BULK-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+        const newRow = [
+          regId,
+          sesionId,
+          studentIdStr,
+          estadoAsistencia,
+          "",
+          0,
+          false,
+          observacionDocente || "Registro masivo de asistencia",
+          now
+        ];
+        data.push(newRow);
+        indexMap[key] = data.length - 1;
+        aplicados++;
+      }
+    });
+
+    if (data.length > 1) {
+      regSheet.getRange(1, 1, data.length, data[0].length).setValues(data);
+    }
+
+    return {
+      status: "success",
+      sesionId,
+      totalProcesados: estudiantes.length,
+      aplicados,
+      omitidos,
+      message: `Estado de asistencia (${estadoAsistencia}) aplicado masivamente a ${aplicados} estudiante(s). ${omitidos} omitido(s).`
+    };
+  } finally {
+    try { lock.releaseLock(); } catch (e) {}
+  }
 }
 
 function getClassAttendance(payload) {

@@ -67,7 +67,7 @@
 
 ---
 
-### [ ] [F10-Task04] Optimizar el registro masivo de asistencia y la gestión de sesiones
+### [X] [F10-Task04] Optimizar el registro masivo de asistencia y la gestión de sesiones
 - **Origen del Hallazgo:** `AUDITORIA_FASE_10_ASISTENCIA_DISCIPLINA_CONVIVENCIA.md` / Tarea 10.2 (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Optimización y registro masivo)
@@ -79,7 +79,7 @@
   Permitir registrar la asistencia de un grupo completo en una sola vista, aplicar estados masivos, manejar guardado parcial, control de concurrencia y recuperación de sesiones interrumpidas.
 - **Criterios de Aceptación:**
   - El registro de grupos numerosos es eficiente, no produce duplicados y permite reintentos seguros.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
