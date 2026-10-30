@@ -1221,6 +1221,7 @@ function validateRolePermission(action, payload) {
       if (payload) {
         payload._delegatedFrom = activeDel.delegante;
         payload._delegationId = activeDel.delId;
+        payload._executorUserId = verifiedId;
       }
       return { authorized: true, role: userRole + " (Delegado de " + activeDel.delegante + ")" };
     }

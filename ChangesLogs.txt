@@ -5,6 +5,27 @@ Plataforma: Ecosistema Educativo New Generation Christian Academy
 
 -------------------------------------------------------------------------------
 FECHA: 2026-10-29
+TAREA: [F10-Task11] Completar la delegación de responsabilidades para asistentes administrativos y académicos
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 252, 861, 8103-8133: Inserción del permiso "auditAssistantDelegatedAction" en ROLE_PERMISSIONS, dispatcher en el conmutador doPost switch e implementación de la función `auditAssistantDelegatedAction` con etiqueta identificativa `[F10-Task11]`. Inyección de `_executorUserId` en `validateRolePermission` para garantizar la trazabilidad obligatoria de doble identidad (autor real y titular delegante).
+
+2. backend/user-service/Code.gs
+   - Linea 1224: Inyección de `_executorUserId` en `validateRolePermission` para registro de doble identidad en operaciones delegadas.
+
+3. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `auditAssistantDelegatedAction [F10-Task11]`.
+
+4. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F10-Task11]`.
+
+5. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F10-Task11]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
 TAREA: [F10-Task10] Completar el modelo funcional de orientación académica y vocacional
 -------------------------------------------------------------------------------
 

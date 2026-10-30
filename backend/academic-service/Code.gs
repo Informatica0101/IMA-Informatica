@@ -249,7 +249,7 @@ const ROLE_PERMISSIONS = {
     "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans",
     "calculateUnifiedAcademicGrade", "previewAcademicGradeCalculation", "auditAcademicGradesIntegrity", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess", "exportAcademicGradesData"
   ],
-  "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentTimeline", "getClassAttendance", "getStudentAttendanceSummary"],
+  "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentTimeline", "getClassAttendance", "getStudentAttendanceSummary", "auditAssistantDelegatedAction"],
   "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "calculateUnifiedAcademicGrade", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess"],
   "Alumno": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicPeriods", "getAcademicOffers", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess"]
 };
@@ -504,6 +504,7 @@ function validateRolePermission(action, payload) {
       if (payload) {
         payload._delegatedFrom = activeDel.delegante;
         payload._delegationId = activeDel.delId;
+        payload._executorUserId = verifiedId;
       }
       return { authorized: true, role: userRole + " (Delegado de " + activeDel.delegante + ")" };
     }
@@ -857,6 +858,7 @@ function doPost(e) {
       case "referCounselingCase": result = referCounselingCase(payload); break;
       case "saveGuidanceFollowupPlan": result = saveGuidanceFollowupPlan(payload); break;
       case "saveVocationalRecommendation": result = saveVocationalRecommendation(payload); break;
+      case "auditAssistantDelegatedAction": result = auditAssistantDelegatedAction(payload); break;
       case "getStudentAttendanceSummary": result = getStudentAttendanceSummary(payload); break;
       case "checkAndDispatchAttendanceAlerts": result = checkAndDispatchAttendanceAlerts(payload); break;
       case "getAttendanceConfig": result = getAttendanceConfig(payload); break;
@@ -8096,6 +8098,36 @@ function saveVocationalRecommendation(payload) {
     userId,
     casoId: caseRes.data ? caseRes.data.casoId : null,
     message: "Informe y recomendación vocacional registrado exitosamente."
+  };
+}
+
+// [F10-Task11] [P1] - Completar la delegación de responsabilidades para asistentes administrativos y académicos
+function auditAssistantDelegatedAction(payload) {
+  const { accion, modulo, detalles, authRole } = payload || {};
+  const executorUserId = (payload && (payload._executorUserId || payload._verifiedUserId || payload.autorRealId)) || "Asistente";
+  const delegatedFrom = (payload && (payload._delegatedFrom || payload.titularDeleganteId)) || "Titular";
+  const delegationId = (payload && (payload._delegationId || payload.delegacionId)) || "DEL-GEN";
+
+  if (!accion) throw new Error("Parámetro obligatorio ausente: accion.");
+
+  logStructuredEvent("ACADEMIC", "auditAssistantDelegatedAction", "INFO", "DELEGATED_ASSISTANT_ACTION", `Acción '${accion}' ejecutada por asistente ${executorUserId} bajo delegación ${delegationId} de ${delegatedFrom}`, {
+    accion,
+    modulo: modulo || "Asistencia_Convivencia",
+    executorUserId,
+    delegatedFrom,
+    delegationId,
+    detalles: detalles || "Operación delegada con registro de doble identidad."
+  }, authRole || "Asistente");
+
+  return {
+    status: "success",
+    doubleIdentity: {
+      autorReal: executorUserId,
+      titularDelegado: delegatedFrom,
+      delegacionId: delegationId,
+      accion: accion
+    },
+    message: `Operación '${accion}' registrada con trazabilidad de doble identidad.`
   };
 }
 

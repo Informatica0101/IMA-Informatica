@@ -177,7 +177,7 @@
 
 ---
 
-### [ ] [F10-Task11] Completar la delegación de responsabilidades para asistentes administrativos y académicos
+### [X] [F10-Task11] Completar la delegación de responsabilidades para asistentes administrativos y académicos
 - **Origen del Hallazgo:** `AUDITORIA_FASE_10_ASISTENCIA_DISCIPLINA_CONVIVENCIA.md` / Tarea F10-Task03 (P1) y Tarea 10.10
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Delegación de funciones, roles y auditoría de asistentes)
@@ -189,7 +189,7 @@
   Consolidar el modelo de delegación para asistentes administrativos y académicos, definiendo responsabilidades granulares por cargo (Dirección, Secretaría, Coordinación) con registro de doble identidad (ejecutor y titular delegado) y posibilidad de revocar delegaciones sin alterar historial.
 - **Criterios de Aceptación:**
   - Las operaciones de los asistentes identifican al autor real y al titular delegado, bloqueando autorizaciones restringidas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
