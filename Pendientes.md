@@ -115,7 +115,7 @@
 
 ---
 
-### [ ] [F10-Task07] Completar el ciclo de vida de las incidencias de convivencia escolar
+### [X] [F10-Task07] Completar el ciclo de vida de las incidencias de convivencia escolar
 - **Origen del Hallazgo:** `AUDITORIA_FASE_10_ASISTENCIA_DISCIPLINA_CONVIVENCIA.md` / Tarea 10.5 (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Convivencia y disciplina)
@@ -126,7 +126,7 @@
   Establecer un ciclo de vida transparente para incidencias disciplinarias (Reportada, Pendiente revisión, En investigación, Confirmada, Cerrada, Reabierta) diferenciando reportes iniciales de decisiones institucionales y medidas correctivas.
 - **Criterios de Aceptación:**
   - Las incidencias cumplen el ciclo de vida completo sin aplicar sanciones automáticas prematuras.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

@@ -215,7 +215,7 @@ const ROLE_PERMISSIONS = {
   "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope"],
   "Desarrollador": ["getAcademicConfig", "getAcademicHistory", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "configureAcademicLevelsAndDynamicStorage"],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
-  "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"],
+  "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"],
   "Padre": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory",
     "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
@@ -845,6 +845,7 @@ function doPost(e) {
       case "recordEarlyDeparture": result = recordEarlyDeparture(payload); break;
       case "getAttendanceIncidents": result = getAttendanceIncidents(payload); break;
       case "saveAttendanceIncident": result = saveAttendanceIncident(payload); break;
+      case "updateAttendanceIncidentStatus": result = updateAttendanceIncidentStatus(payload); break;
       case "getAttendanceFollowupCases": result = getAttendanceFollowupCases(payload); break;
       case "saveAttendanceFollowupCase": result = saveAttendanceFollowupCase(payload); break;
       case "addCaseFollowUpNote": result = addCaseFollowUpNote(payload); break;
@@ -7671,6 +7672,7 @@ function getAttendanceIncidents(payload) {
   return { status: "success", data: incidents };
 }
 
+// [F10-Task07] [P1] - Completar el ciclo de vida de las incidencias de convivencia escolar
 function saveAttendanceIncident(payload) {
   const { userId, tipoIncidencia, descripcion, reportadoPor } = payload || {};
   if (!userId || !tipoIncidencia) throw new Error("userId y tipoIncidencia son requeridos.");
@@ -7691,7 +7693,55 @@ function saveAttendanceIncident(payload) {
     reportadoPor || "Docente"
   ]);
 
-  return { status: "success", message: "Incidencia de asistencia registrada.", data: { incidenciaId: incId } };
+  logStructuredEvent("ACADEMIC", "saveAttendanceIncident", "INFO", "ATTENDANCE_INCIDENT_REPORTED", `Incidencia ${incId} reportada para ${userId}`, { incidenciaId: incId, userId, tipoIncidencia }, payload && payload.authRole || "Docente");
+
+  return { status: "success", message: "Incidencia de asistencia registrada en estado 'Reportada'.", data: { incidenciaId: incId } };
+}
+
+function updateAttendanceIncidentStatus(payload) {
+  const { incidenciaId, nuevoEstado, resolucion, medidasCorrectivas, revisadoPor, authRole } = payload || {};
+  if (!incidenciaId || !nuevoEstado) throw new Error("incidenciaId y nuevoEstado son requeridos.");
+
+  const validLifecycleStates = ["Reportada", "PendienteRevision", "EnInvestigacion", "Confirmada", "Cerrada", "Reabierta"];
+  const cleanState = String(nuevoEstado).trim();
+  if (validLifecycleStates.indexOf(cleanState) === -1) {
+    throw new Error(`Estado de incidencia '${nuevoEstado}' no válido. Estados válidos: ${validLifecycleStates.join(", ")}`);
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "IncidenciasAsistencia");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(incidenciaId).trim());
+  if (idx === -1) throw new Error("Incidencia disciplinaria/convivencia no encontrada.");
+
+  const estadoAnterior = String(data[idx][5] || "Reportada").trim();
+  const targetUserId = String(data[idx][1]).trim();
+  const now = new Date();
+
+  sheet.getRange(idx + 1, 6).setValue(cleanState); // Estado
+
+  const obsPrevias = String(data[idx][3] || "").trim();
+  const notaAdicional = [
+    resolucion ? `Resolución: ${resolucion}` : "",
+    medidasCorrectivas ? `Medidas Correctivas: ${medidasCorrectivas}` : "",
+    revisadoPor ? `Revisado por: ${revisadoPor}` : ""
+  ].filter(Boolean).join(" | ");
+
+  if (notaAdicional) {
+    const descActualizada = obsPrevias ? `${obsPrevias} \n[${now.toISOString().split('T')[0]} - ${cleanState}]: ${notaAdicional}` : `[${now.toISOString().split('T')[0]} - ${cleanState}]: ${notaAdicional}`;
+    sheet.getRange(idx + 1, 4).setValue(descActualizada);
+  }
+
+  logStructuredEvent("ACADEMIC", "updateAttendanceIncidentStatus", "INFO", "ATTENDANCE_INCIDENT_STATUS_UPDATED", `Estado de incidencia ${incidenciaId} modificado de '${estadoAnterior}' a '${cleanState}'`, { incidenciaId, estadoAnterior, nuevoEstado: cleanState, revisadoPor }, authRole || "Consejería");
+
+  return {
+    status: "success",
+    incidenciaId,
+    estadoAnterior,
+    nuevoEstado: cleanState,
+    message: `Estado de la incidencia ${incidenciaId} actualizado exitosamente a '${cleanState}'.`
+  };
 }
 
 // [F10-Task01] [P0] - Fortalecer la confidencialidad y el control de acceso a expedientes sensibles
