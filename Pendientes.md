@@ -130,7 +130,7 @@
 
 ---
 
-### [ ] [F10-Task08] Estructurar el seguimiento de compromisos, intervenciones y evidencias
+### [X] [F10-Task08] Estructurar el seguimiento de compromisos, intervenciones y evidencias
 - **Origen del Hallazgo:** `AUDITORIA_FASE_10_ASISTENCIA_DISCIPLINA_CONVIVENCIA.md` / Tarea 10.6 (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Seguimiento de acuerdos y evidencias)
@@ -141,7 +141,7 @@
   Normalizar los compromisos y seguimientos dentro de estructuras estables e independientes, permitiendo evaluar plazos, estados de cumplimiento y evidencias adjuntas sin perder historial.
 - **Criterios de Aceptación:**
   - Cada compromiso posee identificador inmutable y permite seguimiento individual.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

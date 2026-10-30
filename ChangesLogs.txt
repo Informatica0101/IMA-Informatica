@@ -5,6 +5,24 @@ Plataforma: Ecosistema Educativo New Generation Christian Academy
 
 -------------------------------------------------------------------------------
 FECHA: 2026-10-29
+TAREA: [F10-Task08] Estructurar el seguimiento de compromisos, intervenciones y evidencias
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 218, 852, 7853-7933: Inserción de permisos "addCaseCommitment" y "updateCaseCommitmentStatus" en ROLE_PERMISSIONS, dispatchers en el conmutador doPost switch e implementación de las funciones `addCaseCommitment` y `updateCaseCommitmentStatus` con etiqueta identificativa `[F10-Task08]`. Estructuración de compromisos con ID inmutable (`COM-AST-...`), plazos, estados de cumplimiento (`Pendiente`, `EnProceso`, `Cumplido`, `Incumplido`, `Reprogramado`), evidencias adjuntas y trazabilidad.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `addCaseCommitment` y `updateCaseCommitmentStatus [F10-Task08]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F10-Task08]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F10-Task08]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
 TAREA: [F10-Task07] Completar el ciclo de vida de las incidencias de convivencia escolar
 -------------------------------------------------------------------------------
 

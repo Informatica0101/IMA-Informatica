@@ -849,6 +849,8 @@ function doPost(e) {
       case "getAttendanceFollowupCases": result = getAttendanceFollowupCases(payload); break;
       case "saveAttendanceFollowupCase": result = saveAttendanceFollowupCase(payload); break;
       case "addCaseFollowUpNote": result = addCaseFollowUpNote(payload); break;
+      case "addCaseCommitment": result = addCaseCommitment(payload); break;
+      case "updateCaseCommitmentStatus": result = updateCaseCommitmentStatus(payload); break;
       case "getStudentAttendanceSummary": result = getStudentAttendanceSummary(payload); break;
       case "checkAndDispatchAttendanceAlerts": result = checkAndDispatchAttendanceAlerts(payload); break;
       case "getAttendanceConfig": result = getAttendanceConfig(payload); break;
@@ -7846,6 +7848,86 @@ function saveAttendanceFollowupCase(payload) {
   logStructuredEvent("ACADEMIC", "saveAttendanceFollowupCase", "INFO", "CASE_SAVED", `Caso de seguimiento ${cid} guardado para ${userId}`, { cid, estado: estado || "Abierto" }, payload && payload.authRole);
 
   return { status: "success", message: "Caso de seguimiento guardado exitosamente.", data: { casoId: cid } };
+}
+
+// [F10-Task08] [P1] - Estructurar el seguimiento de compromisos, intervenciones y evidencias
+function addCaseCommitment(payload) {
+  const { casoId, compromiso, fechaLimite, responsable, evidenciaUrl, autorId, authRole } = payload || {};
+  if (!casoId || !compromiso) throw new Error("casoId y compromiso son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CasosSeguimiento");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(casoId).trim());
+  if (idx === -1) throw new Error("Caso de seguimiento no encontrado.");
+
+  const currentAcciones = data[idx][5] ? (typeof data[idx][5] === 'string' ? JSON.parse(data[idx][5]) : data[idx][5]) : [];
+  const compromisoId = "COM-AST-" + Date.now();
+  const nowStr = new Date().toISOString();
+
+  const newCommitment = {
+    compromisoId,
+    tipo: "Compromiso",
+    compromiso: String(compromiso).trim(),
+    fechaCreacion: nowStr,
+    fechaLimite: fechaLimite || null,
+    responsable: responsable || "Estudiante/Tutor",
+    estadoCumplimiento: "Pendiente",
+    evidenciaUrl: evidenciaUrl || "",
+    autor: autorId || "Orientación/Consejería"
+  };
+
+  currentAcciones.push(newCommitment);
+  sheet.getRange(idx + 1, 6).setValue(JSON.stringify(currentAcciones));
+
+  logStructuredEvent("ACADEMIC", "addCaseCommitment", "INFO", "CASE_COMMITMENT_ADDED", `Compromiso ${compromisoId} registrado en caso ${casoId}`, { casoId, compromisoId }, authRole || "Consejería");
+
+  return {
+    status: "success",
+    message: "Compromiso/Intervención estructurada registrada exitosamente.",
+    data: newCommitment
+  };
+}
+
+function updateCaseCommitmentStatus(payload) {
+  const { casoId, compromisoId, nuevoEstado, observaciones, evidenciaUrl, autorId, authRole } = payload || {};
+  if (!casoId || !compromisoId || !nuevoEstado) throw new Error("casoId, compromisoId y nuevoEstado son requeridos.");
+
+  const validStates = ["Pendiente", "EnProceso", "Cumplido", "Incumplido", "Reprogramado"];
+  const cleanState = String(nuevoEstado).trim();
+  if (validStates.indexOf(cleanState) === -1) {
+    throw new Error(`Estado de compromiso '${nuevoEstado}' no válido. Estados válidos: ${validStates.join(", ")}`);
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CasosSeguimiento");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(casoId).trim());
+  if (idx === -1) throw new Error("Caso de seguimiento no encontrado.");
+
+  const currentAcciones = data[idx][5] ? (typeof data[idx][5] === 'string' ? JSON.parse(data[idx][5]) : data[idx][5]) : [];
+  const targetItem = currentAcciones.find(item => item && String(item.compromisoId).trim() === String(compromisoId).trim());
+
+  if (!targetItem) throw new Error("Compromiso no encontrado dentro de las acciones del caso.");
+
+  const estadoAnterior = targetItem.estadoCumplimiento || "Pendiente";
+  targetItem.estadoCumplimiento = cleanState;
+  targetItem.fechaActualizacion = new Date().toISOString();
+  if (observaciones) targetItem.observaciones = observaciones;
+  if (evidenciaUrl) targetItem.evidenciaUrl = evidenciaUrl;
+
+  sheet.getRange(idx + 1, 6).setValue(JSON.stringify(currentAcciones));
+
+  logStructuredEvent("ACADEMIC", "updateCaseCommitmentStatus", "INFO", "CASE_COMMITMENT_STATUS_UPDATED", `Estado de compromiso ${compromisoId} modificado a '${cleanState}'`, { casoId, compromisoId, estadoAnterior, nuevoEstado: cleanState }, authRole || "Consejería");
+
+  return {
+    status: "success",
+    casoId,
+    compromisoId,
+    estadoAnterior,
+    nuevoEstado: cleanState,
+    message: `Estado del compromiso actualizado exitosamente a '${cleanState}'.`
+  };
 }
 
 function getStudentAttendanceSummary(payload) {

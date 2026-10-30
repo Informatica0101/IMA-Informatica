@@ -14,8 +14,19 @@ FECHA: 2026-10-29
 AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task07: COMPLETAR EL CICLO DE VIDA DE LAS INCIDENCIAS DE CONVIVENCIA ESCOLAR
 ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
 RESULTADO DE EVALUACIÓN:
-- Se implementó la función `updateAttendanceIncidentStatus` y reestructurado `saveAttendanceIncident` con la etiqueta identificativa `[F10-Task07]` en `backend/academic-service/Code.gs`.
+- Se implementó la función `updateAttendanceIncidentStatus` y reestructurado `saveAttendanceIncident` with la etiqueta identificativa `[F10-Task07]` en `backend/academic-service/Code.gs`.
 - Se verificó la gestión del ciclo de vida transparente de incidencias disciplinarias/convivencia (`Reportada`, `PendienteRevision`, `EnInvestigacion`, `Confirmada`, `Cerrada`, `Reabierta`), el registro de resoluciones, medidas correctivas y eventos de auditoría `ATTENDANCE_INCIDENT_STATUS_UPDATED`.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task08: ESTRUCTURAR EL SEGUIMIENTO DE COMPROMISOS, INTERVENCIONES Y EVIDENCIAS
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `addCaseCommitment` y `updateCaseCommitmentStatus` con la etiqueta identificativa `[F10-Task08]` en `backend/academic-service/Code.gs`.
+- Se verificó la estructuración de compromisos, acuerdos, intervenciones y evidencias con identificadores inmutables (`COM-AST-...`), plazos (`fechaLimite`), estados de cumplimiento (`Pendiente`, `EnProceso`, `Cumplido`, `Incumplido`, `Reprogramado`) y URLs de evidencia adjunta sin sobrescribir el historial.
 - Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
