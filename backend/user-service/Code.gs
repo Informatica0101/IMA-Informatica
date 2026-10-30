@@ -883,6 +883,7 @@ function getOrCreateSheet(ss, name) {
     if (name === "ComunicadosInstitucionales") sheet.appendRow(["ComunicadoID", "Titulo", "Contenido", "Categoria", "AutorID", "AudienciaJSON", "RequiereFirma", "FechaPublicacion", "Estado"]);
     if (name === "ConfirmacionesLecturaComunicados") sheet.appendRow(["ConfirmacionID", "ComunicadoID", "UserId", "FechaApertura", "FechaConfirmacionExplicit", "EstadoConfirmacion", "IpMetadata"]);
     if (name === "SolicitudesAutorizacion") sheet.appendRow(["SolicitudAutorizacionID", "ActividadOPermiso", "EstudianteID", "TutorUserId", "DetallesJSON", "FechaLimite", "Estado", "FechaRespuesta", "RespuestaTutor", "IpMetadata", "FechaCreacion", "CreadoPor"]);
+    if (name === "CalendarioInstitucional") sheet.appendRow(["EventoID", "Titulo", "Descripcion", "Categoria", "FechaInicio", "FechaFin", "HoraInicio", "HoraFin", "EspacioFisico", "OrganizadorUserId", "ParticipantesJSON", "Visibilidad", "Estado", "FechaCreacion"]);
     if (name === "ConversacionesMensajes") sheet.appendRow(["MensajeID", "ConversacionID", "RemitenteID", "DestinatarioID", "EstudianteID", "MensajeTexto", "AdjuntoUrl", "FechaEnvio", "EstadoLectura"]);
     if (name === "BandejaNotificaciones") sheet.appendRow(["NotificacionID", "UserId", "Titulo", "Mensaje", "Tipo", "Categoria", "Leido", "EnlaceAccion", "FechaRegistro"]);
     if (name === "SolicitudesTramites") sheet.appendRow(["SolicitudID", "UserId", "EstudianteID", "TipoTramite", "Descripcion", "AdjuntoUrl", "Estado", "AsignadoA", "ObservacionesAdmin", "FechaSolicitud", "FechaResolucion"]);
@@ -939,19 +940,19 @@ const ROLE_PERMISSIONS = {
   "Director": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "dispatchScheduleChangeNotifications", "getScheduleChangeNotificationLogs", "getAdmissionNotificationLogs", "getStudentProcedureNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "dispatchScheduleChangeNotifications", "getScheduleChangeNotificationLogs", "getAdmissionNotificationLogs", "getStudentProcedureNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
     "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData", "generatePrivilegeAndAccountAuditReport", "getPaginatedAuditLogReport", "auditAndReconcileIdentityInconsistencies"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "createLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders"
   ],
   "Secretaría": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders"
   ],
   "Contador": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest"],
   "RecursosHumanos": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "createNews", "getInternalMessages", "sendInternalMessage"],
@@ -961,7 +962,7 @@ const ROLE_PERMISSIONS = {
   "Profesor": [
     "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "createNews", "uploadNewsImage", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData",
     "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans",
-    "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "markNotificationAsRead", "createUserNotification", "getAdministrativeRequests", "submitAdministrativeRequest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus"
+    "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "markNotificationAsRead", "createUserNotification", "getAdministrativeRequests", "submitAdministrativeRequest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "checkCalendarEventOverlap"
   ],
   "Asistente": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "getLearningProfile", "getInstitutionalCriteria", "getFormativeEvaluations", "getInstitutionalAnnouncements", "getUserNotifications"],
   "Estudiante": [
@@ -1370,6 +1371,8 @@ function doPost(e) {
       case "bookAppointment": result = bookAppointment(payload); break;
       case "updateAppointmentStatus": result = updateAppointmentStatus(payload); break;
       case "getInstitutionalCalendarEvents": result = getInstitutionalCalendarEvents(payload); break;
+      case "saveInstitutionalCalendarEvent": result = saveInstitutionalCalendarEvent(payload); break;
+      case "checkCalendarEventOverlap": result = checkCalendarEventOverlap(payload); break;
       case "getPendingReminders": result = getPendingReminders(payload); break;
 
       case "searchGlobalOmnibox": result = searchGlobalOmnibox(payload); break;
@@ -5887,34 +5890,282 @@ function respondToAuthorizationRequest(payload) {
   }
 }
 
-function getInstitutionalCalendarEvents(payload) {
-  const { categoria, anoLectivo } = payload || {};
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = ss.getSheetByName("CalendarioAcademico");
-  if (!sheet) {
+// [F11-Task06] [P1] - Gestión de calendarios institucionales, convocatorias y prevención de traslapes
+function checkCalendarEventOverlap(payload) {
+  try {
+    const { eventoId, fechaInicio, fechaFin, horaInicio, horaFin, espacioFisico, organizadorUserId, participantes } = payload || {};
+    if (!fechaInicio) return { status: "success", hasOverlap: false, overlaps: [] };
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "CalendarioInstitucional");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", hasOverlap: false, overlaps: [] };
+
+    const targetStart = String(fechaInicio).split('T')[0];
+    const targetEnd = (fechaFin ? String(fechaFin).split('T')[0] : targetStart);
+    const targetHStart = horaInicio || "00:00";
+    const targetHEnd = horaFin || "23:59";
+
+    const targetSpace = espacioFisico ? String(espacioFisico).trim().toLowerCase() : "";
+    const targetOrganizer = organizadorUserId ? String(organizadorUserId).trim() : "";
+    const targetParticipants = Array.isArray(participantes) ? participantes.map(p => String(p).trim()) : [];
+
+    const overlaps = [];
+
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const evId = String(row[0] || "");
+      if (eventoId && evId === String(eventoId)) continue; // Ignorar el mismo evento si se está editando
+
+      const st = String(row[12] || "Activo");
+      if (st === "Cancelado" || st === "Inactivo") continue;
+
+      const eStart = row[4] ? String(row[4]).split('T')[0] : "";
+      const eEnd = row[5] ? String(row[5]).split('T')[0] : eStart;
+      const eHStart = row[6] || "00:00";
+      const eHEnd = row[7] || "23:59";
+      const eSpace = row[8] ? String(row[8]).trim().toLowerCase() : "";
+      const eOrganizer = row[9] ? String(row[9]).trim() : "";
+      let eParticipants = [];
+      try {
+        eParticipants = typeof row[10] === "object" ? row[10] : JSON.parse(row[10] || "[]");
+      } catch (_) {
+        eParticipants = [];
+      }
+
+      // 1. Verificación de fechas superpuestas
+      const dateOverlap = (targetStart <= eEnd && targetEnd >= eStart);
+      if (!dateOverlap) continue;
+
+      // 2. Verificación de horario superpuesto
+      const timeOverlap = (targetHStart < eHEnd && targetHEnd > eHStart);
+      if (!timeOverlap) continue;
+
+      // 3. Verificación de choque de espacio físico
+      let conflictReason = null;
+      if (targetSpace && eSpace && targetSpace !== "virtual" && targetSpace !== "online" && targetSpace === eSpace) {
+        conflictReason = `Traslape de espacio físico: El espacio '${row[8]}' ya está reservado por el evento '${row[1]}' de ${eHStart} a ${eHEnd}.`;
+      }
+
+      // 4. Verificación de choque de organizador o participante clave
+      if (!conflictReason && targetOrganizer && (targetOrganizer === eOrganizer || eParticipants.indexOf(targetOrganizer) !== -1)) {
+        conflictReason = `Traslape de agenda: El organizador ${targetOrganizer} ya tiene asignado el evento '${row[1]}' (${eHStart} - ${eHEnd}).`;
+      }
+
+      if (!conflictReason && targetParticipants.length > 0) {
+        const common = targetParticipants.find(p => p === eOrganizer || eParticipants.indexOf(p) !== -1);
+        if (common) {
+          conflictReason = `Traslape de participante: El usuario ${common} ya está convocado en el evento '${row[1]}'.`;
+        }
+      }
+
+      if (conflictReason) {
+        overlaps.push({
+          eventoId: evId,
+          titulo: row[1],
+          espacioFisico: row[8],
+          horaInicio: eHStart,
+          horaFin: eHEnd,
+          motivoConflicto: conflictReason
+        });
+      }
+    }
+
     return {
       status: "success",
-      eventos: [
-        { eventoId: "EVT-01", titulo: "Inicio de Clases I Parcial", fechaInicio: "2026-02-01", categoria: "Academico", destinatarios: "TodaLaComunidad" },
-        { eventoId: "EVT-02", titulo: "Exámenes I Parcial", fechaInicio: "2026-04-15", categoria: "Evaluacion", destinatarios: "TodaLaComunidad" }
-      ]
+      hasOverlap: overlaps.length > 0,
+      totalConflictos: overlaps.length,
+      overlaps: overlaps
     };
+  } catch (error) {
+    return { status: "error", message: error.message };
   }
-  const rows = sheet.getDataRange().getValues().slice(1);
+}
 
-  let filtered = rows;
-  if (categoria) filtered = filtered.filter(r => String(r[3]).toLowerCase().trim() === String(categoria).toLowerCase().trim());
+function saveInstitutionalCalendarEvent(payload) {
+  try {
+    const verifiedRole = getUserVerifiedRole(payload);
+    const callerId = (payload && payload._verifiedUserId) || "Sistema";
+    const isAuthorized = ["Administrador", "Desarrollador", "Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Profesor"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "No tiene autorización para registrar o modificar eventos en el calendario institucional." };
+    }
 
-  const mapped = filtered.map(r => ({
-    eventoId: r[0],
-    titulo: r[2],
-    fechaInicio: r[4],
-    fechaFin: r[5],
-    categoria: r[3],
-    destinatarios: r[6]
-  }));
+    const {
+      eventoId,
+      titulo,
+      descripcion,
+      categoria,
+      fechaInicio,
+      fechaFin,
+      horaInicio,
+      horaFin,
+      espacioFisico,
+      organizadorUserId,
+      participantes,
+      visibilidad,
+      permitirTraslape
+    } = payload || {};
 
-  return { status: "success", eventos: mapped };
+    if (!titulo || !fechaInicio) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "titulo y fechaInicio son requeridos para agendar un evento." };
+    }
+
+    // Comprobación preventiva de traslapes si no se forzó su omisión
+    if (!permitirTraslape) {
+      const overlapCheck = checkCalendarEventOverlap({
+        eventoId,
+        fechaInicio,
+        fechaFin,
+        horaInicio,
+        horaFin,
+        espacioFisico,
+        organizadorUserId: organizadorUserId || callerId,
+        participantes
+      });
+
+      if (overlapCheck && overlapCheck.hasOverlap) {
+        return {
+          status: "warning",
+          code: "SCHEDULE_OVERLAP_DETECTED",
+          message: "Se detectaron incompatibilidades de horario al agendar el evento.",
+          hasOverlap: true,
+          conflictos: overlapCheck.overlaps
+        };
+      }
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "CalendarioInstitucional");
+    const data = sheet.getDataRange().getValues();
+
+    const now = new Date();
+    const nowISO = now.toISOString();
+    const evId = eventoId || ("EVT-INS-" + now.getFullYear() + "-" + Math.floor(100000 + Math.random() * 900000));
+
+    const fStart = String(fechaInicio).split('T')[0];
+    const fEnd = (fechaFin ? String(fechaFin).split('T')[0] : fStart);
+    const hStart = horaInicio || "08:00";
+    const hEnd = horaFin || "09:00";
+    const orgId = organizadorUserId || callerId;
+    const partStr = Array.isArray(participantes) ? JSON.stringify(participantes) : (participantes || "[]");
+
+    let foundIdx = -1;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(evId).trim()) {
+        foundIdx = i;
+        break;
+      }
+    }
+
+    const rowData = [
+      evId,
+      String(titulo).trim(),
+      descripcion || "",
+      categoria || "General",
+      fStart,
+      fEnd,
+      hStart,
+      hEnd,
+      espacioFisico || "General",
+      orgId,
+      partStr,
+      visibilidad || "TodaLaComunidad",
+      "Activo",
+      foundIdx !== -1 ? (data[foundIdx][13] || nowISO) : nowISO
+    ];
+
+    if (foundIdx !== -1) {
+      sheet.getRange(foundIdx + 1, 1, 1, rowData.length).setValues([rowData]);
+      logStructuredEvent("USER", "saveInstitutionalCalendarEvent", "INFO", "CALENDAR_EVENT_UPDATED", `Evento institucional ${evId} actualizado`, { eventoId: evId, titulo }, verifiedRole);
+    } else {
+      sheet.appendRow(rowData);
+      logStructuredEvent("USER", "saveInstitutionalCalendarEvent", "INFO", "CALENDAR_EVENT_CREATED", `Evento institucional ${evId} creado`, { eventoId: evId, titulo, espacioFisico }, verifiedRole);
+    }
+
+    return {
+      status: "success",
+      eventoId: evId,
+      titulo: titulo,
+      fechaInicio: fStart,
+      fechaFin: fEnd,
+      horaInicio: hStart,
+      horaFin: hEnd,
+      espacioFisico: espacioFisico || "General",
+      estado: "Activo",
+      message: `Evento institucional '${titulo}' guardado correctamente en el calendario oficial.`
+    };
+  } catch (error) {
+    logStructuredEvent("USER", "saveInstitutionalCalendarEvent", "ERROR", "CALENDAR_EVENT_SAVE_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function getInstitutionalCalendarEvents(payload) {
+  try {
+    const { categoria, anoLectivo, fechaInicio, fechaFin, visibilidad } = payload || {};
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "CalendarioInstitucional");
+    const data = sheet.getDataRange().getValues();
+
+    const eventos = [];
+
+    if (data.length > 1) {
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        const evId = String(row[0] || "");
+        const tit = String(row[1] || "");
+        const desc = String(row[2] || "");
+        const cat = String(row[3] || "General");
+        const fIni = row[4] ? String(row[4]).split('T')[0] : "";
+        const fFin = row[5] ? String(row[5]).split('T')[0] : fIni;
+        const hIni = row[6] || "";
+        const hFin = row[7] || "";
+        const esp = row[8] || "";
+        const org = row[9] || "";
+        let part = [];
+        try { part = JSON.parse(row[10] || "[]"); } catch(_) {}
+        const vis = row[11] || "TodaLaComunidad";
+        const st = row[12] || "Activo";
+
+        if (st === "Cancelado" || st === "Inactivo") continue;
+        if (categoria && categoria !== "Todas" && cat !== categoria) continue;
+        if (visibilidad && visibilidad !== "Todas" && vis !== visibilidad && vis !== "TodaLaComunidad") continue;
+        if (fechaInicio && fFin < String(fechaInicio).split('T')[0]) continue;
+        if (fechaFin && fIni > String(fechaFin).split('T')[0]) continue;
+
+        eventos.push({
+          eventoId: evId,
+          titulo: tit,
+          descripcion: desc,
+          categoria: cat,
+          fechaInicio: fIni,
+          fechaFin: fFin,
+          horaInicio: hIni,
+          horaFin: hFin,
+          espacioFisico: esp,
+          organizadorUserId: org,
+          participantes: part,
+          destinatarios: vis,
+          estado: st
+        });
+      }
+    }
+
+    // Si aún no hay eventos creados en CalendarioInstitucional, fallback compatible
+    if (eventos.length === 0) {
+      const defaultEvents = [
+        { eventoId: "EVT-01", titulo: "Inicio de Clases I Parcial", fechaInicio: "2026-02-01", fechaFin: "2026-02-01", categoria: "Academico", destinatarios: "TodaLaComunidad", espacioFisico: "Campus Central" },
+        { eventoId: "EVT-02", titulo: "Exámenes I Parcial", fechaInicio: "2026-04-15", fechaFin: "2026-04-20", categoria: "Evaluacion", destinatarios: "TodaLaComunidad", espacioFisico: "Aulas" }
+      ];
+      return { status: "success", eventos: defaultEvents };
+    }
+
+    return { status: "success", totalEventos: eventos.length, eventos: eventos };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
 }
 
 // [B-001] [pendientes2.md] - Service backend endpoint (getPendingReminders) con bloqueo LockService para despacho idempotente de recordatorios.

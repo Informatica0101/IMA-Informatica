@@ -117,7 +117,7 @@
 
 ---
 
-### [ ] [F11-Task06] Desarrollar la gestión de calendarios institucionales, convocatorias y prevención de traslapes
+### [X] [F11-Task06] Desarrollar la gestión de calendarios institucionales, convocatorias y prevención de traslapes
 - **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área I (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Planificación y eventos)
@@ -128,7 +128,7 @@
   Permitir la creación y consulta de eventos institucionales y académicos, previniendo choques de horario para los mismos espacios o participantes.
 - **Criterios de Aceptación:**
   - El sistema detecta e informa incompatibilidades de horario al agendar reuniones.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

@@ -3449,3 +3449,15 @@ ARCHIVOS MODIFICADOS:
 - tests/regression/academic-grading-suite.js (línea ~86):
   Se agregó la aserción de comprobación para `respondToAuthorizationRequest` y `submitAuthorizationRequest` con la etiqueta `[F11-Task05]`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task06 - Desarrollar la gestión de calendarios institucionales, convocatorias y prevención de traslapes
+ARCHIVOS MODIFICADOS:
+- backend/user-service/Code.gs (líneas ~886, ~943-965, ~1373-1375, ~5892-6170):
+  Se creó la hoja `CalendarioInstitucional` en `getOrCreateSheet` e implementaron las funciones `checkCalendarEventOverlap`, `saveInstitutionalCalendarEvent` y refactorizado `getInstitutionalCalendarEvents` con la etiqueta identificativa `[F11-Task06]`.
+  Se implementó la detección preventiva de choques de horario de espacio físico (`espacioFisico`) y de agenda para el organizador/participantes convocados.
+  Se registraron los permisos correspondientes en `ROLE_PERMISSIONS` y en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~87):
+  Se agregó la aserción de comprobación para `checkCalendarEventOverlap` y `saveInstitutionalCalendarEvent` con la etiqueta `[F11-Task06]`.
+===============================================================================
