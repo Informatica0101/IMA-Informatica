@@ -215,7 +215,8 @@ const ROLE_PERMISSIONS = {
   "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope"],
   "Desarrollador": ["getAcademicConfig", "getAcademicHistory", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "configureAcademicLevelsAndDynamicStorage"],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
-  "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "scheduleCounselingAppointment", "recordCounselingSessionAct", "referCounselingCase", "getStudentAttendanceSummary"],
+  "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "scheduleCounselingAppointment", "recordCounselingSessionAct", "referCounselingCase", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "getStudentAttendanceSummary"],
+  "Orientacion": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "getStudentAttendanceSummary"],
   "Padre": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory",
     "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
@@ -854,6 +855,8 @@ function doPost(e) {
       case "scheduleCounselingAppointment": result = scheduleCounselingAppointment(payload); break;
       case "recordCounselingSessionAct": result = recordCounselingSessionAct(payload); break;
       case "referCounselingCase": result = referCounselingCase(payload); break;
+      case "saveGuidanceFollowupPlan": result = saveGuidanceFollowupPlan(payload); break;
+      case "saveVocationalRecommendation": result = saveVocationalRecommendation(payload); break;
       case "getStudentAttendanceSummary": result = getStudentAttendanceSummary(payload); break;
       case "checkAndDispatchAttendanceAlerts": result = checkAndDispatchAttendanceAlerts(payload); break;
       case "getAttendanceConfig": result = getAttendanceConfig(payload); break;
@@ -8040,6 +8043,59 @@ function referCounselingCase(payload) {
     casoId,
     destinoDerivacion,
     message: `Caso de consejería derivado exitosamente a '${destinoDerivacion}'.`
+  };
+}
+
+// [F10-Task10] [P1] - Completar el modelo funcional de orientación académica y vocacional
+function saveGuidanceFollowupPlan(payload) {
+  const { userId, metasAprendizaje, intervencionesPedagogicas, observaciones, fechaRevision, orientadorUserId, authRole } = payload || {};
+  if (!userId || !metasAprendizaje) throw new Error("userId y metasAprendizaje son requeridos para el plan de orientación académica.");
+
+  const planId = "PLAN-ORI-" + Date.now();
+  const caseRes = saveAttendanceFollowupCase({
+    userId,
+    motivoApertura: `Plan de Orientación Académica: ${String(metasAprendizaje).substring(0, 100)}`,
+    resumenAsistencia: `Categoría: Orientación | Plan de Seguimiento Pedagógico | Creado por: ${orientadorUserId || 'Orientación'}`,
+    responsableId: orientadorUserId || "Orientacion",
+    acciones: Array.isArray(intervencionesPedagogicas) ? intervencionesPedagogicas : [{ meta: metasAprendizaje, observaciones: observaciones || "" }],
+    estado: "Abierto",
+    categoriaCaso: "Orientación"
+  });
+
+  logStructuredEvent("ACADEMIC", "saveGuidanceFollowupPlan", "INFO", "GUIDANCE_PLAN_SAVED", `Plan de orientación ${planId} guardado para ${userId}`, { planId, userId }, authRole || "Orientación");
+
+  return {
+    status: "success",
+    planId,
+    userId,
+    casoId: caseRes.data ? caseRes.data.casoId : null,
+    message: "Plan de seguimiento académico de orientación guardado exitosamente sin alterar notas ni matrículas."
+  };
+}
+
+function saveVocationalRecommendation(payload) {
+  const { userId, perfilVocacional, carrerasSugeridas, recomendaciones, orientadorUserId, authRole } = payload || {};
+  if (!userId || !perfilVocacional) throw new Error("userId y perfilVocacional son requeridos para registrar recomendaciones vocacionales.");
+
+  const recId = "REC-VOC-" + Date.now();
+  const caseRes = saveAttendanceFollowupCase({
+    userId,
+    motivoApertura: `Informe de Orientación Vocacional: ${perfilVocacional}`,
+    resumenAsistencia: `Categoría: Orientación Vocacional | Carreras: ${Array.isArray(carrerasSugeridas) ? carrerasSugeridas.join(", ") : carrerasSugeridas || "N/A"}`,
+    responsableId: orientadorUserId || "Orientacion",
+    acciones: [{ tipo: "OrientacionVocacional", perfilVocacional, carrerasSugeridas, recomendaciones: recomendaciones || "" }],
+    estado: "Abierto",
+    categoriaCaso: "Orientación"
+  });
+
+  logStructuredEvent("ACADEMIC", "saveVocationalRecommendation", "INFO", "VOCATIONAL_RECOMMENDATION_SAVED", `Recomendación vocacional ${recId} guardada para ${userId}`, { recId, userId, perfilVocacional }, authRole || "Orientación");
+
+  return {
+    status: "success",
+    recId,
+    userId,
+    casoId: caseRes.data ? caseRes.data.casoId : null,
+    message: "Informe y recomendación vocacional registrado exitosamente."
   };
 }
 

@@ -161,7 +161,7 @@
 
 ---
 
-### [ ] [F10-Task10] Completar el modelo funcional de orientación académica y vocacional
+### [X] [F10-Task10] Completar el modelo funcional de orientación académica y vocacional
 - **Origen del Hallazgo:** `AUDITORIA_FASE_10_ASISTENCIA_DISCIPLINA_CONVIVENCIA.md` / Tarea 10.9 (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Orientación vocacional y proyectos de aprendizaje)
@@ -173,7 +173,7 @@
   Permitir a los orientadores diseñar planes de seguimiento académico, fijar metas de aprendizaje y registrar recomendaciones vocacionales sin alterar las notas oficiales ni matrículas.
 - **Criterios de Aceptación:**
   - Los orientadores registran metas académicas e informes sin permisos de alteración de calificaciones oficiales.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
