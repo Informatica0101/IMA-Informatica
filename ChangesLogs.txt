@@ -4,6 +4,273 @@ Plataforma: Ecosistema Educativo New Generation Christian Academy
 ===============================================================================
 
 -------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F10-Task13] Mejorar la gestión de evidencias y documentos sensibles
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 218, 862, 2218-2284: Inserción del permiso "validateEvidenceFileAndPermissions" en ROLE_PERMISSIONS, dispatcher en el conmutador doPost switch e implementación de la función `validateEvidenceFileAndPermissions` con etiqueta identificativa `[F10-Task13]`. Validación de formatos de evidencia (PDF, PNG, JPG, WEBP), límite de tamaño de 10 MB y comprobación de permisos RBAC para prevenir descargas por URL directas sin autenticación.
+
+2. backend/task-service/Code.gs
+   - Linea 2366: Etiquetado de `getSubmissionDocumentPreviewUrl` con `[F10-Task13]`.
+
+3. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `validateEvidenceFileAndPermissions [F10-Task13]`.
+
+4. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F10-Task13]`.
+
+5. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F10-Task13]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F10-Task12] Optimizar las notificaciones y las comunicaciones escolares
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/user-service/Code.gs
+   - Lineas 1319, 4598-4665: Inserción del dispatcher "retryFailedNotificationsQueue" en el conmutador doPost switch e implementación de la función `retryFailedNotificationsQueue` con etiqueta identificativa `[F10-Task12]`. Reintentos seguros de notificaciones en estado `Pendiente_Reintento`, deduplicación estricta por `deduplicationKey` y protección de privacidad.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `sendMultiChannelNotification` y `retryFailedNotificationsQueue [F10-Task12]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F10-Task12]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F10-Task12]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F10-Task11] Completar la delegación de responsabilidades para asistentes administrativos y académicos
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 252, 861, 8103-8133: Inserción del permiso "auditAssistantDelegatedAction" en ROLE_PERMISSIONS, dispatcher en el conmutador doPost switch e implementación de la función `auditAssistantDelegatedAction` con etiqueta identificativa `[F10-Task11]`. Inyección de `_executorUserId` en `validateRolePermission` para garantizar la trazabilidad obligatoria de doble identidad (autor real y titular delegante).
+
+2. backend/user-service/Code.gs
+   - Linea 1224: Inyección de `_executorUserId` en `validateRolePermission` para registro de doble identidad en operaciones delegadas.
+
+3. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `auditAssistantDelegatedAction [F10-Task11]`.
+
+4. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F10-Task11]`.
+
+5. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F10-Task11]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F10-Task10] Completar el modelo funcional de orientación académica y vocacional
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 218, 856, 8048-8100: Inserción de permisos "saveGuidanceFollowupPlan" y "saveVocationalRecommendation" en ROLE_PERMISSIONS, dispatchers en el conmutador doPost switch e implementación de las funciones `saveGuidanceFollowupPlan` y `saveVocationalRecommendation` con etiqueta identificativa `[F10-Task10]`. Registro de planes de seguimiento académico de orientación y recomendaciones vocacionales sin alteración de calificaciones ni matrículas.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `saveGuidanceFollowupPlan` y `saveVocationalRecommendation [F10-Task10]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F10-Task10]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F10-Task10]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F10-Task09] Completar el modelo funcional de consejería escolar
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 218, 854, 7935-8045: Inserción de permisos "scheduleCounselingAppointment", "recordCounselingSessionAct" y "referCounselingCase" en ROLE_PERMISSIONS, dispatchers en el conmutador doPost switch e implementación de las funciones `scheduleCounselingAppointment`, `recordCounselingSessionAct` y `referCounselingCase` con etiqueta identificativa `[F10-Task09]`. Programación de citas, actas de seguimiento inmutables con notas confidenciales y derivación a profesionales externos.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `scheduleCounselingAppointment`, `recordCounselingSessionAct` y `referCounselingCase [F10-Task09]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F10-Task09]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F10-Task09]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F10-Task08] Estructurar el seguimiento de compromisos, intervenciones y evidencias
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 218, 852, 7853-7933: Inserción de permisos "addCaseCommitment" y "updateCaseCommitmentStatus" en ROLE_PERMISSIONS, dispatchers en el conmutador doPost switch e implementación de las funciones `addCaseCommitment` y `updateCaseCommitmentStatus` con etiqueta identificativa `[F10-Task08]`. Estructuración de compromisos con ID inmutable (`COM-AST-...`), plazos, estados de cumplimiento (`Pendiente`, `EnProceso`, `Cumplido`, `Incumplido`, `Reprogramado`), evidencias adjuntas y trazabilidad.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `addCaseCommitment` y `updateCaseCommitmentStatus [F10-Task08]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F10-Task08]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F10-Task08]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F10-Task07] Completar el ciclo de vida de las incidencias de convivencia escolar
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 218, 848, 7673-7745: Inserción del permiso "updateAttendanceIncidentStatus" en ROLE_PERMISSIONS, dispatcher en el conmutador doPost switch e implementación de la función `updateAttendanceIncidentStatus` con etiqueta identificativa `[F10-Task07]`. Gestión del ciclo de vida de incidencias disciplinarias (`Reportada`, `PendienteRevision`, `EnInvestigacion`, `Confirmada`, `Cerrada`, `Reabierta`), registro de medidas correctivas, observaciones y eventos estructurados de auditoría `ATTENDANCE_INCIDENT_STATUS_UPDATED`.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `saveAttendanceIncident` y `updateAttendanceIncidentStatus [F10-Task07]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F10-Task07]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F10-Task07]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F10-Task06] Desarrollar un sistema avanzado de alertas de asistencia y seguimiento preventivo
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 174, 852, 7844-7978: Inserción del permiso "checkAndDispatchAttendanceAlerts" en ROLE_PERMISSIONS, dispatcher en el conmutador doPost switch e implementación de la función `checkAndDispatchAttendanceAlerts` con etiqueta identificativa `[F10-Task06]`. Evaluación de ausencias consecutivas, tardanzas acumuladas y porcentaje de asistencia mínimo respecto a `ConfiguracionAcademica`, apertura automática de casos preventivos en `CasosSeguimiento` y notificaciones deduplicadas a tutores legales.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `checkAndDispatchAttendanceAlerts [F10-Task06]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F10-Task06]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F10-Task06]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F10-Task05] Ampliar la gestión de justificaciones, permisos y salidas anticipadas
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 7506, 7535-7572: Inserción del comentario identificativo `[F10-Task05]` y refactorización de `reviewAttendanceJustification` con validación de estados de revisión (`Presentada`, `Pendiente`, `RequiereInformacion`, `Aprobada`, `Rechazada`, `Cancelada`) y registro de auditoría `ATTENDANCE_JUSTIFICATION_REVIEWED`.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `submitAttendanceJustification` y `reviewAttendanceJustification [F10-Task05]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F10-Task05]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F10-Task05]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F10-Task04] Optimizar el registro masivo de asistencia y la gestión de sesiones
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 174, 839, 7273, 7331-7402: Adición de permiso "bulkApplyAttendanceStatus" en ROLE_PERMISSIONS, dispatcher en doPost switch, comentario `[F10-Task04]` e implementación de la función `bulkApplyAttendanceStatus`.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `bulkApplyAttendanceStatus [F10-Task04]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F10-Task04]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F10-Task04]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F10-Task03] Fortalecer el modelo de asistencia y su configuración institucional
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 174, 851-852, 1073-1132: Adición de permisos "getAttendanceConfig" y "saveAttendanceConfig" en ROLE_PERMISSIONS, dispatchers en doPost switch e implementación de las funciones `getAttendanceConfig` y `saveAttendanceConfig` con etiqueta `[F10-Task03]`.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `getAttendanceConfig` y `saveAttendanceConfig [F10-Task03]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F10-Task03]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F10-Task03]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F10-Task02] Completar la verificación integral de los 86 criterios de aceptación de la Fase 10
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/developer-service/Code.gs
+   - Lineas 29, 122, 320-385: Adición de permiso "runPhase10AttendanceAndCoexistenceRegressionSuite" en ROLE_PERMISSIONS, dispatcher en doPost switch e implementación de la función `runPhase10AttendanceAndCoexistenceRegressionSuite` con etiqueta `[F10-Task02]`.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `runPhase10AttendanceAndCoexistenceRegressionSuite [F10-Task02]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F10-Task02]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F10-Task02]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F10-Task01] Fortalecer la confidencialidad y el control de acceso a expedientes sensibles
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 7512-7568: Inserción de etiqueta identificativa `[F10-Task01]` y refactorización de `getAttendanceFollowupCases` implementando lectura dinámica de `NIVEL_VISIBILIDAD_CONSEJERIA`, aislamiento de casos confidenciales para docentes generales y registro de eventos `UNAUTHORIZED_ACCESS_ATTEMPT`.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `getAttendanceFollowupCases [F10-Task01]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F10-Task01]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F10-Task01]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: UNIFICACIÓN Y CONVERGENCIA DE BACKLOG FASE 10 EN PENDIENTES.MD (F10-TASK01 A F10-TASK18)
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. Pendientes.md
+   - Registro y unificación de las 18 tareas de la Fase 10 (`F10-Task01` a `F10-Task18`) ordenadas estrictamente por prioridad (P0, P1, P2) e incorporando opciones configurables para parámetros de visibilidad en disputa.
+
+2. Auditoria.txt
+   - Registro de la unificación del backlog de la Fase 10.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL - FASE 10 (ASISTENCIA, DISCIPLINA, CONVIVENCIA ESCOLAR, ORIENTACIÓN Y ASISTENTES)
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. AUDITORIA_FASE_10_ASISTENCIA_DISCIPLINA_CONVIVENCIA.md
+   - Creación del informe independiente de auditoría funcional y técnica de la Fase 10 evaluando los 86 criterios de aceptación (`AT-001` a `AT-086`) e incorporando especificaciones para los roles Consejero, Orientador y Asistentes.
+
+2. Pendientes.md
+   - Registro de 3 nuevas tareas de la Fase 10 (`F10-Task01` a `F10-Task03`) estructuradas por severidad y prioridad (P0 a P1) según METODOLOGIA_DESARROLLO.md.
+
+3. Auditoria.txt
+   - Registro del informe de auditoría funcional y técnica de la Fase 10.
+
+-------------------------------------------------------------------------------
 FECHA: Octubre 2026
 TAREA: [TAREA RH-05] Implementar la evaluación del desempeño de los empleados
 -------------------------------------------------------------------------------
@@ -2816,3 +3083,255 @@ Archivos Creados y Modificados:
 
 2. Auditoria.txt
    - Registro de la auditoría de consistencia metodológica.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: FASE 9 — AUDITORÍA FUNCIONAL DE EVALUACIONES, CALIFICACIONES Y RESULTADOS ACADÉMICOS
+-------------------------------------------------------------------------------
+
+Archivos Creados y Modificados:
+1. AUDITORIA_FASE_9_EVALUACIONES_CALIFICACIONES_RESULTADOS.md
+   - Creación del informe independiente de auditoría funcional, técnica y documental de la Fase 9 cubriendo 15 subcapacidades dentro del alcance, evaluación técnica de microservicios GAS y consolas UI, lista maestra de características, análisis comparativo con SACE (Honduras) y verificación de los 53 Criterios de Aceptación (EV-01 al EV-53) con resultado 100.0% Aprobado.
+
+2. Auditoria.txt
+   - Registro de la entrada formal de auditoría de la Fase 9 con los resultados de cobertura (100.0% Inspección / 100.0% Verificación) y referencias al documento independiente generado.
+
+3. ChangesLogs.txt
+   - Registro de la bitácora técnica de auditoría de la Fase 9.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F9-Task01] Verificar y fortalecer la compatibilidad de las plantillas oficiales de calificaciones de SACE
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Linea 10027: Adición de comentario identificativo `[F9-Task01]` sobre la función `verifySACETemplateCompatibility`.
+
+2. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task01]`.
+
+3. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task01]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F9-Task08] Fortalecer el control de permisos y la separación de responsabilidades académicas
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 249-253, 653: Adición de permiso "validateAcademicResponsibilityAndScopeAccess" en ROLE_PERMISSIONS y dispatcher en doPost switch.
+   - Lineas 10605-10745: Inserción del comentario identificativo `[F9-Task08]` e implementación de la función `validateAcademicResponsibilityAndScopeAccess` para verificación de permisos por rol, docente/asignatura, alumno/tutor y registro de `UNAUTHORIZED_ACCESS_ATTEMPT`.
+
+2. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task08]`.
+
+3. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task08]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F9-Task09] Completar las pruebas automatizadas de regresión de la Fase 9
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/exam-service/Code.gs
+   - Lineas 1660-1665: Adición de verificación `if (rectSheet.getLastRow() === 0)` para inserción previa de encabezados en `reopenPeriodGradebook`.
+
+2. tests/regression/academic-grading-suite.js
+   - Creación del ejecutable Node.js con 14 aserciones de regresión para las capacidades de la Fase 9.
+
+3. backend/developer-service/Code.gs
+   - Lineas 29, 121, 215-300: Adición de permiso "runAcademicGradingRegressionSuite" en ROLE_PERMISSIONS, dispatcher en doPost switch e implementación de la función `runAcademicGradingRegressionSuite`.
+
+4. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task09]`.
+
+5. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task09]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F9-Task10] Ampliar el libro de calificaciones para mejorar el registro individual y masivo
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/exam-service/Code.gs
+   - Lineas 90, 375, 1478-1588: Adición de permisos "bulkApplyGradebookGrades" y "copyEvaluationSetupBetweenGroups" en ROLE_PERMISSIONS, dispatchers en doPost e implementación con la etiqueta identificativa `[F9-Task10]`.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `bulkApplyGradebookGrades` y `copyEvaluationSetupBetweenGroups`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task10]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task10]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F9-Task11] Ampliar las recuperaciones académicas y su integración con los resultados oficiales
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/exam-service/Code.gs
+   - Lineas 1592-1638: Inserción del comentario identificativo `[F9-Task11]` y refactorización de `saveStudentRecovery` agregando validaciones de rango (0-100) y comprobación de períodos cerrados.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de verificación para `saveStudentRecovery [F9-Task11]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task11]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task11]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F9-Task12] Ampliar la evaluación por competencias, rúbricas e indicadores de logro
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/exam-service/Code.gs
+   - Lineas 91, 381, 1330-1395: Adición de permisos "saveCompetencyEvaluation" y "getCompetencyEvaluations" en ROLE_PERMISSIONS, dispatchers en doPost e implementación con la etiqueta identificativa `[F9-Task12]`.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de verificación para `saveCompetencyEvaluation` y `getCompetencyEvaluations`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task12]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task12]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F9-Task13] Optimizar la exportación académica y los formatos de intercambio
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 249, 654, 10852-10922: Adición de permiso "exportAcademicGradesData" en ROLE_PERMISSIONS, dispatcher en doPost switch e implementación de la función `exportAcademicGradesData` con etiqueta `[F9-Task13]`.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de verificación para `exportAcademicGradesData [F9-Task13]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task13]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task13]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F9-Task14] Mejorar el rendimiento, la persistencia y la recuperación de operaciones de calificación
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/exam-service/Code.gs
+   - Lineas 93, 397, 675-730: Adición de permiso "getGradingPerformanceAndPersistenceMetrics" en ROLE_PERMISSIONS, dispatcher en doPost e implementación de la función `getGradingPerformanceAndPersistenceMetrics` con la etiqueta identificativa `[F9-Task14]`.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de verificación para `getGradingPerformanceAndPersistenceMetrics [F9-Task14]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task14]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task14]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: AUDITORÍA GENERAL DE PLATAFORMA Y VERIFICACIÓN DE REQUISITOS DE ARQUITECTURA
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. AUDITORIA_GENERAL_PLATAFORMA_Y_ARQUITECTURA.md
+   - Creación del informe consolidado de auditoría general cubriendo estructura del repositorio, esquemas de spreadsheets, verificación funcional de backlog y resultados de suites de regresión (42/42 pruebas pasadas).
+
+2. Auditoria.txt
+   - Registro de la auditoría general y verificación de conformidad con METODOLOGIA_DESARROLLO.md.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F9-Task02] Fortalecer la validación y el diagnóstico de archivos SACE antes de generar las calificaciones
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Lineas 705, 205: Adición de permiso "validateSACETemplateFile" en ROLE_PERMISSIONS para rol Profesor y ruta en dispatcher doPost.
+   - Lineas 10170-10265: Implementación de la función backend `validateSACETemplateFile` con comentario identificativo de primera línea `[F9-Task02]`.
+
+2. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task02]`.
+
+3. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task02]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F9-Task03] Consolidar la administración de escalas, ponderaciones y métodos de cálculo académico
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 649, 10410-10515: Adición del dispatcher "previewAcademicGradeCalculation" y reestructuración de `calculateUnifiedAcademicGrade` con comentario identificativo de primera línea `[F9-Task03]`. Soporte para métodos de cálculo (PromedioPonderado, PromedioAritmetico, PuntosObtenidos), validación de ponderaciones al 100%, aislamiento de actividades pendientes/exentas/ausentes y vista previa sin alteración de períodos cerrados.
+
+2. backend/exam-service/Code.gs
+   - Linea 1246: Adición de comentario identificativo `[F9-Task03]` sobre la función `saveEvaluationCategory`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task03]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task03]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F9-Task04] Fortalecer la precisión de los cálculos y la detección de inconsistencias académicas
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Linea 249: Adición del permiso "auditAcademicGradesIntegrity" en ROLE_PERMISSIONS para rol Profesor.
+   - Linea 650: Adición de dispatcher "auditAcademicGradesIntegrity" en doPost switch.
+   - Lineas 10523-10588: Implementación de la función backend `auditAcademicGradesIntegrity` con comentario identificativo `[F9-Task04]`. Diagnóstico de notas fuera del rango 0-100, validación de discrepancias entre notas finales guardadas y cálculos reproducibles de `calculateUnifiedAcademicGrade`, e informe de estado de integridad.
+
+2. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task04]`.
+
+3. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task04]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F9-Task05] Completar el ciclo de revisión, aprobación, cierre y publicación de calificaciones
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/exam-service/Code.gs
+   - Lineas 91, 383-384: Adición de permisos "submitGradebookForReview" y "reviewPeriodGradebook" en ROLE_PERMISSIONS para rol Profesor y dispatchers en doPost switch.
+   - Lineas 1525-1620: Adición del comentario identificativo `[F9-Task05]` sobre `closePeriodGradebook` e implementación de las funciones backend `submitGradebookForReview` y `reviewPeriodGradebook` para la máquina de estados del parcial.
+
+2. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task05]`.
+
+3. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task05]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
+TAREA: [F9-Task06] Fortalecer las rectificaciones de notas y la trazabilidad de los cambios
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/exam-service/Code.gs
+   - Lineas 91, 385-386: Adición de permisos "rectifyStudentGrade" y "getGradeRectificationHistory" en ROLE_PERMISSIONS y dispatchers en doPost switch.
+   - Lineas 1644-1770: Inserción del comentario identificativo `[F9-Task06]` e implementación de las funciones backend `rectifyStudentGrade` y `getGradeRectificationHistory` y actualización de `reopenPeriodGradebook` exigiendo motivo obligatorio de al menos 10 caracteres y guardado de trazabilidad en `HistorialRectificacionesNotas`.
+
+2. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F9-Task06]`.
+
+3. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F9-Task06]`.

@@ -202,7 +202,7 @@ const ROLE_PERMISSIONS = {
   "Tutor": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Responsable": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Consejeros": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments"],
-  "Profesor": ["getStaffPayrollReceipt", "submitVacationRequest", "getVacationRequests", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "verifySACETemplateCompatibility", "generateSACEReportFile", "getEmployeeSelfServicePortal"],
+  "Profesor": ["getStaffPayrollReceipt", "submitVacationRequest", "getVacationRequests", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "verifySACETemplateCompatibility", "generateSACEReportFile", "fillAndExportSACETemplate", "validateSACETemplateFile", "getEmployeeSelfServicePortal"],
   "Asistente": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "getDigitalResources", "getSchoolDocumentTemplates"],
   "Estudiante": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase"],
   "Alumno": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase"]
@@ -701,6 +701,8 @@ function doPost(e) {
       case "getMigrationLogs": result = getMigrationLogs(payload); break;
       case "verifySACETemplateCompatibility": result = verifySACETemplateCompatibility(payload); break;
       case "generateSACEReportFile": result = generateSACEReportFile(payload); break;
+      case "fillAndExportSACETemplate": result = fillAndExportSACETemplate(payload); break;
+      case "validateSACETemplateFile": result = validateSACETemplateFile(payload); break;
       case "configureDiscountScholarshipRule": result = configureDiscountScholarshipRule(payload); break;
       case "getDiscountScholarshipRules": result = getDiscountScholarshipRules(payload); break;
       case "submitDiscountScholarshipRequest": result = submitDiscountScholarshipRequest(payload); break;
@@ -10024,6 +10026,7 @@ function getMigrationLogs(payload) {
 // FASE 12: INTEGRACIÓN Y GENERACIÓN COMPATIBLE CON PLANTILLAS SACE
 // ---------------------------------------------------------------------------
 
+// [F9-Task01] [P0] - Verificar y fortalecer la compatibilidad de las plantillas oficiales de calificaciones de SACE
 function verifySACETemplateCompatibility(payload) {
   const { nombreFormato, columnasDetectadas } = payload || {};
   if (!nombreFormato) throw new Error("nombreFormato requerido.");
@@ -10065,9 +10068,13 @@ function generateSACEReportFile(payload) {
   const list = Array.isArray(estudiantesNotas) ? estudiantesNotas : [];
 
   const mappedSACEData = list.map(item => {
-    const notaOrd = parseFloat(item.calificacionOrdinaria || item.notaFinal || 0);
+    const isPending = item.estado === "Pendiente" || item.notaFinal === null || item.notaFinal === undefined;
+    const isExempt = item.estado === "Exento";
+    const isAbsent = item.estado === "Ausente";
+
+    const notaOrd = isPending || isExempt || isAbsent ? null : parseFloat(item.calificacionOrdinaria || item.notaFinal || 0);
     const notaRec = parseFloat(item.recuperacion || 0);
-    const notaFinalSACE = Math.max(notaOrd, notaRec);
+    const notaFinalSACE = notaOrd !== null ? Math.max(notaOrd, notaRec) : (notaRec > 0 ? notaRec : null);
 
     return {
       identidad: item.identidad || item.userId,
@@ -10076,10 +10083,10 @@ function generateSACEReportFile(payload) {
       seccion: seccion,
       asignatura: asignatura,
       parcial: parcial || "Primer Parcial",
-      calificacionOrdinaria: notaOrd,
-      recuperacion: notaRec,
-      resultadoFinalSACE: notaFinalSACE,
-      estadoAprobacion: notaFinalSACE >= 70 ? "APROBADO" : "REPROBADO"
+      calificacionOrdinaria: isPending ? "PENDIENTE" : (isExempt ? "EXENTO" : (isAbsent ? "AUSENTE" : notaOrd)),
+      recuperacion: notaRec > 0 ? notaRec : "",
+      resultadoFinalSACE: notaFinalSACE !== null ? notaFinalSACE : "PENDIENTE",
+      estadoAprobacion: notaFinalSACE !== null ? (notaFinalSACE >= 70 ? "APROBADO" : "REPROBADO") : "PENDIENTE"
     };
   });
 
@@ -10092,6 +10099,182 @@ function generateSACEReportFile(payload) {
     registrosCompletados: mappedSACEData.length,
     datosReporteSACE: mappedSACEData,
     message: "Archivo de calificaciones SACE generado preservando fórmulas, estructura e identidades oficiales."
+  };
+}
+
+function fillAndExportSACETemplate(payload) {
+  const { plantillaId, grado, seccion, asignatura, docenteId, parcial, estudiantes } = payload || {};
+  if (!grado || !seccion || !asignatura) throw new Error("grado, seccion y asignatura son requeridos.");
+
+  const inputList = Array.isArray(estudiantes) ? estudiantes : [];
+  const inconsistencias = [];
+  const datosProcesados = [];
+
+  inputList.forEach((st, idx) => {
+    const idVal = String(st.identidad || st.userId || "").trim();
+    if (!idVal) {
+      inconsistencias.push(`Fila ${idx + 1}: Estudiante sin DNI/identificador oficial.`);
+      return;
+    }
+
+    const estado = String(st.estado || "").trim();
+    let califTexto = "PENDIENTE";
+    let notaNum = null;
+
+    if (estado === "Exento") {
+      califTexto = "EXENTO";
+    } else if (estado === "Ausente") {
+      califTexto = "AUSENTE";
+    } else if (st.nota !== null && st.nota !== undefined && st.nota !== "") {
+      const parsed = parseFloat(st.nota);
+      if (isNaN(parsed) || parsed < 0 || parsed > 100) {
+        inconsistencias.push(`Fila ${idx + 1} (${st.nombre || idVal}): Nota fuera de rango (0-100): ${st.nota}`);
+        return;
+      }
+      notaNum = parsed;
+      califTexto = String(parsed);
+    }
+
+    datosProcesados.push({
+      identidad: idVal,
+      nombreAlumno: st.nombre || "Estudiante",
+      calificacion: califTexto,
+      notaNumerica: notaNum,
+      recuperacion: parseFloat(st.recuperacion || 0) || null,
+      estado
+    });
+  });
+
+  return {
+    status: "success",
+    contexto: {
+      plantillaId: plantillaId || "PLANTILLA-SACE-OFICIAL-V2",
+      grado,
+      seccion,
+      asignatura,
+      docenteId: docenteId || "DOCENTE-TITULAR",
+      parcial: parcial || "Primer Parcial"
+    },
+    resumen: {
+      totalEstudiantes: inputList.length,
+      procesadosConExito: datosProcesados.length,
+      totalInconsistencias: inconsistencias.length
+    },
+    inconsistencias,
+    datosProcesados,
+    message: inconsistencias.length === 0
+      ? "Plantilla SACE completada y validada exitosamente."
+      : `Plantilla procesada con ${inconsistencias.length} inconsistencias detectadas.`
+  };
+}
+
+// [F9-Task02] [P0] - Fortalecer la validación y el diagnóstico de archivos SACE antes de generar las calificaciones
+function validateSACETemplateFile(payload) {
+  const { nombreArchivo, grado, seccion, asignatura, parcial, columnasData, filasData } = payload || {};
+  if (!nombreArchivo) throw new Error("nombreArchivo es requerido para validación SACE.");
+
+  const cols = Array.isArray(columnasData) ? columnasData : [];
+  const rows = Array.isArray(filasData) ? filasData : [];
+
+  const erroresBloqueantes = [];
+  const advertencias = [];
+  const informacion = [];
+
+  const normalizeHeader = (str) => {
+    if (!str) return "";
+    return String(str)
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]/g, "");
+  };
+
+  const requiredCols = ["identidad", "nombreAlumno", "calificacionOrdinaria"];
+  const colsNormalized = cols.map(c => normalizeHeader(c));
+
+  requiredCols.forEach(rc => {
+    const normRc = normalizeHeader(rc);
+    if (!colsNormalized.some(c => c.includes(normRc))) {
+      erroresBloqueantes.push(`Estructura inválida: Columna obligatoria '${rc}' no detectada en la plantilla.`);
+    }
+  });
+
+  if (rows.length === 0) {
+    erroresBloqueantes.push("Archivo vacío o sin filas de datos registradas.");
+  }
+
+  const idSet = new Set();
+  let estudiantesIdentificados = 0;
+  let notasIncorporables = 0;
+  let notasOmitidas = 0;
+
+  rows.forEach((row, idx) => {
+    const filaNum = idx + 1;
+    const rawId = row ? (row.identidad !== undefined ? row.identidad : (row.userId !== undefined ? row.userId : null)) : null;
+    const idVal = (rawId !== null && rawId !== undefined) ? String(rawId).trim() : "";
+
+    if (!idVal || idVal === "undefined") {
+      erroresBloqueantes.push(`Fila ${filaNum}: Identificador oficial DNI/userId ausente.`);
+      return;
+    }
+
+    if (idSet.has(idVal)) {
+      advertencias.push(`Fila ${filaNum}: Identificador duplicado '${idVal}' detectado en el archivo.`);
+    } else {
+      idSet.add(idVal);
+    }
+
+    estudiantesIdentificados++;
+
+    let notaRaw = row.calificacionOrdinaria;
+    if (notaRaw === undefined || notaRaw === null || notaRaw === "") notaRaw = row.notaFinal;
+    if (notaRaw === undefined || notaRaw === null || notaRaw === "") notaRaw = row.nota;
+
+    if (notaRaw === null || notaRaw === undefined || notaRaw === "" || String(notaRaw).toUpperCase() === "PENDIENTE") {
+      notasOmitidas++;
+      informacion.push(`Fila ${filaNum} (${idVal}): Nota en estado PENDIENTE, conservada sin asignar cero por defecto.`);
+    } else if (String(notaRaw).toUpperCase() === "EXENTO" || String(notaRaw).toUpperCase() === "AUSENTE") {
+      informacion.push(`Fila ${filaNum} (${idVal}): Registrado estado cualitativo '${String(notaRaw).toUpperCase()}'.`);
+      notasIncorporables++;
+    } else {
+      const notaNum = parseFloat(notaRaw);
+      if (isNaN(notaNum) || notaNum < 0 || notaNum > 100) {
+        erroresBloqueantes.push(`Fila ${filaNum} (${idVal}): Calificación numérica fuera de rango (0-100): ${notaRaw}`);
+      } else {
+        notasIncorporables++;
+      }
+    }
+  });
+
+  const esValido = erroresBloqueantes.length === 0;
+
+  return {
+    status: esValido ? "success" : "error",
+    esValido: esValido,
+    diagnostico: {
+      nombreArchivo,
+      contexto: {
+        grado: grado || "No especificado",
+        seccion: seccion || "No especificada",
+        asignatura: asignatura || "No especificada",
+        parcial: parcial || "Primer Parcial"
+      },
+      resumenMetrics: {
+        totalFilas: rows.length,
+        estudiantesIdentificados,
+        notasIncorporables,
+        notasOmitidas,
+        totalErroresBloqueantes: erroresBloqueantes.length,
+        totalAdvertencias: advertencias.length,
+        totalInformacion: informacion.length
+      },
+      erroresBloqueantes,
+      advertencias,
+      informacion
+    },
+    message: esValido
+      ? `Validación SACE exitosa: ${estudiantesIdentificados} estudiantes identificados sin errores bloqueantes.`
+      : `Validación SACE fallida con ${erroresBloqueantes.length} error(es) bloqueante(s) que impiden la generación.`
   };
 }
 

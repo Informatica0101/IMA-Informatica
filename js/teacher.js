@@ -2058,6 +2058,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Helper UI para aplicación masiva de asistencia
+    window.bulkApplyAttendanceUI = async function(sesionId, estudiantes, estadoAsistencia, observacionDocente) {
+        if (!sesionId || !Array.isArray(estudiantes) || estudiantes.length === 0) {
+            return { status: 'error', message: 'Parámetros inválidos para aplicación masiva.' };
+        }
+        return await fetchApi('ACADEMIC', 'bulkApplyAttendanceStatus', {
+            sesionId,
+            estudiantes,
+            estadoAsistencia: estadoAsistencia || 'Presente',
+            observacionDocente: observacionDocente || 'Aplicación masiva desde panel docente',
+            sobrescribirExistentes: false
+        });
+    };
+
 
     /*
      * [TAREA-F7-IMP-16] Ampliar la gestión de sustituciones y la reasignación de clases afectadas

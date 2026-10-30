@@ -87,16 +87,16 @@ const ROLE_PERMISSIONS = {
   "Profesor": [
     "createExam", "updateExam", "updateExamStatus", "deleteExam", "gradeExamSubmission", "deleteExamSubmission",
     "getAllExams", "getTeacherExamActivity", "getExamQuestions", "getStudentExams", "getExamResult",
-    "getGradebookData", "saveGradebookGrades", "getEvaluationCategories", "saveEvaluationCategory",
-    "getRubrics", "saveRubric", "saveStudentRecovery", "getStudentRecoveries", "closePeriodGradebook", "reopenPeriodGradebook", "getStudentAcademicReport",
+    "getGradebookData", "saveGradebookGrades", "bulkApplyGradebookGrades", "copyEvaluationSetupBetweenGroups", "getEvaluationCategories", "saveEvaluationCategory",
+    "getRubrics", "saveRubric", "saveCompetencyEvaluation", "getCompetencyEvaluations", "saveStudentRecovery", "getStudentRecoveries", "closePeriodGradebook", "reopenPeriodGradebook", "submitGradebookForReview", "reviewPeriodGradebook", "rectifyStudentGrade", "getGradeRectificationHistory", "getStudentAcademicReport",
     "manageQuestionBank", "getQuestionBank", "checkExamSchedulingConflict", "simulateExamReschedule",
-    "getExamGradeDistributionAnalytics"
+    "getExamGradeDistributionAnalytics", "getGradingPerformanceAndPersistenceMetrics"
   ],
   "Estudiante": [
-    "getStudentExams", "getExamQuestions", "submitExam", "getExamResult", "getEvaluationCategories", "getRubrics", "getStudentRecoveries", "getStudentAcademicReport"
+    "getStudentExams", "getExamQuestions", "submitExam", "getExamResult", "getEvaluationCategories", "getRubrics", "getCompetencyEvaluations", "getStudentRecoveries", "getStudentAcademicReport"
   ],
   "Alumno": [
-    "getStudentExams", "getExamQuestions", "submitExam", "getExamResult", "getEvaluationCategories", "getRubrics", "getStudentRecoveries", "getStudentAcademicReport"
+    "getStudentExams", "getExamQuestions", "submitExam", "getExamResult", "getEvaluationCategories", "getRubrics", "getCompetencyEvaluations", "getStudentRecoveries", "getStudentAcademicReport"
   ]
 };
 
@@ -372,20 +372,29 @@ function doPost(e) {
       case "deleteExamSubmission": result = deleteExamSubmission(payload); break;
       case "getGradebookData": result = getGradebookData(payload); break;
       case "saveGradebookGrades": result = saveGradebookGrades(payload); break;
+      case "bulkApplyGradebookGrades": result = bulkApplyGradebookGrades(payload); break;
+      case "copyEvaluationSetupBetweenGroups": result = copyEvaluationSetupBetweenGroups(payload); break;
       case "getEvaluationCategories": result = getEvaluationCategories(payload); break;
       case "saveEvaluationCategory": result = saveEvaluationCategory(payload); break;
       case "getRubrics": result = getRubrics(payload); break;
       case "saveRubric": result = saveRubric(payload); break;
+      case "saveCompetencyEvaluation": result = saveCompetencyEvaluation(payload); break;
+      case "getCompetencyEvaluations": result = getCompetencyEvaluations(payload); break;
       case "saveStudentRecovery": result = saveStudentRecovery(payload); break;
       case "getStudentRecoveries": result = getStudentRecoveries(payload); break;
       case "closePeriodGradebook": result = closePeriodGradebook(payload); break;
       case "reopenPeriodGradebook": result = reopenPeriodGradebook(payload); break;
+      case "submitGradebookForReview": result = submitGradebookForReview(payload); break;
+      case "reviewPeriodGradebook": result = reviewPeriodGradebook(payload); break;
+      case "rectifyStudentGrade": result = rectifyStudentGrade(payload); break;
+      case "getGradeRectificationHistory": result = getGradeRectificationHistory(payload); break;
       case "getStudentAcademicReport": result = getStudentAcademicReport(payload); break;
       case "manageQuestionBank": result = manageQuestionBank(payload); break;
       case "getQuestionBank": result = getQuestionBank(payload); break;
       case "checkExamSchedulingConflict": result = checkExamSchedulingConflict(payload); break;
       case "simulateExamReschedule": result = simulateExamReschedule(payload); break;
       case "getExamGradeDistributionAnalytics": result = getExamGradeDistributionAnalytics(payload); break;
+      case "getGradingPerformanceAndPersistenceMetrics": result = getGradingPerformanceAndPersistenceMetrics(payload); break;
       default:
         result = { status: "error", message: `Acción no válida: ${action}` };
     }
@@ -660,6 +669,63 @@ function getExamQuestions({ examenId }) {
       ...examDetails,
       preguntas: preguntas
     }
+  };
+}
+
+// [F9-Task14] [P1] - Mejorar el rendimiento, la persistencia y la recuperación de operaciones de calificación
+function getGradingPerformanceAndPersistenceMetrics(payload) {
+  const startTime = Date.now();
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const sheetsToMonitor = [
+    "CalificacionesEstudiantes",
+    "CategoriasEvaluacion",
+    "HistorialRectificacionesNotas",
+    "CierresPeriodos",
+    "RecuperacionesEstudiante",
+    "EvaluacionesCompetencias"
+  ];
+
+  const metrics = [];
+  let totalRowsAcrossAllSheets = 0;
+
+  sheetsToMonitor.forEach(sheetName => {
+    const sheet = ss.getSheetByName(sheetName);
+    const rowCount = sheet ? sheet.getLastRow() : 0;
+    totalRowsAcrossAllSheets += rowCount;
+    metrics.push({
+      sheetName,
+      exists: !!sheet,
+      rowCount,
+      status: rowCount > 10000 ? "RIESGO_ELEVADO" : (rowCount > 3000 ? "ADVERTENCIA" : "NORMAL")
+    });
+  });
+
+  const queryLatencyMs = Date.now() - startTime;
+  let nivelAlertaGrading = "NORMAL";
+  let recomendacion = "El volumen de datos y rendimiento de persistencia se encuentran dentro de los parámetros óptimos para Google Sheets.";
+
+  if (totalRowsAcrossAllSheets > 15000 || queryLatencyMs > 2500) {
+    nivelAlertaGrading = "CRITICO";
+    recomendacion = "El volumen de calificaciones supera las 15,000 filas o la latencia es alta. Se recomienda migrar el almacenamiento de notas a una base de datos relacional (PostgreSQL/Cloud SQL).";
+  } else if (totalRowsAcrossAllSheets > 5000 || queryLatencyMs > 1000) {
+    nivelAlertaGrading = "ADVERTENCIA";
+    recomendacion = "El volumen de calificaciones se aproxima a los límites recomendados para operaciones en tiempo real. Utilizar procesamiento en lotes e índices de memoria.";
+  }
+
+  return {
+    status: "success",
+    servicio: "EXAM_SERVICE",
+    nivelAlertaGrading,
+    latenciaLecturaMs: queryLatencyMs,
+    totalFilasCalificaciones: totalRowsAcrossAllSheets,
+    metricasHojas: metrics,
+    mecanismosResiliencia: {
+      lotesPermitidos: true,
+      idempotenciaCaches: true,
+      deteccionDuplicados: true
+    },
+    recomendacion
   };
 }
 
@@ -1243,6 +1309,7 @@ function getEvaluationCategories(payload) {
   return { status: "success", data: categories };
 }
 
+// [F9-Task03] [P0] - Consolidar la administración de escalas, ponderaciones y métodos de cálculo académico
 function saveEvaluationCategory(payload) {
   const { categoriaId, nombre, porcentajePonderacion, ambito, escalaId } = payload || {};
   if (!nombre) throw new Error("Nombre de la categoría es requerido.");
@@ -1317,6 +1384,75 @@ function saveRubric(payload) {
   }
 
   return { status: "success", message: "Rúbrica guardada correctamente.", data: { rubricaId: rid } };
+}
+
+// [F9-Task12] [P1] - Ampliar la evaluación por competencias, rúbricas e indicadores de logro
+function saveCompetencyEvaluation(payload) {
+  const { competenciaId, indicadorId, userId, asignaturaId, periodoId, nivelDesempeno, observaciones, rubricaId } = payload || {};
+  if (!competenciaId || !userId || !nivelDesempeno) {
+    return { status: "error", message: "competenciaId, userId y nivelDesempeno son requeridos para evaluar competencias." };
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "EvaluacionesCompetencias");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["ID", "CompetenciaID", "IndicadorID", "UserID", "AsignaturaID", "PeriodoID", "NivelDesempeno", "Observaciones", "RubricaID", "FechaRegistro"]);
+  }
+
+  const cid = "COMP-EVAL-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+  const now = new Date();
+
+  sheet.appendRow([
+    cid,
+    competenciaId,
+    indicadorId || "IND-GENERIC",
+    userId,
+    asignaturaId || "ASIG-GENERIC",
+    periodoId || "P1",
+    String(nivelDesempeno).trim(),
+    observaciones || "",
+    rubricaId || "",
+    now
+  ]);
+
+  return {
+    status: "success",
+    evaluacionCompetenciaId: cid,
+    competenciaId,
+    userId,
+    nivelDesempeno,
+    message: "Evaluación cualitativa por competencias e indicadores registrada exitosamente."
+  };
+}
+
+function getCompetencyEvaluations(payload) {
+  const { userId, asignaturaId, periodoId, competenciaId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "EvaluacionesCompetencias");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const filtered = data.slice(1).filter(r => {
+    if (userId && String(r[3]).trim() !== String(userId).trim()) return false;
+    if (asignaturaId && String(r[4]).trim() !== String(asignaturaId).trim()) return false;
+    if (periodoId && String(r[5]).trim() !== String(periodoId).trim()) return false;
+    if (competenciaId && String(r[1]).trim() !== String(competenciaId).trim()) return false;
+    return true;
+  }).map(r => ({
+    evaluacionCompetenciaId: r[0],
+    competenciaId: r[1],
+    indicadorId: r[2],
+    userId: r[3],
+    asignaturaId: r[4],
+    periodoId: r[5],
+    nivelDesempeno: r[6],
+    observaciones: r[7],
+    rubricaId: r[8],
+    fechaRegistro: r[9] ? new Date(r[9]).toISOString() : null
+  }));
+
+  return { status: "success", total: filtered.length, data: filtered };
 }
 
 function getGradebookData(payload) {
@@ -1468,9 +1604,138 @@ function saveGradebookGrades(payload) {
   return { status: "success", message: `Se guardaron ${savedCount} calificaciones exitosamente.` };
 }
 
+// [F9-Task10] [P1] - Ampliar el libro de calificaciones para mejorar el registro individual y masivo
+function bulkApplyGradebookGrades(payload) {
+  const { evaluacionId, estudiantes, nota, observaciones, sobrescribirExistentes } = payload || {};
+  if (!evaluacionId || !Array.isArray(estudiantes) || estudiantes.length === 0) {
+    return { status: "error", message: "Se requiere evaluacionId y una lista de IDs de estudiantes para aplicación masiva." };
+  }
+
+  const notaNum = parseFloat(nota);
+  if (isNaN(notaNum) || notaNum < 0 || notaNum > 100) {
+    return { status: "error", message: "La calificación a aplicar masivamente debe estar entre 0 y 100." };
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CalificacionesEstudiantes");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["ID", "EvaluacionID", "UserID", "NotaObtenida", "PuntajePonderado", "EsBorrador", "EsPublicada", "Observaciones", "FechaRegistro"]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+  let aplicados = 0;
+  let omitidos = 0;
+
+  const indexMap = {};
+  for (let i = 1; i < data.length; i++) {
+    const key = `${String(data[i][1]).trim()}_${String(data[i][2]).trim()}`;
+    indexMap[key] = i;
+  }
+
+  estudiantes.forEach(uId => {
+    const studentIdStr = String(uId).trim();
+    if (!studentIdStr) return;
+
+    const key = `${String(evaluacionId).trim()}_${studentIdStr}`;
+    if (key in indexMap) {
+      const idx = indexMap[key];
+      const notaActual = parseFloat(data[idx][3]);
+      if (!sobrescribirExistentes && !isNaN(notaActual) && notaActual > 0) {
+        omitidos++;
+        return;
+      }
+      data[idx][3] = notaNum;
+      data[idx][5] = true; // EsBorrador
+      data[idx][7] = observaciones || data[idx][7] || "Aplicado masivamente";
+      data[idx][8] = now;
+      aplicados++;
+    } else {
+      const cid = "CALIF-BULK-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+      const newRow = [cid, evaluacionId, studentIdStr, notaNum, notaNum, true, false, observaciones || "Aplicado masivamente", now];
+      data.push(newRow);
+      indexMap[key] = data.length - 1;
+      aplicados++;
+    }
+  });
+
+  if (data.length > 1) {
+    sheet.getRange(1, 1, data.length, data[0].length).setValues(data);
+  }
+
+  return {
+    status: "success",
+    evaluacionId,
+    totalProcesados: estudiantes.length,
+    aplicados,
+    omitidos,
+    message: `Calificación masiva (${notaNum}) aplicada a ${aplicados} estudiante(s). ${omitidos} omitido(s) por conservar nota previa.`
+  };
+}
+
+function copyEvaluationSetupBetweenGroups(payload) {
+  const { grupoOrigen, grupoDestino } = payload || {};
+  if (!grupoOrigen || !grupoDestino) {
+    return { status: "error", message: "Se requieren parámetros grupoOrigen y grupoDestino para copiar la configuración de evaluación." };
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheetCat = getOrCreateSheet(ss, "CategoriasEvaluacion");
+  const dataCat = sheetCat.getDataRange().getValues();
+
+  let copiados = 0;
+  if (dataCat.length > 1) {
+    const origAsig = String(grupoOrigen.asignatura || "").trim();
+    const destAsig = String(grupoDestino.asignatura || "").trim();
+    const destGrado = String(grupoDestino.grado || "").trim();
+    const destSec = String(grupoDestino.seccion || "").trim();
+    const destPer = String(grupoDestino.periodo || "").trim();
+
+    for (let i = 1; i < dataCat.length; i++) {
+      const rowAsig = String(dataCat[i][1] || "").trim();
+      if (!origAsig || rowAsig === origAsig) {
+        const newCatId = "CAT-COPY-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+        const newRow = [
+          newCatId,
+          destAsig || rowAsig,
+          dataCat[i][2], // Nombre Categoria
+          dataCat[i][3], // Ponderacion
+          destGrado || dataCat[i][4],
+          destSec || dataCat[i][5],
+          destPer || dataCat[i][6],
+          new Date()
+        ];
+        sheetCat.appendRow(newRow);
+        copiados++;
+      }
+    }
+  }
+
+  return {
+    status: "success",
+    categoriasCopias: copiados,
+    message: `Configuración de evaluación copiada exitosamente (${copiados} categoría(s) duplicadas para el grupo destino sin copiar datos de estudiantes).`
+  };
+}
+
+// [F9-Task11] [P1] - Ampliar las recuperaciones académicas y su integración con los resultados oficiales
 function saveStudentRecovery(payload) {
-  const { evaluacionId, userId, notaOriginal, notaRecuperada, metodoAplicado, autorizadoPor } = payload || {};
+  const { evaluacionId, userId, notaOriginal, notaRecuperada, metodoAplicado, autorizadoPor, periodoId, asignatura } = payload || {};
   if (!evaluacionId || !userId) throw new Error("evaluacionId y userId son requeridos.");
+
+  if (periodoId) {
+    const ssCheck = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const cierresSheet = getOrCreateSheet(ssCheck, "CierresPeriodos");
+    const cierresData = cierresSheet.getDataRange().getValues();
+    const isClosed = cierresData.slice(1).some(r =>
+      String(r[2]).trim() === String(periodoId).trim() &&
+      String(r[7]).trim() === "Cerrado" &&
+      (!asignatura || String(r[5]).trim() === String(asignatura).trim())
+    );
+    if (isClosed) {
+      throw new Error("El período académico se encuentra cerrado. Las recuperaciones en períodos cerrados requieren autorización explícita de reapertura o rectificación.");
+    }
+  }
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "RecuperacionesEstudiante");
@@ -1480,8 +1745,11 @@ function saveStudentRecovery(payload) {
 
   const orig = parseFloat(notaOriginal) || 0;
   const rec = parseFloat(notaRecuperada) || 0;
-  let finalCalc = rec;
+  if (isNaN(orig) || orig < 0 || orig > 100 || isNaN(rec) || rec < 0 || rec > 100) {
+    throw new Error("Las calificaciones originales y recuperadas deben ser valores numéricos válidos entre 0 y 100.");
+  }
 
+  let finalCalc = rec;
   const metodo = metodoAplicado || "Sustitucion";
   if (metodo === "Promedio") finalCalc = (orig + rec) / 2;
   else if (metodo === "Mayor") finalCalc = Math.max(orig, rec);
@@ -1491,7 +1759,11 @@ function saveStudentRecovery(payload) {
 
   sheet.appendRow([recId, evaluacionId, userId, orig, rec, finalCalc, metodo, autorizadoPor || "Docente", now]);
 
-  return { status: "success", message: "Recuperación de nota registrada exitosamente.", data: { recuperacionId: recId, notaFinalCalculada: finalCalc } };
+  return {
+    status: "success",
+    message: "Recuperación de nota registrada e integrada exitosamente.",
+    data: { recuperacionId: recId, notaOriginal: orig, notaRecuperada: rec, notaFinalCalculada: finalCalc, metodoAplicado: metodo }
+  };
 }
 
 function getStudentRecoveries(payload) {
@@ -1520,6 +1792,43 @@ function getStudentRecoveries(payload) {
   return { status: "success", data: recoveries };
 }
 
+function publishGradebookForContext(ss, targetGrado, targetSeccion, targetAsignatura) {
+  try {
+    const usuariosSheet = ss.getSheetByName("Usuarios");
+    const targetStudentIds = new Set();
+    if (usuariosSheet) {
+      const uData = usuariosSheet.getDataRange().getValues().slice(1);
+      uData.forEach(u => {
+        const rol = normalizeString(u[6] || u[5]);
+        if (rol === "estudiante" || rol === "alumno") {
+          const matchGrado = !targetGrado || normalizeString(u[2]) === normalizeString(targetGrado);
+          const matchSec = !targetSeccion || normalizeString(u[3]) === normalizeString(targetSeccion);
+          if (matchGrado && matchSec) {
+            targetStudentIds.add(String(u[0]).trim());
+          }
+        }
+      });
+    }
+
+    const califSheet = getOrCreateSheet(ss, "CalificacionesEstudiantes");
+    const califData = califSheet.getDataRange().getValues();
+    if (califData.length > 1) {
+      for (let i = 1; i < califData.length; i++) {
+        const uId = String(califData[i][2]).trim();
+        const matchesStudent = targetStudentIds.size === 0 || targetStudentIds.has(uId);
+        if (matchesStudent && (califData[i][5] === true || String(califData[i][5]).toLowerCase() === "true")) {
+          califData[i][5] = false; // esBorrador = false
+          califData[i][6] = true;  // esPublicada = true
+        }
+      }
+      califSheet.getRange(1, 1, califData.length, califData[0].length).setValues(califData);
+    }
+  } catch (err) {
+    logDebug("Error actualizando estados de publicación contextuales", err.message);
+  }
+}
+
+// [F9-Task05] [P0] - Completar el ciclo de revisión, aprobación, cierre y publicación de calificaciones
 function closePeriodGradebook(payload) {
   const { anoId, periodoId, grado, seccion, asignatura, profesorId } = payload || {};
   if (!grado || !asignatura || !periodoId) throw new Error("Grado, Asignatura y Período son requeridos.");
@@ -1535,26 +1844,77 @@ function closePeriodGradebook(payload) {
 
   sheet.appendRow([cierreId, anoId || "ANO-CURRENT", periodoId, grado, seccion || "A", asignatura, profesorId || "Docente", "Cerrado", now]);
 
-  try {
-    const califSheet = getOrCreateSheet(ss, "CalificacionesEstudiantes");
-    const califData = califSheet.getDataRange().getValues();
-    if (califData.length > 1) {
-      for (let i = 1; i < califData.length; i++) {
-        califData[i][5] = false; // esBorrador = false
-        califData[i][6] = true;  // esPublicada = true
-      }
-      califSheet.getRange(1, 1, califData.length, califData[0].length).setValues(califData);
-    }
-  } catch (err) {
-    logDebug("Error actualizando estados de publicación al cerrar período", err.message);
-  }
+  publishGradebookForContext(ss, grado, seccion, asignatura);
 
   return { status: "success", message: `Período ${periodoId} cerrado oficialmente para ${asignatura} (${grado} ${seccion || 'A'}).` };
 }
 
+function submitGradebookForReview(payload) {
+  const { anoId, periodoId, grado, seccion, asignatura, profesorId, notasPendientesCount } = payload || {};
+  if (!grado || !asignatura || !periodoId) throw new Error("Grado, Asignatura y Período son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CierresPeriodos");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["CierreID", "AnoID", "PeriodoID", "Grado", "Seccion", "Asignatura", "ProfesorID", "Estado", "FechaCierre"]);
+  }
+
+  const cierreId = "REV-" + Date.now();
+  const now = new Date();
+
+  sheet.appendRow([cierreId, anoId || "ANO-CURRENT", periodoId, grado, seccion || "A", asignatura, profesorId || "Docente", "PendienteRevision", now]);
+
+  return {
+    status: "success",
+    cierreId,
+    estado: "PendienteRevision",
+    notasPendientesCount: notasPendientesCount || 0,
+    message: `Libro de notas de ${asignatura} (${grado} ${seccion || 'A'}) enviado a revisión de Secretaría/Dirección.`
+  };
+}
+
+function reviewPeriodGradebook(payload) {
+  const { cierreId, decision, observaciones, revisadoPor } = payload || {};
+  if (!cierreId || !decision) throw new Error("cierreId y decision ('Aprobado', 'Observado', 'Publicado') son requeridos.");
+
+  const estadoTarget = decision === "Observado" ? "Observado" : (decision === "Aprobado" ? "Aprobado" : "Cerrado");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CierresPeriodos");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(cierreId).trim());
+
+  if (idx === -1) throw new Error("Registro de período no encontrado.");
+
+  sheet.getRange(idx + 1, 8).setValue(estadoTarget);
+  sheet.getRange(idx + 1, 9).setValue(new Date());
+
+  if (estadoTarget === "Cerrado" || decision === "Publicado") {
+    const targetRow = data[idx];
+    const targetGrado = targetRow ? targetRow[3] : null;
+    const targetSeccion = targetRow ? targetRow[4] : null;
+    const targetAsignatura = targetRow ? targetRow[5] : null;
+
+    publishGradebookForContext(ss, targetGrado, targetSeccion, targetAsignatura);
+  }
+
+  return {
+    status: "success",
+    cierreId,
+    estadoActual: estadoTarget,
+    revisadoPor: revisadoPor || "Secretaría",
+    observaciones: observaciones || "",
+    message: `Revisión completada: Período marcado como '${estadoTarget}'.`
+  };
+}
+
+// [F9-Task06] [P0] - Fortalecer las rectificaciones de notas y la trazabilidad de los cambios
 function reopenPeriodGradebook(payload) {
   const { cierreId, motivo, autorizadoPor } = payload || {};
   if (!cierreId) throw new Error("cierreId es requerido.");
+  if (!motivo || String(motivo).trim().length < 10) {
+    throw new Error("Se requiere una justificación detallada (mínimo 10 caracteres) para reabrir un período cerrado.");
+  }
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "CierresPeriodos");
@@ -1563,7 +1923,121 @@ function reopenPeriodGradebook(payload) {
   if (idx === -1) throw new Error("Registro de cierre no encontrado.");
 
   sheet.getRange(idx + 1, 8).setValue("Reabierto");
-  return { status: "success", message: "Período reabierto para rectificaciones autorizadas." };
+
+  try {
+    const rectSheet = getOrCreateSheet(ss, "HistorialRectificacionesNotas");
+    if (rectSheet.getLastRow() === 0) {
+      rectSheet.appendRow(["RectificacionID", "EvaluacionID", "UserID", "Accion", "NotaAnterior", "NotaNueva", "Motivo", "AutorizadoPor", "Fecha"]);
+    }
+    rectSheet.appendRow([
+      "REAP-" + Date.now(),
+      cierreId,
+      payload && payload._verifiedUserId ? payload._verifiedUserId : (autorizadoPor || "Secretaría"),
+      "REAPERTURA_PERIODO",
+      "Cerrado",
+      "Reabierto",
+      String(motivo).trim(),
+      autorizadoPor || "Secretaría",
+      new Date()
+    ]);
+  } catch (e) {
+    logDebug("Error registrando auditoría de reapertura", e.message);
+  }
+
+  return { status: "success", cierreId, estado: "Reabierto", message: "Período reabierto oficialmente para rectificaciones autorizadas." };
+}
+
+function rectifyStudentGrade(payload) {
+  const { evaluacionId, userId, calificacionId, notaNueva, motivo, autorizadoPor, authRole } = payload || {};
+  if ((!calificacionId && (!evaluacionId || !userId)) || notaNueva === undefined || notaNueva === null) {
+    throw new Error("evaluacionId, userId o calificacionId, y notaNueva son requeridos.");
+  }
+
+  if (!motivo || String(motivo).trim().length < 10) {
+    throw new Error("Se requiere un motivo o justificación de al menos 10 caracteres para rectificar una nota oficial.");
+  }
+
+  const notaNum = parseFloat(notaNueva);
+  if (isNaN(notaNum) || notaNum < 0 || notaNum > 100) {
+    throw new Error("La nueva calificación debe ser un número válido dentro del rango 0 a 100.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CalificacionesEstudiantes");
+  const data = sheet.getDataRange().getValues();
+
+  let targetIdx = -1;
+  if (calificacionId) {
+    targetIdx = data.findIndex(r => String(r[0]).trim() === String(calificacionId).trim());
+  } else {
+    targetIdx = data.findIndex(r => String(r[1]).trim() === String(evaluacionId).trim() && String(r[2]).trim() === String(userId).trim());
+  }
+
+  if (targetIdx === -1) throw new Error("Registro de calificación no encontrado para rectificar.");
+
+  const rowData = data[targetIdx];
+  const notaAnterior = parseFloat(rowData[3]) || 0;
+  const now = new Date();
+
+  sheet.getRange(targetIdx + 1, 4).setValue(notaNum); // NotaObtenida
+  sheet.getRange(targetIdx + 1, 6).setValue(false);   // esBorrador = false
+  sheet.getRange(targetIdx + 1, 7).setValue(true);    // esPublicada = true
+  sheet.getRange(targetIdx + 1, 8).setValue(`RECTIFICADO: ${String(motivo).trim()}`);
+  sheet.getRange(targetIdx + 1, 9).setValue(now);
+
+  const rectSheet = getOrCreateSheet(ss, "HistorialRectificacionesNotas");
+  if (rectSheet.getLastRow() === 0) {
+    rectSheet.appendRow(["RectificacionID", "EvaluacionID", "UserID", "Accion", "NotaAnterior", "NotaNueva", "Motivo", "AutorizadoPor", "Fecha"]);
+  }
+
+  const rectId = "RECT-" + Date.now();
+  rectSheet.appendRow([
+    rectId,
+    evaluacionId || rowData[1],
+    userId || rowData[2],
+    "RECTIFICACION_NOTA",
+    notaAnterior,
+    notaNum,
+    String(motivo).trim(),
+    autorizadoPor || (payload && payload._verifiedUserId) || "Secretaría",
+    now
+  ]);
+
+  return {
+    status: "success",
+    rectificacionId: rectId,
+    notaAnterior: notaAnterior,
+    notaNueva: notaNum,
+    autorizadoPor: autorizadoPor || "Secretaría",
+    message: "Calificación rectificada oficialmente con trazabilidad y auditoría de cambios registrada."
+  };
+}
+
+function getGradeRectificationHistory(payload) {
+  const { userId, evaluacionId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "HistorialRectificacionesNotas");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const history = data.slice(1).filter(r => {
+    if (userId && String(r[2]).trim() !== String(userId).trim()) return false;
+    if (evaluacionId && String(r[1]).trim() !== String(evaluacionId).trim()) return false;
+    return true;
+  }).map(r => ({
+    rectificacionId: r[0],
+    evaluacionId: r[1],
+    userId: r[2],
+    accion: r[3],
+    notaAnterior: parseFloat(r[4]) || 0,
+    notaNueva: parseFloat(r[5]) || 0,
+    motivo: r[6],
+    autorizadoPor: r[7],
+    fecha: r[8] ? new Date(r[8]).toISOString() : null
+  }));
+
+  return { status: "success", data: history };
 }
 
 function getStudentAcademicReport(payload) {

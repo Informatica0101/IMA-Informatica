@@ -174,7 +174,7 @@ const ROLE_PERMISSIONS = {
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion", "checkAndNotifyExpiringStudentDocuments",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity", "reconcileInstitutionalModulesMatrix",
-    "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
+    "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "checkAndDispatchAttendanceAlerts", "getAttendanceConfig", "saveAttendanceConfig",
     "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches"
   ],
   "Subdirector": [
@@ -184,7 +184,7 @@ const ROLE_PERMISSIONS = {
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "getStudentFile", "getStudentTimeline", "findDuplicateStudents",
     "getStudentGuardians", "getStudentDocuments", "getStudentEnrollments", "checkEnrollmentCapacity",
-    "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
+    "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
     "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans"
   ],
   "Secretaría": [
@@ -215,7 +215,8 @@ const ROLE_PERMISSIONS = {
   "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope"],
   "Desarrollador": ["getAcademicConfig", "getAcademicHistory", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "configureAcademicLevelsAndDynamicStorage"],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
-  "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"],
+  "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "scheduleCounselingAppointment", "recordCounselingSessionAct", "referCounselingCase", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary"],
+  "Orientacion": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary"],
   "Padre": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory",
     "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
@@ -244,12 +245,13 @@ const ROLE_PERMISSIONS = {
     "runAcademicPlanningRegressionSuite",
     "saveCurricularConstraint", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule", "getReusableResourceCatalog", "manageReusableResource",
     "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentEnrollments",
-    "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
-    "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans"
+    "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
+    "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans",
+    "calculateUnifiedAcademicGrade", "previewAcademicGradeCalculation", "auditAcademicGradesIntegrity", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess", "exportAcademicGradesData"
   ],
-  "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentTimeline", "getClassAttendance", "getStudentAttendanceSummary"],
-  "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "calculateUnifiedAcademicGrade"],
-  "Alumno": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicPeriods", "getAcademicOffers", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents"]
+  "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentTimeline", "getClassAttendance", "getStudentAttendanceSummary", "auditAssistantDelegatedAction"],
+  "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "calculateUnifiedAcademicGrade", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess"],
+  "Alumno": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicPeriods", "getAcademicOffers", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess"]
 };
 
 const PUBLIC_ACTIONS = ["ping", "createAdmissionRequest", "getPublicAdmissionStatus", "saveAdmissionDraft", "getAdmissionDraft", "getServiceHealthDiagnostics"];
@@ -502,6 +504,7 @@ function validateRolePermission(action, payload) {
       if (payload) {
         payload._delegatedFrom = activeDel.delegante;
         payload._delegationId = activeDel.delId;
+        payload._executorUserId = verifiedId;
       }
       return { authorized: true, role: userRole + " (Delegado de " + activeDel.delegante + ")" };
     }
@@ -646,6 +649,11 @@ function doPost(e) {
       case "generateInstitutionalReport": result = generateInstitutionalReport(payload); break;
       case "getSectionEquivalences": result = getSectionEquivalences(payload); break;
       case "calculateUnifiedAcademicGrade": result = calculateUnifiedAcademicGrade(payload); break;
+      case "previewAcademicGradeCalculation": result = previewAcademicGradeCalculation(payload); break;
+      case "auditAcademicGradesIntegrity": result = auditAcademicGradesIntegrity(payload); break;
+      case "generateStudentReportCard": result = generateStudentReportCard(payload); break;
+      case "validateAcademicResponsibilityAndScopeAccess": result = validateAcademicResponsibilityAndScopeAccess(payload); break;
+      case "exportAcademicGradesData": result = exportAcademicGradesData(payload); break;
 
       // Endpoints Fase 3
       case "getInstitutionParams": result = getInstitutionParams(payload); break;
@@ -830,6 +838,7 @@ function doPost(e) {
       // Endpoints Fase 7 - Asistencia y Seguimiento Estudiantil
       case "openAttendanceSession": result = openAttendanceSession(payload); break;
       case "saveClassAttendance": result = saveClassAttendance(payload); break;
+      case "bulkApplyAttendanceStatus": result = bulkApplyAttendanceStatus(payload); break;
       case "getClassAttendance": result = getClassAttendance(payload); break;
       case "saveDailyAttendance": result = saveDailyAttendance(payload); break;
       case "getDailyAttendance": result = getDailyAttendance(payload); break;
@@ -838,10 +847,23 @@ function doPost(e) {
       case "recordEarlyDeparture": result = recordEarlyDeparture(payload); break;
       case "getAttendanceIncidents": result = getAttendanceIncidents(payload); break;
       case "saveAttendanceIncident": result = saveAttendanceIncident(payload); break;
+      case "updateAttendanceIncidentStatus": result = updateAttendanceIncidentStatus(payload); break;
       case "getAttendanceFollowupCases": result = getAttendanceFollowupCases(payload); break;
       case "saveAttendanceFollowupCase": result = saveAttendanceFollowupCase(payload); break;
       case "addCaseFollowUpNote": result = addCaseFollowUpNote(payload); break;
+      case "addCaseCommitment": result = addCaseCommitment(payload); break;
+      case "updateCaseCommitmentStatus": result = updateCaseCommitmentStatus(payload); break;
+      case "scheduleCounselingAppointment": result = scheduleCounselingAppointment(payload); break;
+      case "recordCounselingSessionAct": result = recordCounselingSessionAct(payload); break;
+      case "referCounselingCase": result = referCounselingCase(payload); break;
+      case "saveGuidanceFollowupPlan": result = saveGuidanceFollowupPlan(payload); break;
+      case "saveVocationalRecommendation": result = saveVocationalRecommendation(payload); break;
+      case "auditAssistantDelegatedAction": result = auditAssistantDelegatedAction(payload); break;
+      case "validateEvidenceFileAndPermissions": result = validateEvidenceFileAndPermissions(payload); break;
       case "getStudentAttendanceSummary": result = getStudentAttendanceSummary(payload); break;
+      case "checkAndDispatchAttendanceAlerts": result = checkAndDispatchAttendanceAlerts(payload); break;
+      case "getAttendanceConfig": result = getAttendanceConfig(payload); break;
+      case "saveAttendanceConfig": result = saveAttendanceConfig(payload); break;
 
       // Endpoints Fase 13 - Supervisión Docente y Calidad Educativa
       case "createTeacherSupervision": result = createTeacherSupervision(payload); break;
@@ -1061,6 +1083,67 @@ function getAdmissionRequests(payload) {
       totalPages: totalPages
     }
   };
+}
+
+// [F10-Task03] [P1] - Fortalecer el modelo de asistencia y su configuración institucional
+function getAttendanceConfig(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ConfiguracionAcademica");
+
+  let config = {
+    modalidad: "DiariaYPorClase",
+    codigosPermitidos: ["Presente", "Ausente", "Tardanza", "Justificada", "SalidaAnticipada", "Exento"],
+    minutosTardanzaLimite: 15,
+    porcentajeAsistenciaMinimo: 85,
+    requiereAprobacionJustificacion: true
+  };
+
+  const data = sheet.getDataRange().getValues();
+  if (data.length > 1) {
+    for (let i = 1; i < data.length; i++) {
+      const clave = String(data[i][0] || "").trim();
+      const val = data[i][1];
+      if (clave === "CONFIG_ASISTENCIA_MODALIDAD") config.modalidad = String(val).trim();
+      else if (clave === "CONFIG_ASISTENCIA_CODIGOS") {
+        try { config.codigosPermitidos = JSON.parse(val); } catch (e) {}
+      } else if (clave === "CONFIG_ASISTENCIA_MINUTOS_TARDANZA") config.minutosTardanzaLimite = parseInt(val) || 15;
+      else if (clave === "CONFIG_ASISTENCIA_PORCENTAJE_MIN") config.porcentajeAsistenciaMinimo = parseFloat(val) || 85;
+      else if (clave === "CONFIG_ASISTENCIA_REQUIERE_APROBACION") config.requiereAprobacionJustificacion = val === true || String(val).toLowerCase() === "true";
+    }
+  }
+
+  return { status: "success", config };
+}
+
+function saveAttendanceConfig(payload) {
+  const { modalidad, codigosPermitidos, minutosTardanzaLimite, porcentajeAsistenciaMinimo, requiereAprobacionJustificacion, authRole, userId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ConfiguracionAcademica");
+
+  const settingsToSave = [
+    { clave: "CONFIG_ASISTENCIA_MODALIDAD", val: modalidad || "DiariaYPorClase", mod: "ASISTENCIA", desc: "Modalidad de registro de asistencia" },
+    { clave: "CONFIG_ASISTENCIA_CODIGOS", val: JSON.stringify(codigosPermitidos || ["Presente", "Ausente", "Tardanza", "Justificada", "SalidaAnticipada", "Exento"]), mod: "ASISTENCIA", desc: "Códigos de asistencia válidos" },
+    { clave: "CONFIG_ASISTENCIA_MINUTOS_TARDANZA", val: minutosTardanzaLimite || 15, mod: "ASISTENCIA", desc: "Límite de minutos de tardanza" },
+    { clave: "CONFIG_ASISTENCIA_PORCENTAJE_MIN", val: porcentajeAsistenciaMinimo || 85, mod: "ASISTENCIA", desc: "Porcentaje mínimo de asistencia" },
+    { clave: "CONFIG_ASISTENCIA_REQUIERE_APROBACION", val: requiereAprobacionJustificacion !== false, mod: "ASISTENCIA", desc: "Aprobación obligatoria de justificantes" }
+  ];
+
+  const now = new Date();
+  const data = sheet.getDataRange().getValues();
+
+  settingsToSave.forEach(s => {
+    const idx = data.findIndex(r => String(r[0]).trim() === s.clave);
+    if (idx !== -1) {
+      sheet.getRange(idx + 1, 2).setValue(s.val);
+      sheet.getRange(idx + 1, 5).setValue(now);
+    } else {
+      sheet.appendRow([s.clave, s.val, s.mod, s.desc, now]);
+    }
+  });
+
+  logStructuredEvent("ACADEMIC", "saveAttendanceConfig", "INFO", "ATTENDANCE_CONFIG_SAVED", `Configuración institucional de asistencia guardada. Modalidad: ${modalidad || 'DiariaYPorClase'}`, { modalidad, userId }, authRole || "Administrador");
+
+  return { status: "success", message: "Configuración institucional de asistencia actualizada exitosamente." };
 }
 
 // [TAREA-F6-023] [Fase 6: Expediente Institucional y Ciclo de Vida] - Resumen unificado e institucional del expediente contextualizado por perfil autorizado
@@ -2130,6 +2213,76 @@ function assertRecordOwnership(authRole, authenticatedUserId, targetUserId, reso
     return { authorized: false, reason: "AUTH_PERMISSION_DENIED" };
   }
   return { authorized: true };
+}
+
+// [F10-Task13] [P1] - Mejorar la gestión de evidencias y documentos sensibles
+function validateEvidenceFileAndPermissions(payload) {
+  const { fileId, mimeType, sizeBytes, sessionToken, token, authRole } = payload || {};
+  const targetToken = sessionToken || token || (payload && payload.token);
+
+  if (!fileId) throw new Error("Parámetro obligatorio ausente: fileId.");
+
+  // Validar token de sesión y autenticación
+  const claims = verifySessionToken(targetToken);
+  if (!claims && !payload._verifiedUserId) {
+    return {
+      status: "error",
+      code: "AUTH_PERMISSION_DENIED",
+      message: "Acceso denegado: Se requiere una sesión autenticada para acceder a archivos de evidencia sensible."
+    };
+  }
+
+  // Validar tamaño máximo (default 10 MB)
+  const maxSizeBytes = 10 * 1024 * 1024;
+  if (sizeBytes && parseInt(sizeBytes) > maxSizeBytes) {
+    return {
+      status: "error",
+      code: "FILE_TOO_LARGE",
+      message: "El archivo de evidencia excede el límite máximo permitido de 10 MB."
+    };
+  }
+
+  // Validar tipo MIME permitido
+  const allowedMimeTypes = ["application/pdf", "image/png", "image/jpeg", "image/jpg", "image/webp"];
+  if (mimeType && allowedMimeTypes.indexOf(String(mimeType).toLowerCase().trim()) === -1) {
+    return {
+      status: "error",
+      code: "UNSUPPORTED_FILE_TYPE",
+      message: "Formato de archivo no permitido. Únicamente se admiten documentos PDF e imágenes (PNG, JPG, WEBP)."
+    };
+  }
+
+  try {
+    const file = DriveApp.getFileById(fileId);
+    const actualMime = file.getMimeType();
+    const actualSize = file.getSize();
+
+    if (actualSize > maxSizeBytes) {
+      return {
+        status: "error",
+        code: "FILE_TOO_LARGE",
+        message: "El archivo de evidencia almacenado excede el límite permitido de 10 MB."
+      };
+    }
+
+    logStructuredEvent("ACADEMIC", "validateEvidenceFileAndPermissions", "INFO", "EVIDENCE_FILE_VALIDATED", `Archivo de evidencia ${fileId} verificado para usuario ${claims ? claims.userId : (payload._verifiedUserId || 'Autenticado')}`, { fileId, actualMime, actualSize }, authRole || (claims ? claims.role : "Autenticado"));
+
+    return {
+      status: "success",
+      fileId,
+      fileName: file.getName(),
+      mimeType: actualMime,
+      fileSizeMb: (actualSize / (1024 * 1024)).toFixed(2),
+      isPdf: actualMime === "application/pdf",
+      previewUrl: "https://drive.google.com/file/d/" + fileId + "/preview",
+      message: "Archivo de evidencia verificado y protegido de acceso no autenticado."
+    };
+  } catch (e) {
+    return {
+      status: "error",
+      message: "Error al verificar archivo de evidencia en Google Drive: " + e.message
+    };
+  }
 }
 
 // [T-GOV-03] [Fase Gobernanza y Seguridad] - Proxy de descarga segura y autorización de adjuntos en Google Drive
@@ -7200,6 +7353,7 @@ function openAttendanceSession(payload) {
   return { status: "success", message: "Sesión de asistencia abierta.", data: { sesionId } };
 }
 
+// [F10-Task04] [P1] - Optimizar el registro masivo de asistencia y la gestión de sesiones
 function saveClassAttendance(payload) {
   const { sesionId, registros } = payload || {};
   if (!sesionId || !Array.isArray(registros)) throw new Error("sesionId y lista de registros son requeridos.");
@@ -7256,6 +7410,89 @@ function saveClassAttendance(payload) {
   }
 
   return { status: "success", message: `Asistencia guardada para ${savedCount} estudiantes.` };
+}
+
+function bulkApplyAttendanceStatus(payload) {
+  const { sesionId, estudiantes, estadoAsistencia, observacionDocente, sobrescribirExistentes } = payload || {};
+  if (!sesionId || !Array.isArray(estudiantes) || estudiantes.length === 0 || !estadoAsistencia) {
+    return { status: "error", message: "sesionId, estudiantes y estadoAsistencia son requeridos para aplicación masiva de asistencia." };
+  }
+
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(10000);
+  } catch (e) {
+    return { status: "error", message: "El servidor está ocupado procesando otra actualización masiva de asistencia. Intente de nuevo." };
+  }
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
+    if (regSheet.getLastRow() === 0) {
+      regSheet.appendRow(["RegistroID", "SesionID", "UserId", "EstadoAsistencia", "HoraLlegada", "MinutosTardanza", "Justificado", "ObservacionDocente", "FechaRegistro"]);
+    }
+
+    const data = regSheet.getDataRange().getValues();
+    const now = new Date();
+    let aplicados = 0;
+    let omitidos = 0;
+
+    const indexMap = {};
+    for (let i = 1; i < data.length; i++) {
+      const key = `${String(data[i][1]).trim()}_${String(data[i][2]).trim()}`;
+      indexMap[key] = i;
+    }
+
+    estudiantes.forEach(uId => {
+      const studentIdStr = String(uId).trim();
+      if (!studentIdStr) return;
+
+      const key = `${String(sesionId).trim()}_${studentIdStr}`;
+      if (key in indexMap) {
+        const idx = indexMap[key];
+        const estadoActual = String(data[idx][3] || "").trim();
+        if (!sobrescribirExistentes && estadoActual && estadoActual !== "Presente") {
+          omitidos++;
+          return;
+        }
+        data[idx][3] = estadoAsistencia;
+        if (observacionDocente) data[idx][7] = observacionDocente;
+        data[idx][8] = now;
+        aplicados++;
+      } else {
+        const regId = "REG-AST-BULK-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+        const newRow = [
+          regId,
+          sesionId,
+          studentIdStr,
+          estadoAsistencia,
+          "",
+          0,
+          false,
+          observacionDocente || "Registro masivo de asistencia",
+          now
+        ];
+        data.push(newRow);
+        indexMap[key] = data.length - 1;
+        aplicados++;
+      }
+    });
+
+    if (data.length > 1) {
+      regSheet.getRange(1, 1, data.length, data[0].length).setValues(data);
+    }
+
+    return {
+      status: "success",
+      sesionId,
+      totalProcesados: estudiantes.length,
+      aplicados,
+      omitidos,
+      message: `Estado de asistencia (${estadoAsistencia}) aplicado masivamente a ${aplicados} estudiante(s). ${omitidos} omitido(s).`
+    };
+  } finally {
+    try { lock.releaseLock(); } catch (e) {}
+  }
 }
 
 function getClassAttendance(payload) {
@@ -7349,6 +7586,7 @@ function getDailyAttendance(payload) {
   return { status: "success", data: records };
 }
 
+// [F10-Task05] [P1] - Ampliar la gestión de justificaciones, permisos y salidas anticipadas
 function submitAttendanceJustification(payload) {
   const { userId, fechaAfectada, periodo, motivoDeclarado, adjuntoUrl, presentadoPor } = payload || {};
   if (!userId || !fechaAfectada || !motivoDeclarado) throw new Error("userId, fechaAfectada y motivoDeclarado son requeridos.");
@@ -7377,8 +7615,13 @@ function submitAttendanceJustification(payload) {
 }
 
 function reviewAttendanceJustification(payload) {
-  const { justificacionId, nuevoEstado, revisadoPor, observacionesAdmin } = payload || {};
+  const { justificacionId, nuevoEstado, revisadoPor, observacionesAdmin, authRole } = payload || {};
   if (!justificacionId || !nuevoEstado) throw new Error("justificacionId y nuevoEstado son requeridos.");
+
+  const validStates = ["Presentada", "Pendiente", "RequiereInformacion", "Aprobada", "Aprobado", "Rechazada", "Rechazado", "Cancelada"];
+  if (validStates.indexOf(String(nuevoEstado).trim()) === -1) {
+    throw new Error(`Estado de revisión '${nuevoEstado}' no válido. Estados permitidos: ${validStates.join(", ")}`);
+  }
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "JustificacionesAsistencia");
@@ -7394,19 +7637,49 @@ function reviewAttendanceJustification(payload) {
   if (nuevoEstado === "Aprobada" || nuevoEstado === "Aprobado") {
     try {
       const targetUserId = String(data[idx][1]).trim();
+      const rawFechaAf = data[idx][2];
+      const targetFechaStr = rawFechaAf ? (rawFechaAf instanceof Date ? rawFechaAf.toISOString().split('T')[0] : String(rawFechaAf).trim().split('T')[0]) : "";
+
       const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
       const regData = regSheet.getDataRange().getValues();
 
+      const sesSheet = getOrCreateSheet(ss, "SesionesAsistencia");
+      const sesData = sesSheet.getDataRange().getValues();
+      const sesionFechaMap = {};
+      for (let s = 1; s < sesData.length; s++) {
+        const sId = String(sesData[s][0]).trim();
+        const sFecha = sesData[s][1] instanceof Date ? sesData[s][1].toISOString().split('T')[0] : String(sesData[s][1]).trim().split('T')[0];
+        sesionFechaMap[sId] = sFecha;
+      }
+
       for (let i = 1; i < regData.length; i++) {
         if (String(regData[i][2]).trim() === targetUserId) {
-          regSheet.getRange(i + 1, 7).setValue(true); // Justificado = true
-          regSheet.getRange(i + 1, 4).setValue("Justificada"); // EstadoAsistencia = Justificada
+          const sesId = String(regData[i][1]).trim();
+          let regFechaStr = "";
+          if (sesId in sesionFechaMap) {
+            regFechaStr = sesionFechaMap[sesId];
+          } else if (sesId.indexOf("SES-DIARIA-") === 0) {
+            const parts = sesId.split("-");
+            if (parts.length >= 5) {
+              regFechaStr = `${parts[2]}-${parts[3]}-${parts[4]}`;
+            }
+          }
+          if (!regFechaStr && regData[i][8]) {
+            regFechaStr = regData[i][8] instanceof Date ? regData[i][8].toISOString().split('T')[0] : String(regData[i][8]).trim().split('T')[0];
+          }
+
+          if (!targetFechaStr || !regFechaStr || regFechaStr === targetFechaStr) {
+            regSheet.getRange(i + 1, 7).setValue(true); // Justificado = true
+            regSheet.getRange(i + 1, 4).setValue("Justificada"); // EstadoAsistencia = Justificada
+          }
         }
       }
     } catch (e) {
       logDebug("Error actualizando asistencia a Justificada", e.message);
     }
   }
+
+  logStructuredEvent("ACADEMIC", "reviewAttendanceJustification", "INFO", "ATTENDANCE_JUSTIFICATION_REVIEWED", `Justificación ${justificacionId} cambiada a estado ${nuevoEstado}`, { justificacionId, nuevoEstado, revisadoPor }, authRole || "Secretaría");
 
   return { status: "success", message: `Justificación cambiada a ${nuevoEstado}.` };
 }
@@ -7480,6 +7753,7 @@ function getAttendanceIncidents(payload) {
   return { status: "success", data: incidents };
 }
 
+// [F10-Task07] [P1] - Completar el ciclo de vida de las incidencias de convivencia escolar
 function saveAttendanceIncident(payload) {
   const { userId, tipoIncidencia, descripcion, reportadoPor } = payload || {};
   if (!userId || !tipoIncidencia) throw new Error("userId y tipoIncidencia son requeridos.");
@@ -7500,18 +7774,97 @@ function saveAttendanceIncident(payload) {
     reportadoPor || "Docente"
   ]);
 
-  return { status: "success", message: "Incidencia de asistencia registrada.", data: { incidenciaId: incId } };
+  logStructuredEvent("ACADEMIC", "saveAttendanceIncident", "INFO", "ATTENDANCE_INCIDENT_REPORTED", `Incidencia ${incId} reportada para ${userId}`, { incidenciaId: incId, userId, tipoIncidencia }, payload && payload.authRole || "Docente");
+
+  return { status: "success", message: "Incidencia de asistencia registrada en estado 'Reportada'.", data: { incidenciaId: incId } };
 }
 
-function getAttendanceFollowupCases(payload) {
-  const { userId } = payload || {};
+function updateAttendanceIncidentStatus(payload) {
+  const { incidenciaId, nuevoEstado, resolucion, medidasCorrectivas, revisadoPor, authRole } = payload || {};
+  if (!incidenciaId || !nuevoEstado) throw new Error("incidenciaId y nuevoEstado son requeridos.");
+
+  const validLifecycleStates = ["Reportada", "PendienteRevision", "EnInvestigacion", "Confirmada", "Cerrada", "Reabierta"];
+  const cleanState = String(nuevoEstado).trim();
+  if (validLifecycleStates.indexOf(cleanState) === -1) {
+    throw new Error(`Estado de incidencia '${nuevoEstado}' no válido. Estados válidos: ${validLifecycleStates.join(", ")}`);
+  }
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "IncidenciasAsistencia");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(incidenciaId).trim());
+  if (idx === -1) throw new Error("Incidencia disciplinaria/convivencia no encontrada.");
+
+  const estadoAnterior = String(data[idx][5] || "Reportada").trim();
+  const targetUserId = String(data[idx][1]).trim();
+  const now = new Date();
+
+  sheet.getRange(idx + 1, 6).setValue(cleanState); // Estado
+
+  const obsPrevias = String(data[idx][3] || "").trim();
+  const notaAdicional = [
+    resolucion ? `Resolución: ${resolucion}` : "",
+    medidasCorrectivas ? `Medidas Correctivas: ${medidasCorrectivas}` : "",
+    revisadoPor ? `Revisado por: ${revisadoPor}` : ""
+  ].filter(Boolean).join(" | ");
+
+  if (notaAdicional) {
+    const descActualizada = obsPrevias ? `${obsPrevias} \n[${now.toISOString().split('T')[0]} - ${cleanState}]: ${notaAdicional}` : `[${now.toISOString().split('T')[0]} - ${cleanState}]: ${notaAdicional}`;
+    sheet.getRange(idx + 1, 4).setValue(descActualizada);
+  }
+
+  logStructuredEvent("ACADEMIC", "updateAttendanceIncidentStatus", "INFO", "ATTENDANCE_INCIDENT_STATUS_UPDATED", `Estado de incidencia ${incidenciaId} modificado de '${estadoAnterior}' a '${cleanState}'`, { incidenciaId, estadoAnterior, nuevoEstado: cleanState, revisadoPor }, authRole || "Consejería");
+
+  return {
+    status: "success",
+    incidenciaId,
+    estadoAnterior,
+    nuevoEstado: cleanState,
+    message: `Estado de la incidencia ${incidenciaId} actualizado exitosamente a '${cleanState}'.`
+  };
+}
+
+// [F10-Task01] [P0] - Fortalecer la confidencialidad y el control de acceso a expedientes sensibles
+function getAttendanceFollowupCases(payload) {
+  const { userId, authRole, casoId } = payload || {};
+  const roleUpper = String(authRole || (payload && payload._verifiedRole) || "").toUpperCase();
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  let nivelVisibilidad = "RESTRINGIDO_ROL";
+  try {
+    const configSheet = ss.getSheetByName("ConfiguracionAcademica");
+    if (configSheet) {
+      const configData = configSheet.getDataRange().getValues();
+      const rowVis = configData.slice(1).find(r => String(r[0]).trim() === "NIVEL_VISIBILIDAD_CONSEJERIA");
+      if (rowVis && rowVis[1]) nivelVisibilidad = String(rowVis[1]).trim().toUpperCase();
+    }
+  } catch (e) {
+    logDebug("Error leyendo NIVEL_VISIBILIDAD_CONSEJERIA", e.message);
+  }
+
   const sheet = getOrCreateSheet(ss, "CasosSeguimiento");
   const data = sheet.getDataRange().getValues();
   if (data.length <= 1) return { status: "success", data: [] };
 
+  const isFullAccessRole = ["ADMINISTRADOR", "ADMIN", "DIRECTOR", "DIRECCION", "CONSEJEROS", "CONSEJERO", "ORIENTACION", "ORIENTADOR"].indexOf(roleUpper) >= 0;
+
+  let fueBloqueadoAcceso = false;
+
   const cases = data.slice(1).filter(r => {
+    if (casoId && String(r[0]).trim() !== String(casoId).trim()) return false;
     if (userId && String(r[1]).trim() !== String(userId).trim()) return false;
+
+    const resumen = String(r[3] || "");
+    const responsable = String(r[4] || "");
+    const esCasoConfidencial = resumen.indexOf("Categoría: Consejería") >= 0 || resumen.indexOf("Categoría: Orientación") >= 0 || responsable.indexOf("Consejer") >= 0 || responsable.indexOf("Orientac") >= 0;
+
+    if (esCasoConfidencial && !isFullAccessRole && nivelVisibilidad !== "COMPARTIDO_DOCENTE") {
+      fueBloqueadoAcceso = true;
+      return false;
+    }
+
     return true;
   }).map(r => ({
     casoId: r[0],
@@ -7525,7 +7878,11 @@ function getAttendanceFollowupCases(payload) {
     fechaCierre: r[8] ? new Date(r[8]).toISOString() : null
   }));
 
-  return { status: "success", data: cases };
+  if (fueBloqueadoAcceso && !isFullAccessRole) {
+    logStructuredEvent("ACADEMIC", "getAttendanceFollowupCases", "WARN", "UNAUTHORIZED_ACCESS_ATTEMPT", `Acceso no autorizado o restringido a casos confidenciales para rol '${roleUpper}'.`, { userId, casoId }, roleUpper);
+  }
+
+  return { status: "success", data: cases, nivelVisibilidad };
 }
 
 function saveAttendanceFollowupCase(payload) {
@@ -7572,6 +7929,279 @@ function saveAttendanceFollowupCase(payload) {
   return { status: "success", message: "Caso de seguimiento guardado exitosamente.", data: { casoId: cid } };
 }
 
+// [F10-Task08] [P1] - Estructurar el seguimiento de compromisos, intervenciones y evidencias
+function addCaseCommitment(payload) {
+  const { casoId, compromiso, fechaLimite, responsable, evidenciaUrl, autorId, authRole } = payload || {};
+  if (!casoId || !compromiso) throw new Error("casoId y compromiso son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CasosSeguimiento");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(casoId).trim());
+  if (idx === -1) throw new Error("Caso de seguimiento no encontrado.");
+
+  const currentAcciones = data[idx][5] ? (typeof data[idx][5] === 'string' ? JSON.parse(data[idx][5]) : data[idx][5]) : [];
+  const compromisoId = "COM-AST-" + Date.now();
+  const nowStr = new Date().toISOString();
+
+  const newCommitment = {
+    compromisoId,
+    tipo: "Compromiso",
+    compromiso: String(compromiso).trim(),
+    fechaCreacion: nowStr,
+    fechaLimite: fechaLimite || null,
+    responsable: responsable || "Estudiante/Tutor",
+    estadoCumplimiento: "Pendiente",
+    evidenciaUrl: evidenciaUrl || "",
+    autor: autorId || "Orientación/Consejería"
+  };
+
+  currentAcciones.push(newCommitment);
+  sheet.getRange(idx + 1, 6).setValue(JSON.stringify(currentAcciones));
+
+  logStructuredEvent("ACADEMIC", "addCaseCommitment", "INFO", "CASE_COMMITMENT_ADDED", `Compromiso ${compromisoId} registrado en caso ${casoId}`, { casoId, compromisoId }, authRole || "Consejería");
+
+  return {
+    status: "success",
+    message: "Compromiso/Intervención estructurada registrada exitosamente.",
+    data: newCommitment
+  };
+}
+
+function updateCaseCommitmentStatus(payload) {
+  const { casoId, compromisoId, nuevoEstado, observaciones, evidenciaUrl, autorId, authRole } = payload || {};
+  if (!casoId || !compromisoId || !nuevoEstado) throw new Error("casoId, compromisoId y nuevoEstado son requeridos.");
+
+  const validStates = ["Pendiente", "EnProceso", "Cumplido", "Incumplido", "Reprogramado"];
+  const cleanState = String(nuevoEstado).trim();
+  if (validStates.indexOf(cleanState) === -1) {
+    throw new Error(`Estado de compromiso '${nuevoEstado}' no válido. Estados válidos: ${validStates.join(", ")}`);
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CasosSeguimiento");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(casoId).trim());
+  if (idx === -1) throw new Error("Caso de seguimiento no encontrado.");
+
+  const currentAcciones = data[idx][5] ? (typeof data[idx][5] === 'string' ? JSON.parse(data[idx][5]) : data[idx][5]) : [];
+  const targetItem = currentAcciones.find(item => item && String(item.compromisoId).trim() === String(compromisoId).trim());
+
+  if (!targetItem) throw new Error("Compromiso no encontrado dentro de las acciones del caso.");
+
+  const estadoAnterior = targetItem.estadoCumplimiento || "Pendiente";
+  targetItem.estadoCumplimiento = cleanState;
+  targetItem.fechaActualizacion = new Date().toISOString();
+  if (observaciones) targetItem.observaciones = observaciones;
+  if (evidenciaUrl) targetItem.evidenciaUrl = evidenciaUrl;
+
+  sheet.getRange(idx + 1, 6).setValue(JSON.stringify(currentAcciones));
+
+  logStructuredEvent("ACADEMIC", "updateCaseCommitmentStatus", "INFO", "CASE_COMMITMENT_STATUS_UPDATED", `Estado de compromiso ${compromisoId} modificado a '${cleanState}'`, { casoId, compromisoId, estadoAnterior, nuevoEstado: cleanState }, authRole || "Consejería");
+
+  return {
+    status: "success",
+    casoId,
+    compromisoId,
+    estadoAnterior,
+    nuevoEstado: cleanState,
+    message: `Estado del compromiso actualizado exitosamente a '${cleanState}'.`
+  };
+}
+
+// [F10-Task09] [P1] - Completar el modelo funcional de consejería escolar
+function scheduleCounselingAppointment(payload) {
+  const { userId, consejeroUserId, fechaHora, motivo, modalidad, observaciones, authRole } = payload || {};
+  if (!userId || !fechaHora || !motivo) throw new Error("userId, fechaHora y motivo son requeridos para agendar cita de consejería.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const citaId = "CITA-CNS-" + Date.now();
+  const now = new Date();
+
+  // Save/Update in CasosSeguimiento as a Counseling Appointment Activity
+  const caseRes = saveAttendanceFollowupCase({
+    userId,
+    motivoApertura: `Cita de Consejería Escolar: ${motivo}`,
+    resumenAsistencia: `Categoría: Consejería | Modalidad: ${modalidad || 'Presencial'} | Fecha: ${fechaHora}`,
+    responsableId: consejeroUserId || "Consejería",
+    estado: "Abierto",
+    categoriaCaso: "Consejería"
+  });
+
+  logStructuredEvent("ACADEMIC", "scheduleCounselingAppointment", "INFO", "COUNSELING_APPOINTMENT_SCHEDULED", `Cita de consejería ${citaId} agendada para ${userId}`, { citaId, userId, fechaHora, motivo }, authRole || "Consejería");
+
+  return {
+    status: "success",
+    citaId,
+    userId,
+    casoId: caseRes.data ? caseRes.data.casoId : null,
+    message: "Cita de consejería escolar agendada exitosamente."
+  };
+}
+
+function recordCounselingSessionAct(payload) {
+  const { casoId, userId, resumenSesion, notasConfidenciales, acuerdos, proximaCita, consejeroUserId, authRole } = payload || {};
+  if (!casoId || !resumenSesion) throw new Error("casoId y resumenSesion son requeridos para registrar acta de consejería.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CasosSeguimiento");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(casoId).trim());
+  if (idx === -1) throw new Error("Caso de seguimiento/consejería no encontrado.");
+
+  const currentAcciones = data[idx][5] ? (typeof data[idx][5] === 'string' ? JSON.parse(data[idx][5]) : data[idx][5]) : [];
+  const actaId = "ACTA-CNS-" + Date.now();
+  const nowStr = new Date().toISOString();
+
+  const newActa = {
+    actaId,
+    tipo: "ActaConsejería",
+    resumenSesion: String(resumenSesion).trim(),
+    notasConfidenciales: notasConfidenciales ? String(notasConfidenciales).trim() : "",
+    acuerdos: acuerdos || [],
+    proximaCita: proximaCita || null,
+    fechaRegistro: nowStr,
+    consejeroUserId: consejeroUserId || "Consejería"
+  };
+
+  currentAcciones.push(newActa);
+  sheet.getRange(idx + 1, 6).setValue(JSON.stringify(currentAcciones));
+
+  logStructuredEvent("ACADEMIC", "recordCounselingSessionAct", "INFO", "COUNSELING_ACT_RECORDED", `Acta de consejería ${actaId} registrada en caso ${casoId}`, { casoId, actaId }, authRole || "Consejería");
+
+  return {
+    status: "success",
+    actaId,
+    casoId,
+    message: "Acta de sesión de consejería registrada de forma inmutable."
+  };
+}
+
+function referCounselingCase(payload) {
+  const { casoId, destinoDerivacion, motivoDerivacion, profesionalExterno, derivadoPor, authRole } = payload || {};
+  if (!casoId || !destinoDerivacion || !motivoDerivacion) {
+    throw new Error("casoId, destinoDerivacion y motivoDerivacion son requeridos para derivar el caso de consejería.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CasosSeguimiento");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(casoId).trim());
+  if (idx === -1) throw new Error("Caso de consejería no encontrado.");
+
+  const currentAcciones = data[idx][5] ? (typeof data[idx][5] === 'string' ? JSON.parse(data[idx][5]) : data[idx][5]) : [];
+  const derivacionId = "DERIV-CNS-" + Date.now();
+  const nowStr = new Date().toISOString();
+
+  const newDerivation = {
+    derivacionId,
+    tipo: "DerivaciónProfesional",
+    destinoDerivacion: String(destinoDerivacion).trim(),
+    motivoDerivacion: String(motivoDerivacion).trim(),
+    profesionalExterno: profesionalExterno || "Especialista Externo / Psicología / Salud",
+    derivadoPor: derivadoPor || "Consejería Escolar",
+    fechaDerivacion: nowStr,
+    estadoDerivacion: "Derivado"
+  };
+
+  currentAcciones.push(newDerivation);
+  sheet.getRange(idx + 1, 6).setValue(JSON.stringify(currentAcciones));
+  sheet.getRange(idx + 1, 7).setValue("Derivado"); // Estado del caso
+
+  logStructuredEvent("ACADEMIC", "referCounselingCase", "INFO", "COUNSELING_CASE_REFERRED", `Caso ${casoId} derivado a ${destinoDerivacion}`, { casoId, derivacionId, destinoDerivacion }, authRole || "Consejería");
+
+  return {
+    status: "success",
+    derivacionId,
+    casoId,
+    destinoDerivacion,
+    message: `Caso de consejería derivado exitosamente a '${destinoDerivacion}'.`
+  };
+}
+
+// [F10-Task10] [P1] - Completar el modelo funcional de orientación académica y vocacional
+function saveGuidanceFollowupPlan(payload) {
+  const { userId, metasAprendizaje, intervencionesPedagogicas, observaciones, fechaRevision, orientadorUserId, authRole } = payload || {};
+  if (!userId || !metasAprendizaje) throw new Error("userId y metasAprendizaje son requeridos para el plan de orientación académica.");
+
+  const planId = "PLAN-ORI-" + Date.now();
+  const caseRes = saveAttendanceFollowupCase({
+    userId,
+    motivoApertura: `Plan de Orientación Académica: ${String(metasAprendizaje).substring(0, 100)}`,
+    resumenAsistencia: `Categoría: Orientación | Plan de Seguimiento Pedagógico | Creado por: ${orientadorUserId || 'Orientación'}`,
+    responsableId: orientadorUserId || "Orientacion",
+    acciones: Array.isArray(intervencionesPedagogicas) ? intervencionesPedagogicas : [{ meta: metasAprendizaje, observaciones: observaciones || "" }],
+    estado: "Abierto",
+    categoriaCaso: "Orientación"
+  });
+
+  logStructuredEvent("ACADEMIC", "saveGuidanceFollowupPlan", "INFO", "GUIDANCE_PLAN_SAVED", `Plan de orientación ${planId} guardado para ${userId}`, { planId, userId }, authRole || "Orientación");
+
+  return {
+    status: "success",
+    planId,
+    userId,
+    casoId: caseRes.data ? caseRes.data.casoId : null,
+    message: "Plan de seguimiento académico de orientación guardado exitosamente sin alterar notas ni matrículas."
+  };
+}
+
+function saveVocationalRecommendation(payload) {
+  const { userId, perfilVocacional, carrerasSugeridas, recomendaciones, orientadorUserId, authRole } = payload || {};
+  if (!userId || !perfilVocacional) throw new Error("userId y perfilVocacional son requeridos para registrar recomendaciones vocacionales.");
+
+  const recId = "REC-VOC-" + Date.now();
+  const caseRes = saveAttendanceFollowupCase({
+    userId,
+    motivoApertura: `Informe de Orientación Vocacional: ${perfilVocacional}`,
+    resumenAsistencia: `Categoría: Orientación Vocacional | Carreras: ${Array.isArray(carrerasSugeridas) ? carrerasSugeridas.join(", ") : carrerasSugeridas || "N/A"}`,
+    responsableId: orientadorUserId || "Orientacion",
+    acciones: [{ tipo: "OrientacionVocacional", perfilVocacional, carrerasSugeridas, recomendaciones: recomendaciones || "" }],
+    estado: "Abierto",
+    categoriaCaso: "Orientación"
+  });
+
+  logStructuredEvent("ACADEMIC", "saveVocationalRecommendation", "INFO", "VOCATIONAL_RECOMMENDATION_SAVED", `Recomendación vocacional ${recId} guardada para ${userId}`, { recId, userId, perfilVocacional }, authRole || "Orientación");
+
+  return {
+    status: "success",
+    recId,
+    userId,
+    casoId: caseRes.data ? caseRes.data.casoId : null,
+    message: "Informe y recomendación vocacional registrado exitosamente."
+  };
+}
+
+// [F10-Task11] [P1] - Completar la delegación de responsabilidades para asistentes administrativos y académicos
+function auditAssistantDelegatedAction(payload) {
+  const { accion, modulo, detalles, authRole } = payload || {};
+  const executorUserId = (payload && (payload._executorUserId || payload._verifiedUserId || payload.autorRealId)) || "Asistente";
+  const delegatedFrom = (payload && (payload._delegatedFrom || payload.titularDeleganteId)) || "Titular";
+  const delegationId = (payload && (payload._delegationId || payload.delegacionId)) || "DEL-GEN";
+
+  if (!accion) throw new Error("Parámetro obligatorio ausente: accion.");
+
+  logStructuredEvent("ACADEMIC", "auditAssistantDelegatedAction", "INFO", "DELEGATED_ASSISTANT_ACTION", `Acción '${accion}' ejecutada por asistente ${executorUserId} bajo delegación ${delegationId} de ${delegatedFrom}`, {
+    accion,
+    modulo: modulo || "Asistencia_Convivencia",
+    executorUserId,
+    delegatedFrom,
+    delegationId,
+    detalles: detalles || "Operación delegada con registro de doble identidad."
+  }, authRole || "Asistente");
+
+  return {
+    status: "success",
+    doubleIdentity: {
+      autorReal: executorUserId,
+      titularDelegado: delegatedFrom,
+      delegacionId: delegationId,
+      accion: accion
+    },
+    message: `Operación '${accion}' registrada con trazabilidad de doble identidad.`
+  };
+}
+
 function getStudentAttendanceSummary(payload) {
   const { userId } = payload || {};
   if (!userId) throw new Error("userId es requerido.");
@@ -7613,6 +8243,142 @@ function getStudentAttendanceSummary(payload) {
       justificadas,
       porcentajeAsistencia: parseFloat(porcentajeAsistencia)
     }
+  };
+}
+
+// [F10-Task06] [P1] - Sistema avanzado de alertas de asistencia y seguimiento preventivo
+function checkAndDispatchAttendanceAlerts(payload) {
+  const { userId, grado, seccion, umbralAusenciasConsecutivas, umbralTardanzas } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const configRes = getAttendanceConfig(payload);
+  const cfg = configRes.config || {};
+  const pctMin = cfg.porcentajeAsistenciaMinimo || 85;
+  const maxConsecutiveAbsences = umbralAusenciasConsecutivas || 3;
+  const maxTardanzas = umbralTardanzas || 5;
+
+  const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
+  const regData = regSheet.getDataRange().getValues();
+  if (regData.length <= 1) {
+    return { status: "success", totalEvaluados: 0, alertasGeneradas: 0, alertas: [] };
+  }
+
+  // Group records by student
+  const studentMap = {};
+  for (let i = 1; i < regData.length; i++) {
+    const r = regData[i];
+    const uId = String(r[2] || "").trim();
+    if (!uId) continue;
+    if (userId && uId !== String(userId).trim()) continue;
+
+    if (!studentMap[uId]) studentMap[uId] = [];
+    studentMap[uId].push({
+      registroId: r[0],
+      sesionId: r[1],
+      estado: String(r[3] || "").toLowerCase(),
+      justificado: r[6] === true || String(r[6]).toLowerCase() === "true",
+      fecha: r[8] ? new Date(r[8]) : new Date()
+    });
+  }
+
+  const generatedAlerts = [];
+  const nowStr = new Date().toISOString().split('T')[0];
+
+  Object.keys(studentMap).forEach(uId => {
+    const regs = studentMap[uId];
+    // Sort by date ascending
+    regs.sort((a, b) => a.fecha - b.fecha);
+
+    let presentes = 0;
+    let ausentes = 0;
+    let tardanzas = 0;
+    let justificadas = 0;
+    let currentConsecutiveAbsences = 0;
+    let maxConsecutiveObserved = 0;
+
+    regs.forEach(r => {
+      if (r.estado === "presente") {
+        presentes++;
+        currentConsecutiveAbsences = 0;
+      } else if (r.estado === "ausente") {
+        ausentes++;
+        if (!r.justificado) {
+          currentConsecutiveAbsences++;
+          if (currentConsecutiveAbsences > maxConsecutiveObserved) maxConsecutiveObserved = currentConsecutiveAbsences;
+        } else {
+          currentConsecutiveAbsences = 0;
+        }
+      } else if (r.estado === "tardanza") {
+        tardanzas++;
+        currentConsecutiveAbsences = 0;
+      }
+      if (r.justificado) justificadas++;
+    });
+
+    const total = regs.length;
+    const pct = total > 0 ? (((presentes + tardanzas) / total) * 100) : 100;
+
+    const alertReasons = [];
+    if (maxConsecutiveObserved >= maxConsecutiveAbsences) {
+      alertReasons.push(`${maxConsecutiveObserved} ausencias injustificadas consecutivas`);
+    }
+    if (tardanzas >= maxTardanzas) {
+      alertReasons.push(`${tardanzas} tardanzas acumuladas`);
+    }
+    if (total >= 5 && pct < pctMin) {
+      alertReasons.push(`Porcentaje de asistencia del ${pct.toFixed(1)}% (inferior al mínimo de ${pctMin}%)`);
+    }
+
+    if (alertReasons.length > 0) {
+      const dedupKey = `ALERT_AST_${uId}_${nowStr}`;
+      const alertObj = {
+        userId: uId,
+        fecha: nowStr,
+        motivo: alertReasons.join(" | "),
+        totalSesiones: total,
+        pctAsistencia: parseFloat(pct.toFixed(1)),
+        ausenciasConsecutivas: maxConsecutiveObserved,
+        tardanzas: tardanzas,
+        deduplicationKey: dedupKey
+      };
+      generatedAlerts.push(alertObj);
+
+      // Automated case opening in CasosSeguimiento for preventive tracking
+      try {
+        saveAttendanceFollowupCase({
+          userId: uId,
+          motivoApertura: `Alerta preventiva de asistencia: ${alertReasons.join("; ")}`,
+          resumenAsistencia: `Sesiones: ${total}, Asistencia: ${pct.toFixed(1)}%, Tardanzas: ${tardanzas}, Ausencias Consecutivas: ${maxConsecutiveObserved}`,
+          responsableId: "Orientacion",
+          estado: "Abierto"
+        });
+      } catch (e) {
+        logDebug("Error creando caso preventivo para alerta", e.message);
+      }
+
+      // Notify tutors if sendMultiChannelNotification is defined
+      try {
+        if (typeof sendMultiChannelNotification === "function") {
+          sendMultiChannelNotification({
+            userId: uId,
+            titulo: "Alerta Preventiva de Asistencia Escolar",
+            mensaje: `Estimado tutor, se ha emitido una alerta preventiva de asistencia para el estudiante. Motivos: ${alertReasons.join("; ")}.`,
+            tipo: "AlertaAsistenciaPreventiva",
+            categoria: "Asistencia",
+            deduplicationKey: dedupKey
+          });
+        }
+      } catch (_) {}
+    }
+  });
+
+  logStructuredEvent("ACADEMIC", "checkAndDispatchAttendanceAlerts", "INFO", "ATTENDANCE_ALERTS_DISPATCHED", `Escaneo de alertas de asistencia completado. Estudiantes evaluados: ${Object.keys(studentMap).length}, Alertas emitidas: ${generatedAlerts.length}`, { totalEvaluados: Object.keys(studentMap).length, alertasCount: generatedAlerts.length }, payload && payload.authRole || "Sistema");
+
+  return {
+    status: "success",
+    totalEvaluados: Object.keys(studentMap).length,
+    alertasGeneradas: generatedAlerts.length,
+    alertas: generatedAlerts
   };
 }
 
@@ -10407,9 +11173,10 @@ function getSectionEquivalences(payload) {
   };
 }
 
+// [F9-Task03] [P0] - Consolidar la administración de escalas, ponderaciones y métodos de cálculo académico
 // [TAREA-12] [Fase 1 - Evaluación Unificada] - Unificación de la evaluación académica, rúbricas analíticas, ponderaciones, inalterabilidad de periodos cerrados y compatibilidad SACE / Cuadro de Honor.
 function calculateUnifiedAcademicGrade(payload) {
-  const { userId, asignaturaId, periodoId, actividades, esAnoHistoricoAnterior, periodoCerrado } = payload || {};
+  const { userId, asignaturaId, periodoId, actividades, esAnoHistoricoAnterior, periodoCerrado, metodoEvaluacion } = payload || {};
 
   if (esAnoHistoricoAnterior) {
     throw new Error("Las calificaciones de años escolares anteriores son inalterables.");
@@ -10424,31 +11191,75 @@ function calculateUnifiedAcademicGrade(payload) {
       status: "success",
       notaFinal: 0,
       estadoCalificacion: "Sin Actividades",
-      ponderaciones: {},
+      ponderacionesPorCategoria: {},
       cuadroHonor: false,
+      equivalenciaSACE: "Insuficiente",
       compatibilidadSACE: "Pendiente"
     };
   }
 
+  const metodo = metodoEvaluacion || "PromedioPonderado";
   let acumuladoPonderado = 0;
   let totalPonderacion = 0;
+  let sumaAritmetica = 0;
+  let totalActividadesEvaluadas = 0;
+  let puntosObtenidosTotal = 0;
+  let puntosPosiblesTotal = 0;
   const ponderacionesPorCategoria = {};
 
   actividades.forEach(act => {
-    const nota = parseFloat(act.notaObtenida) || 0;
+    const estado = String(act.estado || "").toUpperCase();
+    if (estado === "EXENTO" || estado === "AUSENTE_JUSTIFICADO") {
+      return;
+    }
+
+    const notaRaw = act.notaObtenida;
+    const esPendiente = notaRaw === null || notaRaw === undefined || notaRaw === "" || estado === "PENDIENTE";
+
+    if (esPendiente) {
+      return;
+    }
+
+    const nota = parseFloat(notaRaw) || 0;
     const peso = parseFloat(act.porcentajePonderacion) || 0;
+    const puntosPosibles = parseFloat(act.puntosPosibles || 100) || 100;
     const cat = act.categoria || "General";
 
     acumuladoPonderado += (nota * (peso / 100));
     totalPonderacion += peso;
+    sumaAritmetica += nota;
+    totalActividadesEvaluadas++;
+    puntosObtenidosTotal += nota;
+    puntosPosiblesTotal += puntosPosibles;
 
     ponderacionesPorCategoria[cat] = (ponderacionesPorCategoria[cat] || 0) + (nota * (peso / 100));
   });
 
-  const notaFinalCalculada = Math.min(100, Math.round(acumuladoPonderado * 100) / 100);
+  let notaFinalCalculada = 0;
+  let ponderacionInvalida = false;
+  let advertenciaPonderacion = null;
+
+  if (metodo === "PromedioPonderado") {
+    if (totalPonderacion > 0 && Math.abs(totalPonderacion - 100) > 0.01) {
+      ponderacionInvalida = true;
+      advertenciaPonderacion = `La suma de ponderaciones activas (${totalPonderacion.toFixed(1)}%) difiere del 100% requerido.`;
+    }
+    notaFinalCalculada = Math.min(100, Math.round(acumuladoPonderado * 100) / 100);
+  } else if (metodo === "PromedioAritmetico") {
+    notaFinalCalculada = totalActividadesEvaluadas > 0
+      ? Math.min(100, Math.round((sumaAritmetica / totalActividadesEvaluadas) * 100) / 100)
+      : 0;
+  } else if (metodo === "PuntosObtenidos") {
+    notaFinalCalculada = puntosPosiblesTotal > 0
+      ? Math.min(100, Math.round((puntosObtenidosTotal / puntosPosiblesTotal) * 10000) / 100)
+      : 0;
+  } else {
+    notaFinalCalculada = Math.min(100, Math.round(acumuladoPonderado * 100) / 100);
+  }
+
   const esCuadroHonor = notaFinalCalculada >= 90;
 
-  let equivalenciaSACE = "Reprobado";
+  let equivalenciaSACE = "Insuficiente";
   if (notaFinalCalculada >= 91) equivalenciaSACE = "Excelente";
   else if (notaFinalCalculada >= 81) equivalenciaSACE = "Muy Bueno";
   else if (notaFinalCalculada >= 70) equivalenciaSACE = "Satisfactorio";
@@ -10458,11 +11269,415 @@ function calculateUnifiedAcademicGrade(payload) {
     userId: userId,
     asignaturaId: asignaturaId,
     periodoId: periodoId,
+    metodoEvaluacion: metodo,
     notaFinal: notaFinalCalculada,
     estadoCalificacion: notaFinalCalculada >= 70 ? "Aprobado" : "Reprobado",
     equivalenciaSACE: equivalenciaSACE,
     esCuadroHonor: esCuadroHonor,
-    ponderacionesPorCategoria: ponderacionesPorCategoria
+    ponderacionesPorCategoria: ponderacionesPorCategoria,
+    ponderacionInvalida: ponderacionInvalida,
+    advertenciaPonderacion: advertenciaPonderacion
+  };
+}
+
+function previewAcademicGradeCalculation(payload) {
+  return calculateUnifiedAcademicGrade(payload);
+}
+
+// [F9-Task04] [P0] - Fortalecer la precisión de los cálculos y la detección de inconsistencias académicas
+function auditAcademicGradesIntegrity(payload) {
+  const { grado, seccion, asignaturaId, periodoId, muestraCalificaciones } = payload || {};
+
+  const items = Array.isArray(muestraCalificaciones) ? muestraCalificaciones : [];
+  const inconsistencias = [];
+  let totalEvaluados = 0;
+  let fueraDeRango = 0;
+  let discrepanciasCalculo = 0;
+
+  items.forEach((item, idx) => {
+    const filaNum = idx + 1;
+    const uid = item.userId || item.estudianteId || `EST-${filaNum}`;
+    totalEvaluados++;
+
+    const actividades = Array.isArray(item.actividades) ? item.actividades : [];
+
+    actividades.forEach((act, actIdx) => {
+      let notaRaw = act.notaObtenida;
+      if (notaRaw === undefined || notaRaw === null || notaRaw === "") notaRaw = act.nota;
+
+      if (notaRaw !== null && notaRaw !== undefined && notaRaw !== "" && String(notaRaw).toUpperCase() !== "PENDIENTE" && String(notaRaw).toUpperCase() !== "EXENTO" && String(notaRaw).toUpperCase() !== "AUSENTE") {
+        const parsed = parseFloat(notaRaw);
+        if (isNaN(parsed) || parsed < 0 || parsed > 100) {
+          fueraDeRango++;
+          inconsistencias.push({
+            fila: filaNum,
+            userId: uid,
+            tipo: "RANGO_INVALIDO",
+            mensaje: `Actividad ${actIdx + 1} (${act.nombre || 'Evaluación'}): Calificación fuera del rango 0-100 (${notaRaw}).`
+          });
+        }
+      }
+    });
+
+    if (actividades.length > 0 && item.notaFinalGuardada !== undefined && item.notaFinalGuardada !== null) {
+      const calcRes = calculateUnifiedAcademicGrade({
+        userId: uid,
+        asignaturaId: asignaturaId || "GENERIC",
+        periodoId: periodoId || "P1",
+        actividades: actividades,
+        metodoEvaluacion: item.metodoEvaluacion || "PromedioPonderado"
+      });
+
+      const notaGuardada = parseFloat(item.notaFinalGuardada);
+      if (!isNaN(notaGuardada) && Math.abs(notaGuardada - calcRes.notaFinal) > 0.01) {
+        discrepanciasCalculo++;
+        inconsistencias.push({
+          fila: filaNum,
+          userId: uid,
+          tipo: "DISCREPANCIA_CALCULO",
+          mensaje: `Nota final guardada (${notaGuardada}) no coincide con el cálculo unificado reproducible (${calcRes.notaFinal}).`
+        });
+      }
+    }
+  });
+
+  const esIntegro = inconsistencias.length === 0;
+
+  return {
+    status: "success",
+    esIntegro,
+    diagnosticoIntegridad: {
+      grado: grado || "Todos",
+      seccion: seccion || "Todas",
+      asignaturaId: asignaturaId || "Todas",
+      periodoId: periodoId || "Actual",
+      totalMuestrasAnalizadas: items.length,
+      totalEvaluados,
+      fueraDeRango,
+      discrepanciasCalculo,
+      totalInconsistencias: inconsistencias.length,
+      inconsistencias
+    },
+    message: esIntegro
+      ? "Diagnóstico de integridad completado: No se detectaron inconsistencias en las calificaciones."
+      : `Diagnóstico completado con ${inconsistencias.length} inconsistencia(s) detectada(s).`
+  };
+}
+
+// [F9-Task07] [P0] - Fortalecer la generación de boletines, certificados e historiales académicos
+function generateStudentReportCard(payload) {
+  const { userId, estudianteId, periodoId, incluirObservaciones, formatoOutput } = payload || {};
+  const studentId = userId || estudianteId;
+
+  if (!studentId) {
+    return {
+      status: "error",
+      message: "Se requiere un identificador de estudiante (userId o estudianteId) para generar el boletín."
+    };
+  }
+
+  const ss = getSpreadsheet();
+
+  // Resolve Student Info
+  let estudianteInfo = { userId: studentId, nombreCompleto: "Estudiante " + studentId, grado: "N/A", seccion: "N/A" };
+  const sheetEstud = ss.getSheetByName("Estudiantes") || ss.getSheetByName("Alumnos");
+  if (sheetEstud) {
+    const dataEst = sheetEstud.getDataRange().getValues();
+    if (dataEst.length > 1) {
+      const headers = dataEst[0].map(h => String(h).trim().toLowerCase());
+      const idxId = headers.indexOf("userid") >= 0 ? headers.indexOf("userid") : headers.indexOf("estudianteid");
+      const idxNombre = headers.indexOf("nombrecompleto") >= 0 ? headers.indexOf("nombrecompleto") : headers.indexOf("nombre");
+      const idxGrado = headers.indexOf("grado");
+      const idxSeccion = headers.indexOf("seccion");
+
+      for (let i = 1; i < dataEst.length; i++) {
+        if (String(dataEst[i][idxId]).trim() === String(studentId).trim()) {
+          estudianteInfo.nombreCompleto = idxNombre >= 0 ? dataEst[i][idxNombre] : estudianteInfo.nombreCompleto;
+          estudianteInfo.grado = idxGrado >= 0 ? dataEst[i][idxGrado] : estudianteInfo.grado;
+          estudianteInfo.seccion = idxSeccion >= 0 ? dataEst[i][idxSeccion] : estudianteInfo.seccion;
+          break;
+        }
+      }
+    }
+  }
+
+  // Fetch Grades for period
+  const asignaturasNotas = [];
+  const sheetNotas = ss.getSheetByName("Calificaciones") || ss.getSheetByName("Notas");
+  if (sheetNotas) {
+    const dataNotas = sheetNotas.getDataRange().getValues();
+    if (dataNotas.length > 1) {
+      const headers = dataNotas[0].map(h => String(h).trim().toLowerCase());
+      const idxId = headers.indexOf("userid") >= 0 ? headers.indexOf("userid") : headers.indexOf("estudianteid");
+      const idxAsig = headers.indexOf("asignatura") >= 0 ? headers.indexOf("asignatura") : headers.indexOf("asignaturaid");
+      const idxPer = headers.indexOf("periodo") >= 0 ? headers.indexOf("periodo") : headers.indexOf("periodoid");
+      const idxNota = headers.indexOf("nota") >= 0 ? headers.indexOf("nota") : headers.indexOf("notafinal");
+      const idxObs = headers.indexOf("observaciones") >= 0 ? headers.indexOf("observaciones") : headers.indexOf("observacion");
+      const idxEstado = headers.indexOf("estado") >= 0 ? headers.indexOf("estado") : headers.indexOf("estadoaprobacion");
+
+      for (let i = 1; i < dataNotas.length; i++) {
+        const rowStudent = String(dataNotas[i][idxId] || "").trim();
+        const rowPeriod = idxPer >= 0 ? String(dataNotas[i][idxPer] || "").trim() : "";
+
+        if (rowStudent === String(studentId).trim() && (!periodoId || rowPeriod === String(periodoId).trim())) {
+          const rawNota = idxNota >= 0 ? dataNotas[i][idxNota] : 0;
+          const notaNum = parseFloat(rawNota) || 0;
+          const estado = idxEstado >= 0 ? String(dataNotas[i][idxEstado]) : (notaNum >= 70 ? "APROBADO" : "REPROBADO");
+          const obs = idxObs >= 0 ? String(dataNotas[i][idxObs]) : "";
+
+          asignaturasNotas.push({
+            asignatura: idxAsig >= 0 ? dataNotas[i][idxAsig] : "Asignatura General",
+            periodo: rowPeriod || periodoId || "P1",
+            notaFinal: Math.round(notaNum * 100) / 100,
+            estadoAprobacion: estado,
+            observaciones: incluirObservaciones ? obs : undefined
+          });
+        }
+      }
+    }
+  }
+
+  // Calculate Academic Summary
+  const totalAsignaturas = asignaturasNotas.length;
+  const sumaNotas = asignaturasNotas.reduce((acc, curr) => acc + (curr.notaFinal || 0), 0);
+  const promedioGeneral = totalAsignaturas > 0 ? Math.round((sumaNotas / totalAsignaturas) * 100) / 100 : 0;
+  const asignaturasAprobadas = asignaturasNotas.filter(a => a.estadoAprobacion === "APROBADO").length;
+  const asignaturasReprobadas = totalAsignaturas - asignaturasAprobadas;
+
+  const esOficial = !!periodoId;
+
+  return {
+    status: "success",
+    boletin: {
+      titulo: esOficial ? "Boletín Oficial de Calificaciones" : "Informe Provisorio de Rendimiento Académico",
+      estudiante: estudianteInfo,
+      periodo: periodoId || "Todos los Períodos",
+      fechaGeneracion: new Date().toISOString(),
+      esDocumentoOficial: esOficial,
+      resumenGeneral: {
+        totalAsignaturas,
+        promedioGeneral,
+        asignaturasAprobadas,
+        asignaturasReprobadas,
+        estadoPromocion: promedioGeneral >= 70 ? "PROMOVIDO" : "PENDIENTE"
+      },
+      detalleAsignaturas: asignaturasNotas
+    },
+    message: "Boletín de calificaciones generado exitosamente."
+  };
+}
+
+// [F9-Task08] [P0] - Fortalecer el control de permisos y la separación de responsabilidades académicas
+function validateAcademicResponsibilityAndScopeAccess(payload) {
+  const { userId, role, estudianteId, asignaturaId, grado, seccion, periodoId, operacion } = payload || {};
+
+  if (!userId || !role) {
+    return {
+      status: "error",
+      authorized: false,
+      message: "userId y role son requeridos para la validación de responsabilidades académicas."
+    };
+  }
+
+  const roleUpper = String(role).trim().toUpperCase();
+
+  // Roles de administración institucional tienen acceso completo a los ámbitos académicos
+  if (["ADMINISTRADOR", "ADMIN", "DIRECTOR", "DIRECCION", "SECRETARIA", "COORDINADOR", "COORDINACION"].indexOf(roleUpper) >= 0) {
+    return {
+      status: "success",
+      authorized: true,
+      role: roleUpper,
+      message: "Acceso autorizado por responsabilidad institucional de dirección/administración."
+    };
+  }
+
+  // Validación para Rol Docente / Profesor
+  if (roleUpper === "DOCENTE" || roleUpper === "PROFESOR") {
+    if (asignaturaId || grado || seccion) {
+      const ss = getSpreadsheet();
+      const sheetAsignaciones = ss.getSheetByName("AsignacionesDocentes") || ss.getSheetByName("Docentes");
+      let docenteAsignado = false;
+
+      if (sheetAsignaciones) {
+        const data = sheetAsignaciones.getDataRange().getValues();
+        if (data.length > 1) {
+          const headers = data[0].map(h => String(h).trim().toLowerCase());
+          const idxDocente = headers.indexOf("docenteid") >= 0 ? headers.indexOf("docenteid") : headers.indexOf("userid");
+          const idxAsig = headers.indexOf("asignaturaid") >= 0 ? headers.indexOf("asignaturaid") : headers.indexOf("asignatura");
+          const idxGrado = headers.indexOf("grado");
+          const idxSeccion = headers.indexOf("seccion");
+
+          for (let i = 1; i < data.length; i++) {
+            const rowDocente = String(data[i][idxDocente] || "").trim();
+            if (rowDocente === String(userId).trim()) {
+              const rowAsig = idxAsig >= 0 ? String(data[i][idxAsig]).trim() : "";
+              const rowGrado = idxGrado >= 0 ? String(data[i][idxGrado]).trim() : "";
+              const rowSeccion = idxSeccion >= 0 ? String(data[i][idxSeccion]).trim() : "";
+
+              const matchAsig = !asignaturaId || rowAsig === String(asignaturaId).trim();
+              const matchGrado = !grado || rowGrado === String(grado).trim();
+              const matchSeccion = !seccion || rowSeccion === String(seccion).trim();
+
+              if (matchAsig && matchGrado && matchSeccion) {
+                docenteAsignado = true;
+                break;
+              }
+            }
+          }
+        }
+      } else {
+        docenteAsignado = true;
+      }
+
+      if (!docenteAsignado) {
+        logStructuredEvent("ACADEMIC", "validateAcademicResponsibilityAndScopeAccess", "WARN", "UNAUTHORIZED_ACCESS_ATTEMPT", `Docente '${userId}' intentó acceder a la asignatura '${asignaturaId}' sin asignación activa.`, { userId, asignaturaId, grado, seccion, operacion }, roleUpper);
+        return {
+          status: "success",
+          authorized: false,
+          reason: "El docente no tiene asignación académica activa para la asignatura, grado o sección solicitados.",
+          message: "Acceso denegado: Asignación académica no encontrada."
+        };
+      }
+    }
+
+    return {
+      status: "success",
+      authorized: true,
+      role: roleUpper,
+      message: "Acceso autorizado para el docente dentro de su carga académica."
+    };
+  }
+
+  // Validación para Estudiantes y Tutores / Padres
+  if (roleUpper === "ESTUDIANTE" || roleUpper === "ALUMNO" || roleUpper === "TUTOR" || roleUpper === "PADRE" || roleUpper === "RESPONSABLE") {
+    if (estudianteId && String(estudianteId).trim() !== String(userId).trim()) {
+      let tutorVinculado = false;
+      const ss = getSpreadsheet();
+      const sheetTutores = ss.getSheetByName("RelacionesTutores") || ss.getSheetByName("TutoresEstudiantes");
+
+      if (sheetTutores) {
+        const dataT = sheetTutores.getDataRange().getValues();
+        if (dataT.length > 1) {
+          const headers = dataT[0].map(h => String(h).trim().toLowerCase());
+          const idxTutor = headers.indexOf("tutorid") >= 0 ? headers.indexOf("tutorid") : headers.indexOf("userid");
+          const idxEstud = headers.indexOf("estudianteid") >= 0 ? headers.indexOf("estudianteid") : headers.indexOf("alumnoid");
+
+          for (let i = 1; i < dataT.length; i++) {
+            if (String(dataT[i][idxTutor]).trim() === String(userId).trim() && String(dataT[i][idxEstud]).trim() === String(estudianteId).trim()) {
+              tutorVinculado = true;
+              break;
+            }
+          }
+        }
+      }
+
+      if (!tutorVinculado) {
+        logStructuredEvent("ACADEMIC", "validateAcademicResponsibilityAndScopeAccess", "WARN", "UNAUTHORIZED_ACCESS_ATTEMPT", `Usuario '${userId}' con rol '${roleUpper}' intentó acceder a datos del estudiante '${estudianteId}' sin vínculo autorizado.`, { userId, estudianteId, operacion }, roleUpper);
+        return {
+          status: "success",
+          authorized: false,
+          reason: "No se encontró vinculación autorizada entre el usuario y el estudiante solicitado.",
+          message: "Acceso denegado: Intento de consulta de expediente o calificaciones de un tercero."
+        };
+      }
+    }
+
+    if (operacion && ["EDITAR_NOTA", "REGISTRAR_NOTA", "RECTIFICAR_NOTA", "PUBLICAR_NOTAS", "CERRAR_PERIODO"].indexOf(String(operacion).toUpperCase()) >= 0) {
+      logStructuredEvent("ACADEMIC", "validateAcademicResponsibilityAndScopeAccess", "WARN", "UNAUTHORIZED_ACCESS_ATTEMPT", `Rol '${roleUpper}' intentó ejecutar la operación restringida '${operacion}'.`, { userId, operacion }, roleUpper);
+      return {
+        status: "success",
+        authorized: false,
+        reason: `La operación '${operacion}' requiere permisos de edición o administración académica.`,
+        message: "Acceso denegado: Operación no permitida para el rol del usuario."
+      };
+    }
+
+    return {
+      status: "success",
+      authorized: true,
+      role: roleUpper,
+      message: "Acceso autorizado para consulta de resultados académicos propios o de dependientes vinculados."
+    };
+  }
+
+  logStructuredEvent("ACADEMIC", "validateAcademicResponsibilityAndScopeAccess", "WARN", "UNAUTHORIZED_ACCESS_ATTEMPT", `Rol '${roleUpper}' no reconocido para validación de responsabilidades académicas.`, { userId, role }, roleUpper);
+  return {
+    status: "success",
+    authorized: false,
+    reason: `Rol '${roleUpper}' no reconocido para responsabilidad académica.`,
+    message: "Acceso denegado por defecto."
+  };
+}
+
+// [F9-Task13] [P1] - Optimizar la exportación académica y los formatos de intercambio
+function exportAcademicGradesData(payload) {
+  const { formato, periodoId, asignaturaId, grado, seccion, incluirBorradores, vistaPrevia, userId, authRole } = payload || {};
+
+  const targetFormat = String(formato || "CSV").toUpperCase();
+  const esVistaPrevia = vistaPrevia === true;
+
+  const ss = getSpreadsheet();
+  const sheetNotas = ss.getSheetByName("CalificacionesEstudiantes") || ss.getSheetByName("Calificaciones") || ss.getSheetByName("Notas");
+
+  const records = [];
+  let totalOficiales = 0;
+  let totalBorradores = 0;
+
+  if (sheetNotas) {
+    const data = sheetNotas.getDataRange().getValues();
+    if (data.length > 1) {
+      const headers = data[0].map(h => String(h).trim().toLowerCase());
+      const idxUser = headers.indexOf("userid") >= 0 ? headers.indexOf("userid") : headers.indexOf("estudianteid");
+      const idxNota = headers.indexOf("notaobtenida") >= 0 ? headers.indexOf("notaobtenida") : headers.indexOf("nota");
+      const idxBorrador = headers.indexOf("esborrador");
+      const idxPublicada = headers.indexOf("espublicada");
+      const idxObs = headers.indexOf("observaciones");
+
+      for (let i = 1; i < data.length; i++) {
+        const uId = idxUser >= 0 ? String(data[i][idxUser]).trim() : "";
+        if (!uId) continue;
+
+        const isDraft = idxBorrador >= 0 ? data[i][idxBorrador] === true : false;
+        const isPublished = idxPublicada >= 0 ? data[i][idxPublicada] === true : true;
+
+        if (isDraft && !incluirBorradores) continue;
+
+        if (isDraft) totalBorradores++;
+        else totalOficiales++;
+
+        records.push({
+          userId: uId,
+          nota: idxNota >= 0 ? parseFloat(data[i][idxNota]) || 0 : 0,
+          estadoRegistro: isDraft ? "BORRADOR" : (isPublished ? "OFICIAL" : "PENDIENTE"),
+          observaciones: idxObs >= 0 ? String(data[i][idxObs]) : ""
+        });
+      }
+    }
+  }
+
+  logStructuredEvent("ACADEMIC", "exportAcademicGradesData", "INFO", "EXPORTE_NOTAS_ACADEMICAS", `Exportación de notas académicas realizada en formato '${targetFormat}'. Total registros: ${records.length}.`, { formato: targetFormat, totalRecords: records.length, userId }, authRole || "Docente");
+
+  if (esVistaPrevia) {
+    return {
+      status: "success",
+      esVistaPrevia: true,
+      formato: targetFormat,
+      resumenExportacion: {
+        totalRegistros: records.length,
+        totalOficiales,
+        totalBorradores,
+        muestraRegistros: records.slice(0, 5)
+      },
+      message: `Vista previa de exportación generada en formato ${targetFormat}.`
+    };
+  }
+
+  return {
+    status: "success",
+    formato: targetFormat,
+    totalExportados: records.length,
+    datosExportacion: records,
+    message: `Exportación de calificaciones en formato ${targetFormat} completada exitosamente.`
   };
 }
 
