@@ -132,7 +132,7 @@
 
 ---
 
-### [ ] [F11-Task07] Fortalecer la gestión de citas de orientación y acompañamiento estudiantil
+### [X] [F11-Task07] Fortalecer la gestión de citas de orientación y acompañamiento estudiantil
 - **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área II (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Acompañamiento y bienestar)
@@ -143,7 +143,7 @@
   Gestionar la programación de citas de orientación estudiantil y entrevistas familiares con estados (Programada, Realizada, Reincidencia, Cancelada) y derivación inmutable.
 - **Criterios de Aceptación:**
   - Las citas quedan ligadas al caso de seguimiento sin exponer motivos confidenciales en notificaciones públicas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

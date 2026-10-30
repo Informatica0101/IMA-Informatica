@@ -175,7 +175,7 @@ const ROLE_PERMISSIONS = {
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity", "reconcileInstitutionalModulesMatrix",
     "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "checkAndDispatchAttendanceAlerts", "getAttendanceConfig", "saveAttendanceConfig",
-    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches"
+    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches", "scheduleGuidanceAppointment", "getGuidanceAppointments", "updateGuidanceAppointmentStatus"
   ],
   "Subdirector": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "registerStudentEnrollment", "getStudentEnrollmentHistory",
@@ -215,8 +215,8 @@ const ROLE_PERMISSIONS = {
   "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "getBatchAttendanceRecords", "generateConsolidatedAttendanceAndCoexistenceReport"],
   "Desarrollador": ["getAcademicConfig", "getAcademicHistory", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "configureAcademicLevelsAndDynamicStorage"],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
-  "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "scheduleCounselingAppointment", "recordCounselingSessionAct", "referCounselingCase", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary", "validateStudentWelfareAccess"],
-  "Orientacion": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary", "validateStudentWelfareAccess"],
+  "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "scheduleCounselingAppointment", "recordCounselingSessionAct", "referCounselingCase", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary", "validateStudentWelfareAccess", "scheduleGuidanceAppointment", "getGuidanceAppointments", "updateGuidanceAppointmentStatus"],
+  "Orientacion": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary", "validateStudentWelfareAccess", "scheduleGuidanceAppointment", "getGuidanceAppointments", "updateGuidanceAppointmentStatus"],
   "Padre": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory",
     "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
@@ -858,6 +858,9 @@ function doPost(e) {
       case "referCounselingCase": result = referCounselingCase(payload); break;
       case "saveGuidanceFollowupPlan": result = saveGuidanceFollowupPlan(payload); break;
       case "saveVocationalRecommendation": result = saveVocationalRecommendation(payload); break;
+      case "scheduleGuidanceAppointment": result = scheduleGuidanceAppointment(payload); break;
+      case "getGuidanceAppointments": result = getGuidanceAppointments(payload); break;
+      case "updateGuidanceAppointmentStatus": result = updateGuidanceAppointmentStatus(payload); break;
       case "auditAssistantDelegatedAction": result = auditAssistantDelegatedAction(payload); break;
       case "validateEvidenceFileAndPermissions": result = validateEvidenceFileAndPermissions(payload); break;
       case "getStudentAttendanceSummary": result = getStudentAttendanceSummary(payload); break;
@@ -8399,6 +8402,222 @@ function saveVocationalRecommendation(payload) {
     casoId: caseRes.data ? caseRes.data.casoId : null,
     message: "Informe y recomendación vocacional registrado exitosamente."
   };
+}
+
+// [F11-Task07] [P1] - Fortalecer la gestión de citas de orientación y acompañamiento estudiantil
+function scheduleGuidanceAppointment(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const callerId = (payload && payload._verifiedUserId) || "Orientación";
+    const isAuthorized = ["Administrador", "Director", "Orientacion", "Consejeros"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "Solo personal de Orientación, Consejería o Dirección puede agendar citas de orientación estudiantil." };
+    }
+
+    const {
+      casoId,
+      userId,
+      tutorUserId,
+      fechaHora,
+      modalidad,
+      tipoCita,
+      motivoPublico,
+      notasConfidenciales,
+      derivacionRef
+    } = payload || {};
+
+    if (!userId || !fechaHora) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "userId y fechaHora son requeridos para agendar una cita de orientación." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "CitasOrientacion");
+
+    const now = new Date();
+    const nowISO = now.toISOString();
+    const citaId = "CITA-ORI-" + now.getFullYear() + "-" + Math.floor(100000 + Math.random() * 900000);
+
+    // Si no se proporcionó casoId, se vincula o abre automáticamente un caso preventivo en CasosSeguimiento
+    let targetCasoId = casoId;
+    if (!targetCasoId) {
+      const caseRes = saveAttendanceFollowupCase({
+        userId,
+        motivoApertura: `Acompañamiento y Orientación Estudiantil (${tipoCita || 'Entrevista'})`,
+        resumenAsistencia: `Categoría: Orientación | Modalidad: ${modalidad || 'Presencial'} | Fecha: ${fechaHora}`,
+        responsableId: callerId,
+        estado: "Abierto",
+        categoriaCaso: "Orientación"
+      });
+      targetCasoId = caseRes && caseRes.data ? caseRes.data.casoId : ("CASO-" + Date.now());
+    }
+
+    // Persistir la cita en CitasOrientacion
+    // Columnas: CitaOrientacionID, CasoID, UserId, TutorUserId, OrientadorUserId, FechaHora, Modalidad, Estado, TipoCita, NotasPublicas, NotasConfidenciales, DerivacionRef, FechaCreacion
+    sheet.appendRow([
+      citaId,
+      String(targetCasoId).trim(),
+      String(userId).trim(),
+      tutorUserId ? String(tutorUserId).trim() : "",
+      callerId,
+      String(fechaHora),
+      modalidad || "Presencial",
+      "Programada",
+      tipoCita || "Acompañamiento",
+      motivoPublico || "Cita de Acompañamiento Institucional",
+      notasConfidenciales || "",
+      derivacionRef || "",
+      nowISO
+    ]);
+
+    logStructuredEvent("ACADEMIC", "scheduleGuidanceAppointment", "INFO", "GUIDANCE_APPOINTMENT_SCHEDULED", `Cita de orientación ${citaId} agendada para ${userId} ligada al caso ${targetCasoId}`, { citaId, userId, targetCasoId }, verifiedRole);
+
+    return {
+      status: "success",
+      citaOrientacionId: citaId,
+      casoId: targetCasoId,
+      userId: userId,
+      fechaHora: fechaHora,
+      estado: "Programada",
+      message: "Cita de orientación y acompañamiento estudiantil agendada correctamente ligada al caso de seguimiento."
+    };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "scheduleGuidanceAppointment", "ERROR", "GUIDANCE_APPOINTMENT_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function getGuidanceAppointments(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const callerId = (payload && payload._verifiedUserId) || "";
+    const isWelfareStaff = ["Administrador", "Director", "Orientacion", "Consejeros"].indexOf(verifiedRole) !== -1;
+
+    const { casoId, userId, estado, citaOrientacionId } = payload || {};
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "CitasOrientacion");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", totalCitas: 0, citas: [] };
+
+    const citas = [];
+
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const cId = String(row[0] || "");
+      const cCasoId = String(row[1] || "");
+      const cUserId = String(row[2] || "");
+      const cTutorId = String(row[3] || "");
+      const cOrientadorId = String(row[4] || "");
+      const fHora = row[5] ? new Date(row[5]).toISOString() : "";
+      const mod = String(row[6] || "Presencial");
+      const st = String(row[7] || "Programada");
+      const tipo = String(row[8] || "Acompañamiento");
+      const notasPub = String(row[9] || "");
+      const notasConf = String(row[10] || "");
+      const derivRef = String(row[11] || "");
+      const fCrea = row[12] ? new Date(row[12]).toISOString() : "";
+
+      if (citaOrientacionId && String(citaOrientacionId).trim() !== cId) continue;
+      if (casoId && String(casoId).trim() !== cCasoId) continue;
+      if (userId && String(userId).trim() !== cUserId) continue;
+      if (estado && estado !== "Todas" && st !== estado) continue;
+
+      // Restricción de aislamiento para roles no pertenecientes a orientación/bienestar
+      if (!isWelfareStaff) {
+        if (verifiedRole === "Estudiante" && cUserId !== callerId) continue;
+        if ((verifiedRole === "Padre" || verifiedRole === "Tutor") && cTutorId !== callerId) continue;
+      }
+
+      citas.push({
+        citaOrientacionId: cId,
+        casoId: cCasoId,
+        userId: cUserId,
+        tutorUserId: cTutorId,
+        orientadorUserId: cOrientadorId,
+        fechaHora: fHora,
+        modalidad: mod,
+        estado: st,
+        tipoCita: tipo,
+        notasPublicas: notasPub,
+        notasConfidenciales: isWelfareStaff ? notasConf : "***CONFIDENCIAL***",
+        derivacionRef: derivRef,
+        fechaCreacion: fCrea
+      });
+    }
+
+    citas.reverse();
+    return { status: "success", totalCitas: citas.length, citas: citas };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "getGuidanceAppointments", "ERROR", "GET_GUIDANCE_APPOINTMENTS_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function updateGuidanceAppointmentStatus(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const callerId = (payload && payload._verifiedUserId) || "Orientación";
+    const isAuthorized = ["Administrador", "Director", "Orientacion", "Consejeros"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "Solo personal de Orientación o Dirección puede actualizar el estado de citas de orientación." };
+    }
+
+    const { citaOrientacionId, nuevoEstado, notasSeguimiento, reincidenciaDetalles, derivacionRef } = payload || {};
+    if (!citaOrientacionId || !nuevoEstado) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "citaOrientacionId y nuevoEstado son requeridos." };
+    }
+
+    const validStates = ["Programada", "Realizada", "Reincidencia", "Cancelada"];
+    if (validStates.indexOf(nuevoEstado) === -1) {
+      return { status: "error", code: "VALIDATION_ERROR", message: `nuevoEstado inválido. Debe ser uno de: ${validStates.join(", ")}` };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "CitasOrientacion");
+    const data = sheet.getDataRange().getValues();
+
+    let foundIdx = -1;
+    let appointmentRow = null;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(citaOrientacionId).trim()) {
+        foundIdx = i;
+        appointmentRow = data[i];
+        break;
+      }
+    }
+
+    if (foundIdx === -1) {
+      return { status: "error", code: "NOT_FOUND", message: "Cita de orientación no encontrada." };
+    }
+
+    // Actualizar estado en columna 8 (índice 7)
+    sheet.getRange(foundIdx + 1, 8).setValue(nuevoEstado);
+
+    // Si hay notas adicionales o reincidencia, actualizar notas confidenciales
+    if (notasSeguimiento || reincidenciaDetalles) {
+      const prevNotes = String(appointmentRow[10] || "");
+      const appended = `${prevNotes} [${nuevoEstado} - ${new Date().toISOString()}]: ${notasSeguimiento || reincidenciaDetalles}`.trim();
+      sheet.getRange(foundIdx + 1, 11).setValue(appended);
+    }
+
+    // Si se especificó derivación inmutable, registrarla en columna 12
+    if (derivacionRef) {
+      sheet.getRange(foundIdx + 1, 12).setValue(String(derivacionRef).trim());
+    }
+
+    logStructuredEvent("ACADEMIC", "updateGuidanceAppointmentStatus", "INFO", "GUIDANCE_APPOINTMENT_UPDATED", `Cita de orientación ${citaOrientacionId} actualizada a ${nuevoEstado}`, { citaOrientacionId, nuevoEstado }, verifiedRole);
+
+    return {
+      status: "success",
+      citaOrientacionId: citaOrientacionId,
+      estadoAnterior: appointmentRow[7],
+      nuevoEstado: nuevoEstado,
+      message: `Cita de orientación actualizada exitosamente a '${nuevoEstado}'.`
+    };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "updateGuidanceAppointmentStatus", "ERROR", "UPDATE_GUIDANCE_APPOINTMENT_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
 }
 
 // [F10-Task11] [P1] - Completar la delegación de responsabilidades para asistentes administrativos y académicos

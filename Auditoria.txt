@@ -227,6 +227,18 @@ RESULTADO DE EVALUACIÓN:
 
 ===============================================================================
 FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task07: FORTALECER LA GESTIÓN DE CITAS DE ORIENTACIÓN Y ACOMPAÑAMIENTO ESTUDIANTIL
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `scheduleGuidanceAppointment`, `getGuidanceAppointments` y `updateGuidanceAppointmentStatus` con la etiqueta identificativa `[F11-Task07]` en `backend/academic-service/Code.gs`.
+- Se creó la hoja `CitasOrientacion` para el registro de citas con estados (`Programada`, `Realizada`, `Reincidencia`, `Cancelada`), asociadas automáticamente a casos preventivos en `CasosSeguimiento`.
+- Se aisló la visualización de notas confidenciales frente a roles no autorizados, previniendo exposición en resúmenes públicos.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
 AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task06: DESARROLLAR LA GESTIÓN DE CALENDARIOS INSTITUCIONALES, CONVOCATORIAS Y PREVENCIÓN DE TRASLAPES
 ARCHIVOS AUDITADOS: backend/user-service/Code.gs, tests/regression/academic-grading-suite.js
 RESULTADO DE EVALUACIÓN:

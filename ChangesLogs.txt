@@ -3461,3 +3461,15 @@ ARCHIVOS MODIFICADOS:
 - tests/regression/academic-grading-suite.js (línea ~87):
   Se agregó la aserción de comprobación para `checkCalendarEventOverlap` y `saveInstitutionalCalendarEvent` con la etiqueta `[F11-Task06]`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task07 - Fortalecer la gestión de citas de orientación y acompañamiento estudiantil
+ARCHIVOS MODIFICADOS:
+- backend/academic-service/Code.gs (líneas ~134, ~175, ~218, ~861-863, ~8407-8620):
+  Se creó la hoja `CitasOrientacion` en `getOrCreateSheet` e implementaron las funciones `scheduleGuidanceAppointment`, `getGuidanceAppointments` y `updateGuidanceAppointmentStatus` con la etiqueta identificativa `[F11-Task07]`.
+  Se gestionó el ciclo de vida de citas (`Programada`, `Realizada`, `Reincidencia`, `Cancelada`), vinculándolas al caso de seguimiento en `CasosSeguimiento`, aislando notas confidenciales de la vista de tutores/estudiantes y registrando derivaciones inmutables.
+  Se registraron los permisos correspondientes en `ROLE_PERMISSIONS` y en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~88):
+  Se agregó la aserción de comprobación para `scheduleGuidanceAppointment` y `getGuidanceAppointments` con la etiqueta `[F11-Task07]`.
+===============================================================================

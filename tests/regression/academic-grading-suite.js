@@ -85,6 +85,7 @@ assert(updatedUserCode.includes("sendInstitutionalMessage") && updatedUserCode.i
 assert(updatedUserCode.includes("getInstitutionalAnnouncements") && updatedUserCode.includes("[F11-Task04]"), "backend/user-service/Code.gs contiene getInstitutionalAnnouncements con vigencia de publicaciones [F11-Task04]");
 assert(updatedUserCode.includes("respondToAuthorizationRequest") && updatedUserCode.includes("[F11-Task05]"), "backend/user-service/Code.gs contiene respondToAuthorizationRequest y submitAuthorizationRequest [F11-Task05]");
 assert(updatedUserCode.includes("checkCalendarEventOverlap") && updatedUserCode.includes("[F11-Task06]"), "backend/user-service/Code.gs contiene checkCalendarEventOverlap y saveInstitutionalCalendarEvent [F11-Task06]");
+assert(academicCode.includes("scheduleGuidanceAppointment") && academicCode.includes("[F11-Task07]"), "backend/academic-service/Code.gs contiene scheduleGuidanceAppointment y getGuidanceAppointments [F11-Task07]");
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
