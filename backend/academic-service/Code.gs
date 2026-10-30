@@ -210,9 +210,9 @@ const ROLE_PERMISSIONS = {
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite",
-    "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"
+    "openAttendanceSession", "saveClassAttendance", "getBatchAttendanceRecords", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"
   ],
-  "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope"],
+  "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "getBatchAttendanceRecords"],
   "Desarrollador": ["getAcademicConfig", "getAcademicHistory", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "configureAcademicLevelsAndDynamicStorage"],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
   "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "scheduleCounselingAppointment", "recordCounselingSessionAct", "referCounselingCase", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary"],
@@ -245,11 +245,11 @@ const ROLE_PERMISSIONS = {
     "runAcademicPlanningRegressionSuite",
     "saveCurricularConstraint", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule", "getReusableResourceCatalog", "manageReusableResource",
     "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentEnrollments",
-    "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
+    "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getBatchAttendanceRecords", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
     "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans",
     "calculateUnifiedAcademicGrade", "previewAcademicGradeCalculation", "auditAcademicGradesIntegrity", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess", "exportAcademicGradesData"
   ],
-  "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentTimeline", "getClassAttendance", "getStudentAttendanceSummary", "auditAssistantDelegatedAction"],
+  "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentTimeline", "getClassAttendance", "getBatchAttendanceRecords", "getStudentAttendanceSummary", "auditAssistantDelegatedAction"],
   "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "calculateUnifiedAcademicGrade", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess"],
   "Alumno": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicPeriods", "getAcademicOffers", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess"]
 };
@@ -861,6 +861,7 @@ function doPost(e) {
       case "auditAssistantDelegatedAction": result = auditAssistantDelegatedAction(payload); break;
       case "validateEvidenceFileAndPermissions": result = validateEvidenceFileAndPermissions(payload); break;
       case "getStudentAttendanceSummary": result = getStudentAttendanceSummary(payload); break;
+      case "getBatchAttendanceRecords": result = getBatchAttendanceRecords(payload); break;
       case "checkAndDispatchAttendanceAlerts": result = checkAndDispatchAttendanceAlerts(payload); break;
       case "getAttendanceConfig": result = getAttendanceConfig(payload); break;
       case "saveAttendanceConfig": result = saveAttendanceConfig(payload); break;
@@ -7353,6 +7354,54 @@ function openAttendanceSession(payload) {
   return { status: "success", message: "Sesión de asistencia abierta.", data: { sesionId } };
 }
 
+// [F10-Task14] [P1] - Optimizar las consultas batch de asistencia y resiliencia de servicios
+function getBatchAttendanceRecords(payload) {
+  const { sesionIds, userIds, fechaInicio, fechaFin, grado, seccion } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
+  const regData = regSheet.getDataRange().getValues();
+
+  if (regData.length <= 1) {
+    return { status: "success", count: 0, data: [] };
+  }
+
+  const sesionFilter = Array.isArray(sesionIds) && sesionIds.length > 0 ? new Set(sesionIds.map(id => String(id).trim())) : null;
+  const userFilter = Array.isArray(userIds) && userIds.length > 0 ? new Set(userIds.map(u => String(u).trim())) : null;
+
+  const records = [];
+  for (let i = 1; i < regData.length; i++) {
+    const r = regData[i];
+    const sId = String(r[1]).trim();
+    const uId = String(r[2]).trim();
+
+    if (sesionFilter && !sesionFilter.has(sId)) continue;
+    if (userFilter && !userFilter.has(uId)) continue;
+
+    const fechaRegStr = r[8] ? new Date(r[8]).toISOString().split('T')[0] : null;
+    if (fechaInicio && fechaRegStr && fechaRegStr < fechaInicio) continue;
+    if (fechaFin && fechaRegStr && fechaRegStr > fechaFin) continue;
+
+    records.push({
+      registroId: r[0],
+      sesionId: sId,
+      userId: uId,
+      estadoAsistencia: r[3],
+      horaLlegada: r[4],
+      minutosTardanza: r[5],
+      justificado: r[6] === true || String(r[6]).toLowerCase() === "true",
+      observacionDocente: r[7],
+      fechaRegistro: r[8] ? new Date(r[8]).toISOString() : null
+    });
+  }
+
+  return {
+    status: "success",
+    count: records.length,
+    data: records,
+    message: `Consultados ${records.length} registros de asistencia en lote.`
+  };
+}
+
 // [F10-Task04] [P1] - Optimizar el registro masivo de asistencia y la gestión de sesiones
 function saveClassAttendance(payload) {
   const { sesionId, registros } = payload || {};
@@ -7520,45 +7569,75 @@ function getClassAttendance(payload) {
   return { status: "success", data: records };
 }
 
+// [F10-Task14] [P1] - Optimizar el rendimiento, la recuperación y la consistencia de los servicios
 function saveDailyAttendance(payload) {
   const { fecha, grado, seccion, registros } = payload || {};
   if (!fecha || !Array.isArray(registros)) throw new Error("Fecha y lista de registros son requeridos.");
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
-  const data = regSheet.getDataRange().getValues();
-  const now = new Date();
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(10000);
+  } catch (e) {
+    return { status: "error", message: "El servidor está ocupado procesando otra actualización de asistencia diaria." };
+  }
 
-  const dailySesionId = "SES-DIARIA-" + (fecha || now.toISOString().split('T')[0]) + "-" + (grado || "GEN") + "-" + (seccion || "A");
-
-  let savedCount = 0;
-  registros.forEach(r => {
-    const { userId, estadoAsistencia, horaLlegada, minutosTardanza, observacionDocente } = r;
-    if (!userId) return;
-
-    const idx = data.findIndex(row => String(row[1]).trim() === String(dailySesionId).trim() && String(row[2]).trim() === String(userId).trim());
-
-    if (idx !== -1) {
-      regSheet.getRange(idx + 1, 4).setValue(estadoAsistencia || "Presente");
-      if (horaLlegada) regSheet.getRange(idx + 1, 5).setValue(horaLlegada);
-    } else {
-      const regId = "REG-DIA-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
-      regSheet.appendRow([
-        regId,
-        dailySesionId,
-        userId,
-        estadoAsistencia || "Presente",
-        horaLlegada || "",
-        minutosTardanza || 0,
-        false,
-        observacionDocente || "Registro Diario",
-        now
-      ]);
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
+    if (regSheet.getLastRow() === 0) {
+      regSheet.appendRow(["RegistroID", "SesionID", "UserId", "EstadoAsistencia", "HoraLlegada", "MinutosTardanza", "Justificado", "ObservacionDocente", "FechaRegistro"]);
     }
-    savedCount++;
-  });
 
-  return { status: "success", message: `Asistencia diaria registrada para ${savedCount} alumnos.` };
+    const data = regSheet.getDataRange().getValues();
+    const now = new Date();
+    const dailySesionId = "SES-DIARIA-" + (fecha || now.toISOString().split('T')[0]) + "-" + (grado || "GEN") + "-" + (seccion || "A");
+
+    const indexMap = {};
+    for (let i = 1; i < data.length; i++) {
+      const key = `${String(data[i][1]).trim()}_${String(data[i][2]).trim()}`;
+      indexMap[key] = i;
+    }
+
+    let savedCount = 0;
+    registros.forEach(r => {
+      const { userId, estadoAsistencia, horaLlegada, minutosTardanza, observacionDocente } = r;
+      if (!userId) return;
+
+      const key = `${String(dailySesionId).trim()}_${String(userId).trim()}`;
+      if (key in indexMap) {
+        const idx = indexMap[key];
+        data[idx][3] = estadoAsistencia || "Presente";
+        if (horaLlegada !== undefined && horaLlegada !== null) data[idx][4] = horaLlegada;
+        if (minutosTardanza !== undefined && minutosTardanza !== null) data[idx][5] = minutosTardanza;
+        if (observacionDocente !== undefined && observacionDocente !== null) data[idx][7] = observacionDocente;
+        data[idx][8] = now;
+      } else {
+        const regId = "REG-DIA-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+        const newRow = [
+          regId,
+          dailySesionId,
+          userId,
+          estadoAsistencia || "Presente",
+          horaLlegada || "",
+          minutosTardanza || 0,
+          false,
+          observacionDocente || "Registro Diario",
+          now
+        ];
+        data.push(newRow);
+        indexMap[key] = data.length - 1;
+      }
+      savedCount++;
+    });
+
+    if (data.length > 1) {
+      regSheet.getRange(1, 1, data.length, data[0].length).setValues(data);
+    }
+
+    return { status: "success", message: `Asistencia diaria registrada para ${savedCount} alumnos.` };
+  } finally {
+    try { lock.releaseLock(); } catch (e) {}
+  }
 }
 
 function getDailyAttendance(payload) {

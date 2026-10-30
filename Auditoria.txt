@@ -97,3 +97,14 @@ RESULTADO DE EVALUACIÓN:
 - Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task14: OPTIMIZAR EL RENDIMIENTO, LA RECUPERACIÓN Y LA CONSISTENCIA DE LOS SERVICIOS
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, js/api.js, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `saveDailyAttendance` en `backend/academic-service/Code.gs` realiza iteraciones con `setValue` y `appendRow` individuales para cada alumno dentro de un bucle, generando múltiples llamadas consecutivas de I/O a Google Sheets.
+2. No existe una función dedicada `getBatchAttendanceRecords` en backend/academic-service/Code.gs para consultar lotes múltiples de sesiones de asistencia, estudiantes o rangos de fecha en una sola llamada batch optimizada.
+3. Se requiere protección por concurrencia con `LockService` y control de idempotencia/reintentos exponenciales en operaciones masivas de asistencia en `backend/academic-service/Code.gs` y helper en `js/api.js`.
+4. La suite de regresión `tests/regression/academic-grading-suite.js` requiere aserciones para verificar `[F10-Task14]`.
+===============================================================================

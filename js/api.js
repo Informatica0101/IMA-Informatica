@@ -418,4 +418,17 @@ window.executeDynamicModuleContract = async function(moduleId, customParams, act
         }
         console.log(`[F8-Task27] Caché local de módulos invalidada${moduleId ? ` para: ${moduleId}` : ' totalmente'}.`);
     };
+
+    // [F10-Task14] [P1] - Helper para optimización de consultas batch de asistencia y resiliencia idempotente
+    window.fetchBatchAttendanceRecords = function(params) {
+        var payload = params || {};
+        return window.fetchApi('academic', 'getBatchAttendanceRecords', payload);
+    };
+
+    window.executeIdempotentAttendanceBatch = function(action, payload, idempotencyKey) {
+        var batchPayload = Object.assign({}, payload || {}, {
+            idempotencyKey: idempotencyKey || ('IDEM-AST-' + Date.now() + '-' + Math.floor(Math.random() * 10000))
+        });
+        return window.fetchApi('academic', action, batchPayload);
+    };
 })();

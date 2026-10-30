@@ -3335,3 +3335,17 @@ Archivos Modificados:
 
 3. Auditoria.txt
    - Registro de la auditoría y verificación de la tarea `[F9-Task06]`.
+
+===============================================================================
+FECHA: 2026-10-29
+TAREA: F10-Task14 - Optimizar el rendimiento, la recuperación y la consistencia de los servicios
+ARCHIVOS MODIFICADOS:
+- backend/academic-service/Code.gs (líneas ~213, ~248, ~252, ~861, ~7355-7405, ~7570-7640):
+  Se agregó la función `getBatchAttendanceRecords` para consultas de asistencia en lote filtrando por `sesionIds`, `userIds`, `fechaInicio` y `fechaFin`.
+  Se refactorizó `saveDailyAttendance` utilizando `LockService.getScriptLock()` y actualización en memoria por lotes para evitar llamadas I/O por celda a Google Sheets.
+  Se registraron los permisos correspondientes en `ROLE_PERMISSIONS` y en el despachador `doPost`.
+- js/api.js (líneas ~420-432):
+  Se implementaron las funciones auxiliares `fetchBatchAttendanceRecords` y `executeIdempotentAttendanceBatch` para cliente.
+- tests/regression/academic-grading-suite.js (línea ~72):
+  Se agregó aserción de regresión para verificar `getBatchAttendanceRecords` con la etiqueta `[F10-Task14]`.
+===============================================================================

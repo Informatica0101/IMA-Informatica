@@ -224,7 +224,7 @@
 
 ---
 
-### [ ] [F10-Task14] Optimizar el rendimiento, la recuperación y la consistencia de los servicios
+### [X] [F10-Task14] Optimizar el rendimiento, la recuperación y la consistencia de los servicios
 - **Origen del Hallazgo:** `AUDITORIA_FASE_10_ASISTENCIA_DISCIPLINA_CONVIVENCIA.md` / Tarea 10.15 (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Rendimiento, latencia y resiliencia)
@@ -236,7 +236,7 @@
   Optimizar consultas batch de asistencia, reducir operaciones repetitivas en Google Sheets y controlar la concurrencia en modificaciones simultáneas.
 - **Criterios de Aceptación:**
   - Las operaciones masivas operan dentro de los umbrales de latencia establecidos.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
