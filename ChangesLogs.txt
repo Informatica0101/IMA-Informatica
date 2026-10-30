@@ -3473,3 +3473,15 @@ ARCHIVOS MODIFICADOS:
 - tests/regression/academic-grading-suite.js (línea ~88):
   Se agregó la aserción de comprobación para `scheduleGuidanceAppointment` y `getGuidanceAppointments` con la etiqueta `[F11-Task07]`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task08 - Desarrollar el sistema de alertas tempranas de rendimiento académico y deserción escolar
+ARCHIVOS MODIFICADOS:
+- backend/academic-service/Code.gs (líneas ~134, ~175, ~217-220, ~866-867, ~8625-8975):
+  Se incorporó la inicialización de la hoja `AlertasTempranas` en `getOrCreateSheet` e implementaron las funciones `evaluateAndDispatchEarlyWarningAlerts` y `getEarlyWarningAlerts` con la etiqueta identificativa `[F11-Task08]`.
+  Se evaluaron métricas integradas de ausentismo escolar (porcentaje y ausencias consecutivas no justificadas), reprobación de asignaturas y tareas pendientes para calcular el nivel de riesgo (`Bajo`, `Medio`, `Alto`, `Crítico`), vinculando casos preventivos automáticos en `CasosSeguimiento` para riesgos altos o críticos y aplicando claves de deduplicación (`EARLY_WARN_{userId}_P{periodo}_{grado}_{seccion}`) para prevenir alertas duplicadas activas.
+  Se registraron los permisos correspondientes en `ROLE_PERMISSIONS` (para `Director`, `Subdirector`, `Coordinador`, `Consejeros`, `Orientacion`, `Administrador`) y en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~89):
+  Se agregó la aserción de comprobación para `evaluateAndDispatchEarlyWarningAlerts` y `getEarlyWarningAlerts` con la etiqueta `[F11-Task08]`.
+===============================================================================

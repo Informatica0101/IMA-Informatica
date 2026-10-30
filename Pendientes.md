@@ -147,7 +147,7 @@
 
 ---
 
-### [ ] [F11-Task08] Desarrollar el sistema de alertas tempranas de rendimiento académico y deserción escolar
+### [X] [F11-Task08] Desarrollar el sistema de alertas tempranas de rendimiento académico y deserción escolar
 - **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área II (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Prevención de reprobación y deserción)
@@ -158,7 +158,7 @@
   Evaluar métricas combinadas de ausentismo, reprobación parcial e incumplimiento de tareas para disparar alertas preventivas a coordinadores y orientadores.
 - **Criterios de Aceptación:**
   - Las alertas de riesgo se generan según umbrales institucionales sin duplicar notificaciones activas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

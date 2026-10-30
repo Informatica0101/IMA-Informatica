@@ -248,3 +248,13 @@ RESULTADO DE EVALUACIÓN:
 - Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/user-service/Code.gs`.
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task08: DESARROLLAR EL SISTEMA DE ALERTAS TEMPRANAS DE RENDIMIENTO ACADÉMICO Y DESERCIÓN ESCOLAR
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS:
+1. El backend `academic-service` cuenta con `checkAndDispatchAttendanceAlerts` orientada exclusivamente a asistencia física (inasistencias y tardanzas consecutivas), pero carece de un motor integral de alertas tempranas (`EarlyWarning`) que combine ausentismo, reprobación parcial y tareas pendientes para determinar el riesgo de deserción o fracaso académico.
+2. Se requiere la tabla `AlertasTempranas` para estructurar el registro de alertas con identificador unívoco (`ALERTA-TMP-...`), estudiante, grado, sección, métricas computadas (porcentaje asistencia, materias reprobadas, tareas adeudadas), nivel de riesgo (`Bajo`, `Medio`, `Alto`, `Crítico`), estado (`Activa`, `EnAtencion`, `Descartada`, `Resuelta`) y prevención de alertas duplicadas activas para un mismo estudiante.
+3. Se deben registrar los permisos de rol correspondientes en `ROLE_PERMISSIONS` y enrutamiento en `doPost`.
+===============================================================================
