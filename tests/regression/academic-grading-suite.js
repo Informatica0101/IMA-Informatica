@@ -54,6 +54,7 @@ assert(examCode.includes("saveCompetencyEvaluation") && examCode.includes("getCo
 assert(academicCode.includes("exportAcademicGradesData") && academicCode.includes("[F9-Task13]"), "backend/academic-service/Code.gs contiene exportAcademicGradesData [F9-Task13]");
 assert(examCode.includes("getGradingPerformanceAndPersistenceMetrics") && examCode.includes("[F9-Task14]"), "backend/exam-service/Code.gs contiene getGradingPerformanceAndPersistenceMetrics [F9-Task14]");
 assert(academicCode.includes("getAttendanceFollowupCases") && academicCode.includes("[F10-Task01]"), "backend/academic-service/Code.gs contiene aislamiento de confidencialidad en getAttendanceFollowupCases [F10-Task01]");
+assert(devCode.includes("runPhase10AttendanceAndCoexistenceRegressionSuite") && devCode.includes("[F10-Task02]"), "backend/developer-service/Code.gs contiene función runPhase10AttendanceAndCoexistenceRegressionSuite [F10-Task02]");
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
