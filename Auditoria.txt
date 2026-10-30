@@ -47,7 +47,7 @@ FECHA: 2026-10-29
 AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task11: COMPLETAR LA DELEGACIÓN DE RESPONSABILIDADES PARA ASISTENTES ADMINISTRATIVOS Y ACADÉMICOS
 ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, backend/user-service/Code.gs
 RESULTADO DE EVALUACIÓN:
-- Se implementó la función `auditAssistantDelegatedAction` y reforzado `validateRolePermission` con la etiqueta identificativa `[F10-Task11]` en `backend/academic-service/Code.gs` y `backend/user-service/Code.gs`.
+- Se implementó la función `auditAssistantDelegatedAction` y reinforced `validateRolePermission` con la etiqueta identificativa `[F10-Task11]` en `backend/academic-service/Code.gs` y `backend/user-service/Code.gs`.
 - Se verificó el registro e identificación obligatoria de doble identidad: autor real (`_executorUserId`), titular delegante (`_delegatedFrom`), ID de delegación (`_delegationId`) y la auditoría estructurada de acciones ejecutadas por asistentes bajo delegación activa.
 - Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
 - Resultado: 100% Funcional y Verificado.
@@ -124,7 +124,7 @@ AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task16: AMPLIAR LOS INFORMES DE ASISTENCIA
 ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
 HALLAZGOS DETECTADOS:
 1. No existe un informe consolidado multi-criterio `generateConsolidatedAttendanceAndCoexistenceReport` en `backend/academic-service/Code.gs` que agregue por grupo/grado/sección o período las métricas de asistencia, tardanzas acumuladas, incidencias de convivencia y compromisos de casos de seguimiento.
-2. El informe consolidado debe excluir estrictamente la información confidencial de las categorías `Consejería` y `Orientación` cuando sea consultado por roles no autorizados como docentes generales.
+2. El informe consolidado debe excluir strictly la información confidencial de las categorías `Consejería` y `Orientación` cuando sea consultado por roles no autorizados como docentes generales.
 3. Se requiere registrar la acción en `ROLE_PERMISSIONS` para `Director`, `Secretaría`, `Coordinador`, `Administrador` y `Profesor` (filtrado) y agregar aserciones en `tests/regression/academic-grading-suite.js`.
 ===============================================================================
 
@@ -201,4 +201,14 @@ HALLAZGOS DETECTADOS:
 1. `backend/user-service/Code.gs` poseía la hoja `BandejaNotificaciones` para despachos unidireccionales, pero carecía de funciones para conversaciones bidireccionales contextuales (`MensajeriaInstitucional`) organizadas por estudiante, grupo o trámite.
 2. Se requiere implementar `sendInstitutionalMessage`, `getInstitutionalConversations`, `getConversationMessages` y `archiveInstitutionalConversation` con control de permisos y trazabilidad de lectura/adjuntos.
 3. Se deben registrar los permisos en `ROLE_PERMISSIONS` y agregar la comprobación de regresión `[F11-Task03]` en `tests/regression/academic-grading-suite.js`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task04: IMPLEMENTAR EL GESTOR DE NOTICIAS, ANUNCIOS, CIRCULARES Y COMUNICADOS CON VIGENCIA
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `getInstitutionalAnnouncements` y `createInstitutionalAnnouncement` en `backend/user-service/Code.gs` guardaban anuncios en la hoja `ComunicadosInstitucionales`, pero carecían de filtrado por rango de fecha de vigencia (`fechaInicioVigencia`, `fechaFinVigencia`), estados de ciclo de vida (`Borrador`, `Programado`, `Publicado`, `Vencido`, `Archivado`), e indicadores de urgencia/prioridad (`Urgente`, `Ordinario`).
+2. Se requiere refactorizar `getInstitutionalAnnouncements` para omitir comunicados programados o vencidos ante consultas de destinatarios generales, permitiendo a roles administrativos consultar borradores y estadísticas.
+3. Se agregará la comprobación de regresión `[F11-Task04]` en `tests/regression/academic-grading-suite.js`.
 ===============================================================================

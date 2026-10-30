@@ -3427,3 +3427,13 @@ ARCHIVOS MODIFICADOS:
 - tests/regression/academic-grading-suite.js (línea ~83):
   Se agregó la aserción de comprobación para `sendInstitutionalMessage` y `getInstitutionalConversations` con la etiqueta `[F11-Task03]`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task04 - Optimizar la gestión de noticias, anuncios, circulares y comunicados con vigencia
+ARCHIVOS MODIFICADOS:
+- backend/user-service/Code.gs (líneas ~5266-5318, ~5376-5500):
+  Se refactorizaron `getNews`, `getInstitutionalAnnouncements` y `createInstitutionalAnnouncement` para incorporar filtrado por fechas de vigencia (`fechaInicioVigencia`, `fechaFinVigencia`), transiciones automáticas de estado (`Borrador`, `Programado`, `Publicado`, `Vencido`, `Archivado`), segmentación por audiencia (grado, sección, rol) e indicadores de urgencia (`Critico`, `Urgente`, `Ordinario`).
+- tests/regression/academic-grading-suite.js (línea ~85):
+  Se agregó la aserción de comprobación para `getInstitutionalAnnouncements` con la etiqueta `[F11-Task04]`.
+===============================================================================

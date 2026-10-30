@@ -87,7 +87,7 @@
 
 ---
 
-### [ ] [F11-Task04] Implementar el gestor de noticias, anuncios, circulares y comunicados con vigencia
+### [X] [F11-Task04] Implementar el gestor de noticias, anuncios, circulares y comunicados con vigencia
 - **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área I (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Difusión e información escolar)
@@ -98,7 +98,7 @@
   Permitir publicar avisos, circulares y convocatorias con segmentación por destinatarios, estado de borrador/programado, fechas de vigencia e indicadores visuales de urgencia.
 - **Criterios de Aceptación:**
   - Los comunicados programados o vencidos no se presentan a usuarios fuera de su rango de vigencia.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

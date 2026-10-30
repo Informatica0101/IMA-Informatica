@@ -5263,7 +5263,78 @@ function updateAppointmentStatus(payload) {
   return { status: "success", message: `Estado de la cita cambiado a ${nuevoEstado}.` };
 }
 
-// [REQ-EXP-016] [Requerimientos de Expansión y Desarrollo] - Publicación y gestión de noticias/avisos institucionales por Secretaría.
+// [F11-Task04] [P1] - Gestión de Noticias, Anuncios, Circulares y Comunicados con Vigencia
+function getNews(payload) {
+  try {
+    const { categoria, grado, seccion, estado } = payload || {};
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "NoticiasPortal");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", noticias: [] };
+
+    const nowStr = new Date().toISOString().split('T')[0];
+    const noticias = [];
+
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const nId = row[0];
+      const fecha = row[1];
+      const hora = row[2];
+      const titulo = row[3];
+      const contenido = row[4];
+      const imgUrl = row[5];
+      const cat = row[6] || "General";
+      const grAud = row[7] || "Todos";
+      const secAud = row[8] || "Todas";
+      const fInicio = row[9] ? String(row[9]).split('T')[0] : "";
+      const fFin = row[10] ? String(row[10]).split('T')[0] : "";
+      let st = row[11] || "Activa";
+
+      // Vigency evaluation
+      if (fFin && nowStr > fFin && st === "Activa") {
+        st = "Vencida";
+        sheet.getRange(i + 1, 12).setValue("Vencida");
+      }
+      if (fInicio && nowStr < fInicio && st === "Activa") {
+        st = "Programada";
+      }
+
+      if (estado && estado !== "Todas" && st !== estado) {
+        if (!payload || !payload.includeAll) continue;
+      } else if (!estado && st !== "Activa") {
+        // Default only active news
+        continue;
+      }
+
+      if (categoria && categoria !== "Todas" && cat !== categoria) continue;
+      if (grado && grAud !== "Todos" && grAud !== grado) continue;
+      if (seccion && secAud !== "Todas" && secAud !== seccion) continue;
+
+      noticias.push({
+        noticiaId: nId,
+        fecha,
+        hora,
+        titulo,
+        contenido,
+        imagenUrl: imgUrl,
+        categoria: cat,
+        gradoAudiencia: grAud,
+        seccionAudiencia: secAud,
+        fechaInicio: fInicio,
+        fechaFin: fFin,
+        estado: st
+      });
+    }
+
+    noticias.reverse();
+    return { status: "success", noticias: noticias };
+  } catch (error) {
+    logStructuredEvent("USER", "getNews", "ERROR", "GET_NEWS_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
 function createNews(payload) {
   const { titulo, contenido, imagenUrl, categoria, gradoAudiencia, seccionAudiencia, fechaInicio, fechaFin } = payload || {};
   if (!titulo || !contenido) throw new Error("Título y contenido requeridos.");
@@ -5300,6 +5371,288 @@ function updateNewsStatus(payload) {
 
   sheet.getRange(idx + 1, 12).setValue(estado);
   return { status: "success", message: `Estado de la noticia actualizado a '${estado}'.` };
+}
+
+// [F11-Task04] [P1] - Gestor de Comunicados, Circulares y Anuncios Institucionales con Vigencia
+function getInstitutionalAnnouncements(payload) {
+  try {
+    const verifiedRole = getUserVerifiedRole(payload);
+    const isStaff = ["Administrador", "Desarrollador", "Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "RecursosHumanos"].indexOf(verifiedRole) !== -1;
+
+    const { categoria, estado, nivelUrgencia, grado, seccion, rol } = payload || {};
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "ComunicadosInstitucionales");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", comunicados: [] };
+
+    const nowISO = new Date().toISOString();
+    const nowDate = nowISO.split('T')[0];
+    const comunicados = [];
+
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const cId = String(row[0] || "");
+      const titulo = String(row[1] || "");
+      const contenido = String(row[2] || "");
+      const cat = String(row[3] || "Aviso");
+      const autorId = String(row[4] || "");
+      const audienciaRaw = row[5];
+      const requiereFirma = row[6] === true || String(row[6]).toUpperCase() === "SI" || String(row[6]).toLowerCase() === "true";
+      const fechaPub = row[7] ? new Date(row[7]).toISOString() : "";
+      let st = String(row[8] || "Publicado");
+      const fInicioVig = row[9] ? String(row[9]).split('T')[0] : (fechaPub ? fechaPub.split('T')[0] : "");
+      const fFinVig = row[10] ? String(row[10]).split('T')[0] : "";
+      const urgencia = String(row[11] || "Ordinario");
+      const fechaCrea = row[12] ? new Date(row[12]).toISOString() : fechaPub;
+
+      // Evaluar vigencia
+      if (fFinVig && nowDate > fFinVig && (st === "Publicado" || st === "Programado")) {
+        st = "Vencido";
+        sheet.getRange(i + 1, 9).setValue("Vencido");
+      } else if (fInicioVig && nowDate < fInicioVig && st === "Publicado") {
+        st = "Programado";
+      }
+
+      // Filtro de estado
+      if (!isStaff) {
+        // Usuarios generales sólo ven "Publicado" vigente
+        if (st !== "Publicado") continue;
+      } else if (estado && estado !== "Todos" && st !== estado) {
+        continue;
+      }
+
+      // Filtro por categoría
+      if (categoria && categoria !== "Todas" && cat !== categoria) continue;
+
+      // Filtro por urgencia
+      if (nivelUrgencia && nivelUrgencia !== "Todos" && urgencia !== nivelUrgencia) continue;
+
+      // Parsing de audiencia
+      let audienciaObj = {};
+      try {
+        audienciaObj = typeof audienciaRaw === "object" ? audienciaRaw : JSON.parse(audienciaRaw || "{}");
+      } catch (e) {
+        audienciaObj = { target: String(audienciaRaw || "Todos") };
+      }
+
+      // Filtros por grado, sección o rol
+      if (grado && audienciaObj.grado && audienciaObj.grado !== "Todos" && audienciaObj.grado !== grado) continue;
+      if (seccion && audienciaObj.seccion && audienciaObj.seccion !== "Todas" && audienciaObj.seccion !== seccion) continue;
+      if (rol && audienciaObj.roles && Array.isArray(audienciaObj.roles) && audienciaObj.roles.length > 0 && audienciaObj.roles.indexOf(rol) === -1 && audienciaObj.roles.indexOf("Todos") === -1) continue;
+
+      comunicados.push({
+        comunicadoId: cId,
+        titulo: titulo,
+        contenido: contenido,
+        categoria: cat,
+        autorId: autorId,
+        audiencia: audienciaObj,
+        requiereFirma: requiereFirma,
+        fechaPublicacion: fechaPub,
+        estado: st,
+        fechaInicioVigencia: fInicioVig,
+        fechaFinVigencia: fFinVig,
+        nivelUrgencia: urgencia,
+        fechaCreacion: fechaCrea
+      });
+    }
+
+    // Ordenar priorizando Urgente/Critico primero y luego fecha más reciente
+    comunicados.sort((a, b) => {
+      const rankUrg = { "Critico": 3, "Urgente": 2, "Ordinario": 1 };
+      const diffUrg = (rankUrg[b.nivelUrgencia] || 1) - (rankUrg[a.nivelUrgencia] || 1);
+      if (diffUrg !== 0) return diffUrg;
+      return new Date(b.fechaPublicacion || b.fechaCreacion || 0) - new Date(a.fechaPublicacion || a.fechaCreacion || 0);
+    });
+
+    return { status: "success", totalComunicados: comunicados.length, comunicados: comunicados };
+  } catch (error) {
+    logStructuredEvent("USER", "getInstitutionalAnnouncements", "ERROR", "GET_ANNOUNCEMENTS_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+// [F11-Task04] [P1] - Creación y Edición de Anuncios Institucionales con Vigencia
+function createInstitutionalAnnouncement(payload) {
+  try {
+    const verifiedRole = getUserVerifiedRole(payload);
+    const isAuthorized = ["Administrador", "Desarrollador", "Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Profesor", "RecursosHumanos"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "No cuenta con autorización para publicar o gestionar comunicados e información institucional." };
+    }
+
+    const {
+      comunicadoId,
+      titulo,
+      contenido,
+      categoria,
+      audienciaJSON,
+      audiencia,
+      requiereFirma,
+      fechaInicioVigencia,
+      fechaInicio,
+      fechaFinVigencia,
+      fechaFin,
+      nivelUrgencia,
+      estado,
+      notificar
+    } = payload || {};
+
+    if (!titulo || !contenido) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "El título y el contenido del comunicado son requeridos." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "ComunicadosInstitucionales");
+    const data = sheet.getDataRange().getValues();
+
+    const now = new Date();
+    const nowISO = now.toISOString();
+    const nowDate = nowISO.split('T')[0];
+
+    const cId = comunicadoId || ("COM-AN-" + now.getFullYear() + "-" + Math.floor(1000 + Math.random() * 9000));
+    const cat = categoria || "Aviso";
+    const autor = (payload && (payload._verifiedUserId || payload.autorId || payload.userId)) || verifiedRole;
+
+    const audObj = audienciaJSON || audiencia || { target: "Todos" };
+    const audStr = typeof audObj === "object" ? JSON.stringify(audObj) : String(audObj);
+
+    const fInicioVig = (fechaInicioVigencia || fechaInicio || nowDate).split('T')[0];
+    const fFinVig = (fechaFinVigencia || fechaFin || "").split('T')[0];
+    const urgencia = nivelUrgencia || (cat === "Urgente" ? "Urgente" : "Ordinario");
+
+    let st = estado || "Publicado";
+    if (fInicioVig && fInicioVig > nowDate && st === "Publicado") {
+      st = "Programado";
+    }
+
+    let foundIndex = -1;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(cId).trim()) {
+        foundIndex = i;
+        break;
+      }
+    }
+
+    const rowData = [
+      cId,
+      titulo.trim(),
+      contenido.trim(),
+      cat,
+      autor,
+      audStr,
+      requiereFirma ? "SI" : "NO",
+      nowISO,
+      st,
+      fInicioVig,
+      fFinVig,
+      urgencia,
+      foundIndex !== -1 ? (data[foundIndex][12] || nowISO) : nowISO
+    ];
+
+    if (foundIndex !== -1) {
+      sheet.getRange(foundIndex + 1, 1, 1, rowData.length).setValues([rowData]);
+      logStructuredEvent("USER", "createInstitutionalAnnouncement", "INFO", "ANNOUNCEMENT_UPDATED", `Comunicado ${cId} actualizado`, { comunicadoId: cId, estado: st }, verifiedRole);
+    } else {
+      sheet.appendRow(rowData);
+      logStructuredEvent("USER", "createInstitutionalAnnouncement", "INFO", "ANNOUNCEMENT_CREATED", `Comunicado ${cId} publicado (${urgencia})`, { comunicadoId: cId, estado: st }, verifiedRole);
+    }
+
+    // Si es urgente o solicitan notificar, emitir notificación multicanal
+    if (notificar || urgencia === "Urgente" || urgencia === "Critico") {
+      try {
+        sendMultiChannelNotification({
+          userId: "TODOS",
+          titulo: `[COMUNICADO ${urgencia.toUpperCase()}] ${titulo}`,
+          mensaje: contenido.substring(0, 200) + (contenido.length > 200 ? "..." : ""),
+          tipo: "ComunicadoInstitucional",
+          categoria: cat,
+          deduplicationKey: `NOTIF_COM_${cId}`,
+          authRole: verifiedRole
+        });
+      } catch (eNotif) {
+        logStructuredEvent("USER", "createInstitutionalAnnouncement", "WARN", "NOTIF_DISPATCH_WARN", eNotif.message, { comunicadoId: cId }, verifiedRole);
+      }
+    }
+
+    return {
+      status: "success",
+      comunicadoId: cId,
+      estado: st,
+      fechaInicioVigencia: fInicioVig,
+      fechaFinVigencia: fFinVig,
+      nivelUrgencia: urgencia,
+      message: `Comunicado institucional '${titulo}' ${foundIndex !== -1 ? 'actualizado' : 'registrado'} exitosamente con estado '${st}'.`
+    };
+  } catch (error) {
+    logStructuredEvent("USER", "createInstitutionalAnnouncement", "ERROR", "ANNOUNCEMENT_CREATE_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function submitAnnouncementReceiptConfirmation(payload) {
+  try {
+    const { comunicadoId, userId, observacion } = payload || {};
+    const effectiveUserId = (payload && (payload._verifiedUserId || payload.userId)) || userId;
+    if (!comunicadoId || !effectiveUserId) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "comunicadoId y userId son requeridos para confirmar lectura." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "ConfirmacionesLecturaComunicados");
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["ConfirmacionID", "ComunicadoID", "UserId", "FechaApertura", "FechaConfirmacionExplicit", "EstadoConfirmacion", "IpMetadata"]);
+    }
+
+    const confId = "CNF-" + Date.now();
+    const now = new Date().toISOString();
+
+    sheet.appendRow([
+      confId,
+      String(comunicadoId).trim(),
+      String(effectiveUserId).trim(),
+      now,
+      now,
+      "Confirmado",
+      observacion || "PlataformaWeb"
+    ]);
+
+    return { status: "success", confirmacionId: confId, message: "Confirmación de lectura registrada." };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function getAnnouncementReadReport(payload) {
+  try {
+    const { comunicadoId } = payload || {};
+    if (!comunicadoId) return { status: "error", message: "comunicadoId es requerido." };
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "ConfirmacionesLecturaComunicados");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", comunicadoId, totalConfirmaciones: 0, confirmaciones: [] };
+
+    const confirmaciones = [];
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][1]).trim() === String(comunicadoId).trim()) {
+        confirmaciones.push({
+          confirmacionId: data[i][0],
+          comunicadoId: data[i][1],
+          userId: data[i][2],
+          fechaApertura: data[i][3],
+          fechaConfirmacion: data[i][4],
+          estado: data[i][5]
+        });
+      }
+    }
+
+    return { status: "success", comunicadoId, totalConfirmaciones: confirmaciones.length, confirmaciones: confirmaciones };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
 }
 
 function getInstitutionalCalendarEvents(payload) {
