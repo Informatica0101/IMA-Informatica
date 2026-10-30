@@ -3359,3 +3359,15 @@ ARCHIVOS MODIFICADOS:
 - tests/regression/academic-grading-suite.js (línea ~73):
   Se agregó la aserción de comprobación para la suite de regresión ampliada `runPhase10AttendanceAndCoexistenceRegressionSuite` `[F10-Task15]`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+TAREA: F10-Task16 - Ampliar los informes de asistencia, convivencia y seguimiento
+ARCHIVOS MODIFICADOS:
+- backend/academic-service/Code.gs (líneas ~213, ~216, ~248, ~863, ~1088-1190):
+  Se implementó la función `generateConsolidatedAttendanceAndCoexistenceReport` para consolidar métricas de asistencia, tardanzas acumuladas, estados de incidencias de convivencia y resumen de compromisos de seguimiento.
+  Se incorporó el aislamiento de confidencialidad para excluir notas de las categorías `Consejería` y `Orientación` cuando la consulta es realizada por roles no autorizados.
+  Se registraron los permisos correspondientes en `ROLE_PERMISSIONS` y en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~74):
+  Se agregó la aserción de comprobación para `generateConsolidatedAttendanceAndCoexistenceReport` con la etiqueta `[F10-Task16]`.
+===============================================================================

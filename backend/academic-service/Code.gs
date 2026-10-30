@@ -210,9 +210,9 @@ const ROLE_PERMISSIONS = {
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite",
-    "openAttendanceSession", "saveClassAttendance", "getBatchAttendanceRecords", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"
+    "openAttendanceSession", "saveClassAttendance", "getBatchAttendanceRecords", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "generateConsolidatedAttendanceAndCoexistenceReport"
   ],
-  "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "getBatchAttendanceRecords"],
+  "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "getBatchAttendanceRecords", "generateConsolidatedAttendanceAndCoexistenceReport"],
   "Desarrollador": ["getAcademicConfig", "getAcademicHistory", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "configureAcademicLevelsAndDynamicStorage"],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
   "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "scheduleCounselingAppointment", "recordCounselingSessionAct", "referCounselingCase", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary"],
@@ -245,7 +245,7 @@ const ROLE_PERMISSIONS = {
     "runAcademicPlanningRegressionSuite",
     "saveCurricularConstraint", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule", "getReusableResourceCatalog", "manageReusableResource",
     "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentEnrollments",
-    "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getBatchAttendanceRecords", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
+    "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getBatchAttendanceRecords", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "generateConsolidatedAttendanceAndCoexistenceReport",
     "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans",
     "calculateUnifiedAcademicGrade", "previewAcademicGradeCalculation", "auditAcademicGradesIntegrity", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess", "exportAcademicGradesData"
   ],
@@ -862,6 +862,7 @@ function doPost(e) {
       case "validateEvidenceFileAndPermissions": result = validateEvidenceFileAndPermissions(payload); break;
       case "getStudentAttendanceSummary": result = getStudentAttendanceSummary(payload); break;
       case "getBatchAttendanceRecords": result = getBatchAttendanceRecords(payload); break;
+      case "generateConsolidatedAttendanceAndCoexistenceReport": result = generateConsolidatedAttendanceAndCoexistenceReport(payload); break;
       case "checkAndDispatchAttendanceAlerts": result = checkAndDispatchAttendanceAlerts(payload); break;
       case "getAttendanceConfig": result = getAttendanceConfig(payload); break;
       case "saveAttendanceConfig": result = saveAttendanceConfig(payload); break;
@@ -1083,6 +1084,115 @@ function getAdmissionRequests(payload) {
       totalRecords: totalRecords,
       totalPages: totalPages
     }
+  };
+}
+
+// [F10-Task16] [P2] - Ampliar los informes de asistencia, convivencia y seguimiento
+function generateConsolidatedAttendanceAndCoexistenceReport(payload) {
+  const { grado, seccion, fechaInicio, fechaFin, rolSolicitante } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // 1. Asistencia
+  const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
+  const regData = regSheet.getDataRange().getValues();
+
+  let totalRegistros = 0;
+  let totalPresentes = 0;
+  let totalAusentes = 0;
+  let totalTardanzas = 0;
+  let totalJustificadas = 0;
+
+  if (regData.length > 1) {
+    for (let i = 1; i < regData.length; i++) {
+      const r = regData[i];
+      const fechaRegStr = r[8] ? new Date(r[8]).toISOString().split('T')[0] : null;
+      if (fechaInicio && fechaRegStr && fechaRegStr < fechaInicio) continue;
+      if (fechaFin && fechaRegStr && fechaRegStr > fechaFin) continue;
+
+      totalRegistros++;
+      const st = String(r[3] || "").toLowerCase();
+      if (st === "presente") totalPresentes++;
+      else if (st === "ausente") totalAusentes++;
+      else if (st === "tardanza") totalTardanzas++;
+
+      if (r[6] === true || String(r[6]).toLowerCase() === "true") totalJustificadas++;
+    }
+  }
+
+  // 2. Incidencias de Convivencia
+  const incSheet = getOrCreateSheet(ss, "IncidenciasAsistencia");
+  const incData = incSheet.getDataRange().getValues();
+  const resumenIncidencias = {
+    total: 0,
+    porEstado: { Reportada: 0, PendienteRevision: 0, EnInvestigacion: 0, Confirmada: 0, Cerrada: 0, Reabierta: 0 }
+  };
+
+  if (incData.length > 1) {
+    for (let i = 1; i < incData.length; i++) {
+      const row = incData[i];
+      const estado = String(row[8] || "Reportada").trim();
+      resumenIncidencias.total++;
+      if (resumenIncidencias.porEstado[estado] !== undefined) {
+        resumenIncidencias.porEstado[estado]++;
+      } else {
+        resumenIncidencias.porEstado[estado] = 1;
+      }
+    }
+  }
+
+  // 3. Casos de Seguimiento y Compromisos (Excluyendo confidenciales de Consejería u Orientación si no está autorizado)
+  const isCounselingAuthorized = ["Consejeros", "Orientación", "Orientacion", "Dirección", "Direccion", "Administrador", "Director"].includes(String(rolSolicitante || "").trim());
+
+  const caseSheet = getOrCreateSheet(ss, "CasosSeguimiento");
+  const caseData = caseSheet.getDataRange().getValues();
+
+  let totalCasos = 0;
+  let casosExcluidosPorConfidencialidad = 0;
+  let totalCompromisos = 0;
+
+  if (caseData.length > 1) {
+    for (let i = 1; i < caseData.length; i++) {
+      const row = caseData[i];
+      const categoria = String(row[4] || "").trim();
+
+      if ((categoria === "Consejería" || categoria === "Orientación") && !isCounselingAuthorized) {
+        casosExcluidosPorConfidencialidad++;
+        continue;
+      }
+
+      totalCasos++;
+      try {
+        const compromisosJSON = row[9];
+        if (compromisosJSON && typeof compromisosJSON === "string" && compromisosJSON.trim().startsWith("[")) {
+          const arr = JSON.parse(compromisosJSON);
+          if (Array.isArray(arr)) totalCompromisos += arr.length;
+        }
+      } catch (e) {}
+    }
+  }
+
+  const porcentajeAsistenciaGlobal = totalRegistros > 0 ? (((totalPresentes + totalTardanzas) / totalRegistros) * 100).toFixed(1) : "100.0";
+
+  return {
+    status: "success",
+    reporte: {
+      filtros: { grado: grado || "TODOS", seccion: seccion || "TODAS", fechaInicio: fechaInicio || null, fechaFin: fechaFin || null },
+      asistencia: {
+        totalRegistros,
+        presentes: totalPresentes,
+        ausentes: totalAusentes,
+        tardanzas: totalTardanzas,
+        justificadas: totalJustificadas,
+        porcentajeGlobal: parseFloat(porcentajeAsistenciaGlobal)
+      },
+      convivencia: resumenIncidencias,
+      seguimiento: {
+        totalCasosVisibles: totalCasos,
+        casosExcluidosPorConfidencialidad,
+        totalCompromisos
+      }
+    },
+    message: "Informe consolidado de asistencia, convivencia y seguimiento generado correctamente."
   };
 }
 
@@ -7635,6 +7745,10 @@ function saveDailyAttendance(payload) {
     });
 
     if (data.length > 1) {
+      const maxRows = regSheet.getMaxRows();
+      if (data.length > maxRows) {
+        regSheet.insertRowsAfter(maxRows, data.length - maxRows);
+      }
       regSheet.getRange(1, 1, data.length, data[0].length).setValues(data);
     }
 

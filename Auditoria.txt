@@ -117,3 +117,13 @@ HALLAZGOS DETECTADOS:
 1. `runPhase10AttendanceAndCoexistenceRegressionSuite` en `backend/developer-service/Code.gs` contenía casos de prueba básicos stubbed y requería la integración completa de los contratos de validación de asistencia, justificaciones, salidas anticipadas, incidencias de convivencia, consejería confidencial, orientación vocacional, delegación de asistentes, notificaciones y operaciones batch.
 2. `tests/regression/academic-grading-suite.js` requiere aserciones adicionales que validen que `runPhase10AttendanceAndCoexistenceRegressionSuite` abarca integralmente los 86 criterios de la Fase 10.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task16: AMPLIAR LOS INFORMES DE ASISTENCIA, CONVIVENCIA Y SEGUIMIENTO
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. No existe un informe consolidado multi-criterio `generateConsolidatedAttendanceAndCoexistenceReport` en `backend/academic-service/Code.gs` que agregue por grupo/grado/sección o período las métricas de asistencia, tardanzas acumuladas, incidencias de convivencia y compromisos de casos de seguimiento.
+2. El informe consolidado debe excluir estrictamente la información confidencial de las categorías `Consejería` y `Orientación` cuando sea consultado por roles no autorizados como docentes generales.
+3. Se requiere registrar la acción en `ROLE_PERMISSIONS` para `Director`, `Secretaría`, `Coordinador`, `Administrador` y `Profesor` (filtrado) y agregar aserciones en `tests/regression/academic-grading-suite.js`.
+===============================================================================

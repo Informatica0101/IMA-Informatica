@@ -260,7 +260,7 @@
 
 ---
 
-### [ ] [F10-Task16] Ampliar los informes de asistencia, convivencia y seguimiento
+### [X] [F10-Task16] Ampliar los informes de asistencia, convivencia y seguimiento
 - **Origen del Hallazgo:** `AUDITORIA_FASE_10_ASISTENCIA_DISCIPLINA_CONVIVENCIA.md` / Tarea 10.12 (P2)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Media (Informes, reportes y estadísticas)
@@ -271,7 +271,7 @@
   Incorporar informes consolidados de asistencia por clase/día, tardanzas acumuladas, incidencias por estado y resumen de compromisos respetando los permisos de rol.
 - **Criterios de Aceptación:**
   - Los reportes aplican los filtros seleccionados y excluyen información confidencial de consejería.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
