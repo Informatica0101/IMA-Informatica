@@ -925,7 +925,7 @@ const ROLE_PERMISSIONS = {
   "Desarrollador": ["*"],
   "Padre": [
     "getUserInfo", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
-    "acceptLinkInvitation", "getGuardianStudents", "getGuardianApplicants", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "acceptLinkInvitation", "getGuardianStudents", "getGuardianApplicants", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Tutor": [
     "getUserInfo", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
@@ -938,7 +938,7 @@ const ROLE_PERMISSIONS = {
   "Director": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "dispatchScheduleChangeNotifications", "getScheduleChangeNotificationLogs", "getAdmissionNotificationLogs", "getStudentProcedureNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "dispatchScheduleChangeNotifications", "getScheduleChangeNotificationLogs", "getAdmissionNotificationLogs", "getStudentProcedureNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
     "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData", "generatePrivilegeAndAccountAuditReport", "getPaginatedAuditLogReport", "auditAndReconcileIdentityInconsistencies"
   ],
@@ -950,7 +950,7 @@ const ROLE_PERMISSIONS = {
   "Secretaría": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Contador": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest"],
   "RecursosHumanos": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "createNews", "getInternalMessages", "sendInternalMessage"],
@@ -960,7 +960,7 @@ const ROLE_PERMISSIONS = {
   "Profesor": [
     "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "createNews", "uploadNewsImage", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData",
     "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans",
-    "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "markNotificationAsRead", "createUserNotification", "getAdministrativeRequests", "submitAdministrativeRequest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus"
+    "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "markNotificationAsRead", "createUserNotification", "getAdministrativeRequests", "submitAdministrativeRequest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus"
   ],
   "Asistente": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "getLearningProfile", "getInstitutionalCriteria", "getFormativeEvaluations", "getInstitutionalAnnouncements", "getUserNotifications"],
   "Estudiante": [
@@ -1337,6 +1337,10 @@ function doPost(e) {
       case "generatePrivilegeAndAccountAuditReport": result = generatePrivilegeAndAccountAuditReport(payload); break;
       case "getPaginatedAuditLogReport": result = getPaginatedAuditLogReport(payload); break;
       case "auditAndReconcileIdentityInconsistencies": result = auditAndReconcileIdentityInconsistencies(payload); break;
+      case "sendInstitutionalMessage": result = sendInstitutionalMessage(payload); break;
+      case "getInstitutionalConversations": result = getInstitutionalConversations(payload); break;
+      case "getConversationMessages": result = getConversationMessages(payload); break;
+      case "archiveInstitutionalConversation": result = archiveInstitutionalConversation(payload); break;
       case "getNotificationPreferences": result = getNotificationPreferences(payload); break;
       case "markNotificationAsRead": result = markNotificationAsRead(payload); break;
       case "createUserNotification": result = createUserNotification(payload); break;
@@ -7359,6 +7363,142 @@ function getUserDynamicDashboardConfig(payload) {
       message: "Error al consultar configuración del dashboard dinámico: " + error.message
     };
   }
+}
+
+// [F11-Task03] [P1] - Centro unificado de comunicaciones y mensajería contextual
+function sendInstitutionalMessage(payload) {
+  const { conversacionId, remitenteUserId, destinatarioUserId, asunto, contenido, contextoTipo, contextoId, adjuntosUrls } = payload || {};
+  if (!remitenteUserId || !contenido) throw new Error("remitenteUserId y contenido son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MensajeriaInstitucional");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["MensajeID", "ConversacionID", "RemitenteUserId", "DestinatarioUserId", "Asunto", "Contenido", "ContextoTipo", "ContextoID", "Adjuntos", "Estado", "FechaRegistro"]);
+  }
+
+  const now = new Date();
+  const mensajeId = "MSG-" + now.getTime();
+  const convId = conversacionId || ("CONV-" + (contextoTipo || "GEN") + "-" + (contextoId || Date.now()));
+
+  sheet.appendRow([
+    mensajeId,
+    convId,
+    String(remitenteUserId).trim(),
+    destinatarioUserId ? String(destinatarioUserId).trim() : "TODOS",
+    asunto || "Mensaje Institucional",
+    contenido,
+    contextoTipo || "GENERAL",
+    contextoId || "N/A",
+    JSON.stringify(adjuntosUrls || []),
+    "Enviado",
+    now
+  ]);
+
+  return {
+    status: "success",
+    mensajeId: mensajeId,
+    conversacionId: convId,
+    message: "Mensaje institucional registrado correctamente en el contexto correspondiente."
+  };
+}
+
+function getInstitutionalConversations(payload) {
+  const { userId, contextoTipo, contextoId, incluirArchivados } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MensajeriaInstitucional");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", conversaciones: [] };
+
+  const convMap = {};
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const cId = String(row[1]).trim();
+    const rem = String(row[2]).trim();
+    const dest = String(row[3]).trim();
+    const ctxT = String(row[6]).trim();
+    const ctxId = String(row[7]).trim();
+    const est = String(row[9]).trim();
+
+    if (userId && rem !== String(userId).trim() && dest !== String(userId).trim() && dest !== "TODOS") continue;
+    if (contextoTipo && ctxT !== contextoTipo) continue;
+    if (contextoId && ctxId !== contextoId) continue;
+    if (!incluirArchivados && est === "Archivado") continue;
+
+    if (!convMap[cId]) {
+      convMap[cId] = {
+        conversacionId: cId,
+        asunto: row[4],
+        contextoTipo: ctxT,
+        contextoId: ctxId,
+        ultimoMensaje: row[5],
+        fechaUltimoMensaje: row[10] ? new Date(row[10]).toISOString() : null,
+        estado: est,
+        totalMensajes: 0
+      };
+    }
+    convMap[cId].totalMensajes++;
+    convMap[cId].ultimoMensaje = row[5];
+    convMap[cId].fechaUltimoMensaje = row[10] ? new Date(row[10]).toISOString() : null;
+  }
+
+  return { status: "success", conversaciones: Object.values(convMap) };
+}
+
+function getConversationMessages(payload) {
+  const { conversacionId, userId } = payload || {};
+  if (!conversacionId) throw new Error("conversacionId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MensajeriaInstitucional");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", mensajes: [] };
+
+  const mensajes = [];
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    if (String(row[1]).trim() === String(conversacionId).trim()) {
+      const rem = String(row[2]).trim();
+      const dest = String(row[3]).trim();
+      if (userId && rem !== String(userId).trim() && dest !== String(userId).trim() && dest !== "TODOS") continue;
+
+      mensajes.push({
+        mensajeId: row[0],
+        conversacionId: row[1],
+        remitenteUserId: rem,
+        destinatarioUserId: dest,
+        asunto: row[4],
+        contenido: row[5],
+        contextoTipo: row[6],
+        contextoId: row[7],
+        adjuntos: row[8] ? JSON.parse(row[8]) : [],
+        estado: row[9],
+        fechaRegistro: row[10] ? new Date(row[10]).toISOString() : null
+      });
+    }
+  }
+
+  return { status: "success", conversacionId, mensajes };
+}
+
+function archiveInstitutionalConversation(payload) {
+  const { conversacionId } = payload || {};
+  if (!conversacionId) throw new Error("conversacionId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MensajeriaInstitucional");
+  const data = sheet.getDataRange().getValues();
+
+  let actualizados = 0;
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][1]).trim() === String(conversacionId).trim()) {
+      sheet.getRange(i + 1, 10).setValue("Archivado");
+      actualizados++;
+    }
+  }
+
+  return { status: "success", conversacionId, actualizados, message: `Conversación ${conversacionId} archivada correctamente.` };
 }
 
 // [F8-Task21] [TAREA-ARQ-06] [Anexo Técnico: Arquitectura de Roles - Servicio de Comunicaciones Institucionales] - Modelo común de comunicaciones inter-rol, gestión de solicitudes e hilos de conversación con idempotencia

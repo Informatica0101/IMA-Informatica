@@ -8025,8 +8025,8 @@ function updateAttendanceIncidentStatus(payload) {
 
 // [F11-Task01] [P0] - Fortalecer la seguridad, privacidad y aislamiento de expedientes de bienestar estudiantil
 function validateStudentWelfareAccess(payload) {
-  const { userId, authRole, casoId, estudianteId } = payload || {};
-  const roleUpper = String(authRole || (payload && payload._verifiedRole) || "").toUpperCase();
+  const { userId, casoId, estudianteId } = payload || {};
+  const roleUpper = String((payload && payload._verifiedRole) || (payload && payload.authRole) || "").toUpperCase();
   const isAuthorizedRole = ["ADMINISTRADOR", "ADMIN", "DIRECTOR", "DIRECCION", "CONSEJEROS", "CONSEJERO", "ORIENTACION", "ORIENTADOR"].indexOf(roleUpper) >= 0;
 
   if (!isAuthorizedRole) {

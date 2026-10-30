@@ -71,7 +71,7 @@
 
 ---
 
-### [ ] [F11-Task03] Implementar el centro unificado de comunicaciones, mensajes institucionales y avisos
+### [X] [F11-Task03] Implementar el centro unificado de comunicaciones, mensajes institucionales y avisos
 - **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área I (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Comunicación institucional)
@@ -83,7 +83,7 @@
   Desarrollar la mensajería institucional contextual organizada por estudiante, grupo o trámite, permitiendo conversaciones bidireccionales con trazabilidad y adjuntos seguros.
 - **Criterios de Aceptación:**
   - Los mensajes quedan vinculados al contexto original (expediente/trámite) y solo son consultables por participantes autorizados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

@@ -4980,7 +4980,7 @@ function approvePurchaseOrder(payload) {
   const montoTotal = parseFloat(data[idx][7] || 0);
   const solicitanteId = String(data[idx][13] || data[idx][1] || "").trim();
   const aprobadorId = String((payload && (payload.authenticatedUserId || payload.userId || payload.actorId)) || "").trim();
-  const roleUpper = String(authRole || "").toUpperCase();
+  const roleUpper = String((payload && payload._verifiedRole) || authRole || "").toUpperCase();
 
   if (nuevoEstado === "Aprobada" && aprobadorId && solicitanteId && solicitanteId === aprobadorId) {
     logStructuredEvent("ACCOUNTING", "approvePurchaseOrder", "WARN", "AUTO_APPROVAL_BLOCKED", `Auto-aprobación de orden de compra bloqueada para usuario ${solicitanteId}`, payload, authRole);

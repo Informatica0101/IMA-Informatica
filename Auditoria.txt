@@ -192,3 +192,13 @@ HALLAZGOS DETECTADOS:
 2. `approvePurchaseOrder` en `backend/accounting-service/Code.gs` bloquea autoaprobación, pero carecía de validación de umbrales montos para requerir aprobación formal de Dirección/Administración en órdenes superiores al umbral institucional (`50000.00`).
 3. Se agregará la comprobación de regresión `[F11-Task02]` en `tests/regression/academic-grading-suite.js`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task03: IMPLEMENTAR EL CENTRO UNIFICADO DE COMUNICACIONES, MENSAJES INSTITUCIONALES Y AVISOS
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `backend/user-service/Code.gs` poseía la hoja `BandejaNotificaciones` para despachos unidireccionales, pero carecía de funciones para conversaciones bidireccionales contextuales (`MensajeriaInstitucional`) organizadas por estudiante, grupo o trámite.
+2. Se requiere implementar `sendInstitutionalMessage`, `getInstitutionalConversations`, `getConversationMessages` y `archiveInstitutionalConversation` con control de permisos y trazabilidad de lectura/adjuntos.
+3. Se deben registrar los permisos en `ROLE_PERMISSIONS` y agregar la comprobación de regresión `[F11-Task03]` en `tests/regression/academic-grading-suite.js`.
+===============================================================================

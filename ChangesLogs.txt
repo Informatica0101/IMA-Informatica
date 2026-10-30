@@ -3416,3 +3416,14 @@ ARCHIVOS MODIFICADOS:
 - tests/regression/academic-grading-suite.js (línea ~81):
   Se agregó la aserción de comprobación para `recordAccountingJournalEntry` y `approvePurchaseOrder` con la etiqueta `[F11-Task02]`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task03 - Implementar el centro unificado de comunicaciones, mensajes institucionales y avisos
+ARCHIVOS MODIFICADOS:
+- backend/user-service/Code.gs (líneas ~1340, ~7368-7500):
+  Se implementaron las funciones `sendInstitutionalMessage`, `getInstitutionalConversations`, `getConversationMessages` y `archiveInstitutionalConversation` para la mensajería bidireccional contextual vinculada a estudiante, trámite o grupo.
+  Se ruteó la acción en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~83):
+  Se agregó la aserción de comprobación para `sendInstitutionalMessage` y `getInstitutionalConversations` con la etiqueta `[F11-Task03]`.
+===============================================================================

@@ -80,6 +80,9 @@ assert(fs.existsSync(path.join(__dirname, '../../docs/architecture/phase-10-atte
 assert(academicCode.includes("validateStudentWelfareAccess") && academicCode.includes("[F11-Task01]"), "backend/academic-service/Code.gs contiene validateStudentWelfareAccess [F11-Task01]");
 assert(acctCode.includes("recordAccountingJournalEntry") && acctCode.includes("[F11-Task02]"), "backend/accounting-service/Code.gs contiene recordAccountingJournalEntry y approvePurchaseOrder [F11-Task02]");
 
+const updatedUserCode = fs.readFileSync(path.join(__dirname, '../../backend/user-service/Code.gs'), 'utf8');
+assert(updatedUserCode.includes("sendInstitutionalMessage") && updatedUserCode.includes("[F11-Task03]"), "backend/user-service/Code.gs contiene sendInstitutionalMessage y getInstitutionalConversations [F11-Task03]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");
