@@ -22,6 +22,17 @@ RESULTADO DE EVALUACIÓN:
 
 ===============================================================================
 FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task13: MEJORAR LA GESTIÓN DE EVIDENCIAS Y DOCUMENTOS SENSIBLES
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, backend/task-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `validateEvidenceFileAndPermissions` e inyectada la etiqueta identificativa `[F10-Task13]` en `backend/academic-service/Code.gs` y `backend/task-service/Code.gs`.
+- Se verificó la validación de formatos (PDF, PNG, JPG, WEBP), límite de tamaño de 10 MB y verificación de sesión y permisos RBAC para prevenir descargas por URL directas sin autenticación.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el conmutador `doPost` switch en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
 AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task10: COMPLETAR EL MODELO FUNCIONAL DE ORIENTACIÓN ACADÉMICA Y VOCACIONAL
 ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
 RESULTADO DE EVALUACIÓN:

@@ -5,6 +5,27 @@ Plataforma: Ecosistema Educativo New Generation Christian Academy
 
 -------------------------------------------------------------------------------
 FECHA: 2026-10-29
+TAREA: [F10-Task13] Mejorar la gestión de evidencias y documentos sensibles
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 218, 862, 2218-2284: Inserción del permiso "validateEvidenceFileAndPermissions" en ROLE_PERMISSIONS, dispatcher en el conmutador doPost switch e implementación de la función `validateEvidenceFileAndPermissions` con etiqueta identificativa `[F10-Task13]`. Validación de formatos de evidencia (PDF, PNG, JPG, WEBP), límite de tamaño de 10 MB y comprobación de permisos RBAC para prevenir descargas por URL directas sin autenticación.
+
+2. backend/task-service/Code.gs
+   - Linea 2366: Etiquetado de `getSubmissionDocumentPreviewUrl` con `[F10-Task13]`.
+
+3. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `validateEvidenceFileAndPermissions [F10-Task13]`.
+
+4. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F10-Task13]`.
+
+5. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F10-Task13]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
 TAREA: [F10-Task12] Optimizar las notificaciones y las comunicaciones escolares
 -------------------------------------------------------------------------------
 

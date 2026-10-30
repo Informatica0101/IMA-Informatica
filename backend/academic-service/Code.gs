@@ -215,8 +215,8 @@ const ROLE_PERMISSIONS = {
   "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope"],
   "Desarrollador": ["getAcademicConfig", "getAcademicHistory", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "configureAcademicLevelsAndDynamicStorage"],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
-  "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "scheduleCounselingAppointment", "recordCounselingSessionAct", "referCounselingCase", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "getStudentAttendanceSummary"],
-  "Orientacion": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "getStudentAttendanceSummary"],
+  "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "scheduleCounselingAppointment", "recordCounselingSessionAct", "referCounselingCase", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary"],
+  "Orientacion": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary"],
   "Padre": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory",
     "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
@@ -859,6 +859,7 @@ function doPost(e) {
       case "saveGuidanceFollowupPlan": result = saveGuidanceFollowupPlan(payload); break;
       case "saveVocationalRecommendation": result = saveVocationalRecommendation(payload); break;
       case "auditAssistantDelegatedAction": result = auditAssistantDelegatedAction(payload); break;
+      case "validateEvidenceFileAndPermissions": result = validateEvidenceFileAndPermissions(payload); break;
       case "getStudentAttendanceSummary": result = getStudentAttendanceSummary(payload); break;
       case "checkAndDispatchAttendanceAlerts": result = checkAndDispatchAttendanceAlerts(payload); break;
       case "getAttendanceConfig": result = getAttendanceConfig(payload); break;
@@ -2212,6 +2213,76 @@ function assertRecordOwnership(authRole, authenticatedUserId, targetUserId, reso
     return { authorized: false, reason: "AUTH_PERMISSION_DENIED" };
   }
   return { authorized: true };
+}
+
+// [F10-Task13] [P1] - Mejorar la gestión de evidencias y documentos sensibles
+function validateEvidenceFileAndPermissions(payload) {
+  const { fileId, mimeType, sizeBytes, sessionToken, token, authRole } = payload || {};
+  const targetToken = sessionToken || token || (payload && payload.token);
+
+  if (!fileId) throw new Error("Parámetro obligatorio ausente: fileId.");
+
+  // Validar token de sesión y autenticación
+  const claims = verifySessionToken(targetToken);
+  if (!claims && !payload._verifiedUserId) {
+    return {
+      status: "error",
+      code: "AUTH_PERMISSION_DENIED",
+      message: "Acceso denegado: Se requiere una sesión autenticada para acceder a archivos de evidencia sensible."
+    };
+  }
+
+  // Validar tamaño máximo (default 10 MB)
+  const maxSizeBytes = 10 * 1024 * 1024;
+  if (sizeBytes && parseInt(sizeBytes) > maxSizeBytes) {
+    return {
+      status: "error",
+      code: "FILE_TOO_LARGE",
+      message: "El archivo de evidencia excede el límite máximo permitido de 10 MB."
+    };
+  }
+
+  // Validar tipo MIME permitido
+  const allowedMimeTypes = ["application/pdf", "image/png", "image/jpeg", "image/jpg", "image/webp"];
+  if (mimeType && allowedMimeTypes.indexOf(String(mimeType).toLowerCase().trim()) === -1) {
+    return {
+      status: "error",
+      code: "UNSUPPORTED_FILE_TYPE",
+      message: "Formato de archivo no permitido. Únicamente se admiten documentos PDF e imágenes (PNG, JPG, WEBP)."
+    };
+  }
+
+  try {
+    const file = DriveApp.getFileById(fileId);
+    const actualMime = file.getMimeType();
+    const actualSize = file.getSize();
+
+    if (actualSize > maxSizeBytes) {
+      return {
+        status: "error",
+        code: "FILE_TOO_LARGE",
+        message: "El archivo de evidencia almacenado excede el límite permitido de 10 MB."
+      };
+    }
+
+    logStructuredEvent("ACADEMIC", "validateEvidenceFileAndPermissions", "INFO", "EVIDENCE_FILE_VALIDATED", `Archivo de evidencia ${fileId} verificado para usuario ${claims ? claims.userId : (payload._verifiedUserId || 'Autenticado')}`, { fileId, actualMime, actualSize }, authRole || (claims ? claims.role : "Autenticado"));
+
+    return {
+      status: "success",
+      fileId,
+      fileName: file.getName(),
+      mimeType: actualMime,
+      fileSizeMb: (actualSize / (1024 * 1024)).toFixed(2),
+      isPdf: actualMime === "application/pdf",
+      previewUrl: "https://drive.google.com/file/d/" + fileId + "/preview",
+      message: "Archivo de evidencia verificado y protegido de acceso no autenticado."
+    };
+  } catch (e) {
+    return {
+      status: "error",
+      message: "Error al verificar archivo de evidencia en Google Drive: " + e.message
+    };
+  }
 }
 
 // [T-GOV-03] [Fase Gobernanza y Seguridad] - Proxy de descarga segura y autorización de adjuntos en Google Drive

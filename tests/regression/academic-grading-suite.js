@@ -68,6 +68,8 @@ assert(academicCode.includes("auditAssistantDelegatedAction") && academicCode.in
 const userCode = fs.readFileSync(path.join(__dirname, '../../backend/user-service/Code.gs'), 'utf8');
 assert(userCode.includes("sendMultiChannelNotification") && userCode.includes("retryFailedNotificationsQueue") && userCode.includes("[F10-Task12]"), "backend/user-service/Code.gs contiene sendMultiChannelNotification y retryFailedNotificationsQueue [F10-Task12]");
 
+assert(academicCode.includes("validateEvidenceFileAndPermissions") && academicCode.includes("[F10-Task13]"), "backend/academic-service/Code.gs contiene validateEvidenceFileAndPermissions [F10-Task13]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

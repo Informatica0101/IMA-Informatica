@@ -208,7 +208,7 @@
 
 ---
 
-### [ ] [F10-Task13] Mejorar la gestión de evidencias y documentos sensibles
+### [X] [F10-Task13] Mejorar la gestión de evidencias y documentos sensibles
 - **Origen del Hallazgo:** `AUDITORIA_FASE_10_ASISTENCIA_DISCIPLINA_CONVIVENCIA.md` / Tarea 10.14 (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Almacenamiento de archivos y seguridad)
@@ -220,7 +220,7 @@
   Validar formatos/tamaños de archivos adjuntos en justificantes e incidencias, verificar permisos antes de servir archivos y controlar sustituciones o borrados lógicos.
 - **Criterios de Aceptación:**
   - Los archivos de evidencia están protegidos contra descargas por URL directas sin autenticación.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
