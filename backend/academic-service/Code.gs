@@ -132,6 +132,7 @@ function getOrCreateSheet(ss, name) {
     if (name === "CasosSeguimiento") sheet.appendRow(["CasoID", "UserId", "MotivoApertura", "ResumenAsistencia", "ResponsableID", "AccionesJSON", "Estado", "FechaApertura", "FechaCierre"]);
     if (name === "CitasOrientacion") sheet.appendRow(["CitaOrientacionID", "CasoID", "UserId", "TutorUserId", "OrientadorUserId", "FechaHora", "Modalidad", "Estado", "TipoCita", "NotasPublicas", "NotasConfidenciales", "DerivacionRef", "FechaCreacion"]);
     if (name === "AlertasTempranas") sheet.appendRow(["AlertaID", "UserId", "Grado", "Seccion", "Periodo", "NivelRiesgo", "FactoresRiesgoJSON", "MetricasJSON", "Estado", "NotificadoA", "DeduplicationKey", "FechaGeneracion", "UltimaActualizacion"]);
+    if (name === "PlanificacionesPedagogicas") sheet.appendRow(["PlanificacionID", "DocenteUserId", "Grado", "Seccion", "Asignatura", "Periodo", "TituloUnidad", "CompetenciasJSON", "ObjetivosAprendizaje", "ContenidosJSON", "RecursosActividadesJSON", "Version", "Estado", "FechaCreacion", "UltimaActualizacion"]);
 
     // Nuevas Tablas Fase 13 - Supervisión Docente y Calidad Educativa
     if (name === "SupervisionesDocentes") sheet.appendRow(["SupervisionID", "DocenteUserId", "SupervisorUserId", "FechaProgramada", "Grado", "Seccion", "Asignatura", "TipoSupervision", "RubricaID", "Estado", "ObservacionesAdmin", "FechaCreacion"]);
@@ -177,7 +178,7 @@ const ROLE_PERMISSIONS = {
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity", "reconcileInstitutionalModulesMatrix",
     "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "checkAndDispatchAttendanceAlerts", "getAttendanceConfig", "saveAttendanceConfig",
-    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches", "scheduleGuidanceAppointment", "getGuidanceAppointments", "updateGuidanceAppointmentStatus", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts"
+    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches", "scheduleGuidanceAppointment", "getGuidanceAppointments", "updateGuidanceAppointmentStatus", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts", "savePedagogicalPlanning", "getPedagogicalPlannings"
   ],
   "Subdirector": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "registerStudentEnrollment", "getStudentEnrollmentHistory",
@@ -187,7 +188,7 @@ const ROLE_PERMISSIONS = {
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "getStudentFile", "getStudentTimeline", "findDuplicateStudents",
     "getStudentGuardians", "getStudentDocuments", "getStudentEnrollments", "checkEnrollmentCapacity",
     "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
-    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans"
+    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "savePedagogicalPlanning", "getPedagogicalPlannings"
   ],
   "Secretaría": [
     "getAcademicConfig", "getAsignaturasActivas", "registerStudentEnrollment", "getStudentEnrollmentHistory",
@@ -214,7 +215,7 @@ const ROLE_PERMISSIONS = {
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite",
     "openAttendanceSession", "saveClassAttendance", "getBatchAttendanceRecords", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "generateConsolidatedAttendanceAndCoexistenceReport", "validateStudentWelfareAccess"
   ],
-  "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "getBatchAttendanceRecords", "generateConsolidatedAttendanceAndCoexistenceReport", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts"],
+  "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "getBatchAttendanceRecords", "generateConsolidatedAttendanceAndCoexistenceReport", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts", "savePedagogicalPlanning", "getPedagogicalPlannings"],
   "Desarrollador": ["getAcademicConfig", "getAcademicHistory", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "configureAcademicLevelsAndDynamicStorage"],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
   "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "scheduleCounselingAppointment", "recordCounselingSessionAct", "referCounselingCase", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary", "validateStudentWelfareAccess", "scheduleGuidanceAppointment", "getGuidanceAppointments", "updateGuidanceAppointmentStatus", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts"],
@@ -249,7 +250,8 @@ const ROLE_PERMISSIONS = {
     "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentEnrollments",
     "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getBatchAttendanceRecords", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "generateConsolidatedAttendanceAndCoexistenceReport",
     "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans",
-    "calculateUnifiedAcademicGrade", "previewAcademicGradeCalculation", "auditAcademicGradesIntegrity", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess", "exportAcademicGradesData"
+    "calculateUnifiedAcademicGrade", "previewAcademicGradeCalculation", "auditAcademicGradesIntegrity", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess", "exportAcademicGradesData",
+    "savePedagogicalPlanning", "getPedagogicalPlannings"
   ],
   "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentTimeline", "getClassAttendance", "getBatchAttendanceRecords", "getStudentAttendanceSummary", "auditAssistantDelegatedAction"],
   "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "calculateUnifiedAcademicGrade", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess"],
@@ -883,6 +885,8 @@ function doPost(e) {
       case "getSupervisionObservation": result = getSupervisionObservation(payload); break;
       case "saveTeacherImprovementPlan": result = saveTeacherImprovementPlan(payload); break;
       case "getTeacherImprovementPlans": result = getTeacherImprovementPlans(payload); break;
+      case "savePedagogicalPlanning": result = savePedagogicalPlanning(payload); break;
+      case "getPedagogicalPlannings": result = getPedagogicalPlannings(payload); break;
 
       case "ping": result = { status: "success", service: "ACADEMIC", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
@@ -5202,6 +5206,203 @@ function getTeacherImprovementPlans(payload) {
   }));
 
   return { status: "success", data: plans };
+}
+
+// [F11-Task09] [P1] - Gestión de planificación pedagógica, jornalizaciones y guiones docentes
+function savePedagogicalPlanning(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const callerId = (payload && payload._verifiedUserId) || "";
+    const isAuthorized = ["Administrador", "Director", "Subdirector", "Coordinador", "Profesor"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "UNAUTHORIZED", message: "Acceso denegado: Rol no autorizado para gestionar planificación pedagógica." };
+    }
+
+    const {
+      planificacionId,
+      docenteUserId,
+      grado,
+      seccion,
+      asignatura,
+      periodo,
+      tituloUnidad,
+      competencias,
+      objetivosAprendizaje,
+      contenidos,
+      recursosActividades,
+      estado,
+      version
+    } = payload || {};
+
+    const effectiveDocente = docenteUserId || (verifiedRole === "Profesor" ? callerId : "DOCENTE-TITULAR");
+    if (!effectiveDocente || !asignatura || !grado) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "docenteUserId, asignatura y grado son campos requeridos." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "PlanificacionesPedagogicas");
+    const data = sheet.getDataRange().getValues();
+
+    const now = new Date();
+    const nowISO = now.toISOString();
+    let targetId = planificacionId ? String(planificacionId).trim() : "";
+    let nextVersion = version !== undefined ? Number(version) : 1;
+    let foundIdx = -1;
+
+    if (targetId && data.length > 1) {
+      for (let i = 1; i < data.length; i++) {
+        if (String(data[i][0]).trim() === targetId) {
+          foundIdx = i;
+          const currentVer = Number(data[i][11] || 1);
+          if (version === undefined) nextVersion = currentVer + 1;
+          break;
+        }
+      }
+    }
+
+    const compJSON = JSON.stringify(competencias || []);
+    const contJSON = JSON.stringify(contenidos || []);
+    const recJSON = JSON.stringify(recursosActividades || []);
+    const planEstado = estado || "Borrador";
+
+    if (foundIdx !== -1) {
+      sheet.getRange(foundIdx + 1, 2).setValue(effectiveDocente);
+      sheet.getRange(foundIdx + 1, 3).setValue(grado);
+      sheet.getRange(foundIdx + 1, 4).setValue(seccion || "A");
+      sheet.getRange(foundIdx + 1, 5).setValue(asignatura);
+      sheet.getRange(foundIdx + 1, 6).setValue(periodo || "1");
+      sheet.getRange(foundIdx + 1, 7).setValue(tituloUnidad || "");
+      sheet.getRange(foundIdx + 1, 8).setValue(compJSON);
+      sheet.getRange(foundIdx + 1, 9).setValue(objetivosAprendizaje || "");
+      sheet.getRange(foundIdx + 1, 10).setValue(contJSON);
+      sheet.getRange(foundIdx + 1, 11).setValue(recJSON);
+      sheet.getRange(foundIdx + 1, 12).setValue(nextVersion);
+      sheet.getRange(foundIdx + 1, 13).setValue(planEstado);
+      sheet.getRange(foundIdx + 1, 15).setValue(nowISO);
+
+      logStructuredEvent("ACADEMIC", "savePedagogicalPlanning", "INFO", "PEDAGOGICAL_PLANNING_UPDATED", `Planificación ${targetId} actualizada a versión ${nextVersion}`, { planificacionId: targetId, version: nextVersion, estado: planEstado }, verifiedRole);
+
+      return {
+        status: "success",
+        planificacionId: targetId,
+        version: nextVersion,
+        estado: planEstado,
+        message: `Planificación pedagógica ${targetId} actualizada exitosamente a versión ${nextVersion}.`
+      };
+    } else {
+      targetId = "PLAN-PED-" + now.getFullYear() + "-" + Math.floor(100000 + Math.random() * 900000);
+      sheet.appendRow([
+        targetId,
+        effectiveDocente,
+        grado,
+        seccion || "A",
+        asignatura,
+        periodo || "1",
+        tituloUnidad || "",
+        compJSON,
+        objetivosAprendizaje || "",
+        contJSON,
+        recJSON,
+        nextVersion,
+        planEstado,
+        nowISO,
+        nowISO
+      ]);
+
+      logStructuredEvent("ACADEMIC", "savePedagogicalPlanning", "INFO", "PEDAGOGICAL_PLANNING_CREATED", `Planificación pedagógica ${targetId} creada exitosamente`, { planificacionId: targetId, docenteUserId: effectiveDocente, asignatura }, verifiedRole);
+
+      return {
+        status: "success",
+        planificacionId: targetId,
+        version: nextVersion,
+        estado: planEstado,
+        message: `Planificación pedagógica ${targetId} registrada exitosamente.`
+      };
+    }
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "savePedagogicalPlanning", "ERROR", "SAVE_PEDAGOGICAL_PLANNING_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function getPedagogicalPlannings(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const callerId = (payload && payload._verifiedUserId) || "";
+    const isAuthorized = ["Administrador", "Director", "Subdirector", "Coordinador", "Profesor"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "UNAUTHORIZED", message: "Acceso denegado: Rol no autorizado para consultar planificaciones pedagógicas." };
+    }
+
+    const { planificacionId, docenteUserId, grado, seccion, asignatura, periodo, estado } = payload || {};
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "PlanificacionesPedagogicas");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", totalPlanificaciones: 0, planificaciones: [] };
+
+    const planificaciones = [];
+    for (let i = 1; i < data.length; i++) {
+      const r = data[i];
+      const pId = String(r[0] || "").trim();
+      const docId = String(r[1] || "").trim();
+      const pGrado = String(r[2] || "").trim();
+      const pSeccion = String(r[3] || "").trim();
+      const pAsig = String(r[4] || "").trim();
+      const pPeriodo = String(r[5] || "").trim();
+      const pTitulo = String(r[6] || "").trim();
+      let comp = [];
+      try { comp = JSON.parse(r[7] || "[]"); } catch (e) { comp = [String(r[7] || "")]; }
+      const obj = String(r[8] || "").trim();
+      let cont = [];
+      try { cont = JSON.parse(r[9] || "[]"); } catch (e) { cont = [String(r[9] || "")]; }
+      let rec = [];
+      try { rec = JSON.parse(r[10] || "[]"); } catch (e) { rec = [String(r[10] || "")]; }
+      const ver = Number(r[11] || 1);
+      const est = String(r[12] || "").trim();
+      const fCreacion = r[13];
+      const fAct = r[14];
+
+      // Restricción: un profesor general solo puede ver sus propias planificaciones a menos que se trate de coordinación/dirección
+      if (verifiedRole === "Profesor" && docId !== callerId && callerId !== "") {
+        continue;
+      }
+      if (planificacionId && pId !== String(planificacionId).trim()) continue;
+      if (docenteUserId && docId !== String(docenteUserId).trim()) continue;
+      if (grado && pGrado.toLowerCase() !== String(grado).toLowerCase().trim()) continue;
+      if (seccion && pSeccion.toLowerCase() !== String(seccion).toLowerCase().trim()) continue;
+      if (asignatura && pAsig.toLowerCase() !== String(asignatura).toLowerCase().trim()) continue;
+      if (periodo && pPeriodo !== String(periodo).trim()) continue;
+      if (estado && est.toLowerCase() !== String(estado).toLowerCase().trim()) continue;
+
+      planificaciones.push({
+        planificacionId: pId,
+        docenteUserId: docId,
+        grado: pGrado,
+        seccion: pSeccion,
+        asignatura: pAsig,
+        periodo: pPeriodo,
+        tituloUnidad: pTitulo,
+        competencias: comp,
+        objetivosAprendizaje: obj,
+        contenidos: cont,
+        recursosActividades: rec,
+        version: ver,
+        estado: est,
+        fechaCreacion: fCreacion,
+        ultimaActualizacion: fAct
+      });
+    }
+
+    return {
+      status: "success",
+      totalPlanificaciones: planificaciones.length,
+      planificaciones: planificaciones
+    };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "getPedagogicalPlannings", "ERROR", "GET_PEDAGOGICAL_PLANNINGS_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
 }
 
 // --- FUNCIONES DE CONFIGURACIÓN INSTITUCIONAL Y ESTRUCTURA ACADÉMICA (FASE 3) ---

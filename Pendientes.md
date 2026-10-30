@@ -162,7 +162,7 @@
 
 ---
 
-### [ ] [F11-Task09] Completar la gestión de planificación pedagógica, jornalizaciones y guiones docentes
+### [X] [F11-Task09] Completar la gestión de planificación pedagógica, jornalizaciones y guiones docentes
 - **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área III (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Gestión pedagógica)
@@ -173,7 +173,7 @@
   Permitir el registro y estructuración de planes de clase, jornalizaciones y sílabos vinculados con grado, seccion, asignatura y período académico.
 - **Criterios de Aceptación:**
   - Las planificaciones conservan versión, docente titular y competencias asociadas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

@@ -258,3 +258,13 @@ HALLAZGOS:
 2. Se requiere la tabla `AlertasTempranas` para estructurar el registro de alertas con identificador unívoco (`ALERTA-TMP-...`), estudiante, grado, sección, métricas computadas (porcentaje asistencia, materias reprobadas, tareas adeudadas), nivel de riesgo (`Bajo`, `Medio`, `Alto`, `Crítico`), estado (`Activa`, `EnAtencion`, `Descartada`, `Resuelta`) y prevención de alertas duplicadas activas para un mismo estudiante.
 3. Se deben registrar los permisos de rol correspondientes en `ROLE_PERMISSIONS` y enrutamiento en `doPost`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task09: COMPLETAR LA GESTIÓN DE PLANIFICACIÓN PEDAGÓGICA, JORNALIZACIONES Y GUIONES DOCENTES
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS:
+1. El backend `academic-service` cuenta con endpoints para supervisión docente (`SupervisionesDocentes`, `ObservacionesSupervision`, `PlanesMejoraPedagogica`), pero carece de un modelo estructurado para la creación, registro y versionamiento de la planificación pedagógica docente (jornalizaciones anuales/periódicas, guiones de clase y sílabos por asignatura).
+2. Se requiere la tabla `PlanificacionesPedagogicas` para soportar planes con identificador único (`PLAN-PED-...`), docente titular (`docenteUserId`), grado, sección, asignatura, período académico, título de la unidad/bloque, competencias JSON, objetivos de aprendizaje, contenidos programáticos, recursos/actividades, estado inicial (`Borrador`, `Enviado`) y número de versión (`version`).
+3. Se deben configurar los permisos en `ROLE_PERMISSIONS` para roles pedagógicos (`Profesor`, `Coordinador`, `Director`, `Subdirector`, `Administrador`) y agregar los casos correspondientes en el enrutador `doPost`.
+===============================================================================
