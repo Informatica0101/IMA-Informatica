@@ -99,7 +99,7 @@
 
 ---
 
-### [ ] [F10-Task06] Desarrollar un sistema avanzado de alertas de asistencia y seguimiento preventivo
+### [X] [F10-Task06] Desarrollar un sistema avanzado de alertas de asistencia y seguimiento preventivo
 - **Origen del Hallazgo:** `AUDITORIA_FASE_10_ASISTENCIA_DISCIPLINA_CONVIVENCIA.md` / Tarea F10-Task02 (P1) y Tarea 10.4
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Comunicaciones, alertas y prevención de deserción)
@@ -111,7 +111,7 @@
   Permitir configurar reglas de alerta por ausencias acumuladas, tardanzas repetidas y porcentajes de asistencia, notificar a tutores autorizados de forma configurable y evitar notificaciones duplicadas por reintentos.
 - **Criterios de Aceptación:**
   - Las alertas de inasistencia se generan según umbrales configurados y se notifican a los tutores legales registrados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

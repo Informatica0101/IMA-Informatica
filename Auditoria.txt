@@ -8,3 +8,15 @@ RESULTADO DE EVALUACIÓN:
 - Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task06: DESARROLLAR UN SISTEMA AVANZADO DE ALERTAS DE ASISTENCIA Y SEGUIMIENTO PREVENTIVO
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `checkAndDispatchAttendanceAlerts` con la etiqueta identificativa `[F10-Task06]` en `backend/academic-service/Code.gs`.
+- Se verificó la evaluación de ausencias injustificadas consecutivas, tardanzas acumuladas y porcentaje de asistencia mínimo respecto a la configuración institucional (`ConfiguracionAcademica`).
+- Se verificó el flujo de apertura automatizada de casos preventivos en `CasosSeguimiento`, el envío de notificaciones deduplicadas a tutores legales y el registro estructurado de eventos `ATTENDANCE_ALERTS_DISPATCHED`.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================

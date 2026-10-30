@@ -5,6 +5,24 @@ Plataforma: Ecosistema Educativo New Generation Christian Academy
 
 -------------------------------------------------------------------------------
 FECHA: 2026-10-29
+TAREA: [F10-Task06] Desarrollar un sistema avanzado de alertas de asistencia y seguimiento preventivo
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 174, 852, 7844-7978: Inserción del permiso "checkAndDispatchAttendanceAlerts" en ROLE_PERMISSIONS, dispatcher en el conmutador doPost switch e implementación de la función `checkAndDispatchAttendanceAlerts` con etiqueta identificativa `[F10-Task06]`. Evaluación de ausencias consecutivas, tardanzas acumuladas y porcentaje de asistencia mínimo respecto a `ConfiguracionAcademica`, apertura automática de casos preventivos en `CasosSeguimiento` y notificaciones deduplicadas a tutores legales.
+
+2. tests/regression/academic-grading-suite.js
+   - Adición de aserción de comprobación para `checkAndDispatchAttendanceAlerts [F10-Task06]`.
+
+3. Pendientes.md
+   - Actualización del estado a [X] Completado para `[F10-Task06]`.
+
+4. Auditoria.txt
+   - Registro de la auditoría y verificación de la tarea `[F10-Task06]`.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-29
 TAREA: [F10-Task05] Ampliar la gestión de justificaciones, permisos y salidas anticipadas
 -------------------------------------------------------------------------------
 

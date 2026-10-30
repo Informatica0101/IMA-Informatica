@@ -174,7 +174,7 @@ const ROLE_PERMISSIONS = {
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion", "checkAndNotifyExpiringStudentDocuments",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity", "reconcileInstitutionalModulesMatrix",
-    "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "getAttendanceConfig", "saveAttendanceConfig",
+    "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "checkAndDispatchAttendanceAlerts", "getAttendanceConfig", "saveAttendanceConfig",
     "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches"
   ],
   "Subdirector": [
@@ -849,6 +849,7 @@ function doPost(e) {
       case "saveAttendanceFollowupCase": result = saveAttendanceFollowupCase(payload); break;
       case "addCaseFollowUpNote": result = addCaseFollowUpNote(payload); break;
       case "getStudentAttendanceSummary": result = getStudentAttendanceSummary(payload); break;
+      case "checkAndDispatchAttendanceAlerts": result = checkAndDispatchAttendanceAlerts(payload); break;
       case "getAttendanceConfig": result = getAttendanceConfig(payload); break;
       case "saveAttendanceConfig": result = saveAttendanceConfig(payload); break;
 
@@ -7838,6 +7839,142 @@ function getStudentAttendanceSummary(payload) {
       justificadas,
       porcentajeAsistencia: parseFloat(porcentajeAsistencia)
     }
+  };
+}
+
+// [F10-Task06] [P1] - Sistema avanzado de alertas de asistencia y seguimiento preventivo
+function checkAndDispatchAttendanceAlerts(payload) {
+  const { userId, grado, seccion, umbralAusenciasConsecutivas, umbralTardanzas } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const configRes = getAttendanceConfig(payload);
+  const cfg = configRes.config || {};
+  const pctMin = cfg.porcentajeAsistenciaMinimo || 85;
+  const maxConsecutiveAbsences = umbralAusenciasConsecutivas || 3;
+  const maxTardanzas = umbralTardanzas || 5;
+
+  const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
+  const regData = regSheet.getDataRange().getValues();
+  if (regData.length <= 1) {
+    return { status: "success", totalEvaluados: 0, alertasGeneradas: 0, alertas: [] };
+  }
+
+  // Group records by student
+  const studentMap = {};
+  for (let i = 1; i < regData.length; i++) {
+    const r = regData[i];
+    const uId = String(r[2] || "").trim();
+    if (!uId) continue;
+    if (userId && uId !== String(userId).trim()) continue;
+
+    if (!studentMap[uId]) studentMap[uId] = [];
+    studentMap[uId].push({
+      registroId: r[0],
+      sesionId: r[1],
+      estado: String(r[3] || "").toLowerCase(),
+      justificado: r[6] === true || String(r[6]).toLowerCase() === "true",
+      fecha: r[8] ? new Date(r[8]) : new Date()
+    });
+  }
+
+  const generatedAlerts = [];
+  const nowStr = new Date().toISOString().split('T')[0];
+
+  Object.keys(studentMap).forEach(uId => {
+    const regs = studentMap[uId];
+    // Sort by date ascending
+    regs.sort((a, b) => a.fecha - b.fecha);
+
+    let presentes = 0;
+    let ausentes = 0;
+    let tardanzas = 0;
+    let justificadas = 0;
+    let currentConsecutiveAbsences = 0;
+    let maxConsecutiveObserved = 0;
+
+    regs.forEach(r => {
+      if (r.estado === "presente") {
+        presentes++;
+        currentConsecutiveAbsences = 0;
+      } else if (r.estado === "ausente") {
+        ausentes++;
+        if (!r.justificado) {
+          currentConsecutiveAbsences++;
+          if (currentConsecutiveAbsences > maxConsecutiveObserved) maxConsecutiveObserved = currentConsecutiveAbsences;
+        } else {
+          currentConsecutiveAbsences = 0;
+        }
+      } else if (r.estado === "tardanza") {
+        tardanzas++;
+        currentConsecutiveAbsences = 0;
+      }
+      if (r.justificado) justificadas++;
+    });
+
+    const total = regs.length;
+    const pct = total > 0 ? (((presentes + tardanzas) / total) * 100) : 100;
+
+    const alertReasons = [];
+    if (maxConsecutiveObserved >= maxConsecutiveAbsences) {
+      alertReasons.push(`${maxConsecutiveObserved} ausencias injustificadas consecutivas`);
+    }
+    if (tardanzas >= maxTardanzas) {
+      alertReasons.push(`${tardanzas} tardanzas acumuladas`);
+    }
+    if (total >= 5 && pct < pctMin) {
+      alertReasons.push(`Porcentaje de asistencia del ${pct.toFixed(1)}% (inferior al mínimo de ${pctMin}%)`);
+    }
+
+    if (alertReasons.length > 0) {
+      const dedupKey = `ALERT_AST_${uId}_${nowStr}`;
+      const alertObj = {
+        userId: uId,
+        fecha: nowStr,
+        motivo: alertReasons.join(" | "),
+        totalSesiones: total,
+        pctAsistencia: parseFloat(pct.toFixed(1)),
+        ausenciasConsecutivas: maxConsecutiveObserved,
+        tardanzas: tardanzas,
+        deduplicationKey: dedupKey
+      };
+      generatedAlerts.push(alertObj);
+
+      // Automated case opening in CasosSeguimiento for preventive tracking
+      try {
+        saveAttendanceFollowupCase({
+          userId: uId,
+          motivoApertura: `Alerta preventiva de asistencia: ${alertReasons.join("; ")}`,
+          resumenAsistencia: `Sesiones: ${total}, Asistencia: ${pct.toFixed(1)}%, Tardanzas: ${tardanzas}, Ausencias Consecutivas: ${maxConsecutiveObserved}`,
+          responsableId: "Orientacion",
+          estado: "Abierto"
+        });
+      } catch (e) {
+        logDebug("Error creando caso preventivo para alerta", e.message);
+      }
+
+      // Notify tutors if sendMultiChannelNotification is defined
+      try {
+        if (typeof sendMultiChannelNotification === "function") {
+          sendMultiChannelNotification({
+            userId: uId,
+            titulo: "Alerta Preventiva de Asistencia Escolar",
+            mensaje: `Estimado tutor, se ha emitido una alerta preventiva de asistencia para el estudiante. Motivos: ${alertReasons.join("; ")}.`,
+            tipo: "AlertaAsistenciaPreventiva",
+            categoria: "Asistencia",
+            deduplicationKey: dedupKey
+          });
+        }
+      } catch (_) {}
+    }
+  });
+
+  logStructuredEvent("ACADEMIC", "checkAndDispatchAttendanceAlerts", "INFO", "ATTENDANCE_ALERTS_DISPATCHED", `Escaneo de alertas de asistencia completado. Estudiantes evaluados: ${Object.keys(studentMap).length}, Alertas emitidas: ${generatedAlerts.length}`, { totalEvaluados: Object.keys(studentMap).length, alertasCount: generatedAlerts.length }, payload && payload.authRole || "Sistema");
+
+  return {
+    status: "success",
+    totalEvaluados: Object.keys(studentMap).length,
+    alertasGeneradas: generatedAlerts.length,
+    alertas: generatedAlerts
   };
 }
 
