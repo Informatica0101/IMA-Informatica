@@ -9873,348 +9873,896 @@
 ---
 ## FASE 29 — MIGRACIÓN, VALIDACIÓN Y TRANSICIÓN OPERATIVA
 
-### PLAN DE IMPLEMENTACIÓN Y BACKLOG ESTRUCTURADO DE TAREAS
+### BACKLOG DE DESARROLLO ESTRUCTURADO Y CONVERGENCIA TÉCNICA INTEGRAL
 **Proyecto:** Plataforma Integral de Gestión Educativa · Fase 29
 **Área:** Migración de datos, interoperabilidad, integridad histórica, conciliación, transición operativa y retiro de sistemas anteriores.
-**Estrategia de Ejecución:** Conservación y ampliación de utilidades existentes (`createSystemBackup`/`restoreSystemBackup` con protección de notas en `academic-service`, `validateImportPreview` y `importDataWithColumnMapping` en `accounting-service`, compatibilidad oficial SACE, lectura batch en `developer-service`). Corrección prioritaria de las 5 brechas críticas (P0): tabla de correspondencia de identificadores cruzados, aislamiento de saldos iniciales para evitar duplicidad financiera, inalterabilidad de notas históricas migradas, motor de rollback con retención de transacciones delta post-corte, y activación segura de cuentas migradas. Estructuración por prioridad (P0, P1, P2) y orden secuencial estricto.
+**Estrategia de Ejecución:** Conservación y ampliación de capacidades funcionales existentes (`createSystemBackup`/`restoreSystemBackup` con protección de notas en `academic-service`, `validateImportPreview` y `importDataWithColumnMapping` en `accounting-service`, compatibilidad oficial SACE, lectura batch en `developer-service`). Corrección prioritaria de las brechas críticas de aislamiento criptográfico, correspondencia de identidades, saldos iniciales, rollback con delta post-corte, y activación segura de cuentas migradas.
+**Organización:** 28 tareas organizadas en 6 bloques temáticos, ordenadas estrictamente por secuencia de ejecución y agrupadas por prioridad consolidada (P0: 14 tareas críticas, P1: 11 tareas de alta prioridad, P2: 3 tareas de media prioridad).
 
 ---
 
-### P0 — PRIORIDAD CRÍTICA
+### BLOQUE 1. IDENTIDAD, INTEGRIDAD Y CONSERVACIÓN DE INFORMACIÓN
 
-### [F29-Task01] [P0] Tabla Central de Correspondencia de Identificadores Cruzados (`CorrespondenciaIdentificadores`)
-- **Tipo:** Corrección de Seguridad, Integridad y Prevención de Duplicados.
+### [F29-Task01] [P0] Sistema Centralizado de Correspondencia de Identificadores y Resolución de Identidades
+- **Orden de Ejecución:** 1
+- **Prioridad:** P0 (Crítica)
 - **Componentes Afectados:**
   - `backend/accounting-service/Code.gs` (`importDataWithColumnMapping`, `resolveCrossReferenceIdentifier`)
-  - `backend/user-service/Code.gs` (`resolveUserByLegacyId`)
+  - `backend/user-service/Code.gs` (`resolveUserByLegacyId`, `auditAndReconcileIdentityInconsistencies`)
   - Hoja de cálculo maestra: Nueva hoja `CorrespondenciaIdentificadores`
   - Base de datos en IndexedDB / Caché de identidades
 - **Subcapacidades Relacionadas:** F29-01, F29-05, F29-09, F29-11.
-- **Estado de Partida:** Defectuosa (Importaciones directas sin almacenamiento del mapeo biunívoco entre IDs legados e IDs internos).
-- **Dependencias:** Autenticación de usuarios, esquema de base de datos relacional.
+- **Estado de Partida:** Defectuosa.
+- **Dependencias Principales:** Ninguna (Base para las demás tareas).
 - **Problema Detectado y Riesgos:**
-  Cuando se importan datos desde múltiples sistemas legados (ej. código de alumno en sistema anterior `ALU-2019-102`, RNE de SACE `0801200512345`, expediente de secretaría `EXP-440`), la plataforma genera un nuevo identificador interno (`USER-UUID-xxx`). Sin embargo, no almacena de forma persistente la correspondencia. Si se ejecuta una segunda importación o una sincronización de actualización, el sistema no reconoce que el registro ya existe y crea un alumno o docente duplicado, fragmentando el historial académico y las obligaciones de pago.
-- **Requisitos Funcionales y Técnicos:**
-  1. *Creación de la hoja/tabla de persistencia `CorrespondenciaIdentificadores`:*
+  La plataforma importa identificadores de manera plana y no conserva una relación persistente entre los identificadores originales de los sistemas anteriores y los identificadores internos actuales. Esto permite que una misma persona o entidad termine registrada varias veces cuando se importa desde fuentes diferentes o se repite una migración. También existe riesgo de colisión cuando dos estudiantes comparten nombre completo, cuando una fuente no contiene RNE o cuando los sistemas anteriores utilizan códigos internos distintos.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Estructura persistente `CorrespondenciaIdentificadores`:*
      - Columnas mínimas obligatorias:
-       `[idMapeo, sistemaOrigen, tipoEntidad, idOriginalLegado, idNuevoPlataforma, institucionId, hashRegistroOrigen, fechaMigracion, versionMapeo, migradoPor]`
-     - Índice único compuesto: `(sistemaOrigen, tipoEntidad, idOriginalLegado, institucionId)`.
-  2. *Resolución bidireccional de identidades:*
-     - Implementar función `resolveInternalIdFromLegacy(sistemaOrigen, tipoEntidad, idOriginalLegado)`: Busca en la tabla y devuelve el `idNuevoPlataforma` si ya fue migrado.
-     - Implementar función `resolveLegacyIdFromInternal(idNuevoPlataforma, sistemaOrigen)`: Devuelve los identificadores históricos para auditoría y reportes retroactivos.
-  3. *Manejo idempotente de reimportaciones:*
-     - Al procesar cualquier lote de migración (`importDataWithColumnMapping`), consultar previamente `CorrespondenciaIdentificadores`:
-       a) Si el ID legado ya existe: **Actualizar** el registro destino sin alterar su clave primaria ni generar una nueva fila.
-       b) Si el ID legado no existe: Generar nuevo identificador interno, insertar el registro y registrar la correspondencia de forma atómica.
-  4. *Detección de homónimos y ambigüedad:*
-     - Si dos registros de sistemas distintos comparten el mismo nombre pero tienen identificadores diferentes, exigir confirmación manual con previsualización de datos comparativos (fecha de nacimiento, nombres de padres) antes de consolidar la identidad.
+       `[idMapeo, sistemaOrigen, tipoEntidad, idOriginalLegado, idNuevoPlataforma, institucionId, hashRegistroOrigen, fechaMigracion, versionMapeo, estadoCorrespondencia, metodoCoincidencia, nivelConfianza, migradoPor]`
+     - Tipo de entidad admitido: estudiante, responsable, empleado, usuario, curso, asignatura, matrícula, cuenta, documento u otra entidad admitida.
+     - Restricción única compuesta: `(sistemaOrigen, tipoEntidad, idOriginalLegado, institucionId)`.
+  2. *Resolución bidireccional y referencias múltiples:*
+     - Permitir que un mismo registro interno tenga varias referencias externas cuando proceda (ej. un alumno con código interno de secretaría `ALU-2018-045` y RNE de SACE `0801200512345`), sin crear registros duplicados.
+     - Funciones: `resolveInternalIdFromLegacy` y `resolveLegacyIdFromInternal`.
+     - Permitir búsquedas por identificador original, identificador actual, sistema de origen y entidad.
+  3. *Motor de detección de coincidencias y homologación:*
+     - Reconocer coincidencias exactas mediante identificadores confiables (RNE, identidad nacional o códigos únicos de origen).
+     - Incorporar mecanismo de detección de posibles coincidencias cuando no existan identificadores confiables (nombres normalizados, fecha de nacimiento, responsables, historial de matrícula).
+     - Clasificación rigurosa de coincidencias:
+       a) Coincidencia confirmada.
+       b) Coincidencia probable pendiente de revisión.
+       c) Coincidencia insuficiente.
+       d) Posible duplicado.
+  4. *Políticas de homónimos y revisión humana obligatoria:*
+     - Prohibición estricta: No fusionar automáticamente personas únicamente por compartir nombre, apellido u otros datos no exclusivos. Dos estudiantes homónimos con RNE o fecha de nacimiento diferentes permanecen como personas independientes.
+     - Interfaz accesible para Secretaría o Administrador autorizado para revisar, confirmar, descartar o vincular coincidencias ambiguas.
+     - Conservar el historial completo de decisiones de vinculación y las identidades originales.
+  5. *Idempotencia en reimportaciones:*
+     - Al reimportar, reconocer correspondencias existentes y actualizar o completar el registro relacionado sin duplicarlo.
 - **Criterios de Aceptación:**
-  - [ ] Reimportar el mismo archivo de 500 alumnos no incrementa el número total de registros en la hoja `Estudiantes` ni genera filas duplicadas.
-  - [ ] Los identificadores originales de SACE y sistemas legados permanecen consultables en el expediente del alumno.
-  - [ ] La tabla `CorrespondenciaIdentificadores` previene colisiones mediante índice único.
+  - [ ] Una reimportación del mismo archivo o registro no genera duplicados.
+  - [ ] Un registro institucional puede conservar múltiples identificadores de origen vinculados.
+  - [ ] Dos estudiantes homónimos con RNE diferentes permanecen como personas independientes.
+  - [ ] Los registros sin identificador confiable pueden someterse a revisión de coincidencias.
+  - [ ] Las coincidencias ambiguas no se fusionan automáticamente.
+  - [ ] Las decisiones de vinculación pueden consultarse y auditarse en bitácora.
+  - [ ] Las relaciones académicas, familiares y administrativas permanecen asociadas al identificador interno correcto.
+  - [ ] Se demuestra la resolución de identidades provenientes de, al menos, dos fuentes diferentes.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F29-Task02] [P0] Aislamiento Financiero de Saldos Iniciales Migrados y Prevención de Duplicidad de Pasivos
-- **Tipo:** Corrección de Integridad Financiera y Contable.
+### [F29-Task02] [P0] Motor de Validación Integral y Control de Calidad de Datos
+- **Orden de Ejecución:** 2
+- **Prioridad:** P0 (Crítica)
 - **Componentes Afectados:**
-  - `backend/accounting-service/Code.gs` (`importFinancialInitialBalances`, `getStudentAccountStatement`, `reconcileInconsistentDataAndOperations`)
-  - Hojas: `SaldosInicialesCorte`, `EstadoCuentaEstudiantes`, `PagosAbonos`
-- **Subcapacidades Relacionadas:** F29-04, F29-07, F29-12.
-- **Estado de Partida:** Defectuosa (Riesgo inminente de duplicación al importar saldos pendientes y facturas históricas a la vez).
-- **Dependencias:** [F29-Task01], catálogo de conceptos de cobro, estado de cuenta de estudiantes.
+  - `backend/accounting-service/Code.gs` (`validateImportPreview`, `validateStagedImportBatch`)
+  - `backend/academic-service/Code.gs`
+  - Hoja: `AuditoriaMigracionesDetalle`
+  - `js/teacher.js`, `js/accounting.js` (UI de previsualización de errores)
+- **Subcapacidades Relacionadas:** F29-02, F29-04, F29-11.
+- **Estado de Partida:** Requiere mejoras.
+- **Dependencias Principales:** [F29-Task01].
 - **Problema Detectado y Riesgos:**
-  Al migrar la cartera financiera de una institución educativa, es común recibir dos fuentes: un reporte consolidado de saldos pendientes a una fecha de corte (ej. 31 de diciembre) y el detalle de facturas/recibos emitidos en años anteriores. Si ambos se cargan al módulo de cobros, el sistema computa el saldo inicial y suma también las facturas históricas no liquidadas, duplicando la deuda real de los padres de familia y causando reclamos legales y contables graves.
-- **Requisitos Funcionales y Técnicos:**
-  1. *Estructuración de la tabla `SaldosInicialesCorte`:*
-     - Columnas: `[saldoCorteId, estudianteId, responsableId, fechaCorte, montoDeudaPendiente, montoCreditoFavor, desgloseConceptosJSON, conciliadoConContabilidad, documentoSoporteRef, creadoPor, fechaRegistro]`
-  2. *Reglas estrictas de coexistencia financiera:*
-     - **Opción Configurable en Plataforma (Política de Migración Financiera):**
-       a) *Opción A (Corte Limpio / Saldo Inicial Consolidado):* El estado de cuenta activo comienza exclusivamente con el registro de `SaldosInicialesCorte`. Las transacciones anteriores a la fecha de corte se importan exclusivamente en modo de consulta histórica (archivadas) sin afectar el balance activo.
-       b) *Opción B (Reconstrucción Integral Transaccional):* Se importan todos los cargos y pagos históricos desde el inicio de los tiempos, recalculando el saldo desde cero sin crear registro en `SaldosInicialesCorte`.
-       - Queda terminantemente prohibido habilitar simultáneamente la suma del saldo inicial consolidado y las facturas históricas abiertas.
-  3. *Validación de corte contable contra balance de comprobación:*
-     - El importe total de la suma de `SaldosInicialesCorte` debe coincidir exactamente (diferencia <= L 0.01) con la cuenta de Cuentas por Cobrar (1.1.03) del balance general de apertura migrado.
+  La validación actual comprueba principalmente la presencia de identificadores y algunos requisitos estructurales básicos. No detecta de manera suficiente duplicados existentes en base institucional, inconsistencias entre entidades, valores fuera de rango (ej. notas > 100), relaciones inválidas ni incompatibilidades con las reglas académicas y administrativas.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  Implementar tres niveles complementarios de validación antes de persistir cualquier registro:
+  1. *Nivel A: Validación Estructural:*
+     - Formato esperado (CSV, XLSX, JSON). Columnas obligatorias presentes, encabezados duplicados, nombres ambiguos.
+     - Identificar filas vacías, registros incompletos, columnas inesperadas, tipos de datos, longitudes, rangos y caracteres ilegibles/codificación UTF-8.
+     - Fechas imposibles, números mal formados y valores monetarios inválidos en Lempiras.
+  2. *Nivel B: Validación de Identidad:*
+     - Identificadores repetidos dentro del archivo. Comparación contra registros existentes en base institucional.
+     - Consulta a `CorrespondenciaIdentificadores` para reconocer registros ya migrados. Detección de homónimos y conflictos entre fuentes.
+     - Evitar sobreescrituras silenciosas de datos institucionales válidos.
+  3. *Nivel C: Validación Relacional y de Reglas de Negocio:*
+     - Matrículas asociadas a estudiantes existentes; compatibilidad de grado, curso, sección, modalidad y ciclo académico.
+     - Asignaturas correspondientes al nivel y grado; calificaciones respetando la escala y reglas del período de origen.
+     - Pagos asociados a estudiantes, responsables o cargos existentes; documentos vinculados a expediente real.
+     - Relaciones de empleados, cargos, departamentos y nómina; consistencia de fechas (matrícula, traslado, retiro, promoción).
+     - Detección de relaciones circulares, huérfanas o contradictorias.
+  4. *Clasificación y exportación de incidencias:*
+     - Clasificar incidencias por severidad: `ERROR_BLOQUEANTE`, `ADVERTENCIA_CORREGIBLE`, `DIFERENCIA_ACEPTABLE`.
+     - Mostrar registro, campo, valor recibido y regla incumplida; sugerir correcciones seguras.
+     - Exportar el detalle completo de incidencias para corrección externa y posterior reimportación.
 - **Criterios de Aceptación:**
-  - [ ] El estado de cuenta del estudiante muestra fielmente el saldo adeudado a la fecha de corte sin duplicar obligaciones pasadas.
-  - [ ] La sumatoria de saldos iniciales de todos los estudiantes concilia al 100% con la cuenta de mayor contable de Cuentas por Cobrar.
-  - [ ] Las facturas históricas previas al corte quedan etiquetadas como `HISTORICO_CERRADO` y no suman al saldo pendiente actual.
+  - [ ] Detecta identificadores duplicados dentro del archivo y contra la base institucional.
+  - [ ] Detecta calificaciones fuera de la escala correspondiente (0-100 o escala de origen).
+  - [ ] Detecta asignaturas incompatibles con el grado o ciclo.
+  - [ ] Detecta matrículas, pagos y documentos con referencias inexistentes.
+  - [ ] Diferencia errores bloqueantes de advertencias.
+  - [ ] Permite consultar y exportar el detalle completo de incidencias en CSV/Excel.
+  - [ ] Una fila inválida no se incorpora silenciosamente a los registros definitivos.
+  - [ ] Las reglas pueden aplicarse a distintas fuentes sin duplicar código.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F29-Task03] [P0] Protección e Inalterabilidad de Calificaciones y Trayectorias Académicas Migradas
-- **Tipo:** Corrección de Integridad Académica y Cumplimiento Normativo.
+### [F29-Task03] [P1] Motor Declarativo de Mapeo, Transformación y Homologación de Datos
+- **Orden de Ejecución:** 3
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`importDataWithColumnMapping`, `applyDataTransformations`)
+  - Catálogos de configuración institucional en `backend/developer-service/Code.gs`
+  - Hoja: `PerfilesMapeoMigracion`, `HomologacionCatalogos`
+- **Subcapacidades Relacionadas:** F29-03, F29-16.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Principales:** [F29-Task01], [F29-Task02].
+- **Problema Detectado y Riesgos:**
+  El mapeo actual permite relacionar columnas de origen con campos de destino, pero carece de un sistema completo de transformación de datos y homologación de catálogos, dificultando importar información de sistemas con formatos de fecha, monedas, nomenclaturas y escalas diferentes.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Perfiles de importación declarativos y versionados:*
+     - Definir y guardar perfiles reutilizables por sistema de origen y tipo de entidad.
+     - Versionar perfiles para rastrear con qué reglas se ejecutó cada migración histórica.
+  2. *Transformaciones configurables de datos:*
+     - Fechas y horas (conversión automática entre `DD/MM/YYYY`, `YYYY-MM-DD`, marcas epoch).
+     - Monedas y números (separadores de miles/decimales en Lempiras `HNL` y Dólares `USD`).
+     - Normalización de texto (nombres, apellidos, limpieza de espacios dobles, mayúsculas/minúsculas).
+     - Teléfonos (formato +504), correos electrónicos, estados, valores booleanos y tratamiento de nulos/vacíos.
+     - Separación de un campo en varios (ej. nombre completo a primer nombre, segundo nombre, apellidos) y combinación de campos.
+  3. *Tablas de homologación de catálogos:*
+     - Homologar nomenclaturas de grados, secciones, modalidades, carreras, asignaturas, períodos, tipos de matrícula y estados académicos mediante tablas administrables en hoja `HomologacionCatalogos`.
+  4. *Trazabilidad de transformación:*
+     - Almacenar el valor original y el valor transformado para fines de auditoría.
+     - Vista previa interactiva del resultado transformado antes de confirmar la importación.
+  5. *Interoperabilidad con plantillas SACE y formatos estándar:*
+     - Completar compatibilidad SACE para importación y exportación bidireccional.
+     - Compatibilidad con CSV, Excel (XLSX) y estructuras JSON.
+- **Criterios de Aceptación:**
+  - [ ] Se importan fechas en diferentes formatos sin alterar su valor cronológico real.
+  - [ ] Los importes monetarios en Lempiras se interpretan con exactitud independientemente de separadores.
+  - [ ] Nombres equivalentes de asignaturas y grados se homologan mediante catálogos sin alterar código.
+  - [ ] Las transformaciones conservan el dato original y el transformado.
+  - [ ] Un perfil guardado puede reutilizarse en sucesivas importaciones.
+  - [ ] La vista previa muestra el resultado final exacto de las transformaciones.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F29-Task04] [P0] Área de Preparación de Datos (Staging) y Aislamiento de Importaciones
+- **Orden de Ejecución:** 4
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`stageIncomingDataBatch`, `commitStagedBatch`, `discardStagedBatch`)
+  - Hoja: `StagingMigracionRegistros`, `StagingMigracionLotes`
+- **Subcapacidades Relacionadas:** F29-02, F29-04, F29-11.
+- **Estado de Partida:** Defectuosa.
+- **Dependencias Principales:** [F29-Task02], [F29-Task03].
+- **Problema Detectado y Riesgos:**
+  La recepción y procesamiento actual trabajan directamente con los datos recibidos en memoria o impactando hojas de producción, sin un área de preparación aislada. Esto genera riesgos graves de escrituras parciales ante caídas de conexión y dificulta revisar o corregir los datos antes de su confirmación definitiva.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Estructura independiente de Staging:*
+     - Almacenar temporalmente los registros recibidos asignando un `ejecucionId` único (`MIG-STAGE-xxx`).
+     - Registrar metadatos: fuente origen, archivo recibido, usuario responsable, fecha recepción, tipo entidad, perfil mapeo, versión reglas, estado validación (`PENDIENTE`, `VALIDADO_CON_ERRORES`, `LISTO_PARA_APROBACION`, `CONFIRMADO`, `DESCARTADO`).
+  2. *Aislamiento absoluto respecto a producción:*
+     - Mantener los registros preparados en tablas de staging separadas; una importación fallida o pendiente no toca tablas institucionales definitivas.
+  3. *Operaciones sobre el área de preparación:*
+     - Consultar, revisar, corregir y descartar lotes completos antes de confirmar.
+     - Permitir reanudar importaciones interrumpidas sin duplicar registros confirmados.
+     - Cancelar ejecuciones limpiamente sin dejar residuos en producción.
+     - Controles de acceso RBAC estrictos para consultar o aprobar datos en staging.
+- **Criterios de Aceptación:**
+  - [ ] Una importación recibida en staging no altera registros institucionales antes de su confirmación.
+  - [ ] Es posible auditar el conjunto completo de registros preparados en la hoja de staging.
+  - [ ] Una ejecución interrumpida puede reanudarse sin duplicar registros.
+  - [ ] Una ejecución cancelada no deja modificaciones parciales en producción.
+  - [ ] Las importaciones de diferentes usuarios o fuentes permanecen aisladas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F29-Task05] [P0] Protección de Historiales Académicos y Conservación de Calificaciones Históricas
+- **Orden de Ejecución:** 5
+- **Prioridad:** P0 (Crítica)
 - **Componentes Afectados:**
   - `backend/academic-service/Code.gs` (`calculateUnifiedAcademicGrade`, `generateStudentReportCard`, `importHistoricGradesBatch`)
   - Hojas: `CalificacionesEstudiantes`, `RecuperacionesEstudiante`, `HistorialAcademicoMigrado`
 - **Subcapacidades Relacionadas:** F29-04, F29-06, F29-12.
-- **Estado de Partida:** Requiere mejoras (Los cálculos dinámicos de notas pueden alterar promedios de períodos migrados cerrados).
-- **Dependencias:** [F29-Task01], `CalificacionesEstudiantes`, motores de evaluación.
+- **Estado de Partida:** Requiere mejoras.
+- **Dependencias Principales:** [F29-Task01], [F29-Task02], [F29-Task03].
 - **Problema Detectado y Riesgos:**
-  Al migrar historiales de años anteriores (ej. 2018 a 2023), los sistemas legados utilizaban escalas, ponderaciones o esquemas distintos (ej. 3 parciales en lugar de 4, o promedios simples en lugar de ponderados por competencias). Si la plataforma nueva ejecuta funciones de consolidación o generación de boletines sobre esos registros, el algoritmo aplica las fórmulas vigentes en 2024, alterando retroactivamente las notas finales de los estudiantes y provocando discordancia con los certificados emitidos en el pasado.
-- **Requisitos Funcionales y Técnicos:**
-  1. *Marcado de inalterabilidad histórica (`esRegistroHistoricoMigrado`):*
-     - Añadir columna booleana `esRegistroHistoricoMigrado: true` y `esquemaEvaluativoOrigen: string` en los registros de calificaciones importadas.
-  2. *Aislamiento en el motor de cálculo:*
-     - Modificar `calculateUnifiedAcademicGrade` y `generateStudentReportCard` para que, si un registro tiene `esRegistroHistoricoMigrado === true`:
-       - No aplicar recálculo ni ponderaciones automáticas.
-       - Respetar y mostrar íntegramente la `notaFinalOriginal`, `promedioOriginal` y el `estadoAprobacionOriginal` (`Aprobado`, `Reprobado`, `Recuperación`) provenientes del sistema legado.
-  3. *Soporte para estructuras académicas heterogéneas:*
-     - Permitir registrar calificaciones históricas con esquemas de 1 nota final anual, 2 semestres, 3 trimestres o 4 parciales, almacenando la estructura en `HistorialAcademicoMigrado` sin forzar conversiones artificiales.
+  Las calificaciones históricas pueden importarse desde estructuras diferentes a las utilizadas actualmente (semestres, trimestres, notas finales anuales sin desglose). Si posteriormente se ejecutan los motores vigentes de cálculo académico, las notas podrían recalcularse con ponderaciones o reglas de 2024 que no corresponden al ciclo en que fueron generadas, alterando promedios y estados de aprobación pasados.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Marcado de procedencia histórica e inalterabilidad:*
+     - Incorporar bandera obligatoria `esRegistroHistoricoMigrado: true`, `esquemaEvaluativoOrigen: string`, `formulaEquivalencia: string`.
+  2. *Protección en motores de cálculo:*
+     - Modificar `calculateUnifiedAcademicGrade` y `generateStudentReportCard` para que los registros con `esRegistroHistoricoMigrado === true` no sufran recálculo automático ni re-ponderación.
+     - Conservar y desplegar la nota final original, promedios y estados de aprobación históricos (`Aprobado`, `Reprobado`, `Recuperación`).
+  3. *Advisión de estructuras de evaluación heterogéneas:*
+     - Permitir importar notas organizadas por semestres, trimestres, unidades o consolidadas anuales en `HistorialAcademicoMigrado`.
+     - Conservar calificaciones finales cuando no exista desglose de parciales.
+     - Prohibición de conversión automática de escalas sin regla explícita aprobada.
+  4. *Protocolo de rectificaciones excepcionales:*
+     - Exigir procedimiento autorizado para rectificaciones de notas históricas, registrando valor previo, nuevo valor, usuario autorizador y justificante formal.
 - **Criterios de Aceptación:**
-  - [ ] La emisión de un boletín o certificado de un año anterior (ej. 2020) refleja con exactitud las notas y promedios originales del sistema legado.
-  - [ ] El motor de evaluación unificada no recalcula ni sobreescribe calificaciones de ciclos cerrados migrados.
-  - [ ] Las auditorías de notas (`auditAcademicGradesIntegrity`) reconocen los registros migrados como válidos sin marcarlos como anomalías.
+  - [ ] Una nota histórica migrada no cambia al modificar las ponderaciones del ciclo actual.
+  - [ ] Se importan historiales semestrales y estructuras diferentes a las 4 parciales vigentes.
+  - [ ] Los boletines reproducen exactamente los resultados y promedios históricos originales.
+  - [ ] Las escalas diferentes se conservan o convierten únicamente mediante reglas explícitas aprobadas.
+  - [ ] Las rectificaciones históricas quedan registradas y auditables.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F29-Task04] [P0] Motor de Retorno Operativo (Rollback) con Extracción de Transacciones Delta Posteriores
-- **Tipo:** Corrección de Continuidad Operativa y Gestión de Contingencias.
+### [F29-Task06] [P0] Modelo de Corte Contable y Migración de Saldos Iniciales sin Duplicación
+- **Orden de Ejecución:** 6
+- **Prioridad:** P0 (Crítica)
 - **Componentes Afectados:**
-  - `backend/academic-service/Code.gs` (`restoreSystemBackup`, `executeEmergencyCutoverRollback`)
-  - `backend/accounting-service/Code.gs` (`exportPostCutoverDeltaTransactions`)
-  - `backend/developer-service/Code.gs`
-- **Subcapacidades Relacionadas:** F29-15, F29-16, F29-17.
-- **Estado de Partida:** Defectuosa (Restaurar un respaldo borra las operaciones ocurridas durante el tiempo en que la nueva plataforma estuvo activa).
-- **Dependencias:** `createSystemBackup`, `restoreSystemBackup`, `logStructuredEvent`.
+  - `backend/accounting-service/Code.gs` (`importFinancialInitialBalances`, `getStudentAccountStatement`, `reconcileInconsistentDataAndOperations`)
+  - Hojas: `SaldosInicialesCorte`, `EstadoCuentaEstudiantes`, `PagosAbonos`
+- **Subcapacidades Relacionadas:** F29-04, F29-07, F29-12.
+- **Estado de Partida:** Defectuosa.
+- **Dependencias Principales:** [F29-Task01], [F29-Task02], [F29-Task03].
 - **Problema Detectado y Riesgos:**
-  Si tras el día de lanzamiento oficial (*Go-Live*), la nueva plataforma presenta una falla crítica no recuperable y la Dirección ordena retornar al sistema anterior después de 48 o 72 horas de operación, simplemente restaurar la copia de seguridad previa al corte provocaría la pérdida total de todas las nuevas matrículas registradas, los cobros cobrados en caja y las asistencias tomadas durante esos días, generando un caos administrativo y financiero.
-- **Requisitos Funcionales y Técnicos:**
-  1. *Función de extracción delta post-corte (`exportPostCutoverDeltaTransactions`):*
-     - Recibir parámetro `fechaHoraCorte: ISOString`.
-     - Escanear todas las tablas transaccionales (`PagosAbonos`, `EstadoCuentaEstudiantes`, `Matriculas`, `Estudiantes`, `CalificacionesEstudiantes`, `AsistenciasDiarias`) y extraer todos los registros cuya `fechaCreacion >= fechaHoraCorte`.
-     - Generar paquete estructurado descargable en formato Excel / CSV / JSON con todas las operaciones ocurridas en la nueva plataforma.
-  2. *Procedimiento de contingencia y retorno controlado:*
-     - Protocolo formal `executeEmergencyCutoverRollback(payload)`:
-       a) Paso 1: Poner la plataforma nueva en modo mantenimiento estricto de solo lectura.
-       b) Paso 2: Generar y descargar el paquete de transacciones delta post-corte para su reingreso manual o automatizado en el sistema legado.
-       c) Paso 3: Generar respaldo final de congelamiento.
-       d) Paso 4: Emitir acta de retorno con lista de responsables autorizados, causa técnica y RTO/RPO medidos.
+  La plataforma no diferencia formalmente los saldos iniciales provenientes de un corte contable de las obligaciones históricas que los originaron. Si se importan facturas pendientes y un saldo inicial que ya las representa, el sistema duplica la deuda exigible a las familias (ej. un saldo de L 5,000 se convierte en L 10,000), provocando reclamos y distorsión en los estados financieros.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Entidad formal `SaldosInicialesCorte`:*
+     - Columnas: `[saldoCorteId, estudianteId, responsableId, fechaHoraCorte, cuentaContable, concepto, montoDeudor, montoAcreedor, moneda, documentoSoporteRef, usuarioResponsable, estadoAprobacion, conciliadoConMayor]`
+  2. *Diferenciación conceptual y política de corte:*
+     - Diferenciar estrictamente:
+       a) Movimientos históricos importados para consulta archivada.
+       b) Obligaciones pendientes reconocidas al momento del corte (`SaldosInicialesCorte`).
+       c) Movimientos financieros nuevos generados tras el corte.
+     - **Opción Configurable en Plataforma (Política Financiera de Migración):**
+       - Modo A (Corte Limpio): El estado de cuenta operativo arranca con el saldo inicial de corte; facturas previas se marcan como `HISTORICO_CERRADO` y no suman pasivo.
+       - Modo B (Reconstrucción Completa): Se importan todas las transacciones históricas desde el origen y se calcula el saldo sin generar fila en saldos de corte.
+     - Prohibición estricta de computar simultáneamente el saldo consolidado y las facturas históricas abiertas.
+  3. *Conciliación con balance contable:*
+     - La suma de saldos de corte debe alcanzar una diferencia de L 0.00 respecto a la cuenta de Cuentas por Cobrar del balance de apertura.
+  4. *Tratamiento de nómina y obligaciones laborales:*
+     - Importar saldos históricos de salarios, deducciones y prestaciones sin generar pagos operativos nuevos.
 - **Criterios de Aceptación:**
-  - [ ] Ante una simulación de retorno tras 48 horas de operación simulada, se exportan el 100% de los pagos y matrículas registrados con posterioridad al corte.
-  - [ ] No se pierde ninguna transacción económica ni académica si se ejecuta una orden de reversión.
-  - [ ] El sistema bloquea escrituras concurrentes inmediatamente al activarse el protocolo de retorno.
+  - [ ] Un saldo pendiente de L 5,000 no se convierte en L 10,000 al importar también facturas históricas.
+  - [ ] Los documentos históricos pueden consultarse sin alterar el saldo operativo vigente.
+  - [ ] Los saldos iniciales se aplican una sola vez por cuenta y estudiante.
+  - [ ] Los estados de cuenta distinguen claramente movimientos anteriores y posteriores al corte.
+  - [ ] La conciliación de saldos iniciales alcanza diferencia de L 0.00 con la contabilidad oficial.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F29-Task05] [P0] Procedimiento Seguro de Activación Masiva de Cuentas Migradas sin Exposición de Credenciales
-- **Tipo:** Corrección de Seguridad y Gestión de Identidades.
+### [F29-Task07] [P1] Migración e Integridad Criptográfica de Documentos y Archivos Institucionales
+- **Orden de Ejecución:** 7
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`verifyAndMigrateDriveDocumentsBatch`)
+  - Google Drive API / Carpetas de almacenamiento institucional
+  - Hojas: `DocumentosEscolaresEmitidos`, `ExpedientesAlumnos`
+- **Subcapacidades Relacionadas:** F29-08, F29-21.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Principales:** [F29-Task01], [F29-Task04].
+- **Problema Detectado y Riesgos:**
+  Los documentos institucionales se relacionan mediante URLs de Google Drive. Si las carpetas se reorganizan, los enlaces web se rompen. Asimismo, no existe una verificación criptográfica de que los archivos trasladados conservan su contenido íntegro sin alteraciones o corrupciones.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Identificador inmutable y metadatos:*
+     - Almacenar el `driveFileId` persistente en lugar de enlaces web temporales.
+     - Registrar metadatos: nombre original, tipo MIME, tamaño en bytes, fecha de origen, fecha de migración, expediente relacionado, categoría documental y estado de integridad.
+  2. *Verificación de integridad por hash SHA-256:*
+     - Calcular y comparar el hash SHA-256 del archivo en origen y en destino para garantizar que no hubo alteraciones.
+  3. *Auditoría y saneamiento documental:*
+     - Detectar archivos duplicados, corruptos, incompletos o sin expediente asociado.
+     - Permitir reconstruir referencias si se reorganizan carpetas.
+     - Migración por lotes reanudable y reporte descargable de archivos aceptados y fallidos.
+     - Verificación estricta de permisos para evitar que documentos privados queden expuestos públicamente.
+- **Criterios de Aceptación:**
+  - [ ] Los documentos migrados conservan el mismo SHA-256 que sus archivos originales.
+  - [ ] Los enlaces internos funcionan tras reorganizar carpetas en Drive.
+  - [ ] Los archivos corruptos o sin expediente se identifican y reportan.
+  - [ ] La migración de archivos puede reanudarse sin duplicar elementos.
+  - [ ] Los permisos de acceso se ajustan al perfil institucional autorizado.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F29-Task08] [P0] Migración Segura de Usuarios, Roles y Flujo de Activación Masiva de Cuentas
+- **Orden de Ejecución:** 8
+- **Prioridad:** P0 (Crítica)
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs` (`createMigratedUserAccountsBatch`, `generateAccountActivationToken`, `activateMigratedAccount`)
-  - `js/auth.js`, plantillas de notificación institucional
+  - `js/auth.js`, plantillas de notificación institucional (`MailApp`)
+  - Hoja: `Usuarios`, `RolesPermisos`
 - **Subcapacidades Relacionadas:** F29-09, F29-21.
 - **Estado de Partida:** Implementada parcialmente.
-- **Dependencias:** `Usuarios`, servicio de envío de notificaciones por correo (`MailApp`).
+- **Dependencias Principales:** [F29-Task01], [F29-Task02], [F29-Task25].
 - **Problema Detectado y Riesgos:**
-  Los sistemas legados almacenan contraseñas con algoritmos obsoletos (ej. MD5 plano) o no permiten exportar los hashes. Migrar contraseñas en texto plano o asignar claves predeterminadas idénticas para todos (ej. `"Colegio2024*"`) crea una vulnerabilidad masiva que permite el secuestro de cuentas de docentes, secretarias y padres de familia.
-- **Requisitos Funcionales y Técnicos:**
-  1. *Creación de cuentas en estado `'PENDIENTE_ACTIVACION'`:*
-     - Al importar usuarios desde sistemas anteriores, asignar estado `estadoCuenta: 'PendienteActivacion'` con campo de contraseña nulo o bloqueado.
-  2. *Generación de tokens criptográficos temporales de activación:*
-     - Generar token de un solo uso con validez configurable (ej. 72 horas) mediante hash seguro (Web Crypto / Apps Script Utilities).
-  3. *Flujo de primer inicio de sesión:*
-     - Cuando el usuario accede mediante el enlace de activación o intenta ingresar por primera vez con su identidad/correo registrado:
-       - Solicitar confirmación de identidad (ej. últimos 4 dígitos del teléfono o fecha de nacimiento registrada).
-       - Exigir el establecimiento de una contraseña segura que cumpla las políticas institucionales (mínimo 8 caracteres, mayúsculas, números y símbolos).
-       - Tras el cambio exitoso, transicionar la cuenta a `'ACTIVA'`.
+  Las cuentas migradas necesitan activación inicial segura. Las contraseñas de sistemas anteriores no deben trasladarse en texto plano ni deben asignarse contraseñas genéricas compartidas para toda la institución, lo cual expondría las cuentas a secuestro o acceso no autorizado.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Importación segura de cuentas:*
+     - Importar usuarios, roles, perfiles y estados sin almacenar contraseñas en texto plano.
+     - Asignar estado inicial: `estadoCuenta: 'PendienteActivacion'`.
+     - Evitar duplicación reconociendo usuarios existentes a través de `CorrespondenciaIdentificadores`.
+  2. *Tokens criptográficos de activación:*
+     - Generar tokens de un solo uso con vencimiento configurable (ej. 72 horas), vinculados a la cuenta.
+     - Invalidar tokens al utilizarlos, expirar o revocarse.
+  3. *Flujo de primer inicio de sesión y cambio obligatorio de clave:*
+     - Exigir verificación de identidad y establecimiento de contraseña segura que cumpla las políticas institucionales.
+     - Transición a estado `'Activa'` tras el establecimiento exitoso.
+  4. *Asignación rigurosa de roles RBAC:*
+     - Mapear permisos según el modelo de roles actual sin otorgar privilegios por equivalencias ambiguas.
+     - Revisión obligatoria previa para cuentas con roles elevados (Administrador, Contabilidad, Dirección).
 - **Criterios de Aceptación:**
-  - [ ] Ninguna contraseña viaja ni se almacena en texto plano durante la migración de usuarios.
-  - [ ] No se utilizan contraseñas genéricas compartidas para la totalidad del alumnado o personal docente.
-  - [ ] Las cuentas migradas exigen establecimiento de clave individual en su primera interacción.
+  - [ ] Ninguna contraseña original se almacena ni transmite en texto plano.
+  - [ ] Los tokens de activación no pueden reutilizarse y vencen según la política definida.
+  - [ ] No se asignan contraseñas genéricas masivas.
+  - [ ] Los usuarios existentes no se duplican.
+  - [ ] Ninguna cuenta hereda privilegios superiores a su perfil autorizado.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### P1 — PRIORIDAD ALTA
-
-### [F29-Task06] [P1] Motor de Validación en Tres Fases con Modo Simulación (`dryRun`) y Reporte de Discrepancias
-- **Tipo:** Ampliación Funcional y Calidad de Datos.
+### [F29-Task09] [P1] Migración de Asistencia y Registros Operativos Históricos Consolidados
+- **Orden de Ejecución:** 9
+- **Prioridad:** P1 (Alta)
 - **Componentes Afectados:**
-  - `backend/accounting-service/Code.gs` (`validateStagedImportBatch`, `validateImportPreview`)
-  - `js/teacher.js`, `js/accounting.js` (UI de previsualización)
-  - Hoja: `AuditoriaMigracionesDetalle`
-- **Subcapacidades Relacionadas:** F29-02, F29-03, F29-04, F29-11.
-- **Estado de Partida:** Implementada parcialmente.
-- **Dependencias:** [F29-Task01], `AuditoriaMigraciones`.
+  - `backend/academic-service/Code.gs` (`importAttendanceHistoricalSummary`, `getAsistenciaEstudiante`)
+  - Hojas: `AsistenciasDiarias`, `AsistenciasHistoricasConsolidadas`
+- **Subcapacidades Relacionadas:** F29-10.
+- **Estado de Partida:** Requiere mejoras.
+- **Dependencias Principales:** [F29-Task01], [F29-Task02], [F29-Task03].
 - **Problema Detectado y Riesgos:**
-  La validación existente en `validateImportPreview` es superficial y solo revisa la presencia de un identificador no vacío. No valida si los datos cumplen tipos de datos, rangos numéricos o relaciones lógicas con otras tablas antes de escribir en la base de datos definitiva.
-- **Requisitos Funcionales y Técnicos:**
-  1. *Pipeline de validación en 3 fases obligatorias:*
-     - **Fase 1 (Integridad Estructural):** Presencia de columnas obligatorias, formatos de fecha, tipos numéricos y caracteres no legibles.
-     - **Fase 2 (Integridad de Identidad):** Detección de identificadores duplicados en el archivo y colisiones con identidades existentes en la base institucional.
-     - **Fase 3 (Integridad Relacional y Reglas de Negocio):** Verificación de que el curso/grado exista, que la calificación esté dentro de la escala permitida (0-100), y que el estudiante esté formalmente matriculado en la sección indicada.
-  2. *Modo Simulación (`dryRun: true`):*
-     - Permitir ejecutar el 100% de las transformaciones y validaciones sin persistir cambios en las hojas de datos reales, emitiendo un reporte exacto de lo que sucedería.
-  3. *Reporte de discrepancias exportable:*
-     - Registrar en `AuditoriaMigracionesDetalle` cada error con número de fila, columna afectada, valor original, valor esperado y clasificación de gravedad (`ERROR_CRITICO`, `ADVERTENCIA`, `DIFERENCIA_ACEPTABLE`).
+  La plataforma admite asistencia diaria detallada, pero muchas fuentes legadas solo conservan acumulados anuales o porcentajes de asistencia por ciclo. Forzar la creación de fechas ficticias o no admitir consolidados impide migrar el historial de conducta y asistencia.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Soporte para detalle diario y acumulados consolidados:*
+     - Importar registros diarios cuando existan.
+     - Crear tabla `AsistenciasHistoricasConsolidadas` para fuentes con totales por ciclo/parcial.
+     - Diferenciar: asistencias, inasistencias justificadas, inasistencias injustificadas, retardos y porcentajes consolidados.
+  2. *Preservación de fidelidad y reglas de integridad:*
+     - Prohibición estricta: No inventar fechas individuales cuando el origen solo contiene totales acumulados.
+     - Conservar ciclo, grado, sección, período y método de cálculo del porcentaje.
+     - No mezclar acumulados históricos con la asistencia diaria del ciclo activo.
+     - Detección de inconsistencias (ej. inasistencias superiores a los días lectivos oficiales).
 - **Criterios de Aceptación:**
-  - [ ] Ejecutar una migración con `dryRun: true` no inserta ninguna fila en las tablas maestras institucionales.
-  - [ ] Los errores se desglosan por fila y campo específico, permitiendo descargar el listado de fallas para su corrección en el archivo de origen.
-  - [ ] Se bloquea la confirmación definitiva de la migración si existen errores clasificados como `ERROR_CRITICO`.
+  - [ ] Se importan históricos de asistencia tanto en detalle diario como en consolidados anuales.
+  - [ ] Los acumulados se muestran en los expedientes sin generar fechas ficticias.
+  - [ ] Los registros históricos de asistencia no alteran los porcentajes del ciclo activo actual.
+  - [ ] Los reportes diferencian claramente el nivel de detalle disponible.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F29-Task07] [P1] Conciliación Integral Cuantitativa y Cualitativa Origen vs Destino con Emisión de Actas
-- **Tipo:** Ampliación Funcional y Trazabilidad.
+### BLOQUE 2. MOTOR DE MIGRACIÓN, SIMULACIÓN Y PROCESAMIENTO
+
+### [F29-Task10] [P0] Modo de Simulación Integral (Dry-Run) sin Escrituras en Producción
+- **Orden de Ejecución:** 10
+- **Prioridad:** P0 (Crítica)
 - **Componentes Afectados:**
-  - `backend/accounting-service/Code.gs` (`executeComprehensiveMigrationReconciliation`, `generateReconciliationActPDF`)
+  - `backend/accounting-service/Code.gs` (`executeMigrationPipeline`)
   - `backend/academic-service/Code.gs`
-  - Hoja: `ConciliacionesMigracion`
-- **Subcapacidades Relacionadas:** F29-12, F29-19.
+  - Hoja: `AuditoriaMigraciones`
+  - `js/teacher.js`, `js/accounting.js` (selector de simulación en interfaz)
+- **Subcapacidades Relacionadas:** F29-02, F29-04, F29-11.
 - **Estado de Partida:** Implementada parcialmente.
-- **Dependencias:** [F29-Task01], [F29-Task02], [F29-Task06].
+- **Dependencias Principales:** [F29-Task02], [F29-Task03], [F29-Task04].
 - **Problema Detectado y Riesgos:**
-  Actualmente, tras importar un archivo, el sistema solo informa cuántas filas fueron procesadas. No existe una conciliación cruzada que compare sumatorias matemáticas (ej. suma de saldos adeudados en el archivo original vs suma de cargos creados en la plataforma) ni verificación de la integridad de los registros individuales, impidiendo garantizar a las autoridades institucionales que no hubo omisiones.
-- **Requisitos Funcionales y Técnicos:**
-  1. *Módulo de conciliación automática origen vs destino:*
-     - Comparar:
-       - Recuento de filas del archivo origen vs registros insertados/actualizados en destino.
-       - Sumatoria de importes monetarios (Total Cargos, Total Pagos, Total Saldos).
-       - Promedios generales de calificaciones por curso.
-  2. *Clasificación de discrepancias:*
-     - Registrar estado para cada entidad: `COINCIDENTE`, `FALTANTE`, `DUPLICADO`, `MODIFICADO`, `EXCLUIDO_JUSTIFICADO`.
-  3. *Generación formal del Acta de Conciliación de Migración en PDF:*
-     - Generar documento oficial con resumen estadístico, tabla de diferencias justificadas, hashes de los archivos y firmas digitales del Responsable de Migración y del Director/Administrador institucional.
+  No existe un modo de simulación que ejecute el pipeline completo de recepción, mapeo, transformación, validación y conciliación sin modificar las tablas institucionales definitivas, obligando a realizar pruebas que ensucian la base de datos de producción.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Parámetro global `dryRun: true`:*
+     - Ejecutar el 100% de las transformaciones y validaciones sobre los datos en staging.
+     - Simular correspondencias de identificadores, relaciones académicas, consecuencias financieras y cálculo de saldos.
+  2. *Garantía de inmutabilidad en producción:*
+     - Asegurar que la simulación no modifique hojas definitivas, calificaciones, saldos ni usuarios.
+  3. *Informe pre-migración y comparabilidad:*
+     - Generar matriz detallada: registros nuevos, actualizaciones, duplicados, conflictos y rechazos.
+     - Permitir comparar diferentes configuraciones de mapeo sobre el mismo archivo.
+     - La confirmación definitiva posterior debe utilizar exactamente el mismo conjunto de datos y versión de reglas validadas en la simulación; cualquier cambio en el archivo invalida la aprobación anterior.
 - **Criterios de Aceptación:**
-  - [ ] El acta de conciliación demuestra matemáticamente la igualdad de totales entre la fuente y el destino o detalla el motivo de cualquier exclusión.
-  - [ ] La conciliación puede reproducirse en cualquier momento posterior a la migración para auditorías ministeriales o externas.
+  - [ ] Una simulación completa no inserta ni modifica una sola fila en tablas de producción.
+  - [ ] El informe de simulación detalla registros aceptados, rechazados, actualizaciones y conflictos.
+  - [ ] La confirmación real solo se habilita tras una simulación exitosa sin errores bloqueantes.
+  - [ ] Los resultados de la simulación son reproducibles con el mismo archivo y reglas.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F29-Task08] [P1] Protocolo Técnico de Transición Operativa (Cutover) y Congelamiento de Sistemas Legados
-- **Tipo:** Gestión de Procedimientos y Transición Operativa.
-- **Componentes Afectados:**
-  - `backend/developer-service/Code.gs` (`manageSystemOperationalState`, `executeCutoverSequence`)
-  - `js/ui-common.js` (banner institucional de transición)
-  - Hoja: `BitacoraTransicionOperativa`
-- **Subcapacidades Relacionadas:** F29-15, F29-18.
-- **Estado de Partida:** Ausente.
-- **Dependencias:** [F29-Task01], [F29-Task04], [F29-Task07].
-- **Problema Detectado y Riesgos:**
-  El paso del sistema viejo al nuevo suele realizarse sin un protocolo técnico coordinado. Si los usuarios continúan registrando pagos o calificaciones en el sistema anterior mientras se realiza la migración hacia el nuevo, se produce una desincronización inmediata de datos que destruye la coherencia de la plataforma.
-- **Requisitos Funcionales y Técnicos:**
-  1. *Máquina de estados de transición operativa:*
-     - Estados: `PREPARACION`, `CONGELAMIENTO_LEGADO`, `DELTA_SYNC`, `VALIDACION_CORTE`, `GO_LIVE_NUEVO_SISTEMA`, `ESTABILIZACION`, `RETIRO_COMPLETADO`.
-  2. *Fase de congelamiento y sincronización delta:*
-     - Establecer fecha y hora exacta de corte ($T_0$).
-     - Procedimiento documentado para poner las fuentes legadas en solo lectura.
-     - Extracción e importación exclusiva del diferencial de datos (*delta*) generado entre la migración de prueba previa y la hora de corte.
-  3. *Validación de corte y apertura escalonada:*
-     - Ejecutar suite de pruebas de humo post-migración (`runPostMigrationSmokeTests`) antes de abrir los accesos a los usuarios finales.
-- **Criterios de Aceptación:**
-  - [ ] Existe un cronograma técnico de transición con responsables, checkpoints y criterios de aprobación Go / No-Go.
-  - [ ] Se impide la escritura concurrente no controlada entre ambos sistemas durante el corte.
-- **Estado:** [ ] Pendiente
-
----
-
-### [F29-Task09] [P1] Procesamiento por Lotes Paginados Resistente a Tiempos de Espera de Google Apps Script
-- **Tipo:** Optimización Técnica y Resiliencia de Arquitectura.
+### [F29-Task11] [P1] Motor de Procesamiento por Lotes Paginados y Reanudación de Migraciones
+- **Orden de Ejecución:** 11
+- **Prioridad:** P1 (Alta)
 - **Componentes Afectados:**
   - `backend/accounting-service/Code.gs` (`processMigrationChunkAsync`, `getMigrationChunkProgress`)
   - `backend/developer-service/Code.gs`
   - Propiedades del script (`PropertiesService.getScriptProperties()`)
 - **Subcapacidades Relacionadas:** F29-02, F29-11, F29-20.
 - **Estado de Partida:** Implementada parcialmente.
-- **Dependencias:** `LockService`, `batchSpreadsheetReadOperations`.
+- **Dependencias Principales:** [F29-Task04], [F29-Task10].
 - **Problema Detectado y Riesgos:**
-  Google Apps Script aborta cualquier ejecución que exceda los 6 minutos (360 segundos). Si se importa un archivo con miles de filas de notas o pagos, el proceso se interrumpe abruptamente arrojando un error fatal, dejando la base de datos a medio migrar y sin indicación clara de en qué fila se detuvo.
-- **Requisitos Funcionales y Técnicos:**
-  1. *Segmentación de ingesta por fragmentos (Chunks):*
-     - Procesar los datos en bloques configurables (predeterminado: 100 filas por llamada).
-  2. *Persistencia del puntero de ejecución:*
-     - Almacenar en `PropertiesService` el estado del lote: `{ ejecucionId, filaActual, totalFilas, estado: 'PROCESANDO' }`.
-  3. *Orquestación desde el cliente o trigger recurrente:*
-     - El cliente frontend invoca iterativamente `processMigrationChunkAsync` mientras `filaActual < totalFilas`, mostrando barra de progreso visual en tiempo real.
-     - Si la conexión se interrumpe, el sistema puede reanudarse desde la última fila confirmada sin duplicar los registros ya insertados.
+  Las ejecuciones de Apps Script tienen un límite estricto de 6 minutos (360 segundos). Archivos grandes de notas o transacciones abortan a mitad de camino, dejando datos incompletos y bloqueando la migración.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Lotes configurables y segmentación:*
+     - Procesar archivos en lotes paginados con tamaño adaptable según la entidad (ej. 100 filas para notas, 50 para transacciones con documentos).
+  2. *Persistencia de progreso y reanudación:*
+     - Guardar en `PropertiesService` el estado y puntero: `{ ejecucionId, etapa, filaActual, totalFilas, estado }`.
+     - Permitir pausar, reanudar y cancelar una migración. Reanudar sin duplicar filas ya confirmadas.
+  3. *Control de concurrencia y optimización I/O:*
+     - Utilizar `LockService` para evitar que dos ejecuciones simultáneas procesen el mismo lote.
+     - Operaciones de lectura y escritura agrupadas por matrices para evitar cuotas de Sheets.
 - **Criterios de Aceptación:**
-  - [ ] Un archivo de 10,000 filas se procesa en múltiples fragmentos sin superar jamás el límite de 6 minutos de Apps Script.
-  - [ ] Una caída de red durante el procesamiento permite continuar desde el punto de interrupción sin reiniciar desde cero.
+  - [ ] Una migración de 10,000 filas se completa mediante ejecuciones encadenadas sin violar el límite de 6 minutos.
+  - [ ] Una interrupción de red permite reanudar desde el último registro confirmado.
+  - [ ] Las ejecuciones concurrentes no producen duplicados ni inconsistencias.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### P2 — PRIORIDAD MEDIA
+### [F29-Task12] [P1] Catálogo Maestro de Fuentes y Sistemas de Origen
+- **Orden de Ejecución:** 12
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs` (`manageMigrationSourceCatalog`, `getMigrationSources`)
+  - Hoja: `CatalogoFuentesMigracion`
+- **Subcapacidades Relacionadas:** F29-01, F29-19.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Principales:** [F29-Task03], [F29-Task04].
+- **Problema Detectado y Riesgos:**
+  La bitácora registra nombres de archivos planos, pero no existe un catálogo centralizado que describa las fuentes institucionales, responsables, restricciones de privacidad y condiciones de extracción.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Estructura del catálogo de fuentes:*
+     - Columnas: `[fuenteId, nombreSistema, departamentoResponsable, custodioDatos, tipoInformacion, formatosDisponibles, identificadoresClave, volumenEstimado, periodoHistorico, fechaUltimoCorte, frecuenciaActualizacion, restriccionesPrivacidad, ubicacionArchivos, estadoFuente]`
+  2. *Gestión del ciclo de vida de fuentes:*
+     - Clasificar fuentes como: `Activa`, `Historica`, `Archivada`, `Retirada`.
+     - Vincular cada ejecución de migración a una fuente del catálogo.
+     - Conservar perfiles de mapeo asociados a cada fuente y trazabilidad de cambios en sus metadatos.
+- **Criterios de Aceptación:**
+  - [ ] Toda migración ejecutada queda ligada a una fuente formal del catálogo.
+  - [ ] Se consulta quién es el custodio de la información y qué datos contiene.
+  - [ ] Los metadatos de la fuente se conservan históricamente aunque los archivos cambien.
+- **Estado:** [ ] Pendiente
 
-### [F29-Task10] [P2] Módulo de Pruebas Piloto por Departamento y Activación Focalizada (Feature Flags)
-- **Tipo:** Optimización Funcional y Gestión del Cambio.
+---
+
+### [F29-Task13] [P0] Conciliación Integral Cuantitativa y Cualitativa entre Origen y Destino
+- **Orden de Ejecución:** 13
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`executeComprehensiveMigrationReconciliation`, `generateReconciliationActPDF`)
+  - `backend/academic-service/Code.gs`
+  - Hoja: `ConciliacionesMigracion`
+- **Subcapacidades Relacionadas:** F29-12, F29-19.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Principales:** [F29-Task01], [F29-Task02], [F29-Task05], [F29-Task06].
+- **Problema Detectado y Riesgos:**
+  Las funciones actuales concilian inconsistencias internas en Sheets, pero no comparan sistemáticamente los datos del archivo origen contra lo efectivamente insertado en destino, imposibilitando certificar la integridad de la migración ante directores y auditores.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Comparación cuantitativa y cualitativa:*
+     - Comparar recuentos: filas originales, válidas, rechazadas, insertadas, actualizadas y omitidas.
+     - Comparar sumatorias monetarias (débitos, créditos, saldos, cobros) por estudiante, responsable y cuenta.
+     - Comparar promedios de calificaciones y recuentos de matrículas, asignaturas y documentos.
+     - Detectar registros presentes en origen y ausentes en destino, y viceversa.
+  2. *Clasificación de discrepancias y tolerancias:*
+     - Diferenciar discrepancias explicadas de discrepancias no resueltas.
+     - Exigir coincidencia matemática exacta (diferencia L 0.00 en saldos iniciales y 0% error en notas).
+  3. *Acta formal de conciliación en PDF:*
+     - Emitir acta descargable con resumen cuantitativo, lista de diferencias justificadas y firmas digitales de responsables.
+- **Criterios de Aceptación:**
+  - [ ] Los totales de origen y destino pueden compararse por entidad y categoría.
+  - [ ] Las diferencias se desglosan hasta el nivel del registro individual afectado.
+  - [ ] No se declara conciliada una migración con diferencias críticas sin resolver.
+  - [ ] Se emite un acta descargable auditable y reproducible.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F29-Task14] [P0] Pruebas Automáticas de Integridad y Funcionamiento Posterior a la Migración (Smoke Tests)
+- **Orden de Ejecución:** 14
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs` (`runPostMigrationSmokeTests`)
+  - Suite de regresión general
+- **Subcapacidades Relacionadas:** F29-13.
+- **Estado de Partida:** Requiere mejoras.
+- **Dependencias Principales:** [F29-Task05], [F29-Task06], [F29-Task07], [F29-Task08], [F29-Task13].
+- **Problema Detectado y Riesgos:**
+  Una migración puede completar la inserción en tablas pero dejar registros con punteros nulos o formatos que hagan fallar los boletines, estados de cuenta o dashboards en las operaciones cotidianas.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  Batería de pruebas automatizadas sobre una muestra aleatoria de registros migrados:
+  1. *Integridad académica:* Consultar expedientes de alumnos migrados, emitir boletines de ciclos históricos, verificar que las notas históricas no se recalculen.
+  2. *Integridad financiera:* Generar estados de cuenta, verificar saldos iniciales y confirmar ausencia de cargos duplicados.
+  3. *Integridad documental y de cuentas:* Abrir documentos migrados en Drive, verificar permisos y validar activación de cuentas.
+  4. *Operatividad general:* Confirmar que los procesos habituales no fallen por datos nulos o relaciones ausentes.
+- **Criterios de Aceptación:**
+  - [ ] La batería de pruebas posterior genera un informe detallado de resultados.
+  - [ ] Cualquier fallo crítico en los tests de humo bloquea la aprobación de la migración.
+  - [ ] Boletines y estados de cuenta se generan sin errores para los registros migrados.
+  - [ ] La suite general existente continúa aprobando sus 53 pruebas al 100%.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F29-Task15] [P1] Ampliación de la Bitácora y Gestión Detallada de Incidencias de Migración
+- **Orden de Ejecución:** 15
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`getMigrationLogs`, `exportMigrationFailureSheet`)
+  - Hoja: `AuditoriaMigraciones`, `AuditoriaMigracionesDetalle`
+- **Subcapacidades Relacionadas:** F29-19.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Principales:** [F29-Task04], [F29-Task10], [F29-Task11].
+- **Problema Detectado y Riesgos:**
+  La bitácora actual almacena un JSON truncado con un máximo de 10 errores. Si un archivo de 2,000 filas tiene 150 errores, los últimos 140 se pierden y no se pueden exportar para su corrección.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Registro granular de incidencias:*
+     - Almacenar cada falla en `AuditoriaMigracionesDetalle`: `[ejecucionId, filaNum, idOrigen, entidad, campoAfectado, valorOriginal, valorTransformado, reglaIncumplida, descripcionError, severidad, etapa, estadoResolucion]`.
+  2. *Exportación de plantilla de corrección:*
+     - Permitir descargar en Excel/CSV todos los registros fallidos conservando sus IDs originales para corrección externa y reimportación incremental.
+  3. *Historial completo de intentos y comparativas:*
+     - Sin límite de 10 errores; permitir comparar ejecuciones sucesivas de la misma fuente.
+- **Criterios de Aceptación:**
+  - [ ] Se almacena y consulta el 100% de las incidencias sin truncamiento.
+  - [ ] Es posible descargar el listado de filas fallidas para corrección.
+  - [ ] Reimportar el archivo corregido procesa únicamente los registros pendientes.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 3. INTEROPERABILIDAD Y CAPACIDADES DE IMPORTACIÓN
+
+### [F29-Task16] [P1] Importación y Exportación Integral de Información SACE
+- **Orden de Ejecución:** 16
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`importSACEDataFile`, `exportSACETemplateData`)
+  - Módulos de compatibilidad SACE en `developer-service`
+- **Subcapacidades Relacionadas:** F29-01, F29-03, F29-16.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Principales:** [F29-Task01] a [F29-Task04], [F29-Task10].
+- **Problema Detectado y Riesgos:**
+  Existe validación de plantillas SACE, pero falta el flujo completo de importación masiva de calificaciones y matrículas desde los archivos oficiales ministeriales y la exportación verificada con perfiles versionados.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Importador de archivos oficiales SACE:*
+     - Reconocer automáticamente plantilla, ciclo, grado, sección y centro educativo.
+     - Validar RNE (13 dígitos) y mapear con identidades institucionales existentes.
+     - Importar calificaciones y matrículas con vista previa obligatoria.
+  2. *Exportación y revalidación:*
+     - Exportar datos al formato ministerial oficial exacto y comparar contra los registros de origen.
+     - Conservar perfiles versionados ante cambios futuros en las plantillas de la Secretaría de Educación.
+- **Criterios de Aceptación:**
+  - [ ] Importa plantillas SACE oficiales asociando los registros a los expedientes institucionales correspondientes.
+  - [ ] Exporta datos en el formato ministerial exacto pasando la validación estructural.
+  - [ ] Se conserva la versión de plantilla utilizada.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F29-Task17] [P2] Interoperabilidad con Bases de Datos Relacionales y Fuentes Externas
+- **Orden de Ejecución:** 17
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs` (`importStructuredRelationalDump`)
+  - Especificaciones de esquemas de datos
+- **Subcapacidades Relacionadas:** F29-01, F29-02.
+- **Estado de Partida:** Ausente.
+- **Dependencias Principales:** [F29-Task01], [F29-Task03], [F29-Task04], [F29-Task10].
+- **Problema Detectado y Riesgos:**
+  La migración desde sistemas con bases de datos MySQL/PostgreSQL depende de transformaciones manuales en hojas de cálculo, aumentando el tiempo y el riesgo de corromper claves foráneas.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Intercambio estructurado multiformato:*
+     - Admitir paquetes JSON/CSV relacionales respetando claves primarias y foráneas.
+     - Mapear claves foráneas hacia las correspondencias internas resueltas.
+  2. *Extracciones incrementales seguras:*
+     - Soportar marcas de tiempo (*timestamps*) para extraer únicamente datos nuevos o modificados sin duplicar.
+     - Prohibición de incluir credenciales o conexiones en bitácoras o exportaciones.
+- **Criterios de Aceptación:**
+  - [ ] Se importa un paquete de tablas relacionadas resolviendo correctamente las claves foráneas.
+  - [ ] Las extracciones incrementales no duplican registros previamente procesados.
+  - [ ] Ninguna credencial de conexión queda expuesta en logs.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F29-Task18] [P1] Migración Histórica de Contabilidad, Cuentas por Cobrar y Obligaciones Administrativas
+- **Orden de Ejecución:** 18
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`importAccountingHistoricalLedger`)
+  - Hojas: `PlanCuentasContables`, `MovimientosCajaBancos`, `SaldosInicialesCorte`
+- **Subcapacidades Relacionadas:** F29-07, F29-18.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Principales:** [F29-Task01], [F29-Task02], [F29-Task03], [F29-Task06], [F29-Task13].
+- **Problema Detectado y Riesgos:**
+  La migración contable carece de homologación del plan de cuentas y de trazabilidad entre facturas históricas, abonos parciales y el balance de apertura.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Homologación de cuentas contables y terceros:*
+     - Mapear plan de cuentas legado con el catálogo estándar de la institución.
+     - Conservar números originales de facturas, recibos y referencias bancarias.
+  2. *Integración con el modelo de corte:*
+     - Importar saldos de cuentas por cobrar y por pagar integrados con `SaldosInicialesCorte`.
+     - Los movimientos históricos pueden consultarse sin duplicar saldos operativos.
+- **Criterios de Aceptación:**
+  - [ ] Los saldos iniciales contables coinciden con el balance de apertura aprobado.
+  - [ ] Las facturas y pagos históricos conservan sus referencias y archivos de soporte asociados.
+  - [ ] Se previene cualquier duplicación de obligaciones activas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F29-Task19] [P2] Migración Histórica de Nómina, Empleados y Obligaciones Laborales
+- **Orden de Ejecución:** 19
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`importPayrollHistoricalRecords`)
+  - Hojas: `BoletasPago`, `PlanillasNomenclatura`
+- **Subcapacidades Relacionadas:** F29-07, F29-09.
+- **Estado de Partida:** Requiere mejoras.
+- **Dependencias Principales:** [F29-Task01], [F29-Task02], [F29-Task03], [F29-Task06].
+- **Problema Detectado y Riesgos:**
+  No existe una utilidad para importar boletas de pago anteriores ni para conservar el historial de deducciones de IHSS y RAP de ciclos pasados.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Importación de boletas y acumulados de nómina:*
+     - Asociar boletas históricas al empleado mediante identidad o No. de afiliación IHSS.
+     - Homologar conceptos salariales, deducciones y aportaciones patronales.
+     - Evitar que los registros históricos generen pagos o deducciones operativas nuevas.
+- **Criterios de Aceptación:**
+  - [ ] Se importan boletas históricas quedando vinculadas al expediente del empleado.
+  - [ ] Los acumulados concilian con los reportes de planillas de la fuente.
+  - [ ] Los registros históricos no generan pagos operativos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 4. PILOTOS, TRANSICIÓN Y CONTINUIDAD OPERATIVA
+
+### [F29-Task20] [P2] Gestión de Pruebas Piloto por Departamento y Grupo de Usuarios
+- **Orden de Ejecución:** 20
+- **Prioridad:** P2 (Media)
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs` (`setDepartmentPilotStatus`, `isDepartmentInPilotMode`)
   - `js/ui-common.js`
   - Hoja: `PilotosDepartamentales`
 - **Subcapacidades Relacionadas:** F29-14.
 - **Estado de Partida:** Ausente.
-- **Dependencias:** Sistema de roles y departamentos.
+- **Dependencias Principales:** [F29-Task08], [F29-Task13], [F29-Task14], [F29-Task25].
 - **Problema Detectado y Riesgos:**
-  Migrar a toda la institución en un solo día sin pruebas en condiciones reales con usuarios finales de departamentos específicos genera una sobrecarga inmanejable de soporte. Se requiere habilitar departamentos seleccionados (ej. preescolar o secretaría) en modo piloto mientras el resto continúa operando normalmente.
-- **Requisitos Funcionales y Técnicos:**
-  1. *Registro y control de pilotos departamentales:*
-     - Configurar tabla `PilotosDepartamentales` con columnas: `[pilotoId, departamento, nivelEducativo, fechaInicio, fechaFinEstimada, usuariosParticipantesJSON, estado, observaciones]`.
-  2. *Activación controlada por banderas de función:*
-     - Si un usuario pertenece a un departamento en piloto, la plataforma le habilita las funciones productivas; si no, le muestra una vista restringida o de consulta según su rol.
-  3. *Bitácora de retroalimentación e incidencias del piloto:*
-     - Formulario accesible para que los usuarios del piloto reporten discrepancias respecto al sistema anterior para su corrección previa al corte global.
+  No se dispone de un mecanismo para habilitar la plataforma de forma controlada a departamentos seleccionados (ej. Secretaría o Preescolar) mientras el resto sigue en el sistema legado.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Administrador de pilotos y feature flags:*
+     - Definir departamento, nivel educativo, grado, sección y usuarios participantes.
+     - Habilitar operaciones de consulta previas a operaciones de escritura.
+  2. *Aislamiento y registro de incidencias del piloto:*
+     - Evitar que un proceso se ejecute simultáneamente en ambos sistemas sin sincronización explícita.
+     - Formulario accesible para registrar discrepancias y retroalimentación de los usuarios piloto.
 - **Criterios de Aceptación:**
-  - [ ] Secretaría puede operar en modo piloto exclusivo sin alterar las operaciones del resto de departamentos.
-  - [ ] Las incidencias del piloto quedan registradas y categorizadas para resolución previa al Go-Live institucional.
+  - [ ] Se habilita la operación piloto para un grupo sin afectar a los usuarios del sistema anterior.
+  - [ ] Se registran y categorizan las incidencias del piloto para su resolución previa al Go-Live.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F29-Task11] [P2] Verificación Criptográfica y Migración de Documentos Institucionales en Google Drive
-- **Tipo:** Optimización Técnica y Preservación Documental.
+### [F29-Task21] [P0] Protocolo Técnico de Corte Temporal y Transición Operativa (Cutover)
+- **Orden de Ejecución:** 21
+- **Prioridad:** P0 (Crítica)
 - **Componentes Afectados:**
-  - `backend/accounting-service/Code.gs` (`verifyAndMigrateDriveDocumentsBatch`)
-  - Google Drive API / Carpetas de expedientes
-  - Hoja: `DocumentosEscolaresEmitidos`, `ExpedientesAlumnos`
-- **Subcapacidades Relacionadas:** F29-08, F29-21.
-- **Estado de Partida:** Implementada parcialmente.
-- **Dependencias:** Almacenamiento en Google Drive.
+  - `backend/developer-service/Code.gs` (`manageSystemOperationalState`, `executeCutoverSequence`)
+  - `js/ui-common.js` (banner institucional de transición)
+  - Hoja: `BitacoraTransicionOperativa`
+- **Subcapacidades Relacionadas:** F29-15, F29-18.
+- **Estado de Partida:** Ausente.
+- **Dependencias Principales:** [F29-Task06], [F29-Task10], [F29-Task11], [F29-Task13], [F29-Task14], [F29-Task22].
 - **Problema Detectado y Riesgos:**
-  Al trasladar miles de archivos escaneados (actas de nacimiento, certificados de salud, títulos) desde cuentas o carpetas anteriores, muchos archivos quedan inaccesibles por enlaces rotos, permisos públicos inseguros o archivos dañados que no abren.
-- **Requisitos Funcionales y Técnicos:**
-  1. *Validación de integridad por hash SHA-256:*
-     - Calcular el hash SHA-256 del archivo en origen y verificar que coincida con el archivo colocado en la carpeta institucional destino.
-  2. *Persistencia del identificador inmutable de Drive (`driveFileId`):*
-     - Reemplazar el almacenamiento de enlaces web frágiles por el ID persistente de Google Drive, garantizando que el archivo siga abriendo aunque se renombre la carpeta.
-  3. *Auditoría de permisos y enlaces huérfanos:*
-     - Detectar y reportar archivos que no existan en Drive o que tengan configuraciones de acceso que vulneren la privacidad del estudiante.
+  Falta de un protocolo formal para congelar escrituras en sistemas legados, sincronizar la brecha final (*delta sync*) y activar la nueva plataforma en un punto de corte controlado.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Fases de la secuencia de corte:*
+     - **Preparación:** Verificación de fuentes, aprobación de simulaciones, respaldo completo con hash.
+     - **Congelamiento:** Establecer fecha y hora de corte ($T_0$), detener escrituras en sistemas anteriores.
+     - **Sincronización Delta:** Extraer e importar exclusivamente el diferencial de cambios posterior a la última simulación.
+     - **Validación de Corte:** Conciliación integral origen-destino y pruebas automáticas de humo.
+     - **Go-Live:** Habilitación de accesos en la nueva plataforma, bloqueo de escrituras paralelas en el legado.
+     - **Estabilización:** Monitoreo intensivo de errores y conciliaciones de control.
+  2. *Reglas Go / No-Go automáticas:*
+     - Discrepancia no justificada en saldos iniciales (diferencia > L 0.00) bloquea el Go-Live.
+     - Falta de correspondencia en un expediente activo bloquea la transición del lote.
+     - Fallo en pruebas de humo post-migración bloquea el Go-Live.
 - **Criterios de Aceptación:**
-  - [ ] El 100% de los documentos migrados se abren y conservan su asociación correcta con el expediente del alumno.
-  - [ ] Los archivos corruptos o faltantes se identifican en un informe de incidencias documentales.
+  - [ ] Se registra y ejecuta el corte con fecha y hora verificables.
+  - [ ] Se congela el sistema anterior y se extrae la brecha delta final.
+  - [ ] Los criterios No-Go impiden la activación ante discrepancias críticas.
+  - [ ] El Go-Live queda documentado con firmas y autorizaciones formales.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F29-Task12] [P2] Protocolo de Retiro Formal (Decommissioning) y Modo Archivo de Sistemas Legados
-- **Tipo:** Procedimiento Institucional y Cumplimiento Legal.
+### [F29-Task22] [P0] Rollback Operativo con Conservación y Exportación de Transacciones Posteriores al Corte
+- **Orden de Ejecución:** 22
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`restoreSystemBackup`, `executeEmergencyCutoverRollback`)
+  - `backend/accounting-service/Code.gs` (`exportPostCutoverDeltaTransactions`)
+  - `backend/developer-service/Code.gs`
+- **Subcapacidades Relacionadas:** F29-15, F29-16, F29-17.
+- **Estado de Partida:** Defectuosa.
+- **Dependencias Principales:** [F29-Task01], [F29-Task06], [F29-Task13], [F29-Task21].
+- **Problema Detectado y Riesgos:**
+  Restaurar una copia de seguridad tras varios días de operación productiva eliminaría todas las matrículas, cobros y calificaciones registradas en la nueva plataforma, perdiendo datos financieros y académicos irrecuperables.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Registro y extracción delta post-corte (`exportPostCutoverDeltaTransactions`):*
+     - Rastrear todas las transacciones ocurridas con posterioridad a la fecha/hora de corte ($T_0$).
+     - Generar paquete descargable en CSV/JSON con altas, modificaciones, pagos, abonos, matrículas y calificaciones.
+  2. *Preservación de relaciones y dependencias:*
+     - Exportar en orden causal respetando dependencias (ej. alumno creado antes de su matrícula o cobro).
+     - Identificar operaciones que no tengan equivalencia en el sistema anterior para revisión manual.
+     - Informe de impacto y consecuencias del rollback.
+  3. *Protocolo formal de reversión:*
+     - Poner plataforma nueva en solo lectura, generar exportación delta y emitir acta de reversión con causas y autorizaciones.
+- **Criterios de Aceptación:**
+  - [ ] Se exportan el 100% de las transacciones generadas tras el corte sin duplicados.
+  - [ ] Los registros exportados conservan identificadores y relaciones íntegras.
+  - [ ] Se emite un informe de operaciones no transferibles.
+  - [ ] No se considera rollback operativo completo si no se rescatan las transacciones posteriores.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F29-Task23] [P0] Fortalecimiento de Respaldos, Recuperación y Medición de Métricas RPO/RTO
+- **Orden de Ejecución:** 23
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`createSystemBackup`, `restoreSystemBackup`, `measureRecoveryMetrics`)
+  - Google Drive / Carpeta de respaldos del sistema
+- **Subcapacidades Relacionadas:** F29-16.
+- **Estado de Partida:** Completa y verificada.
+- **Dependencias Principales:** [F29-Task21], [F29-Task22].
+- **Problema Detectado y Riesgos:**
+  La creación y restauración de respaldos funciona, pero la recuperación requiere intervención manual con clave fija `"RESTORE-CONFIRMED"` y no existe medición automatizada de objetivos de recuperación (RPO y RTO).
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Medición automatizada de RPO y RTO:*
+     - RPO: Antigüedad de la información respaldada y volumen de pérdida potencial ante contingencia.
+     - RTO: Medir el tiempo real de restauración desde el inicio del proceso hasta la validación de integridad.
+  2. *Autorización contextual y verificación criptográfica:*
+     - Sustituir clave fija por autorización contextual con firma del Administrador y token temporal.
+     - Verificar hash de integridad antes de iniciar cualquier restauración.
+     - Conservar la protección existente de inalterabilidad de notas históricas (`preserveHistoricGrades`).
+- **Criterios de Aceptación:**
+  - [ ] Se conserva la creación de respaldos íntegros con hash SHA-256.
+  - [ ] Se calculan y registran los tiempos reales de RPO y RTO.
+  - [ ] Se ejecutan pruebas de restauración en entorno controlado sin afectar producción.
+  - [ ] Las restauraciones críticas exigen autorización contextual verificable.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F29-Task24] [P0] Protocolo de Retiro Formal (Decommissioning) y Archivo Histórico de Sistemas Legados
+- **Orden de Ejecución:** 24
+- **Prioridad:** P0 (Crítica)
 - **Componentes Afectados:**
   - `backend/developer-service/Code.gs` (`archiveLegacySystemSource`)
-  - Documentación de arquitectura
+  - Documentación de arquitectura institucional
   - Hoja: `CatalogoFuentesMigracion`
 - **Subcapacidades Relacionadas:** F29-18, F29-19.
 - **Estado de Partida:** Ausente.
-- **Dependencias:** [F29-Task07], [F29-Task08].
+- **Dependencias Principales:** [F29-Task07], [F29-Task13], [F29-Task21], [F29-Task22], [F29-Task23].
 - **Problema Detectado y Riesgos:**
-  Apagar o desechar un sistema anterior sin un protocolo formal expone a la institución a sanciones legales por pérdida de registros históricos obligatorios (en Honduras, el Código de la Niñez y regulaciones fiscales del SAR exigen conservar registros contables y académicos entre 5 y 10 años).
-- **Requisitos Funcionales y Técnicos:**
-  1. *Lista de verificación formal de retiro (Decommissioning Checklist):*
-     - Confirmar que todas las conciliaciones académicas y financieras tengan resultado conforme sin discrepancias críticas.
-     - Confirmar que la nueva plataforma haya operado de forma estable durante un período de garantía mínimo (ej. 30 a 60 días).
-     - Confirmar la existencia de dos copias de seguridad frías e inmutables del sistema legado en ubicaciones físicas/digitales separadas.
-  2. *Puesta en modo archivo de solo lectura:*
-     - Inhabilitar credenciales de escritura en las fuentes anteriores, preservando acceso exclusivo de consulta para auditorías legales.
-  3. *Emisión del Certificado de Retiro Institucional:*
-     - Documentar formalmente la fecha de desconexión, inventario de datos absorbidos y firmas de la Dirección y Secretaría General.
+  No existe un procedimiento formal para retirar sistemas anteriores ni para mantenerlos disponibles exclusivamente en modo de consulta histórica protegida, exponiendo a la institución a infracciones legales de retención documental.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Checklist de retiro institucional:*
+     - Verificar migración completa de entidades y documentos.
+     - Aprobación unánime de conciliaciones por Secretaría, Contabilidad y Dirección.
+     - Garantizar período de estabilización operativa mínimo (30 a 60 días) en la nueva plataforma.
+  2. *Modo archivo y solo lectura:*
+     - Poner sistemas legados en solo lectura inhabilitando credenciales de escritura.
+     - Conservar copias frías inmutables en dos ubicaciones separadas.
+     - Definir plazos de retención según legislación hondureña (Código de la Niñez, SAR: 5 a 10 años según tipo documental).
+  3. *Expediente de cierre:*
+     - Emitir certificado de retiro con firmas de Dirección y Secretaría General.
 - **Criterios de Aceptación:**
-  - [ ] Ningún sistema legado se retira sin el cumplimiento del 100% de los puntos del checklist.
-  - [ ] Las copias históricas de archivo quedan protegidas y catalogadas con retención de 10 años.
+  - [ ] Cada sistema retirado dispone de su expediente formal de cierre.
+  - [ ] Se conserva copia inmutable verificable de datos y documentos.
+  - [ ] Se impide cualquier escritura en fuentes declaradas de solo lectura.
+  - [ ] No se autoriza el retiro mientras existan discrepancias críticas sin resolver.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 5. SEGURIDAD, PRIVACIDAD Y ESCALABILIDAD
+
+### [F29-Task25] [P0] Protección de Datos Personales, Anonimización y Enmascaramiento en Pruebas
+- **Orden de Ejecución:** 25
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`anonymizeStagedDatasetForTesting`)
+  - `backend/user-service/Code.gs`
+- **Subcapacidades Relacionadas:** F29-21.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Principales:** [F29-Task04], [F29-Task08], [F29-Task10].
+- **Problema Detectado y Riesgos:**
+  Las simulaciones y pruebas de migración pueden exponer información personal sensible de menores de edad, tutores o personal (RNE, teléfonos, fichas médicas, salarios) en entornos compartidos o logs técnicos.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Políticas de anonimización y enmascaramiento:*
+     - Enmascarar RNE/Identidad, teléfonos, correos, domicilios, fichas médicas y salarios en ejecuciones de prueba.
+     - Mantener consistencia referencial: si un estudiante ficticio se enmascara, sus notas y pagos deben permanecer asociados al mismo identificador ficticio.
+  2. *Protección en bitácoras y diagnóstico:*
+     - Suprimir volcado de datos personales en logs de depuración o reportes de incidencias técnicos.
+     - Destrucción segura de conjuntos de prueba temporales al finalizar los ensayos.
+- **Criterios de Aceptación:**
+  - [ ] Los datos sensibles aparecen enmascarados en entornos de prueba configurados.
+  - [ ] La consistencia relacional se mantiene intacta durante la anonimización.
+  - [ ] Los logs no exponen datos personales sensibles.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F29-Task26] [P1] Optimización de Almacenamiento, Métricas de Rendimiento y Escalabilidad
+- **Orden de Ejecución:** 26
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs` (`evaluateTransactionalStorageMigrationNeed`, `measureExecutionMetrics`)
+  - `backend/accounting-service/Code.gs`
+- **Subcapacidades Relacionadas:** F29-20.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Principales:** [F29-Task01], [F29-Task04], [F29-Task11], [F29-Task13].
+- **Problema Detectado y Riesgos:**
+  La evaluación actual de migración de almacenamiento solo mide un umbral fijo de 50,000 filas. No considera métricas continuas de latencia de lectura/escritura, frecuencia de consultas ni sobrecarga de cuotas de Apps Script.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Telemetría de rendimiento y cuotas:*
+     - Medir tiempos de lectura, escritura, validación y conciliación.
+     - Monitorear cuotas de Apps Script y llamadas a servicios externos.
+     - Umbrales configurables de advertencia y riesgo.
+  2. *Optimización de operaciones masivas:*
+     - Consultas paginadas y estructuras de índice eficientes para correspondencias de migración.
+     - Criterios multidimensionales (no solo conteo de filas, sino concurrencia y latencia) para justificar la transición a almacenamiento externo (SQL) manteniendo los mismos contratos de servicio.
+- **Criterios de Aceptación:**
+  - [ ] Se identifican los procesos que consumen mayores recursos y tiempos.
+  - [ ] Las consultas grandes operan paginadas sin saturar memoria.
+  - [ ] Existe evidencia técnica fundamentada para evaluar transiciones de almacenamiento.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 6. CONSOLIDACIÓN Y CONTROL DE CALIDAD DE LA TRANSICIÓN
+
+### [F29-Task27] [P1] Panel de Control y Seguimiento Integral de Migraciones
+- **Orden de Ejecución:** 27
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `dashboards/dashboard-desarrollador.html`, `js/ui-common.js`
+  - `backend/accounting-service/Code.gs` (`getComprehensiveMigrationDashboardData`)
+- **Subcapacidades Relacionadas:** F29-19.
+- **Estado de Partida:** Requiere mejoras.
+- **Dependencias Principales:** [F29-Task12], [F29-Task13], [F29-Task14], [F29-Task15], [F29-Task20], [F29-Task21].
+- **Problema Detectado y Riesgos:**
+  No existe una interfaz centralizada para supervisar en tiempo real el avance de las fuentes, lotes de datos, estado de simulaciones, incidencias pendientes, estado de pilotos y transición operativa.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Vista ejecutiva y operativa de migraciones:*
+     - Mostrar por ejecución: fuente, entidad, archivo, responsable, fecha, estado, registros procesados, válidos, rechazados, porcentaje de avance, errores y resultado de conciliación.
+     - Filtros multicriterio por fuente, entidad, fecha, estado y prioridad.
+  2. *Monitoreo de etapas y pruebas posteriores:*
+     - Estado de pruebas de humo post-migración, alertas financieras y de notas.
+     - Estado de activaciones de usuarios y avances de pilotos.
+     - Vistas diferenciadas por perfil: Dirección (consulta ejecutiva de indicadores) vs Administrador (control operativo).
+- **Criterios de Aceptación:**
+  - [ ] El panel presenta en tiempo real el estado verídico de todas las migraciones.
+  - [ ] Permite identificar inmediatamente ejecuciones detenidas o con fallas críticas.
+  - [ ] Los perfiles de consulta no pueden alterar ejecuciones ni forzar aprobaciones.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F29-Task28] [P1] Gestión Formal de Aprobaciones, Excepciones y Actas de Aceptación Institucional
+- **Orden de Ejecución:** 28
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`submitMigrationApprovalDecision`, `getMigrationApprovals`)
+  - `backend/accounting-service/Code.gs`
+  - Hoja: `AprobacionesMigracion`
+- **Subcapacidades Relacionadas:** F29-12, F29-15, F29-18.
+- **Estado de Partida:** Ausente.
+- **Dependencias Principales:** [F29-Task13], [F29-Task14], [F29-Task21], [F29-Task27].
+- **Problema Detectado y Riesgos:**
+  Falta de separación entre la ejecución técnica y la aprobación institucional formal. Una importación completada por un técnico podría pasarse a producción sin la revisión y firma formal del Director o del Contador General.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Flujo de aprobación colegiado por departamento:*
+     - Secretaría: Aprobación de expedientes, matrículas e historiales de notas.
+     - Contabilidad: Aprobación de saldos de corte, facturas y pagos.
+     - Dirección: Autorización final de Go-Live y retiro de sistemas legados.
+     - Administración Técnica: Certificación de respaldos, seguridad y pruebas de humo.
+  2. *Registro formal de decisiones y excepciones:*
+     - Opciones: `APROBADO`, `RECHAZADO`, `DEVUELTO_CON_OBSERVACIONES`.
+     - Documentar justificante para cualquier excepción aceptada.
+     - Emisión de Acta de Aceptación Institucional en PDF descargable con firmas formales.
+     - Cualquier cambio posterior en el archivo de datos o reglas invalida automáticamente la aprobación previa.
+- **Criterios de Aceptación:**
+  - [ ] Una migración requiere aprobación formal de los responsables departamentales competentes.
+  - [ ] Las excepciones críticas quedan documentadas con justificante y firma.
+  - [ ] Se bloquea la transición a producción si existen incidencias bloqueantes sin resolver o sin acta aprobada.
+  - [ ] Una modificación posterior en los datos invalida la aprobación otorgada.
 - **Estado:** [ ] Pendiente
 
 ---
