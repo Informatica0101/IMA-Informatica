@@ -12384,7 +12384,6 @@
 
 ---
 
-
 ---
 
 # FASE 32: EDITOR VISUAL DE PDF Y CAMPOS SUPERPUESTOS
@@ -12393,133 +12392,166 @@
 
 | ID | Prioridad | Orden Secuencial | Tarea Técnica / Requisito | Componentes Principales | Subcapacidad | Estado |
 |---|---|---|---|---|---|---|
-| [F32-Task01] | P0 | 1 | Motor de Estampado Binario y Aplanado de Campos sobre PDF Original | `backend/accounting-service/Code.gs`, `js/teacher.js` | F32-09, F32-10 | [ ] Pendiente |
-| [F32-Task02] | P0 | 2 | Entradas Numéricas de Precisión y Rejilla Magnética (Snap to Grid) | `js/teacher.js`, `teacher-dashboard.html` | F32-03, F32-05 | [ ] Pendiente |
-| [F32-Task03] | P0 | 3 | Motor de Auto-Ajuste de Tipografía ante Desbordamiento (Auto-Shrink) | `js/teacher.js`, `backend/accounting-service/Code.gs` | F32-05, F32-11 | [ ] Pendiente |
-| [F32-Task04] | P1 | 4 | Herramientas de Selección Múltiple y Alineación Geométrica en Bloque | `js/teacher.js` | F32-05 | [ ] Pendiente |
-| [F32-Task05] | P1 | 5 | Ampliación de Tipos de Control Superpuestos (Números, Moneda y Selectores) | `js/teacher.js`, `backend/accounting-service/Code.gs` | F32-04, F32-06 | [ ] Pendiente |
-| [F32-Task06] | P1 | 6 | Generador de Formulario Web Interactivo desde Plantilla PDF | `js/ui-common.js`, `backend/user-service/Code.gs` | F32-07, F32-08 | [ ] Pendiente |
-| [F32-Task07] | P1 | 7 | Incorporación de Lienzo de Firma Digital Táctil y Código QR sobre Lienzo PDF | `js/teacher.js`, `backend/accounting-service/Code.gs` | F32-04, F32-08 | [ ] Pendiente |
-| [F32-Task08] | P1 | 8 | Control de Concurrencia y Autoguardado Preventivo de Borradores de Plantilla | `js/teacher.js`, `backend/accounting-service/Code.gs` | F32-09 | [ ] Pendiente |
-| [F32-Task09] | P2 | 9 | Detector Heurístico de Líneas Guía y Sugerencia Automática de Cajas | `js/teacher.js` | F32-02 | [ ] Pendiente |
-| [F32-Task10] | P2 | 10 | Módulo de Reconocimiento OCR Asistido para Documentos Escaneados | `backend/developer-service/Code.gs`, `js/teacher.js` | F32-02, F32-10 | [ ] Pendiente |
-| [F32-Task11] | P2 | 11 | Banco de Pruebas de Fidelidad PDF y Detección de Desplazamientos | `tests/regression/academic-grading-suite.js` | F32-11 | [ ] Pendiente |
-| [F32-Task12] | P2 | 12 | Duplicador de Plantillas y Biblioteca de Formatos Preimpresos Escolares | `backend/accounting-service/Code.gs`, `teacher-dashboard.html` | F32-01, F32-09 | [ ] Pendiente |
+| [F32-Task01] | P0 | 1 | Motor de Estampado Binario y Aplanado de Campos sobre el PDF Original | `backend/accounting-service/Code.gs`, `js/teacher.js` | F32-09, F32-10 | [ ] Pendiente |
+| [F32-Task02] | P0 | 2 | Sistema de Coordenadas de Precisión, Entradas Numéricas y Rejilla Magnética | `teacher-dashboard.html`, `js/teacher.js` | F32-03, F32-05 | [ ] Pendiente |
+| [F32-Task03] | P0 | 3 | Motor Inteligente de Ajuste Tipográfico y Control de Desbordamiento (Auto-Shrink) | `js/teacher.js`, `backend/accounting-service/Code.gs` | F32-05, F32-11 | [ ] Pendiente |
+| [F32-Task04] | P1 | 4 | Selección Múltiple, Edición Conjunta y Alineación Avanzada de Campos | `js/teacher.js`, `teacher-dashboard.html` | F32-05 | [ ] Pendiente |
+| [F32-Task05] | P1 | 5 | Ampliación de Tipos de Campos y Controles de Captura Especializados | `js/teacher.js`, `backend/accounting-service/Code.gs` | F32-04, F32-06 | [ ] Pendiente |
+| [F32-Task06] | P1 | 6 | Generador de Formularios Web Dinámicos Vinculado a Plantillas PDF | `js/ui-common.js`, `backend/user-service/Code.gs` | F32-07, F32-08 | [ ] Pendiente |
+| [F32-Task07] | P1 | 7 | Captura Real de Firmas Manuscritas y Generación de Códigos QR de Verificación | `js/teacher.js`, `backend/accounting-service/Code.gs` | F32-04, F32-08 | [ ] Pendiente |
+| [F32-Task08] | P1 | 8 | Autoguardado, Recuperación de Borradores y Control de Concurrencia del Editor | `js/teacher.js`, `backend/accounting-service/Code.gs` | F32-09 | [ ] Pendiente |
+| [F32-Task11] | P1 | 9 | Suite Automatizada de Pruebas de Fidelidad Geométrica, Compatibilidad y Regresión PDF | `tests/regression/academic-grading-suite.js`, `backend/developer-service/Code.gs` | F32-11 | [ ] Pendiente |
+| [F32-Task13] | P1 | 10 | Motor Unificado de Reglas de Validación y Restricciones de Formularios | `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs` | F32-07, F32-08 | [ ] Pendiente |
+| [F32-Task09] | P2 | 11 | Detector Heurístico de Líneas Guía, Casillas y Espacios de Captura | `js/teacher.js` | F32-02 | [ ] Pendiente |
+| [F32-Task10] | P2 | 12 | Motor OCR y Reconocimiento Semántico Asistido para Documentos Escaneados | `backend/developer-service/Code.gs`, `js/teacher.js` | F32-02, F32-10 | [ ] Pendiente |
+| [F32-Task12] | P2 | 13 | Biblioteca de Plantillas, Duplicación y Reutilización de Formatos Institucionales | `backend/accounting-service/Code.gs`, `teacher-dashboard.html` | F32-01, F32-09 | [ ] Pendiente |
 
 ---
 
-### BLOQUE 1. FIDELIDAD GEOMÉTRICA Y APLANADO BINARIO (P0)
+### BLOQUE 1. INTEGRIDAD DOCUMENTAL Y PRECISIÓN DE GENERACIÓN (P0)
 
-### [F32-Task01] [P0] Motor de Estampado Binario y Aplanado de Campos sobre PDF Original
+### [F32-Task01] [P0] Motor de Estampado Binario y Aplanado de Campos sobre el PDF Original
 - **Orden de Ejecución:** 1
 - **Prioridad:** P0 (Crítica)
 - **Componentes Afectados:**
-  - `backend/accounting-service/Code.gs` (`stampOverlayFieldsOnPdfBinary`, `generateFlattenedSchoolDocumentPdf`)
+  - `backend/accounting-service/Code.gs` (`stampOverlayFieldsOnPdfBinary`, `generateFlattenedSchoolDocumentPdf`, `verifySchoolDocumentByCUV`)
   - `js/teacher.js`
-  - Hoja: `DocumentosEscolaresEmitidos`
+  - Hoja: `DocumentosEscolaresEmitidos`, `PlantillasEscolares`
 - **Subcapacidades Relacionadas:** F32-09, F32-10.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (10) y Sección G.
-- **Problema o Carencia:**
-  El editor visual almacena con precisión las coordenadas porcentuales relativas (`xRatio`, `yRatio`, `wRatio`, `hRatio`) en `PlantillasEscolares`. No obstante, la generación oficial en backend compila principalmente HTML a PDF mediante Google Drive; para plantillas con `tipoSalida: 'PDF_OVERLAY'`, se requiere un motor de estampado binario que incruste los textos y marcas directamente sobre el archivo PDF base original, preservando la nitidez de sellos y membretes preimpresos sin recreación artificial en HTML.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (10), Sección G y Backlog F32-Task01.
+- **Problema Detectado y Riesgos:**
+  La plataforma conserva las coordenadas relativas de los campos y registra emisiones oficiales con correlativo y CUV. Sin embargo, la generación documental todavía depende principalmente de la conversión de HTML a PDF. No está consolidada la incorporación directa de los valores sobre el archivo PDF binario original, impidiendo garantizar que los documentos generados conserven exactamente el diseño, dimensiones y geometría del documento preimpreso.
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Fusión binaria y aplanado (Flattening):*
-     - Estampar los valores resueltos de las variables dinámicas exactamente en las coordenadas reales del PDF:
+  1. *Motor de composición y estampado binario:*
+     - Abrir el archivo binario original del PDF y agregar contenido sobre sus páginas sin reconstruirlas mediante HTML.
+     - Recuperar la configuración de `overlayFields` y asociar cada valor capturado con su campo correspondiente.
+     - Convertir coordenadas normalizadas en coordenadas reales del documento: posición horizontal ($X$), vertical ($Y$), ancho ($W$) y alto ($H$).
+     - Considerar dimensiones reales de cada página, su orientación y rotación, así como los límites de cuadros de página PDF (`MediaBox`, `CropBox` y `BleedBox`).
+     - Resolver matemáticamente la diferencia entre el origen de coordenadas de la interfaz (esquina superior izquierda, eje Y hacia abajo) y el formato PDF (esquina inferior izquierda, eje Y hacia arriba):
        $$X_{pdf} = xRatio 	imes Ancho_{pagina}, \quad Y_{pdf} = Alto_{pagina} - (yRatio + hRatio) 	imes Alto_{pagina}$$
-     - Aplanar las capas de formulario para generar un PDF estático inmutable donde los textos no puedan ser editados ni alterados por terceros.
-     - Permitir opcionalmente emitir un PDF interactivo con campos rellenables activos si así se define en la configuración de la plantilla (`MODO_EMISION_PDF`: `APLANADO_INMUTABLE` vs `INTERACTIVO_EDITABLE`).
-  2. *Asignación atómica de CUV y folio anual:*
-     - Incorporar en el pie o encabezado del PDF resultante el Código Único de Verificación (`CUV-YYYY-XXXXXX`) y el número correlativo oficial.
-     - Bloqueo de concurrencia mediante `LockService.getScriptLock()` para garantizar cero colisiones de numeración.
+     - Aplicar los valores capturados exactamente sobre la página correspondiente manteniendo intactos elementos gráficos, textos, imágenes, fondos, sellos, membretes, logotipos, tablas y líneas del documento original.
+  2. *Tipos de campos procesados y modalidades de emisión:*
+     - Estampar: texto plano, texto multilínea, fechas, casillas marcadas, selecciones, firmas manuscritas digitalizadas, imágenes y códigos QR.
+     - Modalidad interactiva vs aplanada: permitir emitir PDF interactivo con campos rellenables activos o PDF aplanado (*flattened*) donde los valores quedan incrustados visualmente al contenido sin controles editables. En caso de discrepancia en requerimientos, habilitar parámetro configurable en la plantilla (`MODO_EMISION_PDF`: `APLANADO_INMUTABLE` vs `INTERACTIVO_RELLENABLE`).
+     - Configurar fuentes tipográficas, tamaños, alineación, colores y ajuste de texto.
+  3. *Trazabilidad, CUV y atomicidad:*
+     - Incorporar el CUV (`CUV-YYYY-XXXXXX`) y el número correlativo anual (`YYYY-XXXXXX`) en el pie o encabezado sin alterar la integridad del documento base.
+     - Generar el hash criptográfico SHA-256 del documento final una vez completadas todas las operaciones de estampado.
+     - Bloqueo de concurrencia atómico mediante `LockService.getScriptLock()` para impedir colisiones o folios duplicados.
+     - Si la operación falla, rechazar la transacción y no registrar como emitido un documento incompleto o corrupto.
 - **Criterios de Aceptación:**
-  - [ ] El documento final emitido conserva al 100% el fondo, resolución y gráficos del PDF base original.
-  - [ ] Los valores capturados aparecen exactamente en las posiciones geométricas delimitadas en el editor visual.
-  - [ ] El archivo final se abre sin errores en Adobe Acrobat Reader, Foxit y navegadores web estándar.
-  - [ ] La descarga final no presenta desalineaciones respecto a la previsualización del lienzo.
+  - [ ] Genera documentos a partir de PDFs de una página y multipágina verticales y horizontales conservando el 100% del fondo original.
+  - [ ] Los valores aparecen exactamente en las coordenadas configuradas sin desplazamiento geométrico perceptible.
+  - [ ] Se verifica en Adobe Acrobat Reader, Foxit y lectores web independientes que los campos aplanados no son editables.
+  - [ ] La modalidad interactiva conserva los campos activos cuando así se configure.
+  - [ ] El CUV y correlativo identifican unívocamente el documento emitido y su hash coincide en la base de datos.
+  - [ ] Los reintentos de red no producen documentos duplicados con folios inconsistentes.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F32-Task02] [P0] Entradas Numéricas de Precisión y Rejilla Magnética (Snap to Grid)
+### [F32-Task02] [P0] Sistema de Coordenadas de Precisión, Entradas Numéricas y Rejilla Magnética
 - **Orden de Ejecución:** 2
 - **Prioridad:** P0 (Crítica)
 - **Componentes Afectados:**
   - `teacher-dashboard.html` (`#field-props-form`)
   - `js/teacher.js` (`updateFieldPropsPanel`, `applyFieldCoordInputs`, `toggleGridSnapping`)
 - **Subcapacidades Relacionadas:** F32-03, F32-05.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (4) y Sección G.
-- **Problema o Carencia:**
-  Actualmente las coordenadas relativas se calculan mediante arrastre libre del ratón y solo se muestran como texto informativo de solo lectura en el panel lateral (`#prop-field-x-display`), dificultando colocar campos alineados a la perfección en formularios densos con casillas pequeñas (como tablas de notas o fichas médicas).
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (4), Sección G y Backlog F32-Task02.
+- **Problema Detectado y Riesgos:**
+  El editor utiliza `xRatio`, `yRatio`, `wRatio` y `hRatio`, lo que mantiene la posición relativa al variar el zoom. Sin embargo, la colocación depende exclusivamente del mouse y los valores de posición solo se leen como texto informativo, sin permitir entradas numéricas de precisión ni rejilla magnética para alinear casillas contiguas en formularios densos.
 - **Requisitos Funcionales y Técnicos Convergentes:**
   1. *Entradas numéricas bidireccionales de coordenadas:*
-     - Convertir los indicadores de posición en campos de entrada numérica editables: `X (%)`, `Y (%)`, `Ancho (%)` y `Alto (%)` con precisión de 2 decimales.
-     - Al modificar un valor numérico en el input, actualizar instantáneamente la caja en el lienzo visual y viceversa.
-  2. *Rejilla magnética configurable (Snap to Grid):*
-     - Botón para activar/desactivar rejilla visual sobre el lienzo (`#btn-toggle-grid`).
-     - Ajuste magnético automático de coordenadas a pasos de rejilla configurables (1%, 2% o 5% del tamaño de página).
-     - Guías visuales de alineación horizontal y vertical (smart guides) al arrastrar un campo cerca del borde de otro campo preexistente.
+     - Entradas numéricas editables en el panel de propiedades para: X, Y, Ancho y Alto.
+     - Permitir introducir y visualizar valores en porcentajes (`%`) y en unidades físicas reales: milímetros (`mm`) y puntos tipográficos PDF (`pt`).
+     - Conversión automática bidireccional entre unidades sin pérdida de precisión ni redondeos acumulativos.
+     - Permitir configurar el origen de referencia (esquina superior izquierda por defecto).
+  2. *Rejilla visual y ajuste magnético (Snap to Grid):*
+     - Rejilla visual superpuesta activable y desactivable con espaciado configurable (1%, 2%, 5% o medidas en mm).
+     - Ajuste magnético de campos a: líneas de rejilla, bordes de página, bordes de otros campos y centros de elementos cercanos.
+     - Guías dinámicas de alineación inteligente (*smart guides*) que se iluminan cuando dos o más campos comparten bordes o centros.
+     - Restricción de campos dentro de los límites físicos de la página salvo excepción autorizada.
+     - Mantener la precisión geométrica inalterada independientemente del nivel de zoom del visor.
 - **Criterios de Aceptación:**
-  - [ ] El usuario puede posicionar campos ingresando valores numéricos exactos en el panel de propiedades.
-  - [ ] La rejilla magnética alinea los campos a pasos discretos impidiendo discrepancias de píxeles.
-  - [ ] La selección y edición manual no interfiere con el desplazamiento ni con el zoom del lienzo.
+  - [ ] El usuario puede posicionar un campo introduciendo valores numéricos exactos en milímetros, puntos o porcentaje.
+  - [ ] Al cambiar el nivel de zoom o rotación de página, la posición del campo permanece milimétricamente inalterada.
+  - [ ] El ajuste magnético facilita alinear casillas adyacentes sin generar desplazamientos acumulativos al arrastrar.
+  - [ ] Las coordenadas guardadas en la plantilla reproducen fielmente la misma posición al reabrir el editor y al generar el PDF.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F32-Task03] [P0] Motor de Auto-Ajuste de Tipografía ante Desbordamiento (Auto-Shrink)
+### [F32-Task03] [P0] Motor Inteligente de Ajuste Tipográfico y Control de Desbordamiento (Auto-Shrink)
 - **Orden de Ejecución:** 3
 - **Prioridad:** P0 (Crítica)
 - **Componentes Afectados:**
   - `js/teacher.js` (`calculateAutoShrinkFontSize`)
   - `backend/accounting-service/Code.gs`
 - **Subcapacidades Relacionadas:** F32-05, F32-11.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (5, 11) y Sección G.
-- **Problema o Carencia:**
-  Si el valor de un dato institucional o respuesta de usuario excede el ancho físico delimitado de la caja (ej. nombres completos con más de 35 caracteres en una casilla corta), el texto se trunca abruptamente o desborda la línea, comprometiendo la legibilidad y validez oficial del certificado.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (5, 11), Sección G y Backlog F32-Task03.
+- **Problema Detectado y Riesgos:**
+  Los textos extensos (nombres largos, motivos de excusas, observaciones pedagógicas) quedan truncados o desbordan la caja si las dimensiones son fijas, comprometiendo la legibilidad y validez oficial del certificado.
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Algoritmo de reducción progresiva de fuente (Auto-Shrink):*
-     - Si la longitud del texto excede el ancho de la caja a su tamaño de fuente configurado (ej. 11 pt), reducir dinámicamente el tamaño de letra punto a punto (10 pt, 9 pt, 8 pt) hasta que el texto encaje completamente.
-     - Límite mínimo de legibilidad: umbral inferior configurable (por defecto 7 pt).
-     - Si ni a 7 pt encaja, aplicar política configurable de seguridad: truncar con puntos suspensivos (`...`), dividir en dos líneas si la altura lo permite, o emitir advertencia de desbordamiento en la validación previa.
-  2. *Soporte multilínea inteligente:*
-     - Para campos de tipo `multiline`, respetar saltos de línea manuales y distribuir uniformemente el espaciado interlineal sin invadir los bordes inferiores del recuadro.
+  1. *Ajuste tipográfico automático (Auto-Shrink):*
+     - Reducción progresiva y controlada del tamaño de fuente cuando el texto no quepa en el ancho o alto disponible.
+     - Configuración de tamaño preferido, tamaño máximo y tamaño mínimo admisible por campo (ej. mínimo 7 pt para garantizar legibilidad en impresión).
+     - Cálculo de espacio ocupado mediante métricas tipográficas reales basadas en Canvas `measureText()` y fuentes PDF reales.
+  2. *Políticas configurables de desbordamiento:*
+     - Opciones disponibles por campo:
+       - `REDUCCION_AUTOMATICA`: Reduce el tamaño de fuente hasta el límite mínimo configurado.
+       - `AJUSTE_MULTILINEA`: Divide en líneas aprovechando el espacio vertical disponible.
+       - `RESTRICCION_LONGITUD`: Limita caracteres impidiendo ingresar más texto del permitido.
+       - `AMPLIACION_DINAMICA`: Expande el campo hacia abajo si no invade elementos contiguos.
+       - `ADVERTENCIA_BLOQUEANTE`: Advierte durante la previsualización y bloquea la emisión si se pierde contenido.
+  3. *Tratamiento de campos multilínea y caracteres especiales:*
+     - Respetar saltos de línea explícitos (`
+`) y espaciado entre renglones sin superponer caracteres.
+     - Soporte completo de acentos, eñes y signos de puntuación en español bajo codificación UTF-8.
 - **Criterios de Aceptación:**
-  - [ ] Nombres extensos se ajustan automáticamente reduciendo el tamaño de fuente sin perder apellidos ni truncar caracteres.
-  - [ ] Los textos multilínea respetan los márgenes internos de la caja sin desbordar el casillero preimpreso.
-  - [ ] La reducción tipográfica se replica con fidelidad idéntica tanto en el lienzo Canvas como en el PDF definitivo.
+  - [ ] Nombres extensos o compuestos se ajustan reduciendo la fuente sin perder apellidos ni truncar caracteres.
+  - [ ] El tamaño de fuente respeta estrictamente el umbral mínimo configurado para impedir textos ilegibles.
+  - [ ] Los campos multilínea realizan saltos de línea automáticos dentro de los márgenes de la caja sin desbordar el casillero preimpreso.
+  - [ ] La previsualización en pantalla y el archivo PDF definitivo muestran exactamente el mismo tamaño y distribución de texto.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### BLOQUE 2. SELECCIÓN, TIPOLOGÍA Y EXPERIENCIA DE FORMULARIO (P1)
+### BLOQUE 2. HERRAMIENTAS DE EDICIÓN Y CAPACIDADES DE FORMULARIOS (P1)
 
-### [F32-Task04] [P1] Herramientas de Selección Múltiple y Alineación Geométrica en Bloque
+### [F32-Task04] [P1] Selección Múltiple, Edición Conjunta y Alineación Avanzada de Campos
 - **Orden de Ejecución:** 4
 - **Prioridad:** P1 (Alta)
 - **Componentes Afectados:**
-  - `js/teacher.js` (`initMultiFieldSelection`, `alignSelectedFields`, `distributeSelectedFields`)
+  - `js/teacher.js` (`initMultiFieldSelection`, `alignSelectedFields`, `distributeSelectedFields`, `groupSelectedFields`)
   - `teacher-dashboard.html`
 - **Subcapacidades Relacionadas:** F32-05.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (3, 5).
-- **Problema o Carencia:**
-  Actualmente solo se puede seleccionar y editar un campo a la vez. En documentos con muchas casillas (ej. 20 materias en una boleta de calificaciones), configurar y alinear cada elemento individualmente consume tiempo excesivo y propicia errores de desalineación visual.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (3, 5) y Backlog F32-Task04.
+- **Problema Detectado y Riesgos:**
+  La edición se realiza exclusivamente sobre campos individuales, dificultando el diseño de documentos con decenas de casillas repetitivas (fichas de calificaciones o tablas de asistencia).
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Selección múltiple de controles:*
-     - Selección mediante combinación de teclas (`Shift + Clic` o `Ctrl + Clic`) sobre varios campos.
-     - Selección por cuadro elástico (marquee selection) arrastrando el cursor sobre el lienzo Canvas.
-  2. *Barra de herramientas de alineación en bloque:*
-     - Botones de acción colectiva: Alinear a la izquierda, Alinear a la derecha, Alinear al centro horizontal, Alinear arriba, Alinear abajo y Centrar verticalmente.
-     - Distribuir uniformemente el espaciado horizontal o vertical entre los campos seleccionados.
-     - Igualar ancho o igualar alto de todos los campos seleccionados tomando como referencia el primer campo activo.
-     - Mover en bloque todos los campos seleccionados con las teclas de flecha del teclado (cursor keys) a pasos de 1 pt o 10 pt con Shift.
+  1. *Mecanismos de selección múltiple:*
+     - Selección con combinación de teclas (`Clic + Shift`).
+     - Selección elástica por arrastre de marco rectangular (marquee selection).
+     - Selección desde la lista de campos del panel lateral o selección de todos los campos de la página activa.
+  2. *Operaciones y alineación en bloque:*
+     - Mover simultáneamente el conjunto de campos seleccionados conservando distancias relativas.
+     - Alinear por: Izquierda, Centro horizontal, Derecha, Arriba, Centro vertical y Abajo.
+     - Distribuir uniformemente espacios horizontales y verticales.
+     - Igualar ancho y alto tomando como base el primer campo seleccionado.
+     - Agrupar y desagrupar campos para moverlos como una sola unidad lógica.
+     - Duplicar y copiar/pegar conjuntos de campos asignando identificadores únicos independientes.
+     - Bloquear campos para evitar modificaciones accidentales.
+     - Historial de deshacer/rehacer (Undo/Redo) para todas las operaciones en grupo.
 - **Criterios de Aceptación:**
-  - [ ] Permite seleccionar 5 o más campos simultáneamente y alinearlos a la izquierda con un solo clic.
-  - [ ] La distribución de espacios equidistantes calcula distancias uniformes sin desbordar la página.
-  - [ ] Las teclas de flecha permiten micro-desplazamientos de precisión sobre la selección activa.
+  - [ ] Permite seleccionar varios campos con Shift o marco rectangular y alinearlos con un solo clic.
+  - [ ] Las distancias distribuidas de forma uniforme son geométricamente exactas.
+  - [ ] Las operaciones en bloque conservan íntegras las propiedades individuales (fuente dinámica, validaciones) de cada campo.
+  - [ ] Deshacer restaura el estado previo del grupo seleccionado de forma consistente.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F32-Task05] [P1] Ampliación de Tipos de Control Superpuestos (Números, Moneda y Selectores)
+### [F32-Task05] [P1] Ampliación de Tipos de Campos y Controles de Captura Especializados
 - **Orden de Ejecución:** 5
 - **Prioridad:** P1 (Alta)
 - **Componentes Afectados:**
@@ -12527,27 +12559,32 @@
   - `teacher-dashboard.html`
   - `backend/accounting-service/Code.gs`
 - **Subcapacidades Relacionadas:** F32-04, F32-06.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (6).
-- **Problema o Carencia:**
-  La barra lateral cuenta con 5 tipos básicos (`texto`, `multiline`, `fecha`, `checkbox`, `firma`). Se requiere ampliar los controles interactivos para cubrir requerimientos específicos de cobros, listas desplegables y opciones mutuamente excluyentes (radio buttons).
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (6) y Backlog F32-Task05.
+- **Problema Detectado y Riesgos:**
+  El editor dispone de texto corto, multilínea, fecha, checkbox y firma, careciendo de controles especializados para cálculos, monedas, listas desplegables o selecciones excluyentes requeridas en trámites institucionales y boletas de pago.
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Nuevos tipos de campos disponibles en barra de herramientas:*
-     - Número entero y decimal con validación de rango (mínimo / máximo).
-     - Moneda hondureña formateada automáticamente (`L. 0.00`).
-     - Lista desplegable (Dropdown) con opciones configurables en el panel de propiedades.
-     - Grupo de botones de radio (Radio Group): casillas mutuamente excluyentes identificadas por un mismo nombre de grupo (`groupName`).
-     - Imagen estática institucional o fotografía del alumno vinculada a Drive.
-  2. *Renderizado visual diferenciado:*
-     - Cada tipo de control muestra un ícono representativo y borde temático para distinguirse con facilidad en el lienzo.
+  1. *Controles numéricos y financieros:*
+     - Campo numérico entero y decimal con validación de rangos (mínimo, máximo, decimales).
+     - Campo monetario en Lempiras (`HNL`) formateado visualmente (`L. 0.00`) conservando el valor numérico en el modelo.
+  2. *Controles de selección estructurada:*
+     - Listas desplegables con opciones manuales o alimentadas por catálogos institucionales.
+     - Grupos de botones de radio (Radio Group) mutuamente excluyentes vinculados a una misma variable.
+     - Selección múltiple de casillas con límites mínimos y máximos de selección.
+  3. *Campos calculados y gráficos:*
+     - Campos calculados con fórmulas sencillas dependientes de otros campos con prevención de referencias circulares.
+     - Controles de fecha y hora con restricciones de intervalos y valores predeterminados dinámicos.
+     - Imágenes y fotografías adjuntas vinculadas al expediente institucional con ajuste de proporciones.
+     - Código QR dinámico enlazado al portal de verificación CUV.
 - **Criterios de Aceptación:**
-  - [ ] Se pueden insertar y configurar controles numéricos, monedas, listas desplegables y radios.
-  - [ ] Los botones de radio pertenecientes a un mismo grupo son mutuamente excluyentes.
-  - [ ] Las propiedades de opciones de listas desplegables se serializan y recuperan intactas en la plantilla.
+  - [ ] Se pueden insertar y configurar controles numéricos, monetarios, desplegables, radios y calculados.
+  - [ ] Los radios de un mismo grupo respetan la exclusión mutua tanto en web como en el PDF final.
+  - [ ] Los campos calculados se actualizan en tiempo real al modificar los valores de origen.
+  - [ ] Las opciones y propiedades de cada control se serializan y recuperan intactas en la plantilla.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F32-Task06] [P1] Generador de Formulario Web Interactivo desde Plantilla PDF
+### [F32-Task06] [P1] Generador de Formularios Web Dinámicos Vinculado a Plantillas PDF
 - **Orden de Ejecución:** 6
 - **Prioridad:** P1 (Alta)
 - **Componentes Afectados:**
@@ -12555,168 +12592,225 @@
   - `backend/user-service/Code.gs`, `backend/accounting-service/Code.gs`
   - Hoja: `SolicitudesTramites`
 - **Subcapacidades Relacionadas:** F32-07, F32-08.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección A (1) y Sección B (7, 8).
-- **Problema o Carencia:**
-  Una vez diseñada la plantilla PDF, no se debe obligar a los padres de familia o estudiantes a interactuar con un visor PDF complejo en teléfonos móviles para rellenar los datos; se debe generar automáticamente un formulario web limpio y amigable que capture la información y la estampe sobre el PDF final.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección A (1), Sección B (7, 8) y Backlog F32-Task06.
+- **Problema Detectado y Riesgos:**
+  No se debe forzar a padres o alumnos a manipular un visor PDF complejo en pantallas de teléfonos móviles para rellenar trámites; debe existir un generador automático de formularios web limpios cuyas respuestas se mapeen exactamente a los campos del PDF oficial.
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Generación automática de formulario web de captura:*
-     - Interpretar las definiciones de campos de la plantilla (`camposJSON`) y renderizar una vista de formulario HTML estándar responsiva y accesible.
-     - Agrupar campos por páginas o secciones lógicas.
-     - Autocompletar automáticamente los campos que tengan asignada una fuente dinámica autorizada (`{{estudiante.nombre}}`, `{{estudiante.grado}}`).
-  2. *Captura de respuestas y generación en un solo clic:*
-     - Validar campos requeridos y formatos en el cliente antes del envío.
-     - Al enviar, despachar los datos al backend, invocar `generateSchoolDocument` para estampar el PDF y retornar el enlace seguro de descarga con CUV al usuario.
+  1. *Generación automática de formulario web accesible:*
+     - Generar formulario web responsivo a partir de los `overlayFields` y `camposJSON` de la plantilla publicada.
+     - Mapeo bidireccional estricto entre el control HTML de captura y las coordenadas del campo en el PDF.
+     - Organización en secciones lógicas con títulos e instrucciones de ayuda contextual.
+     - Permitir reordenar la presentación de preguntas sin alterar la ubicación física de los campos en el PDF preimpreso.
+  2. *Autocompletado con fuentes dinámicas institucionales:*
+     - Precargar datos existentes del expediente del alumno: `{{estudiante.nombreCompleto}}`, `{{estudiante.identidad}}`, `{{estudiante.grado}}`, `{{estudiante.seccion}}`, `{{institucion.nombre}}`, `{{institucion.anoLectivo}}`.
+     - Diferenciar campos editables por el usuario de campos institucionales bloqueados de solo lectura.
+     - Validación en cliente y servidor con guardado de borradores recuperables.
+     - Vista previa del PDF resultante antes del envío definitivo.
 - **Criterios de Aceptación:**
-  - [ ] Las familias pueden diligenciar un trámite desde un formulario web simple en su teléfono sin interactuar directamente con el visor PDF.
-  - [ ] Los datos enviados se estampan con precisión milimétrica en el PDF oficial de Secretaría.
-  - [ ] El estudiante o apoderado recibe confirmación inmediata y enlace de descarga del documento generado.
+  - [ ] El formulario web generado permite completar un trámite en móviles de forma limpia y accesible.
+  - [ ] Los campos institucionales protegidos no pueden ser alterados por el solicitante.
+  - [ ] Las respuestas capturadas se estampan con precisión exacta en las casillas correspondientes del PDF.
+  - [ ] La previsualización refleja con exactitud la apariencia del documento final antes de confirmar.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F32-Task07] [P1] Incorporación de Lienzo de Firma Digital Táctil y Código QR sobre Lienzo PDF
+### [F32-Task07] [P1] Captura Real de Firmas Manuscritas y Generación de Códigos QR de Verificación
 - **Orden de Ejecución:** 7
 - **Prioridad:** P1 (Alta)
 - **Componentes Afectados:**
   - `js/teacher.js` (`openSignaturePadModal`, `injectSignatureInOverlayField`)
   - `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs`
-  - Hoja: `FirmasConformidades`
+  - Hoja: `FirmasConformidades`, `DocumentosEscolaresEmitidos`
 - **Subcapacidades Relacionadas:** F32-04, F32-08.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (6, 8) y Sección G.
-- **Problema o Carencia:**
-  Los campos de tipo `firma` reservan el espacio visual en el editor, pero se requiere un capturador táctil fluido con trazo suavizado en Canvas y la capacidad de estampar la firma y el código QR de verificación CUV como elementos gráficos de alta resolución.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (6, 8) y Backlog F32-Task07.
+- **Problema Detectado y Riesgos:**
+  El tipo de campo de firma reserva un área visual en el diseñador, pero se requiere un capturador táctil fluido con trazo suavizado en Canvas y la capacidad de estampar la firma y el código QR de verificación CUV como elementos gráficos de alta resolución sin deformaciones.
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Modal de captura de firma táctil:*
-     - Modal con lienzo Canvas de firma optimizado para dispositivos táctiles (teléfonos y tabletas) con trazo suave anti-aliasing y botón de borrado/limpieza.
-     - Conversión a imagen PNG transparente recortada exactamente al tamaño de la firma.
-  2. *Incrustación de Código QR de verificación:*
-     - Campo superpuesto especial de tipo `qr_cuv` que estampa el código QR oficial apuntando al validador público de autenticidad institucional.
-     - Proteger la integridad mediante hash SHA-256 registrado en `FirmasConformidades`.
+  1. *Captura táctil e incrustación de firma:*
+     - Modal de firma manuscrita para mouse, stylus o pantalla táctil con anti-aliasing y botón de borrado/limpieza.
+     - Conversión a imagen PNG transparente con conservación de proporciones, adaptándola al área delimitada del PDF.
+     - Vinculación formal de la firma con el usuario en sesión, fecha/hora y hash SHA-256 en `FirmasConformidades`.
+     - Diferenciar claramente firma manuscrita digitalizada de firma electrónica criptográfica certificada.
+  2. *Códigos QR dinámicos para verificación CUV:*
+     - Control de código QR posicionable sobre cualquier página del PDF.
+     - Generar el QR apuntando a la URL del portal de validación oficial: `https://[dominio]/verify?cuv=CUV-YYYY-XXXXXX`.
+     - Resolución nítida garantizada para impresión física y escaneo con smartphone.
+     - El portal de verificación muestra el estado del documento, emisor y fecha sin exponer datos PII sensibles.
 - **Criterios de Aceptación:**
-  - [ ] Permite capturar firmas manuscritas con el dedo o stylus con trazo nítido y fondo transparente.
-  - [ ] La firma y el código QR se incrustan en el PDF final sin pixelación ni deformación de proporciones.
-  - [ ] La verificación del CUV confirma la autenticidad e integridad del documento emitido.
+  - [ ] Permite capturar firmas en dispositivos táctiles con trazo fluido y fondo transparente.
+  - [ ] La firma se incorpora al PDF final exactamente en el recuadro asignado sin deformaciones de escala.
+  - [ ] El código QR se imprime nítidamente y al escanearse conduce al portal oficial de verificación del CUV.
+  - [ ] Un documento o CUV alterado es detectado y rechazado por el validador público.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F32-Task08] [P1] Control de Concurrencia y Autoguardado Preventivo de Borradores de Plantilla
+### [F32-Task08] [P1] Autoguardado, Recuperación de Borradores y Control de Concurrencia del Editor
 - **Orden de Ejecución:** 8
 - **Prioridad:** P1 (Alta)
 - **Componentes Afectados:**
   - `js/teacher.js` (`initPdfTemplateAutoSave`, `checkTemplateLockStatus`)
   - `backend/accounting-service/Code.gs`
-  - Hoja: `PlantillasEscolares`
+  - Hoja: `PlantillasEscolares`, `BorradoresPlantillas`
 - **Subcapacidades Relacionadas:** F32-09.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (9).
-- **Problema o Carencia:**
-  Si un diseñador pasa 20 minutos colocando decenas de campos sobre un formulario extenso y se produce una desconexión de red o cierre accidental de pestaña, se pierde la totalidad del trabajo realizado. Asimismo, dos secretarios podrían abrir la misma plantilla y sobrescribir sus cambios mutuamente.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (9) y Backlog F32-Task08.
+- **Problema Detectado y Riesgos:**
+  Una desconexión transitoria de red o cierre accidental de pestaña durante el diseño de un formulario complejo puede ocasionar la pérdida total de horas de trabajo de posicionamiento. Asimismo, la edición simultánea por dos operadores puede provocar sobrescrituras accidentales.
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Autoguardado local en IndexedDB / LocalStorage:*
-     - Almacenar el estado de las cajas (`overlayFields`), página activa y título cada 30 segundos en el almacenamiento local del navegador.
-     - Al reabrir el editor, ofrecer restaurar el borrador no guardado si se detecta una sesión interrumpida.
-  2. *Bloqueo de edición concurrente (Locking optimista):*
-     - Registrar en `PlantillasEscolares` el `usuarioEditando` y `timestampEdicion`.
-     - Si otro usuario intenta abrir la plantilla para diseño simultáneo, mostrar aviso informativo indicando quién la está modificando y permitir abrir en modo solo lectura.
+  1. *Autoguardado periódico y recuperación de sesión:*
+     - Guardado automático local en IndexedDB/LocalStorage cada 30 segundos y tras cambios estructurales.
+     - Al reabrir el editor, detectar borradores no sincronizados y ofrecer restaurarlos con un solo clic.
+     - Indicador visual del estado de guardado en la barra superior: `Guardando...`, `Guardado`, `Cambios pendientes` o `Error de conexión`.
+  2. *Control de concurrencia y prevención de sobrescrituras:*
+     - Bloqueo optimista registrando el usuario que está editando la plantilla y su marca de tiempo.
+     - Advertir al segundo usuario si la plantilla está siendo editada en otra sesión y permitir abrir en modo solo lectura.
+     - Separación estricta entre borradores de trabajo y versiones oficiales publicadas.
 - **Criterios de Aceptación:**
-  - [ ] El trabajo de diseño de campos no se pierde tras una recarga accidental de la página o caída de red.
-  - [ ] Se detecta y previene la sobrescritura accidental entre múltiples secretarios o diseñadores.
+  - [ ] El diseño de campos se recupera íntegro tras una desconexión intencional o recarga forzada de la pestaña.
+  - [ ] El estado del guardado se comunica en tiempo real de forma clara en la interfaz.
+  - [ ] Se detectan ediciones simultáneas y se impide la sobrescritura silenciosa de plantillas.
+  - [ ] La recuperación de un borrador no afecta las versiones publicadas activas.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### BLOQUE 3. RECONOCIMIENTO ASISTIDO Y MEJORA CONTINUA (P2)
-
-### [F32-Task09] [P2] Detector Heurístico de Líneas Guía y Sugerencia Automática de Cajas
+### [F32-Task11] [P1] Suite Automatizada de Pruebas de Fidelidad Geométrica, Compatibilidad y Regresión PDF
 - **Orden de Ejecución:** 9
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `tests/regression/academic-grading-suite.js`
+  - `backend/developer-service/Code.gs` (`runPdfOverlayFidelityRegressionSuite`)
+- **Subcapacidades Relacionadas:** F32-11.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección F (PDF-01 a PDF-30), Sección G y Backlog F32-Task11.
+- **Problema Detectado y Riesgos:**
+  La fidelidad de posicionamiento e integridad del PDF no debe depender exclusivamente de revisiones visuales manuales. Se requiere una suite de regresión automatizada que certifique que las actualizaciones de código no introduzcan derivas en las coordenadas ni desalineaciones al generar documentos finales.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Aserciones geométricas y tipográficas automatizadas:*
+     - Validar que las coordenadas deserializadas `(xRatio, yRatio, wRatio, hRatio)` mantengan precisión idéntica con tolerancia menor al 0.001%.
+     - Validar que variaciones de zoom (0.5x, 1.0x, 2.5x) o de dimensiones de página conserven la posición matemática de los campos.
+     - Validar el comportamiento del motor de auto-shrink tipográfico ante cadenas de prueba extensas.
+     - Validar renderizado de caracteres españoles y acentos sin corrupción Unicode.
+  2. *Verificación de los 30 escenarios obligatorios (PDF-01 a PDF-30):*
+     - Carga de PDF válido, corrupto, multipágina, orientación horizontal/vertical, inserción, arrastre, eliminación, duplicación, alineación, autoguardado, obligatoriedad, formatos de fecha, multilínea, firmas, CUV, apertura en visores independientes y control de acceso.
+  3. *Detección de regresiones visuales:*
+     - Documentos de referencia para comparar coordenadas esperadas vs observadas con umbral de tolerancia estricto.
+- **Criterios de Aceptación:**
+  - [ ] La suite de pruebas se ejecuta de forma automatizada en Node.js y Apps Script pasando al 100%.
+  - [ ] Detecta intencionalmente cualquier desplazamiento introducido en las coordenadas de prueba.
+  - [ ] Certifica que los 30 escenarios funcionales de la auditoría se encuentran cubiertos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F32-Task13] [P1] Motor Unificado de Reglas de Validación y Restricciones de Formularios
+- **Orden de Ejecución:** 10
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`validateTemplateFieldRules`, `validateDocumentEmissionPayload`)
+  - `backend/user-service/Code.gs`
+  - Hoja: `PlantillasEscolares`, `FormulariosInstitucionales`
+- **Subcapacidades Relacionadas:** F32-07, F32-08.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (7) y Backlog F32-Task13.
+- **Problema Detectado y Riesgos:**
+  Existe riesgo de que el editor visual, el formulario web de captura y el generador final de PDF manejen reglas de validación discrepantes, permitiendo que datos inválidos o incompletos burlen las comprobaciones si una petición se envía directamente al backend.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Reglas de validación unificadas por campo:*
+     - Obligatoriedad (requerido/opcional), longitud mínima y máxima de texto.
+     - Límites numéricos (mínimo, máximo, cantidad fija de decimales).
+     - Máscaras de entrada y patrones regex para DNI/identidad, teléfonos y correos.
+     - Restricciones de fechas (ej. fecha de fin posterior a fecha de inicio, prohibir fechas futuras).
+     - Cantidad mínima y máxima de selecciones en casillas y listas.
+  2. *Validación cruzada institucional y de backend:*
+     - Validar que códigos de matrícula o IDs de estudiantes existan legítimamente en el sistema institucional.
+     - Las mismas reglas configuradas en la plantilla se aplican en: editor, formulario web de captura, guardado de borradores y generación definitiva del PDF.
+     - El backend valida obligatoriamente la carga útil antes de permitir la emisión oficial con CUV.
+     - Mensajes de error contextuales que señalan con precisión el campo defectuoso y cómo corregirlo, conservando los datos válidos previamente ingresados.
+- **Criterios de Aceptación:**
+  - [ ] Se impide la emisión de cualquier documento si existen campos obligatorios vacíos o formatos inválidos.
+  - [ ] Las solicitudes directas a la API que contengan datos no conformes son rechazadas por el backend.
+  - [ ] Los mensajes de error identifican claramente el campo con problemas y no borran los datos válidos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 3. RECONOCIMIENTO AUTOMÁTICO Y PROCESAMIENTO INTELIGENTE (P2)
+
+### [F32-Task09] [P2] Detector Heurístico de Líneas Guía, Casillas y Espacios de Captura
+- **Orden de Ejecución:** 11
 - **Prioridad:** P2 (Media)
 - **Componentes Afectados:**
   - `js/teacher.js` (`detectFormLinesHeuristic`, `suggestOverlayFieldsFromCanvas`)
 - **Subcapacidades Relacionadas:** F32-02.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (2) y Sección G.
-- **Problema o Carencia:**
-  Al cargar un formulario preimpreso, el diseñador debe arrastrar y ajustar manualmente cada campo sobre las líneas de puntos o recuadros impresos. Un asistente heurístico puede acelerar la preparación detectando líneas horizontales continuas en el lienzo Canvas.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (2), Sección G y Backlog F32-Task09.
+- **Problema Detectado y Riesgos:**
+  Los documentos preimpresos suelen contener patrones repetitivos de líneas de llenado o casillas de verificación que actualmente obligan al diseñador a colocar manualmente cada recuadro uno por uno.
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Análisis heurístico de píxeles en Canvas:*
-     - Algoritmo en cliente que analice la matriz de píxeles del canvas renderizado en busca de trazos horizontales oscuros continuos (líneas de llenado).
-     - Generar cajas sugeridas posicionadas automáticamente 2 pt por encima de cada línea detectada.
-  2. *Revisión humana obligatoria:*
-     - Presentar las cajas sugeridas con borde punteado amarillo para que el usuario las apruebe, ajuste o elimine con un solo clic.
-     - La detección automática jamás sustituye la revisión del operador humano.
+  1. *Análisis visual de píxeles en Canvas:*
+     - Analizar la matriz de imagen del PDF renderizado en busca de líneas horizontales continuas y rectángulos vacíos.
+     - Identificar posibles casillas de verificación (cuadrados de 10 a 20 pt) y líneas de escritura.
+     - Estimar dimensiones y proponer cajas sugeridas posicionadas automáticamente sobre las áreas detectadas.
+  2. *Revisión y confirmación humana:*
+     - Mostrar las sugerencias como cajas preliminares resaltadas con borde punteado.
+     - Permitir al diseñador aceptar, ajustar o descartar individualmente o en bloque las sugerencias.
+     - La detección heurística opera como un asistente acelerador, sin sustituir jamás la aprobación humana.
 - **Criterios de Aceptación:**
-  - [ ] Identifica líneas de llenado en formularios estructurados y propone campos preliminares.
-  - [ ] El diseñador puede aceptar o descartar individualmente cada sugerencia automática.
+  - [ ] Identifica con éxito líneas de llenado y casillas en formularios estructurados.
+  - [ ] El diseñador puede aceptar o rechazar sugerencias con un solo clic.
+  - [ ] Las cajas aceptadas se integran normalmente al conjunto de campos con coordenadas normalizadas.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F32-Task10] [P2] Módulo de Reconocimiento OCR Asistido para Documentos Escaneados
-- **Orden de Ejecución:** 10
+### [F32-Task10] [P2] Motor OCR y Reconocimiento Semántico Asistido para Documentos Escaneados
+- **Orden de Ejecución:** 12
 - **Prioridad:** P2 (Media)
 - **Componentes Afectados:**
   - `backend/developer-service/Code.gs` (`processScannedPdfOcrRecognition`)
   - `js/teacher.js`
 - **Subcapacidades Relacionadas:** F32-02, F32-10.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (2, 10).
-- **Problema o Carencia:**
-  Actualmente los PDFs escaneados como imagen se renderizan como mapas de bits estáticos sin que el sistema detecte la ausencia de texto seleccionable ni ofrezca reconocimiento de etiquetas impresas ("Nombre del Alumno:", "DNI:").
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (2, 10), Sección G y Backlog F32-Task10.
+- **Problema Detectado y Riesgos:**
+  Los documentos escaneados antiguos que carecen de texto digital seleccionable no ofrecen detección automática de etiquetas impresas ("Nombre del Estudiante:", "Grado:"), obligando a una transcripción manual.
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Detección de necesidad de OCR:*
-     - Al cargar el PDF con PDF.js, comprobar si la capa de texto (`page.getTextContent()`) contiene caracteres.
-     - Si la capa está vacía o contiene menos de 10 palabras en una página completa, mostrar advertencia: *"Documento escaneado detectado. Se recomienda reconocimiento OCR."*
-  2. *Reconocimiento asistido opcional:*
-     - Conectar de forma opcional con motor OCR ligero para extraer cajas delimitadoras de etiquetas conocidas.
-     - Diferenciar claramente el texto original de las sugerencias OCR y permitir corrección manual.
+  1. *Detección de contenido escaneado:*
+     - Comprobar si las páginas contienen texto digital seleccionable (`page.getTextContent()`).
+     - Si la página es predominantemente una imagen de mapa de bits, advertir al usuario y sugerir escaneo OCR asistido.
+  2. *Reconocimiento semántico asistido:*
+     - Conexión opcional con motor OCR ligero para extraer palabras clave y coordenadas aproximadas en español.
+     - Proponer campos de texto situados a la derecha de etiquetas reconocidas ("Nombre:", "DNI:").
+     - Mantener el PDF escaneado original intacto en el fondo sin alteraciones destructivas de píxeles.
 - **Criterios de Aceptación:**
-  - [ ] El sistema identifica con precisión si un PDF es digital vectorial o escaneado como imagen.
-  - [ ] Emite recomendaciones claras sin prometer edición mágica cuando el documento es una imagen de baja resolución.
+  - [ ] Detecta con precisión si un PDF requiere OCR y emite la recomendación pertinente.
+  - [ ] Las sugerencias semánticas reconocen etiquetas comunes en documentos escolares en español.
+  - [ ] El archivo PDF original permanece inalterado.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F32-Task11] [P2] Banco de Pruebas de Fidelidad PDF y Detección de Desplazamientos
-- **Orden de Ejecución:** 11
-- **Prioridad:** P2 (Media)
-- **Componentes Afectados:**
-  - `tests/regression/academic-grading-suite.js`
-  - `backend/developer-service/Code.gs` (`runPdfOverlayFidelityRegressionSuite`)
-- **Subcapacidades Relacionadas:** F32-11.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección F (PDF-01 a PDF-30) y Sección G.
-- **Problema o Carencia:**
-  Se requiere una suite automatizada continua que certifique que las actualizaciones de código o bibliotecas no introduzcan derivas geométricas de posicionamiento ni rompan la persistencia de las plantillas PDF existentes.
-- **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Aserciones automatizadas de coordenadas:*
-     - Validar matemáticamente que la serialización y deserialización de `overlayFields` conserve los ratios `(xRatio, yRatio)` con error relativo inferior al 0.001%.
-     - Validar que cambiar el zoom de renderizado en Canvas (0.5x, 1.0x, 2.0x) no altere las coordenadas de origen.
-     - Validar que caracteres españoles y Unicode se almacenen sin distorsión de codificación.
-  2. *Verificación de los 30 escenarios funcionales:*
-     - Integrar aserciones para los casos de prueba PDF-01 a PDF-30 en la suite de regresión general.
-- **Criterios de Aceptación:**
-  - [ ] La suite de pruebas de fidelidad PDF se ejecuta de forma reproducible en Node.js y Apps Script.
-  - [ ] Certifica que ninguna operación de zoom o redimensión altera las posiciones absolutas en el PDF final.
-- **Estado:** [ ] Pendiente
-
----
-
-### [F32-Task12] [P2] Duplicador de Plantillas y Biblioteca de Formatos Preimpresos Escolares
-- **Orden de Ejecución:** 12
+### [F32-Task12] [P2] Biblioteca de Plantillas, Duplicación y Reutilización de Formatos Institucionales
+- **Orden de Ejecución:** 13
 - **Prioridad:** P2 (Media)
 - **Componentes Afectados:**
   - `backend/accounting-service/Code.gs` (`duplicateSchoolDocumentTemplate`, `getPreloadedSchoolFormTemplates`)
   - `teacher-dashboard.html`, `js/teacher.js`
+  - Hoja: `PlantillasEscolares`
 - **Subcapacidades Relacionadas:** F32-01, F32-09.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (1, 9) y Sección H.
-- **Problema o Carencia:**
-  Para crear formatos similares (ej. excusas de primaria vs secundaria, o constancias de conducta con variaciones menores), los secretarios deben volver a cargar el PDF y posicionar todos los campos desde cero.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (1, 9), Sección H y Backlog F32-Task12.
+- **Problema Detectado y Riesgos:**
+  Para diseñar formatos con pequeñas variaciones (excusas de primaria vs secundaria, o constancias de conducta), los secretarios deben recrear todos los campos desde cero si no pueden clonar plantillas existentes.
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Función de duplicación de plantilla con un clic:*
-     - Duplicar una plantilla PDF existente clonando su PDF base, metadatos y la totalidad de sus campos superpuestos bajo un nuevo `plantillaId` y título editable.
-     - Permitir modificar la copia sin alterar en absoluto la plantilla matriz original.
-  2. *Biblioteca precargada de formatos institucionales:*
-     - Incorporar plantillas modelo de referencia del sistema educativo hondureño: Excusas por inasistencia, Solicitud de matrícula ordinaria, Compromiso de convivencia y Pagaré de colegiatura.
+  1. *Duplicación de plantillas con un solo clic:*
+     - Duplicar una plantilla PDF existente clonando su PDF base, metadatos y la totalidad de sus `overlayFields` bajo un nuevo `plantillaId` y título editable.
+     - La nueva plantilla es completamente independiente: sus modificaciones posteriores no alteran la plantilla matriz ni los documentos emitidos bajo versiones previas.
+  2. *Catálogo de formatos escolares hondureños precargados:*
+     - Biblioteca de formatos institucionales de uso frecuente: Excusas estudiantiles por inasistencia, Solicitud de matrícula ordinaria, Compromiso de convivencia y Pagaré de colegiatura.
+     - Permitir a la institución subir sus propios formatos preimpresos y clasificarlos por categoría y ciclo lectivo.
+     - Archivo controlado de plantillas obsoletas impidiendo su uso en nuevos trámites pero preservando el histórico.
 - **Criterios de Aceptación:**
-  - [ ] Permite clonar cualquier plantilla PDF existente manteniendo todas las coordenadas exactas.
-  - [ ] La biblioteca precargada ofrece formatos institucionales listos para usar o personalizar.
+  - [ ] Permite clonar cualquier plantilla PDF conservando el 100% de sus campos y coordenadas.
+  - [ ] La copia es independiente y puede editarse sin afectar la plantilla original ni los registros históricos.
+  - [ ] La biblioteca de formatos permite iniciar nuevos trámites a partir de plantillas modelo precargadas.
 - **Estado:** [ ] Pendiente
 
 ---

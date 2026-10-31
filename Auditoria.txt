@@ -371,7 +371,7 @@ RESULTADO DE EVALUACIÓN:
 - Se documentó el informe de auditoría independiente en AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md.
 - Se destacaron las fortalezas del sistema en su arquitectura de coordenadas relativas porcentuales (xRatio, yRatio) inmune a variaciones de zoom de pantalla y la vinculación nativa con CUV y correlativos anuales.
 - Se identificó la necesidad de consolidar el motor de estampado binario y aplanado en backend (F32-Task01), las entradas numéricas de precisión con rejilla magnética (F32-Task02) y el auto-ajuste tipográfico ante desbordamiento (F32-Task03).
-- Se integró el backlog técnico priorizado en Pendientes.md compuesto por 12 tareas técnicas ([F32-Task01] a [F32-Task12]) organizadas en 3 bloques por prioridad (P0, P1, P2) y orden secuencial, preservando intactas todas las fases preexistentes (Fases 10 a 31).
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 13 tareas técnicas ([F32-Task01] a [F32-Task13]) organizadas en 4 bloques por prioridad (P0: Task01 a Task03; P1: Task04 a Task08, Task11, Task13; P2: Task09, Task10, Task12) y orden secuencial de ejecución con parametrización configurable para opciones en disputa, preservando intactas todas las fases preexistentes (Fases 10 a 31).
 - Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
 - Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
 ===============================================================================
