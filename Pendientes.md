@@ -9436,3 +9436,142 @@
 - **Estado:** [ ] Pendiente
 
 ---
+## FASE 28 — ACCESIBILIDAD, MOVILIDAD Y CONTINUIDAD DE TRABAJO
+
+### P0 — PRIORIDAD CRÍTICA
+
+### [F28-Task01] [P0] [Seguridad en Borradores - Aislamiento Criptográfico por Usuario y Sesión]
+- **Componentes Afectados:**
+  - `js/ui-common.js`
+  - `js/teacher.js`
+  - `js/student.js`
+  - Almacenamiento local del navegador (`localStorage` / `IndexedDB`)
+- **Subcapacidades Relacionadas:** B03, B04, S04.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Expuestas:** `auditAndFixAccessibility`, `localStorage`, autenticación de usuario.
+- **Problema Detectado:**
+  El guardado automático de borradores actual en `auditAndFixAccessibility` utiliza la clave `draft_ + inp.id` en `localStorage`. Si dos usuarios (por ejemplo, dos docentes o un docente y un estudiante) comparten el mismo equipo físico o tablet institucional, un usuario podría visualizar y restaurar indebidamente el borrador del usuario anterior, provocando riesgos graves de fuga de información y contaminación de datos.
+- **Requisitos Funcionales:**
+  1. Aislamiento estricto de claves de almacenamiento local:
+     - Formatear obligatoriamente las claves de borrador incorporando el identificador del usuario autenticado: `draft_${authUserId}_${formId}_${inp.id}`.
+     - Si no existe una sesión autenticada válida, deshabilitar la persistencia de borradores en disco local.
+  2. Restauración selectiva contextual:
+     - Al cargar un formulario, buscar exclusivamente borradores que coincidan con el `authUserId` de la sesión activa.
+     - Ignorar y no restaurar datos pertenecientes a otros identificadores de usuario.
+  3. Purga segura al cerrar sesión (`logoutUser`):
+     - Al cerrar sesión formalmente o por expiración de token, escanear y eliminar del almacenamiento local todos los elementos que comiencen con `draft_${authUserId}_`.
+  4. Indicador visual de estado de borrador:
+     - Mostrar etiqueta o tooltip discreto indicando "Borrador guardado localmente para tu usuario" y la marca temporal ISO de la última modificación.
+- **Criterios de Aceptación:**
+  - [ ] Los borradores se guardan con prefijo que incluye inequívocamente el `userId` activo.
+  - [ ] Al iniciar sesión con un usuario B en el mismo navegador, no se restaura ningún borrador guardado por el usuario A.
+  - [ ] Al cerrar sesión, los borradores del usuario que sale se purgan de forma segura del navegador.
+  - [ ] Recargar la página con la misma sesión activa restaura fielmente el contenido del borrador.
+- **Estado:** [ ] Pendiente
+
+---
+
+### P1 — PRIORIDAD ALTA
+
+### [F28-Task02] [P1] [PWA y Offline - Implementación de Service Worker y Manifiesto de Instalación]
+- **Componentes Afectados:**
+  - `manifest.json`
+  - `sw.js` (Service Worker)
+  - `app/html/`
+  - `index.html`
+- **Subcapacidades Relacionadas:** M01, O01, O03.
+- **Estado de Partida:** Requiere mejoras.
+- **Dependencias Expuestas:** Caché del navegador (`CacheStorage`), activos estáticos (HTML, CSS, JS, iconos).
+- **Problema Detectado:**
+  La plataforma cuenta con almacenamiento IndexedDB para datos, pero carece de un manifiesto de aplicación web (`manifest.json`) y de un Service Worker registrado formalmente para almacenar en caché los activos estáticos del frontend. Sin esto, la aplicación no puede cargarse ni abrirse si el usuario no tiene conexión previa al momento de iniciar la página en el navegador móvil.
+- **Requisitos Funcionales:**
+  1. Creación y enlace de `manifest.json`:
+     - Declarar nombre de la plataforma, nombre corto, colores institucionales de tema (`theme_color`), color de fondo (`background_color`), modo de visualización `standalone` e iconos PWA adaptables (192x192, 512x512).
+  2. Implementación de Service Worker (`sw.js`):
+     - Estrategia de caché `Cache-First` para activos estáticos inmutables (CSS de Tailwind, fuentes, iconos FontAwesome).
+     - Estrategia `Network-First` con fallback a caché para vistas HTML principales de dashboard (`teacher-dashboard.html`, `student-dashboard.html`, etc.).
+     - Excluir explícitamente de la caché del Service Worker las peticiones dinámicas POST hacia Google Apps Script (que se gestionan mediante la cola de IndexedDB).
+  3. Ciclo de vida y actualización controlada:
+     - Escuchar eventos `install` y `activate` con limpieza automática de versiones antiguas de caché (`v1`, `v2`).
+- **Criterios de Aceptación:**
+  - [ ] El navegador móvil reconoce la plataforma como una PWA instalable con prompt "Agregar a pantalla de inicio".
+  - [ ] Al abrir la aplicación en modo avión (sin internet), la interfaz básica y los paneles cargan desde la caché del Service Worker.
+  - [ ] Las actualizaciones de código en el servidor provocan la actualización del Service Worker y la renovación de la caché.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F28-Task03] [P1] [Sincronización en Segundo Plano - Integración con Background Sync API]
+- **Componentes Afectados:**
+  - `sw.js`
+  - `js/ui-common.js`
+  - `js/api.js`
+- **Subcapacidades Relacionadas:** S01, S05, O02.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Expuestas:** `syncOfflineQueue`, `sync_queue` de IndexedDB, `sw.js`.
+- **Problema Detectado:**
+  La sincronización actual de la cola offline (`syncOfflineQueue`) depende exclusivamente de que la pestaña del navegador permanezca abierta cuando se dispara el evento `online`. Si el usuario registra una asistencia o una calificación en el aula, cierra el navegador y sale a una zona con cobertura, la sincronización no ocurre hasta que vuelva a abrir la aplicación manualmente.
+- **Requisitos Funcionales:**
+  1. Registro de sincronización en segundo plano:
+     - Al encolar una acción en IndexedDB (`queueOfflineAction`), solicitar un tag de sincronización al Service Worker: `registration.sync.register('sync-institutional-queue')`.
+  2. Manejador en Service Worker:
+     - Escuchar el evento `sync` con tag `sync-institutional-queue` en `sw.js` para procesar los elementos pendientes de la cola de IndexedDB incluso si la ventana principal está cerrada.
+  3. Notificación de sincronización completada:
+     - Emitir notificación al usuario cuando las tareas pendientes encoladas fuera de línea se hayan sincronizado exitosamente en el servidor.
+- **Criterios de Aceptación:**
+  - [ ] Al registrar una acción offline y cerrar la pestaña, el Service Worker ejecuta la sincronización en segundo plano al recuperar red en navegadores compatibles.
+  - [ ] Las acciones sincronizadas en segundo plano actualizan su estado a `COMPLETED` en IndexedDB.
+  - [ ] Se mantiene compatibilidad de fallback hacia el disparador `window.addEventListener('online')` en navegadores que no soporten la Background Sync API.
+- **Estado:** [ ] Pendiente
+
+---
+
+### P2 — PRIORIDAD MEDIA
+
+### [F28-Task04] [P2] [Accesibilidad Avanzada - Indicador de Foco de Alto Contraste y Atajos de Teclado]
+- **Componentes Afectados:**
+  - `js/ui-common.js`
+  - Estilos CSS / Tailwind
+- **Subcapacidades Relacionadas:** A01, A03, A05.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Expuestas:** `auditAndFixAccessibility`, navegación por teclado.
+- **Problema Detectado:**
+  Aunque los controles interactivos poseen indicadores de foco básicos, en pantallas con luz solar intensa o para usuarios con baja visión, el anillo de foco por defecto puede pasar desapercibido. Asimismo, faltan atajos de teclado globales para abrir el menú principal, cerrar diálogos y buscar en la aplicación.
+- **Requisitos Funcionales:**
+  1. Estilos de foco de alto contraste:
+     - Configurar anillo de foco visible reforzado (`focus-visible:ring-4 focus-visible:ring-blue-600 focus-visible:ring-offset-2`) en todos los botones, enlaces y campos de formulario.
+  2. Atajos de teclado accesibles:
+     - `Alt + M`: Abrir / cerrar menú de navegación principal.
+     - `Alt + S`: Abrir buscador global omnibox.
+     - `Escape`: Cerrar cualquier ventana modal activa y devolver el foco al elemento que la abrió.
+  3. Región de anuncios ARIA (`aria-live`):
+     - Mantener un contenedor `div[role="status"][aria-live="polite"]` para anunciar dinámicamente mensajes de éxito y errores a lectores de pantalla.
+- **Criterios de Aceptación:**
+  - [ ] El indicador de foco es claramente visible en todos los elementos interactivos bajo navegación con Tab.
+  - [ ] Los atajos de teclado (`Alt+M`, `Escape`) funcionan de forma predecible sin colisionar con atajos nativos del navegador.
+  - [ ] Las alertas dinámicas son leídas por lectores de pantalla (NVDA/JAWS/VoiceOver) a través del contenedor `aria-live`.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F28-Task05] [P2] [Optimización de Medios - Compresión Progresiva de Imágenes y Lazy Loading]
+- **Componentes Afectados:**
+  - `js/ui-common.js`
+  - `js/teacher.js`
+  - `js/accounting.js`
+- **Subcapacidades Relacionadas:** R01, R04.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Expuestas:** Carga de fotografías de expedientes y comprobantes de pago.
+- **Problema Detectado:**
+  La carga de imágenes y fotografías de alumnos o comprobantes bancarios desde dispositivos móviles puede saturar el ancho de banda y generar lentitud si las imágenes tomadas con cámaras modernas (4MB - 10MB) se envían sin procesar al backend o si se cargan simultáneamente en listados extensos.
+- **Requisitos Funcionales:**
+  1. Compresión en cliente antes del envío:
+     - Utilizar un canvas HTML5 en el navegador para redimensionar fotografías de perfil a un máximo de 800x800px y comprobantes a 1200x1200px con calidad JPEG 0.8, reduciendo el peso en más del 80% antes de subir.
+  2. Carga diferida (`loading="lazy"`):
+     - Asignar atributo `loading="lazy"` a todas las imágenes de avatares en tablas y nóminas de alumnos.
+- **Criterios de Aceptación:**
+  - [ ] Una fotografía de 5MB tomada desde un teléfono se comprime en el cliente a menos de 300KB antes de enviarse al backend.
+  - [ ] Las imágenes en tablas extensas no se descargan hasta que el usuario se desplaza cerca de ellas en pantalla.
+- **Estado:** [ ] Pendiente
+
+---
