@@ -5890,6 +5890,52 @@ function respondToAuthorizationRequest(payload) {
   }
 }
 
+function normalizeCalendarTimestamp(dateVal, timeVal, isEnd) {
+  if (!dateVal) return NaN;
+  let year, month, day;
+  if (dateVal instanceof Date) {
+    year = dateVal.getFullYear();
+    month = String(dateVal.getMonth() + 1).padStart(2, "0");
+    day = String(dateVal.getDate()).padStart(2, "0");
+  } else {
+    const s = String(dateVal).trim();
+    if (s.indexOf("T") !== -1) {
+      const p = s.split("T")[0].split("-");
+      if (p.length === 3) { year = p[0]; month = p[1]; day = p[2]; }
+    } else {
+      const p = s.split("-");
+      if (p.length === 3) {
+        year = p[0]; month = p[1]; day = p[2];
+      } else {
+        const parsed = new Date(s);
+        if (!isNaN(parsed.getTime())) {
+          year = parsed.getFullYear();
+          month = String(parsed.getMonth() + 1).padStart(2, "0");
+          day = String(parsed.getDate()).padStart(2, "0");
+        }
+      }
+    }
+  }
+  if (!year || !month || !day) return NaN;
+
+  let h = isEnd ? "23" : "00";
+  let m = isEnd ? "59" : "00";
+  let sec = "00";
+
+  if (timeVal) {
+    const tParts = String(timeVal).trim().split(":");
+    if (tParts.length >= 2) {
+      h = tParts[0].padStart(2, "0");
+      m = tParts[1].padStart(2, "0");
+      sec = tParts[2] ? tParts[2].padStart(2, "0") : "00";
+    }
+  } else if (isEnd) {
+    sec = "59";
+  }
+
+  return new Date(`${year}-${month}-${day}T${h}:${m}:${sec}`).getTime();
+}
+
 // [F11-Task06] [P1] - Gestión de calendarios institucionales, convocatorias y prevención de traslapes
 function checkCalendarEventOverlap(payload) {
   try {
@@ -5902,10 +5948,10 @@ function checkCalendarEventOverlap(payload) {
 
     if (data.length <= 1) return { status: "success", hasOverlap: false, overlaps: [] };
 
-    const targetStart = String(fechaInicio).split('T')[0];
-    const targetEnd = (fechaFin ? String(fechaFin).split('T')[0] : targetStart);
     const targetHStart = horaInicio || "00:00";
     const targetHEnd = horaFin || "23:59";
+    const targetStartTs = normalizeCalendarTimestamp(fechaInicio, targetHStart, false);
+    const targetEndTs = normalizeCalendarTimestamp(fechaFin || fechaInicio, targetHEnd, true);
 
     const targetSpace = espacioFisico ? String(espacioFisico).trim().toLowerCase() : "";
     const targetOrganizer = organizadorUserId ? String(organizadorUserId).trim() : "";
@@ -5921,8 +5967,8 @@ function checkCalendarEventOverlap(payload) {
       const st = String(row[12] || "Activo");
       if (st === "Cancelado" || st === "Inactivo") continue;
 
-      const eStart = row[4] ? String(row[4]).split('T')[0] : "";
-      const eEnd = row[5] ? String(row[5]).split('T')[0] : eStart;
+      const eDateStart = row[4];
+      const eDateEnd = row[5] || eDateStart;
       const eHStart = row[6] || "00:00";
       const eHEnd = row[7] || "23:59";
       const eSpace = row[8] ? String(row[8]).trim().toLowerCase() : "";
@@ -5934,11 +5980,13 @@ function checkCalendarEventOverlap(payload) {
         eParticipants = [];
       }
 
-      // 1. Normalización de intervalos continuos fecha-hora con soporte multi-día
-      const targetStartTs = new Date(`${targetStart}T${targetHStart}:00`).getTime();
-      const targetEndTs = new Date(`${targetEnd}T${targetHEnd}:00`).getTime();
-      const eventStartTs = new Date(`${eStart}T${eHStart}:00`).getTime();
-      const eventEndTs = new Date(`${eEnd}T${eHEnd}:00`).getTime();
+      // 1. Normalización precisa de intervalos continuos fecha-hora con soporte multi-día robusto
+      const eventStartTs = normalizeCalendarTimestamp(eDateStart, eHStart, false);
+      const eventEndTs = normalizeCalendarTimestamp(eDateEnd, eHEnd, true);
+
+      if (isNaN(targetStartTs) || isNaN(targetEndTs) || isNaN(eventStartTs) || isNaN(eventEndTs)) {
+        continue;
+      }
 
       const intervalOverlap = (targetStartTs < eventEndTs && targetEndTs > eventStartTs);
       if (!intervalOverlap) continue;
