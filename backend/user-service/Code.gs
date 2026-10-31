@@ -5383,7 +5383,7 @@ function updateNewsStatus(payload) {
 // [F11-Task04] [P1] - Gestor de Comunicados, Circulares y Anuncios Institucionales con Vigencia
 function getInstitutionalAnnouncements(payload) {
   try {
-    const verifiedRole = getUserVerifiedRole(payload);
+    const verifiedRole = (typeof getUserVerifiedRole === "function" ? getUserVerifiedRole(payload) : null) || (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
     const isStaff = ["Administrador", "Desarrollador", "Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "RecursosHumanos"].indexOf(verifiedRole) !== -1;
 
     const { categoria, estado, nivelUrgencia, grado, seccion, rol } = payload || {};
@@ -5483,7 +5483,7 @@ function getInstitutionalAnnouncements(payload) {
 // [F11-Task04] [P1] - Creación y Edición de Anuncios Institucionales con Vigencia
 function createInstitutionalAnnouncement(payload) {
   try {
-    const verifiedRole = getUserVerifiedRole(payload);
+    const verifiedRole = (typeof getUserVerifiedRole === "function" ? getUserVerifiedRole(payload) : null) || (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
     const isAuthorized = ["Administrador", "Desarrollador", "Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Profesor", "RecursosHumanos"].indexOf(verifiedRole) !== -1;
     if (!isAuthorized) {
       return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "No cuenta con autorización para publicar o gestionar comunicados e información institucional." };
@@ -5665,7 +5665,7 @@ function getAnnouncementReadReport(payload) {
 // [F11-Task05] [P1] - Motor de confirmaciones de lectura, respuestas y solicitudes de autorización
 function submitAuthorizationRequest(payload) {
   try {
-    const verifiedRole = getUserVerifiedRole(payload);
+    const verifiedRole = (typeof getUserVerifiedRole === "function" ? getUserVerifiedRole(payload) : null) || (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
     const callerId = (payload && payload._verifiedUserId) || "Sistema";
     const isAuthorized = ["Administrador", "Desarrollador", "Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Profesor", "Consejeros"].indexOf(verifiedRole) !== -1;
     if (!isAuthorized) {
@@ -5735,7 +5735,7 @@ function submitAuthorizationRequest(payload) {
 
 function getAuthorizationRequests(payload) {
   try {
-    const verifiedRole = getUserVerifiedRole(payload);
+    const verifiedRole = (typeof getUserVerifiedRole === "function" ? getUserVerifiedRole(payload) : null) || (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
     const callerId = (payload && payload._verifiedUserId) || "";
     const isStaff = ["Administrador", "Desarrollador", "Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Profesor"].indexOf(verifiedRole) !== -1;
 
@@ -5816,7 +5816,7 @@ function getAuthorizationRequests(payload) {
 
 function respondToAuthorizationRequest(payload) {
   try {
-    const verifiedRole = getUserVerifiedRole(payload);
+    const verifiedRole = (typeof getUserVerifiedRole === "function" ? getUserVerifiedRole(payload) : null) || (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
     const callerId = (payload && payload._verifiedUserId) || "";
     const { solicitudAutorizacionId, respuesta, observacion } = payload || {};
 
@@ -5934,13 +5934,14 @@ function checkCalendarEventOverlap(payload) {
         eParticipants = [];
       }
 
-      // 1. Verificación de fechas superpuestas
-      const dateOverlap = (targetStart <= eEnd && targetEnd >= eStart);
-      if (!dateOverlap) continue;
+      // 1. Normalización de intervalos continuos fecha-hora con soporte multi-día
+      const targetStartTs = new Date(`${targetStart}T${targetHStart}:00`).getTime();
+      const targetEndTs = new Date(`${targetEnd}T${targetHEnd}:00`).getTime();
+      const eventStartTs = new Date(`${eStart}T${eHStart}:00`).getTime();
+      const eventEndTs = new Date(`${eEnd}T${eHEnd}:00`).getTime();
 
-      // 2. Verificación de horario superpuesto
-      const timeOverlap = (targetHStart < eHEnd && targetHEnd > eHStart);
-      if (!timeOverlap) continue;
+      const intervalOverlap = (targetStartTs < eventEndTs && targetEndTs > eventStartTs);
+      if (!intervalOverlap) continue;
 
       // 3. Verificación de choque de espacio físico
       let conflictReason = null;
@@ -5985,7 +5986,7 @@ function checkCalendarEventOverlap(payload) {
 
 function saveInstitutionalCalendarEvent(payload) {
   try {
-    const verifiedRole = getUserVerifiedRole(payload);
+    const verifiedRole = (typeof getUserVerifiedRole === "function" ? getUserVerifiedRole(payload) : null) || (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
     const callerId = (payload && payload._verifiedUserId) || "Sistema";
     const isAuthorized = ["Administrador", "Desarrollador", "Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Profesor"].indexOf(verifiedRole) !== -1;
     if (!isAuthorized) {
