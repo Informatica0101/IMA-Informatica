@@ -278,3 +278,14 @@ HALLAZGOS:
 2. Se requiere la tabla `RevisionesPlanificacion` para registrar el historial de revisiones con identificador único (`REV-PLAN-...`), identificador de planificación (`planificacionId`), versión exacta evaluada (`version`), estado resultante (`EnRevision`, `RequiereCorrecciones`, `Aprobado`), observaciones detalladas del revisor, usuario revisor (`revisorUserId`) y timestamp inmutable.
 3. Se deben registrar los permisos de rol correspondientes en `ROLE_PERMISSIONS` (entrega para `Profesor` y revisión para `Coordinador`, `Director`, `Subdirector`, `Administrador`) y agregar los casos correspondientes en `doPost`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task11: DESARROLLAR EL SISTEMA DE OBSERVACIONES, RÚBRICAS DE SUPERVISIÓN Y EVALUACIONES PEDAGÓGICAS
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS:
+1. El backend `academic-service` cuenta con la persistencia de supervisiones (`SupervisionesDocentes`), observaciones (`ObservacionesSupervision`) y planes de mejora (`PlanesMejoraPedagogica`), pero carece de un gestor de rúbricas/pautas de supervisión pedagógica configurables por nivel y área académica (`RubricasSupervision`).
+2. En `saveSupervisionObservation`, se debe garantizar que la pauta y dictamen emitido por supervisión/dirección permanezca inmutable frente a modificaciones de docentes observados, permitiéndole a estos únicamente ingresar sus comentarios de retroalimentación (`comentarioDocente`) sin alterar los puntajes ni fortalezas/oportunidades registradas por el supervisor.
+3. Se requiere la tabla `RubricasSupervision` para parametrizar las pautas (criterios, ponderaciones, escalas de desempeño cualitativo/cuantitativo y nivel académico aplicable).
+4. Se deben configurar los permisos en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+===============================================================================

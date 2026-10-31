@@ -3509,3 +3509,15 @@ ARCHIVOS MODIFICADOS:
 - tests/regression/academic-grading-suite.js (línea ~91):
   Se agregó la aserción de comprobación para `submitPlanningForReview` y `reviewPedagogicalPlanning` con la etiqueta `[F11-Task10]`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task11 - Desarrollar el sistema de observaciones, rúbricas de supervisión y evaluaciones pedagógicas
+ARCHIVOS MODIFICADOS:
+- backend/academic-service/Code.gs (líneas ~137, ~181, ~191, ~218, ~254, ~893-894, ~5085-5285):
+  Se incorporó la inicialización de la hoja `RubricasSupervision` en `getOrCreateSheet` e implementaron las funciones `saveSupervisionRubric` y `getSupervisionRubrics` con la etiqueta identificativa `[F11-Task11]`.
+  Se refactorizó `saveSupervisionObservation` para blindar la evaluación oficial del supervisor/dirección frente a modificaciones de docentes generales, permitiendo a estos agregar únicamente su comentario de retroalimentación (`comentarioDocente`) sin alterar los puntajes de la rúbrica ni las fortalezas/oportunidades detectadas.
+  Se registraron los permisos correspondientes en `ROLE_PERMISSIONS` (para `Director`, `Subdirector`, `Coordinador`, `Profesor`, `Administrador`) y en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~92):
+  Se agregó la aserción de comprobación para `saveSupervisionRubric` y `getSupervisionRubrics` con la etiqueta `[F11-Task11]`.
+===============================================================================

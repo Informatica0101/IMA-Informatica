@@ -134,6 +134,7 @@ function getOrCreateSheet(ss, name) {
     if (name === "AlertasTempranas") sheet.appendRow(["AlertaID", "UserId", "Grado", "Seccion", "Periodo", "NivelRiesgo", "FactoresRiesgoJSON", "MetricasJSON", "Estado", "NotificadoA", "DeduplicationKey", "FechaGeneracion", "UltimaActualizacion"]);
     if (name === "PlanificacionesPedagogicas") sheet.appendRow(["PlanificacionID", "DocenteUserId", "Grado", "Seccion", "Asignatura", "Periodo", "TituloUnidad", "CompetenciasJSON", "ObjetivosAprendizaje", "ContenidosJSON", "RecursosActividadesJSON", "Version", "Estado", "FechaCreacion", "UltimaActualizacion"]);
     if (name === "RevisionesPlanificacion") sheet.appendRow(["RevisionID", "PlanificacionID", "Version", "Estado", "Observaciones", "RevisorUserId", "RevisorRol", "FechaRevision"]);
+    if (name === "RubricasSupervision") sheet.appendRow(["RubricaID", "Nombre", "NivelEducativo", "AreaAcademica", "CriteriosJSON", "EscalaJSON", "Estado", "CreadoPor", "FechaCreacion", "UltimaActualizacion"]);
 
     // Nuevas Tablas Fase 13 - Supervisión Docente y Calidad Educativa
     if (name === "SupervisionesDocentes") sheet.appendRow(["SupervisionID", "DocenteUserId", "SupervisorUserId", "FechaProgramada", "Grado", "Seccion", "Asignatura", "TipoSupervision", "RubricaID", "Estado", "ObservacionesAdmin", "FechaCreacion"]);
@@ -179,7 +180,7 @@ const ROLE_PERMISSIONS = {
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity", "reconcileInstitutionalModulesMatrix",
     "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "checkAndDispatchAttendanceAlerts", "getAttendanceConfig", "saveAttendanceConfig",
-    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches", "scheduleGuidanceAppointment", "getGuidanceAppointments", "updateGuidanceAppointmentStatus", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts", "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "reviewPedagogicalPlanning", "getPlanningReviewHistory"
+    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches", "scheduleGuidanceAppointment", "getGuidanceAppointments", "updateGuidanceAppointmentStatus", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts", "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "reviewPedagogicalPlanning", "getPlanningReviewHistory", "saveSupervisionRubric", "getSupervisionRubrics"
   ],
   "Subdirector": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "registerStudentEnrollment", "getStudentEnrollmentHistory",
@@ -189,7 +190,7 @@ const ROLE_PERMISSIONS = {
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "getStudentFile", "getStudentTimeline", "findDuplicateStudents",
     "getStudentGuardians", "getStudentDocuments", "getStudentEnrollments", "checkEnrollmentCapacity",
     "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
-    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "reviewPedagogicalPlanning", "getPlanningReviewHistory"
+    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "reviewPedagogicalPlanning", "getPlanningReviewHistory", "saveSupervisionRubric", "getSupervisionRubrics"
   ],
   "Secretaría": [
     "getAcademicConfig", "getAsignaturasActivas", "registerStudentEnrollment", "getStudentEnrollmentHistory",
@@ -216,7 +217,7 @@ const ROLE_PERMISSIONS = {
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite",
     "openAttendanceSession", "saveClassAttendance", "getBatchAttendanceRecords", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "generateConsolidatedAttendanceAndCoexistenceReport", "validateStudentWelfareAccess"
   ],
-  "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "getBatchAttendanceRecords", "generateConsolidatedAttendanceAndCoexistenceReport", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts", "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "reviewPedagogicalPlanning", "getPlanningReviewHistory"],
+  "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "getBatchAttendanceRecords", "generateConsolidatedAttendanceAndCoexistenceReport", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts", "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "reviewPedagogicalPlanning", "getPlanningReviewHistory", "saveSupervisionRubric", "getSupervisionRubrics"],
   "Desarrollador": ["getAcademicConfig", "getAcademicHistory", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "configureAcademicLevelsAndDynamicStorage"],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
   "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "scheduleCounselingAppointment", "recordCounselingSessionAct", "referCounselingCase", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary", "validateStudentWelfareAccess", "scheduleGuidanceAppointment", "getGuidanceAppointments", "updateGuidanceAppointmentStatus", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts"],
@@ -252,7 +253,7 @@ const ROLE_PERMISSIONS = {
     "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getBatchAttendanceRecords", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "generateConsolidatedAttendanceAndCoexistenceReport",
     "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans",
     "calculateUnifiedAcademicGrade", "previewAcademicGradeCalculation", "auditAcademicGradesIntegrity", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess", "exportAcademicGradesData",
-    "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "getPlanningReviewHistory"
+    "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "getPlanningReviewHistory", "getSupervisionRubrics"
   ],
   "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentTimeline", "getClassAttendance", "getBatchAttendanceRecords", "getStudentAttendanceSummary", "auditAssistantDelegatedAction"],
   "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "calculateUnifiedAcademicGrade", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess"],
@@ -891,6 +892,8 @@ function doPost(e) {
       case "submitPlanningForReview": result = submitPlanningForReview(payload); break;
       case "reviewPedagogicalPlanning": result = reviewPedagogicalPlanning(payload); break;
       case "getPlanningReviewHistory": result = getPlanningReviewHistory(payload); break;
+      case "saveSupervisionRubric": result = saveSupervisionRubric(payload); break;
+      case "getSupervisionRubrics": result = getSupervisionRubrics(payload); break;
 
       case "ping": result = { status: "success", service: "ACADEMIC", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
@@ -5082,9 +5085,155 @@ function updateSupervisionStatus(payload) {
   return { status: "success", message: `Estado de supervisión actualizado a ${nuevoEstado}.` };
 }
 
+// [F11-Task11] [P1] - Sistema de observaciones, rúbricas de supervisión y evaluaciones pedagógicas
+function saveSupervisionRubric(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const callerId = (payload && payload._verifiedUserId) || "Dirección";
+    const isAuthorized = ["Administrador", "Director", "Subdirector", "Coordinador"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "UNAUTHORIZED", message: "Acceso denegado: Rol no autorizado para gestionar rúbricas de supervisión." };
+    }
+
+    const { rubricaId, nombre, nivelEducativo, areaAcademica, criterios, escala, estado } = payload || {};
+    if (!nombre) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "nombre es un campo requerido para la rúbrica." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "RubricasSupervision");
+    const data = sheet.getDataRange().getValues();
+
+    const now = new Date();
+    const nowISO = now.toISOString();
+    let targetId = rubricaId ? String(rubricaId).trim() : "";
+    let foundIdx = -1;
+
+    if (targetId && data.length > 1) {
+      for (let i = 1; i < data.length; i++) {
+        if (String(data[i][0]).trim() === targetId) {
+          foundIdx = i;
+          break;
+        }
+      }
+    }
+
+    const critJSON = JSON.stringify(criterios || []);
+    const escJSON = JSON.stringify(escala || { Excelente: 4, Bueno: 3, Satisfactorio: 2, NecesitaMejora: 1 });
+    const est = estado || "Activa";
+
+    if (foundIdx !== -1) {
+      sheet.getRange(foundIdx + 1, 2).setValue(nombre);
+      sheet.getRange(foundIdx + 1, 3).setValue(nivelEducativo || "General");
+      sheet.getRange(foundIdx + 1, 4).setValue(areaAcademica || "General");
+      sheet.getRange(foundIdx + 1, 5).setValue(critJSON);
+      sheet.getRange(foundIdx + 1, 6).setValue(escJSON);
+      sheet.getRange(foundIdx + 1, 7).setValue(est);
+      sheet.getRange(foundIdx + 1, 10).setValue(nowISO);
+
+      logStructuredEvent("ACADEMIC", "saveSupervisionRubric", "INFO", "SUPERVISION_RUBRIC_UPDATED", `Rúbrica de supervisión ${targetId} actualizada`, { rubricaId: targetId, nombre }, verifiedRole);
+
+      return {
+        status: "success",
+        rubricaId: targetId,
+        message: `Rúbrica de supervisión '${nombre}' actualizada exitosamente.`
+      };
+    } else {
+      targetId = "RUB-SUP-" + now.getFullYear() + "-" + Math.floor(100000 + Math.random() * 900000);
+      sheet.appendRow([
+        targetId,
+        nombre,
+        nivelEducativo || "General",
+        areaAcademica || "General",
+        critJSON,
+        escJSON,
+        est,
+        callerId,
+        nowISO,
+        nowISO
+      ]);
+
+      logStructuredEvent("ACADEMIC", "saveSupervisionRubric", "INFO", "SUPERVISION_RUBRIC_CREATED", `Rúbrica de supervisión ${targetId} creada`, { rubricaId: targetId, nombre }, verifiedRole);
+
+      return {
+        status: "success",
+        rubricaId: targetId,
+        message: `Rúbrica de supervisión '${nombre}' creada exitosamente.`
+      };
+    }
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "saveSupervisionRubric", "ERROR", "SAVE_SUPERVISION_RUBRIC_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function getSupervisionRubrics(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const isAuthorized = ["Administrador", "Director", "Subdirector", "Coordinador", "Profesor"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "UNAUTHORIZED", message: "Acceso denegado: Rol no autorizado para consultar rúbricas de supervisión." };
+    }
+
+    const { rubricaId, nivelEducativo, areaAcademica, estado } = payload || {};
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "RubricasSupervision");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", totalRubricas: 0, rubricas: [] };
+
+    const rubricas = [];
+    for (let i = 1; i < data.length; i++) {
+      const r = data[i];
+      const rId = String(r[0] || "").trim();
+      const nom = String(r[1] || "").trim();
+      const nivel = String(r[2] || "").trim();
+      const area = String(r[3] || "").trim();
+      let crit = [];
+      try { crit = JSON.parse(r[4] || "[]"); } catch (e) { crit = []; }
+      let esc = {};
+      try { esc = JSON.parse(r[5] || "{}"); } catch (e) { esc = {}; }
+      const est = String(r[6] || "").trim();
+      const creadoPor = String(r[7] || "").trim();
+      const fCreacion = r[8];
+      const fAct = r[9];
+
+      if (rubricaId && rId !== String(rubricaId).trim()) continue;
+      if (nivelEducativo && nivel.toLowerCase() !== String(nivelEducativo).toLowerCase().trim()) continue;
+      if (areaAcademica && area.toLowerCase() !== String(areaAcademica).toLowerCase().trim()) continue;
+      if (estado && est.toLowerCase() !== String(estado).toLowerCase().trim()) continue;
+
+      rubricas.push({
+        rubricaId: rId,
+        nombre: nom,
+        nivelEducativo: nivel,
+        areaAcademica: area,
+        criterios: crit,
+        escala: esc,
+        estado: est,
+        creadoPor: creadoPor,
+        fechaCreacion: fCreacion,
+        ultimaActualizacion: fAct
+      });
+    }
+
+    return {
+      status: "success",
+      totalRubricas: rubricas.length,
+      rubricas: rubricas
+    };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "getSupervisionRubrics", "ERROR", "GET_SUPERVISION_RUBRICS_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
 function saveSupervisionObservation(payload) {
+  const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
   const { supervisionId, respuestasRubrica, evidenciasTexto, fortalezasTexto, oportunidadesMejora, comentarioDocente } = payload || {};
   if (!supervisionId) throw new Error("supervisionId es requerido.");
+
+  const isSupervisor = ["Administrador", "Director", "Subdirector", "Coordinador"].indexOf(verifiedRole) !== -1;
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "ObservacionesSupervision");
@@ -5094,17 +5243,30 @@ function saveSupervisionObservation(payload) {
   const idx = data.findIndex(r => String(r[1]).trim() === String(supervisionId).trim());
 
   const now = new Date();
-  const respJSON = JSON.stringify(respuestasRubrica || {});
 
   if (idx !== -1) {
+    // Si quien modifica es el docente o rol no directivo, NO puede alterar la pauta de evaluación registrada por la dirección
+    if (!isSupervisor) {
+      if (comentarioDocente !== undefined) {
+        sheet.getRange(idx + 1, 7).setValue(comentarioDocente);
+        sheet.getRange(idx + 1, 8).setValue(now);
+      }
+      return { status: "success", message: "Retroalimentación docente registrada. La pauta evaluativa oficial se mantiene inalterada." };
+    }
+
+    const respJSON = JSON.stringify(respuestasRubrica || {});
     sheet.getRange(idx + 1, 3).setValue(respJSON);
-    if (evidenciasTexto) sheet.getRange(idx + 1, 4).setValue(evidenciasTexto);
-    if (fortalezasTexto) sheet.getRange(idx + 1, 5).setValue(fortalezasTexto);
-    if (oportunidadesMejora) sheet.getRange(idx + 1, 6).setValue(oportunidadesMejora);
-    if (comentarioDocente) sheet.getRange(idx + 1, 7).setValue(comentarioDocente);
+    if (evidenciasTexto !== undefined) sheet.getRange(idx + 1, 4).setValue(evidenciasTexto);
+    if (fortalezasTexto !== undefined) sheet.getRange(idx + 1, 5).setValue(fortalezasTexto);
+    if (oportunidadesMejora !== undefined) sheet.getRange(idx + 1, 6).setValue(oportunidadesMejora);
+    if (comentarioDocente !== undefined) sheet.getRange(idx + 1, 7).setValue(comentarioDocente);
     sheet.getRange(idx + 1, 8).setValue(now);
   } else {
+    if (!isSupervisor) {
+      throw new Error("Acceso denegado: Solo el personal de supervisión o dirección puede registrar la evaluación inicial.");
+    }
     const obsId = "OBS-SUP-" + Date.now();
+    const respJSON = JSON.stringify(respuestasRubrica || {});
     sheet.appendRow([
       obsId,
       supervisionId,
@@ -5117,8 +5279,10 @@ function saveSupervisionObservation(payload) {
     ]);
   }
 
-  // Actualizar estado de supervisión a Finalizada
-  updateSupervisionStatus({ supervisionId, nuevoEstado: "Finalizada" });
+  // Actualizar estado de supervisión a Finalizada si es supervisor
+  if (isSupervisor) {
+    updateSupervisionStatus({ supervisionId, nuevoEstado: "Finalizada" });
+  }
 
   return { status: "success", message: "Observaciones de la supervisión guardadas exitosamente." };
 }
