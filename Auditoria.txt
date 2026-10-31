@@ -438,3 +438,18 @@ RESULTADO DE EVALUACIÓN:
 - Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
 - Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 37: AISLAMIENTO DE DATOS Y ASIGNACIÓN POR DEPARTAMENTO
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, backend/user-service/Code.gs, backend/academic-service/Code.gs, js/teacher.js, teacher-dashboard.html
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 37 correspondiente al Aislamiento de datos y asignación por departamento.
+- Se inspeccionaron las 12 subcapacidades funcionales (F37-01 a F37-12) y se evaluó la matriz completa de 32 pruebas funcionales (PT-F37-01 a PT-F37-32).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_37_AISLAMIENTO_DATOS_ASIGNACION_DEPARTAMENTOS.md.
+- Se identificó la robustez del control RBAC en servidor (validateRolePermission en user-service) y el soporte multi-hoja de CatalogoSpreadsheets en accounting-service.
+- Se detectaron brechas críticas en la asignación de destinos en importaciones (el backend acepta destinoModulo del cliente sin validar correspondencia semántica contra la entidad ni autorización de área), falta de máscaras de atributos mínimos en consultas interdepartamentales (exposición excesiva de datos de alumnos ante Contabilidad) y ausencia de comprobación de existencia de matrículas foráneas en transacciones de cobro.
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 6 tareas técnicas ([F37-Task01] a [F37-Task06]) organizadas en 2 bloques por prioridad (P0: Task01 a Task04; P1: Task05 a Task06) y orden secuencial recomendado (1 a 6) con parametrización configurable, preservando intactas todas las fases preexistentes (Fases 10 a 35).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
