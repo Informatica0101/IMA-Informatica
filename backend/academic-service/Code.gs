@@ -251,7 +251,7 @@ const ROLE_PERMISSIONS = {
     "saveCurricularConstraint", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule", "getReusableResourceCatalog", "manageReusableResource",
     "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentEnrollments",
     "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getBatchAttendanceRecords", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "generateConsolidatedAttendanceAndCoexistenceReport",
-    "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans",
+    "getTeacherSupervisions", "getSupervisionObservation", "saveSupervisionObservation", "getTeacherImprovementPlans",
     "calculateUnifiedAcademicGrade", "previewAcademicGradeCalculation", "auditAcademicGradesIntegrity", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess", "exportAcademicGradesData",
     "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "getPlanningReviewHistory", "getSupervisionRubrics"
   ],
@@ -6310,6 +6310,7 @@ function getScheduleScenarios(payload) {
   return { status: "success", data: scenarios };
 }
 
+// [F11-Task12] [P1] - Implementar el sistema de suplencias temporales y relevos docentes con alcance acotado
 /**
  * [TAREA-F7-IMP-16] Ampliar la gestión de sustituciones y la reasignación de clases afectadas
  * Registra y valida una sustitución docente temporal o prolongada, verificando disponibilidad,

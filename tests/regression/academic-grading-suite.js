@@ -90,6 +90,9 @@ assert(academicCode.includes("evaluateAndDispatchEarlyWarningAlerts") && academi
 assert(academicCode.includes("savePedagogicalPlanning") && academicCode.includes("[F11-Task09]"), "backend/academic-service/Code.gs contiene savePedagogicalPlanning y getPedagogicalPlannings [F11-Task09]");
 assert(academicCode.includes("submitPlanningForReview") && academicCode.includes("[F11-Task10]"), "backend/academic-service/Code.gs contiene submitPlanningForReview y reviewPedagogicalPlanning [F11-Task10]");
 assert(academicCode.includes("saveSupervisionRubric") && academicCode.includes("[F11-Task11]"), "backend/academic-service/Code.gs contiene saveSupervisionRubric y getSupervisionRubrics [F11-Task11]");
+assert(academicCode.includes("createTeacherSubstitution") && academicCode.includes("[F11-Task12]"), "backend/academic-service/Code.gs contiene createTeacherSubstitution y getTeacherSubstitutions [F11-Task12]");
+assert(acctCode.includes("performBankReconciliation") && acctCode.includes("[F11-Task13]"), "backend/accounting-service/Code.gs contiene performBankReconciliation [F11-Task13]");
+assert(acctCode.includes("checkBudgetAvailability") && acctCode.includes("[F11-Task14]"), "backend/accounting-service/Code.gs contiene checkBudgetAvailability [F11-Task14]");
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {

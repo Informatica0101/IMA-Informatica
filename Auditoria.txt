@@ -289,3 +289,36 @@ HALLAZGOS:
 3. Se requiere la tabla `RubricasSupervision` para parametrizar las pautas (criterios, ponderaciones, escalas de desempeño cualitativo/cuantitativo y nivel académico aplicable).
 4. Se deben configurar los permisos en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task12: IMPLEMENTAR EL SISTEMA DE SUPLENCIAS TEMPORALES Y RELEVOS DOCENTES CON ALCANCE ACOTADO
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se auditó el código de `createTeacherSubstitution` y `getTeacherSubstitutions` en `backend/academic-service/Code.gs`.
+- Se verificó que permite registrar sustitutos temporales vinculados a la oferta académica, verificando colisiones de horario en `HorariosClase`, manteniendo intacto el nombramiento del docente titular en `AsignacionesDocentes` y calculando el vencimiento automático de accesos al concluir `fechaFin`.
+- Cumple integralmente todos los requisitos funcionales de la tarea. De conformidad con la condición 6, se agregó el comentario identificativo `[F11-Task12]`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task13: DESARROLLAR LA CONCILIACIÓN BANCARIA ASISTIDA Y PAREO AUTOMÁTICO DE EXTRACTOS
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se auditó el código de `performBankReconciliation` en `backend/accounting-service/Code.gs`.
+- Se verificó que permite importar partidas bancarias, contrastarlas contra `MovimientosCajaBancos`, marcar los movimientos pareados y estructurar la conciliación mensual con registro de discrepancias.
+- Cumple integralmente todos los requisitos funcionales de la tarea. De conformidad con la condición 6, se agregó el comentario identificativo `[F11-Task13]`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task14: DESARROLLAR EL CONTROL PRESUPUESTARIO Y ALERTAS DE SOBREGIRO POR CENTRO DE COSTO
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `checkBudgetAvailability` con la etiqueta identificativa `[F11-Task14]` en `backend/accounting-service/Code.gs`.
+- Se verificó que compara montos presupuestados vs comprometidos y ejecutados en `PresupuestosInstitucionales`, calcula el saldo disponible (`saldoDisponible = montoAprobado - montoComprometido - montoEjecutado`) y genera advertencias y auditoría de sobregiro (`BUDGET_OVERRUN_ALERT`) ante solicitudes que excedan la partida disponible.
+- Registrados los permisos correspondientes en `ROLE_PERMISSIONS` y en el despachador `doPost`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================

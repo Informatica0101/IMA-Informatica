@@ -207,7 +207,7 @@
 
 ---
 
-### [ ] [F11-Task12] Implementar el sistema de suplencias temporales y relevos docentes con alcance acotado
+### [X] [F11-Task12] Implementar el sistema de suplencias temporales y relevos docentes con alcance acotado
 - **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área III (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Continuidad académica)
@@ -218,11 +218,11 @@
   Asignar suplentes temporales ante ausencias docentes, otorgando acceso acotado a las secciones del titular sin alterar el nombramiento original ni conceder acceso a otros grupos.
 - **Criterios de Aceptación:**
   - Al concluir el período de suplencia, los accesos temporales son revocados automáticamente.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
-### [ ] [F11-Task13] Desarrollar la conciliación bancaria asistida y pareo automático de extractos
+### [X] [F11-Task13] Desarrollar la conciliación bancaria asistida y pareo automático de extractos
 - **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área IV (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Control de tesorería)
@@ -233,11 +233,11 @@
   Permitir importar movimientos bancarios y compararlos contra ingresos/egresos internos, identificando partidas concilidadas y diferencias pendientes.
 - **Criterios de Aceptación:**
   - El sistema marca los movimientos pareados y genera la hoja de trabajo de conciliación del mes.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
-### [ ] [F11-Task14] Desarrollar el control presupuestario y alertas de sobregiro por centro de costo
+### [X] [F11-Task14] Desarrollar el control presupuestario y alertas de sobregiro por centro de costo
 - **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área IV (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Gestión presupuestaria)
@@ -248,7 +248,7 @@
   Comparar montos presupuestados vs ejecutados por departamento/centro de costo, emitiendo alertas cuando un gasto comprometa la partida asignada.
 - **Criterios de Aceptación:**
   - Se genera una advertencia o bloqueo presupuestario cuando una solicitud excede el presupuesto disponible.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

@@ -3521,3 +3521,36 @@ ARCHIVOS MODIFICADOS:
 - tests/regression/academic-grading-suite.js (línea ~92):
   Se agregó la aserción de comprobación para `saveSupervisionRubric` y `getSupervisionRubrics` con la etiqueta `[F11-Task11]`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task12 - Implementar el sistema de suplencias temporales y relevos docentes con alcance acotado
+ARCHIVOS MODIFICADOS:
+- backend/academic-service/Code.gs (líneas ~6310-6435):
+  Se verificó el código operativo de `createTeacherSubstitution` y `getTeacherSubstitutions`, el cual gestiona la asignación de suplentes temporales ante ausencias docentes con verificación de traslapes de horario y límites de carga sin alterar la asignación titular. Al expirar la fecha límite (`fechaFin`), la sustitución pasa automáticamente al estado 'Vencida' en la consulta efectiva.
+  Se incorporó el comentario identificativo `[F11-Task12]` en la cabecera de la función de acuerdo con la Regla 6.
+- tests/regression/academic-grading-suite.js (línea ~93):
+  Se agregó la aserción de comprobación para `createTeacherSubstitution` y `getTeacherSubstitutions` con la etiqueta `[F11-Task12]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task13 - Desarrollar la conciliación bancaria asistida y pareo automático de extractos
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (líneas ~5245-5310):
+  Se verificó la función `performBankReconciliation`, la cual importa partidas de extractos bancarios y ejecuta el pareo automático contra los registros de `MovimientosCajaBancos` por referencia y monto, clasificando coincidencias y diferencias y actualizando el estado de conciliación (`Conciliado` o `Pendiente Revisiones`).
+  Se agregó el comentario identificativo `[F11-Task13]` en la cabecera del bloque de código conforme a la Regla 6.
+- tests/regression/academic-grading-suite.js (línea ~94):
+  Se agregó la aserción de comprobación para `performBankReconciliation` con la etiqueta `[F11-Task13]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task14 - Desarrollar el control presupuestario y alertas de sobregiro por centro de costo
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (líneas ~193-195, ~558, ~8920-8980):
+  Se implementó la función `checkBudgetAvailability` con la etiqueta identificativa `[F11-Task14]`, la cual evalúa montos presupuestados versus comprometidos y ejecutados por centro de costo y partida presupuestaria, calculando el saldo disponible en tiempo real y disparando eventos de alerta `BUDGET_OVERRUN_ALERT` ante sobregiros.
+  Se incorporó el permiso en `ROLE_PERMISSIONS` para `Director`, `Subdirector` y `Contador` y se registró la acción en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~95):
+  Se agregó la aserción de comprobación para `checkBudgetAvailability` con la etiqueta `[F11-Task14]`.
+===============================================================================
