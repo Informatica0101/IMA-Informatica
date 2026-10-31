@@ -5147,43 +5147,57 @@
 
 ---
 
-# PENDIENTES - FASE 22: GESTIÓN DOCUMENTAL, FORMULARIOS Y FIRMA ELECTRÓNICA
+# PENDIENTES - FASE 22: GESTIÓN DOCUMENTAL, FORMULARIOS, FIRMA ELECTRÓNICA E INTEGRACIÓN CON CUADROS DE SACE
 
-## TAREAS CRÍTICAS (P0 - SEGURIDAD BINARIA, HASH CRIPTOGRÁFICO, CERTIFICADO DE FIRMA Y MARCO LEGAL)
+## TAREAS CRÍTICAS (P0 - SEGURIDAD BINARIA, HASH CRIPTOGRÁFICO, EXPEDIENTE PROBATORIO Y FIRMA AVANZADA)
 
 ---
 
-### [ ] [F22-Task01] Validación binaria de archivos adjuntos (Magic Bytes y Sanitización)
-- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-11), Sección G (Defecto 1) y Plan de Trabajo P0
+### [ ] [F22-Task01] Validación binaria, seguridad e integridad de archivos adjuntos
+- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-11), Sección G (Defecto 1) y Plan de Trabajo TAREA 22-01
 - **Prioridad:** P0
-- **Severidad/Clasificación:** Crítica (Seguridad perimetral, prevención de inyección de código malicioso y validación de tipos MIME reales)
+- **Severidad/Clasificación:** Crítica (Seguridad perimetral, prevención de inyección de código malicioso y validación de tipos binarios reales)
 - **Archivos Involucrados:**
   - `backend/accounting-service/Code.gs`
   - `backend/user-service/Code.gs` (`submitInstitutionalFormRequest`)
   - Google Drive API
-- **Dependencias Expuestas:** `submitInstitutionalFormRequest`, Google Drive API
+- **Dependencias Expuestas:** Google Drive, servicios de recepción de archivos, formularios institucionales, solicitudes y trámites, expedientes estudiantiles y laborales.
 - **Descripción del Alcance:**
-  Actualmente, los formularios y trámites aceptan archivos adjuntos validando únicamente el nombre y la extensión declarada en el cliente (`archivo.pdf`). Esto permite que un usuario malintencionado suba ejecutables, scripts o archivos dañinos renombrados como PDF.
+  La plataforma valida principalmente la extensión declarada en el nombre del archivo. Esto permite que un archivo ejecutable, corrupto o con contenido distinto al formato anunciado pueda presentarse como PDF o imagen y llegar al almacenamiento institucional en Google Drive.
   Requerimientos Funcionales Detallados:
-  1. Inspección binaria de encabezados (Magic Numbers):
-     - Leer los primeros bytes del archivo recibido en backend antes de almacenarlo en Google Drive:
+  1. Validación del contenido binario real:
+     - Centralizar la validación de archivos para que todos los módulos que reciben adjuntos utilicen los mismos controles de seguridad.
+     - Implementar validación del contenido binario real del archivo, sin confiar exclusivamente en el nombre, la extensión, el MIME declarado por el navegador ni el tipo de archivo seleccionado en el formulario.
+     - Reconocer y validar las firmas binarias (Magic Bytes) de los formatos permitidos, como mínimo:
        * PDF: debe comenzar obligatoriamente con `%PDF-` (`0x25, 0x50, 0x44, 0x46, 0x2D`).
        * JPEG/JPG: debe comenzar con `0xFF, 0xD8, 0xFF`.
        * PNG: debe comenzar con `0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A`.
-     - Si los bytes binarios no coinciden con la firma declarada, abortar inmediatamente arrojando una excepción de tipo de archivo inválido (`INVALID_FILE_SIGNATURE`).
-  2. Sanitización y límites de tamaño:
-     - Sanitizar el nombre del archivo eliminando caracteres especiales, secuencias de escape o rutas relativas (`../`).
-     - Validar que el archivo no esté vacío (0 bytes) y no supere el tamaño máximo autorizado configurable (ej. 10 MB).
+       * WEBP: contenedor RIFF con firma `WEBP`.
+       * DOCX / XLSX: contenedores PKZip (`0x50, 0x4B, 0x03, 0x04`) con validación de estructura de paquete OpenXML interna.
+  2. Comprobación estructural y rechazos preventivos:
+     - Comprobar que la estructura interna del archivo sea coherente con el formato detectado.
+     - Rechazar: ejecutables renombrados como documentos (`.exe`, `.sh`, `.bat`), archivos con extensión y contenido incompatibles, archivos corruptos o incompletos, archivos vacíos (0 bytes), formatos no autorizados y archivos que excedan los límites establecidos configurables (ej. 10 MB).
+     - Evitar que se acepten archivos con contenido activo o potencialmente peligroso cuando el formato o el contexto no lo requieran.
+     - Incorporar análisis antimalware mediante un mecanismo o servicio compatible cuando esté disponible.
+     - Registrar el resultado de la validación y el motivo específico de rechazo para orientar al usuario.
+     - Ejecutar la validación en el servidor antes de guardar definitivamente el archivo en Google Drive; un archivo rechazado no debe generar registros documentales incompletos ni asociarse a expedientes.
+     - Mantener el nombre original como metadato, sin utilizarlo como prueba del formato real.
 - **Criterios de Aceptación:**
-  - Subir un archivo PDF legítimo y comprobar que se valida y almacena exitosamente en Drive.
-  - Subir un archivo ejecutable renombrado a `.pdf` y verificar que el backend lo rechaza detectando la discrepancia binaria.
-  - Subir un archivo vacío o corrupto y comprobar que el sistema lo rechaza informando el error de integridad.
+  - [ ] Un ejecutable renombrado como PDF es rechazado inmediatamente por discrepancia binaria.
+  - [ ] Un archivo con MIME falso es identificado y catalogado por su contenido real.
+  - [ ] Un PDF válido puede cargarse y abrirse correctamente en el visor.
+  - [ ] Un PDF corrupto o truncado es rechazado con mensaje descriptivo.
+  - [ ] Una imagen válida es aceptada únicamente si corresponde a un formato permitido.
+  - [ ] Los archivos demasiado grandes son rechazados antes de su almacenamiento definitivo en Drive.
+  - [ ] Los errores de validación no generan registros documentales incompletos en las hojas.
+  - [ ] La validación se aplica a todos los módulos que permiten adjuntar documentos.
+  - [ ] Se conserva la trazabilidad del archivo y del resultado de su validación.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [ ] [F22-Task02] Hashing criptográfico SHA-256 y sellado inmutable de documentos emitidos y firmados
-- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-15), Sección G (Defecto 2) y Plan de Trabajo P0
+### [ ] [F22-Task02] Hash SHA-256 y vinculación criptográfica de las firmas con los documentos
+- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-15), Sección G (Defecto 2) y Plan de Trabajo TAREA 22-02
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Integridad documental matemática, valor probatorio inalterable y no repudio)
 - **Archivos Involucrados:**
@@ -5191,29 +5205,38 @@
   - `backend/user-service/Code.gs` (`registerDocumentSignature`)
   - `DocumentosEscolaresEmitidos`
   - `FirmasConformidades`
-- **Dependencias Expuestas:** `generateSchoolDocument`, `registerDocumentSignature`, `Utilities.computeDigest`
+- **Dependencias Expuestas:** Generación documental, almacenamiento de Drive, registros de firmas, control de versiones y certificados de finalización.
 - **Descripción del Alcance:**
-  Al emitir un documento oficial con CUV o registrar una firma/conformidad institucional, se genera un identificador aleatorio, pero no se calcula ni almacena el hash criptográfico SHA-256 del contenido final del documento. Esto imposibilita certificar matemáticamente ante un peritaje legal que el documento no fue alterado tras su emisión.
+  El sistema registra una conformidad digital mediante un token, una fecha y una dirección IP, pero no demuestra criptográficamente que el archivo firmado sea exactamente el mismo que existía al momento de la aceptación.
   Requerimientos Funcionales Detallados:
-  1. Cálculo de huella digital SHA-256:
-     - Al generar el documento oficial en `generateSchoolDocument`, calcular el hash SHA-256 de los bytes finales del archivo:
+  1. Huella criptográfica SHA-256 sobre bytes definitivos:
+     - Calcular una huella criptográfica SHA-256 del documento definitivo que será aceptado o firmado:
        `hashSHA256 = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, documentBytes)`
        `hashHex = bytesToHex(hashSHA256)`
-     - Almacenar el hash resultante en la columna `HashContenido` de `DocumentosEscolaresEmitidos`.
-  2. Sellado de firma electrónica:
-     - En `registerDocumentSignature`, capturar el hash SHA-256 del documento al momento exacto en que el firmante manifiesta su consentimiento, registrándolo en `FirmasConformidades`.
-  3. Verificación de integridad en CUV:
-     - Al consultar el documento mediante `verifySchoolDocumentByCUV`, incluir el hash criptográfico para permitir a los receptores externos validar la integridad bit a bit del archivo PDF.
+     - Calcular el hash sobre los bytes del archivo PDF definitivo, no únicamente sobre el HTML de la plantilla o los datos JSON utilizados para generarlo.
+     - Asociar la huella al registro de firma y al documento correspondiente en `FirmasConformidades` y `DocumentosEscolaresEmitidos`.
+  2. Metadatos de la vinculación criptográfica:
+     - Registrar: identificador del documento, identificador de la solicitud de firma, hash SHA-256, versión del documento, identidad del firmante, rol del firmante, fecha y hora de aceptación, método de autenticación utilizado e identificador de la transacción.
+     - Diferenciar entre: Hash del documento antes de la firma, Hash del documento final firmado y Hash de los anexos o evidencias (cuando corresponda).
+  3. Verificación de inmutabilidad:
+     - Impedir que una modificación posterior del documento se presente como parte de la misma firma.
+     - Permitir verificar la integridad de un documento comparando su hash actual con el hash registrado al momento de la firma.
+     - Si el documento cambia, generar una nueva versión y solicitar nuevamente las firmas que correspondan; una nueva versión nunca hereda las firmas anteriores.
+     - Vincular cada firma con una versión concreta e inmutable del documento.
 - **Criterios de Aceptación:**
-  - Todo documento emitido registra su hash SHA-256 único e irrepetible en la base de datos.
-  - Cualquier alteración en una sola letra del contenido produce un hash totalmente diferente, permitiendo detectar manipulaciones.
-  - El validador CUV expone la huella digital oficial para comprobación de autenticidad.
+  - [ ] Cada documento firmado tiene un hash SHA-256 asociado y persistido en la base de datos.
+  - [ ] El hash corresponde al archivo PDF definitivo generado en Drive.
+  - [ ] La verificación de un archivo sin modificaciones devuelve un resultado válido.
+  - [ ] La modificación de un solo byte provoca que la verificación de integridad falle inmediatamente.
+  - [ ] Una nueva versión del documento no hereda las firmas de una versión anterior.
+  - [ ] Las firmas conservan su vínculo con el documento y versión originales.
+  - [ ] El historial permite identificar cuándo se generó cada huella y a qué archivo corresponde.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [ ] [F22-Task03] Certificado de finalización de firma y pista de auditoría probatoria anexa
-- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-19), Sección D y Plan de Trabajo P0
+### [ ] [F22-Task03] Certificado de finalización y expediente probatorio de cada firma
+- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-19), Sección D y Plan de Trabajo TAREA 22-03
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Pista de auditoría probatoria, evidencia legal de consentimiento y estándar Certificate of Completion)
 - **Archivos Involucrados:**
@@ -5221,63 +5244,93 @@
   - `backend/accounting-service/Code.gs`
   - `FirmasConformidades`
   - `DocumentosEscolaresEmitidos`
-- **Dependencias Expuestas:** `FirmasConformidades`, `F22-Task02`, Generador PDF
+- **Dependencias Expuestas:** `F22-Task02`, gestión de firmas, almacenamiento documental y trazabilidad.
 - **Descripción del Alcance:**
-  Los documentos firmados digitalmente no cuentan con una hoja anexa de evidencias que certifique el proceso de firma, dificultando su presentación formal como prueba ante autoridades educativas o judiciales.
+  La plataforma conserva información básica de las conformidades, pero no genera un documento consolidado que permita revisar y verificar las evidencias de una transacción de firma para su validez legal ante terceros.
   Requerimientos Funcionales Detallados:
-  1. Generación del Certificado de Finalización de Firma (Audit Trail):
-     - Al completarse todas las firmas requeridas en un documento, generar automáticamente una página final anexa conteniendo:
-       * Identificador único de transacción y Código Único de Verificación (CUV).
-       * Título del documento y versión de la plantilla utilizada.
-       * Hash criptográfico SHA-256 del documento original antes de la firma.
-       * Detalle por cada firmante: Nombre completo, número de identidad (DNI/DPI), rol institucional, correo electrónico autenticado, dirección IP de conexión, fecha y hora en formato UTC / Hora Oficial de Honduras (GMT-6).
-       * Declaración expresa de consentimiento aceptada por el firmante.
-       * Hash final del documento sellado y token de verificación.
-  2. Fusión inmutable en el archivo PDF:
-     - Anexar la página de certificación al final del PDF oficial almacenado en Google Drive, protegiéndolo contra ediciones posteriores.
+  1. Generador de Certificado de Finalización (Audit Trail):
+     - Generar automáticamente un certificado de finalización asociado a cada proceso de firma completado, conteniendo:
+       * Identificador único de la transacción.
+       * Identificador y tipo de documento.
+       * Nombre o descripción del documento.
+       * Versión firmada.
+       * Hash SHA-256 del archivo.
+       * Relación completa de firmantes.
+       * Nombre e identidad de cada firmante (según los datos verificados disponibles).
+       * Rol con el que participó cada firmante.
+       * Método de autenticación utilizado.
+       * Fecha y hora exacta de cada aceptación (en formato UTC y Hora Oficial de Honduras GMT-6).
+       * Orden en el que se realizaron las firmas.
+       * Dirección IP y demás evidencias técnicas proporcionadas.
+       * Resultado final del proceso.
+       * Token o código de verificación (CUV).
+       * Identificador del proveedor de firma (cuando se utilice uno externo).
+  2. Preservación del expediente probatorio:
+     - El certificado debe permitir distinguir claramente entre una conformidad electrónica simple y una firma avanzada respaldada por un proveedor acreditado.
+     - Vincular el certificado al documento y al expediente correspondiente.
+     - Conservar el certificado como archivo independiente y relacionarlo con el PDF firmado (o como hoja anexa final del PDF).
+     - Evitar que el certificado pueda editarse o regenerarse con datos diferentes a los registrados originalmente.
+     - Incorporar verificación de integridad del certificado y del documento al que hace referencia.
 - **Criterios de Aceptación:**
-  - Al completarse la firma de un documento, el archivo PDF final incorpora automáticamente la página de certificación de auditoría.
-  - El certificado detalla inequívocamente a los firmantes, sus marcas de tiempo ISO, IPs y el hash SHA-256 del documento.
-  - La descarga del documento desde el portal familiar o secretaría incluye el certificado probatorio integrado.
+  - [ ] Una transacción completada genera su certificado automáticamente.
+  - [ ] El certificado identifica a todos los firmantes y sus respectivas actuaciones.
+  - [ ] Los datos coinciden con el historial real de la transacción.
+  - [ ] El certificado identifica el hash del documento firmado.
+  - [ ] El certificado puede descargarse y consultarse desde el expediente escolar.
+  - [ ] Una modificación del documento no altera retroactivamente el certificado.
+  - [ ] Las transacciones canceladas, rechazadas o vencidas no se presentan como firmas completadas.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [ ] [F22-Task04] Arquitectura para firma electrónica avanzada bajo la Ley de Firmas de Honduras (Decreto 149-2013)
-- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección C (7), Sección E (F22-16) y Plan de Trabajo P0
+### [ ] [F22-Task04] Integración con firma electrónica avanzada y proveedores de certificación (Decreto 149-2013)
+- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección C (7), Sección E (F22-16) y Plan de Trabajo TAREA 22-04
 - **Prioridad:** P0
-- **Severidad/Clasificación:** Crítica (Cumplimiento legal hondureño, contratos de matrícula vinculantes y convenios laborales de personal)
+- **Severidad/Clasificación:** Crítica (Cumplimiento normativo hondureño, contratos de matrícula vinculantes y convenios laborales docentes)
 - **Archivos Involucrados:**
   - `backend/accounting-service/Code.gs`
   - `backend/user-service/Code.gs`
   - Hoja `ConfiguracionFirmaAvanzada`
-- **Dependencias Expuestas:** `FirmasConformidades`, Prestadores de Servicios de Certificación (PSC)
+- **Dependencias Expuestas:** `F22-Task02`, `F22-Task03`, gestión documental, control de versiones, proveedores de certificación y revisión jurídica.
 - **Descripción del Alcance:**
-  La institución requiere diferenciar formalmente entre la "Conformidad Digital Institucional" (usada para permisos diarios y comunicados escolares) y la "Firma Electrónica Avanzada / Calificada" (requerida para contratos anuales de matrícula y contratos laborales bajo el Decreto No. 149-2013 de Honduras).
+  La plataforma dispone de mecanismos de aceptación electrónica simple, pero no de una integración con un Prestador de Servicios de Certificación (PSC) que permita gestionar los casos que requieran firma electrónica avanzada bajo el marco legal de Honduras.
   Requerimientos Funcionales Detallados:
-  1. Adaptador de integración para Prestador de Servicios de Certificación (PSC):
-     - Diseñar la interfaz de integración para proveedores de firma digital acreditados en Honduras (o prestadores internacionales con equivalencia legal reconocida).
-     - Parámetros configurables: URL del servicio PSC, identificador de emisor, tipo de certificado (X.509 v3), sellado de tiempo cualificado (RFC 3161).
-  2. Clasificación jurídica del documento:
-     - Cada plantilla documental debe definir el nivel de firma exigido:
-       * Nivel 1: `AceptacionSimple` (registro de usuario autenticado + IP + fecha).
-       * Nivel 2: `FirmaDigitalInstitucional` (token CUV + hash SHA-256 + certificado de auditoría anexo).
-       * Nivel 3: `FirmaAvanzadaCertificada` (firma PKI con certificado emitido por PSC acreditado).
-     - Prohibir que la plataforma declare falsamente cumplimiento de "Firma Electrónica Avanzada" en documentos de Nivel 1 o 2.
+  1. Arquitectura de integración con proveedores de certificación:
+     - Diseñar una arquitectura de integración con proveedores de firma electrónica y certificación compatibles con el marco normativo hondureño (Decreto Legislativo No. 149-2013 y Acuerdo Ejecutivo No. 41-2014).
+     - Incorporar una capa de integración desacoplada del proveedor específico que permita configurar credenciales, endpoints, certificados y parámetros de cada proveedor de forma segura.
+     - Permitir seleccionar el mecanismo de firma según la naturaleza del documento:
+       * Aceptación electrónica simple.
+       * Firma electrónica mediante proveedor externo.
+       * Firma electrónica avanzada (con certificado X.509 v3 y sellado de tiempo cualificado), cuando corresponda.
+  2. Gestión transaccional y validación:
+     - Soportar: creación de solicitudes de firma, identificación y autenticación de firmantes, entrega del documento, recepción del resultado, recuperación del documento firmado, recepción y validación de certificados y consulta del estado de la transacción.
+     - Verificar la autenticidad del resultado recibido y la integridad del documento.
+     - Registrar el identificador de transacción proporcionado por el proveedor.
+     - Gestionar fallos de comunicación, solicitudes pendientes, vencimientos, cancelaciones y reintentos sin generar firmas duplicadas.
+     - No considerar una firma completada hasta recibir y verificar la confirmación correspondiente del proveedor.
+  3. Consideraciones normativas hondureñas:
+     - La plataforma no debe afirmar que una firma dibujada, un nombre escrito, un token o una casilla constituyen automáticamente una firma electrónica avanzada.
+     - Los contratos de matrícula y laborales deben someterse a revisión jurídica para definir el mecanismo obligatorio.
 - **Criterios de Aceptación:**
-  - Las plantillas clasifican explícitamente el nivel de formalidad legal requerido.
-  - Se implementa el adaptador de conexión para firma avanzada con manejo de contingencia y reintentos.
-  - Los documentos emitidos reflejan de forma veraz y transparente el nivel de firma utilizado.
+  - [ ] Los tipos de documentos pueden configurarse según el mecanismo de firma requerido.
+  - [ ] Una solicitud externa puede crearse y consultarse.
+  - [ ] La plataforma identifica correctamente los estados pendientes, completados, rechazados, cancelados y vencidos.
+  - [ ] Un documento no se marca como firmado si el proveedor no confirma el resultado.
+  - [ ] Se verifica la integridad del documento recibido.
+  - [ ] Se conserva la evidencia de la transacción.
+  - [ ] Los fallos de conexión no generan firmas duplicadas ni documentos inconsistentes.
+  - [ ] La solución permite sustituir o incorporar otro proveedor sin reconstruir todo el módulo.
+  - [ ] No se presentan como avanzadas las firmas que no cumplen los requisitos correspondientes.
 - **Estado:** [ ] Pendiente
 
 ---
 
-## TAREAS DE ALTA PRIORIDAD (P1 - EXPLORADOR DOCUMENTAL, MÚLTIPLES FIRMANTES, IMPRIMIBLES Y LOTES)
+## TAREAS DE ALTA PRIORIDAD (P1 - EXPLORADOR DOCUMENTAL, MÚLTIPLES FIRMANTES, IMPRIMIBLES, LOTES Y COMPATIBILIDAD SACE)
 
 ---
 
-### [ ] [F22-Task05] Explorador centralizado de gestión documental institucional
-- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-01), Sección G (Defecto 4) y Plan de Trabajo P1
+### [ ] [F22-Task05] Explorador documental institucional unificado
+- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-01), Sección G (Defecto 4) y Plan de Trabajo TAREA 22-05
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Visibilidad institucional, búsqueda 360° de expedientes y eliminación de dispersión documental)
 - **Archivos Involucrados:**
@@ -5285,97 +5338,227 @@
   - `dashboard-secretaria.html`
   - `js/secretaria.js`
   - `backend/accounting-service/Code.gs` (nueva función `searchUnifiedDocumentRepository`)
-- **Dependencias Expuestas:** `DocumentosEscolaresEmitidos`, `DocumentosLaborales`, `SolicitudesTramites`, Google Drive API
+- **Dependencias Expuestas:** Persistencia documental existente, Google Drive, expedientes estudiantiles y laborales, permisos RBAC/ABAC y registros de trámites.
 - **Descripción del Alcance:**
-  Los documentos se encuentran dispersos en distintas hojas y carpetas sin una interfaz única donde la Dirección y Secretaría puedan consultar, filtrar y recuperar expedientes escolares y de personal de manera consolidada.
+  Los documentos se encuentran distribuidos entre diferentes hojas, carpetas y módulos sin una interfaz centralizada que permita consultar y administrar el archivo documental institucional de forma integral.
   Requerimientos Funcionales Detallados:
-  1. Vista de explorador documental unificado:
-     - Pantalla interactiva en dashboards administrativos con buscador global por: nombre del titular, número de identidad (DNI), código de documento, categoría, departamento, fecha de emisión y CUV.
-     - Árbol de categorías: Expedientes Estudiantiles (matrícula, constancias, reportes), Expedientes de Personal (contratos, evaluaciones, permisos), Trámites Administrativos y Compras/Finanzas.
-     - Previsualización rápida de documentos en visor PDF integrado y enlaces de descarga directa autorizada.
-     - Respetar aislamiento RBAC estricto: los usuarios solo visualizan los documentos permitidos según su rol.
+  1. Organización y clasificación multidimensional:
+     - Desarrollar un explorador centralizado para navegar por: Expedientes de estudiantes, Expedientes familiares, Expedientes de empleados, Departamentos institucionales, Tipos de documentos, Solicitudes y trámites, Documentos emitidos, Documentos pendientes de aprobación, Documentos firmados, Documentos vencidos, Documentos archivados, y Documentos financieros/administrativos.
+     - La clasificación debe utilizar metadatos y relaciones documentales, no depender exclusivamente de la ubicación física del archivo en Drive.
+  2. Búsqueda y filtros combinables:
+     - Filtros por: Nombre del estudiante o empleado, Identificador institucional, Grado y sección, Departamento, Categoría documental, Tipo de trámite, Fechas (creación, emisión, vencimiento), Estado, Responsable, Firmante, Código CUV y Número correlativo.
+     - Ordenamiento por fecha, nombre, categoría y estado.
+  3. Visualización y acciones autorizadas:
+     - Previsualizar el documento (PDF e imágenes), descargarlo, consultar metadatos, ver historial, consultar firmas y evidencias, ver expediente al que pertenece, acceder a versiones anteriores y archivar.
+     - Reunir información de registros existentes sin crear copias innecesarias de archivos en Drive.
+     - Paginación o carga progresiva, filtros persistentes durante navegación y diseño adaptable a móvil, tablet y escritorio.
 - **Criterios de Aceptación:**
-  - Un usuario administrativo puede buscar y localizar en segundos cualquier constancia, contrato o solicitud de un estudiante o empleado.
-  - Los filtros combinados devuelven resultados precisos sin mezclar expedientes confidenciales de otras áreas.
-  - Se permite previsualizar y descargar los archivos PDF legítimos directamente desde la plataforma.
+  - [ ] Un documento escolar emitido aparece en el explorador.
+  - [ ] Un documento laboral aparece en el explorador.
+  - [ ] Un archivo adjunto a una solicitud aparece relacionado con ella.
+  - [ ] Un mismo documento puede localizarse desde su expediente y desde su categoría sin duplicarse.
+  - [ ] Los filtros pueden combinarse.
+  - [ ] La búsqueda por CUV y número correlativo funciona.
+  - [ ] La previsualización y descarga respetan los permisos.
+  - [ ] Un usuario no puede consultar documentos de expedientes ajenos a su ámbito de autorización.
+  - [ ] El explorador identifica correctamente documentos pendientes, firmados, vencidos y archivados.
+  - [ ] La consulta no depende de que los archivos permanezcan en una carpeta física con un nombre determinado.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [ ] [F22-Task06] Flujo de múltiples firmantes en orden secuencial o paralelo
-- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-17), Sección D y Plan de Trabajo P1
+### [ ] [F22-Task06] Gestión de múltiples firmantes y enrutamiento secuencial o paralelo
+- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-17), Sección D y Plan de Trabajo TAREA 22-06
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Contratos con firma de ambos padres, convenios laborales firmados por director y docente, y aprobaciones encadenadas)
 - **Archivos Involucrados:**
   - `backend/user-service/Code.gs` (`submitAuthorizationRequest`, `respondToAuthorizationRequest`, `registerDocumentSignature`)
   - `SolicitudesAutorizacion`
   - `FirmasConformidades`
-- **Dependencias Expuestas:** `SolicitudesAutorizacion`, `FirmasConformidades`, `F22-Task03`
+- **Dependencias Expuestas:** `F22-Task02`, `F22-Task03`, `F22-Task04`, solicitudes de autorización, notificaciones y expedientes familiares.
 - **Descripción del Alcance:**
-  Las solicitudes actuales solo admiten un firmante individual o una autorización general. No se contemplan trámites que requieran la firma encadenada de dos o más personas (ej. Padre y Madre para excursión internacional, o Empleado -> Contador -> Director en un contrato).
+  El sistema permite registrar conformidades y gestionar autorizaciones de tutores, pero no dispone de un flujo general para que varios participantes firmen el mismo documento siguiendo un orden o participando simultáneamente.
   Requerimientos Funcionales Detallados:
-  1. Enrutamiento de múltiples firmantes:
-     - Configurar modalidad de firma: `Secuencial` (Firma 1 -> Firma 2 -> Firma 3) o `Paralela` (todos pueden firmar simultáneamente en cualquier orden).
-     - Para firma secuencial, notificar al segundo firmante únicamente cuando el primero haya suscrito exitosamente el documento.
-     - Si un firmante de la cadena rechaza el documento, cancelar el proceso e informar a los firmantes previos y al solicitante.
-     - El documento solo pasa a estado `EmitidoOficial` o `Completado` cuando todos los firmantes requeridos hayan firmado.
+  1. Configuración de múltiples firmantes por documento:
+     - Definir para cada firmante: identidad, rol, relación con el estudiante o proceso, tipo de participación, orden de firma, mecanismo de autenticación y fecha límite.
+  2. Modalidades secuencial y paralela:
+     - Secuencial: el siguiente firmante recibe la solicitud cuando el anterior completa su firma.
+     - Paralela: todos los firmantes autorizados pueden firmar sin esperar a los demás.
+     - Permitir combinar ambas modalidades mediante etapas.
+     - Soportar procesos como: firma de ambos padres o tutores, firma de tutor y dirección, firma de docente y coordinador, firma de empleado y representante institucional.
+  3. Reglas de completitud y enrutamiento:
+     - Diferenciar entre: todos los firmantes obligatorios, cualquiera de los firmantes autorizados, o firmantes opcionales.
+     - Impedir que un participante firme en nombre de otro sin una autorización válida.
+     - Registrar cada actuación individualmente.
+     - Permitir rechazar, declinar o cancelar una solicitud.
+     - Generar el documento final y certificado de finalización cuando se cumplan las condiciones configuradas.
 - **Criterios de Aceptación:**
-  - Se puede configurar una solicitud que exija la firma de dos tutores de forma secuencial.
-  - El segundo tutor no puede firmar hasta que el primero complete su participación.
-  - Si un participante rechaza el trámite, el flujo se detiene registrando el motivo.
-  - Al completar todas las firmas, el documento genera su certificado de auditoría consolidado con los datos de todos los firmantes.
+  - [ ] Se puede configurar un proceso con dos o más firmantes.
+  - [ ] El flujo secuencial respeta el orden establecido.
+  - [ ] El flujo paralelo permite firmar independientemente.
+  - [ ] El sistema identifica qué participantes han firmado y cuáles están pendientes.
+  - [ ] Una firma no autorizada es rechazada.
+  - [ ] Una firma duplicada no altera el estado del proceso.
+  - [ ] La negativa de un firmante produce el resultado configurado.
+  - [ ] El documento final contiene todas las firmas requeridas.
+  - [ ] El certificado identifica el orden y la fecha de cada firma.
+  - [ ] Una transacción incompleta no se presenta como finalizada.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [ ] [F22-Task07] Descarga de formularios imprimibles y carga diferida de escaneos
-- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-07), Sección C (2.6) y Plan de Trabajo P1
+### [ ] [F22-Task07] Formularios descargables, imprimibles y recepción posterior de documentos escaneados
+- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-07), Sección C (2.6) y Plan de Trabajo TAREA 22-07
 - **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Inclusión digital, atención a familias sin acceso a internet y digitalización física en ventanilla)
+- **Severidad/Clasificación:** Alta (Inclusión digital, atención a familias sin acceso continuo a internet y digitalización física en ventanilla)
 - **Archivos Involucrados:**
   - `backend/user-service/Code.gs`
   - `backend/accounting-service/Code.gs`
   - `FormulariosInstitucionales`
   - `SolicitudesTramites`
-- **Dependencias Expuestas:** `FormulariosInstitucionales`, `F22-Task01`
+- **Dependencias Expuestas:** Diseñador de formularios, generación PDF, repositorio documental, solicitudes y validación de archivos (`F22-Task01`).
 - **Descripción del Alcance:**
-  Para familias que no pueden completar trámites digitales desde teléfonos o computadoras, la institución requiere proveer formularios descargables en blanco para llenado manuscrito y permitir su posterior carga digitalizada por ventanilla.
+  El diseñador de formularios digitales está implementado, pero no se dispone de un flujo completo para descargar formularios en blanco, completarlos manualmente y reincorporarlos al expediente institucional.
   Requerimientos Funcionales Detallados:
-  1. Generación de formularios en blanco para impresión:
-     - Generar versión PDF imprimible de cada formulario institucional con título, instrucciones, campos con espacio suficiente para escritura a mano y código identificador de formulario en el encabezado.
-  2. Carga y asociación de formularios digitalizados:
-     - En el portal de secretaría, permitir registrar el trámite seleccionando el estudiante y cargando el escaneo o fotografía del formulario físico completado.
-     - Asociar el documento al expediente del alumno bajo la categoría correspondiente, quedando indexado y consultable de forma idéntica a un trámite digital nativo.
+  1. Versiones imprimibles de formularios:
+     - Permitir generar una versión imprimible de cada formulario institucional.
+     - Descargar el formulario en PDF sin respuestas ni datos personales cuando se solicite en blanco.
+     - Permitir generar versión personalizada con datos institucionales o del estudiante cuando corresponda.
+     - Incorporar identificador único de formulario o trámite, instrucciones de llenado y espacios adecuados para datos, fechas, firmas manuscritas y sellos.
+  2. Recepción y carga de documentos completados manualmente:
+     - Permitir cargar posteriormente el formulario escaneado o fotografiado desde el portal de secretaría o familiar.
+     - Relacionar el archivo recibido con el formulario original, la solicitud, el estudiante y el responsable de recepción.
+     - Permitir revisar la legibilidad antes de aceptarlo y mantener el archivo original escaneado.
+     - Diferenciar documentos completados manualmente de los completados digitalmente.
+     - Permitir que secretaría solicite una corrección o nueva carga cuando el escaneo sea ilegible o incompleto.
 - **Criterios de Aceptación:**
-  - Se puede descargar e imprimir cualquier formulario oficial en formato PDF limpio y legible.
-  - Secretaría puede subir el formulario físico escaneado e indexarlo en el expediente del alumno.
-  - El documento cargado se somete a las mismas validaciones de seguridad binaria y queda archivado en Drive.
+  - [ ] Un formulario puede descargarse en blanco en formato PDF limpio y legible.
+  - [ ] El PDF conserva su estructura y campos legibles al imprimirse.
+  - [ ] Cada descarga puede identificarse mediante un código único.
+  - [ ] El formulario escaneado puede cargarse posteriormente.
+  - [ ] El archivo queda relacionado con la solicitud original.
+  - [ ] Un escaneo ilegible puede devolverse para corrección.
+  - [ ] El sistema conserva el archivo original recibido.
+  - [ ] Se registra quién lo recibió, cuándo y cuál fue el resultado de la revisión.
+  - [ ] El proceso funciona desde dispositivos móviles y computadoras.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [ ] [F22-Task08] Generación masiva de documentos oficiales por grado o grupo
-- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-37), Sección C (2.4) y Plan de Trabajo P1
+### [ ] [F22-Task08] Generación masiva de documentos oficiales por grado, sección o grupo
+- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-37), Sección C (2.4) y Plan de Trabajo TAREA 22-08
 - **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Productividad en secretaría de fin de año, emisión masiva de diplomas y constancias)
+- **Severidad/Clasificación:** Alta (Productividad en secretaría de fin de año, emisión masiva de diplomas y constancias escolares)
 - **Archivos Involucrados:**
   - `backend/accounting-service/Code.gs` (nueva función `batchGenerateSchoolDocuments`)
   - `PlantillasEscolares`
   - `DocumentosEscolaresEmitidos`
   - `js/teacher.js`
-- **Dependencias Expuestas:** `generateSchoolDocument`, `F22-Task02`, `LockService`
+- **Dependencias Expuestas:** Motor de plantillas, CUV, correlativos, expedientes estudiantiles y almacenamiento documental (`F22-Task02`, `LockService`).
 - **Descripción del Alcance:**
-  Actualmente, las constancias o certificados oficiales deben emitirse estudiante por estudiante de forma individual. Al finalizar el período escolar, secretaría requiere generar documentos para toda una sección (ej. 30 alumnos) en una sola operación.
+  La generación documental funciona individualmente, pero no permite emitir eficientemente documentos oficiales para grupos completos de estudiantes en secretaría de fin de ciclo.
   Requerimientos Funcionales Detallados:
   1. Emisión por lotes (Batch Processing):
-     - Seleccionar plantilla oficial y grupo de estudiantes (por grado y sección o lista de IDs).
-     - Procesar iterativamente cada alumno generando para cada uno su CUV único, correlativo oficial consecutivo y archivo PDF individualizado.
-     - Manejo de excepciones: si un alumno presenta datos incompletos, registrar el fallo en un resumen de emisión sin abortar el resto del lote.
-     - Entregar al operador un resumen de la emisión masiva (total procesados, total exitosos, fallidos con detalle) y un enlace para descargar un archivo comprimido ZIP con todos los PDFs generados.
+     - Permitir seleccionar un conjunto de estudiantes mediante criterios: Año lectivo, Nivel educativo, Grado, Sección, Jornada, Grupo, o Estado de matrícula.
+     - Seleccionar el tipo de documento y la plantilla que se utilizará.
+     - Generar un documento independiente para cada estudiante completando las variables con sus datos particulares.
+     - Asignar un correlativo independiente y un CUV único a cada documento del lote.
+     - Evitar duplicados cuando se repita una operación por error mediante claves de idempotencia.
+     - Permitir excluir estudiantes que no cumplan los requisitos de emisión (ej. retención de notas por morosidad o expediente incompleto).
+  2. Experiencia de procesamiento y descarga:
+     - Mostrar vista previa y resumen antes de confirmar la operación.
+     - Procesar lotes grandes sin bloquear la interfaz mostrando progreso individual y general.
+     - Permitir descargar los documentos individualmente o agrupados en un archivo comprimido ZIP.
+     - Registrar el resultado de cada documento, separando documentos exitosos de los que presenten errores.
+     - Permitir reanudar una operación interrumpida sin duplicar documentos ya emitidos.
 - **Criterios de Aceptación:**
-  - Se puede emitir una constancia masiva para un grupo de 25 estudiantes en una sola ejecución.
-  - Cada documento generado posee su propio CUV irrepetible y correlativo consecutivo exacto.
-  - Los errores individuales no interrumpen la generación del resto de los documentos del grupo.
+  - [ ] Se puede seleccionar un grado y sección completos.
+  - [ ] Se genera un documento por cada estudiante elegible.
+  - [ ] Cada documento contiene los datos del alumno correspondiente.
+  - [ ] No se repiten CUV ni números correlativos.
+  - [ ] Un error individual no invalida los documentos correctamente generados del lote.
+  - [ ] Se puede consultar el resultado de cada elemento del lote.
+  - [ ] Una operación interrumpida puede reanudarse sin duplicaciones.
+  - [ ] Los documentos pueden descargarse individualmente y en conjunto (ZIP).
+  - [ ] El historial identifica quién ejecutó la emisión y cuándo.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F22-Task09] Compatibilidad con las plantillas oficiales de cuadros de calificaciones de SACE
+- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E, Sección G y Plan de Trabajo TAREA 22-09
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Compatibilidad con el sistema educativo oficial SACE de Honduras, llenado exacto de calificaciones y preservación de formato)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`fillAndExportSACETemplate`, `validateSACETemplateFile`, `verifySACETemplateCompatibility`)
+  - `js/teacher.js` (Cuadro de Calificaciones)
+  - Archivos Excel oficiales SACE en repositorio
+- **Dependencias Expuestas:** Cuadro de calificaciones docente, registros académicos, matrícula, asignaturas, grados y secciones, repositorio de plantillas SACE y mecanismo de procesamiento de archivos Excel.
+- **Descripción del Alcance:**
+  La plataforma administra calificaciones académicas, pero necesita exportar los resultados al formato oficial de cuadros de calificaciones de SACE completando correctamente el archivo oficial que el docente utiliza y entrega, sin reconstruirlo desde cero ni alterar su estructura original.
+  Requerimientos Funcionales Detallados:
+  1. Análisis y mapeo de las plantillas oficiales de SACE:
+     - Localizar y examinar los archivos de cuadros de SACE disponibles en el repositorio.
+     - Analizar cada archivo para determinar: hojas de cálculo incluidas, nombres y distribución, filas y columnas utilizadas, celdas combinadas, encabezados institucionales, centro educativo, año lectivo, grado, sección, jornada, asignatura, identificación del docente, lista de alumnos, columnas de calificaciones por parcial, totales/promedios, fórmulas preexistentes, validaciones de datos, formatos numéricos y áreas protegidas.
+     - Determinar exactamente qué dato de la plataforma corresponde a cada celda del archivo oficial.
+     - Reconocer las fórmulas que ya incorpora SACE y conservarlas intactas sin sustituirlas por valores estáticos calculados, salvo exigencia expresa de la plantilla.
+  2. Reconocimiento y validación del archivo seleccionado:
+     - Al seleccionar «Llenar cuadro de SACE» en el menú del cuadro de notas del docente, abrir el selector para elegir el archivo Excel oficial.
+     - Analizar el archivo y comprobar: que corresponde a una plantilla SACE reconocida, que el grado coincide con el que califica el docente, que la sección coincide, que la asignatura corresponde, que el año lectivo es correcto y que la lista de alumnos coincide.
+     - Si existe incompatibilidad, detener el proceso y explicar exactamente qué dato no coincide.
+  3. Correspondencia estricta de alumnos y calificaciones:
+     - Leer la lista de alumnos incluida en el archivo oficial y establecer correspondencia con la plataforma mediante identidad oficial (DNI) o comparación robusta de nombres (manejando mayúsculas, acentos, espacios y orden de apellidos).
+     - Nunca asignar una calificación basándose en una coincidencia dudosa de nombres; si no es confiable, solicitar revisión.
+     - Detectar alumnos ausentes en SACE o en la plataforma e informar discrepancias.
+     - Colocar cada calificación en la celda correspondiente al alumno y parcial.
+     - Respetar la escala de calificación; no convertir calificaciones vacías en ceros ni sustituir valores sin advertirlo.
+  4. Conservación absoluta del formato del archivo oficial:
+     - Modificar exclusivamente las celdas de calificaciones y datos autorizados del mapeo.
+     - Conservar: nombre original del archivo, estructura y orden de hojas, celdas combinadas, fuentes, tamaños, bordes, colores, anchos de columna, fórmulas, configuración de impresión y áreas de impresión.
+     - Prohibido convertir a CSV/PDF para reconstruir como Excel ni generar archivos nuevos con apariencia aproximada.
+  5. Descarga automática del archivo completado:
+     - Al terminar, iniciar automáticamente la descarga del archivo completado conservando el nombre original exacto, formato y extensión.
+     - Mostrar confirmación con resumen de alumnos identificados y notas colocadas, advirtiendo si quedaron elementos sin correspondencia.
+- **Criterios de Aceptación:**
+  - [ ] Se identifican y analizan las plantillas SACE existentes en el repositorio documentando el mapeo.
+  - [ ] La opción «Llenar cuadro de SACE» aparece en el menú de acciones del cuadro de calificaciones.
+  - [ ] El sistema identifica asignatura, grado, sección y año lectivo del archivo seleccionado.
+  - [ ] Se rechaza un archivo correspondiente a otra asignatura, grado o sección.
+  - [ ] Se reconoce correctamente la lista de alumnos que ya contiene el archivo SACE.
+  - [ ] Las calificaciones se asignan a los alumnos correctos sin que las vacías se conviertan en cero.
+  - [ ] Las fórmulas originales y celdas ajenas al mapeo permanecen intactas.
+  - [ ] El archivo conserva su nombre original, formato Excel, hojas, estilos y configuración de impresión.
+  - [ ] La descarga comienza automáticamente y el archivo abre en Excel sin advertencias de reparación.
+  - [ ] El sistema informa cualquier alumno o calificación que no haya podido procesarse.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F22-Task10] Administración de versiones y compatibilidad de plantillas SACE
+- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E, Sección G y Plan de Trabajo TAREA 22-10
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Gestión de cambios de formato oficial SACE, retrocompatibilidad y mapeo versionado)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - Hoja `PlantillasSACEVerificadas`
+- **Dependencias Expuestas:** `F22-Task09`, repositorio de archivos SACE y mecanismo de procesamiento Excel.
+- **Descripción del Alcance:**
+  Las plantillas oficiales de SACE pueden cambiar entre períodos o años lectivos. Si el sistema utiliza posiciones fijas, una actualización del formato ministerial podría provocar que las notas se escriban en columnas erróneas.
+  Requerimientos Funcionales Detallados:
+  1. Catálogo versionado de plantillas SACE:
+     - Separar el reconocimiento de plantillas de la escritura de calificaciones.
+     - Registrar en `PlantillasSACEVerificadas`: Identificador, Versión, Año lectivo/vigencia, Tipo de cuadro, Grado o nivel aplicable, Asignatura aplicable, Estructura de hojas, Mapeo de celdas (`ColumnasMapJSON`), Reglas de identificación de alumnos y Reglas de conservación.
+  2. Validación estructural previa:
+     - Detectar cambios en encabezados, posiciones, nombres de hojas y celdas combinadas.
+     - Identificar plantillas desconocidas o modificadas; evitar utilizar un mapeo antiguo cuando la estructura no coincida.
+     - Permitir probar una plantilla nueva con archivos de ejemplo antes de habilitarla.
+     - Mantener disponibles las versiones anteriores para procesar cuadros históricos.
+- **Criterios de Aceptación:**
+  - [ ] Se pueden registrar y administrar distintas versiones de plantillas SACE.
+  - [ ] El sistema identifica la versión de la plantilla del archivo seleccionado.
+  - [ ] Un archivo modificado de forma incompatible es rechazado con explicación clara.
+  - [ ] Una nueva plantilla puede configurarse y probarse sin alterar las existentes.
+  - [ ] Cada procesamiento registra la versión del mapeo utilizado.
 - **Estado:** [ ] Pendiente
 
 ---
@@ -5384,60 +5567,100 @@
 
 ---
 
-### [ ] [F22-Task09] Reconocimiento asistido de datos en documentos escaneados (OCR)
-- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-30), Sección C (2.22) y Plan de Trabajo P2
+### [ ] [F22-Task11] OCR y extracción asistida de información documental
+- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-30), Sección C (2.22) y Plan de Trabajo TAREA 22-11
 - **Prioridad:** P2
-- **Severidad/Clasificación:** Media (Productividad en admisión, digitalización ágil y extracción de datos en partidas de nacimiento)
+- **Severidad/Clasificación:** Media (Productividad en secretaría, digitalización ágil y extracción de datos en partidas de nacimiento)
 - **Archivos Involucrados:**
   - `backend/user-service/Code.gs` (nueva función `extractDocumentDataOCR`)
   - Google Drive OCR API
-- **Dependencias Expuestas:** Google Drive OCR API, Expedientes de Estudiantes
+- **Dependencias Expuestas:** Repositorio documental, validación de archivos, expedientes y servicio OCR.
 - **Descripción del Alcance:**
-  Al recibir partidas de nacimiento, certificados de estudio de otros colegios o tarjetas de vacunación, el personal debe transcribir manualmente todos los datos (nombres, fechas de nacimiento, número de identidad).
+  La plataforma no dispone de reconocimiento óptico de caracteres para extraer información de documentos escaneados, obligando a transcribir manualmente datos de certificados y partidas de nacimiento.
   Requerimientos Funcionales Detallados:
   1. Extracción óptica asistida (OCR):
-     - Permitir procesar imágenes o PDFs nítidos de documentos de identidad utilizando las capacidades de extracción de texto de Drive API.
-     - Identificar campos clave (número de identidad, nombres, apellidos, fecha de nacimiento).
-     - Presentar los datos extraídos en un formulario de revisión humana para su validación previa.
-     - Prohibir taxativamente que los datos extraídos por OCR modifiquen automáticamente los registros oficiales de matrícula sin la confirmación de un operador de secretaría facultado.
+     - Incorporar OCR para documentos PDF escaneados e imágenes de uso frecuente: Partidas de nacimiento, Certificados de estudio, Identificaciones (DNI), Constancias y Documentos de admisión.
+     - Extraer campos configurables: Nombre, Apellidos, Fecha de nacimiento, Número de identidad, Lugar de nacimiento, Nombres de tutores, Fechas de emisión e Institución emisora.
+  2. Revisión humana obligatoria:
+     - Mostrar los datos extraídos en una interfaz de revisión indicando nivel de confianza o campos dudosos.
+     - Permitir corregir manualmente la información.
+     - Conservar el documento original y registrar quién confirmó los datos.
+     - Prohibir taxativamente sobrescribir información institucional existente sin autorización y confirmación humana.
 - **Criterios de Aceptación:**
-  - Se procesa un documento escaneado y se extrae el texto legible con asistencia visual.
-  - Los campos sugeridos se muestran en pantalla para verificación obligatoria del operador.
-  - Ningún registro institucional se actualiza sin la confirmación humana explícita.
+  - [ ] Se puede procesar un PDF escaneado o imagen de documento oficial.
+  - [ ] Los datos extraídos se presentan en pantalla para revisión previa.
+  - [ ] Los campos dudosos se identifican visualmente.
+  - [ ] La persona autorizada puede corregir los resultados antes de guardar.
+  - [ ] No se modifican registros institucionales sin confirmación humana explícita.
+  - [ ] El documento original permanece íntegro y disponible.
 - **Estado:** [ ] Pendiente
 
 ---
 
-## TAREAS DE ASEGURAMIENTO Y CALIDAD (P0 - SUITE INTEGRAL DE REGRESIÓN DE GESTIÓN DOCUMENTAL)
+### [ ] [F22-Task12] Importación y exportación masiva de documentos y metadatos
+- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-32), Sección C (2.24) y Plan de Trabajo TAREA 22-12
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Migración de archivos históricos, respaldo masivo y exportación estructurada)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `backend/user-service/Code.gs`
+  - Google Drive API
+- **Dependencias Expuestas:** Repositorio documental, expedientes, permisos y almacenamiento de Drive.
+- **Descripción del Alcance:**
+  La importación y exportación documental está parcialmente implementada y no proporciona un mecanismo completo para migrar, consultar o administrar grandes volúmenes de documentos institucionales.
+  Requerimientos Funcionales Detallados:
+  1. Importación masiva con metadatos:
+     - Permitir importar documentos acompañados de sus metadatos desde archivos estructurados (CSV y XLSX): Identificador del estudiante/empleado, Tipo documental, Categoría, Fecha, Descripción, Estado y Relación con expediente.
+     - Asociar los archivos físicos con los registros importados validando relaciones e identificadores.
+     - Detectar duplicados por hash SHA-256 e identificadores.
+     - Mostrar vista previa de los registros antes de confirmar.
+  2. Exportación masiva y respaldos:
+     - Permitir exportar listados de metadatos según filtros y permisos RBAC.
+     - Descargar documentos seleccionados individualmente o en archivo comprimido ZIP.
+     - Registrar el resultado de cada importación y permitir reanudar procesos interrumpidos sin duplicar registros.
+- **Criterios de Aceptación:**
+  - [ ] Se pueden importar metadatos desde archivos CSV o XLSX.
+  - [ ] Los archivos físicos se asocian con los registros correspondientes.
+  - [ ] Se detectan y alertan registros duplicados por hash.
+  - [ ] Los errores se muestran claramente antes de confirmar la importación.
+  - [ ] Se exporta información filtrada respetando estrictamente los permisos.
+  - [ ] Las operaciones interrumpidas pueden recuperarse sin duplicar información.
+- **Estado:** [ ] Pendiente
 
 ---
 
-### [ ] [F22-Task10] Implementar suite automatizada de pruebas y regresión integral de gestión documental
-- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección G (P0), Sección F y Plan de Trabajo F22-10
+## TAREAS DE ASEGURAMIENTO Y CALIDAD (P0 - SUITE INTEGRAL DE REGRESIÓN DE GESTIÓN DOCUMENTAL Y SACE)
+
+---
+
+### [ ] [F22-Task13] Suite de pruebas automatizadas y regresión integral de la Fase 22
+- **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección G (P0), Sección F y Plan de Trabajo TAREA 22-13
 - **Prioridad:** P0
-- **Severidad/Clasificación:** Crítica (Aseguramiento continuo de emisión documental, correlativos CUV, firmas electrónicas y no regresión)
+- **Severidad/Clasificación:** Crítica (Aseguramiento continuo de emisión CUV, correlativos seguros, firmas, compatibilidad SACE y no regresión)
 - **Archivos Involucrados:**
   - `backend/accounting-service/Code.gs`
   - `backend/user-service/Code.gs`
   - `backend/developer-service/Code.gs`
   - `tests/regression/academic-grading-suite.js`
-- **Dependencias Expuestas:** Todas las tareas de la Fase 22 (`F22-Task01` a `F22-Task09`), suites de pruebas del ecosistema institucional
+- **Dependencias Expuestas:** Todas las tareas de la Fase 22 (`F22-Task01` a `F22-Task12`), suites de pruebas del ecosistema institucional.
 - **Descripción del Alcance:**
-  Implementar la suite integral automatizada `runPhase22DocumentManagementRegressionSuite` que valide de manera continua el diseñador de plantillas, emisión con CUV, numeración correlativa segura, formularios dinámicos, flujos de aprobación por etapas, sellado de firmas y no regresión de las fases anteriores.
+  Implementar la suite integral automatizada `runPhase22DocumentManagementAndSACERegressionSuite` que valide de manera continua la generación documental con CUV, concurrencia, validación binaria, hash criptográfico de firmas, explorador documental, flujos de aprobación y procesamiento exacto de cuadros oficiales SACE sin regresión de las fases anteriores.
   Requerimientos Funcionales Detallados:
-  1. Batería obligatoria de pruebas automatizadas:
-     - Plantillas: configuración, versionado v1.0 a v1.1, sustitución de variables dinámicas y previsualización.
-     - Generación CUV: correlativo secuencial anual, código CUV irrepetible y verificación pública mediante `verifySchoolDocumentByCUV`.
-     - Formularios: publicación de formulario con definición JSON, envío de trámite y vinculación de adjuntos.
-     - Flujos y decisiones: registro de aprobación en `RevisionesDecisionesTramite` y actualización de estado en `SolicitudesTramites`.
-     - Firma y auditoría: generación de token de firma con IP y fecha, y bloqueo por vencimiento de fecha límite.
-     - Concurrencia: adquisición de `LockService` garantizando numeraciones correlativas consecutivas sin colisión.
+  1. Batería de pruebas automatizadas:
+     - Documentos y almacenamiento: generación de documentos, correlativos anuales, CUV único, concurrencia con `LockService`, versionado de plantillas v1.0/v1.1, validación binaria de archivos (Magic Bytes) y recuperación documental.
+     - Formularios y trámites: creación de formularios con definición JSON, envío de solicitudes, adjuntos en Drive, revisión y aprobación de trámites, rechazo justificado, vencimientos y trazabilidad.
+     - Firmas: aceptación simple, cálculo de hash SHA-256, verificación de integridad, certificado de finalización de firma, múltiples firmantes secuenciales/paralelos y detección de documentos modificados.
+     - Explorador documental: búsqueda por CUV/correlativo, filtros combinados, previsualización y aislamiento RBAC/ABAC entre expedientes.
+     - Cuadros SACE: reconocimiento de plantillas oficiales en repositorio, validación de asignatura/grado/sección, correspondencia estricta de alumnos sin ceros automáticos, conservación absoluta de fórmulas, estilos y áreas de impresión, y descarga automática.
   2. No regresión del ecosistema:
-     - Garantizar que la suite opere en entorno controlado sin alterar registros de producción ni las 53 pruebas de regresión previas de las Fases 9, 10, 11, 15, 16, 17, 18, 19, 20 y 21.
+     - Verificar que las nuevas implementaciones no alteren registros de producción ni deterioren las 53 pruebas de regresión previas de las Fases 9, 10, 11, 15, 16, 17, 18, 19, 20 y 21.
 - **Criterios de Aceptación:**
-  - La suite de regresión ejecuta todas las pruebas de gestión documental con el 100% de éxito (`PASS`).
-  - Se valida el bloqueo estricto de colisiones en CUV y números correlativos.
-  - Las suites de regresión previas (53/53 pruebas) se mantienen aprobadas al 100%.
+  - [ ] Las pruebas de generación CUV y correlativos se ejecutan correctamente garantizando unicidad.
+  - [ ] Las pruebas de integridad criptográfica detectan documentos alterados.
+  - [ ] Las pruebas de permisos detectan y bloquean accesos no autorizados a expedientes.
+  - [ ] Las pruebas de flujos verifican todos los estados y transiciones válidas.
+  - [ ] Las pruebas SACE verifican las celdas y notas de cada alumno preservando el formato original del libro Excel.
+  - [ ] Las funcionalidades previamente verificadas mantienen su comportamiento y las 53 pruebas previas se mantienen aprobadas al 100%.
 - **Estado:** [ ] Pendiente
 
 ---
