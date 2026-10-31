@@ -3822,3 +3822,423 @@
 - **Estado:** [ ] Pendiente
 
 ---
+
+# PENDIENTES - FASE 21: TRANSPORTE ESCOLAR Y SERVICIOS COMPLEMENTARIOS
+
+## TAREAS CRÍTICAS (P0 - SEGURIDAD INFANTIL, CONTROL DE CUPOS, ABORDAJE Y AUTORIZACIONES DE ENTREGA)
+
+---
+
+### [ ] [F21-Task01] Control estricto de cupos y prevención de sobrecupo en rutas escolares
+- **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-02), Sección G (Defecto 1) y Plan de Trabajo P0
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Seguridad física de estudiantes, cumplimiento de límites legales de capacidad vehicular y prevención de colisiones)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`assignStudentTransport`, `getTransportRoutes`, `getTransportAssignments`)
+  - `TransporteRutas`
+  - `TransporteAsignaciones`
+- **Dependencias Expuestas:** `TransporteRutas`, `TransporteAsignaciones`, `LockService`
+- **Descripción del Alcance:**
+  Actualmente, `assignStudentTransport` inserta registros de forma incondicional sin verificar cuántos estudiantes se encuentran activos en la ruta frente a la capacidad de pasajeros de la unidad (`capacidad` en `TransporteRutas`), permitiendo sobrecupos ilegales e inseguros. Además, no valida si el estudiante ya tiene otra ruta asignada en el mismo horario.
+  Requerimientos Funcionales Detallados:
+  1. Validación atómica de cupos disponibles:
+     - Adquirir bloqueo mediante `LockService.getScriptLock()` antes de asignar.
+     - Contar las asignaciones activas actuales de la ruta: `cuposOcupados = countActiveAssignments(rutaId)`.
+     - Comparar contra la capacidad autorizada del vehículo asignado a la ruta.
+     - Si `cuposOcupados >= capacidad`, rechazar la asignación con excepción descriptiva indicando que la ruta se encuentra al 100% de capacidad.
+  2. Prevención de colisiones horarias y asignaciones duplicadas:
+     - Comprobar si el estudiante ya cuenta con una asignación activa en el mismo horario/jornada escolar.
+     - Si ya está asignado a otra ruta simultánea, rechazar la operación para evitar conflictos de movilidad.
+  3. Lista de espera automática:
+     - Si la ruta está llena, permitir registrar al estudiante en estado `ListaEspera` sin ocupar asiento físico.
+- **Criterios de Aceptación:**
+  - Crear una ruta con capacidad para 25 estudiantes; intentar asignar al estudiante número 26 y verificar que el sistema rechaza la operación por cupo agotado.
+  - Al cancelar o dar de baja una asignación, el cupo se libera inmediatamente permitiendo una nueva inscripción.
+  - Se bloquea la asignación simultánea de un mismo estudiante a dos rutas con horarios coincidentes.
+  - Las operaciones concurrentes bajo solicitudes simultáneas respetan estrictamente el tope máximo de pasajeros.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F21-Task02] Blindaje de privacidad y aislamiento RBAC en consultas de transporte
+- **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-49), Sección G (Defecto 2) y Plan de Trabajo P0
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Privacidad y protección de datos de menores, FERPA y prevención de divulgación de paradas a terceros)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`getTransportAssignments`, `getTransportRoutes`)
+  - `TransporteAsignaciones`
+  - `ExpedientesFamiliares`
+- **Dependencias Expuestas:** `ROLE_PERMISSIONS`, `validateRolePermission`, `ExpedientesFamiliares`
+- **Descripción del Alcance:**
+  `getTransportAssignments` devuelve todas las asignaciones institucionales si se invoca sin el parámetro `estudianteUserId`, permitiendo a usuarios con rol `Padre` o `Estudiante` consultar rutas, paradas exactas y horarios de otros menores no vinculados a su núcleo familiar.
+  Requerimientos Funcionales Detallados:
+  1. Aislamiento estricto por rol (RBAC/ABAC):
+     - Para roles `Padre`, `Tutor`, `Responsable`: restringir la consulta exclusivamente a los `estudianteUserId` formalmente vinculados al usuario en los expedientes familiares. Si intenta consultar un alumno no autorizado, denegar con error de acceso.
+     - Para roles `Estudiante`, `Alumno`: permitir consultar únicamente sus propios datos de transporte.
+     - Para rol `Conductor` / `Acompañante`: restringir la consulta exclusivamente a los estudiantes asignados a su ruta oficial.
+     - Los roles `Administrador`, `Director`, `Subdirector` conservan acceso a la consulta consolidada de todas las rutas.
+  2. Protección de puntos geográficos:
+     - No exponer coordenadas GPS ni direcciones residenciales a usuarios que no tengan relación legal con el menor.
+- **Criterios de Aceptación:**
+  - Un usuario autenticado como Padre intenta consultar las asignaciones sin filtro o con el ID de un estudiante ajeno y recibe un error de acceso no autorizado.
+  - Un Padre consulta a sus hijos vinculados y recibe únicamente sus registros de transporte.
+  - Un conductor solo puede visualizar el listado de estudiantes que abordan en las paradas de su ruta asignada.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F21-Task03] Registro de abordaje, descenso y confirmación de 0 pasajeros al cierre de ruta
+- **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-20, PT-21-24), Sección G (Defecto 3) y Plan de Trabajo P0
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Seguridad de menores a bordo, prevención de olvidos en autobuses y trazabilidad de viaje)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (nuevas funciones `recordStudentBoarding`, `recordStudentAlighting`, `finalizeTransportTrip`)
+  - Hoja `TransporteAsistenciaViajes`
+  - Hoja `TransporteViajes`
+- **Dependencias Expuestas:** `TransporteAsignaciones`, `TransporteRutas`, `sendMultiChannelNotification`
+- **Descripción del Alcance:**
+  No existe ningún mecanismo para registrar cuándo sube o baja un menor del autobús escolar, ni existe una confirmación obligatoria al apagar la unidad para asegurar que ningún niño permanezca dormido u olvidado a bordo.
+  Requerimientos Funcionales Detallados:
+  1. Registro de abordaje y descenso en parada:
+     - Permitir al acompañante/conductor registrar el abordaje (`recordStudentBoarding`) y el descenso (`recordStudentAlighting`) mediante escaneo de credencial con código QR o lista de asistencia interactiva.
+     - Registrar: `viajeId`, `rutaId`, `estudianteUserId`, `paradaNombre`, `tipoEvento` (`Abordaje`, `Descenso`), `fechaHora`, `registradoPorUserId` y `metodoRegistro` (`QR`, `ManualAsistido`).
+     - Alerta inmediata si un estudiante intenta abordar una ruta a la que no pertenece.
+  2. Protocolo de cierre de viaje y barrido físico de la unidad:
+     - Al completar el recorrido, el conductor/acompañante debe ejecutar `finalizeTransportTrip`.
+     - Validar que el 100% de los estudiantes que abordaron hayan registrado formalmente su descenso.
+     - Si existen estudiantes marcados aún a bordo, bloquear el cierre del viaje y emitir una alarma crítica en pantalla exigiendo inspección física del interior del autobús y registro de la situación.
+     - Obligar a marcar la casilla de verificación de barrido físico ("Inspección física realizada: 0 estudiantes a bordo").
+- **Criterios de Aceptación:**
+  - Se registra el abordaje y descenso de cada estudiante con marca de tiempo exacta.
+  - Al escanear dos veces el mismo abordaje, el sistema detecta y descarta el duplicado.
+  - Si un estudiante aborda pero no registra descenso, el sistema impide finalizar el recorrido de manera ordinaria y dispara alerta de revisión física.
+  - El cierre de viaje queda asentado con usuario responsable y confirmación de unidad desocupada.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F21-Task04] Gestión de personas autorizadas para recepción y entrega de menores en paradas
+- **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-15, PT-21-16), Sección C (1.8) y Plan de Trabajo P0
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Seguridad física de entrega de infantes, custodia legal y prevención de entregas no autorizadas)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (nuevas funciones `getAuthorizedPickupPersons`, `recordStudentSafeDelivery`)
+  - Hoja `TransportePersonasAutorizadas`
+  - `ExpedientesFamiliares`
+- **Dependencias Expuestas:** `ExpedientesFamiliares`, `TransporteAsignaciones`, `F21-Task03`
+- **Descripción del Alcance:**
+  No existe integración entre las paradas de transporte escolar y los expedientes familiares para certificar que el menor que desciende del autobús es entregado exclusivamente a adultos con autorización formal de los padres o tutores legales.
+  Requerimientos Funcionales Detallados:
+  1. Ficha de personas autorizadas por estudiante:
+     - Almacenar nombre completo, número de identidad (DPI/DNI), parentesco, teléfono, fotografía reciente y tipo de autorización (`Permanente`, `TemporalConVigencia`).
+     - Permitir revocar autorizaciones de forma inmediata desde el portal familiar.
+  2. Validación en el momento de la entrega:
+     - En paradas residenciales de nivel Prebásica y Primaria, desplegar en la app del acompañante la lista y foto de las personas autorizadas para recibir al menor.
+     - Al registrar el descenso, seleccionar el adulto que recibe al niño y capturar firma digital o confirmación de identidad.
+     - Si la persona que acude no figura en el listado, bloquear la entrega ordinaria, retener al menor bajo custodia segura en la unidad y comunicar inmediatamente a los padres y a Dirección.
+- **Criterios de Aceptación:**
+  - El acompañante visualiza exclusivamente a las personas autorizadas para cada estudiante en su parada de destino.
+  - La entrega a una persona no autorizada es bloqueada por el sistema exigiendo validación telefónica directiva.
+  - Las autorizaciones temporales vencidas se desactivan automáticamente impidiendo su uso.
+  - Toda entrega registra quién recibió al estudiante, la hora exacta y el responsable de ruta que entregó.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F21-Task05] Gestión de flota vehicular y conductores con control de vigencias y seguros
+- **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-01, PT-21-03, PT-21-04), Sección C (1.1, 1.2) y Plan de Trabajo P0
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Habilitación legal de transporte escolar, vigencia de pólizas de seguro de pasajeros y licencias de conducir pesada)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (nuevas funciones `manageTransportVehicle`, `getTransportVehicles`, `manageTransportDriver`, `getTransportDrivers`)
+  - Hoja `TransporteVehiculos`
+  - Hoja `TransporteConductores`
+  - `TransporteRutas`
+- **Dependencias Expuestas:** `TransporteRutas`, `MantenimientoOrdenes`, `ROLE_PERMISSIONS`
+- **Descripción del Alcance:**
+  Las rutas utilizan cadenas de texto libres para `unidadCodigo` y `conductorEmpleadoId` sin una entidad formal que controle placas, capacidad máxima de asientos homologados, vigencia del seguro obligatorio de accidentes, revisión técnico-mecánica ni licencias de conducir profesionales.
+  Requerimientos Funcionales Detallados:
+  1. Hoja y maestro `TransporteVehiculos`:
+     - `VehiculoID`, `PlacaMatricula`, `MarcaModeloAno`, `CapacidadPasajeros`, `NumeroSeguroPoliza`, `FechaVencimientoSeguro`, `FechaRevisionMecanica`, `ProveedorPropietario`, `Estado` (`Disponible`, `EnRuta`, `Mantenimiento`, `FueraServicio`).
+     - Alertas preventivas ante pólizas o revisiones mecánicas por vencer (30 días).
+     - Bloquear la asignación de un vehículo a una ruta activa si su póliza de seguro o revisión mecánica se encuentra vencida.
+  2. Hoja y maestro `TransporteConductores`:
+     - `ConductorID`, `EmpleadoId`, `NombreCompleto`, `NumeroLicencia`, `CategoriaLicencia` (Pesada/Comercial), `FechaVencimientoLicencia`, `RecordConduccionUrl`, `TipoPersonal` (`ConductorTitular`, `ConductorSustituto`, `AcompananteMonitor`), `Estado` (`Activo`, `Inactivo`, `Suspendido`).
+     - Bloquear la asignación de conductores con licencia vencida o no autorizada para transporte de pasajeros.
+  3. Sustituciones operativas:
+     - Permitir registrar reemplazos temporales de autobús o conductor por imprevistos, conservando el titular y auditando el motivo del cambio.
+- **Criterios de Aceptación:**
+  - Registrar unidades y conductores en maestros independientes con validación de fechas límite.
+  - El sistema impide asignar a una ruta un autobús con seguro vencido o un chofer con licencia caducada.
+  - Registrar una sustitución temporal actualiza la información operativa sin borrar las asignaciones titulares históricas.
+  - Los vehículos marcados en estado `Mantenimiento` no pueden seleccionarse para nuevas rutas activas.
+- **Estado:** [ ] Pendiente
+
+---
+
+## TAREAS DE ALTA PRIORIDAD (P1 - RUTAS ASIMÉTRICAS, PORTAL FAMILIAR, GPS, NOTIFICACIONES Y FACTURACIÓN)
+
+---
+
+### [ ] [F21-Task06] Rutas asimétricas de ida/regreso y selección de días específicos de transporte
+- **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-07, PT-21-08), Sección C (1.3, 1.6) y Plan de Trabajo P1
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Flexibilidad de movilidad familiar, optimización de ocupación y control por jornadas)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`assignStudentTransport`, `getTransportAssignments`, `manageTransportRoute`)
+  - `TransporteAsignaciones`
+  - `TransporteRutas`
+- **Dependencias Expuestas:** `TransporteRutas`, `TransporteAsignaciones`, `F21-Task01`
+- **Descripción del Alcance:**
+  La estructura actual de asignaciones contempla una sola ruta por alumno sin discriminar si es viaje matutino de entrada o vespertino de salida, ni permite configurar estudiantes que solo utilizan el autobús ciertos días de la semana (ej. extracurriculares o custodia compartida).
+  Requerimientos Funcionales Detallados:
+  1. Asignaciones asimétricas por sentido de viaje:
+     - Permitir asignar a un estudiante:
+       * Ruta de Ida (Mañana) con su parada específica de recogida.
+       * Ruta de Regreso (Tarde) con su parada específica de entrega (que puede pertenecer a otra ruta o destino distinto, ej. casa de abuelos).
+       * Servicio de un solo sentido (solo ida o solo regreso).
+  2. Días lectivos de utilización:
+     - Registrar en la asignación los días habilitados: `["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"]`.
+     - Si un alumno solo viaja lunes y miércoles, no debe figurar en la lista de pasajeros esperados ni ocupar cupo los martes, jueves y viernes.
+- **Criterios de Aceptación:**
+  - Asignar a un estudiante la Ruta 1 por la mañana y la Ruta 2 por la tarde sin que el sistema genere conflicto.
+  - Configurar un estudiante con servicio exclusivo de ida y comprobar que no aparece en las listas de retorno.
+  - Configurar días específicos y verificar que el estudiante solo figura en el padrón de los días contratados.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F21-Task07] Portal operativo y familiar de transporte escolar
+- **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-28), Sección C (1.18) y Plan de Trabajo P1
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Experiencia de usuario, eliminación de dependencia de backend directo e interfaces adaptadas por perfil)
+- **Archivos Involucrados:**
+  - `dashboard-contabilidad.html`
+  - `dashboard-director.html`
+  - `dashboard-padres.html`
+  - `js/accounting.js`
+  - `js/portal-padres.js`
+- **Dependencias Expuestas:** `getTransportRoutes`, `getTransportAssignments`, `F21-Task01`, `F21-Task02`, `F21-Task05`
+- **Descripción del Alcance:**
+  El módulo de transporte carece de interfaces visuales. Los administradores no tienen pantallas para diseñar rutas ni asignar estudiantes, los conductores no cuentan con vista móvil de su trayecto y los padres no pueden consultar horarios ni conductores desde su portal web.
+  Requerimientos Funcionales Detallados:
+  1. Módulo administrativo de transporte:
+     - Pestaña interactiva para crear y editar rutas, unidades, conductores, paradas y ver el porcentaje de ocupación de asientos en tiempo real.
+  2. Vista móvil para conductores y acompañantes:
+     - Interfaz ligera optimizada para teléfonos o tabletas con la secuencia de paradas del recorrido actual, lista de estudiantes a recoger y botones grandes de abordaje/descenso.
+  3. Componente familiar en el portal de padres:
+     - Visualizar para cada hijo: ruta asignada, unidad, nombre y teléfono del conductor/acompañante, parada oficial y horario previsto de paso.
+     - Botón para reportar "Hoy mi hijo no utilizará el transporte" para evitar demoras en la ruta matutina.
+- **Criterios de Aceptación:**
+  - Administración gestiona rutas, flota y asignaciones mediante formularios interactivos con validación.
+  - El conductor accede a su ruta diaria desde el navegador de su teléfono con diseño responsivo.
+  - Los padres consultan la información de movilidad escolar de sus hijos desde su perfil web institucional.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F21-Task08] Seguimiento de recorridos, estimación de tiempos de llegada y alertas de retraso
+- **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-26, PT-21-29), Sección C (1.10, 1.11) y Plan de Trabajo P1
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Tranquilidad familiar, certidumbre en paradas, telemetría y comunicación proactiva)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (nuevas funciones `updateTripLocation`, `getTripLiveLocation`, `reportTripDelay`)
+  - Hoja `TransporteTelemetria`
+  - `TransporteViajes`
+  - `backend/user-service/Code.gs` (`sendMultiChannelNotification`)
+- **Dependencias Expuestas:** `TransporteViajes`, `sendMultiChannelNotification`, Leaflet / Maps API
+- **Descripción del Alcance:**
+  Las familias esperan en las paradas sin conocer la posición de la unidad escolar ni reciben avisos ante embotellamientos viales o retrasos significativos en el trayecto.
+  Requerimientos Funcionales Detallados:
+  1. Telemetría y posición de recorrido:
+     - Permitir a la aplicación del conductor enviar periódicamente coordenadas (`latitud`, `longitud`, `velocidad`, `timestamp`).
+     - Almacenar la última posición conocida y estado del viaje (`Iniciado`, `EnRuta`, `Completado`).
+     - Distinguir en el portal familiar entre: "Ubicación en tiempo real", "Última posición hace X minutos" o "Sin señal GPS".
+  2. Notificaciones proactivas de viaje y retrasos:
+     - Botón de conductor para reportar retraso con motivo preestablecido (Tráfico, Lluvia, Desvío, Avería) y minutos estimados.
+     - Despachar notificación automática a los tutores de las paradas aún pendientes de visitar.
+     - Notificación automática al tutor cuando el autobús se encuentre a 5 minutos o 1 kilómetro de su parada.
+- **Criterios de Aceptación:**
+  - El sistema recibe y actualiza la posición del autobús durante el recorrido activo.
+  - Los padres pueden visualizar en un mapa interactivo la posición de la unidad de su hijo.
+  - Al reportar un retraso, los padres de la ruta reciben la notificación con el tiempo estimado de demora.
+  - Al finalizar el viaje, el seguimiento se desactiva protegiendo la privacidad de la unidad.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F21-Task09] Integración financiera automática de transporte y servicios complementarios
+- **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-44), Sección C (1.16) y Plan de Trabajo P1
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Automatización de cobros, integridad financiera y conciliación de servicios contratados)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`assignStudentTransport`, nueva función `generateTransportMonthlyCharges`)
+  - `TransporteAsignaciones`
+  - `CargosEstudiante`
+  - `ConceptosCobro`
+- **Dependencias Expuestas:** `TransporteAsignaciones`, `CargosEstudiante`, `ConceptosCobro`
+- **Descripción del Alcance:**
+  La asignación de transporte no está vinculada con la facturación de colegiaturas. Los cargos deben generarse manualmente por secretaría o contabilidad, provocando omisiones en cobros de transporte o inconsistencias en los estados de cuenta.
+  Requerimientos Funcionales Detallados:
+  1. Vinculación de tarifas por ruta y modalidad:
+     - Asociar a cada ruta su concepto y tarifa mensual de cobro (Tarifa Completa Ida/Vuelta vs Media Tarifa Solo Ida o Solo Vuelta).
+  2. Generación automática y prorrateo:
+     - Al formalizar la asignación activa de un estudiante, programar o generar automáticamente el cargo correspondiente en `CargosEstudiante`.
+     - Soportar prorrateo automático si el servicio se contrata o cancela a mitad de mes.
+     - Prevención estricta de cargos duplicados mediante clave idempotente de cargo mensual por servicio (`TRN-MES-AÑO-ESTUDIANTE`).
+     - Reflejar el cargo desglosado en el estado de cuenta y recibo de pago de la familia.
+- **Criterios de Aceptación:**
+  - Asignar a un alumno a transporte escolar genera de forma transparente el cargo en su estado de cuenta mensual.
+  - Asignar modalidad de medio viaje aplica la tarifa reducida correspondiente.
+  - Reprocesar la facturación no duplica el cargo del mismo mes para el estudiante.
+  - Cancelar el servicio cierra la facturación de los meses posteriores.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F21-Task10] Registro y escalamiento de incidencias, averías y emergencias en ruta
+- **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-33, PT-21-34), Sección C (1.12) y Plan de Trabajo P1
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Seguridad escolar, gestión de crisis, comunicación urgente y registro probatorio)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (nuevas funciones `reportTransportIncident`, `getTransportIncidents`, `resolveTransportIncident`)
+  - Hoja `TransporteIncidencias`
+  - `MantenimientoOrdenes`
+  - `backend/user-service/Code.gs` (`sendMultiChannelNotification`)
+- **Dependencias Expuestas:** `TransporteRutas`, `TransporteVehiculos`, `sendMultiChannelNotification`
+- **Descripción del Alcance:**
+  No existe un protocolo sistematizado para que los conductores o acompañantes reporten averías mecánicas, accidentes, emergencias médicas de estudiantes o bloqueos viales imprevistos durante el recorrido.
+  Requerimientos Funcionales Detallados:
+  1. Expediente digital de incidencias de transporte:
+     - Registrar: `IncidenciaTranspID`, `FechaHora`, `RutaID`, `VehiculoID`, `ConductorID`, `TipoIncidencia` (`AveriaMecanica`, `AccidenteTransito`, `EmergenciaMedica`, `EstudianteNoEntregado`, `DesvioRuta`, `ProblemaConducta`), `NivelGravedad` (`Baja`, `Media`, `Alta`, `Critica`), `DescripcionDetallada`, `EstudiantesAfectadosJSON`, `EvidenciasUrl`, `Estado` (`Reportado`, `EnAtencion`, `Resuelto`).
+  2. Protocolo de escalamiento y notificación de emergencia:
+     - Ante incidencias de gravedad `Alta` o `Critica`, disparar de inmediato alerta prioritaria a Dirección General, Coordinación de Transporte y a los tutores de los alumnos involucrados.
+     - Si la incidencia implica falla mecánica del autobús, generar automáticamente una orden de mantenimiento correctivo en `MantenimientoOrdenes` y marcar el vehículo como no disponible.
+     - Documentar resolución, medidas adoptadas y hora de cierre.
+- **Criterios de Aceptación:**
+  - Reportar una avería mecánica registra la incidencia y alerta inmediatamente a Dirección.
+  - Si la avería inhabilita la unidad, el vehículo pasa automáticamente a estado de mantenimiento.
+  - Las familias de los estudiantes a bordo reciben el aviso institucional con las instrucciones pertinentes.
+  - Queda prohibido cerrar una incidencia grave sin documentar las acciones de resolución ejecutadas.
+- **Estado:** [ ] Pendiente
+
+---
+
+## TAREAS DE PRIORIDAD MEDIA (P2 - CHECKLIST DE SEGURIDAD, SOLICITUDES DE CAMBIO Y EXCURSIONES)
+
+---
+
+### [ ] [F21-Task11] Checklist preoperacional de seguridad vehicular e inspección diaria
+- **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-39), Sección C (3.4) y Plan de Trabajo P2
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Mantenimiento preventivo, prevención de accidentes viales y seguridad operativa)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (nuevas funciones `recordPreTripInspection`, `getPreTripInspections`)
+  - Hoja `TransporteInspecciones`
+  - `TransporteVehiculos`
+- **Dependencias Expuestas:** `TransporteVehiculos`, `MantenimientoOrdenes`, `F21-Task05`
+- **Descripción del Alcance:**
+  Los conductores inician recorridos sin registrar una lista de verificación previa de condiciones mecánicas y de seguridad del autobús (frenos, neumáticos, luces, extintor, botiquín de primeros auxilios).
+  Requerimientos Funcionales Detallados:
+  1. Formulario móvil de inspección preoperacional:
+     - Antes de iniciar el primer viaje del día, el conductor completa el checklist: niveles de aceite/agua, presión y estado de llantas, luces direccionales y frenos, extintor vigente, botiquín equipado, cinturones de seguridad operativos y limpieza general.
+     - Captura de kilometraje inicial del día.
+  2. Bloqueo de inicio ante fallas críticas:
+     - Si se reporta una falla crítica de seguridad (ej. falla en frenos o neumáticos lisos), el sistema bloquea el inicio ordinario de la ruta y alerta a la coordinación para sustituir la unidad.
+- **Criterios de Aceptación:**
+  - El conductor registra la inspección diaria desde su móvil antes de arrancar la ruta.
+  - El reporte de fallas críticas bloquea la unidad e impide iniciar el recorrido.
+  - Se genera un historial de inspecciones por vehículo para auditorías de mantenimiento.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F21-Task12] Solicitudes familiares de cambio temporal de parada y permisos de viaje
+- **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-13), Sección C (1.10) y Plan de Trabajo P2
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Gestión de excepciones familiares, trazabilidad de permisos y autorizaciones temporales)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (nuevas funciones `requestTemporaryTransportChange`, `reviewTransportChangeRequest`)
+  - Hoja `TransporteSolicitudesCambio`
+  - `TransporteAsignaciones`
+- **Dependencias Expuestas:** `TransporteAsignaciones`, `sendMultiChannelNotification`, `F21-Task07`
+- **Descripción del Alcance:**
+  Las familias suelen coordinar cambios de parada o avisos de no viaje mediante mensajes informales de WhatsApp con los choferes, lo que genera confusiones, reclamos de paradas omitidas o entrega de menores en destinos no autorizados.
+  Requerimientos Funcionales Detallados:
+  1. Tramitación formal de excepciones desde el portal de padres:
+     - Tipos de solicitud:
+       * "No viajará hoy" (el autobús no se detiene en su parada, ahorrando tiempo en ruta).
+       * "Bajará en parada alterna autorizada" (ej. casa de un familiar con adulto autorizado).
+       * "Viajará con un compañero en otra ruta" (sujeto a disponibilidad de cupo en la ruta destino).
+     - Validación de antelación mínima (ej. máximo hasta las 06:00 AM para ruta matutina y 11:30 AM para vespertina).
+  2. Aprobación y actualización del padrón del chofer:
+     - Actualización automática en la app del conductor, mostrando la excepción en la parada correspondiente sin alterar la asignación permanente del alumno.
+- **Criterios de Aceptación:**
+  - Los padres reportan ausencias o paradas alternas desde su portal web con horario límite.
+  - La hoja de ruta del conductor refleja la excepción automáticamente sin necesidad de llamadas telefónicas.
+  - La asignación permanente del estudiante se restablece al finalizar la vigencia de la solicitud temporal.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F21-Task13] Gestión de transporte extraordinario para excursiones y eventos institucionales
+- **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-38), Sección C (3.8) y Plan de Trabajo P2
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Movilidad extracurricular, visitas culturales, eventos deportivos y autorizaciones especiales)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (nuevas funciones `createExtraordinaryTrip`, `getExtraordinaryTrips`)
+  - Hoja `TransporteViajesEspeciales`
+  - `ActividadesExtracurriculares`
+  - `backend/user-service/Code.gs` (`respondToAuthorizationRequest`)
+- **Dependencias Expuestas:** `TransporteVehiculos`, `TransporteConductores`, `ActividadesExtracurriculares`
+- **Descripción del Alcance:**
+  La institución realiza viajes especiales (visitas guiadas, torneos de fútbol, olimpiadas académicas) que requieren reservar unidades de la flota institucional o contratar autobuses externos sin interferir con las rutas escolares cotidianas.
+  Requerimientos Funcionales Detallados:
+  1. Planificación de viajes especiales:
+     - Destino, fecha y horario de salida y regreso, motivo, docente responsable a cargo, vehículo asignado y chofer habilitado.
+     - Padrón específico de alumnos participantes.
+     - Verificación obligatoria de autorización firmada por los padres en el portal familiar (`SolicitudesAutorizacion`) antes de permitir el abordaje.
+  2. Control de abordaje en viaje especial:
+     - Lista de abordaje y regreso exclusiva para el evento con control de asistencia y cierre de viaje seguro.
+- **Criterios de Aceptación:**
+  - Se pueden programar viajes especiales sin desconfigurar las rutas ordinarias de la institución.
+  - El sistema bloquea el abordaje de alumnos que no cuenten con la autorización firmada del tutor.
+  - Se genera el listado oficial de pasajeros para fines de seguro y logística de viaje.
+- **Estado:** [ ] Pendiente
+
+---
+
+## TAREAS DE ASEGURAMIENTO Y CALIDAD (P0 - SUITE INTEGRAL DE REGRESIÓN DE TRANSPORTE Y SERVICIOS)
+
+---
+
+### [ ] [F21-Task14] Implementar suite automatizada de pruebas y regresión integral de transporte y servicios complementarios
+- **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E, Sección G (P0) y Plan de Trabajo F21-14
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Aseguramiento continuo de integridad en movilidad escolar, cupos, seguridad infantil y cobros)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `backend/developer-service/Code.gs`
+  - `tests/regression/academic-grading-suite.js`
+- **Dependencias Expuestas:** Todas las tareas de la Fase 21 (`F21-Task01` a `F21-Task13`), suites de pruebas del ecosistema institucional
+- **Descripción del Alcance:**
+  Implementar la suite integral automatizada `runPhase21TransportAndServicesRegressionSuite` que valide de manera continua el ciclo de transporte: control de cupos máximos, privacidad familiar RBAC, registro de abordaje/descenso, verificación de 0 pasajeros al cierre, bloqueo por seguros o licencias vencidas, asignaciones asimétricas ida/vuelta, cobros recurrentes en estados de cuenta e integración con servicios de cafetería y extracurriculares.
+  Requerimientos Funcionales Detallados:
+  1. Batería obligatoria de pruebas automatizadas:
+     - Capacidad y cupos: rechazo estricto de asignación al superar el límite de asientos de la unidad.
+     - Privacidad RBAC: verificación de que un rol Padre solo recibe datos de sus hijos y se bloquean accesos cruzados.
+     - Abordaje y descenso: registro de eventos QR, prevención de abordajes duplicados y bloqueo de cierre de viaje con alumnos a bordo.
+     - Entregas autorizadas: verificación de que solo adultos vigentes en expediente familiar son aceptados al entregar menores.
+     - Habilitación de flota: bloqueo de autobuses con revisión mecánica o seguro caducado y choferes con licencia vencida.
+     - Rutas asimétricas: asignación independiente mañana/tarde y control por días lectivos.
+     - Facturación de transporte: generación del cargo en `CargosEstudiante` con tarifa adecuada y prevención de duplicados.
+     - Cafetería y extracurriculares: cobros con crédito familiar y asistencia a clubes estudiantiles.
+  2. No regresión del ecosistema:
+     - Garantizar que la suite opere en entorno controlado sin alterar registros de producción ni las 53 pruebas de regresión previas de las Fases 9, 10, 11, 15, 16, 17, 18 y 19.
+- **Criterios de Aceptación:**
+  - La suite de regresión ejecuta todas las pruebas de transporte y servicios complementarios con el 100% de éxito (`PASS`).
+  - Se valida el bloqueo efectivo de sobrecupos y la protección de datos de menores.
+  - Las suites de regresión previas (53/53 pruebas) se mantienen aprobadas al 100%.
+- **Estado:** [ ] Pendiente
+
+---
