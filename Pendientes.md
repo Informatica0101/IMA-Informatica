@@ -252,7 +252,7 @@
 
 ---
 
-### [ ] [F11-Task15] Integrar la gestión de becas y exoneraciones con los estados de cuenta estudiantiles
+### [X] [F11-Task15] Integrar la gestión de becas y exoneraciones con los estados de cuenta estudiantiles
 - **Origen del Hallazgo:** `AUDITORIA-FASE-11-COMUNICACION-BIENESTAR-SUPERVISION-FINANZAS.md` / Área IV (P1)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Finanzas estudiantiles)
@@ -263,7 +263,7 @@
   Aplicar reglas automáticas de becas y descuentos aprobados sobre los cobros periódicos de colegiatura en los estados de cuenta de los estudiantes.
 - **Criterios de Aceptación:**
   - La mensualidad refleja de forma transparente el arancel base, el descuento/beca aplicado y el saldo neto a pagar.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

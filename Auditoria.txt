@@ -322,3 +322,13 @@ RESULTADO DE EVALUACIÓN:
 - Registrados los permisos correspondientes en `ROLE_PERMISSIONS` y en el despachador `doPost`.
 - Resultado: 100% Funcional y Verificado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task15: INTEGRAR LA GESTIÓN DE BECAS Y EXONERACIONES CON LOS ESTADOS DE CUENTA ESTUDIANTILES
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS:
+1. El backend `accounting-service` dispone del módulo de descuentos y becas (`DescuentosBecas`, `SolicitudesDescuentoBeca`, `approveDiscountScholarshipRequest`), pero las solicitudes aprobadas no se aplicaban automáticamente sobre los cargos periódicos del estudiante en `CargosEstudiante`.
+2. Se requiere implementar la función `applyApprovedScholarshipsToCharges` e integrarla dentro de `getStudentAccountStatement` para recalcular o sincronizar los cargos de mensualidad/colegiatura, deduciendo el porcentaje o monto fijo de beca aprobado sobre el arancel base (`montoBase`), reflejando el descuento exacto (`descuento`) y actualizando el monto neto a pagar (`montoFinal`).
+3. Se deben configurar los permisos en `ROLE_PERMISSIONS` y en el despachador `doPost` en `backend/accounting-service/Code.gs`.
+===============================================================================

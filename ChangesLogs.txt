@@ -3554,3 +3554,15 @@ ARCHIVOS MODIFICADOS:
 - tests/regression/academic-grading-suite.js (línea ~95):
   Se agregó la aserción de comprobación para `checkBudgetAvailability` con la etiqueta `[F11-Task14]`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task15 - Integrar la gestión de becas y exoneraciones con los estados de cuenta estudiantiles
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (líneas ~193-195, ~540, ~865-950, ~3280-3340):
+  Se implementó la función `applyApprovedScholarshipsToCharges` con la etiqueta identificativa `[F11-Task15]`, la cual consulta las becas y descuentos aprobados en `SolicitudesDescuentoBeca` y recalcula los cobros pendientes de colegiatura en `CargosEstudiante`, reflejando el monto base, el descuento deducido y el saldo neto a pagar.
+  Se integró su ejecución automática dentro de `getStudentAccountStatement` para garantizar transparencia en la visualización financiera de apoderados y estudiantes.
+  Se registraron los permisos correspondientes en `ROLE_PERMISSIONS` y en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~96):
+  Se agregó la aserción de comprobación para `applyApprovedScholarshipsToCharges` con la etiqueta `[F11-Task15]`.
+===============================================================================
