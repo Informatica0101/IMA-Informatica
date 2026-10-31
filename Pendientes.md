@@ -8726,3 +8726,405 @@
 - **Estado:** [ ] Pendiente
 
 ---
+## FASE 26 — CONFIGURACIÓN INSTITUCIONAL Y PERSONALIZACIÓN
+
+### P0 — PRIORIDAD CRÍTICA
+
+### [F26-Task01] [P0] [Gobernanza Jerárquica - Motor Central de Configuración Jerárquica y Herencia Departamental]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - Hojas `ConfiguracionSistema`, `ConfiguracionDepartamental`, `ConfiguracionRoles`
+  - `js/ui-common.js`
+- **Subcapacidades Relacionadas:** F26-002, F26-010.
+- **Estado de Partida:** Implementada parcialmente / Requiere mejoras.
+- **Dependencias Expuestas:** Estructuras de usuarios, roles, departamentos, `ConfiguracionSistema`, permisos server-side y servicios consumidores de configuración.
+- **Problema Detectado:**
+  La plataforma permite administrar configuraciones globales y preferencias individuales, pero no dispone de un nivel departamental formal. Las unidades administrativas no pueden establecer parámetros propios de manera segura y existe riesgo de sobrescribir configuraciones globales. La solución actual necesita evolucionar de una estructura binaria a un sistema de configuración jerárquica que permita administrar valores institucionales, excepciones departamentales y preferencias personales sin generar contradicciones.
+- **Requisitos Funcionales:**
+  1. Jerarquía de resolución de configuración en 4 niveles:
+     - Nivel 1. Global: valores predeterminados del sistema.
+     - Nivel 2. Institucional: valores definidos para la institución.
+     - Nivel 3. Departamental: excepciones o parámetros propios de una unidad/departamento.
+     - Nivel 4. Personal: preferencias individuales permitidas.
+     - La precedencia debe resolverse según el tipo de parámetro. No todos los valores deben admitir sobrescritura en todos los niveles.
+  2. Políticas de alcance declarativas por parámetro:
+     - `Global obligatorio`: no admite sobrescritura en ningún nivel inferior.
+     - `Institucional`: se establece para toda la institución.
+     - `Heredable`: permite excepciones departamentales controladas.
+     - `Personalizable`: admite preferencias individuales de usuario.
+     - `Restringido`: requiere autorización especial para cualquier modificación.
+  3. Herencia y sobrescritura:
+     - Si no existe un valor departamental, utilizar el valor institucional.
+     - Si existe una excepción departamental autorizada, utilizarla dentro de su ámbito.
+     - Si se elimina la excepción, recuperar automáticamente el valor heredado.
+     - Si cambia el valor institucional, actualizar los departamentos que lo heredan.
+     - Conservar las excepciones explícitas que deban mantenerse.
+     - Identificar visualmente si un valor es heredado, sobrescrito o definido localmente.
+     - Permitir restablecer un valor heredado sin tener que copiar manualmente el valor institucional.
+  4. Catálogo de parámetros y metadatos:
+     - Identificador estable (`configId`), clave, tipo de dato, valor predeterminado, ámbitos permitidos, bandera de herencia, bandera de sobrescritura, roles autorizados, restricciones de modificación, dependencias, versión, estado, fecha y responsable de actualización.
+     - No crear una segunda fuente de verdad para parámetros que ya estén almacenados en `ConfiguracionSistema`, `ConfiguracionAcademica` u otras estructuras especializadas.
+  5. Administración departamental:
+     - Permitir que los responsables autorizados consulten y administren las configuraciones de su unidad.
+     - Mostrar valor efectivo, valor institucional de origen, estado de herencia, excepciones existentes, responsable y fecha de actualización.
+     - Una unidad no debe poder modificar configuraciones de otra unidad ni cambiar parámetros institucionales no habilitados para su ámbito.
+  6. Resolución de conflictos:
+     - Aplicar la política de precedencia definida para el parámetro.
+     - Rechazar sobrescrituras prohibidas.
+     - Informar qué valor prevalece y por qué.
+     - Evitar que una excepción departamental modifique configuraciones globales.
+     - Registrar las modificaciones y los conflictos relevantes en bitácora de auditoría.
+- **Cambios Necesarios:**
+  - Ampliar el modelo de configuración existente para representar los cuatro ámbitos (`GLOBAL`, `INSTITUCIONAL`, `DEPARTAMENTAL`, `PERSONAL`).
+  - Incorporar relaciones entre institución, departamentos y usuarios en hoja `ConfiguracionDepartamental`.
+  - Implementar un mecanismo central de lectura y resolución jerárquica de configuraciones (`resolveHierarchicalConfiguration`).
+  - Integrar las operaciones de lectura y escritura de `saveSystemConfiguration` con el nuevo mecanismo.
+  - Adaptar las configuraciones especializadas que deban admitir herencia.
+  - Incorporar controles server-side para verificar ámbito, rol y permisos.
+  - Ampliar la interfaz administrativa para visualizar valores heredados y excepciones.
+  - Mantener compatibilidad con las configuraciones actuales durante la transición.
+- **Comportamiento Esperado:**
+  Una configuración institucional se establece una vez y se aplica a todas las unidades que la heredan. Un departamento puede establecer una excepción cuando el parámetro lo permita. Los usuarios pueden personalizar sus preferencias individuales sin alterar la configuración de su departamento ni de la institución.
+- **Criterios de Aceptación:**
+  - [ ] Crear una configuración institucional y comprobar que se aplica a los departamentos sin excepciones.
+  - [ ] Crear una excepción departamental y comprobar que solo afecta a esa unidad específica.
+  - [ ] Restablecer la herencia y comprobar que se recupera automáticamente el valor institucional.
+  - [ ] Cambiar el valor institucional y comprobar que se actualizan las unidades que heredan.
+  - [ ] Comprobar que las excepciones explícitas se conservan cuando corresponda.
+  - [ ] Intentar modificar una configuración global con un usuario sin permisos y comprobar que el servidor rechaza la operación (403).
+  - [ ] Intentar modificar una unidad ajena y comprobar que la operación se bloquea.
+  - [ ] Intentar sobrescribir un parámetro global obligatorio desde un departamento y comprobar que se rechaza.
+  - [ ] Comprobar que las preferencias personales no alteran configuraciones compartidas.
+  - [ ] Verificar que las configuraciones antiguas siguen resolviéndose correctamente después de la transición.
+  - [ ] Comprobar que no existen dos valores efectivos contradictorios para un mismo parámetro y ámbito.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F26-Task02] [P0] [Localización Regional - Centralizar el Formateo Regional de Moneda, Fechas, Horas y Números]
+- **Componentes Afectados:**
+  - `js/config.js`
+  - `js/ui-common.js`
+  - `backend/accounting-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `backend/user-service/Code.gs`
+- **Subcapacidad Relacionada:** F26-001.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Expuestas:** `ConfiguracionSistema`, motor de precedencia de `F26-Task01`, frontend común, servicios académicos y financieros, exportaciones y calendarios.
+- **Problema Detectado:**
+  La plataforma almacena parámetros regionales, incluyendo zona horaria y moneda, pero algunos componentes del frontend siguen construyendo formatos manualmente. Se identificó el uso de concatenaciones como `"L. " + monto`. Esto produce diferencias de presentación, errores de interpretación numérica y posibles inconsistencias entre tablas, formularios, documentos, reportes y operaciones financieras.
+- **Requisitos Funcionales:**
+  1. Formateador regional único y universal:
+     - Implementar una capa común de formato en frontend (`RegionalFormatter`) que consulte la configuración institucional efectiva y permita formatear: moneda, números enteros, decimales, porcentajes, fechas, horas, instantes combinados y duraciones.
+     - Configurar: código de moneda (HNL), símbolo monetario (`L.`), separador decimal (punto o coma según configuración), separador de miles, cantidad de decimales (2 por defecto en finanzas), formato de fecha (`DD/MM/YYYY`), formato de hora (12h/24h), idioma regional (`es-HN`) y zona horaria (`America/Tegucigalpa`, GMT-6).
+     - Utilizar mecanismos regionales estándar (`Intl.NumberFormat`, `Intl.DateTimeFormat`) evitando concatenaciones manuales ad-hoc.
+  2. Moneda institucional estandarizada:
+     - Distinguir entre código ISO (`HNL`), símbolo de presentación (`L.`), precisión decimal y formato visual.
+     - El símbolo no debe sustituir al código de moneda en los datos internos; los cálculos deben operar sobre valores numéricos (`float`) puros.
+  3. Interpretación controlada de números (parsing seguro):
+     - Interpretar entradas ambiguas de usuarios (`1,250.50` vs `1.250,50`) según la configuración regional activa.
+     - Solicitar corrección explícita ante entradas numéricas que no puedan resolverse de forma segura.
+  4. Fechas y horas:
+     - Utilizar la zona horaria institucional como referencia común.
+     - Distinguir fechas sin hora (fechas de nacimiento, fechas de matrícula) de marcas temporales con instante (timestamps de auditoría en UTC).
+     - Evitar conversiones que desplacen un día por diferencias de huso horario en fechas sin hora.
+  5. Integración con hojas de cálculo y exportaciones:
+     - No confundir valores numéricos con cadenas formateadas en Google Sheets; persistir tipos nativos y asignar formatos de celda.
+     - Evitar que una exportación a CSV/XLSX convierta importes en texto por añadir símbolos monetarios manualmente.
+- **Cambios Necesarios:**
+  - Crear el módulo `RegionalFormatter` en `js/ui-common.js` o `js/config.js`.
+  - Eliminar progresivamente las concatenaciones manuales de símbolos monetarios (`"L. " + monto`) en `accounting.js`, `reports.js`, `teacher.js` y `student.js`.
+  - Sustituir formateadores locales incompatibles.
+  - Conectar la capa de formato con la configuración institucional y su resolución jerárquica.
+  - Adaptar tablas, tarjetas, formularios, documentos, reportes y componentes financieros.
+  - Incorporar funciones de interpretación y validación de entradas numéricas en formularios.
+  - Revisar las conversiones de fechas entre frontend, backend y hojas de cálculo.
+- **Comportamiento Esperado:**
+  Los mismos valores deben mostrarse de forma coherente en toda la plataforma. Cambiar el formato regional debe modificar la presentación, sin alterar cantidades, fechas ni datos históricos.
+- **Criterios de Aceptación:**
+  - [ ] Mostrar un mismo importe en diferentes módulos y comprobar que utiliza exactamente el mismo formato.
+  - [ ] Cambiar la moneda institucional y comprobar la actualización coherente de los componentes correspondientes.
+  - [ ] Comprobar que el valor numérico original en base de datos no cambia al modificar el formato visual.
+  - [ ] Introducir números con coma y punto y verificar su interpretación correcta según la configuración regional.
+  - [ ] Rechazar entradas ambiguas cuando no exista una interpretación segura.
+  - [ ] Comprobar importes positivos, negativos, cero y valores con más decimales de los permitidos.
+  - [ ] Comprobar fechas en formatos diferentes sin alterar su valor real almacenado.
+  - [ ] Verificar fechas cercanas a medianoche en la zona horaria institucional sin desfasaje de días.
+  - [ ] Comprobar que las fechas de eventos se muestran correctamente tras consultar los registros.
+  - [ ] Exportar importes y fechas a hojas de cálculo y verificar que se conservan como datos tipados y no como cadenas de texto.
+  - [ ] Confirmar que no quedan componentes relevantes utilizando formatos manuales incompatibles.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F26-Task03] [P1] [Formularios Dinámicos - Ampliar los Formularios Institucionales con un Constructor Visual de Campos Dinámicos]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - Hojas `FormulariosInstitucionales`, `RespuestasFormularios`
+  - `js/ui-common.js`
+- **Subcapacidad Relacionada:** F26-007.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Expuestas:** `FormulariosInstitucionales`, almacenamiento de registros, roles y permisos, catálogos existentes y motor de precedencia.
+- **Problema Detectado:**
+  Existe una estructura `FormulariosInstitucionales` con esquemas JSON de campos, pero falta una herramienta visual para crear y administrar campos personalizados sin modificar directamente el código. La plataforma necesita convertir la definición de formularios en una capacidad administrable, con validaciones, reglas condicionales, reutilización y control de permisos.
+- **Requisitos Funcionales:**
+  1. Constructor visual de campos:
+     - Interfaz para crear, editar, ordenar y configurar campos personalizados.
+     - Agregar campos, editar etiquetas y descripciones, seleccionar tipos de datos, definir obligatoriedad, establecer valores predeterminados y límites.
+     - Ordenar campos mediante controles visuales y agrupar por secciones temáticas.
+     - Previsualizar el formulario interactivo en tiempo real.
+     - Guardar borradores y publicar versiones oficiales.
+     - Desactivar campos sin destruir información histórica previamente capturada.
+     - Trabajar sobre el esquema JSON existente sin crear un motor paralelo.
+  2. Tipos de campos soportados:
+     - Texto corto, texto extenso, número entero, número decimal, fecha, fecha y hora, casilla de selección (checkbox), lista desplegable (select), selección múltiple, referencia a catálogo institucional, referencia a entidad interna y archivo adjunto.
+     - Controles específicos por tipo: longitud mín/máx en texto, límites numéricos y precisión, rangos de fecha, formatos de archivo y tamaño máximo en megabytes.
+  3. Campos condicionales declarativos:
+     - Reglas de visibilidad y obligatoriedad dependientes del valor de otros campos (ej. mostrar campo adicional según categoría seleccionada).
+     - Almacenar condiciones como reglas declarativas controladas (JSON), no como JavaScript ejecutable arbitrario.
+  4. Validación estricta en frontend y backend:
+     - Toda validación relevante debe ejecutarse también en el servidor (`doPost`).
+     - Verificar pertenencia del campo al formulario, tipo de dato, permisos de usuario, opciones autorizadas del catálogo, límites y cumplimiento de condiciones de obligatoriedad.
+  5. Versionado y compatibilidad histórica:
+     - Generar versiones controladas (`v1.0`, `v1.1`, `v2.0`).
+     - Los registros históricos conservan la versión exacta con la que fueron llenados.
+     - Desactivar un campo no borra las respuestas históricas asociadas.
+  6. Ámbitos y permisos:
+     - Formularios institucionales y formularios específicos por departamento respetando la jerarquía de `F26-Task01`.
+     - Control de acceso RBAC sobre campos con información confidencial o restringida.
+- **Cambios Necesarios:**
+  - Ampliar la administración de `FormulariosInstitucionales` en backend (`saveFormDefinition`, `getFormDefinitions`).
+  - Implementar el constructor visual en la interfaz administrativa.
+  - Incorporar validaciones declarativas server-side en el envío de respuestas (`submitInstitutionalFormRequest`).
+  - Adaptar el renderizador de formularios para generar controles según el esquema dinámico.
+  - Añadir versionado de esquemas y relacionar respuestas con la versión del formulario.
+  - Integrar permisos por rol y ámbito en el catálogo de formularios.
+- **Comportamiento Esperado:**
+  Un administrador o responsable autorizado puede agregar un campo desde la interfaz, publicarlo y utilizarlo en el formulario correspondiente. Los datos se guardan, consultan y validan sin necesidad de modificar código para cada nuevo campo.
+- **Criterios de Aceptación:**
+  - [ ] Crear un formulario y agregar campos de diferentes tipos de datos desde la interfaz.
+  - [ ] Modificar etiquetas, descripciones y obligatoriedad con vista previa en tiempo real.
+  - [ ] Previsualizar el formulario antes de publicarlo.
+  - [ ] Guardar un registro utilizando campos personalizados y verificar persistencia íntegra.
+  - [ ] Consultar posteriormente los valores guardados comprobando fidelidad de datos.
+  - [ ] Enviar datos inválidos directamente al backend y comprobar que se rechazan con mensaje de error específico.
+  - [ ] Comprobar que las reglas condicionales se aplican tanto en cliente como en servidor.
+  - [ ] Cambiar una versión del formulario y verificar que los registros históricos conservan su estructura.
+  - [ ] Desactivar un campo y comprobar que no se pierden los datos históricos existentes.
+  - [ ] Intentar utilizar un campo desde otro formulario y comprobar que el servidor valida su pertenencia.
+  - [ ] Intentar modificar un formulario sin permisos y comprobar que la operación se bloquea.
+  - [ ] Comprobar que los campos personalizados no alteran formularios institucionales ajenos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F26-Task04] [P1] [Reportes Personalizados - Implementar Persistencia de Vistas y Configuraciones Personalizadas de Reportes]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - Hoja `VistasPersonalizadasReportes`
+  - `js/ui-common.js`
+- **Subcapacidad Relacionada:** F26-008.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Expuestas:** Reportes institucionales existentes, permisos, catálogos de campos y almacenamiento de preferencias.
+- **Problema Detectado:**
+  Existen definiciones de reportes institucionales, pero falta persistencia de vistas personalizadas por usuario. Los usuarios necesitan conservar sus configuraciones de consulta sin tener que reconstruir filtros, columnas, ordenamientos y agrupaciones cada vez que acceden a un reporte.
+- **Requisitos Funcionales:**
+  1. Configuración de vistas analíticas:
+     - Permitir personalizar reportes mediante: selección de columnas visibles, orden de columnas, filtros aplicados, ordenamiento ascendente/descendente, agrupaciones por categorías, totales y subtotales, períodos de consulta, criterios de búsqueda y opciones de exportación.
+  2. Guardado y reutilización:
+     - Guardar vistas personalizadas con nombre descriptivo y notas.
+     - Modificar, duplicar, establecer como predeterminada (`defaultView`) o eliminar vistas propias.
+     - Recuperar la configuración predeterminada institucional con un clic.
+     - Compartir vistas con usuarios o roles autorizados.
+     - Diferenciar formalmente: vistas personales, vistas compartidas departamentales y plantillas institucionales oficiales.
+  3. Permisos y seguridad estricta:
+     - Una vista guardada no debe ampliar jamás los permisos del usuario.
+     - El servidor debe validar en cada ejecución: acceso al reporte, acceso a cada campo incluido, ámbito del usuario (grado/sección/departamento) y permisos de exportación.
+     - Si un usuario pierde acceso a un campo utilizado en una vista guardada, advertir y omitir el campo sin exponer datos restringidos.
+  4. Compatibilidad ante modificaciones de esquema:
+     - Si un campo del reporte original cambia o se elimina, no ejecutar consultas fallidas silenciosas; advertir al usuario y permitir adaptar la vista guardada.
+  5. Rendimiento y presentación:
+     - Aplicar filtros y ordenamientos en servidor; mantener paginación y mostrar estados de carga sin bloquear la interfaz.
+- **Cambios Necesarios:**
+  - Crear hoja `VistasPersonalizadasReportes` en backend.
+  - Implementar endpoints en backend (`saveReportView`, `getReportViews`, `deleteReportView`).
+  - Asociar vistas con `userId`, `rol` y ámbito departamental.
+  - Integrar validaciones de permisos sobre campos guardados en las consultas de reportes.
+  - Adaptar el visor modal de reportes (`modal-report-viewer`) para permitir seleccionar y guardar vistas.
+- **Comportamiento Esperado:**
+  Un usuario autorizado puede personalizar un reporte, guardar la vista y volver a ejecutarla posteriormente. La configuración permanece disponible sin modificar el reporte institucional original ni ampliar los permisos del usuario.
+- **Criterios de Aceptación:**
+  - [ ] Crear una vista con columnas, filtros y ordenamientos personalizados.
+  - [ ] Guardarla y volver a cargarla posteriormente desde la lista de vistas guardadas.
+  - [ ] Ejecutar nuevamente el reporte y comprobar que conserva todos los criterios configurados.
+  - [ ] Modificar una vista sin afectar otras vistas guardadas ni el reporte institucional original.
+  - [ ] Duplicar y eliminar una vista verificando la correcta actualización del catálogo.
+  - [ ] Comprobar que las vistas personales no son visibles para usuarios no autorizados.
+  - [ ] Compartir una vista y comprobar que los destinatarios conservan sus propias restricciones de datos (RBAC).
+  - [ ] Retirar el permiso de un campo y verificar que una vista que lo utiliza no expone información confidencial.
+  - [ ] Modificar el esquema de un reporte y comprobar que las vistas incompatibles muestran una advertencia amigable.
+  - [ ] Ejecutar reportes con muchos registros y comprobar que se aplican filtros y paginación correctamente.
+  - [ ] Exportar una vista personalizada y comprobar que el resultado coincide exactamente con los filtros y columnas seleccionados.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F26-Task05] [P0] [Caché y Sincronización - Implementar Invalidación Reactiva y Sincronización de Caché de Configuraciones]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - `backend/developer-service/Code.gs`
+  - `js/ui-common.js`
+  - `js/config.js`
+  - `js/api.js`
+  - Hojas `ConfiguracionSistema`, `RegistroEventos`
+- **Subcapacidad Relacionada:** F26-013.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Expuestas:** `ConfiguracionSistema`, `manageInstitutionalDataCache`, motor de precedencia (`F26-Task01`), sesiones de usuario y componentes frontend consumidores de configuración.
+- **Problema Detectado:**
+  Después de modificar parámetros en `ConfiguracionSistema`, los clientes pueden conservar valores antiguos en memoria local hasta que se cierre la sesión o se recargue la página. Esto puede ocasionar comportamientos contradictorios entre módulos y usuarios que utilizan configuraciones diferentes durante un mismo período de operación.
+- **Requisitos Funcionales:**
+  1. Identificación y señalización de cambios:
+     - Toda modificación de configuración debe generar una señal verificable de actualización con marca de versión incremental y timestamp ISO.
+     - Registrar parámetro modificado, ámbito afectado, versión nueva, fecha, usuario responsable y módulos dependientes.
+  2. Versionado y detección de obsolescencia:
+     - Mecanismo para comprobar si la configuración local del cliente sigue vigente comparando su versión con la versión central (`configVersion`).
+     - Determinar si el cambio requiere una recarga completa de sesión o solo actualizar el componente local.
+  3. Invalidación reactiva:
+     - Al guardar en backend (`saveSystemConfiguration`), purgar inmediatamente la caché en servidor (`CacheService`).
+     - Emitir respuesta con la nueva versión para que el cliente invalide su caché local (`localStorage` / memoria).
+     - Evitar que una configuración antigua sobrescriba una versión más reciente.
+  4. Caché diferenciada por ámbito:
+     - Respetar la jerarquía de precedencia: un cambio global invalida a todos los ámbitos que lo heredan; un cambio departamental solo invalida las sesiones de esa unidad; una preferencia personal solo afecta al usuario emisor.
+  5. Resiliencia y fallos de sincronización:
+     - Si el cliente pierde conexión, no declarar sincronización exitosa; registrar error y reintentar al reconectar.
+     - Para operaciones críticas, el servidor debe validar la versión vigente de la configuración antes de autorizar la acción.
+  6. Gestión de concurrencia:
+     - Detectar colisiones si dos administradores modifican configuraciones simultáneamente e informar del conflicto sin sobrescrituras ciegas.
+- **Cambios Necesarios:**
+  - Incorporar versionado de configuraciones y marcas de tiempo en `ConfiguracionSistema`.
+  - Adaptar `manageInstitutionalDataCache` para soportar purga selectiva por clave y ámbito.
+  - Integrar la invalidación automática en `saveSystemConfiguration`.
+  - Incorporar verificación de versión de configuración en las llamadas periódicas de `api.js` / `ui-common.js`.
+  - Implementar validación de versión en operaciones críticas de backend.
+- **Comportamiento Esperado:**
+  Cuando un administrador modifica un parámetro, los usuarios afectados reciben la configuración vigente sin depender de cerrar sesión o recargar manualmente la aplicación. Los cambios se propagan únicamente a los ámbitos correspondientes.
+- **Criterios de Aceptación:**
+  - [ ] Abrir dos sesiones concurrentes con usuarios diferentes.
+  - [ ] Modificar una configuración institucional desde una sesión y comprobar que la otra sesión detecta el cambio y actualiza el valor.
+  - [ ] Modificar una configuración departamental y comprobar que solo afecta al ámbito correspondiente sin alterar otros departamentos.
+  - [ ] Modificar una preferencia personal y comprobar que no invalida configuraciones ajenas.
+  - [ ] Simular un fallo de red durante la actualización y comprobar que el cliente no declara una sincronización exitosa.
+  - [ ] Recuperar la conexión y comprobar que se obtiene la versión vigente del servidor.
+  - [ ] Modificar simultáneamente un parámetro desde dos sesiones y comprobar que se detecta el conflicto de concurrencia.
+  - [ ] Comprobar que un cliente con una versión antigua no puede sobrescribir silenciosamente una configuración nueva.
+  - [ ] Verificar que la invalidación de caché no elimina datos de negocio ajenos a la configuración.
+  - [ ] Comprobar que las cachés de los servicios dependientes se actualizan correctamente.
+- **Estado:** [ ] Pendiente
+
+---
+
+### P2 — PRIORIDAD MEDIA
+
+### [F26-Task06] [P2] [Historial y Recuperación - Centro de Historial, Comparación y Restauración de Configuraciones Críticas]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - Hojas `ConfiguracionSistema`, `RegistroEventos`, `HistorialVersionesConfiguracion`
+  - `js/ui-common.js`
+- **Subcapacidades Relacionadas:** F26-011, F26-012.
+- **Estado de Partida:** Protección e historial completos y verificados; falta la herramienta de restauración identificada en el backlog.
+- **Dependencias Expuestas:** Versionado actual de `ConfiguracionSistema`, `RegistroEventos`, roles y permisos, motor de precedencia (`F26-Task01`) e invalidación reactiva (`F26-Task05`).
+- **Problema que Resuelve:**
+  La plataforma ya restringe la modificación de configuraciones globales, mantiene versiones y registra eventos. Sin embargo, no dispone de un procedimiento funcional completo para restaurar una versión anterior de un parámetro modificado erróneamente. Se requiere ampliar la trazabilidad existente para ofrecer recuperación controlada, sin sustituir el sistema de auditoría ni eliminar su historial.
+- **Requisitos Funcionales:**
+  1. Consulta del historial de configuraciones:
+     - Vista administrativa filtrable por parámetro, categoría, ámbito, departamento, usuario, fecha y versión.
+     - Mostrar valor anterior, valor nuevo, usuario responsable, fecha/hora, motivo de cambio y versión resultante.
+  2. Comparación visual y estructural de versiones (Diff):
+     - Seleccionar dos versiones históricas y visualizar diferencias: valores anteriores vs nuevos, cambios de tipo, cambios de ámbito, parámetros agregados o desactivados y dependencias afectadas.
+     - Proteger y enmascarar valores sensibles (claves API, credenciales).
+  3. Restauración controlada de versiones (`rollbackSystemConfiguration`):
+     - Restaurar una versión anterior creando una nueva versión secuencial basada en el valor histórico seleccionado.
+     - Conservar la versión actual en el historial sin eliminar versiones intermedias ni reescribir la auditoría.
+     - Registrar quién solicitó y ejecutó la restauración, valor anterior y restaurado, fecha y justificación.
+     - Validar permisos elevados (`Administrador`/`Director`) y dependencias antes de confirmar.
+     - Mostrar advertencia de impacto y solicitar confirmación explícita.
+  4. Restauración selectiva:
+     - Permitir restaurar parámetros individuales o conjuntos relacionados validando compatibilidad entre valores.
+  5. Protección de información histórica:
+     - La restauración de una configuración no debe modificar retroactivamente registros académicos, financieros o administrativos creados bajo la configuración previa.
+  6. Integración con permisos y caché:
+     - Invalidar reactivamente cachés tras la restauración (`F26-Task05`) y registrar eventos estructurados en `RegistroEventos`.
+- **Cambios Necesarios:**
+  - Incorporar almacenamiento de historial detallado en `HistorialVersionesConfiguracion`.
+  - Implementar endpoint en backend `rollbackSystemConfiguration`.
+  - Crear interfaz de usuario para consulta, comparación visual y botón de restauración con modal de confirmación.
+  - Integrar la restauración con el motor de precedencia e invalidación de caché.
+- **Comportamiento Esperado:**
+  Un administrador autorizado puede consultar versiones anteriores, comparar sus diferencias y restaurar una configuración seleccionada. La restauración genera una nueva versión y deja evidencia completa, sin borrar el historial ni alterar registros académicos o financieros existentes.
+- **Criterios de Aceptación:**
+  - [ ] Modificar un parámetro y comprobar que se registra la versión anterior y la nueva en el historial.
+  - [ ] Consultar el historial y localizar la modificación con sus metadatos completos.
+  - [ ] Comparar dos versiones y verificar que se muestran sus diferencias con claridad.
+  - [ ] Restaurar una versión anterior y comprobar que el valor efectivo cambia de inmediato.
+  - [ ] Verificar que la restauración crea una nueva versión secuencial y no elimina las posteriores.
+  - [ ] Intentar restaurar con un usuario sin permisos y comprobar que la operación se rechaza.
+  - [ ] Restaurar un parámetro departamental y comprobar que no afecta a otros departamentos.
+  - [ ] Restaurar varios parámetros relacionados y comprobar que se validan sus dependencias antes de aplicar.
+  - [ ] Simular una restauración incompatible y comprobar que se bloquea sin dejar cambios parciales.
+  - [ ] Comprobar que los registros históricos académicos y financieros no se modifican retroactivamente.
+  - [ ] Verificar que la restauración invalida las cachés afectadas de forma reactiva.
+  - [ ] Comprobar que el historial identifica tanto la versión de origen como la nueva versión restaurada.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F26-Task07] [P2] [Preferencias de Usuario - Ampliar la Administración de Preferencias Personales sin Permitir Conflictos Institucionales]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - Hojas `PreferenciasNotificacion`, `ConfiguracionVisualGlobal`, `PreferenciasUsuario`
+  - `js/ui-common.js`
+- **Subcapacidades Relacionadas:** F26-001, F26-002, F26-014.
+- **Estado de Partida:** Preferencias visuales y de notificaciones implementadas; ampliar únicamente las preferencias que estén ausentes y sean compatibles con el modelo jerárquico.
+- **Dependencias Expuestas:** `PreferenciasNotificacion`, `ConfiguracionVisualGlobal`, motor de precedencia (`F26-Task01`) y formateador regional (`F26-Task02`).
+- **Problema Detectado:**
+  La plataforma dispone de preferencias individuales de notificaciones y visualización, pero estas deben integrarse de manera coherente con la configuración institucional y departamental. Se necesita distinguir claramente qué puede personalizar cada usuario y qué parámetros deben permanecer bajo control institucional.
+- **Requisitos Funcionales:**
+  1. Preferencias individuales personalizables autorizadas:
+     - Idioma de la interfaz de usuario (español, inglés).
+     - Formato personal de presentación de fechas (sin alterar valores en base de datos).
+     - Preferencias visuales de paleta de colores y temas contrastados.
+     - Disposición y orden de los widgets en el dashboard dinámico.
+     - Categorías y canales de notificación activos (in-app, correo).
+     - Frecuencia y agrupación de avisos opcionales.
+     - No permitir personalización individual de parámetros institucionales obligatorios (moneda oficial, reglas fiscales, años lectivos).
+  2. Herencia de valores predeterminados:
+     - Si el usuario no tiene una preferencia explícita configurada, heredar el valor del departamento o de la institución.
+     - Opción en la interfaz para restablecer preferencias individuales y recuperar valores heredados.
+  3. Administración y persistencia segura:
+     - Guardar preferencias en hoja `PreferenciasUsuario` vinculadas a `userId`.
+     - Recuperar preferencias al iniciar sesión y aplicarlas sin afectar a otros usuarios.
+     - Conservar preferencias entre sesiones y en almacenamiento local de navegador.
+  4. Separación estricta de presentación y operación:
+     - Una preferencia de presentación no debe modificar cálculos financieros, nombres de registros ni reglas de negocio.
+- **Cambios Necesarios:**
+  - Integrar `PreferenciasNotificacion` y configuraciones visuales bajo la entidad común de preferencias.
+  - Crear interfaz modal amigable para personalización individual en `modal-dashboard-settings`.
+  - Incorporar botón de "Restablecer a valores institucionales".
+  - Implementar validación en servidor para rechazar intentos de personalizar parámetros reservados.
+- **Comportamiento Esperado:**
+  Cada usuario puede personalizar las opciones permitidas y conservarlas entre sesiones. Cuando no establece una preferencia, recibe el valor heredado correspondiente. Ninguna personalización individual modifica la configuración institucional.
+- **Criterios de Aceptación:**
+  - [ ] Cambiar una preferencia personal y comprobar que persiste al iniciar una nueva sesión.
+  - [ ] Comprobar que la preferencia individual no modifica la configuración de otros usuarios concurrentes.
+  - [ ] Restablecer la preferencia y comprobar que recupera automáticamente el valor institucional heredado.
+  - [ ] Cambiar el valor institucional y verificar que los usuarios sin excepciones personales reciben el nuevo valor.
+  - [ ] Comprobar que las preferencias personales no alteran cálculos financieros, fechas almacenadas ni permisos de acceso.
+  - [ ] Intentar modificar una preferencia no permitida mediante petición directa y comprobar que el servidor la rechaza.
+  - [ ] Verificar que las preferencias visuales y de notificación existentes continúan funcionando sin regresiones.
+- **Estado:** [ ] Pendiente
+
+---
