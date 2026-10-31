@@ -11515,7 +11515,6 @@
 
 ---
 
-
 ---
 
 # FASE 31: DISEÑADOR UNIVERSAL DE DOCUMENTOS Y PLANTILLAS
@@ -11524,25 +11523,36 @@
 
 | ID | Prioridad | Orden Secuencial | Tarea Técnica / Requisito | Componentes Principales | Subcapacidad | Estado |
 |---|---|---|---|---|---|---|
-| [F31-Task01] | P0 | 1 | Editor Universal de Composición Documental WYSIWYG y Formato de Página | `backend/accounting-service/Code.gs`, `js/teacher.js`, `js/ui-common.js` | F31-01, F31-02, F31-10 | [ ] Pendiente |
-| [F31-Task02] | P0 | 2 | Diseñador Visual de Formularios Digitales y Constructor de Campos | `backend/user-service/Code.gs`, `js/ui-common.js` | F31-04, F31-11 | [ ] Pendiente |
-| [F31-Task03] | P0 | 3 | Motor de Importación DOCX Avanzado y Compatibilidad Word 2013-2017 | `backend/accounting-service/Code.gs`, `js/teacher.js` | F31-08 | [ ] Pendiente |
-| [F31-Task04] | P0 | 4 | Sistema Centralizado de Variables y Secciones Repetibles (Looping Tags) | `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs` | F31-06, F31-23 | [ ] Pendiente |
-| [F31-Task05] | P0 | 5 | Motor de Generación Masiva por Lotes y Paquetes de Documentos ZIP | `backend/accounting-service/Code.gs` | F31-07, F31-19 | [ ] Pendiente |
-| [F31-Task06] | P1 | 6 | Motor de Lógica Condicional y Visibilidad Dinámica en Formularios (AND/OR) | `backend/user-service/Code.gs`, `js/ui-common.js` | F31-05 | [ ] Pendiente |
-| [F31-Task07] | P1 | 7 | Integración Automática de Documentos Emitidos con Expedientes Institucionales | `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs` | F31-16, F31-22 | [ ] Pendiente |
-| [F31-Task08] | P1 | 8 | Gestión de Estilos Corporativos Globales y Encabezados Diferenciados | `backend/accounting-service/Code.gs`, `js/ui-common.js` | F31-03 | [ ] Pendiente |
-| [F31-Task09] | P1 | 9 | Validador Criptográfico de Archivos Adjuntos y Prevención de Malware | `backend/academic-service/Code.gs`, `backend/user-service/Code.gs` | F31-15, F31-17 | [ ] Pendiente |
-| [F31-Task10] | P1 | 10 | Optimización Móvil y Accesibilidad WCAG en Diligenciamiento de Formularios | `js/ui-common.js`, `css/style.css` | F31-18 | [ ] Pendiente |
-| [F31-Task11] | P2 | 11 | Generador de Códigos QR Dinámicos para Verificación Instantánea de CUV | `backend/accounting-service/Code.gs`, `js/teacher.js` | F31-23 | [ ] Pendiente |
-| [F31-Task12] | P2 | 12 | Soporte de Plantillas Multilingües Sincronizadas (Español / Inglés) | `backend/accounting-service/Code.gs` | F31-23 | [ ] Pendiente |
-| [F31-Task13] | P2 | 13 | Módulo de Revisión Colaborativa y Comentarios en Borradores de Plantillas | `backend/accounting-service/Code.gs`, `js/teacher.js` | F31-14, F31-20, F31-23 | [ ] Pendiente |
+| [F31-T01] | P0 | 1 | Editor Universal de Documentos Enriquecidos (WYSIWYG) | `backend/accounting-service/Code.gs`, `js/teacher.js`, `js/ui-common.js` | F31-01, F31-02, F31-10 | [ ] Pendiente |
+| [F31-T02] | P0 | 2 | Motor de Maquetación, Paginación y Fidelidad de Impresión | `backend/accounting-service/Code.gs`, `js/ui-common.js` | F31-02, F31-10 | [ ] Pendiente |
+| [F31-T03] | P0 | 3 | Importación Avanzada de Documentos DOCX (Word 2013-2017+) | `backend/accounting-service/Code.gs`, `js/teacher.js` | F31-08 | [ ] Pendiente |
+| [F31-T04] | P0 | 4 | Importación Avanzada de PDF y Reutilización de Documentos Preimpresos | `js/teacher.js`, `backend/accounting-service/Code.gs` | F31-09, F31-02 | [ ] Pendiente |
+| [F31-T05] | P0 | 5 | Sistema de Campos Dinámicos, Variables Institucionales y Secciones Repetibles | `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs` | F31-06, F31-23 | [ ] Pendiente |
+| [F31-T06] | P0 | 6 | Generación Masiva de Documentos y Procesamiento Resiliente por Lotes | `backend/accounting-service/Code.gs` | F31-07, F31-19 | [ ] Pendiente |
+| [F31-T07] | P1 | 7 | Constructor Visual Universal de Formularios Digitales | `backend/user-service/Code.gs`, `js/ui-common.js` | F31-04, F31-11 | [ ] Pendiente |
+| [F31-T08] | P1 | 8 | Motor Centralizado de Reglas Condicionales y Formularios Dinámicos | `backend/user-service/Code.gs`, `js/ui-common.js` | F31-05 | [ ] Pendiente |
+| [F31-T09] | P1 | 9 | Guardado de Borradores, Continuidad de Formularios y Recuperación de Respuestas | `backend/user-service/Code.gs`, `js/ui-common.js` | F31-05, F31-18 | [ ] Pendiente |
+| [F31-T10] | P1 | 10 | Sistema de Estilos Institucionales y Componentes Documentales Reutilizables | `backend/accounting-service/Code.gs`, `js/ui-common.js` | F31-03 | [ ] Pendiente |
+| [F31-T11] | P1 | 11 | Integración Automática de Documentos Emitidos con Expedientes y Procesos | `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs` | F31-16, F31-22 | [ ] Pendiente |
+| [F31-T12] | P1 | 12 | Ampliación del Catálogo Universal de Documentos y Trámites Departamentales | `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs` | F31-22 | [ ] Pendiente |
+| [F31-T13] | P1 | 13 | Gestión Avanzada de Versiones y Ciclo de Vida Inmutable de Plantillas | `backend/accounting-service/Code.gs` | F31-13 | [ ] Pendiente |
+| [F31-T14] | P1 | 14 | Administración Granular de Permisos y Flujos de Aprobación Documental | `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs` | F31-14 | [ ] Pendiente |
+| [F31-T15] | P1 | 15 | Seguridad Avanzada y Validación Criptográfica de Archivos Documentales | `backend/academic-service/Code.gs`, `backend/user-service/Code.gs` | F31-15, F31-17 | [ ] Pendiente |
+| [F31-T16] | P1 | 16 | Fortalecimiento de Firmas, Conformidades y Evidencias de Aprobación | `backend/user-service/Code.gs` | F31-11, F31-15 | [ ] Pendiente |
+| [F31-T23] | P1 | 17 | Banco de Pruebas Documentales y Validación de Fidelidad Multi-Formato | `tests/regression/academic-grading-suite.js`, `backend/developer-service/Code.gs` | F31-19, F31-20 | [ ] Pendiente |
+| [F31-T24] | P1 | 18 | Optimización del Rendimiento y Resiliencia del Procesamiento Documental | `backend/accounting-service/Code.gs`, `backend/developer-service/Code.gs` | F31-19 | [ ] Pendiente |
+| [F31-T17] | P2 | 19 | Optimización de Experiencia Móvil, Accesibilidad y Usabilidad del Diseñador | `js/ui-common.js`, `css/style.css` | F31-18 | [ ] Pendiente |
+| [F31-T18] | P2 | 20 | Generación de Códigos QR Dinámicos y Verificación Documental CUV Ampliada | `backend/accounting-service/Code.gs`, `js/teacher.js` | F31-23 | [ ] Pendiente |
+| [F31-T19] | P2 | 21 | Plantillas Multilingües Sincronizadas y Localización Documental | `backend/accounting-service/Code.gs` | F31-23 | [ ] Pendiente |
+| [F31-T20] | P2 | 22 | Revisión Colaborativa y Comentarios en Borradores de Plantillas | `backend/accounting-service/Code.gs`, `js/teacher.js` | F31-14, F31-20, F31-23 | [ ] Pendiente |
+| [F31-T21] | P2 | 23 | Búsqueda Avanzada, Clasificación y Administración del Repositorio Documental | `backend/accounting-service/Code.gs`, `js/teacher.js` | F31-12 | [ ] Pendiente |
+| [F31-T22] | P2 | 24 | Auditoría Documental Ampliada, Trazabilidad y Métricas Operativas | `backend/user-service/Code.gs`, `backend/accounting-service/Code.gs` | F31-20 | [ ] Pendiente |
 
 ---
 
-### BLOQUE 1. ARQUITECTURA DOCUMENTAL Y MOTORES DE EDICIÓN NUCLEARES (P0)
+### BLOQUE 1. EDICIÓN Y COMPOSICIÓN DOCUMENTAL — PRIORIDAD P0
 
-### [F31-Task01] [P0] Editor Universal de Composición Documental WYSIWYG y Formato de Página
+### [F31-T01] [P0] Editor Universal de Documentos Enriquecidos (WYSIWYG)
 - **Orden de Ejecución:** 1
 - **Prioridad:** P0 (Crítica)
 - **Componentes Afectados:**
@@ -11550,66 +11560,107 @@
   - `js/teacher.js`, `js/ui-common.js`
   - Hoja: `PlantillasEscolares`
 - **Subcapacidades Relacionadas:** F31-01, F31-02, F31-10.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-02) y Sección F.
-- **Problema Detectado y Riesgos:**
-  La plataforma cuenta con un editor visual de PDF Overlay sobre fondos preimpresos y un visor HTML básico, pero carece de un procesador de texto enriquecido en línea (Word-like) que permita componer documentos administrativos y pedagógicos desde cero con tamaños de papel normalizados (A4, Carta, Oficio), orientación, márgenes configurables y tablas estructuradas.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-01, F31-02) y Backlog de Implementación F31-T01.
+- **Problema o Carencia:**
+  La plataforma permite configurar contenido HTML y posicionar campos dinámicos sobre documentos PDF, pero todavía no ofrece una experiencia completa de edición de documentos desde cero. El editor actual no sustituye las capacidades de un procesador de textos para elaborar circulares, actas, contratos, reglamentos, constancias, informes y documentos institucionales extensos.
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Herramientas completas de formato de texto:*
-     - Tipografía institucional y tamaño, negrita, cursiva, subrayado, tachado, color de fuente y resaltado.
-     - Alineación (izquierda, centro, derecha, justificada), sangrías, interlineado, listas numeradas y con viñetas.
-     - Estilos preconfigurados de títulos (H1, H2, H3), citas, texto normal y notas al pie.
-     - Deshacer/rehacer (historial de acciones en cliente) y motor de búsqueda y reemplazo de texto.
-  2. *Composición y maquetación de página:*
-     - Selección de formato de papel: Carta (Letter), Oficio (Legal) y A4.
-     - Orientación vertical y horizontal con márgenes editables (superior, inferior, izquierdo, derecho).
+  1. *Edición de contenido:*
+     - Crear documentos en blanco y a partir de plantillas existentes.
+     - Insertar, seleccionar, modificar, copiar, cortar, pegar y eliminar contenido.
+     - Deshacer y rehacer operaciones con pila de historial fluida.
+     - Seleccionar fragmentos, párrafos, tablas e imágenes.
+     - Permitir copiar contenido desde otras aplicaciones conservando, cuando sea posible, el formato compatible.
+     - Opciones configurables de pegado: conservar formato original, adaptar al estilo del documento o pegar únicamente texto plano (`MODO_PEGADO_PREDETERMINADO`).
+     - Mantener la edición fluida en documentos extensos sin bloqueos de memoria.
+  2. *Formato de texto:*
+     - Familia tipográfica, tamaño, color y resaltado.
+     - Negrita, cursiva, subrayado, tachado y subíndice/superíndice.
+     - Alineación izquierda, derecha, centrada y justificada.
+     - Interlineado, espaciado anterior y posterior, sangrías y tabulaciones.
+     - Listas numeradas y con viñetas, incluyendo listas multinivel.
+     - Estilos reutilizables para títulos (H1, H2, H3), subtítulos, párrafos, citas y notas.
+     - Aplicación y actualización coherente de estilos en todo el documento.
+  3. *Configuración de página:*
+     - Tamaños normalizados A4, Carta (Letter), Oficio (Legal) y tamaños personalizados.
+     - Orientación vertical y horizontal con márgenes independientes (superior, inferior, izquierdo, derecho).
      - Saltos de página y de sección controlados.
-     - Encabezados y pies de página con numeración automática (`Página X de Y`), permitiendo iniciar la numeración desde una página determinada.
-  3. *Tablas y elementos estructurados:*
-     - Inserción y eliminación de tablas, ajuste visual de ancho de columnas y alto de filas.
-     - Combinación y división de celdas, bordes personalizados y color de fondo.
-     - Control de salto de página para filas largas y encabezados de tabla repetidos en páginas subsiguientes.
-  4. *Elementos multimedia y firmas:*
-     - Inserción de imágenes con control de proporciones, dimensiones y ajuste con el texto circundante.
-     - Inserción de sellos institucionales y líneas oficiales de firma.
+     - Columnas y distribución de contenido periodístico/multicolumna.
+     - Configuración diferenciada de encabezados y pies de página.
+     - Numeración automática de páginas con formato (`Página X de Y`), posición y numeración inicial configurable.
+     - Diferenciación de primera página y páginas pares e impares.
+  4. *Tablas estructuradas:*
+     - Insertar tablas y configurar filas y columnas.
+     - Agregar y eliminar filas o columnas dinámicamente.
+     - Combinar y dividir celdas horizontal y verticalmente.
+     - Configurar bordes, colores, alineación, márgenes internos (padding) y dimensiones.
+     - Controlar ajuste de texto y tamaño de celdas evitando que excedan los márgenes de impresión.
+     - Permitir que las tablas continúen entre páginas controlando el comportamiento de sus filas (evitar cortes a mitad de renglón).
+     - Permitir marcar filas de encabezado para que se repitan en páginas posteriores.
+  5. *Imágenes y elementos insertables:*
+     - Insertar imágenes desde archivos o recursos institucionales autorizados.
+     - Modificar tamaño, proporción, alineación y posición relativa.
+     - Controlar el ajuste del texto alrededor de las imágenes (en línea, cuadrado, detrás/delante del texto).
+     - Insertar logotipos, sellos, líneas divisoras, formas y otros elementos gráficos.
+     - Permitir insertar enlaces e identificativos institucionales, asegurando que las imágenes embebidas no desaparezcan al exportar o trasladar el documento.
+  6. *Compatibilidad y coexistencia:*
+     - Separar el contenido, los estilos y la configuración de página para permitir su reutilización.
+     - Representación de página visual que se aproxime fielmente al resultado final de impresión.
+     - Conservar la compatibilidad con el editor PDF Overlay, que debe continuar disponible para trabajar sobre documentos preimpresos.
 - **Criterios de Aceptación:**
-  - [ ] Permite redactar un documento institucional de varias páginas desde cero conservando su estructura al guardar y reabrir.
-  - [ ] Las tablas con celdas combinadas y saltos de página se renderizan sin cortes de texto.
-  - [ ] La exportación a PDF reproduce exactamente los márgenes, fuentes y alineación visualizados en el editor.
+  - [ ] Se puede crear, editar, guardar, cerrar y volver a abrir un documento sin perder su contenido ni formato.
+  - [ ] Las operaciones de deshacer y rehacer funcionan sobre las acciones principales.
+  - [ ] Se pueden insertar y modificar tablas con celdas combinadas.
+  - [ ] Los saltos de página, encabezados, pies y numeración se conservan en el PDF.
+  - [ ] La vista previa y el archivo exportado mantienen una distribución coherente.
+  - [ ] Los documentos extensos no producen bloqueos, pérdida de contenido ni degradación inaceptable del editor.
+  - [ ] El editor PDF Overlay sigue funcionando de forma independiente y compatible con el nuevo editor.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F31-Task02] [P0] Diseñador Visual de Formularios Digitales y Constructor de Campos
+### [F31-T02] [P0] Motor de Maquetación, Paginación y Fidelidad de Impresión
 - **Orden de Ejecución:** 2
 - **Prioridad:** P0 (Crítica)
 - **Componentes Afectados:**
-  - `backend/user-service/Code.gs` (`saveInstitutionalFormSchema`, `getFormSchemaWithFields`)
-  - `js/ui-common.js` (Constructor visual arrastrar y soltar)
-  - Hoja: `FormulariosInstitucionales`
-- **Subcapacidades Relacionadas:** F31-04, F31-11.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-04).
-- **Problema Detectado y Riesgos:**
-  Los formularios institucionales se configuran actualmente mediante payloads JSON manuales en el backend, sin una interfaz visual intuitiva que permita a los directivos y secretarios diseñar formularios, ordenar campos y definir validaciones sin conocimientos de programación.
+  - `backend/accounting-service/Code.gs` (`renderPaginatedDocumentHtml`, `validateDocumentLayoutPrintability`)
+  - `js/ui-common.js`
+- **Subcapacidades Relacionadas:** F31-02, F31-10.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-02, F31-10) y Backlog de Implementación F31-T02.
+- **Problema o Carencia:**
+  La generación PDF ya produce documentos de varias páginas y supera pruebas básicas de impresión. Sin embargo, se requiere ampliar la maquetación para asegurar que el motor conserve fielmente diseños complejos elaborados con el editor enriquecido o importados desde DOCX/PDF, evitando cortes inadecuados de tablas o imágenes desplazadas.
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Catálogo completo de tipos de campo:*
-     - Básicos: Texto corto, texto multilínea, número entero, número decimal, fecha, hora, correo electrónico, teléfono y dirección.
-     - Selección: Lista desplegable, casillas de verificación (checkboxes), botones de radio (radio buttons), selección múltiple y catálogos institucionales dinámicos (grados, asignaturas, departamentos).
-     - Especiales: Firma manuscrita en Canvas, carga de archivos adjuntos, imagen de evidencia, campo calculado y campo de solo lectura vinculado a datos del estudiante/empleado.
-  2. *Propiedades configurables por campo:*
-     - Identificador único (`name`/`id`), etiqueta visible (`label`), texto de ayuda (`placeholder`), valor por defecto.
-     - Obligatoriedad (requerido/opcional), longitud mínima/máxima, límites numéricos, regex de validación y mensaje de error personalizado.
-     - Orden de presentación y permisos de visualización por rol institucional.
-  3. *Generación de versión imprimible:*
-     - Opción de renderizar automáticamente el formulario en formato apto para impresión en papel con líneas y casillas para completado manual con tinta.
+  1. *Fidelidad de representación física:*
+     - Representación de páginas que respete estrictamente los límites físicos del papel (A4, Carta, Oficio).
+     - Correspondencia milimétrica entre las dimensiones del editor y las dimensiones del PDF generado.
+     - Control estricto de saltos automáticos y manuales de página.
+  2. *Prevención de desbordamientos y cortes:*
+     - Evitar encabezados y pies superpuestos al contenido.
+     - Evitar que párrafos, títulos o filas de tablas queden divididos de manera inadecuada (control de líneas viudas y huérfanas).
+     - Permitir controlar si un párrafo debe mantenerse junto al siguiente (`keep_with_next`).
+     - Mantener encabezados de tabla al continuar una tabla en otra página.
+     - Controlar imágenes para que no se desplacen, deformen o invadan márgenes.
+  3. *Secciones y tipografías:*
+     - Soportar documentos con orientación (vertical/horizontal) y márgenes diferentes por sección.
+     - Diferenciar encabezados y pies de primera página, páginas pares e impares.
+     - Gestión de fuentes instaladas, fuentes web incorporadas y sustituciones tipográficas controladas.
+     - Evitar cortes de texto, caracteres sustituidos, elementos invisibles y páginas vacías inesperadas.
+     - Mantener enlaces, numeración, tablas y elementos gráficos durante la exportación.
+  4. *Herramientas de validación:*
+     - Validaciones previas a la exportación para detectar desbordamientos y advertir al usuario.
+     - Vista previa de impresión con navegación fluida entre páginas antes de emitir.
 - **Criterios de Aceptación:**
-  - [ ] Los administradores pueden añadir, reordenar y configurar campos mediante interfaz visual interactiva.
-  - [ ] El motor valida los datos ingresados en cliente y servidor antes de permitir el envío.
-  - [ ] Se puede generar una versión imprimible limpia con espaciado adecuado para escritura manual.
+  - [ ] Se generan documentos de varias páginas con tablas extensas, imágenes y encabezados diferenciados.
+  - [ ] No se pierden filas, párrafos, imágenes ni elementos por desbordamientos.
+  - [ ] Los encabezados de tablas se repiten cuando se configura esa opción.
+  - [ ] Los márgenes y tamaños de papel coinciden con la configuración seleccionada.
+  - [ ] La vista previa permite detectar los mismos problemas que aparecerían en el PDF.
+  - [ ] Se comprueba el resultado en documentos de distintas extensiones y complejidades.
+  - [ ] Se verifica la impresión desde navegadores de escritorio y dispositivos móviles compatibles.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F31-Task03] [P0] Motor de Importación DOCX Avanzado y Compatibilidad Word 2013-2017
+### [F31-T03] [P0] Importación Avanzada de Documentos DOCX (Word 2013-2017+)
 - **Orden de Ejecución:** 3
 - **Prioridad:** P0 (Crítica)
 - **Componentes Afectados:**
@@ -11617,283 +11668,718 @@
   - `js/teacher.js`
   - Hoja: `PlantillasEscolares`
 - **Subcapacidades Relacionadas:** F31-08.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-08) y Sección F.
-- **Problema Detectado y Riesgos:**
-  La importación actual solo procesa texto plano, perdiendo tablas complejas, estilos, márgenes e imágenes de archivos elaborados en Microsoft Word (versiones 2013, 2016 y 2017), obligando a reconstruir manualmente los documentos institucionales preexistentes.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-08) y Backlog de Implementación F31-T03.
+- **Problema o Carencia:**
+  La importación actual permite recuperar contenido textual y generar borradores HTML, pero no reconstruye de forma suficiente la estructura interna de documentos DOCX. Esto limita la reutilización de documentos institucionales elaborados previamente en procesadores de texto Word (2013, 2016 y 2017).
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Parseo binario de paquetes OpenXML (.docx):*
-     - Procesar archivos DOCX sin ejecutar scripts, macros ni contenido activo malicioso.
-     - Extraer y mapear a formato interno: párrafos, alineación, negrita, cursiva, subrayado, tamaños de fuente y colores.
-     - Conservar tablas con anchos de columna relativos, bordes y celdas combinadas.
-     - Extraer imágenes incrustadas preservando proporciones y relación con el texto.
-  2. *Informe de compatibilidad y preservación del original:*
-     - Identificar y notificar al usuario cualquier elemento no soportado antes de confirmar la importación.
-     - Conservar el archivo DOCX original en Google Drive como copia de respaldo inalterada.
-     - Permitir previsualizar el borrador convertido antes de registrarlo como plantilla oficial.
+  1. *Compatibilidad OpenXML completa:*
+     - Importar archivos DOCX generados por Word 2013, 2016 y 2017, así como versiones posteriores.
+     - Reconocer las estructuras OpenXML correspondientes y advertir formatos binarios antiguos no soportados (.doc de Word 97-2003).
+     - No presentar un archivo como totalmente compatible cuando solo se haya recuperado su texto.
+  2. *Elementos que deben recuperarse y mapearse:*
+     - Texto y estructura de párrafos, tipografías, tamaños, colores y estilos.
+     - Títulos y jerarquías de encabezados (H1, H2, H3).
+     - Alineación, interlineado, sangrías y listas multinivel.
+     - Tablas con bordes, dimensiones relativas, alineación y celdas combinadas o anidadas.
+     - Imágenes incrustadas, extrayéndolas como adjuntos y preservando su posición relativa y proporciones.
+     - Encabezados, pies de página, numeración de páginas y listas.
+     - Márgenes, orientación, tamaño de papel, saltos de página y de sección.
+     - Hipervínculos, notas al pie y marcadores que puedan convertirse en variables dinámicas.
+  3. *Conversión, revisión y seguridad:*
+     - Convertir el DOCX en un borrador editable en el diseñador sin alterar el archivo original.
+     - Informe de importación detallando elementos conservados, transformados, omitidos o sustituidos.
+     - Permitir corregir manualmente los elementos cuya conversión no sea exacta antes de guardar.
+     - Prohibición estricta de ejecución de macros, scripts VBA o contenidos activos procedentes de los archivos importados.
 - **Criterios de Aceptación:**
-  - [ ] Importa documentos DOCX de Word 2013, 2016 y 2017 conservando textos, tablas e imágenes.
-  - [ ] Advierte con claridad sobre fuentes no disponibles o sustituciones tipográficas automáticas.
-  - [ ] El archivo original queda archivado y el borrador editable queda disponible en el diseñador.
+  - [ ] Se importan documentos de prueba creados con Word 2013, 2016 y 2017.
+  - [ ] Se conservan textos, estilos, tablas, imágenes, encabezados y configuración de página en los casos compatibles.
+  - [ ] Las tablas anidadas y las celdas combinadas se recuperan correctamente cuando estén soportadas.
+  - [ ] Se identifican los elementos no compatibles y no se descartan silenciosamente.
+  - [ ] El documento original permanece intacto en Google Drive.
+  - [ ] Se comparan visualmente el original y el resultado importado mediante un conjunto de documentos representativos.
+  - [ ] La importación de un archivo inválido, incompleto o manipulado no bloquea el sistema ni compromete otros documentos.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F31-Task04] [P0] Sistema Centralizado de Variables y Secciones Repetibles (Looping Tags)
+### [F31-T04] [P0] Importación Avanzada de PDF y Reutilización de Documentos Preimpresos
 - **Orden de Ejecución:** 4
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `js/teacher.js` (`openPdfOverlayEditor`, `renderPdfPage`, `savePdfOverlayTemplate`)
+  - `backend/accounting-service/Code.gs`
+  - Hoja: `PlantillasEscolares`
+- **Subcapacidades Relacionadas:** F31-09, F31-02.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-09) y Backlog de Implementación F31-T04.
+- **Problema o Carencia:**
+  El editor PDF Overlay permite visualizar documentos y posicionar campos superpuestos. Sin embargo, visualizar un PDF y superponer campos no equivale a interpretar, editar o reutilizar toda su estructura documental ni diferenciar entre PDFs vectoriales nativos y documentos escaneados.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Análisis e importación de archivos PDF:*
+     - Importar PDF digitales con texto seleccionable y PDF escaneados compuestos por imágenes de mapa de bits.
+     - Identificar si cada página contiene texto vectorial, imágenes o combinación de ambos.
+     - Conservar el archivo PDF original como fuente inalterable de referencia en Google Drive.
+     - Mantener el orden, tamaño, orientación y rotación de las páginas importadas.
+     - Reconocer, cuando sea técnicamente viable, formularios PDF interactivos existentes (AcroForms) y sus campos.
+  2. *Reutilización de documentos preimpresos:*
+     - Trabajar sobre el PDF original como fondo fijo inalterable y colocar campos dinámicos superpuestos encima.
+     - Definir el tipo de documento: formulario rellenable, documento de emisión oficial o plantilla de impresión.
+     - Incorporar OCR cuando exista una capacidad técnicamente disponible para recuperar texto de documentos escaneados, diferenciando con claridad el texto reconocido por OCR del texto vectorial original.
+     - Herramientas de alineación, ajuste magnético a rejilla, selección múltiple y posicionamiento milimétrico de campos superpuestos.
+     - Seleccionar páginas específicas para aplicar campos dinámicos.
+     - Mantener la alineación de los campos con el documento base en diferentes tamaños de pantalla y durante la exportación final a PDF.
+- **Criterios de Aceptación:**
+  - [ ] Se importan PDF digitales y escaneados de varias páginas conservando orientación y dimensiones originales.
+  - [ ] Los campos superpuestos mantienen su posición milimétrica exacta al generar el PDF final.
+  - [ ] El sistema no presenta un PDF escaneado como si su texto fuera editable cuando no se ha aplicado OCR.
+  - [ ] El documento fuente no se altera en el almacenamiento.
+  - [ ] La descarga final conserva el fondo original y los campos dinámicos agregados.
+  - [ ] El editor Overlay continúa siendo plenamente funcional en navegadores y dispositivos compatibles.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T05] [P0] Sistema de Campos Dinámicos, Variables Institucionales y Secciones Repetibles
+- **Orden de Ejecución:** 5
 - **Prioridad:** P0 (Crítica)
 - **Componentes Afectados:**
   - `backend/accounting-service/Code.gs` (`renderDynamicDocumentTemplate`, `evaluateTemplateLoopingSections`)
   - `backend/academic-service/Code.gs`
+  - Hoja: `CatalogoVariablesDocumentales`
 - **Subcapacidades Relacionadas:** F31-06, F31-23.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-06) y Sección F.
-- **Problema Detectado y Riesgos:**
-  Las variables dinámicas actuales solo admiten valores escalares fijos (`{{estudiante.nombre}}`), impidiendo la generación de documentos que requieren listas de longitud variable como el cuadro de calificaciones bimestrales con todas las asignaturas o recibos con múltiples conceptos de cobro.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-06) y Backlog de Implementación F31-T05.
+- **Problema o Carencia:**
+  El catálogo actual permite insertar variables individuales escalares relacionadas con estudiantes, institución, trámites y documentos. No obstante, no ofrece una solución completa para representar colecciones de datos de longitud variable dentro de una plantilla, como asignaturas, calificaciones, responsables, conceptos de cobro o registros de asistencia.
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Sintaxis de bloques repetibles (Looping Tags):*
-     - Soporte para etiquetas de iteración estructuradas: `{{#each asignaturas}}...{{/each}}`, `{{#each cargos}}...{{/each}}`, `{{#each pagos}}...{{/each}}`.
-     - Acceso a subcampos dentro del bucle: `{{asignatura.nombre}}`, `{{asignatura.notaFinal}}`, `{{cargo.concepto}}`, `{{cargo.monto}}`.
-  2. *Formateadores y filtros de presentación:*
-     - Formato de fechas: `{{fecha | formatDate:"DD/MM/YYYY"}}`.
-     - Formato de moneda hondureña: `{{monto | formatCurrency:"HNL"}}` (ej. `L 1,500.00`).
-     - Conversión de números a letras para actas oficiales y pagarés: `{{monto | numberToWords}}`.
-  3. *Seguridad y comportamiento ante datos nulos:*
-     - Si una variable no tiene valor, aplicar comportamiento configurable (`TEXTO_VACIO`, `GUIONES_LINEA` o `ADVERTENCIA_BLOQUEANTE`).
-     - Aislamiento de seguridad: impedir inyección de código mediante variables dinámicas.
+  1. *Catálogo centralizado de variables dinámicas:*
+     - Mantener catálogo clasificado por entidad y departamento (Estudiante, Familia, Personal, Académico, Financiero, Administrativo).
+     - Nombre legible, descripción, tipo de dato, origen y perfiles autorizados para su uso.
+     - Diferenciar campos individuales, campos calculados y colecciones iterables.
+     - Incorporar nuevas fuentes institucionales sin necesidad de modificar individualmente cada plantilla.
+  2. *Secciones repetibles (Looping Tags):*
+     - Bloques de iteración: `{{#each asignaturas}}...{{/each}}`, `{{#each cargos}}...{{/each}}`, `{{#each abonos}}...{{/each}}`.
+     - Tablas dinámicas con filas generadas automáticamente según los registros reales del alumno o trámite.
+     - Definir encabezados, filas de detalle y filas de totales/subtotales calculados.
+     - Configuración de comportamiento cuando la colección está vacía (`TEXTO_VACIO`, `OCULTAR_TABLA`, `ADVERTENCIA_BLOQUEANTE`).
+     - Filtros y ordenamientos autorizados sobre los elementos de la colección.
+     - Anidamiento de estructuras repetibles controlado y predecible.
+  3. *Ejemplos y fuentes cubiertas:*
+     - Boletines y cuadros de notas con asignaturas, períodos, calificaciones ponderadas y observaciones.
+     - Estados de cuenta con conceptos, cargos arancelarios, abonos, descuentos y saldos.
+     - Constancias con múltiples responsables, tutores o participantes.
+     - Informes de asistencia acumulada e incidencias disciplinarias.
+     - Documentos administrativos con inventario de bienes o insumos despachados.
+  4. *Resolución segura y preservación de valores:*
+     - Resolver únicamente variables autorizadas para el usuario y contexto mediante validación estricta en servidor.
+     - Formatos configurables para fechas (`formatDate`), cantidades, moneda hondureña (`formatCurrency:"HNL"`) y conversión de números a letras (`numberToWords`).
+     - Evitar que datos ingresados por usuarios se interpreten como código ejecutable.
+     - Capturar instantánea inmutable de los datos utilizados al momento de generar el documento oficial, asegurando que cambios posteriores en expedientes, notas o cobros no alteren documentos históricos emitidos.
 - **Criterios de Aceptación:**
-  - [ ] Renderiza boletines de calificaciones y estados de cuenta con número dinámico de filas sin romper la tabla.
-  - [ ] Aplica correctamente filtros de moneda (Lempiras), fechas y conversión de cantidades a letras.
-  - [ ] Las variables sin datos aplican el comportamiento configurado sin emitir errores de ejecución.
+  - [ ] Las variables escalares existentes continúan funcionando con compatibilidad retrospectiva total.
+  - [ ] Una plantilla puede generar tablas con cantidades diferentes de filas según los registros de la base de datos.
+  - [ ] Las colecciones vacías, incompletas o con valores nulos se procesan según su configuración.
+  - [ ] Los cálculos y totales coinciden con los datos de origen de las hojas transaccionales.
+  - [ ] Los datos no autorizados no pueden recuperarse mediante manipulación de variables o peticiones directas.
+  - [ ] Los documentos generados conservan una instantánea de los valores utilizados al emitir.
+  - [ ] Los cambios posteriores en expedientes, notas o pagos no modifican documentos emitidos anteriormente.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F31-Task05] [P0] Motor de Generación Masiva por Lotes y Paquetes de Documentos ZIP
-- **Orden de Ejecución:** 5
+### [F31-T06] [P0] Generación Masiva de Documentos y Procesamiento Resiliente por Lotes
+- **Orden de Ejecución:** 6
 - **Prioridad:** P0 (Crítica)
 - **Componentes Afectados:**
-  - `backend/accounting-service/Code.gs` (`generateBulkSchoolDocumentsBatch`, `downloadDocumentPackageZip`)
+  - `backend/accounting-service/Code.gs` (`generateBulkSchoolDocumentsBatch`, `downloadDocumentPackageZip`, `resumeBulkGenerationProcess`)
   - Hoja: `DocumentosEscolaresEmitidos`, `LotesGeneracionDocumental`
 - **Subcapacidades Relacionadas:** F31-07, F31-19.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-07).
-- **Problema Detectado y Riesgos:**
-  La emisión masiva de constancias o boletines para una sección completa (30-40 alumnos) puede agotar el tiempo límite de ejecución de Google Apps Script (6 minutos) si se procesa sincrónicamente, arriesgando emisiones a medio terminar o duplicados de correlativos.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-07) y Backlog de Implementación F31-T06.
+- **Problema o Carencia:**
+  La generación individual y por lotes está contemplada en el motor actual, pero se requiere una solución operativa completa para emitir documentos de grupos, grados, secciones o conjuntos de usuarios sin depender de una ejecución sincrónica prolongada que pueda agotar las cuotas o tiempos máximos de Google Apps Script.
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Procesamiento resiliente por lotes:*
-     - Segmentación en bloques de 10-15 documentos con control de tiempo y persistencia de estado intermedio (`LotesGeneracionDocumental`).
-     - Garantía de numeración correlativa secuencial y CUV único por cada documento generado mediante `LockService`.
-  2. *Empaquetamiento y descarga consolidada:*
-     - Generar archivo ZIP descargable con todos los PDFs emitidos del lote seleccionado.
-     - Vista de resultados en tiempo real: total procesados, exitosos, fallidos y omitidos con mensaje de error específico.
-     - Capacidad de reanudar un lote interrumpido sin regenerar ni duplicar los documentos ya emitidos.
+  1. *Selección y previsualización de destinatarios:*
+     - Seleccionar grupos mediante filtros autorizados: grado, sección, nivel, departamento o lote de expedientes.
+     - Mostrar el número exacto de destinatarios antes de iniciar el procesamiento.
+     - Seleccionar la plantilla y verificar que corresponde a una versión publicada y aprobada.
+     - Previsualizar una muestra aleatoria antes de lanzar la generación masiva completa.
+  2. *Procesamiento resiliente en bloques:*
+     - Ejecución segmentada en bloques (ej. 10 a 15 documentos por bloque) con persistencia de estado intermedio en `LotesGeneracionDocumental`.
+     - Mostrar barra de progreso en tiempo real identificando documentos exitosos, fallidos y pendientes.
+     - Concurrencia atómica con `LockService` garantizando numeración correlativa secuencial y CUV único sin colisiones.
+     - Los fallos individuales en un registro no invalidan ni detienen el resto del lote.
+  3. *Reanudación, descarga consolidada y auditoría:*
+     - Capacidad de reanudar un lote interrumpido procesando únicamente los elementos pendientes, sin regenerar ni duplicar correlativos de documentos ya emitidos.
+     - Generación de paquete ZIP descargable conteniendo todos los archivos PDF emitidos con nomenclatura de archivo estandarizada.
+     - Registro de auditoría completo: usuario que inició, fecha, plantilla, versión, destinatarios y resultado.
+     - Políticas de expiración y limpieza automática de archivos temporales en Drive.
 - **Criterios de Aceptación:**
-  - [ ] Genera con éxito un lote de 40 constancias oficiales sin exceder los límites de tiempo de Apps Script.
-  - [ ] Cada archivo dentro del paquete ZIP contiene los datos exclusivos del estudiante correspondiente.
-  - [ ] Si se interrumpe el proceso, permite reanudarlo emitiendo únicamente los documentos pendientes.
+  - [ ] Se generan documentos para grupos con diferentes cantidades de destinatarios sin exceder tiempos de ejecución de Apps Script.
+  - [ ] Cada documento contiene los datos del destinatario correcto.
+  - [ ] El progreso refleja los resultados reales y los fallos individuales no abortan el lote completo.
+  - [ ] Los reintentos no duplican documentos ni correlativos institucionales.
+  - [ ] El paquete ZIP contiene todos los documentos exitosos organizados con nombres legibles.
+  - [ ] Se puede consultar el historial del proceso y verificar los límites reales antes de configurar tamaños de lote.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### BLOQUE 2. AUTOMATIZACIÓN, CONDICIONES Y EXPEDIENTES (P1)
+### BLOQUE 2. FORMULARIOS DIGITALES Y AUTOMATIZACIÓN — PRIORIDAD P1
 
-### [F31-Task06] [P1] Motor de Lógica Condicional y Visibilidad Dinámica en Formularios (AND/OR)
-- **Orden de Ejecución:** 6
-- **Prioridad:** P1 (Alta)
-- **Componentes Afectados:**
-  - `backend/user-service/Code.gs` (`evaluateFormConditionalLogic`)
-  - `js/ui-common.js`
-  - Hoja: `FormulariosInstitucionales`
-- **Subcapacidades Relacionadas:** F31-05.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-05).
-- **Problema Detectado y Riesgos:**
-  Los formularios institucionales actuales muestran todos los campos de forma estática, provocando confusión en los usuarios al presentar requisitos que no aplican a su caso (ej. solicitar datos de traslado escolar a alumnos de primer ingreso).
-- **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Reglas de visibilidad y obligatoriedad condicional:*
-     - Mostrar u ocultar campos individuales o secciones completas según respuestas previas.
-     - Operadores lógicos soportados: Igual, No igual, Mayor que, Menor que, Contiene, No contiene, Vacío y No vacío.
-     - Combinación de reglas mediante operadores booleanos AND y OR.
-  2. *Validación contextual inteligente:*
-     - Los campos ocultados dinámicamente no deben bloquear el envío por reglas de obligatoriedad que ya no aplican.
-     - Guardado automático de borrador en el navegador (LocalStorage) y recuperación ante desconexión.
-     - Barra de progreso por pasos y resumen de confirmación previo al envío definitivo.
-- **Criterios de Aceptación:**
-  - [ ] Un formulario adapta dinámicamente los campos mostrados según el tipo de trámite seleccionado.
-  - [ ] Las condiciones combinadas AND/OR se evalúan correctamente en tiempo real.
-  - [ ] Un campo obligatorio ocultado por una regla no impide el envío satisfactorio del formulario.
-- **Estado:** [ ] Pendiente
-
----
-
-### [F31-Task07] [P1] Integración Automática de Documentos Emitidos con Expedientes Institucionales
+### [F31-T07] [P1] Constructor Visual Universal de Formularios Digitales
 - **Orden de Ejecución:** 7
 - **Prioridad:** P1 (Alta)
 - **Componentes Afectados:**
-  - `backend/accounting-service/Code.gs` (`linkIssuedDocumentToStudentFile`)
-  - `backend/academic-service/Code.gs`
-  - Hoja: `DocumentosEscolaresEmitidos`, `DocumentosEstudiante`, `ExpedientesEstudiantes`
-- **Subcapacidades Relacionadas:** F31-16, F31-22.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-16).
-- **Problema Detectado y Riesgos:**
-  Los documentos emitidos quedan registrados en `DocumentosEscolaresEmitidos`, pero no siempre se indexan de forma inmediata en la pestaña de documentos del expediente del alumno o empleado, obligando a realizar búsquedas separadas por CUV.
+  - `backend/user-service/Code.gs` (`saveInstitutionalFormSchema`, `getFormSchemaWithFields`)
+  - `js/ui-common.js` (Constructor visual arrastrar y soltar)
+  - Hoja: `FormulariosInstitucionales`
+- **Subcapacidades Relacionadas:** F31-04, F31-11.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-04) y Backlog de Implementación F31-T07.
+- **Problema o Carencia:**
+  La plataforma permite almacenar definiciones de formularios y procesar solicitudes, pero la configuración basada en estructuras JSON no ofrece a los responsables institucionales una experiencia suficientemente accesible para diseñar y mantener formularios complejos.
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Indexación automática en expediente:*
-     - Al emitir cualquier documento oficial asociado a un `estudianteUserId` o `expedienteId`, crear automáticamente la referencia correspondiente en `DocumentosEstudiante`.
-     - Metadatos vinculados: tipo de documento, CUV, fecha de emisión, emisor, enlace seguro a Drive y estado (`Vigente`, `Archivado`).
-  2. *Consulta integrada y trazabilidad:*
-     - Visualizar y descargar el documento emitido directamente desde la ficha del estudiante en el dashboard de Secretaría y Dirección.
-     - Clasificación documental automática: Académico, Financiero, Disciplinario o Administrativo.
+  1. *Constructor visual interactivo:*
+     - Crear formularios desde cero o duplicar formularios existentes mediante interfaz visual de arrastrar y soltar.
+     - Reordenar campos y secciones, agruparlos por categorías y crear formularios multipágina.
+     - Configurar títulos, instrucciones y descripciones por sección.
+     - Previsualizar el formulario en vistas de escritorio y móvil durante el diseño.
+     - Guardar borradores sin publicarlos, duplicar, versionar y archivar formularios.
+  2. *Catálogo completo de tipos de campos:*
+     - Texto corto y texto multilínea, número entero y decimal.
+     - Fecha, hora, fecha y hora combinadas, correo electrónico y teléfono.
+     - Listas desplegables, selección múltiple, botones de opción (radio) y casillas de verificación (checkboxes).
+     - Campos de dirección, firma manuscrita digitalizada, adjuntos de archivos y campos calculados.
+     - Campos ocultos controlados por el sistema, separadores y textos informativos.
+     - Selectores alimentados dinámicamente por catálogos institucionales autorizados (grados, secciones, materias).
+  3. *Propiedades y configuración de campos:*
+     - Etiqueta visible, descripción y texto de ayuda (placeholder), valor predeterminado.
+     - Obligatoriedad (requerido/opcional), longitud mínima y máxima, límites numéricos y formato/patrón regex de validación con mensaje de error personalizado.
+     - Identificador estable del campo para conservar compatibilidad entre versiones.
+     - Configuración de adjuntos por tipos MIME y tamaño máximo permitido.
+  4. *Vinculación con plantillas documentales:*
+     - Asociar un formulario con una o varias plantillas autorizadas.
+     - Mapear las respuestas del formulario a las variables dinámicas de la plantilla.
+     - Permitir formularios que solo recopilen información sin emitir documentos, así como formularios que generen automáticamente un documento oficial tras su aprobación.
 - **Criterios de Aceptación:**
-  - [ ] Una constancia emitida desde el diseñador aparece de inmediato en la carpeta documental del expediente del alumno.
-  - [ ] El documento conserva el enlace a su CUV y su archivo PDF original en Drive.
-  - [ ] Los usuarios sin permisos sobre el expediente no pueden visualizar ni descargar el documento indexado.
+  - [ ] Se pueden crear formularios complejos con todos los tipos de campos implementados sin escribir JSON manual.
+  - [ ] Se pueden reorganizar campos y páginas conservando sus propiedades al guardar y reabrir.
+  - [ ] Las respuestas se almacenan con identificadores estables y no se alteran al editar versiones posteriores.
+  - [ ] Los formularios publicados se pueden diligenciar desde los perfiles autorizados y generan el documento correspondiente.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F31-Task08] [P1] Gestión de Estilos Corporativos Globales y Encabezados Diferenciados
+### [F31-T08] [P1] Motor Centralizado de Reglas Condicionales y Formularios Dinámicos
 - **Orden de Ejecución:** 8
 - **Prioridad:** P1 (Alta)
 - **Componentes Afectados:**
-  - `backend/accounting-service/Code.gs` (`saveCorporateStyleLibrary`, `getCorporateStyleLibrary`)
+  - `backend/user-service/Code.gs` (`evaluateFormConditionalLogic`, `validateFormSubmissionRules`)
   - `js/ui-common.js`
-  - Hoja: `EstilosCorporativosDocumentales`
-- **Subcapacidades Relacionadas:** F31-03.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-03).
-- **Problema Detectado y Riesgos:**
-  Cada plantilla define sus estilos de forma aislada, generando inconsistencias visuales en el uso de colores corporativos, tipografías y membretes institucionales entre distintos departamentos.
+  - Hoja: `FormulariosInstitucionales`
+- **Subcapacidades Relacionadas:** F31-05.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-05) y Backlog de Implementación F31-T08.
+- **Problema o Carencia:**
+  La lógica condicional funciona en determinados formularios mediante scripts particulares en el cliente, pero carece de un motor centralizado, estandarizado y verificable en servidor para impedir inconsistencias o peticiones manipuladas.
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Biblioteca centralizada de identidad institucional:*
-     - Configuración central de logotipos oficiales de alta resolución, colores primarios y secundarios, tipografías aprobadas y sellos digitales.
-     - Plantillas de encabezado y pie globales reutilizables con un solo clic.
-  2. *Encabezados diferenciados por sección de página:*
-     - Soporte para membrete completo exclusivo en la primera página y encabezado reducido en páginas subsiguientes.
-     - Encabezados alternados para impresión a doble cara (páginas pares e impares).
-     - La actualización de un estilo global no debe alterar retrospectivamente documentos ya emitidos y archivados.
+  1. *Constructor y evaluador de reglas condicionales:*
+     - Reglas condicionales configurables visualmente desde el constructor.
+     - Operadores de comparación: Igual, Diferente, Mayor que, Menor que, Contiene, No contiene, Está vacío y No está vacío.
+     - Agrupación lógica de condiciones mediante operadores booleanos AND y OR.
+  2. *Acciones dinámicas sobre el formulario:*
+     - Mostrar u ocultar campos individuales o secciones completas.
+     - Habilitar o deshabilitar campos según elecciones previas.
+     - Cambiar dinámicamente la obligatoriedad de un campo (ej. requerir documento de traslado únicamente si el estudiante proviene de otro colegio).
+     - Ramificaciones entre páginas del formulario y campos calculados en tiempo real.
+     - Detección y prevención de referencias circulares o dependencias contradictorias antes de publicar el formulario.
+  3. *Validación en servidor y seguridad:*
+     - Validar las reglas condicionales tanto en cliente como en el backend.
+     - Los campos ocultados dinámicamente no deben bloquear el envío por reglas de obligatoriedad que ya no aplican.
+     - Rechazar en servidor envíos manipulados que intenten inyectar valores en campos que debían estar deshabilitados u ocultos.
+     - Definir política para respuestas de campos que dejan de ser visibles al cambiar una opción previa.
 - **Criterios de Aceptación:**
-  - [ ] Se pueden aplicar estilos institucionales estandarizados a cualquier plantilla con un solo clic.
-  - [ ] El documento renderiza un membrete completo en la página inicial y encabezado compacto en las siguientes.
-  - [ ] La modificación de la identidad visual respeta la inmutabilidad de los documentos emitidos históricos.
+  - [ ] Se pueden configurar y evaluar reglas con combinaciones AND y OR complejas.
+  - [ ] La visibilidad y obligatoriedad cambian en tiempo real de forma idéntica en escritorio y dispositivos móviles.
+  - [ ] El servidor rechaza peticiones que violen las reglas condicionales configuradas.
+  - [ ] Se detectan e informan dependencias circulares o reglas inválidas antes de la publicación.
+  - [ ] Se pueden probar las reglas en un entorno de simulación previo al lanzamiento.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F31-Task09] [P1] Validador Criptográfico de Archivos Adjuntos y Prevención de Malware
+### [F31-T09] [P1] Guardado de Borradores, Continuidad de Formularios y Recuperación de Respuestas
 - **Orden de Ejecución:** 9
 - **Prioridad:** P1 (Alta)
 - **Componentes Afectados:**
-  - `backend/academic-service/Code.gs` (`validateBinaryAttachmentSecurity`)
-  - `backend/user-service/Code.gs`
-- **Subcapacidades Relacionadas:** F31-15, F31-17.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-15) y Sección B (F31-17).
-- **Problema Detectado y Riesgos:**
-  La validación actual de archivos adjuntos en formularios comprueba extensiones de archivo simples (`.pdf`, `.png`), siendo vulnerable a archivos ejecutables renombrados o scripts maliciosos cargados por usuarios.
+  - `backend/user-service/Code.gs` (`saveFormDraftSubmission`, `getFormDraftSubmission`, `resolveFormSubmissionConflict`)
+  - `js/ui-common.js`, `js/persistence.js`
+  - Hoja: `BorradoresFormularios`, `SolicitudesTramites`
+- **Subcapacidades Relacionadas:** F31-05, F31-18.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-05, F31-18) y Backlog de Implementación F31-T09.
+- **Problema o Carencia:**
+  Los trámites institucionales extensos que requieren múltiples pasos y adjuntos pueden perderse si el usuario sufre un cierre accidental, interrupción de conexión o cambio de dispositivo antes de enviar, perjudicando los procesos de matrícula y solicitudes.
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Inspección binaria por Magic Numbers:*
-     - Validar la cabecera binaria real del archivo (PDF: `%PDF-`, PNG: `PNG`, JPG: `ÿØÿ`).
-     - Rechazar archivos cuya extensión no coincida con su tipo MIME binario real.
-     - Bloqueo estricto de ejecutables, scripts (.exe, .bat, .js, .vbs, .sh) y documentos con macros.
-  2. *Límites y aislamiento en almacenamiento seguro:*
-     - Límite de tamaño configurable por campo de formulario (por defecto 10 MB).
-     - Guardado en carpetas protegidas de Google Drive con permisos de acceso restringidos y nombres aleatorizados.
+  1. *Persistencia temporal de borradores:*
+     - Guardado automático periódico en segundo plano y guardado manual con indicación de fecha y hora.
+     - Recuperación fluida del último estado guardado al reanudar la sesión en cualquier dispositivo.
+     - Permitir guardar formularios incompletos identificando campos pendientes y errores de validación sin enviar la solicitud formal.
+  2. *Ciclo de vida y corrección de solicitudes:*
+     - Estados diferenciados: `Borrador`, `Enviado`, `En_Revision`, `Observado`, `Aprobado`, `Rechazado` y `Cerrado`.
+     - Permitir subsanar una solicitud observada corrigiendo los campos señalados sin generar un nuevo trámite duplicado.
+     - Mantener los archivos adjuntos cargados vinculados al borrador de forma segura.
+  3. *Control de concurrencia y expiración:*
+     - Controlar conflictos de edición simultánea si el formulario se accede desde múltiples sesiones.
+     - Políticas configurables de expiración y purga de borradores abandonados (`DIAS_EXPIRACION_BORRADORES`).
+     - Protección contra envíos dobles mediante tokens de transacción (idempotencia).
 - **Criterios de Aceptación:**
-  - [ ] Un archivo ejecutable con extensión `.pdf` renombrada es detectado y rechazado por el servidor.
-  - [ ] Los archivos válidos se almacenan en Drive con acceso restringido exclusivamente a roles autorizados.
-  - [ ] Se registran en auditoría los intentos de carga de archivos sospechosos.
+  - [ ] Un formulario incompleto se guarda en borrador y se recupera intacto tras cerrar la sesión o perder conexión.
+  - [ ] El envío definitivo no se duplica ante doble pulsación del botón o reintentos de red.
+  - [ ] Una solicitud observada puede ser editada y reenviada conservando su número de trámite original.
+  - [ ] Los borradores no son accesibles por usuarios externos no autorizados y caducan según la política configurada.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F31-Task10] [P1] Optimización Móvil y Accesibilidad WCAG en Diligenciamiento de Formularios
+### [F31-T10] [P1] Sistema de Estilos Institucionales y Componentes Documentales Reutilizables
 - **Orden de Ejecución:** 10
 - **Prioridad:** P1 (Alta)
 - **Componentes Afectados:**
-  - `js/ui-common.js`, `css/style.css`
-- **Subcapacidades Relacionadas:** F31-18.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-18).
-- **Problema Detectado y Riesgos:**
-  El diligenciamiento de formularios institucionales y la firma de conformidades desde teléfonos inteligentes presenta dificultades en pantallas pequeñas (desplazamientos horizontales, campos de firma táctil estrechos o botones fuera de vista).
+  - `backend/accounting-service/Code.gs` (`saveCorporateStyleLibrary`, `getCorporateStyleLibrary`, `applyCorporateStyleToTemplate`)
+  - `js/ui-common.js`
+  - Hoja: `EstilosCorporativosDocumentales`, `ComponentesDocumentalesReutilizables`
+- **Subcapacidades Relacionadas:** F31-03.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-03) y Backlog de Implementación F31-T10.
+- **Problema o Carencia:**
+  Las plantillas configuran formatos y estilos de forma aislada, originando inconsistencias visuales en el uso de membretes, sellos, paletas de colores corporativos y tipografías entre departamentos que deberían compartir una identidad visual uniforme.
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Diseño responsivo optimizado para móviles:*
-     - Adaptación vertical automática de campos y botones sin desplazamientos horizontales en pantallas < 480px.
-     - Lienzo de firma digital táctil con suavizado de trazo y botón de pantalla completa para firmar con comodidad en dispositivos móviles.
-  2. *Accesibilidad WCAG 2.2 AA:*
-     - Navegación completa por teclado con indicadores de foco visibles.
-     - Etiquetas accesibles (`aria-label`, `aria-describedby`) en todos los controles interactivos.
-     - Contraste de color mínimo de 4.5:1 en textos y mensajes de error.
+  1. *Perfiles de diseño e identidad institucional:*
+     - Configurar perfiles corporativos con logotipos oficiales en alta resolución, encabezados, pies de página, sellos digitales y datos de contacto.
+     - Paletas de colores aprobadas y tipografías autorizadas con tamaños jerárquicos.
+     - Estilos reutilizables para títulos, subtítulos, texto normal, tablas y notas legales al pie.
+  2. *Bloques y componentes institucionales reutilizables:*
+     - Bloques predefinidos: bloques de firmas mancomunadas, declaraciones juradas, advertencias legales y cajas de contacto.
+     - Diseños diferenciados por departamento o categoría documental.
+     - Encabezados y pies de página distintos para la primera página y para páginas pares/impares (impresión dúplex).
+     - Configuración de la ubicación del CUV, código QR, folio correlativo y fecha de emisión.
+  3. *Gobernanza y resolución de conflictos:*
+     - Las nuevas plantillas heredan automáticamente el perfil de diseño institucional asignado.
+     - Permitir excepciones locales justificadas en plantillas particulares sin alterar el perfil global.
+     - Los cambios en los perfiles globales de diseño aplican únicamente a nuevas emisiones, respetando la inmutabilidad de los documentos emitidos históricos.
 - **Criterios de Aceptación:**
-  - [ ] Un formulario complejo se puede completar y firmar en un teléfono móvil sin desplazamientos horizontales.
-  - [ ] Supera los estándares de accesibilidad WCAG 2.2 AA en contrastes, etiquetas y navegación por teclado.
+  - [ ] Se pueden crear y asignar perfiles de diseño institucional por departamento.
+  - [ ] Las nuevas plantillas heredan los estilos y componentes corporativos de forma transparente.
+  - [ ] Las modificaciones en la identidad visual no alteran retrospectivamente documentos ya emitidos.
+  - [ ] Los encabezados y pies diferenciados (primera página y páginas pares/impares) se renderizan fielmente en el PDF.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### BLOQUE 3. CERTIFICACIÓN, MULTILINGÜISMO Y MEJORA CONTINUA (P2)
-
-### [F31-Task11] [P2] Generador de Códigos QR Dinámicos para Verificación Instantánea de CUV
+### [F31-T11] [P1] Integración Automática de Documentos Emitidos con Expedientes y Procesos
 - **Orden de Ejecución:** 11
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`linkIssuedDocumentToStudentFile`, `linkIssuedDocumentToEmployeeFile`)
+  - `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`
+  - Hoja: `DocumentosEscolaresEmitidos`, `DocumentosEstudiante`, `DocumentosEmpleado`, `ExpedientesEstudiantes`
+- **Subcapacidades Relacionadas:** F31-16, F31-22.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-16, F31-22) y Backlog de Implementación F31-T11.
+- **Problema o Carencia:**
+  Existen vínculos parciales entre documentos emitidos, expedientes de estudiantes y trámites, pero se requiere consolidar la cobertura para asegurar que todo documento generado (constancias, certificaciones, contratos, amonestaciones) se archive automáticamente en el expediente correcto sin intervención manual.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Indexación automática transversal:*
+     - Asociar documentos emitidos con expedientes de estudiantes, expedientes laborales de docentes/personal, responsables de familia y expedientes de trámites administrativos.
+     - Registrar metadatos completos: tipo documental, CUV, número correlativo, destinatario, fecha, plantilla, versión y usuario emisor.
+     - Diferenciar documentos generados automáticamente por el sistema de documentos externos escaneados y cargados al expediente.
+  2. *Consulta y filtrado centralizado:*
+     - Consultar y descargar documentos directamente desde la ficha del expediente en los dashboards respectivos (Secretaría, Dirección, Recursos Humanos, Contabilidad).
+     - Filtros multicriterio: tipo de documento, fecha, estado, departamento y emisor.
+     - Evitar asociaciones ambiguas cuando existan homónimos mediante validación de identificador único institucional.
+     - Permitir corregir una asociación errónea mediante una operación auditada con justificación obligatoria.
+     - Mantener la integridad de las referencias históricas aunque el expediente sea archivado o transferido.
+- **Criterios de Aceptación:**
+  - [ ] Los documentos emitidos se asocian de forma automática e inmediata al expediente correspondiente.
+  - [ ] Los documentos de un estudiante o empleado no son visibles en expedientes ajenos.
+  - [ ] Las referencias se conservan intactas tras cambios de estado, grado o baja del expediente.
+  - [ ] Se registran en auditoría todas las correcciones o traslados de asociación documental.
+  - [ ] El acceso respeta estrictamente los permisos del expediente y la confidencialidad del documento.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T12] [P1] Ampliación del Catálogo Universal de Documentos y Trámites Departamentales
+- **Orden de Ejecución:** 12
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`initializeDepartmentalDocumentCatalog`)
+  - `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`
+  - Hoja: `PlantillasEscolares`, `CatalogoTramitesInstitucionales`
+- **Subcapacidades Relacionadas:** F31-22.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-22) y Backlog de Implementación F31-T12.
+- **Problema o Carencia:**
+  El catálogo actual contempla constancias escolares y recibos de pago, pero no cubre suficientemente los procesos documentales de todos los departamentos (RRHH, Dirección, Docencia, Operaciones), requiriendo unificar la creación de plantillas bajo el mismo motor universal.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Cobertura departamental estandarizada:*
+     - Secretaría: Constancias de estudio, certificados de notas oficiales, historiales académicos, constancias de matrícula, autorizaciones, solicitudes de traslado y comunicaciones a familias.
+     - Dirección y Administración: Circulares, memorandos, actas de asamblea, resoluciones, acuerdos directivos y comunicaciones oficiales.
+     - Docencia y Coordinación: Informes bimestrales de rendimiento, reportes de evaluación por competencias, actas de reuniones de área, planificaciones y reportes de seguimiento conductual.
+     - Contabilidad y Finanzas: Recibos oficiales, estados de cuenta, comprobantes de retención, notificaciones de cobro y actas de arqueo de caja.
+     - Recursos Humanos: Contratos laborales y adendas, constancias de trabajo, solicitudes de permisos/vacaciones, actas de descargo y amonestaciones.
+     - Operaciones: Formularios de despacho de inventario, actas de recepción de bienes, contratos de transporte y autorizaciones de retiro de alumnos.
+  2. *Automatización de trámites de principio a fin:*
+     - Iniciar el trámite desde una plantilla del catálogo departamental.
+     - Recuperar datos del expediente, completar campos mediante formulario, someter a flujo de aprobación, emitir PDF final con CUV, indexar en el expediente y notificar a los interesados.
+- **Criterios de Aceptación:**
+  - [ ] Se pueden crear y administrar documentos de diferentes departamentos utilizando el mismo motor central.
+  - [ ] Cada categoría documental dispone de sus propios campos, flujos de aprobación y permisos aislados.
+  - [ ] Las plantillas de un departamento no son accesibles por perfiles sin autorización.
+  - [ ] Se comprueba la ejecución completa de un trámite documental desde su solicitud hasta su archivo en expediente.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T13] [P1] Gestión Avanzada de Versiones y Ciclo de Vida Inmutable de Plantillas
+- **Orden de Ejecución:** 13
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`createDocumentTemplateVersion`, `compareTemplateVersions`, `restoreTemplateVersion`)
+  - Hoja: `PlantillasEscolares`, `HistorialVersionesPlantillas`
+- **Subcapacidades Relacionadas:** F31-13.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-13) y Backlog de Implementación F31-T13.
+- **Problema o Carencia:**
+  La plataforma registra versiones numéricas y protege documentos emitidos, pero se necesita un ciclo de vida formal que distinga entre borradores, versiones en revisión, aprobadas, publicadas y archivadas, permitiendo comparar cambios y restaurar versiones previas de forma auditable.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Ciclo de vida formal de plantillas:*
+     - Estados: `Borrador`, `En_Revision`, `Aprobada`, `Publicada`, `Archivada` y `Obsoleta`.
+     - Versionado secuencial inmutable: cambios menores (`v1.1`, `v1.2`) y cambios mayores (`v2.0`).
+     - Registrar autor, fecha y hora, motivo justificado y resumen detallado de los cambios realizados.
+     - Programación de fechas de vigencia: fecha de entrada en vigor y fecha límite de validez.
+  2. *Comparación y restauración segura:*
+     - Herramienta visual de comparación (diff) entre dos versiones mostrando variaciones de texto, formato, campos y reglas.
+     - Restaurar una versión anterior como una nueva versión activa, sin eliminar el historial intermedio.
+     - Retirar o archivar una plantilla impidiendo su uso en nuevos trámites pero conservando el acceso a documentos históricos emitidos bajo dicha versión.
+     - Detectar ediciones concurrentes para prevenir sobrescrituras silenciosas mediante control de versiones optimista.
+- **Criterios de Aceptación:**
+  - [ ] Se conserva el historial completo e inmutable de todas las versiones de cada plantilla.
+  - [ ] El comparador identifica con precisión las diferencias de texto, campos y diseño entre dos versiones.
+  - [ ] La restauración crea una nueva versión sin destruir versiones previas.
+  - [ ] Los documentos emitidos conservan inalterada la referencia a la versión exacta con la que fueron generados.
+  - [ ] Los trámites en curso mantienen la versión vigente al momento de su inicio.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T14] [P1] Administración Granular de Permisos y Flujos de Aprobación Documental
+- **Orden de Ejecución:** 14
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`manageDocumentPermissions`, `processDocumentApprovalStep`)
+  - `backend/user-service/Code.gs`
+  - Hoja: `PermisosDocumentales`, `FlujosAprobacionDocumentos`
+- **Subcapacidades Relacionadas:** F31-14.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-14) y Backlog de Implementación F31-T14.
+- **Problema o Carencia:**
+  La plataforma cuenta con permisos por roles generales, pero el sistema documental requiere una granularidad precisa para definir quién puede crear, editar, emitir, aprobar, archivar, descargar o compartir plantillas y documentos específicos según su departamento o confidencialidad.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Matriz granular de permisos documentales:*
+     - Operaciones: Crear plantillas, Editar plantillas asignadas, Duplicar, Consultar catálogo, Emitir documentos individuales/masivos, Diseñar formularios, Revisar y aprobar, Publicar versiones, Archivar y Descargar/Imprimir.
+     - Alcance de autorización: Por rol, usuario individual, departamento, categoría documental, plantilla específica o expediente institucional.
+  2. *Flujos de aprobación multinivel:*
+     - Configurar etapas secuenciales de aprobación con responsables asignados.
+     - Decisiones: `Aprobar`, `Rechazar` o `Solicitar_Correcciones` con comentarios obligatorios.
+     - Notificación automática a los participantes de la siguiente etapa.
+     - Impedir la autoaprobación de plantillas cuando la política institucional exija separación de responsabilidades.
+     - Delegación temporal de aprobación autorizada vinculada a [F30-Task08].
+  3. *Seguridad y aplicación estricta en servidor:*
+     - Validación obligatoria en el backend (no limitarse a ocultar botones en el frontend).
+     - Bloquear consultas directas o manipulación de parámetros de URL para acceder a documentos fuera de alcance.
+     - Revocación inmediata: al retirar un permiso, las peticiones subsiguientes son denegadas automáticamente.
+- **Criterios de Aceptación:**
+  - [ ] Los permisos se configuran y aplican de forma granular por operación, departamento y plantilla.
+  - [ ] Los endpoints del backend rechazan cualquier operación no autorizada mediante validación estricta de sesión.
+  - [ ] Las aprobaciones quedan firmadas digitalmente y asociadas a una versión inmutable.
+  - [ ] La revocación de permisos surte efecto inmediato en la siguiente llamada a la API.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T15] [P1] Seguridad Avanzada y Validación Criptográfica de Archivos Documentales
+- **Orden de Ejecución:** 15
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`validateBinaryAttachmentSecurity`, `sanitizeUploadedDocumentContent`)
+  - `backend/user-service/Code.gs`
+- **Subcapacidades Relacionadas:** F31-15, F31-17.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-15, F31-17) y Backlog de Implementación F31-T15.
+- **Problema o Carencia:**
+  La plataforma valida extensiones y tamaños de adjuntos, pero se requiere endurecimiento contra archivos con contenidos maliciosos encubiertos (ejecutables renombrados, macros embebidas o ataques de inyección) para proteger la información institucional y personal almacenada en Google Drive.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Validación binaria de archivos (Magic Numbers):*
+     - Validar la firma binaria real del archivo contrastándola con el tipo MIME declarado (PDF, PNG, JPG, DOCX).
+     - Rechazar archivos ejecutables (.exe, .bat, .cmd, .sh, .vbs, .js) y archivos con doble extensión.
+     - Deshabilitar o neutralizar macros VBA, scripts y acciones ejecutables embebidas en documentos importados.
+  2. *Sanitización y mitigación de inyecciones:*
+     - Sanitizar contenidos HTML importados para prevenir cross-site scripting (XSS).
+     - Prevenir inyecciones de fórmulas (CSV/Excel Formula Injection) cuando datos de formularios se exporten a hojas de cálculo.
+     - Validar archivos comprimidos ZIP previniendo ataques de bomba de descompresión (zip bombs) o rutas relativas maliciosas.
+  3. *Privacidad y control de enlaces:*
+     - Garantizar que los archivos en Google Drive permanezcan en carpetas privadas con permisos controlados.
+     - Acceso mediante enlaces temporales firmados criptográficamente (HMAC-SHA256) con expiración configurable.
+     - Auditoría estricta de descargas, accesos rechazados y expiraciones sin exponer datos PII.
+- **Criterios de Aceptación:**
+  - [ ] Un archivo ejecutable con extensión `.pdf` renombrada es bloqueado y rechazado por el servidor.
+  - [ ] Los scripts o macros dentro de archivos importados son desarmados sin interrumpir el sistema.
+  - [ ] Los documentos privados no se pueden descargar mediante enlaces públicos ni manipulación de identificadores.
+  - [ ] Todos los accesos a documentos sensibles quedan registrados en la bitácora de seguridad.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T16] [P1] Fortalecimiento de Firmas, Conformidades y Evidencias de Aprobación
+- **Orden de Ejecución:** 16
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`registerDocumentSignature`, `verifyDocumentSignatureIntegrity`)
+  - Hoja: `FirmasConformidades`, `DocumentosEscolaresEmitidos`
+- **Subcapacidades Relacionadas:** F31-11, F31-15.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-11) y Backlog de Implementación F31-T16.
+- **Problema o Carencia:**
+  El registro de firmas con token y hash aporta trazabilidad, pero se requiere diferenciar con rigor técnico y legal entre aceptación electrónica simple, conformidad registrada, firma manuscrita digitalizada y firma electrónica avanzada bajo el marco normativo aplicable (Decreto 149-2013).
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Diferenciación de modalidades de firma:*
+     - Aceptación simple (checkbox de consentimiento con marca de tiempo e IP).
+     - Firma manuscrita digitalizada (trazo capturado en Canvas incrustado visualmente).
+     - Firma electrónica institucional (asociada a la identidad del usuario con hash SHA-256 del documento y token de verificación).
+  2. *Metadatos y sellado de integridad:*
+     - Identidad del firmante (`userId`, DNI, rol), contexto de la operación, fecha/hora exacta.
+     - Hash criptográfico SHA-256 del documento al momento de la firma para verificar que el contenido no ha cambiado posteriormente.
+     - Soporte para flujos de múltiples firmantes con orden secuencial de intervención obligatorio.
+     - Imposibilidad de reutilizar una evidencia de firma en otro documento o versión distinta.
+  3. *Certificado de evidencia de firma:*
+     - Generar hoja de evidencias o resumen de firmas anexable al documento PDF con código de verificación.
+- **Criterios de Aceptación:**
+  - [ ] Cada firma queda indisolublemente vinculada al hash de la versión exacta del documento firmado.
+  - [ ] Cualquier alteración posterior del archivo se detecta al recalcular el hash criptográfico.
+  - [ ] La interfaz comunica con total claridad el alcance y tipo de firma registrado sin atribuir falsas equivalencias legales.
+  - [ ] Se respeta el orden estricto de intervención en flujos de firmas mancomunadas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T23] [P1] Banco de Pruebas Documentales y Validación de Fidelidad Multi-Formato
+- **Orden de Ejecución:** 17
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `tests/regression/academic-grading-suite.js`
+  - `backend/developer-service/Code.gs` (`runDocumentDesignerRegressionSuite`)
+- **Subcapacidades Relacionadas:** F31-19, F31-20.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección E (DOC-01 a DOC-30) y Backlog de Implementación F31-T23.
+- **Problema o Carencia:**
+  La plataforma cuenta con 53 pruebas automáticas pasando, pero se necesita un banco de pruebas específico y exhaustivo para validar la fidelidad visual, importación DOCX/PDF, paginación, combinación de datos y generación masiva sin regresiones en actualizaciones futuras.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Banco de archivos de referencia y escenarios obligatorios:*
+     - Archivos DOCX de prueba (Word 2013, 2016, 2017): documentos extensos, tablas complejas con celdas combinadas, imágenes ajustadas y encabezados diferenciados.
+     - Archivos PDF de prueba: digitales con texto vectorial, escaneados (mapa de bits), páginas rotadas y formularios interactivos.
+     - Formularios: validación de obligatoriedad, reglas condicionales AND/OR, campos calculados y recuperación de borradores.
+     - Emisión: combinación con variables escalares, secciones repetibles (`{{#each}}`), generación masiva y reintentos ante fallos.
+  2. *Automatización y comparación de fidelidad:*
+     - Aserciones automatizadas en Node.js y Apps Script para validar contratos, hashes de integridad y consistencia relacional.
+     - Verificación de ausencia de pérdidas de contenido, desbordamientos de márgenes y páginas en blanco inesperadas.
+     - Registro de resultados vinculados a la versión evaluada.
+- **Criterios de Aceptación:**
+  - [ ] El banco de pruebas se ejecuta de forma automatizada y reproducible en el entorno de desarrollo y CI.
+  - [ ] Cubre la totalidad de los 30 escenarios de la matriz de pruebas funcionales (DOC-01 a DOC-30).
+  - [ ] Se detectan e informan regresiones de formato, pérdidas de texto o fallos de cálculo dinámico.
+  - [ ] Las pruebas se ejecutan sobre datos sintéticos sin corromper la base de datos de producción.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T24] [P1] Optimización del Rendimiento y Resiliencia del Procesamiento Documental
+- **Orden de Ejecución:** 18
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`optimizeDocumentProcessingMemory`, `monitorDocumentGenerationQuotas`)
+  - `backend/developer-service/Code.gs`
+- **Subcapacidades Relacionadas:** F31-19.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-19) y Backlog de Implementación F31-T24.
+- **Problema o Carencia:**
+  El procesamiento de documentos pesados con imágenes de alta resolución o la generación simultánea de múltiples certificados puede provocar saturación de memoria en Google Apps Script o exceder los límites de tiempo de ejecución (6 minutos).
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Gestión eficiente de recursos y memoria:*
+     - Optimización de carga evitando almacenar documentos completos no utilizados en variables globales de Apps Script.
+     - Procesamiento por bloques dimensionados según el consumo real medido de CPU y cuota de Drive.
+     - Optimización y compresión ligera de imágenes en cliente antes del envío para previsualización.
+     - Limpieza sistemática de archivos temporales generados durante conversiones o empaquetamientos ZIP.
+  2. *Resiliencia operativa:*
+     - Manejo de reintentos exponenciales ante fallos transitorios de red con Google Drive.
+     - Liberación garantizada de bloqueos de concurrencia (`LockService.releaseLock()`) en bloques `finally`.
+     - Evitar que la ejecución de un proceso documental masivo bloquee consultas concurrentes de otros usuarios.
+- **Criterios de Aceptación:**
+  - [ ] Se demuestra la generación estable de documentos con imágenes pesadas sin agotar la memoria de Apps Script.
+  - [ ] Las operaciones interrumpidas no dejan bloqueos activos en `LockService` ni archivos temporales huérfanos.
+  - [ ] Se documentan las métricas reales de tiempo y consumo de cuota por operación.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 3. EXPERIENCIA, VERIFICACIÓN Y CAPACIDADES AVANZADAS — PRIORIDAD P2
+
+### [F31-T17] [P2] Optimización de Experiencia Móvil, Accesibilidad y Usabilidad del Diseñador
+- **Orden de Ejecución:** 19
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `js/ui-common.js`, `js/teacher.js`, `css/style.css`
+- **Subcapacidades Relacionadas:** F31-18.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-18) y Backlog de Implementación F31-T17.
+- **Problema o Carencia:**
+  Las herramientas de diseño visual y edición de campos superpuestos sobre PDF presentan limitaciones en dispositivos móviles (dificultad para arrastrar con precisión táctil, controles fuera de vista o menús contextuales invasivos).
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Adaptación táctil del editor visual:*
+     - Controles táctiles precisos para mover, redimensionar y alinear cajas de texto superpuestas en pantallas pequeñas.
+     - Soporte para gestos de pellizco para zoom (pinch-to-zoom) y desplazamiento panorámico sin deseleccionar elementos.
+     - Modo de previsualización de lectura independiente de las barras de herramientas de edición.
+  2. *Accesibilidad WCAG 2.2 AA y formularios móviles:*
+     - Formularios multipágina optimizados para diligenciamiento vertical sin desplazamientos horizontales.
+     - Navegación por teclado completa con indicador de foco visible en todos los botones y campos interactivos.
+     - Contraste de colores accesible, mensajes de validación contextuales junto al campo correspondiente y soporte para lectores de pantalla (`aria-live`).
+- **Criterios de Aceptación:**
+  - [ ] Se puede completar y firmar un formulario institucional multipágina desde un teléfono móvil con fluidez.
+  - [ ] Se pueden ajustar campos superpuestos con precisión táctil sin desbordar el área visible.
+  - [ ] Cumple con las pautas de accesibilidad WCAG 2.2 AA en contrastes, etiquetas y navegación asistida.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T18] [P2] Generación de Códigos QR Dinámicos y Verificación Documental CUV Ampliada
+- **Orden de Ejecución:** 20
 - **Prioridad:** P2 (Media)
 - **Componentes Afectados:**
   - `backend/accounting-service/Code.gs` (`injectQRCodeInDocumentPdf`, `verifySchoolDocumentByCUV`)
   - `js/teacher.js`
+  - Hoja: `DocumentosEscolaresEmitidos`
 - **Subcapacidades Relacionadas:** F31-23.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-23).
-- **Problema Detectado y Riesgos:**
-  Actualmente el Código Único de Verificación (CUV) se imprime como una cadena de texto alfanumérica, requiriendo que quien valida el documento digite manualmente el código en el portal institucional en lugar de escanearlo instantáneamente con la cámara de un teléfono.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-23) y Backlog de Implementación F31-T18.
+- **Problema o Carencia:**
+  Actualmente el Código Único de Verificación (CUV) se plasma únicamente como texto alfanumérico, exigiendo que terceros que deseen autenticar un certificado deban escribir manualmente el código en lugar de escanear un código QR con su smartphone.
 - **Requisitos Funcionales y Técnicos Convergentes:**
   1. *Generación e incrustación de Código QR:*
-     - Generar automáticamente el código QR que apunte a la URL pública de validación: `https://[dominio]/verify?cuv=CUV-YYYY-XXXXXX`.
-     - Insertar el código QR en la esquina inferior o membrete de la plantilla sin distorsionar el texto circundante.
-  2. *Portal de validación CUV amigable y seguro:*
-     - Al escanear el QR, mostrar una pantalla limpia con el estado del documento, fecha de emisión, destinatario y emisor, sin revelar datos personales sensibles protegidos.
+     - Generar automáticamente código QR dinámico por cada documento emitido que encadene la URL oficial de verificación: `https://[dominio]/verify?cuv=CUV-YYYY-XXXXXX`.
+     - Configurar tamaño, posición y visibilidad del QR en la plantilla (membrete o pie de página).
+     - Garantizar contraste y legibilidad óptima tanto en pantalla como al imprimir en blanco y negro.
+  2. *Portal público de verificación seguro:*
+     - Desplegar resultado oficial: estado del documento (`Válido`, `Revocado`, `Sustituido`), fecha de emisión, tipo documental, nombre del titular y emisor institucional.
+     - Protección estricta de datos personales: no exponer notas individuales confidenciales, teléfonos ni direcciones en la consulta pública.
+     - Registro de auditoría de consultas de verificación para detectar posibles sondeos maliciosos.
 - **Criterios de Aceptación:**
-  - [ ] Cada documento oficial emitido incorpora un código QR escaneable en su pie de página.
-  - [ ] Al escanear el código QR con un teléfono, se abre inmediatamente el validador oficial confirmando la autenticidad del documento.
+  - [ ] Cada documento oficial emitido incorpora un código QR escaneable y nítido.
+  - [ ] Al escanear el QR se abre la página oficial confirmando la validez del documento en menos de 2 segundos.
+  - [ ] La consulta pública no expone información sensible protegida por la ley de privacidad.
+  - [ ] El QR permanece asociado de forma inmutable al documento emitido.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F31-Task12] [P2] Soporte de Plantillas Multilingües Sincronizadas (Español / Inglés)
-- **Orden de Ejecución:** 12
+### [F31-T19] [P2] Plantillas Multilingües Sincronizadas y Localización Documental
+- **Orden de Ejecución:** 21
 - **Prioridad:** P2 (Media)
 - **Componentes Afectados:**
   - `backend/accounting-service/Code.gs` (`configureMultilingualDocumentTemplate`, `getLocalizedTemplateContent`)
   - Hoja: `PlantillasEscolares`
 - **Subcapacidades Relacionadas:** F31-23.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-23).
-- **Problema Detectado y Riesgos:**
-  Para emitir certificaciones bilingües o dirigidas a instituciones en el extranjero, los colegios suelen duplicar plantillas en español e inglés, provocando desincronización de formatos y duplicación de mantenimiento.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-23) y Backlog de Implementación F31-T19.
+- **Problema o Carencia:**
+  Para emitir documentos en otros idiomas (como constancias en inglés para aplicaciones al extranjero), las instituciones suelen duplicar plantillas de forma manual, ocasionando desincronización de formatos y divergencias de mantenimiento.
 - **Requisitos Funcionales y Técnicos Convergentes:**
   1. *Estructura multilingüe sincronizada:*
-     - Permitir vincular traducciones oficiales (Español / Inglés) dentro de una misma plantilla maestra.
-     - Mantener los mismos campos dinámicos y correlativos CUV independientemente del idioma seleccionado al emitir.
-  2. *Selector de idioma en emisión:*
-     - El emisor puede elegir el idioma del documento antes de generar el PDF final, aplicando las traducciones preconfiguradas.
+     - Asociar múltiples variantes lingüísticas (Español / Inglés) a una misma plantilla lógica maestra.
+     - Mantener idénticos los identificadores de variables dinámicas, reglas de formato y esquemas de CUV.
+     - Permitir traducir textos fijos, etiquetas y encabezados sin alterar el origen de los datos institucionales.
+  2. *Localización y selección en emisión:*
+     - Selector de idioma al momento de emitir el documento individual o por lotes.
+     - Aplicación de formatos regionales correspondientes al idioma seleccionado (fechas y puntuación decimal).
+     - Advertir al usuario si una variante lingüística se encuentra desactualizada respecto a la plantilla principal.
 - **Criterios de Aceptación:**
-  - [ ] Una misma plantilla maestra permite emitir el certificado en español o en inglés conservando el mismo correlativo y CUV.
-  - [ ] Las variables institucionales se reemplazan con precisión en ambos idiomas.
+  - [ ] Se pueden crear y vincular traducciones oficiales dentro de una misma plantilla maestra.
+  - [ ] El documento se genera en el idioma elegido manteniendo la sustitución exacta de las variables dinámicas.
+  - [ ] Los correlativos y códigos CUV se mantienen consistentes independientemente del idioma de emisión.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F31-Task13] [P2] Módulo de Revisión Colaborativa y Comentarios en Borradores de Plantillas
-- **Orden de Ejecución:** 13
+### [F31-T20] [P2] Revisión Colaborativa y Comentarios sobre Plantillas
+- **Orden de Ejecución:** 22
 - **Prioridad:** P2 (Media)
 - **Componentes Afectados:**
-  - `backend/accounting-service/Code.gs` (`addTemplateReviewComment`, `getTemplateReviewComments`)
+  - `backend/accounting-service/Code.gs` (`addTemplateReviewComment`, `getTemplateReviewComments`, `resolveTemplateReviewComment`)
   - `js/teacher.js`
   - Hoja: `ComentariosRevisionPlantillas`
 - **Subcapacidades Relacionadas:** F31-14, F31-20, F31-23.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-14) y Sección B (F31-23).
-- **Problema Detectado y Riesgos:**
-  La creación y ajuste de nuevas plantillas antes de su publicación carece de un espacio de retroalimentación interna entre coordinadores, secretaría y dirección, requiriendo revisiones informales fuera de la plataforma.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-14, F31-23) y Backlog de Implementación F31-T20.
+- **Problema o Carencia:**
+  La creación y ajuste de nuevas plantillas institucionales antes de su aprobación carece de un espacio de comunicación interna formal, obligando a coordinadores, secretaría y dirección a realizar observaciones fuera del sistema.
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Panel de comentarios y observaciones de revisión:*
-     - Permitir a revisores autorizados dejar comentarios y notas contextuales sobre borradores de plantillas.
-     - Estados de comentario: `Pendiente`, `Atendido`, `Descartado`.
-  2. *Trazabilidad colegiada previa a la aprobación:*
-     - Los comentarios deben quedar resueltos antes de que la Dirección proceda a la aprobación formal de la versión.
+  1. *Comentarios y notas de revisión:*
+     - Permitir a revisores autorizados insertar comentarios asociados al documento completo o a fragmentos específicos.
+     - Registrar autor, fecha y hora, estado de la observación (`Pendiente`, `Resuelta`, `Descartada`) y respuestas en hilo.
+     - Solicitar modificaciones formales al creador de la plantilla antes de elevarla a publicación.
+  2. *Aislamiento y trazabilidad:*
+     - Los comentarios de revisión son de carácter estrictamente interno y no aparecen jamás en el documento PDF emitido.
+     - Condicionar la aprobación directiva final a la resolución de las observaciones obligatorias pendientes.
 - **Criterios de Aceptación:**
-  - [ ] Los usuarios con permisos de revisión pueden dejar observaciones sobre los borradores de plantilla.
-  - [ ] El historial de observaciones y su resolución queda registrado para auditoría.
+  - [ ] Los revisores pueden dejar y responder observaciones sobre versiones en borrador.
+  - [ ] Las notas de revisión se conservan para auditoría y nunca se filtran al archivo final generado.
+  - [ ] Se restringe la visualización de comentarios según el departamento y roles autorizados.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T21] [P2] Búsqueda Avanzada, Clasificación y Administración del Repositorio Documental
+- **Orden de Ejecución:** 23
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`searchDocumentRepositoryAdvanced`, `manageDocumentCategoriesAndTags`)
+  - `js/teacher.js`, `js/ui-common.js`
+- **Subcapacidades Relacionadas:** F31-12.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-12) y Backlog de Implementación F31-T21.
+- **Problema o Carencia:**
+  El catálogo actual filtra plantillas básicas por departamento y categoría, pero a medida que el acervo documental crece con cientos de emisiones y plantillas departamentales, se requiere una búsqueda avanzada y clasificación ágil para localizar archivos sin latencia.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Búsqueda avanzada y filtros combinados:*
+     - Búsqueda por nombre, código interno, descripción, categoría, departamento, etiquetas personalizadas y responsable.
+     - Filtros por estado: Activas, En Borrador, En Revisión, Aprobadas, Archivadas y Obsoletas.
+     - Búsqueda de documentos emitidos por CUV, número correlativo, estudiante, empleado o fecha de emisión.
+  2. *Organización y acceso seguro:*
+     - Marcado de plantillas favoritas y lista de documentos utilizados recientemente.
+     - Aplicación estricta de permisos RBAC sobre los resultados para impedir que usuarios no autorizados descubran la existencia de documentos confidenciales.
+- **Criterios de Aceptación:**
+  - [ ] Los filtros de búsqueda se combinan de forma fluida retornando resultados en menos de 1 segundo.
+  - [ ] Es posible localizar cualquier documento emitido mediante su CUV o número correlativo.
+  - [ ] Los resultados de búsqueda respetan rigurosamente el alcance de permisos del usuario en sesión.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T22] [P2] Auditoría Documental Ampliada, Trazabilidad y Métricas Operativas
+- **Orden de Ejecución:** 24
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`getDocumentLifecycleAuditTrail`, `getDocumentOperationalMetrics`)
+  - `backend/accounting-service/Code.gs`
+  - Hoja: `RegistroEventosDocumentales`, `LogsSistema`
+- **Subcapacidades Relacionadas:** F31-20.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-20) y Backlog de Implementación F31-T22.
+- **Problema o Carencia:**
+  La plataforma registra eventos en bitácoras generales, pero se requiere un seguimiento especializado del ciclo de vida documental que permita a los directivos reconstruir la historia completa de una plantilla, formulario o certificado desde su creación hasta su archivo.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Eventos del ciclo de vida registrados:*
+     - Creación, modificación, duplicación, cambio de versión, envío a revisión, aprobación/rechazo, publicación, emisión individual o por lotes, descargas, impresiones, firmas registradas, consultas CUV, asociación a expedientes y archivado.
+     - Metadatos: identificador del evento, usuario responsable, rol activo, fecha/hora, entidad afectada, acción, resultado, motivo y tiempo de procesamiento.
+  2. *Consultas directivas e indicadores operativos:*
+     - Consultar la línea de tiempo completa del ciclo de vida de un documento o plantilla.
+     - Métricas operativas: total de documentos emitidos por departamento, tasa de errores en generación, documentos más solicitados y tiempos promedio de aprobación.
+     - Protección inmutable de los registros contra edición manual y sanitización de datos personales en los logs técnicos.
+- **Criterios de Aceptación:**
+  - [ ] Cualquier acción relevante sobre una plantilla o documento genera un evento trazable en la bitácora.
+  - [ ] Es posible reconstruir la secuencia histórica completa de cualquier documento mediante su identificador o CUV.
+  - [ ] Los registros de auditoría no pueden ser alterados ni eliminados por usuarios ordinarios.
+  - [ ] Los tableros directivos reflejan métricas verídicas de emisión y uso documental.
 - **Estado:** [ ] Pendiente
 
 ---
