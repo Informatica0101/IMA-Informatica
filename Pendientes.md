@@ -5664,3 +5664,77 @@
 - **Estado:** [ ] Pendiente
 
 ---
+
+### [F23-Task01] [P0] [Motor de Workflows - Concurrencia y Candado Atómico en Transiciones]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - `js/api.js`
+- **Dependencias Expuestas:** `SolicitudesTramites`, `RevisionesDecisionesTramite`, `FlujosAprobacion`, `LockService`.
+- **Descripción del Alcance:**
+  Implementar protección de concurrencia mediante `LockService.getScriptLock()` en `processWorkflowDecision` para evitar condiciones de carrera cuando múltiples revisores evalúan la misma solicitud en paralelo. Validar de forma estricta que el usuario ejecutor posea el rol o identificador asignado a la etapa activa antes de autorizar el cambio de estado.
+- **Criterios de Aceptación:**
+  - [ ] Las solicitudes concurrentes obtienen el candado atómico o retornan error controlado de contención.
+  - [ ] Se rechaza la decisión con `403 Forbidden` si el usuario no tiene autorización para la etapa actual.
+  - [ ] Las transiciones válidas actualizan coherentemente el estado en `SolicitudesTramites` y agregan la fila en `RevisionesDecisionesTramite`.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task02] [P0] [Arquitectura Distribuida - Estandarización de SpreadsheetRouter Ubicuo]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+- **Dependencias Expuestas:** `CatalogoSpreadsheets`, `resolveSpreadsheetSource`, `getOrCreateSheet`.
+- **Descripción del Alcance:**
+  Estandarizar la función `resolveSpreadsheetSource` a través de todos los microservicios backend, permitiendo que las consultas y escrituras a tablas de alto volumen (calificaciones, asistencias, kardex de inventario, bitácoras) se dirijan dinámicamente a la hoja de cálculo asignada por año lectivo y dominio, superando la limitación del `SPREADSHEET_ID` estático.
+- **Criterios de Aceptación:**
+  - [ ] Si existe una hoja particionada activa en `CatalogoSpreadsheets`, el servicio opera transparentemente sobre ella.
+  - [ ] Si no existe una partición específica, recurre de forma segura al spreadsheet principal predeterminado.
+  - [ ] La resolución de fuentes distribuidas incluye caché en memoria para minimizar llamadas `getDataRange()`.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task03] [P1] [Bandeja Unificada de Tareas Pendientes e Inbox Departamental]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - `js/api.js`
+- **Dependencias Expuestas:** `SolicitudesTramites`, `RevisionesDecisionesTramite`, `CargosEstudiante`, `OrdenesCompra`.
+- **Descripción del Alcance:**
+  Desarrollar la función `getUnifiedWorkInbox` en `backend/user-service/Code.gs` que agregue y clasifique todas las tareas, solicitudes y revisiones pendientes asignadas directamente al usuario autenticado o a su rol operativo (Dirección, Secretaría, Contabilidad, Docentes, Orientación).
+- **Criterios de Aceptación:**
+  - [ ] Devuelve una lista ordenada por fecha de vencimiento y prioridad de trámites pendientes.
+  - [ ] Aísla las tareas confidenciales garantizando que cada usuario sólo visualice las que le competen.
+  - [ ] Soporta paginación y filtros por departamento, tipo de trámite y estado.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task04] [P1] [Evaluador de Reglas de Enrutamiento y Compuertas Lógicas]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `FlujosAprobacion`, `processWorkflowDecision`.
+- **Descripción del Alcance:**
+  Crear el motor de evaluación de reglas condicionales para transiciones automáticas en flujos de trabajo. Si una etapa posee reglas en su JSON (ej. `{ "monto_gt": 50000, "nextStep": "Aprobacion_Rector" }`), el motor calcula automáticamente el siguiente destino y asignado sin depender del valor enviado por el frontend.
+- **Criterios de Aceptación:**
+  - [ ] Las decisiones calculan la siguiente etapa en base a las reglas configuradas en `PasosEtapasJSON`.
+  - [ ] Se previenen manipulaciones maliciosas de saltos de etapa o auto-aprobaciones forzadas.
+  - [ ] Se registran bitácoras estructuradas de cada evaluación condicional ejecutada.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task05] [P2] [Motor de Escalamiento Automático y Control de SLA]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `SolicitudesTramites`, `FlujosAprobacion`, notificaciones multicanal.
+- **Descripción del Alcance:**
+  Implementar la función `processWorkflowSLAEscalations` diseñada para ejecutarse periódicamente mediante un temporizador GAS (`Time-driven trigger`). La función inspecciona solicitudes no resueltas que hayan excedido el SLA estipulado en su etapa actual y las escala automáticamente al supervisor jerárquico, emitiendo alertas por notificación institucional.
+- **Criterios de Aceptación:**
+  - [ ] Identifica trámites estancados comparando `FechaSolicitud` / última decisión contra el tiempo límite configurado.
+  - [ ] Reasigna la solicitud al rol superior inmediato y actualiza el estado a `Escalada_Por_Vencimiento`.
+  - [ ] Despacha notificación de alerta al nuevo asignado y al usuario afectado.
+- **Estado:** [ ] Pendiente
+
+---
