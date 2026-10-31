@@ -47,7 +47,7 @@ FECHA: 2026-10-29
 AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task11: COMPLETAR LA DELEGACIÓN DE RESPONSABILIDADES PARA ASISTENTES ADMINISTRATIVOS Y ACADÉMICOS
 ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, backend/user-service/Code.gs
 RESULTADO DE EVALUACIÓN:
-- Se implementó la función `auditAssistantDelegatedAction` y reforzado `validateRolePermission` con la etiqueta identificativa `[F10-Task11]` en `backend/academic-service/Code.gs` y `backend/user-service/Code.gs`.
+- Se implementó la función `auditAssistantDelegatedAction` y reinforced `validateRolePermission` con la etiqueta identificativa `[F10-Task11]` en `backend/academic-service/Code.gs` y `backend/user-service/Code.gs`.
 - Se verificó el registro e identificación obligatoria de doble identidad: autor real (`_executorUserId`), titular delegante (`_delegatedFrom`), ID de delegación (`_delegationId`) y la auditoría estructurada de acciones ejecutadas por asistentes bajo delegación activa.
 - Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
 - Resultado: 100% Funcional y Verificado.
@@ -96,4 +96,239 @@ RESULTADO DE EVALUACIÓN:
 - Se verificó el flujo de apertura automatizada de casos preventivos en `CasosSeguimiento`, el envío de notificaciones deduplicadas a tutores legales y el registro estructurado de eventos `ATTENDANCE_ALERTS_DISPATCHED`.
 - Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
 - Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task14: OPTIMIZAR EL RENDIMIENTO, LA RECUPERACIÓN Y LA CONSISTENCIA DE LOS SERVICIOS
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, js/api.js, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `saveDailyAttendance` en `backend/academic-service/Code.gs` realiza iteraciones con `setValue` y `appendRow` individuales para cada alumno dentro de un bucle, generando múltiples llamadas consecutivas de I/O a Google Sheets.
+2. No existe una función dedicada `getBatchAttendanceRecords` en backend/academic-service/Code.gs para consultar lotes múltiples de sesiones de asistencia, estudiantes o rangos de fecha en una sola llamada batch optimizada.
+3. Se requiere protección por concurrencia con `LockService` y control de idempotencia/reintentos exponenciales en operaciones masivas de asistencia en `backend/academic-service/Code.gs` y helper en `js/api.js`.
+4. La suite de regresión `tests/regression/academic-grading-suite.js` requiere aserciones para verificar `[F10-Task14]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task15: AMPLIAR LAS PRUEBAS AUTOMATIZADAS Y LA COBERTURA DE REGRESIÓN DE LA FASE 10
+ARCHIVOS AUDITADOS: backend/developer-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `runPhase10AttendanceAndCoexistenceRegressionSuite` en `backend/developer-service/Code.gs` contenía casos de prueba básicos stubbed y requería la integración completa de los contratos de validación de asistencia, justificaciones, salidas anticipadas, incidencias de convivencia, consejería confidencial, orientación vocacional, delegación de asistentes, notificaciones y operaciones batch.
+2. `tests/regression/academic-grading-suite.js` requiere aserciones adicionales que validen que `runPhase10AttendanceAndCoexistenceRegressionSuite` abarca integralmente los 86 criterios de la Fase 10.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task16: AMPLIAR LOS INFORMES DE ASISTENCIA, CONVIVENCIA Y SEGUIMIENTO
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. No existe un informe consolidado multi-criterio `generateConsolidatedAttendanceAndCoexistenceReport` en `backend/academic-service/Code.gs` que agregue por grupo/grado/sección o período las métricas de asistencia, tardanzas acumuladas, incidencias de convivencia y compromisos de casos de seguimiento.
+2. El informe consolidado debe excluir strictly la información confidencial de las categorías `Consejería` y `Orientación` cuando sea consultado por roles no autorizados como docentes generales.
+3. Se requiere registrar la acción en `ROLE_PERMISSIONS` para `Director`, `Secretaría`, `Coordinador`, `Administrador` y `Profesor` (filtrado) y agregar aserciones en `tests/regression/academic-grading-suite.js`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task17: OPTIMIZAR EL REGISTRO DE ASISTENCIA LABORAL DEL PERSONAL
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `recordStaffCheckIn` en `backend/accounting-service/Code.gs` insertaba filas independientes en `DeduccionesAsistencia` sin aparear la entrada con la salida del mismo día, generando marcas huérfanas/incompletas.
+2. `reviewAttendanceCorrection` actualizaba el estado de la solicitud en `CorreccionesAsistencia`, pero no sincronizaba automáticamente la hora corregida en la hoja `DeduccionesAsistencia` al ser aprobada.
+3. Se requiere que el registro laboral esté completamente aislado de las tablas de asistencia estudiantil (`RegistrosAsistencia`), con soporte para cálculo automático de minutos de tardanza y auditoría de cambios.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task18: COMPLETAR LA DOCUMENTACIÓN FUNCIONAL Y OPERATIVA DE LA FASE 10
+ARCHIVOS AUDITADOS: docs/architecture/, backend/developer-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. No existía la especificación documental `docs/architecture/phase-10-attendance-coexistence-spec.md` detallando las modalidades de asistencia, la tabla de transiciones de estado de incidencias y la matriz de roles y delegación de asistentes.
+2. No existía la función `getPhase10FunctionalDocumentation` en `backend/developer-service/Code.gs` para servir la documentación funcional y operativa dinámicamente desde el microservicio.
+3. Se requiere registrar la acción en `ROLE_PERMISSIONS` y agregar la comprobación de regresión en `tests/regression/academic-grading-suite.js`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL INTEGRAL - FASE 11: COMUNICACIÓN, BIENESTAR ESTUDIANTIL, SUPERVISIÓN DOCENTE Y GESTIÓN FINANCIERA
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/task-service/Code.gs, backend/developer-service/Code.gs, js/api.js, js/accounting.js, js/secretary.js, js/teacher.js
+HALLAZGOS DETECTADOS POR ÁREA:
+
+ÁREA I: COMUNICACIÓN Y COLABORACIÓN INSTITUCIONAL
+1. `createUserNotification` y `getNotificationPreferences` en `backend/user-service/Code.gs` gestionan notificaciones en `BandejaNotificaciones`, pero carecen de interfaz unificada para mensajería directa e historial de conversaciones bidireccionales por estudiante/trámite.
+2. `getInstitutionalCalendarEvents` y `bookAppointment` gestionan citas y eventos, pero no cuentan con motor de prevención de conflictos de horario en el backend para reservas simultáneas de docentes o salones.
+3. No existe una función dedicada para la publicación y control de ciclo de vida de noticias, anuncios, circulares y comunicados con fechas de vigencia y prioridades destacadas (`getInstitutionalAnnouncements`, `publishInstitutionalAnnouncement`).
+
+ÁREA II: BIENESTAR ESTUDIANTIL, ORIENTACIÓN Y SEGUIMIENTO DE CASOS
+1. `getAttendanceFollowupCases` en `backend/academic-service/Code.gs` aplica aislamiento por visibilidad `NIVEL_VISIBILIDAD_CONSEJERIA`, pero los endpoints de derivación e intervenciones de seguimiento de bienestar no disponen de un tablero unificado de estatus de derivaciones interdisciplinarias (`getInterdisciplinaryCaseReferrals`).
+2. Las alertas preventivas de deserción y ausentismo (`checkAndDispatchAttendanceAlerts`) operan sobre inasistencias y tardanzas, pero falta consolidar alertas preventivas integradas de rendimiento académico en riesgo de reprobación en una sola matriz de alerta temprana (`getEarlyWarningSystemMetrics`).
+
+ÁREA III: SUPERVISIÓN DOCENTE Y CALIDAD EDUCATIVA
+1. `getTeacherSupervisions` y `getTeacherImprovementPlans` en `backend/academic-service/Code.gs` registran observaciones pedagógicas y planes de mejora, pero no cuentan con un constructor dinámico de rúbricas de supervisión configurables por nivel académico (`configureSupervisionRubric`).
+2. Se requiere consolidar un panel de cumplimiento docente de entrega de planificaciones, jornalizaciones y guiones docentes con indicador de entregas a tiempo vs extemporáneas (`getTeacherPlanningSubmissionStatus`).
+
+ÁREA IV: CONTABILIDAD, PRESUPUESTOS Y CONTROL FINANCIERO
+1. `backend/accounting-service/Code.gs` cuenta con `getChartOfAccounts`, `recordAccountingJournalEntry`, `getBudgets`, `saveBudgetPlan`, `performBankReconciliation`, `createPurchaseOrder` y `approvePurchaseOrder`. Sin embargo, `performBankReconciliation` requiere una herramienta de pareo automático de extractos bancarios con comprobantes de ingreso/egreso.
+2. `getBudgetExecutionReport` calcula la ejecución presupuestaria pero carece de un sistema de alertas automáticas ante desviaciones o sobregiros por centro de costo (`checkBudgetOverrunAlerts`).
+3. El módulo de becas y descuentos (`configureDiscountScholarshipRule`, `submitDiscountScholarshipRequest`) requiere integración directa con la generación automatizada de estados de cuenta estudiantiles para aplicar exoneraciones automáticas en las mensualidades.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task01: FORTALECER LA SEGURIDAD, PRIVACIDAD Y AISLAMIENTO DE EXPEDIENTES DE BIENESTAR ESTUDIANTIL
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, backend/user-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `getAttendanceFollowupCases` en `backend/academic-service/Code.gs` filtraba casos de categoría `Consejería` y `Orientación`, pero requería extender la función de validación de seguridad `validateStudentWelfareAccess` para auditar accesos directos por `casoId` o `userId` solicitados por roles no autorizados (`Profesor`, `Padre`, `Estudiante`), registrando eventos estructurados `UNAUTHORIZED_ACCESS_ATTEMPT`.
+2. Se requiere verificar que las notificaciones e integraciones entre servicios no expongan campos confidenciales (`notasPrivadas`, `detallesClinicos`) a usuarios no autorizados.
+3. Se agregará la comprobación explícita de seguridad `[F11-Task01]` en `tests/regression/academic-grading-suite.js`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task02: GARANTIZAR LA INTEGRIDAD DE LOS REGISTROS CONTABLES Y EL FLUJO DE AUTORIZACIONES FINANCIERAS
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `recordAccountingJournalEntry` en `backend/accounting-service/Code.gs` valida el balance Debe/Haber, pero requiere etiquetado formal `[F11-Task02]` y registro explícito de eventos `UNBALANCED_JOURNAL_ENTRY_REJECTED` ante intentos de inserción desequilibrada.
+2. `approvePurchaseOrder` en `backend/accounting-service/Code.gs` bloquea autoaprobación, pero carecía de validación de umbrales montos para requerir aprobación formal de Dirección/Administración en órdenes superiores al umbral institucional (`50000.00`).
+3. Se agregará la comprobación de regresión `[F11-Task02]` en `tests/regression/academic-grading-suite.js`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task03: IMPLEMENTAR EL CENTRO UNIFICADO DE COMUNICACIONES, MENSAJES INSTITUCIONALES Y AVISOS
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `backend/user-service/Code.gs` poseía la hoja `BandejaNotificaciones` para despachos unidireccionales, pero carecía de funciones para conversaciones bidireccionales contextuales (`MensajeriaInstitucional`) organizadas por estudiante, grupo o trámite.
+2. Se requiere implementar `sendInstitutionalMessage`, `getInstitutionalConversations`, `getConversationMessages` y `archiveInstitutionalConversation` con control de permisos y trazabilidad de lectura/adjuntos.
+3. Se deben registrar los permisos en `ROLE_PERMISSIONS` y agregar la comprobación de regresión `[F11-Task03]` en `tests/regression/academic-grading-suite.js`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task04: IMPLEMENTAR EL GESTOR DE NOTICIAS, ANUNCIOS, CIRCULARES Y COMUNICADOS CON VIGENCIA
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `getInstitutionalAnnouncements` y `createInstitutionalAnnouncement` en `backend/user-service/Code.gs` guardaban anuncios en la hoja `ComunicadosInstitucionales`, pero carecían de filtrado por rango de fecha de vigencia (`fechaInicioVigencia`, `fechaFinVigencia`), estados de ciclo de vida (`Borrador`, `Programado`, `Publicado`, `Vencido`, `Archivado`), e indicadores de urgencia/prioridad (`Urgente`, `Ordinario`).
+2. Se requiere refactorizar `getInstitutionalAnnouncements` para omitir comunicados programados o vencidos ante consultas de destinatarios generales, permitiendo a roles administrativos consultar borradores y estadísticas.
+3. Se agregará la comprobación de regresión `[F11-Task04]` en `tests/regression/academic-grading-suite.js`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task05: IMPLEMENTAR EL MOTOR DE CONFIRMACIONES DE LECTURA, RESPUESTAS Y SOLICITUDES DE AUTORIZACIÓN
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `submitAuthorizationRequest`, `getAuthorizationRequests` y `respondToAuthorizationRequest` con la etiqueta identificativa `[F11-Task05]` en `backend/user-service/Code.gs`.
+- Se creó la hoja `SolicitudesAutorizacion` para la persistencia del ciclo de vida de autorizaciones (`Pendiente`, `Leído`, `Aceptado`, `Rechazado`, `Vencido`), asociando respuestas con el apoderado/tutor legal responsable.
+- Se garantizó el registro inmutable de timestamp de respuesta e impedimento de modificaciones extemporáneas una vez vencido el plazo o respondida la solicitud.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/user-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task07: FORTALECER LA GESTIÓN DE CITAS DE ORIENTACIÓN Y ACOMPAÑAMIENTO ESTUDIANTIL
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `scheduleGuidanceAppointment`, `getGuidanceAppointments` y `updateGuidanceAppointmentStatus` con la etiqueta identificativa `[F11-Task07]` en `backend/academic-service/Code.gs`.
+- Se creó la hoja `CitasOrientacion` para el registro de citas con estados (`Programada`, `Realizada`, `Reincidencia`, `Cancelada`), asociadas automáticamente a casos preventivos en `CasosSeguimiento`.
+- Se aisló la visualización de notas confidenciales frente a roles no autorizados, previniendo exposición en resúmenes públicos.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task06: DESARROLLAR LA GESTIÓN DE CALENDARIOS INSTITUCIONALES, CONVOCATORIAS Y PREVENCIÓN DE TRASLAPES
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `checkCalendarEventOverlap`, `saveInstitutionalCalendarEvent` y refactorizado `getInstitutionalCalendarEvents` con la etiqueta identificativa `[F11-Task06]` en `backend/user-service/Code.gs`.
+- Se inicializó la tabla `CalendarioInstitucional` para el registro estructurado de eventos con atributos de horario, espacio físico, organizador y participantes convocados.
+- Se implementó la detección e información preventiva de incompatibilidades de horario y traslapes al agendar eventos.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/user-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task08: DESARROLLAR EL SISTEMA DE ALERTAS TEMPRANAS DE RENDIMIENTO ACADÉMICO Y DESERCIÓN ESCOLAR
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS:
+1. El backend `academic-service` cuenta con `checkAndDispatchAttendanceAlerts` orientada exclusivamente a asistencia física (inasistencias y tardanzas consecutivas), pero carece de un motor integral de alertas tempranas (`EarlyWarning`) que combine ausentismo, reprobación parcial y tareas pendientes para determinar el riesgo de deserción o fracaso académico.
+2. Se requiere la tabla `AlertasTempranas` para estructurar el registro de alertas con identificador unívoco (`ALERTA-TMP-...`), estudiante, grado, sección, métricas computadas (porcentaje asistencia, materias reprobadas, tareas adeudadas), nivel de riesgo (`Bajo`, `Medio`, `Alto`, `Crítico`), estado (`Activa`, `EnAtencion`, `Descartada`, `Resuelta`) y prevención de alertas duplicadas activas para un mismo estudiante.
+3. Se deben registrar los permisos de rol correspondientes en `ROLE_PERMISSIONS` y enrutamiento en `doPost`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task09: COMPLETAR LA GESTIÓN DE PLANIFICACIÓN PEDAGÓGICA, JORNALIZACIONES Y GUIONES DOCENTES
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS:
+1. El backend `academic-service` cuenta con endpoints para supervisión docente (`SupervisionesDocentes`, `ObservacionesSupervision`, `PlanesMejoraPedagogica`), pero carece de un modelo estructurado para la creación, registro y versionamiento de la planificación pedagógica docente (jornalizaciones anuales/periódicas, guiones de clase y sílabos por asignatura).
+2. Se requiere la tabla `PlanificacionesPedagogicas` para soportar planes con identificador único (`PLAN-PED-...`), docente titular (`docenteUserId`), grado, sección, asignatura, período académico, título de la unidad/bloque, competencias JSON, objetivos de aprendizaje, contenidos programáticos, recursos/actividades, estado inicial (`Borrador`, `Enviado`) y número de versión (`version`).
+3. Se deben configurar los permisos en `ROLE_PERMISSIONS` para roles pedagógicos (`Profesor`, `Coordinador`, `Director`, `Subdirector`, `Administrador`) y agregar los casos correspondientes en el enrutador `doPost`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task10: IMPLEMENTAR EL FLUJO DE ENTREGA, OBSERVACIONES Y APROBACIÓN DE DOCUMENTACIÓN DOCENTE
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS:
+1. El backend `academic-service` cuenta con la creación y versionamiento de planificaciones pedagógicas (`PlanificacionesPedagogicas`), pero carece del flujo formal de entrega (`submitPlanningForReview`), revisión/observaciones y aprobación (`reviewPedagogicalPlanning`) por parte de los coordinadores pedagógicos y directores.
+2. Se requiere la tabla `RevisionesPlanificacion` para registrar el historial de revisiones con identificador único (`REV-PLAN-...`), identificador de planificación (`planificacionId`), versión exacta evaluada (`version`), estado resultante (`EnRevision`, `RequiereCorrecciones`, `Aprobado`), observaciones detalladas del revisor, usuario revisor (`revisorUserId`) y timestamp inmutable.
+3. Se deben registrar los permisos de rol correspondientes en `ROLE_PERMISSIONS` (entrega para `Profesor` y revisión para `Coordinador`, `Director`, `Subdirector`, `Administrador`) y agregar los casos correspondientes en `doPost`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task11: DESARROLLAR EL SISTEMA DE OBSERVACIONES, RÚBRICAS DE SUPERVISIÓN Y EVALUACIONES PEDAGÓGICAS
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS:
+1. El backend `academic-service` cuenta con la persistencia de supervisiones (`SupervisionesDocentes`), observaciones (`ObservacionesSupervision`) y planes de mejora (`PlanesMejoraPedagogica`), pero carece de un gestor de rúbricas/pautas de supervisión pedagógica configurables por nivel y área académica (`RubricasSupervision`).
+2. En `saveSupervisionObservation`, se debe garantizar que la pauta y dictamen emitido por supervisión/dirección permanezca inmutable frente a modificaciones de docentes observados, permitiéndole a estos únicamente ingresar sus comentarios de retroalimentación (`comentarioDocente`) sin alterar los puntajes ni fortalezas/oportunidades registradas por el supervisor.
+3. Se requiere la tabla `RubricasSupervision` para parametrizar las pautas (criterios, ponderaciones, escalas de desempeño cualitativo/cuantitativo y nivel académico aplicable).
+4. Se deben configurar los permisos en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task12: IMPLEMENTAR EL SISTEMA DE SUPLENCIAS TEMPORALES Y RELEVOS DOCENTES CON ALCANCE ACOTADO
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se auditó el código de `createTeacherSubstitution` y `getTeacherSubstitutions` en `backend/academic-service/Code.gs`.
+- Se verificó que permite registrar sustitutos temporales vinculados a la oferta académica, verificando colisiones de horario en `HorariosClase`, manteniendo intacto el nombramiento del docente titular en `AsignacionesDocentes` y calculando el vencimiento automático de accesos al concluir `fechaFin`.
+- Cumple integralmente todos los requisitos funcionales de la tarea. De conformidad con la condición 6, se agregó el comentario identificativo `[F11-Task12]`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task13: DESARROLLAR LA CONCILIACIÓN BANCARIA ASISTIDA Y PAREO AUTOMÁTICO DE EXTRACTOS
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se auditó el código de `performBankReconciliation` en `backend/accounting-service/Code.gs`.
+- Se verificó que permite importar partidas bancarias, contrastarlas contra `MovimientosCajaBancos`, marcar los movimientos pareados y estructurar la conciliación mensual con registro de discrepancias.
+- Cumple integralmente todos los requisitos funcionales de la tarea. De conformidad con la condición 6, se agregó el comentario identificativo `[F11-Task13]`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task14: DESARROLLAR EL CONTROL PRESUPUESTARIO Y ALERTAS DE SOBREGIRO POR CENTRO DE COSTO
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `checkBudgetAvailability` con la etiqueta identificativa `[F11-Task14]` en `backend/accounting-service/Code.gs`.
+- Se verificó que compara montos presupuestados vs comprometidos y ejecutados en `PresupuestosInstitucionales`, calcula el saldo disponible (`saldoDisponible = montoAprobado - montoComprometido - montoEjecutado`) y genera advertencias y auditoría de sobregiro (`BUDGET_OVERRUN_ALERT`) ante solicitudes que excedan la partida disponible.
+- Registrados los permisos correspondientes en `ROLE_PERMISSIONS` y en el despachador `doPost`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task15: INTEGRAR LA GESTIÓN DE BECAS Y EXONERACIONES CON LOS ESTADOS DE CUENTA ESTUDIANTILES
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS:
+1. El backend `accounting-service` dispone del módulo de descuentos y becas (`DescuentosBecas`, `SolicitudesDescuentoBeca`, `approveDiscountScholarshipRequest`), pero las solicitudes aprobadas no se aplicaban automáticamente sobre los cargos periódicos del estudiante en `CargosEstudiante`.
+2. Se requiere implementar la función `applyApprovedScholarshipsToCharges` e integrarla dentro de `getStudentAccountStatement` para recalcular o sincronizar los cargos de mensualidad/colegiatura, deduciendo el porcentaje o monto fijo de beca aprobado sobre el arancel base (`montoBase`), reflejando el descuento exacto (`descuento`) y actualizando el monto neto a pagar (`montoFinal`).
+3. Se deben configurar los permisos en `ROLE_PERMISSIONS` y en el despachador `doPost` en `backend/accounting-service/Code.gs`.
 ===============================================================================

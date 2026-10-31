@@ -882,6 +882,8 @@ function getOrCreateSheet(ss, name) {
     if (name === "InvitacionesVinculacion") sheet.appendRow(["InvitacionID", "ExpedienteID", "EmailResponsable", "Token", "FechaEmision", "FechaExpiracion", "Estado", "CreadoPor"]);
     if (name === "ComunicadosInstitucionales") sheet.appendRow(["ComunicadoID", "Titulo", "Contenido", "Categoria", "AutorID", "AudienciaJSON", "RequiereFirma", "FechaPublicacion", "Estado"]);
     if (name === "ConfirmacionesLecturaComunicados") sheet.appendRow(["ConfirmacionID", "ComunicadoID", "UserId", "FechaApertura", "FechaConfirmacionExplicit", "EstadoConfirmacion", "IpMetadata"]);
+    if (name === "SolicitudesAutorizacion") sheet.appendRow(["SolicitudAutorizacionID", "ActividadOPermiso", "EstudianteID", "TutorUserId", "DetallesJSON", "FechaLimite", "Estado", "FechaRespuesta", "RespuestaTutor", "IpMetadata", "FechaCreacion", "CreadoPor"]);
+    if (name === "CalendarioInstitucional") sheet.appendRow(["EventoID", "Titulo", "Descripcion", "Categoria", "FechaInicio", "FechaFin", "HoraInicio", "HoraFin", "EspacioFisico", "OrganizadorUserId", "ParticipantesJSON", "Visibilidad", "Estado", "FechaCreacion"]);
     if (name === "ConversacionesMensajes") sheet.appendRow(["MensajeID", "ConversacionID", "RemitenteID", "DestinatarioID", "EstudianteID", "MensajeTexto", "AdjuntoUrl", "FechaEnvio", "EstadoLectura"]);
     if (name === "BandejaNotificaciones") sheet.appendRow(["NotificacionID", "UserId", "Titulo", "Mensaje", "Tipo", "Categoria", "Leido", "EnlaceAccion", "FechaRegistro"]);
     if (name === "SolicitudesTramites") sheet.appendRow(["SolicitudID", "UserId", "EstudianteID", "TipoTramite", "Descripcion", "AdjuntoUrl", "Estado", "AsignadoA", "ObservacionesAdmin", "FechaSolicitud", "FechaResolucion"]);
@@ -925,32 +927,32 @@ const ROLE_PERMISSIONS = {
   "Desarrollador": ["*"],
   "Padre": [
     "getUserInfo", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
-    "acceptLinkInvitation", "getGuardianStudents", "getGuardianApplicants", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "acceptLinkInvitation", "getGuardianStudents", "getGuardianApplicants", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders", "getAuthorizationRequests", "respondToAuthorizationRequest"
   ],
   "Tutor": [
     "getUserInfo", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
-    "acceptLinkInvitation", "getGuardianStudents", "getGuardianApplicants", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "acceptLinkInvitation", "getGuardianStudents", "getGuardianApplicants", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders", "getAuthorizationRequests", "respondToAuthorizationRequest"
   ],
   "Responsable": [
     "getUserInfo", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
-    "acceptLinkInvitation", "getGuardianStudents", "getGuardianApplicants", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "acceptLinkInvitation", "getGuardianStudents", "getGuardianApplicants", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders", "getAuthorizationRequests", "respondToAuthorizationRequest"
   ],
   "Director": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "dispatchScheduleChangeNotifications", "getScheduleChangeNotificationLogs", "getAdmissionNotificationLogs", "getStudentProcedureNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "dispatchScheduleChangeNotifications", "getScheduleChangeNotificationLogs", "getAdmissionNotificationLogs", "getStudentProcedureNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
     "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData", "generatePrivilegeAndAccountAuditReport", "getPaginatedAuditLogReport", "auditAndReconcileIdentityInconsistencies"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "createLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders"
   ],
   "Secretaría": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders"
   ],
   "Contador": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest"],
   "RecursosHumanos": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "createNews", "getInternalMessages", "sendInternalMessage"],
@@ -960,7 +962,7 @@ const ROLE_PERMISSIONS = {
   "Profesor": [
     "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "createNews", "uploadNewsImage", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData",
     "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans",
-    "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "markNotificationAsRead", "createUserNotification", "getAdministrativeRequests", "submitAdministrativeRequest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus"
+    "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "markNotificationAsRead", "createUserNotification", "getAdministrativeRequests", "submitAdministrativeRequest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "checkCalendarEventOverlap"
   ],
   "Asistente": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "getLearningProfile", "getInstitutionalCriteria", "getFormativeEvaluations", "getInstitutionalAnnouncements", "getUserNotifications"],
   "Estudiante": [
@@ -1308,6 +1310,9 @@ function doPost(e) {
       case "createInstitutionalAnnouncement": result = createInstitutionalAnnouncement(payload); break;
       case "submitAnnouncementReceiptConfirmation": result = submitAnnouncementReceiptConfirmation(payload); break;
       case "getAnnouncementReadReport": result = getAnnouncementReadReport(payload); break;
+      case "submitAuthorizationRequest": result = submitAuthorizationRequest(payload); break;
+      case "getAuthorizationRequests": result = getAuthorizationRequests(payload); break;
+      case "respondToAuthorizationRequest": result = respondToAuthorizationRequest(payload); break;
       case "getDepartmentalWorkInbox": result = getDepartmentalWorkInbox(payload); break;
       case "getInternalConversations": result = getInternalConversations(payload); break;
       case "getInternalMessages": result = getInternalMessages(payload); break;
@@ -1337,6 +1342,10 @@ function doPost(e) {
       case "generatePrivilegeAndAccountAuditReport": result = generatePrivilegeAndAccountAuditReport(payload); break;
       case "getPaginatedAuditLogReport": result = getPaginatedAuditLogReport(payload); break;
       case "auditAndReconcileIdentityInconsistencies": result = auditAndReconcileIdentityInconsistencies(payload); break;
+      case "sendInstitutionalMessage": result = sendInstitutionalMessage(payload); break;
+      case "getInstitutionalConversations": result = getInstitutionalConversations(payload); break;
+      case "getConversationMessages": result = getConversationMessages(payload); break;
+      case "archiveInstitutionalConversation": result = archiveInstitutionalConversation(payload); break;
       case "getNotificationPreferences": result = getNotificationPreferences(payload); break;
       case "markNotificationAsRead": result = markNotificationAsRead(payload); break;
       case "createUserNotification": result = createUserNotification(payload); break;
@@ -1362,6 +1371,8 @@ function doPost(e) {
       case "bookAppointment": result = bookAppointment(payload); break;
       case "updateAppointmentStatus": result = updateAppointmentStatus(payload); break;
       case "getInstitutionalCalendarEvents": result = getInstitutionalCalendarEvents(payload); break;
+      case "saveInstitutionalCalendarEvent": result = saveInstitutionalCalendarEvent(payload); break;
+      case "checkCalendarEventOverlap": result = checkCalendarEventOverlap(payload); break;
       case "getPendingReminders": result = getPendingReminders(payload); break;
 
       case "searchGlobalOmnibox": result = searchGlobalOmnibox(payload); break;
@@ -5259,7 +5270,78 @@ function updateAppointmentStatus(payload) {
   return { status: "success", message: `Estado de la cita cambiado a ${nuevoEstado}.` };
 }
 
-// [REQ-EXP-016] [Requerimientos de Expansión y Desarrollo] - Publicación y gestión de noticias/avisos institucionales por Secretaría.
+// [F11-Task04] [P1] - Gestión de Noticias, Anuncios, Circulares y Comunicados con Vigencia
+function getNews(payload) {
+  try {
+    const { categoria, grado, seccion, estado } = payload || {};
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "NoticiasPortal");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", noticias: [] };
+
+    const nowStr = new Date().toISOString().split('T')[0];
+    const noticias = [];
+
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const nId = row[0];
+      const fecha = row[1];
+      const hora = row[2];
+      const titulo = row[3];
+      const contenido = row[4];
+      const imgUrl = row[5];
+      const cat = row[6] || "General";
+      const grAud = row[7] || "Todos";
+      const secAud = row[8] || "Todas";
+      const fInicio = row[9] ? String(row[9]).split('T')[0] : "";
+      const fFin = row[10] ? String(row[10]).split('T')[0] : "";
+      let st = row[11] || "Activa";
+
+      // Vigency evaluation
+      if (fFin && nowStr > fFin && st === "Activa") {
+        st = "Vencida";
+        sheet.getRange(i + 1, 12).setValue("Vencida");
+      }
+      if (fInicio && nowStr < fInicio && st === "Activa") {
+        st = "Programada";
+      }
+
+      if (estado && estado !== "Todas" && st !== estado) {
+        if (!payload || !payload.includeAll) continue;
+      } else if (!estado && st !== "Activa") {
+        // Default only active news
+        continue;
+      }
+
+      if (categoria && categoria !== "Todas" && cat !== categoria) continue;
+      if (grado && grAud !== "Todos" && grAud !== grado) continue;
+      if (seccion && secAud !== "Todas" && secAud !== seccion) continue;
+
+      noticias.push({
+        noticiaId: nId,
+        fecha,
+        hora,
+        titulo,
+        contenido,
+        imagenUrl: imgUrl,
+        categoria: cat,
+        gradoAudiencia: grAud,
+        seccionAudiencia: secAud,
+        fechaInicio: fInicio,
+        fechaFin: fFin,
+        estado: st
+      });
+    }
+
+    noticias.reverse();
+    return { status: "success", noticias: noticias };
+  } catch (error) {
+    logStructuredEvent("USER", "getNews", "ERROR", "GET_NEWS_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
 function createNews(payload) {
   const { titulo, contenido, imagenUrl, categoria, gradoAudiencia, seccionAudiencia, fechaInicio, fechaFin } = payload || {};
   if (!titulo || !contenido) throw new Error("Título y contenido requeridos.");
@@ -5298,34 +5380,841 @@ function updateNewsStatus(payload) {
   return { status: "success", message: `Estado de la noticia actualizado a '${estado}'.` };
 }
 
-function getInstitutionalCalendarEvents(payload) {
-  const { categoria, anoLectivo } = payload || {};
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = ss.getSheetByName("CalendarioAcademico");
-  if (!sheet) {
+// [F11-Task04] [P1] - Gestor de Comunicados, Circulares y Anuncios Institucionales con Vigencia
+function getInstitutionalAnnouncements(payload) {
+  try {
+    const verifiedRole = (typeof getUserVerifiedRole === "function" ? getUserVerifiedRole(payload) : null) || (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const isStaff = ["Administrador", "Desarrollador", "Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "RecursosHumanos"].indexOf(verifiedRole) !== -1;
+
+    const { categoria, estado, nivelUrgencia, grado, seccion, rol } = payload || {};
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "ComunicadosInstitucionales");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", comunicados: [] };
+
+    const nowISO = new Date().toISOString();
+    const nowDate = nowISO.split('T')[0];
+    const comunicados = [];
+
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const cId = String(row[0] || "");
+      const titulo = String(row[1] || "");
+      const contenido = String(row[2] || "");
+      const cat = String(row[3] || "Aviso");
+      const autorId = String(row[4] || "");
+      const audienciaRaw = row[5];
+      const requiereFirma = row[6] === true || String(row[6]).toUpperCase() === "SI" || String(row[6]).toLowerCase() === "true";
+      const fechaPub = row[7] ? new Date(row[7]).toISOString() : "";
+      let st = String(row[8] || "Publicado");
+      const fInicioVig = row[9] ? String(row[9]).split('T')[0] : (fechaPub ? fechaPub.split('T')[0] : "");
+      const fFinVig = row[10] ? String(row[10]).split('T')[0] : "";
+      const urgencia = String(row[11] || "Ordinario");
+      const fechaCrea = row[12] ? new Date(row[12]).toISOString() : fechaPub;
+
+      // Evaluar vigencia
+      if (fFinVig && nowDate > fFinVig && (st === "Publicado" || st === "Programado")) {
+        st = "Vencido";
+        sheet.getRange(i + 1, 9).setValue("Vencido");
+      } else if (fInicioVig && nowDate < fInicioVig && st === "Publicado") {
+        st = "Programado";
+      }
+
+      // Filtro de estado
+      if (!isStaff) {
+        // Usuarios generales sólo ven "Publicado" vigente
+        if (st !== "Publicado") continue;
+      } else if (estado && estado !== "Todos" && st !== estado) {
+        continue;
+      }
+
+      // Filtro por categoría
+      if (categoria && categoria !== "Todas" && cat !== categoria) continue;
+
+      // Filtro por urgencia
+      if (nivelUrgencia && nivelUrgencia !== "Todos" && urgencia !== nivelUrgencia) continue;
+
+      // Parsing de audiencia
+      let audienciaObj = {};
+      try {
+        audienciaObj = typeof audienciaRaw === "object" ? audienciaRaw : JSON.parse(audienciaRaw || "{}");
+      } catch (e) {
+        audienciaObj = { target: String(audienciaRaw || "Todos") };
+      }
+
+      // Filtros por grado, sección o rol
+      if (grado && audienciaObj.grado && audienciaObj.grado !== "Todos" && audienciaObj.grado !== grado) continue;
+      if (seccion && audienciaObj.seccion && audienciaObj.seccion !== "Todas" && audienciaObj.seccion !== seccion) continue;
+      if (rol && audienciaObj.roles && Array.isArray(audienciaObj.roles) && audienciaObj.roles.length > 0 && audienciaObj.roles.indexOf(rol) === -1 && audienciaObj.roles.indexOf("Todos") === -1) continue;
+
+      comunicados.push({
+        comunicadoId: cId,
+        titulo: titulo,
+        contenido: contenido,
+        categoria: cat,
+        autorId: autorId,
+        audiencia: audienciaObj,
+        requiereFirma: requiereFirma,
+        fechaPublicacion: fechaPub,
+        estado: st,
+        fechaInicioVigencia: fInicioVig,
+        fechaFinVigencia: fFinVig,
+        nivelUrgencia: urgencia,
+        fechaCreacion: fechaCrea
+      });
+    }
+
+    // Ordenar priorizando Urgente/Critico primero y luego fecha más reciente
+    comunicados.sort((a, b) => {
+      const rankUrg = { "Critico": 3, "Urgente": 2, "Ordinario": 1 };
+      const diffUrg = (rankUrg[b.nivelUrgencia] || 1) - (rankUrg[a.nivelUrgencia] || 1);
+      if (diffUrg !== 0) return diffUrg;
+      return new Date(b.fechaPublicacion || b.fechaCreacion || 0) - new Date(a.fechaPublicacion || a.fechaCreacion || 0);
+    });
+
+    return { status: "success", totalComunicados: comunicados.length, comunicados: comunicados };
+  } catch (error) {
+    logStructuredEvent("USER", "getInstitutionalAnnouncements", "ERROR", "GET_ANNOUNCEMENTS_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+// [F11-Task04] [P1] - Creación y Edición de Anuncios Institucionales con Vigencia
+function createInstitutionalAnnouncement(payload) {
+  try {
+    const verifiedRole = (typeof getUserVerifiedRole === "function" ? getUserVerifiedRole(payload) : null) || (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const isAuthorized = ["Administrador", "Desarrollador", "Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Profesor", "RecursosHumanos"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "No cuenta con autorización para publicar o gestionar comunicados e información institucional." };
+    }
+
+    const {
+      comunicadoId,
+      titulo,
+      contenido,
+      categoria,
+      audienciaJSON,
+      audiencia,
+      requiereFirma,
+      fechaInicioVigencia,
+      fechaInicio,
+      fechaFinVigencia,
+      fechaFin,
+      nivelUrgencia,
+      estado,
+      notificar
+    } = payload || {};
+
+    if (!titulo || !contenido) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "El título y el contenido del comunicado son requeridos." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "ComunicadosInstitucionales");
+    const data = sheet.getDataRange().getValues();
+
+    const now = new Date();
+    const nowISO = now.toISOString();
+    const nowDate = nowISO.split('T')[0];
+
+    const cId = comunicadoId || ("COM-AN-" + now.getFullYear() + "-" + Math.floor(1000 + Math.random() * 9000));
+    const cat = categoria || "Aviso";
+    const autor = (payload && (payload._verifiedUserId || payload.autorId || payload.userId)) || verifiedRole;
+
+    const audObj = audienciaJSON || audiencia || { target: "Todos" };
+    const audStr = typeof audObj === "object" ? JSON.stringify(audObj) : String(audObj);
+
+    const fInicioVig = (fechaInicioVigencia || fechaInicio || nowDate).split('T')[0];
+    const fFinVig = (fechaFinVigencia || fechaFin || "").split('T')[0];
+    const urgencia = nivelUrgencia || (cat === "Urgente" ? "Urgente" : "Ordinario");
+
+    let st = estado || "Publicado";
+    if (fInicioVig && fInicioVig > nowDate && st === "Publicado") {
+      st = "Programado";
+    }
+
+    let foundIndex = -1;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(cId).trim()) {
+        foundIndex = i;
+        break;
+      }
+    }
+
+    const rowData = [
+      cId,
+      titulo.trim(),
+      contenido.trim(),
+      cat,
+      autor,
+      audStr,
+      requiereFirma ? "SI" : "NO",
+      nowISO,
+      st,
+      fInicioVig,
+      fFinVig,
+      urgencia,
+      foundIndex !== -1 ? (data[foundIndex][12] || nowISO) : nowISO
+    ];
+
+    if (foundIndex !== -1) {
+      sheet.getRange(foundIndex + 1, 1, 1, rowData.length).setValues([rowData]);
+      logStructuredEvent("USER", "createInstitutionalAnnouncement", "INFO", "ANNOUNCEMENT_UPDATED", `Comunicado ${cId} actualizado`, { comunicadoId: cId, estado: st }, verifiedRole);
+    } else {
+      sheet.appendRow(rowData);
+      logStructuredEvent("USER", "createInstitutionalAnnouncement", "INFO", "ANNOUNCEMENT_CREATED", `Comunicado ${cId} publicado (${urgencia})`, { comunicadoId: cId, estado: st }, verifiedRole);
+    }
+
+    // Si es urgente o solicitan notificar, emitir notificación multicanal
+    if (notificar || urgencia === "Urgente" || urgencia === "Critico") {
+      try {
+        sendMultiChannelNotification({
+          userId: "TODOS",
+          titulo: `[COMUNICADO ${urgencia.toUpperCase()}] ${titulo}`,
+          mensaje: contenido.substring(0, 200) + (contenido.length > 200 ? "..." : ""),
+          tipo: "ComunicadoInstitucional",
+          categoria: cat,
+          deduplicationKey: `NOTIF_COM_${cId}`,
+          authRole: verifiedRole
+        });
+      } catch (eNotif) {
+        logStructuredEvent("USER", "createInstitutionalAnnouncement", "WARN", "NOTIF_DISPATCH_WARN", eNotif.message, { comunicadoId: cId }, verifiedRole);
+      }
+    }
+
     return {
       status: "success",
-      eventos: [
-        { eventoId: "EVT-01", titulo: "Inicio de Clases I Parcial", fechaInicio: "2026-02-01", categoria: "Academico", destinatarios: "TodaLaComunidad" },
-        { eventoId: "EVT-02", titulo: "Exámenes I Parcial", fechaInicio: "2026-04-15", categoria: "Evaluacion", destinatarios: "TodaLaComunidad" }
-      ]
+      comunicadoId: cId,
+      estado: st,
+      fechaInicioVigencia: fInicioVig,
+      fechaFinVigencia: fFinVig,
+      nivelUrgencia: urgencia,
+      message: `Comunicado institucional '${titulo}' ${foundIndex !== -1 ? 'actualizado' : 'registrado'} exitosamente con estado '${st}'.`
     };
+  } catch (error) {
+    logStructuredEvent("USER", "createInstitutionalAnnouncement", "ERROR", "ANNOUNCEMENT_CREATE_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
   }
-  const rows = sheet.getDataRange().getValues().slice(1);
+}
 
-  let filtered = rows;
-  if (categoria) filtered = filtered.filter(r => String(r[3]).toLowerCase().trim() === String(categoria).toLowerCase().trim());
+function submitAnnouncementReceiptConfirmation(payload) {
+  try {
+    const { comunicadoId, userId, observacion } = payload || {};
+    const effectiveUserId = (payload && (payload._verifiedUserId || payload.userId)) || userId;
+    if (!comunicadoId || !effectiveUserId) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "comunicadoId y userId son requeridos para confirmar lectura." };
+    }
 
-  const mapped = filtered.map(r => ({
-    eventoId: r[0],
-    titulo: r[2],
-    fechaInicio: r[4],
-    fechaFin: r[5],
-    categoria: r[3],
-    destinatarios: r[6]
-  }));
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "ConfirmacionesLecturaComunicados");
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["ConfirmacionID", "ComunicadoID", "UserId", "FechaApertura", "FechaConfirmacionExplicit", "EstadoConfirmacion", "IpMetadata"]);
+    }
 
-  return { status: "success", eventos: mapped };
+    const confId = "CNF-" + Date.now();
+    const now = new Date().toISOString();
+
+    sheet.appendRow([
+      confId,
+      String(comunicadoId).trim(),
+      String(effectiveUserId).trim(),
+      now,
+      now,
+      "Confirmado",
+      observacion || "PlataformaWeb"
+    ]);
+
+    return { status: "success", confirmacionId: confId, message: "Confirmación de lectura registrada." };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function getAnnouncementReadReport(payload) {
+  try {
+    const { comunicadoId } = payload || {};
+    if (!comunicadoId) return { status: "error", message: "comunicadoId es requerido." };
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "ConfirmacionesLecturaComunicados");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", comunicadoId, totalConfirmaciones: 0, confirmaciones: [] };
+
+    const confirmaciones = [];
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][1]).trim() === String(comunicadoId).trim()) {
+        confirmaciones.push({
+          confirmacionId: data[i][0],
+          comunicadoId: data[i][1],
+          userId: data[i][2],
+          fechaApertura: data[i][3],
+          fechaConfirmacion: data[i][4],
+          estado: data[i][5]
+        });
+      }
+    }
+
+    return { status: "success", comunicadoId, totalConfirmaciones: confirmaciones.length, confirmaciones: confirmaciones };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+// [F11-Task05] [P1] - Motor de confirmaciones de lectura, respuestas y solicitudes de autorización
+function submitAuthorizationRequest(payload) {
+  try {
+    const verifiedRole = (typeof getUserVerifiedRole === "function" ? getUserVerifiedRole(payload) : null) || (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const callerId = (payload && payload._verifiedUserId) || "Sistema";
+    const isAuthorized = ["Administrador", "Desarrollador", "Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Profesor", "Consejeros"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "No cuenta con autorización para crear solicitudes de autorización de actividades o permisos." };
+    }
+
+    const { actividadOPermiso, estudianteId, tutorUserId, detalles, detallesJSON, fechaLimite } = payload || {};
+    if (!actividadOPermiso || !estudianteId) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "actividadOPermiso y estudianteId son requeridos." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "SolicitudesAutorizacion");
+
+    const now = new Date();
+    const nowISO = now.toISOString();
+    const solId = "AUT-REQ-" + now.getFullYear() + "-" + Math.floor(100000 + Math.random() * 900000);
+
+    const detStr = typeof (detallesJSON || detalles) === "object" ? JSON.stringify(detallesJSON || detalles) : String(detalles || detallesJSON || "");
+    const limitStr = fechaLimite ? String(fechaLimite).split('T')[0] : "";
+
+    sheet.appendRow([
+      solId,
+      String(actividadOPermiso).trim(),
+      String(estudianteId).trim(),
+      tutorUserId ? String(tutorUserId).trim() : "TODOS",
+      detStr,
+      limitStr,
+      "Pendiente",
+      "",
+      "",
+      "PlataformaWeb",
+      nowISO,
+      callerId
+    ]);
+
+    logStructuredEvent("USER", "submitAuthorizationRequest", "INFO", "AUTHORIZATION_REQUEST_CREATED", `Solicitud de autorización ${solId} creada para estudiante ${estudianteId}`, { solicitudAutorizacionId: solId, estudianteId, tutorUserId }, verifiedRole);
+
+    if (tutorUserId && tutorUserId !== "TODOS") {
+      try {
+        sendMultiChannelNotification({
+          userId: tutorUserId,
+          titulo: `Solicitud de Autorización: ${actividadOPermiso}`,
+          mensaje: `Se requiere su autorización para la actividad/permiso '${actividadOPermiso}' antes del ${limitStr || 'plazo estipulado'}.`,
+          tipo: "SolicitudAutorizacion",
+          categoria: "Autorizaciones",
+          deduplicationKey: `NOTIF_AUT_${solId}`,
+          authRole: verifiedRole
+        });
+      } catch (eNotif) {
+        logStructuredEvent("USER", "submitAuthorizationRequest", "WARN", "NOTIF_AUT_DISPATCH_WARN", eNotif.message, { solicitudAutorizacionId: solId }, verifiedRole);
+      }
+    }
+
+    return {
+      status: "success",
+      solicitudAutorizacionId: solId,
+      estado: "Pendiente",
+      fechaCreacion: nowISO,
+      message: `Solicitud de autorización '${actividadOPermiso}' registrada exitosamente.`
+    };
+  } catch (error) {
+    logStructuredEvent("USER", "submitAuthorizationRequest", "ERROR", "AUTHORIZATION_REQUEST_CREATE_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function getAuthorizationRequests(payload) {
+  try {
+    const verifiedRole = (typeof getUserVerifiedRole === "function" ? getUserVerifiedRole(payload) : null) || (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const callerId = (payload && payload._verifiedUserId) || "";
+    const isStaff = ["Administrador", "Desarrollador", "Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Profesor"].indexOf(verifiedRole) !== -1;
+
+    const { tutorUserId, estudianteId, estado, solicitudAutorizacionId } = payload || {};
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "SolicitudesAutorizacion");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", solicitudes: [] };
+
+    const nowDate = new Date().toISOString().split('T')[0];
+    const solicitudes = [];
+
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const solId = String(row[0] || "");
+      const actividad = String(row[1] || "");
+      const estId = String(row[2] || "");
+      const tutorId = String(row[3] || "");
+      const detallesRaw = row[4];
+      const fLimite = row[5] ? String(row[5]).split('T')[0] : "";
+      let st = String(row[6] || "Pendiente");
+      const fResp = row[7] ? new Date(row[7]).toISOString() : "";
+      const respTutor = String(row[8] || "");
+      const meta = String(row[9] || "");
+      const fCrea = row[10] ? new Date(row[10]).toISOString() : "";
+      const creadoPor = String(row[11] || "");
+
+      // Expiration check
+      if (st === "Pendiente" && fLimite && nowDate > fLimite) {
+        st = "Vencido";
+        sheet.getRange(i + 1, 7).setValue("Vencido");
+      }
+
+      if (solicitudAutorizacionId && String(solicitudAutorizacionId).trim() !== solId) continue;
+      if (estudianteId && String(estudianteId).trim() !== estId) continue;
+
+      if (!isStaff) {
+        if (tutorId !== "TODOS" && tutorId !== callerId && tutorUserId !== callerId) {
+          continue;
+        }
+      } else if (tutorUserId && tutorUserId !== "TODOS" && String(tutorUserId).trim() !== tutorId) {
+        continue;
+      }
+
+      if (estado && estado !== "Todos" && st !== estado) continue;
+
+      let detallesObj = {};
+      try {
+        detallesObj = typeof detallesRaw === "object" ? detallesRaw : JSON.parse(detallesRaw || "{}");
+      } catch (e) {
+        detallesObj = { text: String(detallesRaw || "") };
+      }
+
+      solicitudes.push({
+        solicitudAutorizacionId: solId,
+        actividadOPermiso: actividad,
+        estudianteId: estId,
+        tutorUserId: tutorId,
+        detalles: detallesObj,
+        fechaLimite: fLimite,
+        estado: st,
+        fechaRespuesta: fResp,
+        respuestaTutor: respTutor,
+        metadata: meta,
+        fechaCreacion: fCrea,
+        creadoPor: creadoPor
+      });
+    }
+
+    solicitudes.reverse();
+    return { status: "success", totalSolicitudes: solicitudes.length, solicitudes: solicitudes };
+  } catch (error) {
+    logStructuredEvent("USER", "getAuthorizationRequests", "ERROR", "GET_AUTHORIZATION_REQUESTS_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function respondToAuthorizationRequest(payload) {
+  try {
+    const verifiedRole = (typeof getUserVerifiedRole === "function" ? getUserVerifiedRole(payload) : null) || (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const callerId = (payload && payload._verifiedUserId) || "";
+    const { solicitudAutorizacionId, respuesta, observacion } = payload || {};
+
+    if (!solicitudAutorizacionId || !respuesta) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "solicitudAutorizacionId y respuesta ('Aceptado' o 'Rechazado') son requeridos." };
+    }
+
+    const normResp = String(respuesta).trim();
+    if (normResp !== "Aceptado" && normResp !== "Rechazado") {
+      return { status: "error", code: "VALIDATION_ERROR", message: "Respuesta inválida. Debe ser 'Aceptado' o 'Rechazado'." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "SolicitudesAutorizacion");
+    const data = sheet.getDataRange().getValues();
+
+    let foundIdx = -1;
+    let reqRow = null;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(solicitudAutorizacionId).trim()) {
+        foundIdx = i;
+        reqRow = data[i];
+        break;
+      }
+    }
+
+    if (foundIdx === -1) {
+      return { status: "error", code: "NOT_FOUND", message: "Solicitud de autorización no encontrada." };
+    }
+
+    const currentTutorId = String(reqRow[3] || "").trim();
+    const currentStatus = String(reqRow[6] || "Pendiente").trim();
+    const fechaLimite = reqRow[5] ? String(reqRow[5]).split('T')[0] : "";
+    const nowDate = new Date().toISOString().split('T')[0];
+
+    // Impedir modificaciones extemporáneas si ya venció o ya fue respondida
+    if (currentStatus === "Aceptado" || currentStatus === "Rechazado") {
+      return { status: "error", code: "INVALID_STATE", message: "La solicitud ya fue respondida anteriormente y no se permite su modificación extemporánea." };
+    }
+
+    if (currentStatus === "Vencido" || (fechaLimite && nowDate > fechaLimite)) {
+      sheet.getRange(foundIdx + 1, 7).setValue("Vencido");
+      return { status: "error", code: "EXPIRED_REQUEST", message: "La fecha límite de autorización ha expirado y no se permiten respuestas extemporáneas." };
+    }
+
+    const isStaff = ["Administrador", "Desarrollador", "Director", "Subdirector"].indexOf(verifiedRole) !== -1;
+    if (!isStaff && currentTutorId !== "TODOS" && currentTutorId !== callerId) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "No tiene autorización para responder a esta solicitud en representación de otro tutor." };
+    }
+
+    const now = new Date();
+    const nowISO = now.toISOString();
+
+    sheet.getRange(foundIdx + 1, 7).setValue(normResp);
+    sheet.getRange(foundIdx + 1, 8).setValue(nowISO);
+    sheet.getRange(foundIdx + 1, 9).setValue(callerId + (observacion ? `: ${observacion}` : ""));
+
+    logStructuredEvent("USER", "respondToAuthorizationRequest", "INFO", "AUTHORIZATION_REQUEST_RESPONDED", `Solicitud ${solicitudAutorizacionId} ${normResp} por tutor/usuario ${callerId}`, { solicitudAutorizacionId, respuesta: normResp, callerId }, verifiedRole);
+
+    return {
+      status: "success",
+      solicitudAutorizacionId: solicitudAutorizacionId,
+      estado: normResp,
+      fechaRespuesta: nowISO,
+      respondidoPor: callerId,
+      message: `Solicitud de autorización registrada como '${normResp}' con timestamp ${nowISO}.`
+    };
+  } catch (error) {
+    logStructuredEvent("USER", "respondToAuthorizationRequest", "ERROR", "AUTHORIZATION_RESPONSE_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function normalizeCalendarTimestamp(dateVal, timeVal, isEnd) {
+  if (!dateVal) return NaN;
+  let year, month, day;
+  if (dateVal instanceof Date) {
+    year = dateVal.getFullYear();
+    month = String(dateVal.getMonth() + 1).padStart(2, "0");
+    day = String(dateVal.getDate()).padStart(2, "0");
+  } else {
+    const s = String(dateVal).trim();
+    if (s.indexOf("T") !== -1) {
+      const p = s.split("T")[0].split("-");
+      if (p.length === 3) { year = p[0]; month = p[1]; day = p[2]; }
+    } else {
+      const p = s.split("-");
+      if (p.length === 3) {
+        year = p[0]; month = p[1]; day = p[2];
+      } else {
+        const parsed = new Date(s);
+        if (!isNaN(parsed.getTime())) {
+          year = parsed.getFullYear();
+          month = String(parsed.getMonth() + 1).padStart(2, "0");
+          day = String(parsed.getDate()).padStart(2, "0");
+        }
+      }
+    }
+  }
+  if (!year || !month || !day) return NaN;
+
+  let h = isEnd ? "23" : "00";
+  let m = isEnd ? "59" : "00";
+  let sec = "00";
+
+  if (timeVal) {
+    const tParts = String(timeVal).trim().split(":");
+    if (tParts.length >= 2) {
+      h = tParts[0].padStart(2, "0");
+      m = tParts[1].padStart(2, "0");
+      sec = tParts[2] ? tParts[2].padStart(2, "0") : "00";
+    }
+  } else if (isEnd) {
+    sec = "59";
+  }
+
+  return new Date(`${year}-${month}-${day}T${h}:${m}:${sec}`).getTime();
+}
+
+// [F11-Task06] [P1] - Gestión de calendarios institucionales, convocatorias y prevención de traslapes
+function checkCalendarEventOverlap(payload) {
+  try {
+    const { eventoId, fechaInicio, fechaFin, horaInicio, horaFin, espacioFisico, organizadorUserId, participantes } = payload || {};
+    if (!fechaInicio) return { status: "success", hasOverlap: false, overlaps: [] };
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "CalendarioInstitucional");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", hasOverlap: false, overlaps: [] };
+
+    const targetHStart = horaInicio || "00:00";
+    const targetHEnd = horaFin || "23:59";
+    const targetStartTs = normalizeCalendarTimestamp(fechaInicio, targetHStart, false);
+    const targetEndTs = normalizeCalendarTimestamp(fechaFin || fechaInicio, targetHEnd, true);
+
+    const targetSpace = espacioFisico ? String(espacioFisico).trim().toLowerCase() : "";
+    const targetOrganizer = organizadorUserId ? String(organizadorUserId).trim() : "";
+    const targetParticipants = Array.isArray(participantes) ? participantes.map(p => String(p).trim()) : [];
+
+    const overlaps = [];
+
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const evId = String(row[0] || "");
+      if (eventoId && evId === String(eventoId)) continue; // Ignorar el mismo evento si se está editando
+
+      const st = String(row[12] || "Activo");
+      if (st === "Cancelado" || st === "Inactivo") continue;
+
+      const eDateStart = row[4];
+      const eDateEnd = row[5] || eDateStart;
+      const eHStart = row[6] || "00:00";
+      const eHEnd = row[7] || "23:59";
+      const eSpace = row[8] ? String(row[8]).trim().toLowerCase() : "";
+      const eOrganizer = row[9] ? String(row[9]).trim() : "";
+      let eParticipants = [];
+      try {
+        eParticipants = typeof row[10] === "object" ? row[10] : JSON.parse(row[10] || "[]");
+      } catch (_) {
+        eParticipants = [];
+      }
+
+      // 1. Normalización precisa de intervalos continuos fecha-hora con soporte multi-día robusto
+      const eventStartTs = normalizeCalendarTimestamp(eDateStart, eHStart, false);
+      const eventEndTs = normalizeCalendarTimestamp(eDateEnd, eHEnd, true);
+
+      if (isNaN(targetStartTs) || isNaN(targetEndTs) || isNaN(eventStartTs) || isNaN(eventEndTs)) {
+        continue;
+      }
+
+      const intervalOverlap = (targetStartTs < eventEndTs && targetEndTs > eventStartTs);
+      if (!intervalOverlap) continue;
+
+      // 3. Verificación de choque de espacio físico
+      let conflictReason = null;
+      if (targetSpace && eSpace && targetSpace !== "virtual" && targetSpace !== "online" && targetSpace === eSpace) {
+        conflictReason = `Traslape de espacio físico: El espacio '${row[8]}' ya está reservado por el evento '${row[1]}' de ${eHStart} a ${eHEnd}.`;
+      }
+
+      // 4. Verificación de choque de organizador o participante clave
+      if (!conflictReason && targetOrganizer && (targetOrganizer === eOrganizer || eParticipants.indexOf(targetOrganizer) !== -1)) {
+        conflictReason = `Traslape de agenda: El organizador ${targetOrganizer} ya tiene asignado el evento '${row[1]}' (${eHStart} - ${eHEnd}).`;
+      }
+
+      if (!conflictReason && targetParticipants.length > 0) {
+        const common = targetParticipants.find(p => p === eOrganizer || eParticipants.indexOf(p) !== -1);
+        if (common) {
+          conflictReason = `Traslape de participante: El usuario ${common} ya está convocado en el evento '${row[1]}'.`;
+        }
+      }
+
+      if (conflictReason) {
+        overlaps.push({
+          eventoId: evId,
+          titulo: row[1],
+          espacioFisico: row[8],
+          horaInicio: eHStart,
+          horaFin: eHEnd,
+          motivoConflicto: conflictReason
+        });
+      }
+    }
+
+    return {
+      status: "success",
+      hasOverlap: overlaps.length > 0,
+      totalConflictos: overlaps.length,
+      overlaps: overlaps
+    };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function saveInstitutionalCalendarEvent(payload) {
+  try {
+    const verifiedRole = (typeof getUserVerifiedRole === "function" ? getUserVerifiedRole(payload) : null) || (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const callerId = (payload && payload._verifiedUserId) || "Sistema";
+    const isAuthorized = ["Administrador", "Desarrollador", "Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Profesor"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "No tiene autorización para registrar o modificar eventos en el calendario institucional." };
+    }
+
+    const {
+      eventoId,
+      titulo,
+      descripcion,
+      categoria,
+      fechaInicio,
+      fechaFin,
+      horaInicio,
+      horaFin,
+      espacioFisico,
+      organizadorUserId,
+      participantes,
+      visibilidad,
+      permitirTraslape
+    } = payload || {};
+
+    if (!titulo || !fechaInicio) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "titulo y fechaInicio son requeridos para agendar un evento." };
+    }
+
+    // Comprobación preventiva de traslapes si no se forzó su omisión
+    if (!permitirTraslape) {
+      const overlapCheck = checkCalendarEventOverlap({
+        eventoId,
+        fechaInicio,
+        fechaFin,
+        horaInicio,
+        horaFin,
+        espacioFisico,
+        organizadorUserId: organizadorUserId || callerId,
+        participantes
+      });
+
+      if (overlapCheck && overlapCheck.hasOverlap) {
+        return {
+          status: "warning",
+          code: "SCHEDULE_OVERLAP_DETECTED",
+          message: "Se detectaron incompatibilidades de horario al agendar el evento.",
+          hasOverlap: true,
+          conflictos: overlapCheck.overlaps
+        };
+      }
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "CalendarioInstitucional");
+    const data = sheet.getDataRange().getValues();
+
+    const now = new Date();
+    const nowISO = now.toISOString();
+    const evId = eventoId || ("EVT-INS-" + now.getFullYear() + "-" + Math.floor(100000 + Math.random() * 900000));
+
+    const fStart = String(fechaInicio).split('T')[0];
+    const fEnd = (fechaFin ? String(fechaFin).split('T')[0] : fStart);
+    const hStart = horaInicio || "08:00";
+    const hEnd = horaFin || "09:00";
+    const orgId = organizadorUserId || callerId;
+    const partStr = Array.isArray(participantes) ? JSON.stringify(participantes) : (participantes || "[]");
+
+    let foundIdx = -1;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(evId).trim()) {
+        foundIdx = i;
+        break;
+      }
+    }
+
+    const rowData = [
+      evId,
+      String(titulo).trim(),
+      descripcion || "",
+      categoria || "General",
+      fStart,
+      fEnd,
+      hStart,
+      hEnd,
+      espacioFisico || "General",
+      orgId,
+      partStr,
+      visibilidad || "TodaLaComunidad",
+      "Activo",
+      foundIdx !== -1 ? (data[foundIdx][13] || nowISO) : nowISO
+    ];
+
+    if (foundIdx !== -1) {
+      sheet.getRange(foundIdx + 1, 1, 1, rowData.length).setValues([rowData]);
+      logStructuredEvent("USER", "saveInstitutionalCalendarEvent", "INFO", "CALENDAR_EVENT_UPDATED", `Evento institucional ${evId} actualizado`, { eventoId: evId, titulo }, verifiedRole);
+    } else {
+      sheet.appendRow(rowData);
+      logStructuredEvent("USER", "saveInstitutionalCalendarEvent", "INFO", "CALENDAR_EVENT_CREATED", `Evento institucional ${evId} creado`, { eventoId: evId, titulo, espacioFisico }, verifiedRole);
+    }
+
+    return {
+      status: "success",
+      eventoId: evId,
+      titulo: titulo,
+      fechaInicio: fStart,
+      fechaFin: fEnd,
+      horaInicio: hStart,
+      horaFin: hEnd,
+      espacioFisico: espacioFisico || "General",
+      estado: "Activo",
+      message: `Evento institucional '${titulo}' guardado correctamente en el calendario oficial.`
+    };
+  } catch (error) {
+    logStructuredEvent("USER", "saveInstitutionalCalendarEvent", "ERROR", "CALENDAR_EVENT_SAVE_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function getInstitutionalCalendarEvents(payload) {
+  try {
+    const { categoria, anoLectivo, fechaInicio, fechaFin, visibilidad } = payload || {};
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "CalendarioInstitucional");
+    const data = sheet.getDataRange().getValues();
+
+    const eventos = [];
+
+    if (data.length > 1) {
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        const evId = String(row[0] || "");
+        const tit = String(row[1] || "");
+        const desc = String(row[2] || "");
+        const cat = String(row[3] || "General");
+        const fIni = row[4] ? String(row[4]).split('T')[0] : "";
+        const fFin = row[5] ? String(row[5]).split('T')[0] : fIni;
+        const hIni = row[6] || "";
+        const hFin = row[7] || "";
+        const esp = row[8] || "";
+        const org = row[9] || "";
+        let part = [];
+        try { part = JSON.parse(row[10] || "[]"); } catch(_) {}
+        const vis = row[11] || "TodaLaComunidad";
+        const st = row[12] || "Activo";
+
+        if (st === "Cancelado" || st === "Inactivo") continue;
+        if (categoria && categoria !== "Todas" && cat !== categoria) continue;
+        if (visibilidad && visibilidad !== "Todas" && vis !== visibilidad && vis !== "TodaLaComunidad") continue;
+        if (fechaInicio && fFin < String(fechaInicio).split('T')[0]) continue;
+        if (fechaFin && fIni > String(fechaFin).split('T')[0]) continue;
+
+        eventos.push({
+          eventoId: evId,
+          titulo: tit,
+          descripcion: desc,
+          categoria: cat,
+          fechaInicio: fIni,
+          fechaFin: fFin,
+          horaInicio: hIni,
+          horaFin: hFin,
+          espacioFisico: esp,
+          organizadorUserId: org,
+          participantes: part,
+          destinatarios: vis,
+          estado: st
+        });
+      }
+    }
+
+    // Si aún no hay eventos creados en CalendarioInstitucional, fallback compatible
+    if (eventos.length === 0) {
+      const defaultEvents = [
+        { eventoId: "EVT-01", titulo: "Inicio de Clases I Parcial", fechaInicio: "2026-02-01", fechaFin: "2026-02-01", categoria: "Academico", destinatarios: "TodaLaComunidad", espacioFisico: "Campus Central" },
+        { eventoId: "EVT-02", titulo: "Exámenes I Parcial", fechaInicio: "2026-04-15", fechaFin: "2026-04-20", categoria: "Evaluacion", destinatarios: "TodaLaComunidad", espacioFisico: "Aulas" }
+      ];
+      return { status: "success", eventos: defaultEvents };
+    }
+
+    return { status: "success", totalEventos: eventos.length, eventos: eventos };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
 }
 
 // [B-001] [pendientes2.md] - Service backend endpoint (getPendingReminders) con bloqueo LockService para despacho idempotente de recordatorios.
@@ -7359,6 +8248,142 @@ function getUserDynamicDashboardConfig(payload) {
       message: "Error al consultar configuración del dashboard dinámico: " + error.message
     };
   }
+}
+
+// [F11-Task03] [P1] - Centro unificado de comunicaciones y mensajería contextual
+function sendInstitutionalMessage(payload) {
+  const { conversacionId, remitenteUserId, destinatarioUserId, asunto, contenido, contextoTipo, contextoId, adjuntosUrls } = payload || {};
+  if (!remitenteUserId || !contenido) throw new Error("remitenteUserId y contenido son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MensajeriaInstitucional");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["MensajeID", "ConversacionID", "RemitenteUserId", "DestinatarioUserId", "Asunto", "Contenido", "ContextoTipo", "ContextoID", "Adjuntos", "Estado", "FechaRegistro"]);
+  }
+
+  const now = new Date();
+  const mensajeId = "MSG-" + now.getTime();
+  const convId = conversacionId || ("CONV-" + (contextoTipo || "GEN") + "-" + (contextoId || Date.now()));
+
+  sheet.appendRow([
+    mensajeId,
+    convId,
+    String(remitenteUserId).trim(),
+    destinatarioUserId ? String(destinatarioUserId).trim() : "TODOS",
+    asunto || "Mensaje Institucional",
+    contenido,
+    contextoTipo || "GENERAL",
+    contextoId || "N/A",
+    JSON.stringify(adjuntosUrls || []),
+    "Enviado",
+    now
+  ]);
+
+  return {
+    status: "success",
+    mensajeId: mensajeId,
+    conversacionId: convId,
+    message: "Mensaje institucional registrado correctamente en el contexto correspondiente."
+  };
+}
+
+function getInstitutionalConversations(payload) {
+  const { userId, contextoTipo, contextoId, incluirArchivados } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MensajeriaInstitucional");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", conversaciones: [] };
+
+  const convMap = {};
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const cId = String(row[1]).trim();
+    const rem = String(row[2]).trim();
+    const dest = String(row[3]).trim();
+    const ctxT = String(row[6]).trim();
+    const ctxId = String(row[7]).trim();
+    const est = String(row[9]).trim();
+
+    if (userId && rem !== String(userId).trim() && dest !== String(userId).trim() && dest !== "TODOS") continue;
+    if (contextoTipo && ctxT !== contextoTipo) continue;
+    if (contextoId && ctxId !== contextoId) continue;
+    if (!incluirArchivados && est === "Archivado") continue;
+
+    if (!convMap[cId]) {
+      convMap[cId] = {
+        conversacionId: cId,
+        asunto: row[4],
+        contextoTipo: ctxT,
+        contextoId: ctxId,
+        ultimoMensaje: row[5],
+        fechaUltimoMensaje: row[10] ? new Date(row[10]).toISOString() : null,
+        estado: est,
+        totalMensajes: 0
+      };
+    }
+    convMap[cId].totalMensajes++;
+    convMap[cId].ultimoMensaje = row[5];
+    convMap[cId].fechaUltimoMensaje = row[10] ? new Date(row[10]).toISOString() : null;
+  }
+
+  return { status: "success", conversaciones: Object.values(convMap) };
+}
+
+function getConversationMessages(payload) {
+  const { conversacionId, userId } = payload || {};
+  if (!conversacionId) throw new Error("conversacionId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MensajeriaInstitucional");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", mensajes: [] };
+
+  const mensajes = [];
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    if (String(row[1]).trim() === String(conversacionId).trim()) {
+      const rem = String(row[2]).trim();
+      const dest = String(row[3]).trim();
+      if (userId && rem !== String(userId).trim() && dest !== String(userId).trim() && dest !== "TODOS") continue;
+
+      mensajes.push({
+        mensajeId: row[0],
+        conversacionId: row[1],
+        remitenteUserId: rem,
+        destinatarioUserId: dest,
+        asunto: row[4],
+        contenido: row[5],
+        contextoTipo: row[6],
+        contextoId: row[7],
+        adjuntos: row[8] ? JSON.parse(row[8]) : [],
+        estado: row[9],
+        fechaRegistro: row[10] ? new Date(row[10]).toISOString() : null
+      });
+    }
+  }
+
+  return { status: "success", conversacionId, mensajes };
+}
+
+function archiveInstitutionalConversation(payload) {
+  const { conversacionId } = payload || {};
+  if (!conversacionId) throw new Error("conversacionId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MensajeriaInstitucional");
+  const data = sheet.getDataRange().getValues();
+
+  let actualizados = 0;
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][1]).trim() === String(conversacionId).trim()) {
+      sheet.getRange(i + 1, 10).setValue("Archivado");
+      actualizados++;
+    }
+  }
+
+  return { status: "success", conversacionId, actualizados, message: `Conversación ${conversacionId} archivada correctamente.` };
 }
 
 // [F8-Task21] [TAREA-ARQ-06] [Anexo Técnico: Arquitectura de Roles - Servicio de Comunicaciones Institucionales] - Modelo común de comunicaciones inter-rol, gestión de solicitudes e hilos de conversación con idempotencia

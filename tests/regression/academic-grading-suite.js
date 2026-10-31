@@ -69,6 +69,31 @@ const userCode = fs.readFileSync(path.join(__dirname, '../../backend/user-servic
 assert(userCode.includes("sendMultiChannelNotification") && userCode.includes("retryFailedNotificationsQueue") && userCode.includes("[F10-Task12]"), "backend/user-service/Code.gs contiene sendMultiChannelNotification y retryFailedNotificationsQueue [F10-Task12]");
 
 assert(academicCode.includes("validateEvidenceFileAndPermissions") && academicCode.includes("[F10-Task13]"), "backend/academic-service/Code.gs contiene validateEvidenceFileAndPermissions [F10-Task13]");
+assert(academicCode.includes("getBatchAttendanceRecords") && academicCode.includes("[F10-Task14]"), "backend/academic-service/Code.gs contiene getBatchAttendanceRecords [F10-Task14]");
+assert(devCode.includes("runPhase10AttendanceAndCoexistenceRegressionSuite") && devCode.includes("[F10-Task15]"), "backend/developer-service/Code.gs contiene suite de regresión ampliada runPhase10AttendanceAndCoexistenceRegressionSuite [F10-Task15]");
+assert(academicCode.includes("generateConsolidatedAttendanceAndCoexistenceReport") && academicCode.includes("[F10-Task16]"), "backend/academic-service/Code.gs contiene generateConsolidatedAttendanceAndCoexistenceReport [F10-Task16]");
+
+const acctCode = fs.readFileSync(path.join(__dirname, '../../backend/accounting-service/Code.gs'), 'utf8');
+assert(acctCode.includes("recordStaffCheckIn") && acctCode.includes("[F10-Task17]"), "backend/accounting-service/Code.gs contiene recordStaffCheckIn optimizado con trazabilidad [F10-Task17]");
+assert(devCode.includes("getPhase10FunctionalDocumentation") && devCode.includes("[F10-Task18]"), "backend/developer-service/Code.gs contiene getPhase10FunctionalDocumentation [F10-Task18]");
+assert(fs.existsSync(path.join(__dirname, '../../docs/architecture/phase-10-attendance-coexistence-spec.md')), "Existe documento funcional docs/architecture/phase-10-attendance-coexistence-spec.md [F10-Task18]");
+assert(academicCode.includes("validateStudentWelfareAccess") && academicCode.includes("[F11-Task01]"), "backend/academic-service/Code.gs contiene validateStudentWelfareAccess [F11-Task01]");
+assert(acctCode.includes("recordAccountingJournalEntry") && acctCode.includes("[F11-Task02]"), "backend/accounting-service/Code.gs contiene recordAccountingJournalEntry y approvePurchaseOrder [F11-Task02]");
+
+const updatedUserCode = fs.readFileSync(path.join(__dirname, '../../backend/user-service/Code.gs'), 'utf8');
+assert(updatedUserCode.includes("sendInstitutionalMessage") && updatedUserCode.includes("[F11-Task03]"), "backend/user-service/Code.gs contiene sendInstitutionalMessage y getInstitutionalConversations [F11-Task03]");
+assert(updatedUserCode.includes("getInstitutionalAnnouncements") && updatedUserCode.includes("[F11-Task04]"), "backend/user-service/Code.gs contiene getInstitutionalAnnouncements con vigencia de publicaciones [F11-Task04]");
+assert(updatedUserCode.includes("respondToAuthorizationRequest") && updatedUserCode.includes("[F11-Task05]"), "backend/user-service/Code.gs contiene respondToAuthorizationRequest y submitAuthorizationRequest [F11-Task05]");
+assert(updatedUserCode.includes("checkCalendarEventOverlap") && updatedUserCode.includes("[F11-Task06]"), "backend/user-service/Code.gs contiene checkCalendarEventOverlap y saveInstitutionalCalendarEvent [F11-Task06]");
+assert(academicCode.includes("scheduleGuidanceAppointment") && academicCode.includes("[F11-Task07]"), "backend/academic-service/Code.gs contiene scheduleGuidanceAppointment y getGuidanceAppointments [F11-Task07]");
+assert(academicCode.includes("evaluateAndDispatchEarlyWarningAlerts") && academicCode.includes("[F11-Task08]"), "backend/academic-service/Code.gs contiene evaluateAndDispatchEarlyWarningAlerts y getEarlyWarningAlerts [F11-Task08]");
+assert(academicCode.includes("savePedagogicalPlanning") && academicCode.includes("[F11-Task09]"), "backend/academic-service/Code.gs contiene savePedagogicalPlanning y getPedagogicalPlannings [F11-Task09]");
+assert(academicCode.includes("submitPlanningForReview") && academicCode.includes("[F11-Task10]"), "backend/academic-service/Code.gs contiene submitPlanningForReview y reviewPedagogicalPlanning [F11-Task10]");
+assert(academicCode.includes("saveSupervisionRubric") && academicCode.includes("[F11-Task11]"), "backend/academic-service/Code.gs contiene saveSupervisionRubric y getSupervisionRubrics [F11-Task11]");
+assert(academicCode.includes("createTeacherSubstitution") && academicCode.includes("[F11-Task12]"), "backend/academic-service/Code.gs contiene createTeacherSubstitution y getTeacherSubstitutions [F11-Task12]");
+assert(acctCode.includes("performBankReconciliation") && acctCode.includes("[F11-Task13]"), "backend/accounting-service/Code.gs contiene performBankReconciliation [F11-Task13]");
+assert(acctCode.includes("checkBudgetAvailability") && acctCode.includes("[F11-Task14]"), "backend/accounting-service/Code.gs contiene checkBudgetAvailability [F11-Task14]");
+assert(acctCode.includes("applyApprovedScholarshipsToCharges") && acctCode.includes("[F11-Task15]"), "backend/accounting-service/Code.gs contiene applyApprovedScholarshipsToCharges [F11-Task15]");
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {

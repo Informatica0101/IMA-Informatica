@@ -3335,3 +3335,234 @@ Archivos Modificados:
 
 3. Auditoria.txt
    - Registro de la auditoría y verificación de la tarea `[F9-Task06]`.
+
+===============================================================================
+FECHA: 2026-10-29
+TAREA: F10-Task14 - Optimizar el rendimiento, la recuperación y la consistencia de los servicios
+ARCHIVOS MODIFICADOS:
+- backend/academic-service/Code.gs (líneas ~213, ~248, ~252, ~861, ~7355-7405, ~7570-7640):
+  Se agregó la función `getBatchAttendanceRecords` para consultas de asistencia en lote filtrando por `sesionIds`, `userIds`, `fechaInicio` y `fechaFin`.
+  Se refactorizó `saveDailyAttendance` utilizando `LockService.getScriptLock()` y actualización en memoria por lotes para evitar llamadas I/O por celda a Google Sheets.
+  Se registraron los permisos correspondientes en `ROLE_PERMISSIONS` y en el despachador `doPost`.
+- js/api.js (líneas ~420-432):
+  Se implementaron las funciones auxiliares `fetchBatchAttendanceRecords` y `executeIdempotentAttendanceBatch` para cliente.
+- tests/regression/academic-grading-suite.js (línea ~72):
+  Se agregó aserción de regresión para verificar `getBatchAttendanceRecords` con la etiqueta `[F10-Task14]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+TAREA: F10-Task15 - Ampliar las pruebas automatizadas y la cobertura de regresión de la Fase 10
+ARCHIVOS MODIFICADOS:
+- backend/developer-service/Code.gs (líneas ~318-368):
+  Se amplió la función `runPhase10AttendanceAndCoexistenceRegressionSuite` para ejecutar pruebas automatizadas de cobertura de las reglas y contratos de asistencia, justificantes, salidas anticipadas, incidencias, consejería, orientación, delegación de asistentes, consultas batch y notificaciones con etiqueta `[F10-Task15]`.
+- tests/regression/academic-grading-suite.js (línea ~73):
+  Se agregó la aserción de comprobación para la suite de regresión ampliada `runPhase10AttendanceAndCoexistenceRegressionSuite` `[F10-Task15]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+TAREA: F10-Task16 - Ampliar los informes de asistencia, convivencia y seguimiento
+ARCHIVOS MODIFICADOS:
+- backend/academic-service/Code.gs (líneas ~213, ~216, ~248, ~863, ~1088-1190):
+  Se implementó la función `generateConsolidatedAttendanceAndCoexistenceReport` para consolidar métricas de asistencia, tardanzas acumuladas, estados de incidencias de convivencia y resumen de compromisos de seguimiento.
+  Se incorporó el aislamiento de confidencialidad para excluir notas de las categorías `Consejería` y `Orientación` cuando la consulta es realizada por roles no autorizados.
+  Se registraron los permisos correspondientes en `ROLE_PERMISSIONS` y en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~74):
+  Se agregó la aserción de comprobación para `generateConsolidatedAttendanceAndCoexistenceReport` con la etiqueta `[F10-Task16]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+TAREA: F10-Task17 - Optimizar el registro de asistencia laboral del personal
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (líneas ~4082-4185, ~4236-4265):
+  Se optimizó la función `recordStaffCheckIn` para emparejar marcajes de entrada y salida del mismo día, registrando marcas incompletas cuando corresponda y calculando minutos de tardanza según la hora esperada de jornada laboral.
+  Se actualizó `reviewAttendanceCorrection` para sincronizar automáticamente la hora solicitada en la hoja `DeduccionesAsistencia` ante aprobaciones.
+- tests/regression/academic-grading-suite.js (línea ~76):
+  Se agregó la aserción de comprobación para `recordStaffCheckIn` optimizado con la etiqueta `[F10-Task17]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+TAREA: F10-Task18 - Completar la documentación funcional y operativa de la Fase 10
+ARCHIVOS MODIFICADOS:
+- docs/architecture/phase-10-attendance-coexistence-spec.md:
+  Se redactó la especificación funcional y operativa de la Fase 10 documentando las modalidades de asistencia, transiciones de estado de incidencias de convivencia, modelo de doble identidad para la delegación de asistentes y reglas de confidencialidad para notas de consejería y orientación.
+- backend/developer-service/Code.gs (líneas ~29, ~123, ~318-333):
+  Se creó la función `getPhase10FunctionalDocumentation` para servir metadatos de la documentación funcional de la Fase 10 y se registraron sus permisos en `ROLE_PERMISSIONS` y despachador `doPost`.
+- tests/regression/academic-grading-suite.js (líneas ~78-79):
+  Se agregaron aserciones de comprobación para `getPhase10FunctionalDocumentation` y la existencia del archivo de especificación funcional con etiqueta `[F10-Task18]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task01 - Fortalecer la seguridad, privacidad y aislamiento de expedientes de bienestar estudiantil
+ARCHIVOS MODIFICADOS:
+- backend/academic-service/Code.gs (líneas ~213, ~218, ~219, ~866, ~8026-8047):
+  Se implementó la función `validateStudentWelfareAccess` para validar permisos y registrar eventos de auditoría `UNAUTHORIZED_ACCESS_ATTEMPT` ante intentos no autorizados de consulta de expedientes de bienestar u orientación.
+  Se registraron los permisos en `ROLE_PERMISSIONS` y en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~80):
+  Se agregó la aserción de comprobación para `validateStudentWelfareAccess` con la etiqueta `[F11-Task01]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task02 - Garantizar la integridad de los registros contables y el flujo de autorizaciones financieras
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (líneas ~4968-4994, ~5365-5390):
+  Se actualizó `approvePurchaseOrder` para requerir aprobación formal de Dirección/Administración en compras mayores a L 50,000.00.
+  Se refactorizó `recordAccountingJournalEntry` con trazabilidad de eventos `UNBALANCED_JOURNAL_ENTRY_REJECTED` al rechazar asientos desequilibrados.
+- tests/regression/academic-grading-suite.js (línea ~81):
+  Se agregó la aserción de comprobación para `recordAccountingJournalEntry` y `approvePurchaseOrder` con la etiqueta `[F11-Task02]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task03 - Implementar el centro unificado de comunicaciones, mensajes institucionales y avisos
+ARCHIVOS MODIFICADOS:
+- backend/user-service/Code.gs (líneas ~1340, ~7368-7500):
+  Se implementaron las funciones `sendInstitutionalMessage`, `getInstitutionalConversations`, `getConversationMessages` y `archiveInstitutionalConversation` para la mensajería bidireccional contextual vinculada a estudiante, trámite o grupo.
+  Se ruteó la acción en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~83):
+  Se agregó la aserción de comprobación para `sendInstitutionalMessage` y `getInstitutionalConversations` con la etiqueta `[F11-Task03]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task04 - Optimizar la gestión de noticias, anuncios, circulares y comunicados con vigencia
+ARCHIVOS MODIFICADOS:
+- backend/user-service/Code.gs (líneas ~5266-5318, ~5376-5500):
+  Se refactorizaron `getNews`, `getInstitutionalAnnouncements` y `createInstitutionalAnnouncement` para incorporar filtrado por fechas de vigencia (`fechaInicioVigencia`, `fechaFinVigencia`), transiciones automáticas de estado (`Borrador`, `Programado`, `Publicado`, `Vencido`, `Archivado`), segmentación por audiencia (grado, sección, rol) e indicadores de urgencia (`Critico`, `Urgente`, `Ordinario`).
+- tests/regression/academic-grading-suite.js (línea ~85):
+  Se agregó la aserción de comprobación para `getInstitutionalAnnouncements` con la etiqueta `[F11-Task04]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task05 - Implementar el motor de confirmaciones de lectura, respuestas y solicitudes de autorización
+ARCHIVOS MODIFICADOS:
+- backend/user-service/Code.gs (líneas ~883, ~929-938, ~1312-1314, ~5662-5885):
+  Se creó la hoja `SolicitudesAutorizacion` en `getOrCreateSheet` e implementaron las funciones `submitAuthorizationRequest`, `getAuthorizationRequests` y `respondToAuthorizationRequest` con la etiqueta identificativa `[F11-Task05]`.
+  Se reguló el ciclo de vida de autorizaciones para permisos/actividades (`Pendiente`, `Leído`, `Aceptado`, `Rechazado`, `Vencido`), vinculando respuestas con el apoderado/tutor legal responsable, registrando timestamp e impidiendo modificaciones extemporáneas tras vencer el plazo o haberse respondido.
+  Se registraron los permisos correspondientes en `ROLE_PERMISSIONS` y en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~86):
+  Se agregó la aserción de comprobación para `respondToAuthorizationRequest` y `submitAuthorizationRequest` con la etiqueta `[F11-Task05]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task06 - Desarrollar la gestión de calendarios institucionales, convocatorias y prevención de traslapes
+ARCHIVOS MODIFICADOS:
+- backend/user-service/Code.gs (líneas ~886, ~943-965, ~1373-1375, ~5892-6170):
+  Se creó la hoja `CalendarioInstitucional` en `getOrCreateSheet` e implementaron las funciones `checkCalendarEventOverlap`, `saveInstitutionalCalendarEvent` y refactorizado `getInstitutionalCalendarEvents` con la etiqueta identificativa `[F11-Task06]`.
+  Se implementó la detección preventiva de choques de horario de espacio físico (`espacioFisico`) y de agenda para el organizador/participantes convocados.
+  Se registraron los permisos correspondientes en `ROLE_PERMISSIONS` y en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~87):
+  Se agregó la aserción de comprobación para `checkCalendarEventOverlap` y `saveInstitutionalCalendarEvent` con la etiqueta `[F11-Task06]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task07 - Fortalecer la gestión de citas de orientación y acompañamiento estudiantil
+ARCHIVOS MODIFICADOS:
+- backend/academic-service/Code.gs (líneas ~134, ~175, ~218, ~861-863, ~8407-8620):
+  Se creó la hoja `CitasOrientacion` en `getOrCreateSheet` e implementaron las funciones `scheduleGuidanceAppointment`, `getGuidanceAppointments` y `updateGuidanceAppointmentStatus` con la etiqueta identificativa `[F11-Task07]`.
+  Se gestionó el ciclo de vida de citas (`Programada`, `Realizada`, `Reincidencia`, `Cancelada`), vinculándolas al caso de seguimiento en `CasosSeguimiento`, aislando notas confidenciales de la vista de tutores/estudiantes y registrando derivaciones inmutables.
+  Se registraron los permisos correspondientes en `ROLE_PERMISSIONS` y en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~88):
+  Se agregó la aserción de comprobación para `scheduleGuidanceAppointment` y `getGuidanceAppointments` con la etiqueta `[F11-Task07]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task08 - Desarrollar el sistema de alertas tempranas de rendimiento académico y deserción escolar
+ARCHIVOS MODIFICADOS:
+- backend/academic-service/Code.gs (líneas ~134, ~175, ~217-220, ~866-867, ~8625-8975):
+  Se incorporó la inicialización de la hoja `AlertasTempranas` en `getOrCreateSheet` e implementaron las funciones `evaluateAndDispatchEarlyWarningAlerts` y `getEarlyWarningAlerts` con la etiqueta identificativa `[F11-Task08]`.
+  Se evaluaron métricas integradas de ausentismo escolar (porcentaje y ausencias consecutivas no justificadas), reprobación de asignaturas y tareas pendientes para calcular el nivel de riesgo (`Bajo`, `Medio`, `Alto`, `Crítico`), vinculando casos preventivos automáticos en `CasosSeguimiento` para riesgos altos o críticos y aplicando claves de deduplicación (`EARLY_WARN_{userId}_P{periodo}_{grado}_{seccion}`) para prevenir alertas duplicadas activas.
+  Se registraron los permisos correspondientes en `ROLE_PERMISSIONS` (para `Director`, `Subdirector`, `Coordinador`, `Consejeros`, `Orientacion`, `Administrador`) y en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~89):
+  Se agregó la aserción de comprobación para `evaluateAndDispatchEarlyWarningAlerts` y `getEarlyWarningAlerts` con la etiqueta `[F11-Task08]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task09 - Completar la gestión de planificación pedagógica, jornalizaciones y guiones docentes
+ARCHIVOS MODIFICADOS:
+- backend/academic-service/Code.gs (líneas ~135, ~180, ~190, ~217, ~252, ~885-886, ~5210-5390):
+  Se incorporó la inicialización de la hoja `PlanificacionesPedagogicas` en `getOrCreateSheet` e implementaron las funciones `savePedagogicalPlanning` y `getPedagogicalPlannings` con la etiqueta identificativa `[F11-Task09]`.
+  Se estructuró el almacenamiento y versionamiento secuencial de planificaciones de clase y jornalizaciones, asociando docente titular (`docenteUserId`), grado, sección, asignatura, período, competencias pedagógicas (JSON), objetivos de aprendizaje y recursos/actividades, respetando el aislamiento de consulta para docentes no administradores.
+  Se registraron los permisos correspondientes en `ROLE_PERMISSIONS` (para `Profesor`, `Coordinador`, `Director`, `Subdirector`, `Administrador`) y en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~90):
+  Se agregó la aserción de comprobación para `savePedagogicalPlanning` y `getPedagogicalPlannings` con la etiqueta `[F11-Task09]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task10 - Implementar el flujo de entrega, observaciones y aprobación de documentación docente
+ARCHIVOS MODIFICADOS:
+- backend/academic-service/Code.gs (líneas ~136, ~180, ~190, ~217, ~252, ~890-892, ~5410-5615):
+  Se incorporó la inicialización de la hoja `RevisionesPlanificacion` en `getOrCreateSheet` e implementaron las funciones `submitPlanningForReview`, `reviewPedagogicalPlanning` y `getPlanningReviewHistory` con la etiqueta identificativa `[F11-Task10]`.
+  Se gestionó el ciclo de vida de revisión de documentos docentes (`Pendiente`, `EnRevision`, `RequiereCorrecciones`, `Aprobado`), vinculando cada dictamen a la versión exacta evaluada, registrando observaciones cualitativas del revisor y auditando la identidad del coordinador o director aprobador.
+  Se registraron los permisos correspondientes en `ROLE_PERMISSIONS` (para `Profesor` en entrega y `Coordinador`, `Director`, `Subdirector`, `Administrador` en revisión) y en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~91):
+  Se agregó la aserción de comprobación para `submitPlanningForReview` y `reviewPedagogicalPlanning` con la etiqueta `[F11-Task10]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task11 - Desarrollar el sistema de observaciones, rúbricas de supervisión y evaluaciones pedagógicas
+ARCHIVOS MODIFICADOS:
+- backend/academic-service/Code.gs (líneas ~137, ~181, ~191, ~218, ~254, ~893-894, ~5085-5285):
+  Se incorporó la inicialización de la hoja `RubricasSupervision` en `getOrCreateSheet` e implementaron las funciones `saveSupervisionRubric` y `getSupervisionRubrics` con la etiqueta identificativa `[F11-Task11]`.
+  Se refactorizó `saveSupervisionObservation` para blindar la evaluación oficial del supervisor/dirección frente a modificaciones de docentes generales, permitiendo a estos agregar únicamente su comentario de retroalimentación (`comentarioDocente`) sin alterar los puntajes de la rúbrica ni las fortalezas/oportunidades detectadas.
+  Se registraron los permisos correspondientes en `ROLE_PERMISSIONS` (para `Director`, `Subdirector`, `Coordinador`, `Profesor`, `Administrador`) y en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~92):
+  Se agregó la aserción de comprobación para `saveSupervisionRubric` y `getSupervisionRubrics` con la etiqueta `[F11-Task11]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task12 - Implementar el sistema de suplencias temporales y relevos docentes con alcance acotado
+ARCHIVOS MODIFICADOS:
+- backend/academic-service/Code.gs (líneas ~6310-6435):
+  Se verificó el código operativo de `createTeacherSubstitution` y `getTeacherSubstitutions`, el cual gestiona la asignación de suplentes temporales ante ausencias docentes con verificación de traslapes de horario y límites de carga sin alterar la asignación titular. Al expirar la fecha límite (`fechaFin`), la sustitución pasa automáticamente al estado 'Vencida' en la consulta efectiva.
+  Se incorporó el comentario identificativo `[F11-Task12]` en la cabecera de la función de acuerdo con la Regla 6.
+- tests/regression/academic-grading-suite.js (línea ~93):
+  Se agregó la aserción de comprobación para `createTeacherSubstitution` y `getTeacherSubstitutions` con la etiqueta `[F11-Task12]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task13 - Desarrollar la conciliación bancaria asistida y pareo automático de extractos
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (líneas ~5245-5310):
+  Se verificó la función `performBankReconciliation`, la cual importa partidas de extractos bancarios y ejecuta el pareo automático contra los registros de `MovimientosCajaBancos` por referencia y monto, clasificando coincidencias y diferencias y actualizando el estado de conciliación (`Conciliado` o `Pendiente Revisiones`).
+  Se agregó el comentario identificativo `[F11-Task13]` en la cabecera del bloque de código conforme a la Regla 6.
+- tests/regression/academic-grading-suite.js (línea ~94):
+  Se agregó la aserción de comprobación para `performBankReconciliation` con la etiqueta `[F11-Task13]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task14 - Desarrollar el control presupuestario y alertas de sobregiro por centro de costo
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (líneas ~193-195, ~558, ~8920-8980):
+  Se implementó la función `checkBudgetAvailability` con la etiqueta identificativa `[F11-Task14]`, la cual evalúa montos presupuestados versus comprometidos y ejecutados por centro de costo y partida presupuestaria, calculando el saldo disponible en tiempo real y disparando eventos de alerta `BUDGET_OVERRUN_ALERT` ante sobregiros.
+  Se incorporó el permiso en `ROLE_PERMISSIONS` para `Director`, `Subdirector` y `Contador` y se registró la acción en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~95):
+  Se agregó la aserción de comprobación para `checkBudgetAvailability` con la etiqueta `[F11-Task14]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task15 - Integrar la gestión de becas y exoneraciones con los estados de cuenta estudiantiles
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (líneas ~193-195, ~540, ~865-950, ~3280-3340):
+  Se implementó la función `applyApprovedScholarshipsToCharges` con la etiqueta identificativa `[F11-Task15]`, la cual consulta las becas y descuentos aprobados en `SolicitudesDescuentoBeca` y recalcula los cobros pendientes de colegiatura en `CargosEstudiante`, reflejando el monto base, el descuento deducido y el saldo neto a pagar.
+  Se integró su ejecución automática dentro de `getStudentAccountStatement` para garantizar transparencia en la visualización financiera de apoderados y estudiantes.
+  Se registraron los permisos correspondientes en `ROLE_PERMISSIONS` y en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~96):
+  Se agregó la aserción de comprobación para `applyApprovedScholarshipsToCharges` con la etiqueta `[F11-Task15]`.
+===============================================================================

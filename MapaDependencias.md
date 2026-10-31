@@ -151,3 +151,18 @@ Para consultar la referencia detallada de todos los esquemas, tablas y columnas 
 ### 4.1 Arquitectura de Dashboards Dinámicos (Anexo - TAREA-AD-01)
 - **Endpoint:** `getUserDynamicDashboardConfig` (Consulta de configuración de módulos y visuales por rol y permisos en `backend/user-service/Code.gs`).
 - **Página HTML y Loader:** `app/html/dashboards/dynamic-dashboard.html` y función `loadDynamicDashboard` en `js/ui-common.js`.
+
+### 5.0 Mapa de Módulos y Servicios — Fase 11 (Comunicación, Bienestar Estudiantil, Supervisión Docente y Gestión Financiera)
+- **Área I: Comunicación y Colaboración Institucional:**
+  - `backend/user-service/Code.gs`: `createUserNotification`, `getNotificationPreferences`, `getInstitutionalCalendarEvents`, `bookAppointment`, `saveApprovalWorkflow`, `submitInstitutionalFormRequest`, `sendMultiChannelNotification`, `retryFailedNotificationsQueue`.
+  - Frontend: `js/secretary.js`, `js/principal.js`, `js/student.js`, `student-dashboard.html`, `teacher-dashboard.html`.
+- **Área II: Bienestar Estudiantil, Orientación y Seguimiento:**
+  - `backend/academic-service/Code.gs`: `getAttendanceFollowupCases`, `saveAttendanceFollowupCase`, `scheduleCounselingAppointment`, `recordCounselingSessionAct`, `referCounselingCase`, `saveGuidanceFollowupPlan`, `saveVocationalRecommendation`, `addCaseCommitment`, `updateCaseCommitmentStatus`, `checkAndDispatchAttendanceAlerts`.
+  - Frontend: `js/teacher.js`, `js/secretary.js`, `dashboard-direccion.html`.
+- **Área III: Supervisión Docente y Calidad Educativa:**
+  - `backend/academic-service/Code.gs`: `getTeacherSupervisions`, `getSupervisionObservation`, `getTeacherImprovementPlans`, `generateConsolidatedAttendanceAndCoexistenceReport`, `getTeachingHoursSummary`, `getCurricularAnalyticsReport`.
+  - `backend/task-service/Code.gs`: `reviewSubmission`, `getSubmissionDocumentPreviewUrl`.
+  - Frontend: `js/teacher.js`, `dashboard-coordinacion.html`, `dashboard-direccion.html`.
+- **Área IV: Contabilidad, Presupuestos y Control Financiero:**
+  - `backend/accounting-service/Code.gs`: `getChartOfAccounts`, `saveAccountItem`, `recordAccountingJournalEntry`, `getBudgets`, `saveBudgetPlan`, `getBudgetExecutionReport`, `recordStudentPayment`, `createFiscalInvoice`, `recordAccountsPayableExpense`, `performBankReconciliation`, `registerSupplier`, `createPurchaseOrder`, `approvePurchaseOrder`, `configureDiscountScholarshipRule`, `submitDiscountScholarshipRequest`, `getFinancialSummary`, `recordStaffCheckIn`.
+  - Frontend: `js/accounting.js`, `dashboard-contabilidad.html`.

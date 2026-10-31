@@ -130,6 +130,11 @@ function getOrCreateSheet(ss, name) {
     if (name === "SalidasAnticipadas") sheet.appendRow(["SalidaID", "UserId", "Fecha", "HoraSalida", "Motivo", "AutorizadoPor", "RetiradoPor", "RegresoHora", "Estado"]);
     if (name === "IncidenciasAsistencia") sheet.appendRow(["IncidenciaID", "UserId", "TipoIncidencia", "Descripcion", "Fecha", "Estado", "ReportadoPor"]);
     if (name === "CasosSeguimiento") sheet.appendRow(["CasoID", "UserId", "MotivoApertura", "ResumenAsistencia", "ResponsableID", "AccionesJSON", "Estado", "FechaApertura", "FechaCierre"]);
+    if (name === "CitasOrientacion") sheet.appendRow(["CitaOrientacionID", "CasoID", "UserId", "TutorUserId", "OrientadorUserId", "FechaHora", "Modalidad", "Estado", "TipoCita", "NotasPublicas", "NotasConfidenciales", "DerivacionRef", "FechaCreacion"]);
+    if (name === "AlertasTempranas") sheet.appendRow(["AlertaID", "UserId", "Grado", "Seccion", "Periodo", "NivelRiesgo", "FactoresRiesgoJSON", "MetricasJSON", "Estado", "NotificadoA", "DeduplicationKey", "FechaGeneracion", "UltimaActualizacion"]);
+    if (name === "PlanificacionesPedagogicas") sheet.appendRow(["PlanificacionID", "DocenteUserId", "Grado", "Seccion", "Asignatura", "Periodo", "TituloUnidad", "CompetenciasJSON", "ObjetivosAprendizaje", "ContenidosJSON", "RecursosActividadesJSON", "Version", "Estado", "FechaCreacion", "UltimaActualizacion"]);
+    if (name === "RevisionesPlanificacion") sheet.appendRow(["RevisionID", "PlanificacionID", "Version", "Estado", "Observaciones", "RevisorUserId", "RevisorRol", "FechaRevision"]);
+    if (name === "RubricasSupervision") sheet.appendRow(["RubricaID", "Nombre", "NivelEducativo", "AreaAcademica", "CriteriosJSON", "EscalaJSON", "Estado", "CreadoPor", "FechaCreacion", "UltimaActualizacion"]);
 
     // Nuevas Tablas Fase 13 - Supervisión Docente y Calidad Educativa
     if (name === "SupervisionesDocentes") sheet.appendRow(["SupervisionID", "DocenteUserId", "SupervisorUserId", "FechaProgramada", "Grado", "Seccion", "Asignatura", "TipoSupervision", "RubricaID", "Estado", "ObservacionesAdmin", "FechaCreacion"]);
@@ -175,7 +180,7 @@ const ROLE_PERMISSIONS = {
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity", "reconcileInstitutionalModulesMatrix",
     "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "checkAndDispatchAttendanceAlerts", "getAttendanceConfig", "saveAttendanceConfig",
-    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches"
+    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches", "scheduleGuidanceAppointment", "getGuidanceAppointments", "updateGuidanceAppointmentStatus", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts", "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "reviewPedagogicalPlanning", "getPlanningReviewHistory", "saveSupervisionRubric", "getSupervisionRubrics"
   ],
   "Subdirector": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "registerStudentEnrollment", "getStudentEnrollmentHistory",
@@ -185,7 +190,7 @@ const ROLE_PERMISSIONS = {
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "getStudentFile", "getStudentTimeline", "findDuplicateStudents",
     "getStudentGuardians", "getStudentDocuments", "getStudentEnrollments", "checkEnrollmentCapacity",
     "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
-    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans"
+    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "reviewPedagogicalPlanning", "getPlanningReviewHistory", "saveSupervisionRubric", "getSupervisionRubrics"
   ],
   "Secretaría": [
     "getAcademicConfig", "getAsignaturasActivas", "registerStudentEnrollment", "getStudentEnrollmentHistory",
@@ -210,13 +215,13 @@ const ROLE_PERMISSIONS = {
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite",
-    "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"
+    "openAttendanceSession", "saveClassAttendance", "getBatchAttendanceRecords", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "generateConsolidatedAttendanceAndCoexistenceReport", "validateStudentWelfareAccess"
   ],
-  "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope"],
+  "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "getBatchAttendanceRecords", "generateConsolidatedAttendanceAndCoexistenceReport", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts", "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "reviewPedagogicalPlanning", "getPlanningReviewHistory", "saveSupervisionRubric", "getSupervisionRubrics"],
   "Desarrollador": ["getAcademicConfig", "getAcademicHistory", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "configureAcademicLevelsAndDynamicStorage"],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
-  "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "scheduleCounselingAppointment", "recordCounselingSessionAct", "referCounselingCase", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary"],
-  "Orientacion": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary"],
+  "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "scheduleCounselingAppointment", "recordCounselingSessionAct", "referCounselingCase", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary", "validateStudentWelfareAccess", "scheduleGuidanceAppointment", "getGuidanceAppointments", "updateGuidanceAppointmentStatus", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts"],
+  "Orientacion": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary", "validateStudentWelfareAccess", "scheduleGuidanceAppointment", "getGuidanceAppointments", "updateGuidanceAppointmentStatus", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts"],
   "Padre": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory",
     "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
@@ -245,11 +250,12 @@ const ROLE_PERMISSIONS = {
     "runAcademicPlanningRegressionSuite",
     "saveCurricularConstraint", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule", "getReusableResourceCatalog", "manageReusableResource",
     "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentEnrollments",
-    "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
-    "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans",
-    "calculateUnifiedAcademicGrade", "previewAcademicGradeCalculation", "auditAcademicGradesIntegrity", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess", "exportAcademicGradesData"
+    "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getBatchAttendanceRecords", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "generateConsolidatedAttendanceAndCoexistenceReport",
+    "getTeacherSupervisions", "getSupervisionObservation", "saveSupervisionObservation", "getTeacherImprovementPlans",
+    "calculateUnifiedAcademicGrade", "previewAcademicGradeCalculation", "auditAcademicGradesIntegrity", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess", "exportAcademicGradesData",
+    "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "getPlanningReviewHistory", "getSupervisionRubrics"
   ],
-  "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentTimeline", "getClassAttendance", "getStudentAttendanceSummary", "auditAssistantDelegatedAction"],
+  "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentTimeline", "getClassAttendance", "getBatchAttendanceRecords", "getStudentAttendanceSummary", "auditAssistantDelegatedAction"],
   "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "calculateUnifiedAcademicGrade", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess"],
   "Alumno": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicPeriods", "getAcademicOffers", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess"]
 };
@@ -858,9 +864,17 @@ function doPost(e) {
       case "referCounselingCase": result = referCounselingCase(payload); break;
       case "saveGuidanceFollowupPlan": result = saveGuidanceFollowupPlan(payload); break;
       case "saveVocationalRecommendation": result = saveVocationalRecommendation(payload); break;
+      case "scheduleGuidanceAppointment": result = scheduleGuidanceAppointment(payload); break;
+      case "getGuidanceAppointments": result = getGuidanceAppointments(payload); break;
+      case "updateGuidanceAppointmentStatus": result = updateGuidanceAppointmentStatus(payload); break;
+      case "evaluateAndDispatchEarlyWarningAlerts": result = evaluateAndDispatchEarlyWarningAlerts(payload); break;
+      case "getEarlyWarningAlerts": result = getEarlyWarningAlerts(payload); break;
       case "auditAssistantDelegatedAction": result = auditAssistantDelegatedAction(payload); break;
       case "validateEvidenceFileAndPermissions": result = validateEvidenceFileAndPermissions(payload); break;
       case "getStudentAttendanceSummary": result = getStudentAttendanceSummary(payload); break;
+      case "getBatchAttendanceRecords": result = getBatchAttendanceRecords(payload); break;
+      case "generateConsolidatedAttendanceAndCoexistenceReport": result = generateConsolidatedAttendanceAndCoexistenceReport(payload); break;
+      case "validateStudentWelfareAccess": result = validateStudentWelfareAccess(payload); break;
       case "checkAndDispatchAttendanceAlerts": result = checkAndDispatchAttendanceAlerts(payload); break;
       case "getAttendanceConfig": result = getAttendanceConfig(payload); break;
       case "saveAttendanceConfig": result = saveAttendanceConfig(payload); break;
@@ -873,6 +887,13 @@ function doPost(e) {
       case "getSupervisionObservation": result = getSupervisionObservation(payload); break;
       case "saveTeacherImprovementPlan": result = saveTeacherImprovementPlan(payload); break;
       case "getTeacherImprovementPlans": result = getTeacherImprovementPlans(payload); break;
+      case "savePedagogicalPlanning": result = savePedagogicalPlanning(payload); break;
+      case "getPedagogicalPlannings": result = getPedagogicalPlannings(payload); break;
+      case "submitPlanningForReview": result = submitPlanningForReview(payload); break;
+      case "reviewPedagogicalPlanning": result = reviewPedagogicalPlanning(payload); break;
+      case "getPlanningReviewHistory": result = getPlanningReviewHistory(payload); break;
+      case "saveSupervisionRubric": result = saveSupervisionRubric(payload); break;
+      case "getSupervisionRubrics": result = getSupervisionRubrics(payload); break;
 
       case "ping": result = { status: "success", service: "ACADEMIC", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
@@ -1082,6 +1103,115 @@ function getAdmissionRequests(payload) {
       totalRecords: totalRecords,
       totalPages: totalPages
     }
+  };
+}
+
+// [F10-Task16] [P2] - Ampliar los informes de asistencia, convivencia y seguimiento
+function generateConsolidatedAttendanceAndCoexistenceReport(payload) {
+  const { grado, seccion, fechaInicio, fechaFin, rolSolicitante } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // 1. Asistencia
+  const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
+  const regData = regSheet.getDataRange().getValues();
+
+  let totalRegistros = 0;
+  let totalPresentes = 0;
+  let totalAusentes = 0;
+  let totalTardanzas = 0;
+  let totalJustificadas = 0;
+
+  if (regData.length > 1) {
+    for (let i = 1; i < regData.length; i++) {
+      const r = regData[i];
+      const fechaRegStr = r[8] ? new Date(r[8]).toISOString().split('T')[0] : null;
+      if (fechaInicio && fechaRegStr && fechaRegStr < fechaInicio) continue;
+      if (fechaFin && fechaRegStr && fechaRegStr > fechaFin) continue;
+
+      totalRegistros++;
+      const st = String(r[3] || "").toLowerCase();
+      if (st === "presente") totalPresentes++;
+      else if (st === "ausente") totalAusentes++;
+      else if (st === "tardanza") totalTardanzas++;
+
+      if (r[6] === true || String(r[6]).toLowerCase() === "true") totalJustificadas++;
+    }
+  }
+
+  // 2. Incidencias de Convivencia
+  const incSheet = getOrCreateSheet(ss, "IncidenciasAsistencia");
+  const incData = incSheet.getDataRange().getValues();
+  const resumenIncidencias = {
+    total: 0,
+    porEstado: { Reportada: 0, PendienteRevision: 0, EnInvestigacion: 0, Confirmada: 0, Cerrada: 0, Reabierta: 0 }
+  };
+
+  if (incData.length > 1) {
+    for (let i = 1; i < incData.length; i++) {
+      const row = incData[i];
+      const estado = String(row[8] || "Reportada").trim();
+      resumenIncidencias.total++;
+      if (resumenIncidencias.porEstado[estado] !== undefined) {
+        resumenIncidencias.porEstado[estado]++;
+      } else {
+        resumenIncidencias.porEstado[estado] = 1;
+      }
+    }
+  }
+
+  // 3. Casos de Seguimiento y Compromisos (Excluyendo confidenciales de Consejería u Orientación si no está autorizado)
+  const isCounselingAuthorized = ["Consejeros", "Orientación", "Orientacion", "Dirección", "Direccion", "Administrador", "Director"].includes(String(rolSolicitante || "").trim());
+
+  const caseSheet = getOrCreateSheet(ss, "CasosSeguimiento");
+  const caseData = caseSheet.getDataRange().getValues();
+
+  let totalCasos = 0;
+  let casosExcluidosPorConfidencialidad = 0;
+  let totalCompromisos = 0;
+
+  if (caseData.length > 1) {
+    for (let i = 1; i < caseData.length; i++) {
+      const row = caseData[i];
+      const categoria = String(row[4] || "").trim();
+
+      if ((categoria === "Consejería" || categoria === "Orientación") && !isCounselingAuthorized) {
+        casosExcluidosPorConfidencialidad++;
+        continue;
+      }
+
+      totalCasos++;
+      try {
+        const compromisosJSON = row[9];
+        if (compromisosJSON && typeof compromisosJSON === "string" && compromisosJSON.trim().startsWith("[")) {
+          const arr = JSON.parse(compromisosJSON);
+          if (Array.isArray(arr)) totalCompromisos += arr.length;
+        }
+      } catch (e) {}
+    }
+  }
+
+  const porcentajeAsistenciaGlobal = totalRegistros > 0 ? (((totalPresentes + totalTardanzas) / totalRegistros) * 100).toFixed(1) : "100.0";
+
+  return {
+    status: "success",
+    reporte: {
+      filtros: { grado: grado || "TODOS", seccion: seccion || "TODAS", fechaInicio: fechaInicio || null, fechaFin: fechaFin || null },
+      asistencia: {
+        totalRegistros,
+        presentes: totalPresentes,
+        ausentes: totalAusentes,
+        tardanzas: totalTardanzas,
+        justificadas: totalJustificadas,
+        porcentajeGlobal: parseFloat(porcentajeAsistenciaGlobal)
+      },
+      convivencia: resumenIncidencias,
+      seguimiento: {
+        totalCasosVisibles: totalCasos,
+        casosExcluidosPorConfidencialidad,
+        totalCompromisos
+      }
+    },
+    message: "Informe consolidado de asistencia, convivencia y seguimiento generado correctamente."
   };
 }
 
@@ -4955,9 +5085,155 @@ function updateSupervisionStatus(payload) {
   return { status: "success", message: `Estado de supervisión actualizado a ${nuevoEstado}.` };
 }
 
+// [F11-Task11] [P1] - Sistema de observaciones, rúbricas de supervisión y evaluaciones pedagógicas
+function saveSupervisionRubric(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const callerId = (payload && payload._verifiedUserId) || "Dirección";
+    const isAuthorized = ["Administrador", "Director", "Subdirector", "Coordinador"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "UNAUTHORIZED", message: "Acceso denegado: Rol no autorizado para gestionar rúbricas de supervisión." };
+    }
+
+    const { rubricaId, nombre, nivelEducativo, areaAcademica, criterios, escala, estado } = payload || {};
+    if (!nombre) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "nombre es un campo requerido para la rúbrica." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "RubricasSupervision");
+    const data = sheet.getDataRange().getValues();
+
+    const now = new Date();
+    const nowISO = now.toISOString();
+    let targetId = rubricaId ? String(rubricaId).trim() : "";
+    let foundIdx = -1;
+
+    if (targetId && data.length > 1) {
+      for (let i = 1; i < data.length; i++) {
+        if (String(data[i][0]).trim() === targetId) {
+          foundIdx = i;
+          break;
+        }
+      }
+    }
+
+    const critJSON = JSON.stringify(criterios || []);
+    const escJSON = JSON.stringify(escala || { Excelente: 4, Bueno: 3, Satisfactorio: 2, NecesitaMejora: 1 });
+    const est = estado || "Activa";
+
+    if (foundIdx !== -1) {
+      sheet.getRange(foundIdx + 1, 2).setValue(nombre);
+      sheet.getRange(foundIdx + 1, 3).setValue(nivelEducativo || "General");
+      sheet.getRange(foundIdx + 1, 4).setValue(areaAcademica || "General");
+      sheet.getRange(foundIdx + 1, 5).setValue(critJSON);
+      sheet.getRange(foundIdx + 1, 6).setValue(escJSON);
+      sheet.getRange(foundIdx + 1, 7).setValue(est);
+      sheet.getRange(foundIdx + 1, 10).setValue(nowISO);
+
+      logStructuredEvent("ACADEMIC", "saveSupervisionRubric", "INFO", "SUPERVISION_RUBRIC_UPDATED", `Rúbrica de supervisión ${targetId} actualizada`, { rubricaId: targetId, nombre }, verifiedRole);
+
+      return {
+        status: "success",
+        rubricaId: targetId,
+        message: `Rúbrica de supervisión '${nombre}' actualizada exitosamente.`
+      };
+    } else {
+      targetId = "RUB-SUP-" + now.getFullYear() + "-" + Math.floor(100000 + Math.random() * 900000);
+      sheet.appendRow([
+        targetId,
+        nombre,
+        nivelEducativo || "General",
+        areaAcademica || "General",
+        critJSON,
+        escJSON,
+        est,
+        callerId,
+        nowISO,
+        nowISO
+      ]);
+
+      logStructuredEvent("ACADEMIC", "saveSupervisionRubric", "INFO", "SUPERVISION_RUBRIC_CREATED", `Rúbrica de supervisión ${targetId} creada`, { rubricaId: targetId, nombre }, verifiedRole);
+
+      return {
+        status: "success",
+        rubricaId: targetId,
+        message: `Rúbrica de supervisión '${nombre}' creada exitosamente.`
+      };
+    }
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "saveSupervisionRubric", "ERROR", "SAVE_SUPERVISION_RUBRIC_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function getSupervisionRubrics(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const isAuthorized = ["Administrador", "Director", "Subdirector", "Coordinador", "Profesor"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "UNAUTHORIZED", message: "Acceso denegado: Rol no autorizado para consultar rúbricas de supervisión." };
+    }
+
+    const { rubricaId, nivelEducativo, areaAcademica, estado } = payload || {};
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "RubricasSupervision");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", totalRubricas: 0, rubricas: [] };
+
+    const rubricas = [];
+    for (let i = 1; i < data.length; i++) {
+      const r = data[i];
+      const rId = String(r[0] || "").trim();
+      const nom = String(r[1] || "").trim();
+      const nivel = String(r[2] || "").trim();
+      const area = String(r[3] || "").trim();
+      let crit = [];
+      try { crit = JSON.parse(r[4] || "[]"); } catch (e) { crit = []; }
+      let esc = {};
+      try { esc = JSON.parse(r[5] || "{}"); } catch (e) { esc = {}; }
+      const est = String(r[6] || "").trim();
+      const creadoPor = String(r[7] || "").trim();
+      const fCreacion = r[8];
+      const fAct = r[9];
+
+      if (rubricaId && rId !== String(rubricaId).trim()) continue;
+      if (nivelEducativo && nivel.toLowerCase() !== String(nivelEducativo).toLowerCase().trim()) continue;
+      if (areaAcademica && area.toLowerCase() !== String(areaAcademica).toLowerCase().trim()) continue;
+      if (estado && est.toLowerCase() !== String(estado).toLowerCase().trim()) continue;
+
+      rubricas.push({
+        rubricaId: rId,
+        nombre: nom,
+        nivelEducativo: nivel,
+        areaAcademica: area,
+        criterios: crit,
+        escala: esc,
+        estado: est,
+        creadoPor: creadoPor,
+        fechaCreacion: fCreacion,
+        ultimaActualizacion: fAct
+      });
+    }
+
+    return {
+      status: "success",
+      totalRubricas: rubricas.length,
+      rubricas: rubricas
+    };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "getSupervisionRubrics", "ERROR", "GET_SUPERVISION_RUBRICS_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
 function saveSupervisionObservation(payload) {
+  const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
   const { supervisionId, respuestasRubrica, evidenciasTexto, fortalezasTexto, oportunidadesMejora, comentarioDocente } = payload || {};
   if (!supervisionId) throw new Error("supervisionId es requerido.");
+
+  const isSupervisor = ["Administrador", "Director", "Subdirector", "Coordinador"].indexOf(verifiedRole) !== -1;
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "ObservacionesSupervision");
@@ -4967,17 +5243,30 @@ function saveSupervisionObservation(payload) {
   const idx = data.findIndex(r => String(r[1]).trim() === String(supervisionId).trim());
 
   const now = new Date();
-  const respJSON = JSON.stringify(respuestasRubrica || {});
 
   if (idx !== -1) {
+    // Si quien modifica es el docente o rol no directivo, NO puede alterar la pauta de evaluación registrada por la dirección
+    if (!isSupervisor) {
+      if (comentarioDocente !== undefined) {
+        sheet.getRange(idx + 1, 7).setValue(comentarioDocente);
+        sheet.getRange(idx + 1, 8).setValue(now);
+      }
+      return { status: "success", message: "Retroalimentación docente registrada. La pauta evaluativa oficial se mantiene inalterada." };
+    }
+
+    const respJSON = JSON.stringify(respuestasRubrica || {});
     sheet.getRange(idx + 1, 3).setValue(respJSON);
-    if (evidenciasTexto) sheet.getRange(idx + 1, 4).setValue(evidenciasTexto);
-    if (fortalezasTexto) sheet.getRange(idx + 1, 5).setValue(fortalezasTexto);
-    if (oportunidadesMejora) sheet.getRange(idx + 1, 6).setValue(oportunidadesMejora);
-    if (comentarioDocente) sheet.getRange(idx + 1, 7).setValue(comentarioDocente);
+    if (evidenciasTexto !== undefined) sheet.getRange(idx + 1, 4).setValue(evidenciasTexto);
+    if (fortalezasTexto !== undefined) sheet.getRange(idx + 1, 5).setValue(fortalezasTexto);
+    if (oportunidadesMejora !== undefined) sheet.getRange(idx + 1, 6).setValue(oportunidadesMejora);
+    if (comentarioDocente !== undefined) sheet.getRange(idx + 1, 7).setValue(comentarioDocente);
     sheet.getRange(idx + 1, 8).setValue(now);
   } else {
+    if (!isSupervisor) {
+      throw new Error("Acceso denegado: Solo el personal de supervisión o dirección puede registrar la evaluación inicial.");
+    }
     const obsId = "OBS-SUP-" + Date.now();
+    const respJSON = JSON.stringify(respuestasRubrica || {});
     sheet.appendRow([
       obsId,
       supervisionId,
@@ -4990,8 +5279,10 @@ function saveSupervisionObservation(payload) {
     ]);
   }
 
-  // Actualizar estado de supervisión a Finalizada
-  updateSupervisionStatus({ supervisionId, nuevoEstado: "Finalizada" });
+  // Actualizar estado de supervisión a Finalizada si es supervisor
+  if (isSupervisor) {
+    updateSupervisionStatus({ supervisionId, nuevoEstado: "Finalizada" });
+  }
 
   return { status: "success", message: "Observaciones de la supervisión guardadas exitosamente." };
 }
@@ -5083,6 +5374,403 @@ function getTeacherImprovementPlans(payload) {
   }));
 
   return { status: "success", data: plans };
+}
+
+// [F11-Task09] [P1] - Gestión de planificación pedagógica, jornalizaciones y guiones docentes
+function savePedagogicalPlanning(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const callerId = (payload && payload._verifiedUserId) || "";
+    const isAuthorized = ["Administrador", "Director", "Subdirector", "Coordinador", "Profesor"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "UNAUTHORIZED", message: "Acceso denegado: Rol no autorizado para gestionar planificación pedagógica." };
+    }
+
+    const {
+      planificacionId,
+      docenteUserId,
+      grado,
+      seccion,
+      asignatura,
+      periodo,
+      tituloUnidad,
+      competencias,
+      objetivosAprendizaje,
+      contenidos,
+      recursosActividades,
+      estado,
+      version
+    } = payload || {};
+
+    const effectiveDocente = docenteUserId || (verifiedRole === "Profesor" ? callerId : "DOCENTE-TITULAR");
+    if (!effectiveDocente || !asignatura || !grado) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "docenteUserId, asignatura y grado son campos requeridos." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "PlanificacionesPedagogicas");
+    const data = sheet.getDataRange().getValues();
+
+    const now = new Date();
+    const nowISO = now.toISOString();
+    let targetId = planificacionId ? String(planificacionId).trim() : "";
+    let nextVersion = version !== undefined ? Number(version) : 1;
+    let foundIdx = -1;
+
+    if (targetId && data.length > 1) {
+      for (let i = 1; i < data.length; i++) {
+        if (String(data[i][0]).trim() === targetId) {
+          foundIdx = i;
+          const currentVer = Number(data[i][11] || 1);
+          if (version === undefined) nextVersion = currentVer + 1;
+          break;
+        }
+      }
+    }
+
+    const compJSON = JSON.stringify(competencias || []);
+    const contJSON = JSON.stringify(contenidos || []);
+    const recJSON = JSON.stringify(recursosActividades || []);
+    const planEstado = estado || "Borrador";
+
+    if (foundIdx !== -1) {
+      sheet.getRange(foundIdx + 1, 2).setValue(effectiveDocente);
+      sheet.getRange(foundIdx + 1, 3).setValue(grado);
+      sheet.getRange(foundIdx + 1, 4).setValue(seccion || "A");
+      sheet.getRange(foundIdx + 1, 5).setValue(asignatura);
+      sheet.getRange(foundIdx + 1, 6).setValue(periodo || "1");
+      sheet.getRange(foundIdx + 1, 7).setValue(tituloUnidad || "");
+      sheet.getRange(foundIdx + 1, 8).setValue(compJSON);
+      sheet.getRange(foundIdx + 1, 9).setValue(objetivosAprendizaje || "");
+      sheet.getRange(foundIdx + 1, 10).setValue(contJSON);
+      sheet.getRange(foundIdx + 1, 11).setValue(recJSON);
+      sheet.getRange(foundIdx + 1, 12).setValue(nextVersion);
+      sheet.getRange(foundIdx + 1, 13).setValue(planEstado);
+      sheet.getRange(foundIdx + 1, 15).setValue(nowISO);
+
+      logStructuredEvent("ACADEMIC", "savePedagogicalPlanning", "INFO", "PEDAGOGICAL_PLANNING_UPDATED", `Planificación ${targetId} actualizada a versión ${nextVersion}`, { planificacionId: targetId, version: nextVersion, estado: planEstado }, verifiedRole);
+
+      return {
+        status: "success",
+        planificacionId: targetId,
+        version: nextVersion,
+        estado: planEstado,
+        message: `Planificación pedagógica ${targetId} actualizada exitosamente a versión ${nextVersion}.`
+      };
+    } else {
+      targetId = "PLAN-PED-" + now.getFullYear() + "-" + Math.floor(100000 + Math.random() * 900000);
+      sheet.appendRow([
+        targetId,
+        effectiveDocente,
+        grado,
+        seccion || "A",
+        asignatura,
+        periodo || "1",
+        tituloUnidad || "",
+        compJSON,
+        objetivosAprendizaje || "",
+        contJSON,
+        recJSON,
+        nextVersion,
+        planEstado,
+        nowISO,
+        nowISO
+      ]);
+
+      logStructuredEvent("ACADEMIC", "savePedagogicalPlanning", "INFO", "PEDAGOGICAL_PLANNING_CREATED", `Planificación pedagógica ${targetId} creada exitosamente`, { planificacionId: targetId, docenteUserId: effectiveDocente, asignatura }, verifiedRole);
+
+      return {
+        status: "success",
+        planificacionId: targetId,
+        version: nextVersion,
+        estado: planEstado,
+        message: `Planificación pedagógica ${targetId} registrada exitosamente.`
+      };
+    }
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "savePedagogicalPlanning", "ERROR", "SAVE_PEDAGOGICAL_PLANNING_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function getPedagogicalPlannings(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const callerId = (payload && payload._verifiedUserId) || "";
+    const isAuthorized = ["Administrador", "Director", "Subdirector", "Coordinador", "Profesor"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "UNAUTHORIZED", message: "Acceso denegado: Rol no autorizado para consultar planificaciones pedagógicas." };
+    }
+
+    const { planificacionId, docenteUserId, grado, seccion, asignatura, periodo, estado } = payload || {};
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "PlanificacionesPedagogicas");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", totalPlanificaciones: 0, planificaciones: [] };
+
+    const planificaciones = [];
+    for (let i = 1; i < data.length; i++) {
+      const r = data[i];
+      const pId = String(r[0] || "").trim();
+      const docId = String(r[1] || "").trim();
+      const pGrado = String(r[2] || "").trim();
+      const pSeccion = String(r[3] || "").trim();
+      const pAsig = String(r[4] || "").trim();
+      const pPeriodo = String(r[5] || "").trim();
+      const pTitulo = String(r[6] || "").trim();
+      let comp = [];
+      try { comp = JSON.parse(r[7] || "[]"); } catch (e) { comp = [String(r[7] || "")]; }
+      const obj = String(r[8] || "").trim();
+      let cont = [];
+      try { cont = JSON.parse(r[9] || "[]"); } catch (e) { cont = [String(r[9] || "")]; }
+      let rec = [];
+      try { rec = JSON.parse(r[10] || "[]"); } catch (e) { rec = [String(r[10] || "")]; }
+      const ver = Number(r[11] || 1);
+      const est = String(r[12] || "").trim();
+      const fCreacion = r[13];
+      const fAct = r[14];
+
+      // Restricción: un profesor general solo puede ver sus propias planificaciones a menos que se trate de coordinación/dirección
+      if (verifiedRole === "Profesor" && docId !== callerId && callerId !== "") {
+        continue;
+      }
+      if (planificacionId && pId !== String(planificacionId).trim()) continue;
+      if (docenteUserId && docId !== String(docenteUserId).trim()) continue;
+      if (grado && pGrado.toLowerCase() !== String(grado).toLowerCase().trim()) continue;
+      if (seccion && pSeccion.toLowerCase() !== String(seccion).toLowerCase().trim()) continue;
+      if (asignatura && pAsig.toLowerCase() !== String(asignatura).toLowerCase().trim()) continue;
+      if (periodo && pPeriodo !== String(periodo).trim()) continue;
+      if (estado && est.toLowerCase() !== String(estado).toLowerCase().trim()) continue;
+
+      planificaciones.push({
+        planificacionId: pId,
+        docenteUserId: docId,
+        grado: pGrado,
+        seccion: pSeccion,
+        asignatura: pAsig,
+        periodo: pPeriodo,
+        tituloUnidad: pTitulo,
+        competencias: comp,
+        objetivosAprendizaje: obj,
+        contenidos: cont,
+        recursosActividades: rec,
+        version: ver,
+        estado: est,
+        fechaCreacion: fCreacion,
+        ultimaActualizacion: fAct
+      });
+    }
+
+    return {
+      status: "success",
+      totalPlanificaciones: planificaciones.length,
+      planificaciones: planificaciones
+    };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "getPedagogicalPlannings", "ERROR", "GET_PEDAGOGICAL_PLANNINGS_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+// [F11-Task10] [P1] - Flujo de entrega, observaciones y aprobación de documentación docente
+function submitPlanningForReview(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const callerId = (payload && payload._verifiedUserId) || "";
+    const isAuthorized = ["Administrador", "Director", "Subdirector", "Coordinador", "Profesor"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "UNAUTHORIZED", message: "Acceso denegado: Rol no autorizado para entregar planificación." };
+    }
+
+    const { planificacionId } = payload || {};
+    if (!planificacionId) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "planificacionId es requerido." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const planSheet = getOrCreateSheet(ss, "PlanificacionesPedagogicas");
+    const data = planSheet.getDataRange().getValues();
+
+    let foundIdx = -1;
+    let targetRow = null;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(planificacionId).trim()) {
+        foundIdx = i;
+        targetRow = data[i];
+        break;
+      }
+    }
+
+    if (foundIdx === -1) {
+      return { status: "error", code: "NOT_FOUND", message: `Planificación ${planificacionId} no encontrada.` };
+    }
+
+    const docId = String(targetRow[1]).trim();
+    if (verifiedRole === "Profesor" && docId !== callerId && callerId !== "") {
+      return { status: "error", code: "FORBIDDEN", message: "No tiene permisos para entregar la planificación de otro docente." };
+    }
+
+    const currentVer = Number(targetRow[11] || 1);
+    const now = new Date();
+    const nowISO = now.toISOString();
+
+    // Actualizar estado de la planificación a 'Pendiente' de revisión
+    planSheet.getRange(foundIdx + 1, 13).setValue("Pendiente");
+    planSheet.getRange(foundIdx + 1, 15).setValue(nowISO);
+
+    // Registrar en RevisionesPlanificacion
+    const revSheet = getOrCreateSheet(ss, "RevisionesPlanificacion");
+    const revId = "REV-PLAN-" + now.getFullYear() + "-" + Math.floor(100000 + Math.random() * 900000);
+    revSheet.appendRow([
+      revId,
+      String(planificacionId).trim(),
+      currentVer,
+      "Pendiente",
+      "Planificación enviada para revisión pedagógica.",
+      callerId || docId,
+      verifiedRole,
+      nowISO
+    ]);
+
+    logStructuredEvent("ACADEMIC", "submitPlanningForReview", "INFO", "PLANNING_SUBMITTED_FOR_REVIEW", `Planificación ${planificacionId} versión ${currentVer} entregada para revisión`, { planificacionId, version: currentVer }, verifiedRole);
+
+    return {
+      status: "success",
+      planificacionId: planificacionId,
+      version: currentVer,
+      nuevoEstado: "Pendiente",
+      message: `Planificación pedagógica entregada exitosamente para revisión (Versión ${currentVer}).`
+    };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "submitPlanningForReview", "ERROR", "SUBMIT_PLANNING_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function reviewPedagogicalPlanning(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const callerId = (payload && payload._verifiedUserId) || "";
+    const isAuthorized = ["Administrador", "Director", "Subdirector", "Coordinador"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "UNAUTHORIZED", message: "Acceso denegado: Solo directores y coordinadores pueden revisar planificaciones docentes." };
+    }
+
+    const { planificacionId, decision, observaciones } = payload || {};
+    if (!planificacionId || !decision) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "planificacionId y decision son requeridos." };
+    }
+
+    const validDecisions = ["EnRevision", "RequiereCorrecciones", "Aprobado"];
+    if (validDecisions.indexOf(decision) === -1) {
+      return { status: "error", code: "VALIDATION_ERROR", message: `decision inválida. Debe ser una de: ${validDecisions.join(", ")}` };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const planSheet = getOrCreateSheet(ss, "PlanificacionesPedagogicas");
+    const data = planSheet.getDataRange().getValues();
+
+    let foundIdx = -1;
+    let targetRow = null;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(planificacionId).trim()) {
+        foundIdx = i;
+        targetRow = data[i];
+        break;
+      }
+    }
+
+    if (foundIdx === -1) {
+      return { status: "error", code: "NOT_FOUND", message: `Planificación ${planificacionId} no encontrada.` };
+    }
+
+    const currentVer = Number(targetRow[11] || 1);
+    const now = new Date();
+    const nowISO = now.toISOString();
+
+    // Actualizar estado en PlanificacionesPedagogicas
+    planSheet.getRange(foundIdx + 1, 13).setValue(decision);
+    planSheet.getRange(foundIdx + 1, 15).setValue(nowISO);
+
+    // Registrar dictamen inmutable en RevisionesPlanificacion ligado a la versión exacta
+    const revSheet = getOrCreateSheet(ss, "RevisionesPlanificacion");
+    const revId = "REV-PLAN-" + now.getFullYear() + "-" + Math.floor(100000 + Math.random() * 900000);
+    revSheet.appendRow([
+      revId,
+      String(planificacionId).trim(),
+      currentVer,
+      decision,
+      observaciones || (decision === "Aprobado" ? "Planificación pedagógica aprobada satisfactoriamente." : "Revisión realizada."),
+      callerId || "Coordinador",
+      verifiedRole,
+      nowISO
+    ]);
+
+    logStructuredEvent("ACADEMIC", "reviewPedagogicalPlanning", "INFO", "PLANNING_REVIEWED", `Planificación ${planificacionId} versión ${currentVer} dictaminada como '${decision}' por ${callerId}`, { planificacionId, version: currentVer, decision, revisorUserId: callerId }, verifiedRole);
+
+    return {
+      status: "success",
+      revisionId: revId,
+      planificacionId: planificacionId,
+      version: currentVer,
+      estadoResultante: decision,
+      revisorUserId: callerId,
+      message: `Planificación pedagógica dictaminada exitosamente como '${decision}' para la versión ${currentVer}.`
+    };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "reviewPedagogicalPlanning", "ERROR", "REVIEW_PLANNING_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function getPlanningReviewHistory(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const isAuthorized = ["Administrador", "Director", "Subdirector", "Coordinador", "Profesor"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "UNAUTHORIZED", message: "Acceso denegado: Rol no autorizado para consultar historial de revisiones." };
+    }
+
+    const { planificacionId } = payload || {};
+    if (!planificacionId) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "planificacionId es requerido." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const revSheet = getOrCreateSheet(ss, "RevisionesPlanificacion");
+    const data = revSheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", totalRevisiones: 0, revisiones: [] };
+
+    const revisiones = [];
+    for (let i = 1; i < data.length; i++) {
+      const r = data[i];
+      const pId = String(r[1] || "").trim();
+      if (pId === String(planificacionId).trim()) {
+        revisiones.push({
+          revisionId: String(r[0] || "").trim(),
+          planificacionId: pId,
+          version: Number(r[2] || 1),
+          estado: String(r[3] || "").trim(),
+          observaciones: String(r[4] || "").trim(),
+          revisorUserId: String(r[5] || "").trim(),
+          revisorRol: String(r[6] || "").trim(),
+          fechaRevision: r[7]
+        });
+      }
+    }
+
+    return {
+      status: "success",
+      planificacionId: planificacionId,
+      totalRevisiones: revisiones.length,
+      revisiones: revisiones
+    };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "getPlanningReviewHistory", "ERROR", "GET_PLANNING_REVIEWS_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
 }
 
 // --- FUNCIONES DE CONFIGURACIÓN INSTITUCIONAL Y ESTRUCTURA ACADÉMICA (FASE 3) ---
@@ -5622,6 +6310,7 @@ function getScheduleScenarios(payload) {
   return { status: "success", data: scenarios };
 }
 
+// [F11-Task12] [P1] - Implementar el sistema de suplencias temporales y relevos docentes con alcance acotado
 /**
  * [TAREA-F7-IMP-16] Ampliar la gestión de sustituciones y la reasignación de clases afectadas
  * Registra y valida una sustitución docente temporal o prolongada, verificando disponibilidad,
@@ -7353,6 +8042,54 @@ function openAttendanceSession(payload) {
   return { status: "success", message: "Sesión de asistencia abierta.", data: { sesionId } };
 }
 
+// [F10-Task14] [P1] - Optimizar las consultas batch de asistencia y resiliencia de servicios
+function getBatchAttendanceRecords(payload) {
+  const { sesionIds, userIds, fechaInicio, fechaFin, grado, seccion } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
+  const regData = regSheet.getDataRange().getValues();
+
+  if (regData.length <= 1) {
+    return { status: "success", count: 0, data: [] };
+  }
+
+  const sesionFilter = Array.isArray(sesionIds) && sesionIds.length > 0 ? new Set(sesionIds.map(id => String(id).trim())) : null;
+  const userFilter = Array.isArray(userIds) && userIds.length > 0 ? new Set(userIds.map(u => String(u).trim())) : null;
+
+  const records = [];
+  for (let i = 1; i < regData.length; i++) {
+    const r = regData[i];
+    const sId = String(r[1]).trim();
+    const uId = String(r[2]).trim();
+
+    if (sesionFilter && !sesionFilter.has(sId)) continue;
+    if (userFilter && !userFilter.has(uId)) continue;
+
+    const fechaRegStr = r[8] ? new Date(r[8]).toISOString().split('T')[0] : null;
+    if (fechaInicio && fechaRegStr && fechaRegStr < fechaInicio) continue;
+    if (fechaFin && fechaRegStr && fechaRegStr > fechaFin) continue;
+
+    records.push({
+      registroId: r[0],
+      sesionId: sId,
+      userId: uId,
+      estadoAsistencia: r[3],
+      horaLlegada: r[4],
+      minutosTardanza: r[5],
+      justificado: r[6] === true || String(r[6]).toLowerCase() === "true",
+      observacionDocente: r[7],
+      fechaRegistro: r[8] ? new Date(r[8]).toISOString() : null
+    });
+  }
+
+  return {
+    status: "success",
+    count: records.length,
+    data: records,
+    message: `Consultados ${records.length} registros de asistencia en lote.`
+  };
+}
+
 // [F10-Task04] [P1] - Optimizar el registro masivo de asistencia y la gestión de sesiones
 function saveClassAttendance(payload) {
   const { sesionId, registros } = payload || {};
@@ -7479,6 +8216,10 @@ function bulkApplyAttendanceStatus(payload) {
     });
 
     if (data.length > 1) {
+      const maxRows = regSheet.getMaxRows();
+      if (data.length > maxRows) {
+        regSheet.insertRowsAfter(maxRows, data.length - maxRows);
+      }
       regSheet.getRange(1, 1, data.length, data[0].length).setValues(data);
     }
 
@@ -7520,45 +8261,79 @@ function getClassAttendance(payload) {
   return { status: "success", data: records };
 }
 
+// [F10-Task14] [P1] - Optimizar el rendimiento, la recuperación y la consistencia de los servicios
 function saveDailyAttendance(payload) {
   const { fecha, grado, seccion, registros } = payload || {};
   if (!fecha || !Array.isArray(registros)) throw new Error("Fecha y lista de registros son requeridos.");
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
-  const data = regSheet.getDataRange().getValues();
-  const now = new Date();
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(10000);
+  } catch (e) {
+    return { status: "error", message: "El servidor está ocupado procesando otra actualización de asistencia diaria." };
+  }
 
-  const dailySesionId = "SES-DIARIA-" + (fecha || now.toISOString().split('T')[0]) + "-" + (grado || "GEN") + "-" + (seccion || "A");
-
-  let savedCount = 0;
-  registros.forEach(r => {
-    const { userId, estadoAsistencia, horaLlegada, minutosTardanza, observacionDocente } = r;
-    if (!userId) return;
-
-    const idx = data.findIndex(row => String(row[1]).trim() === String(dailySesionId).trim() && String(row[2]).trim() === String(userId).trim());
-
-    if (idx !== -1) {
-      regSheet.getRange(idx + 1, 4).setValue(estadoAsistencia || "Presente");
-      if (horaLlegada) regSheet.getRange(idx + 1, 5).setValue(horaLlegada);
-    } else {
-      const regId = "REG-DIA-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
-      regSheet.appendRow([
-        regId,
-        dailySesionId,
-        userId,
-        estadoAsistencia || "Presente",
-        horaLlegada || "",
-        minutosTardanza || 0,
-        false,
-        observacionDocente || "Registro Diario",
-        now
-      ]);
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
+    if (regSheet.getLastRow() === 0) {
+      regSheet.appendRow(["RegistroID", "SesionID", "UserId", "EstadoAsistencia", "HoraLlegada", "MinutosTardanza", "Justificado", "ObservacionDocente", "FechaRegistro"]);
     }
-    savedCount++;
-  });
 
-  return { status: "success", message: `Asistencia diaria registrada para ${savedCount} alumnos.` };
+    const data = regSheet.getDataRange().getValues();
+    const now = new Date();
+    const dailySesionId = "SES-DIARIA-" + (fecha || now.toISOString().split('T')[0]) + "-" + (grado || "GEN") + "-" + (seccion || "A");
+
+    const indexMap = {};
+    for (let i = 1; i < data.length; i++) {
+      const key = `${String(data[i][1]).trim()}_${String(data[i][2]).trim()}`;
+      indexMap[key] = i;
+    }
+
+    let savedCount = 0;
+    registros.forEach(r => {
+      const { userId, estadoAsistencia, horaLlegada, minutosTardanza, observacionDocente } = r;
+      if (!userId) return;
+
+      const key = `${String(dailySesionId).trim()}_${String(userId).trim()}`;
+      if (key in indexMap) {
+        const idx = indexMap[key];
+        data[idx][3] = estadoAsistencia || "Presente";
+        if (horaLlegada !== undefined && horaLlegada !== null) data[idx][4] = horaLlegada;
+        if (minutosTardanza !== undefined && minutosTardanza !== null) data[idx][5] = minutosTardanza;
+        if (observacionDocente !== undefined && observacionDocente !== null) data[idx][7] = observacionDocente;
+        data[idx][8] = now;
+      } else {
+        const regId = "REG-DIA-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+        const newRow = [
+          regId,
+          dailySesionId,
+          userId,
+          estadoAsistencia || "Presente",
+          horaLlegada || "",
+          minutosTardanza || 0,
+          false,
+          observacionDocente || "Registro Diario",
+          now
+        ];
+        data.push(newRow);
+        indexMap[key] = data.length - 1;
+      }
+      savedCount++;
+    });
+
+    if (data.length > 1) {
+      const maxRows = regSheet.getMaxRows();
+      if (data.length > maxRows) {
+        regSheet.insertRowsAfter(maxRows, data.length - maxRows);
+      }
+      regSheet.getRange(1, 1, data.length, data[0].length).setValues(data);
+    }
+
+    return { status: "success", message: `Asistencia diaria registrada para ${savedCount} alumnos.` };
+  } finally {
+    try { lock.releaseLock(); } catch (e) {}
+  }
 }
 
 function getDailyAttendance(payload) {
@@ -7825,10 +8600,41 @@ function updateAttendanceIncidentStatus(payload) {
   };
 }
 
-// [F10-Task01] [P0] - Fortalecer la confidencialidad y el control de acceso a expedientes sensibles
+// [F11-Task01] [P0] - Fortalecer la seguridad, privacidad y aislamiento de expedientes de bienestar estudiantil
+function validateStudentWelfareAccess(payload) {
+  const { userId, casoId, estudianteId } = payload || {};
+  const roleUpper = String((payload && payload._verifiedRole) || (payload && payload.authRole) || "").toUpperCase();
+  const isAuthorizedRole = ["ADMINISTRADOR", "ADMIN", "DIRECTOR", "DIRECCION", "CONSEJEROS", "CONSEJERO", "ORIENTACION", "ORIENTADOR"].indexOf(roleUpper) >= 0;
+
+  if (!isAuthorizedRole) {
+    logStructuredEvent("ACADEMIC", "validateStudentWelfareAccess", "WARN", "UNAUTHORIZED_ACCESS_ATTEMPT", `Intento de acceso no autorizado a expediente de bienestar por rol '${roleUpper}'.`, { userId, estudianteId, casoId }, roleUpper);
+    return {
+      status: "success",
+      authorized: false,
+      reason: "El rol del usuario no dispone de permisos para consultar expedientes confidenciales de bienestar u orientación.",
+      message: "Acceso denegado a expediente confidencial de bienestar."
+    };
+  }
+
+  return {
+    status: "success",
+    authorized: true,
+    role: roleUpper,
+    message: "Acceso autorizado a expediente de bienestar estudiantil."
+  };
+}
+
+// [F10-Task01] [F11-Task01] [P0] - Fortalecer la confidencialidad y el control de acceso a expedientes sensibles
 function getAttendanceFollowupCases(payload) {
-  const { userId, authRole, casoId } = payload || {};
+  const { userId, authRole, casoId, categoriaCaso } = payload || {};
   const roleUpper = String(authRole || (payload && payload._verifiedRole) || "").toUpperCase();
+
+  if (categoriaCaso === "Consejería" || categoriaCaso === "Orientación") {
+    const welfareCheck = validateStudentWelfareAccess(payload);
+    if (!welfareCheck.authorized) {
+      return { status: "success", data: [], message: welfareCheck.message };
+    }
+  }
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
 
@@ -8170,6 +8976,567 @@ function saveVocationalRecommendation(payload) {
     casoId: caseRes.data ? caseRes.data.casoId : null,
     message: "Informe y recomendación vocacional registrado exitosamente."
   };
+}
+
+// [F11-Task07] [P1] - Fortalecer la gestión de citas de orientación y acompañamiento estudiantil
+function scheduleGuidanceAppointment(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const callerId = (payload && payload._verifiedUserId) || "Orientación";
+    const isAuthorized = ["Administrador", "Director", "Orientacion", "Consejeros"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "Solo personal de Orientación, Consejería o Dirección puede agendar citas de orientación estudiantil." };
+    }
+
+    const {
+      casoId,
+      userId,
+      tutorUserId,
+      fechaHora,
+      modalidad,
+      tipoCita,
+      motivoPublico,
+      notasConfidenciales,
+      derivacionRef
+    } = payload || {};
+
+    if (!userId || !fechaHora) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "userId y fechaHora son requeridos para agendar una cita de orientación." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "CitasOrientacion");
+
+    const now = new Date();
+    const nowISO = now.toISOString();
+    const citaId = "CITA-ORI-" + now.getFullYear() + "-" + Math.floor(100000 + Math.random() * 900000);
+
+    // Si no se proporcionó casoId, se vincula o abre automáticamente un caso preventivo en CasosSeguimiento
+    let targetCasoId = casoId;
+    if (!targetCasoId) {
+      const caseRes = saveAttendanceFollowupCase({
+        userId,
+        motivoApertura: `Acompañamiento y Orientación Estudiantil (${tipoCita || 'Entrevista'})`,
+        resumenAsistencia: `Categoría: Orientación | Modalidad: ${modalidad || 'Presencial'} | Fecha: ${fechaHora}`,
+        responsableId: callerId,
+        estado: "Abierto",
+        categoriaCaso: "Orientación"
+      });
+      targetCasoId = caseRes && caseRes.data ? caseRes.data.casoId : ("CASO-" + Date.now());
+    }
+
+    // Persistir la cita en CitasOrientacion
+    // Columnas: CitaOrientacionID, CasoID, UserId, TutorUserId, OrientadorUserId, FechaHora, Modalidad, Estado, TipoCita, NotasPublicas, NotasConfidenciales, DerivacionRef, FechaCreacion
+    sheet.appendRow([
+      citaId,
+      String(targetCasoId).trim(),
+      String(userId).trim(),
+      tutorUserId ? String(tutorUserId).trim() : "",
+      callerId,
+      String(fechaHora),
+      modalidad || "Presencial",
+      "Programada",
+      tipoCita || "Acompañamiento",
+      motivoPublico || "Cita de Acompañamiento Institucional",
+      notasConfidenciales || "",
+      derivacionRef || "",
+      nowISO
+    ]);
+
+    logStructuredEvent("ACADEMIC", "scheduleGuidanceAppointment", "INFO", "GUIDANCE_APPOINTMENT_SCHEDULED", `Cita de orientación ${citaId} agendada para ${userId} ligada al caso ${targetCasoId}`, { citaId, userId, targetCasoId }, verifiedRole);
+
+    return {
+      status: "success",
+      citaOrientacionId: citaId,
+      casoId: targetCasoId,
+      userId: userId,
+      fechaHora: fechaHora,
+      estado: "Programada",
+      message: "Cita de orientación y acompañamiento estudiantil agendada correctamente ligada al caso de seguimiento."
+    };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "scheduleGuidanceAppointment", "ERROR", "GUIDANCE_APPOINTMENT_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function getGuidanceAppointments(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const callerId = (payload && payload._verifiedUserId) || "";
+    const isWelfareStaff = ["Administrador", "Director", "Orientacion", "Consejeros"].indexOf(verifiedRole) !== -1;
+
+    const { casoId, userId, estado, citaOrientacionId } = payload || {};
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "CitasOrientacion");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", totalCitas: 0, citas: [] };
+
+    const citas = [];
+
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const cId = String(row[0] || "");
+      const cCasoId = String(row[1] || "");
+      const cUserId = String(row[2] || "");
+      const cTutorId = String(row[3] || "");
+      const cOrientadorId = String(row[4] || "");
+      const fHora = row[5] ? new Date(row[5]).toISOString() : "";
+      const mod = String(row[6] || "Presencial");
+      const st = String(row[7] || "Programada");
+      const tipo = String(row[8] || "Acompañamiento");
+      const notasPub = String(row[9] || "");
+      const notasConf = String(row[10] || "");
+      const derivRef = String(row[11] || "");
+      const fCrea = row[12] ? new Date(row[12]).toISOString() : "";
+
+      if (citaOrientacionId && String(citaOrientacionId).trim() !== cId) continue;
+      if (casoId && String(casoId).trim() !== cCasoId) continue;
+      if (userId && String(userId).trim() !== cUserId) continue;
+      if (estado && estado !== "Todas" && st !== estado) continue;
+
+      // Restricción de aislamiento para roles no pertenecientes a orientación/bienestar
+      if (!isWelfareStaff) {
+        if (verifiedRole === "Estudiante" && cUserId !== callerId) continue;
+        if ((verifiedRole === "Padre" || verifiedRole === "Tutor") && cTutorId !== callerId) continue;
+      }
+
+      citas.push({
+        citaOrientacionId: cId,
+        casoId: cCasoId,
+        userId: cUserId,
+        tutorUserId: cTutorId,
+        orientadorUserId: cOrientadorId,
+        fechaHora: fHora,
+        modalidad: mod,
+        estado: st,
+        tipoCita: tipo,
+        notasPublicas: notasPub,
+        notasConfidenciales: isWelfareStaff ? notasConf : "***CONFIDENCIAL***",
+        derivacionRef: derivRef,
+        fechaCreacion: fCrea
+      });
+    }
+
+    citas.reverse();
+    return { status: "success", totalCitas: citas.length, citas: citas };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "getGuidanceAppointments", "ERROR", "GET_GUIDANCE_APPOINTMENTS_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function updateGuidanceAppointmentStatus(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const callerId = (payload && payload._verifiedUserId) || "Orientación";
+    const isAuthorized = ["Administrador", "Director", "Orientacion", "Consejeros"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "Solo personal de Orientación o Dirección puede actualizar el estado de citas de orientación." };
+    }
+
+    const { citaOrientacionId, nuevoEstado, notasSeguimiento, reincidenciaDetalles, derivacionRef } = payload || {};
+    if (!citaOrientacionId || !nuevoEstado) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "citaOrientacionId y nuevoEstado son requeridos." };
+    }
+
+    const validStates = ["Programada", "Realizada", "Reincidencia", "Cancelada"];
+    if (validStates.indexOf(nuevoEstado) === -1) {
+      return { status: "error", code: "VALIDATION_ERROR", message: `nuevoEstado inválido. Debe ser uno de: ${validStates.join(", ")}` };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "CitasOrientacion");
+    const data = sheet.getDataRange().getValues();
+
+    let foundIdx = -1;
+    let appointmentRow = null;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(citaOrientacionId).trim()) {
+        foundIdx = i;
+        appointmentRow = data[i];
+        break;
+      }
+    }
+
+    if (foundIdx === -1) {
+      return { status: "error", code: "NOT_FOUND", message: "Cita de orientación no encontrada." };
+    }
+
+    // Actualizar estado en columna 8 (índice 7)
+    sheet.getRange(foundIdx + 1, 8).setValue(nuevoEstado);
+
+    // Si hay notas adicionales o reincidencia, actualizar notas confidenciales
+    if (notasSeguimiento || reincidenciaDetalles) {
+      const prevNotes = String(appointmentRow[10] || "");
+      const appended = `${prevNotes} [${nuevoEstado} - ${new Date().toISOString()}]: ${notasSeguimiento || reincidenciaDetalles}`.trim();
+      sheet.getRange(foundIdx + 1, 11).setValue(appended);
+    }
+
+    // Si se especificó derivación inmutable, registrarla en columna 12
+    if (derivacionRef) {
+      sheet.getRange(foundIdx + 1, 12).setValue(String(derivacionRef).trim());
+    }
+
+    logStructuredEvent("ACADEMIC", "updateGuidanceAppointmentStatus", "INFO", "GUIDANCE_APPOINTMENT_UPDATED", `Cita de orientación ${citaOrientacionId} actualizada a ${nuevoEstado}`, { citaOrientacionId, nuevoEstado }, verifiedRole);
+
+    return {
+      status: "success",
+      citaOrientacionId: citaOrientacionId,
+      estadoAnterior: appointmentRow[7],
+      nuevoEstado: nuevoEstado,
+      message: `Cita de orientación actualizada exitosamente a '${nuevoEstado}'.`
+    };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "updateGuidanceAppointmentStatus", "ERROR", "UPDATE_GUIDANCE_APPOINTMENT_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+// [F11-Task08] [P1] - Sistema de alertas tempranas de rendimiento académico y deserción escolar
+function evaluateAndDispatchEarlyWarningAlerts(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const isAuthorized = ["Administrador", "Director", "Subdirector", "Coordinador", "Consejeros", "Orientacion"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "UNAUTHORIZED", message: "Acceso denegado: Rol no autorizado para procesar alertas tempranas." };
+    }
+
+    const {
+      anolectivo,
+      periodo,
+      grado,
+      seccion,
+      userId,
+      umbralAusenciasConsecutivas,
+      umbralPorcentajeMinAsistencia,
+      umbralMateriasReprobadas,
+      umbralTareasPendientes
+    } = payload || {};
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const alertSheet = getOrCreateSheet(ss, "AlertasTempranas");
+
+    // Umbrales institucionales por defecto o configurables
+    const minPctAsistencia = umbralPorcentajeMinAsistencia !== undefined ? Number(umbralPorcentajeMinAsistencia) : 85;
+    const maxConsecutivas = umbralAusenciasConsecutivas !== undefined ? Number(umbralAusenciasConsecutivas) : 3;
+    const maxMateriasReprobadas = umbralMateriasReprobadas !== undefined ? Number(umbralMateriasReprobadas) : 1;
+    const maxTareasPendientes = umbralTareasPendientes !== undefined ? Number(umbralTareasPendientes) : 3;
+
+    // Obtener alertas existentes activas para evitar duplicados por ciclo
+    const alertData = alertSheet.getDataRange().getValues();
+    const existingActiveKeys = {};
+    if (alertData.length > 1) {
+      for (let i = 1; i < alertData.length; i++) {
+        const row = alertData[i];
+        const status = String(row[8] || "").trim();
+        const dKey = String(row[10] || "").trim();
+        if (dKey && (status === "Activa" || status === "EnAtencion")) {
+          existingActiveKeys[dKey] = true;
+        }
+      }
+    }
+
+    // 1. Recopilar métricas de asistencia desde RegistrosAsistencia
+    const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
+    const regData = regSheet.getDataRange().getValues();
+    const attendanceMap = {};
+
+    if (regData.length > 1) {
+      for (let i = 1; i < regData.length; i++) {
+        const r = regData[i];
+        const uId = String(r[2] || "").trim();
+        if (!uId) continue;
+        if (userId && uId !== String(userId).trim()) continue;
+
+        if (!attendanceMap[uId]) {
+          attendanceMap[uId] = {
+            total: 0,
+            presentes: 0,
+            ausentes: 0,
+            tardanzas: 0,
+            justificadas: 0,
+            records: []
+          };
+        }
+        const estado = String(r[3] || "").toLowerCase();
+        const justificado = r[6] === true || String(r[6]).toLowerCase() === "true";
+        attendanceMap[uId].total++;
+        if (estado === "presente") attendanceMap[uId].presentes++;
+        else if (estado === "ausente") {
+          attendanceMap[uId].ausentes++;
+          if (justificado) attendanceMap[uId].justificadas++;
+        } else if (estado === "tardanza") attendanceMap[uId].tardanzas++;
+
+        attendanceMap[uId].records.push({
+          estado: estado,
+          justificado: justificado,
+          fecha: r[8] ? new Date(r[8]) : new Date()
+        });
+      }
+    }
+
+    // 2. Extraer lista de estudiantes objetivo (Matrículas o identificados en registros)
+    const matSheet = getOrCreateSheet(ss, "Matriculas");
+    const matData = matSheet.getDataRange().getValues();
+    const studentsToEvaluate = {};
+
+    if (matData.length > 1) {
+      for (let i = 1; i < matData.length; i++) {
+        const m = matData[i];
+        const uId = String(m[2] || "").trim();
+        const mGrado = String(m[4] || "").trim();
+        const mSecc = String(m[5] || "").trim();
+        const mEstado = String(m[8] || "").trim();
+
+        if (!uId || (mEstado && mEstado !== "Activa" && mEstado !== "Matriculado")) continue;
+        if (userId && uId !== String(userId).trim()) continue;
+        if (grado && mGrado.toLowerCase() !== String(grado).toLowerCase().trim()) continue;
+        if (seccion && mSecc.toLowerCase() !== String(seccion).toLowerCase().trim()) continue;
+
+        studentsToEvaluate[uId] = {
+          userId: uId,
+          nombre: String(m[3] || "").trim(),
+          grado: mGrado,
+          seccion: mSecc
+        };
+      }
+    }
+
+    // Si no hay matrículas o se especificó un userId puntual no registrado aún en Matrículas
+    if (userId && !studentsToEvaluate[userId]) {
+      studentsToEvaluate[userId] = {
+        userId: String(userId).trim(),
+        nombre: "Estudiante " + userId,
+        grado: grado || "General",
+        seccion: seccion || "A"
+      };
+    }
+
+    // Si aún no hay estudiantes, usar claves de asistencia encontradas
+    Object.keys(attendanceMap).forEach(uId => {
+      if (!studentsToEvaluate[uId]) {
+        studentsToEvaluate[uId] = {
+          userId: uId,
+          nombre: "Estudiante " + uId,
+          grado: grado || "General",
+          seccion: seccion || "A"
+        };
+      }
+    });
+
+    const evaluatedStudentsCount = Object.keys(studentsToEvaluate).length;
+    const generatedAlerts = [];
+    const targetPeriodo = periodo || "1";
+    const now = new Date();
+    const nowISO = now.toISOString();
+
+    Object.keys(studentsToEvaluate).forEach(uId => {
+      const student = studentsToEvaluate[uId];
+      const att = attendanceMap[uId] || { total: 0, presentes: 0, ausentes: 0, tardanzas: 0, justificadas: 0, records: [] };
+
+      // Calcular porcentaje de asistencia
+      const effectiveTotal = att.total > 0 ? att.total : 1;
+      const attendedCount = att.presentes + (att.tardanzas * 0.5) + att.justificadas;
+      const pctAsistencia = att.total > 0 ? Math.round((attendedCount / effectiveTotal) * 100) : 100;
+
+      // Calcular ausencias consecutivas no justificadas
+      let consecutiveUnexcused = 0;
+      let maxConsecutive = 0;
+      att.records.sort((a, b) => a.fecha - b.fecha);
+      att.records.forEach(r => {
+        if (r.estado === "ausente" && !r.justificado) {
+          consecutiveUnexcused++;
+          if (consecutiveUnexcused > maxConsecutive) maxConsecutive = consecutiveUnexcused;
+        } else if (r.estado === "presente") {
+          consecutiveUnexcused = 0;
+        }
+      });
+
+      // Simulación de métricas académicas y tareas desde payload o inspección
+      const failingSubjectsCount = (payload && payload.mockFailingSubjects && payload.mockFailingSubjects[uId] !== undefined)
+        ? Number(payload.mockFailingSubjects[uId])
+        : 0;
+      const missingTasksCount = (payload && payload.mockMissingTasks && payload.mockMissingTasks[uId] !== undefined)
+        ? Number(payload.mockMissingTasks[uId])
+        : 0;
+
+      const riskFactors = [];
+      let riskScore = 0;
+
+      if (pctAsistencia < minPctAsistencia) {
+        riskFactors.push(`Porcentaje de asistencia crítico (${pctAsistencia}% < ${minPctAsistencia}%)`);
+        riskScore += 3;
+      }
+      if (maxConsecutive >= maxConsecutivas) {
+        riskFactors.push(`Ausencias injustificadas consecutivas (${maxConsecutive} >= ${maxConsecutivas})`);
+        riskScore += 3;
+      }
+      if (failingSubjectsCount >= maxMateriasReprobadas) {
+        riskFactors.push(`Materias con reprobación parcial (${failingSubjectsCount} >= ${maxMateriasReprobadas})`);
+        riskScore += 4;
+      }
+      if (missingTasksCount >= maxTareasPendientes) {
+        riskFactors.push(`Tareas escolares sin entregar (${missingTasksCount} >= ${maxTareasPendientes})`);
+        riskScore += 2;
+      }
+
+      // Si existe algún factor de riesgo, estructurar la alerta
+      if (riskFactors.length > 0) {
+        let nivelRiesgo = "Bajo";
+        if (riskScore >= 7) nivelRiesgo = "Crítico";
+        else if (riskScore >= 5) nivelRiesgo = "Alto";
+        else if (riskScore >= 3) nivelRiesgo = "Medio";
+
+        const deduplicationKey = `EARLY_WARN_${uId}_P${targetPeriodo}_${student.grado}_${student.seccion}`;
+
+        // Si ya existe una alerta activa para este estudiante y período, no duplicar
+        if (!existingActiveKeys[deduplicationKey]) {
+          const alertaId = "ALERTA-TMP-" + now.getFullYear() + "-" + Math.floor(100000 + Math.random() * 900000);
+          const metricas = {
+            porcentajeAsistencia: pctAsistencia,
+            ausenciasConsecutivas: maxConsecutive,
+            materiasReprobadas: failingSubjectsCount,
+            tareasPendientes: missingTasksCount,
+            riskScore: riskScore
+          };
+
+          const notificadoA = "Orientación, Coordinación, Consejería";
+
+          alertSheet.appendRow([
+            alertaId,
+            uId,
+            student.grado,
+            student.seccion,
+            String(targetPeriodo),
+            nivelRiesgo,
+            JSON.stringify(riskFactors),
+            JSON.stringify(metricas),
+            "Activa",
+            notificadoA,
+            deduplicationKey,
+            nowISO,
+            nowISO
+          ]);
+
+          existingActiveKeys[deduplicationKey] = true;
+
+          generatedAlerts.push({
+            alertaId: alertaId,
+            userId: uId,
+            nombre: student.nombre,
+            grado: student.grado,
+            seccion: student.seccion,
+            nivelRiesgo: nivelRiesgo,
+            factoresRiesgo: riskFactors,
+            metricas: metricas,
+            deduplicationKey: deduplicationKey
+          });
+
+          // Disparar o crear caso preventivo en CasosSeguimiento si el riesgo es Alto o Crítico
+          if (nivelRiesgo === "Alto" || nivelRiesgo === "Crítico") {
+            try {
+              saveAttendanceFollowupCase({
+                userId: uId,
+                motivoApertura: `[ALERTA TEMPRANA] Riesgo ${nivelRiesgo}: ${riskFactors.join("; ")}`,
+                categoriaCaso: "Orientación"
+              });
+            } catch (caseErr) {
+              // No abortar el flujo principal si el caso ya existía o falla la creación accesoria
+            }
+          }
+        }
+      }
+    });
+
+    logStructuredEvent("ACADEMIC", "evaluateAndDispatchEarlyWarningAlerts", "INFO", "EARLY_WARNING_ALERTS_EVALUATED", `Evaluación de alertas tempranas ejecutada. Estudiantes evaluados: ${evaluatedStudentsCount}, Nuevas alertas activadas: ${generatedAlerts.length}`, {
+      totalEvaluados: evaluatedStudentsCount,
+      alertasGeneradasCount: generatedAlerts.length
+    }, verifiedRole);
+
+    return {
+      status: "success",
+      totalEvaluados: evaluatedStudentsCount,
+      alertasGeneradas: generatedAlerts.length,
+      alertas: generatedAlerts,
+      message: `Evaluación de alertas tempranas completada. Se generaron ${generatedAlerts.length} nuevas alertas sin duplicación.`
+    };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "evaluateAndDispatchEarlyWarningAlerts", "ERROR", "EARLY_WARNING_EVALUATION_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function getEarlyWarningAlerts(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const isAuthorized = ["Administrador", "Director", "Subdirector", "Coordinador", "Consejeros", "Orientacion"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "UNAUTHORIZED", message: "Acceso denegado: Rol no autorizado para consultar alertas tempranas." };
+    }
+
+    const { userId, grado, seccion, periodo, nivelRiesgo, estado } = payload || {};
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const alertSheet = getOrCreateSheet(ss, "AlertasTempranas");
+    const data = alertSheet.getDataRange().getValues();
+
+    if (data.length <= 1) {
+      return { status: "success", totalAlertas: 0, alertas: [] };
+    }
+
+    const alertas = [];
+    for (let i = 1; i < data.length; i++) {
+      const r = data[i];
+      const aId = String(r[0] || "").trim();
+      const uId = String(r[1] || "").trim();
+      const aGrado = String(r[2] || "").trim();
+      const aSeccion = String(r[3] || "").trim();
+      const aPeriodo = String(r[4] || "").trim();
+      const aNivel = String(r[5] || "").trim();
+      let factores = [];
+      try { factores = JSON.parse(r[6] || "[]"); } catch (e) { factores = [String(r[6] || "")]; }
+      let metricas = {};
+      try { metricas = JSON.parse(r[7] || "{}"); } catch (e) { metricas = {}; }
+      const aEstado = String(r[8] || "").trim();
+      const notificadoA = String(r[9] || "").trim();
+      const dedupKey = String(r[10] || "").trim();
+      const fechaGen = r[11];
+      const fechaAct = r[12];
+
+      if (userId && uId !== String(userId).trim()) continue;
+      if (grado && aGrado.toLowerCase() !== String(grado).toLowerCase().trim()) continue;
+      if (seccion && aSeccion.toLowerCase() !== String(seccion).toLowerCase().trim()) continue;
+      if (periodo && aPeriodo !== String(periodo).trim()) continue;
+      if (nivelRiesgo && aNivel.toLowerCase() !== String(nivelRiesgo).toLowerCase().trim()) continue;
+      if (estado && aEstado.toLowerCase() !== String(estado).toLowerCase().trim()) continue;
+
+      alertas.push({
+        alertaId: aId,
+        userId: uId,
+        grado: aGrado,
+        seccion: aSeccion,
+        periodo: aPeriodo,
+        nivelRiesgo: aNivel,
+        factoresRiesgo: factores,
+        metricas: metricas,
+        estado: aEstado,
+        notificadoA: notificadoA,
+        deduplicationKey: dedupKey,
+        fechaGeneracion: fechaGen,
+        ultimaActualizacion: fechaAct
+      });
+    }
+
+    return {
+      status: "success",
+      totalAlertas: alertas.length,
+      alertas: alertas
+    };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "getEarlyWarningAlerts", "ERROR", "GET_EARLY_WARNING_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
 }
 
 // [F10-Task11] [P1] - Completar la delegación de responsabilidades para asistentes administrativos y académicos
