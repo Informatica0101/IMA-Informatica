@@ -3682,7 +3682,7 @@ Archivos Modificados / Creados:
    - Creación del informe exhaustivo de auditoría independiente de la Fase 37. Incluye identificación y alcance (A), inventario técnico encontrado (B), estado funcional actual F37-01 a F37-12 (C), esquema de arquitectura real de aislamiento (D), comparación funcional externa con Moodle y Odoo (E), lista maestra de características CAR-F37-01 a CAR-F37-12 (F), resultados de la matriz de pruebas funcionales PT-F37-01 a PT-F37-32 (G), hallazgos y riesgos identificados (H), plan de resolución priorizado en 2 bloques (I), cobertura cuantitativa y dictamen de certificación (J).
 
 2. Pendientes.md
-   - Incorporación, unificación y convergencia exhaustiva de las 6 tareas técnicas de la Fase 37 ([F37-Task01] a [F37-Task06]) organizadas estrictamente por prioridad (P0: Task01 a Task04; P1: Task05 a Task06) y orden secuencial de ejecución (1 a 6) al final del archivo, manteniendo íntegras las tareas anteriores de las Fases 10 a 35.
+   - Incorporación, unificación y convergencia exhaustiva de las 8 tareas técnicas convergentes de la Fase 37 ([F37-Task01] a [F37-Task08]) organizadas estrictamente por prioridad (P0: Task01-Task05, P1: Task06-Task08) y orden secuencial de ejecución (1 a 8) con parámetros institucionales configurables al final del archivo, manteniendo íntegras las tareas anteriores de las Fases 10 a 35.
 
 3. Auditoria.txt
    - Inserción de la entrada formal de auditoría diagnóstica de la Fase 37 detallando la evaluación de enrutamiento central, CatalogoSpreadsheets, validación de permisos en servidor, exposición de campos en consultas cruzadas y prevención de escrituras cruzadas.

@@ -14420,170 +14420,285 @@
 
 ---
 
-### [F37-Task01] [P0] Enrutamiento declarativo central de destinos de datos y blindaje de importación
+### [F37-Task01] [P0] Enrutamiento declarativo central de destinos y validación de autorización departamental
 - **Prioridad:** P0 (Bloqueante / Esencial)
 - **Orden de Ejecución:** 1 (Aislamiento y resolución de destino en backend)
 - **Componentes Afectados:**
-  - `backend/accounting-service/Code.gs` (`resolveDataDestination`, `importDataWithColumnMapping`, `validateImportPreview`)
-  - `backend/user-service/Code.gs`
+  - `backend/accounting-service/Code.gs` (`resolveSpreadsheetSource`, `resolveDataDestination`, `importDataWithColumnMapping`)
+  - `backend/user-service/Code.gs` (`getUserVerifiedRole`, `validateRolePermission`)
   - Hoja de Cálculo: `CatalogoSpreadsheets`, `ConfiguracionEnrutamientoDestinos`
 - **Subcapacidades Relacionadas:** F37-01, F37-02, F37-06.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_37_AISLAMIENTO_DATOS_ASIGNACION_DEPARTAMENTOS.md` / Sección C (F37-01, F37-06) y Matriz CAR-F37-01, CAR-F37-06.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_37_AISLAMIENTO_DATOS_ASIGNACION_DEPARTAMENTOS.md` / Sección C (F37-01, F37-06), Matriz CAR-F37-01, CAR-F37-06 y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  El importador actual acepta el parámetro `destinoModulo` directamente enviado desde el cliente web y lo registra en la bitácora sin validar en el servidor si la estructura del archivo coincide semánticamente con ese módulo o si el usuario autenticado tiene autorización sobre ese departamento. Esto permite que solicitudes manipuladas envíen registros financieros al módulo de secretaría o viceversa.
+  El catálogo `CatalogoSpreadsheets` y el mecanismo `resolveSpreadsheetSource` ya permiten localizar fuentes de datos por dominio y año lectivo. Sin embargo, el importador `importDataWithColumnMapping` acepta `destinoModulo` enviado por el frontend sin comprobar estrictamente que ese destino corresponda a la entidad que se pretende importar y al departamento autorizado del usuario. La selección del destino no puede depender de un valor libre enviado por el cliente; debe determinarlo el backend mediante reglas institucionales verificables.
 - **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Motor central de resolución de destino en servidor:*
-     - Implementar `resolveDataDestination(payload)` en backend que determine obligatoriamente el destino operativo de escritura considerando:
-       * Tipo de entidad validada en el archivo.
-       * Departamento propietario del registro (`Secretaría`, `Contabilidad`, `Recursos Humanos`).
-       * Módulo responsable y ámbito institucional (sede/año lectivo).
-       * Rol verificado del usuario (`_verifiedRole`).
-     - Rechazar con error 403 cualquier destino solicitado por el cliente que no coincida con el dominio autorizado para el usuario o con la entidad analizada.
-  2. *Protección contra ambigüedad y nombres de hoja cambiados:*
-     - Si existen dos destinos posibles para una entidad, exigir confirmación explícita del usuario sin asumir asignaciones a ciegas.
-     - Referenciar las hojas mediante IDs internos o catálogos estables en `CatalogoSpreadsheets` para evitar escrituras en destinos erróneos si el usuario renombra una pestaña en Google Sheets.
+  1. *Consolidación de resolución declarativa en servidor:*
+     - Consolidar la resolución de destinos en un mecanismo central del backend que reutilice el catálogo de fuentes existente (`CatalogoSpreadsheets`).
+     - Cada tipo de entidad importable debe tener una asignación declarativa que determine:
+       * Identidad de la entidad.
+       * Departamento propietario.
+       * Módulo responsable.
+       * Fuente de almacenamiento (`spreadsheetId`, hoja o recurso receptor).
+       * Ámbito institucional aplicable (sede, año lectivo).
+       * Operaciones permitidas (crear, actualizar, consultar, archivar).
+       * Roles y permisos efectivos que pueden operar sobre ella.
+       * Estado activo o inactivo del destino.
+     - La resolución debe utilizar el tipo de entidad real analizado en servidor, no únicamente el nombre de la hoja o los encabezados del archivo.
+  2. *Validación de autorización y blindaje ante elusión:*
+     - El backend debe obtener el rol verificado (`getUserVerifiedRole`) y validar permisos (`validateRolePermission`) sobre departamento, entidad y operación.
+     - Tratar el parámetro `destinoModulo` del cliente únicamente como una solicitud, nunca como una autorización vinculante.
+     - Si el cliente envía un destino incompatible con la entidad, el backend debe rechazar la operación con error 403.
+     - Si no se envía un destino y existe una única asignación válida, resolverla automáticamente.
+     - Si existen varios destinos válidos, solicitar selección explícita entre las opciones autorizadas.
+     - Si no existe asignación válida, detener la operación antes de cualquier escritura.
+     - Los destinos inactivos no deben aceptar nuevas escrituras, aunque conserven sus registros históricos.
+     - Eliminar o renombrar una hoja física no debe provocar escrituras en otras hojas por coincidencia de nombres.
   3. *Parametrización configurable en plataforma:*
      - Parámetro en `ConfiguracionInstitucional`: `MODO_ENRUTAMIENTO_DESTINO`: Valores `ESTRICTO_SERVERSIDE_ONLY` (por defecto) vs. `PERMITIR_SOLICITUD_CLIENTE_CON_VALIDACION_ROL`.
 - **Criterios de Aceptación:**
-  - [ ] Una importación de matrículas desde Secretaría se registra en el destino académico sin poder dirigirse a finanzas.
-  - [ ] Una importación de pagos desde Contabilidad se registra en el destino financiero sin alterar registros académicos.
-  - [ ] Enviar un destino manipulado desde el cliente es rechazado de inmediato por el backend con error de autorización.
-  - [ ] Intentar guardar una entidad sin destino configurado falla de manera controlada sin corromper la base de datos.
-- **Dependencias:** `CatalogoSpreadsheets`, `validateRolePermission`.
+  - [ ] Importar matrículas desde Secretaría se resuelve hacia el destino académico configurado.
+  - [ ] Importar pagos desde Contabilidad se resuelve hacia el destino financiero configurado.
+  - [ ] Enviar `destinoModulo: "Secretaría"` junto con una entidad financiera es rechazado por el backend.
+  - [ ] Enviar un identificador de destino fuera del catálogo autorizado o inactivo es rechazado sin escribir.
+  - [ ] Omitir el destino cuando existe una sola asignación válida se resuelve automáticamente.
+  - [ ] Configurar dos destinos posibles sin regla de selección exige confirmación manual.
+  - [ ] Renombrar una hoja física no provoca escrituras en otro destino por coincidencia de nombre.
+  - [ ] Un usuario sin autorización departamental no puede importar aunque conozca el identificador de la fuente.
+- **Dependencias:** Catálogo de fuentes `CatalogoSpreadsheets`, control RBAC de `user-service`.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F37-Task02] [P0] Catálogo de proyecciones y compartición mínima de información (Máscara de Atributos)
+### [F37-Task02] [P0] Validación semántica de importaciones y correspondencia entre entidad, estructura, departamento y destino
 - **Prioridad:** P0 (Bloqueante / Esencial)
-- **Orden de Ejecución:** 2 (Privacidad y principio de menor privilegio)
+- **Orden de Ejecución:** 2 (Validación de congruencia entre datos y destino)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`validateImportPreview`, `importDataWithColumnMapping`)
+  - `js/teacher.js`, `teacher-dashboard.html`
+- **Subcapacidades Relacionadas:** F37-01, F37-06.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_37_AISLAMIENTO_DATOS_ASIGNACION_DEPARTAMENTOS.md` / Sección C (F37-06), Matriz CAR-F37-06 y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  La importación actual puede recibir una estructura de archivo que se parezca a la de otra entidad y permitir que el usuario seleccione un módulo diferente. La validación de columnas obligatorias no garantiza que el contenido corresponda realmente al destino seleccionado. La coincidencia accidental de nombres genéricos como `nombre`, `codigo`, `fecha` o `estado` no debe permitir intercambiar destinos operativos.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Definición de estructura y validación en dos capas:*
+     - Cada entidad importable debe contar con una definición que especifique: campos admitidos, obligatorios, tipos de datos, formatos, reglas de validación, identificadores y referencias.
+     - Diferenciar la validación estructural (columnas y formatos correctos) de la validación semántica (comprobación de que el contenido corresponde a la entidad y operación solicitadas).
+     - No aceptar un archivo de matrículas como archivo de pagos simplemente porque coincidan algunas columnas genéricas.
+     - Si un archivo contiene datos de varias entidades, evitar que todas las filas se escriban en un único destino indebido.
+  2. *Previsualización obligatoria no destructiva:*
+     - La previsualización debe mostrar: tipo de entidad detectado, departamento propietario, módulo de destino, fuente de almacenamiento, mapeo de columnas, conteo de registros válidos/erróneos y referencias pendientes.
+     - La confirmación debe estar vinculada estrictamente a la previsualización validada; si se modifica el archivo, el mapeo, el destino o los permisos, la validación debe invalidarse y repetirse obligatoriamente.
+     - La validación debe ejecutarse en el servidor como autoridad final.
+- **Criterios de Aceptación:**
+  - [ ] Un archivo financiero con encabezados similares a matrículas no puede importarse como matrícula.
+  - [ ] Un archivo académico con un campo llamado `monto` no se clasifica automáticamente como financiero.
+  - [ ] Archivos con campos obligatorios ausentes o formatos incompatibles son rechazados antes de escribir.
+  - [ ] La previsualización no produce escrituras ni cambios de estado en la base de datos.
+  - [ ] Modificar el archivo o destino tras previsualizar obliga a repetir la validación en backend.
+  - [ ] El resumen final coincide exactamente con la cantidad de registros procesados.
+- **Dependencias:** F37-Task01.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F37-Task03] [P0] Catálogo de proyecciones de campos y compartición mínima de información entre departamentos
+- **Prioridad:** P0 (Bloqueante / Esencial)
+- **Orden de Ejecución:** 3 (Privacidad, principio de menor privilegio y máscaras de atributos)
 - **Componentes Afectados:**
   - `backend/accounting-service/Code.gs` (`getStudentMinimalFinancialContext`)
   - `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`
   - Hoja de Cálculo: `CatalogoProyeccionesCompartidas`
 - **Subcapacidades Relacionadas:** F37-02, F37-05, F37-08.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_37_AISLAMIENTO_DATOS_ASIGNACION_DEPARTAMENTOS.md` / Sección C (F37-08) y Matriz CAR-F37-08.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_37_AISLAMIENTO_DATOS_ASIGNACION_DEPARTAMENTOS.md` / Sección C (F37-08), Matriz CAR-F37-08 y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  Cuando Contabilidad consulta a un estudiante para emitir un cobro, o cuando Secretaría consulta el estado de cuenta para una constancia, las llamadas RPC devuelven el objeto completo con todos sus campos (teléfonos privados, observaciones de disciplina, datos clínicos o laborales), violando el principio de compartición mínima y exponiendo información confidencial entre áreas.
+  Las consultas interdepartamentales devuelven filas completas u objetos completos de entidades, incluso cuando el departamento receptor solo necesita unos cuantos atributos. Consultas financieras que necesitan validar a un estudiante reciben el expediente completo (teléfonos de emergencia, tutores secundarios, notas disciplinarias, orientaciones psicológicas), exponiendo datos confidenciales innecesarios.
 - **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Filtro de proyección de campos autorizados:*
-     - Definir e implementar máscaras de atributos por relación interdepartamental:
-       * *Contabilidad consultando Estudiante:* Recibe únicamente `estudianteId`, `nombreCompleto`, `grado`, `seccion`, `estadoMatricula` y `responsablePagoId`.
-       * *Secretaría consultando Pagos:* Recibe únicamente `estadoSolvencia` (`Al Día` / `Mora`), `montoPendienteTotal` y `fechaUltimoPago`.
-     - Excluir estrictamente calificaciones, reportes de bienestar psicológico, notas internas de recursos humanos y datos médicos de cualquier respuesta cruzada.
-  2. *Acceso de solo lectura en referencias compartidas:*
-     - Garantizar que las referencias cruzadas sean de solo lectura: el departamento receptor no puede modificar los atributos de la entidad propietaria a través de la relación.
+  1. *Mecanismo declarativo de proyección de atributos (Lista Blanca):*
+     - Crear un catálogo central de proyecciones por entidad de origen, departamento solicitante, módulo, operación y rol del usuario.
+     - La respuesta del backend debe construirse mediante una lista permitida de campos (proyección estricta), excluyendo por defecto cualquier atributo no autorizado.
+     - Prohibir el uso de listas negras que eliminen atributos a posteriori; la construcción debe ser aditiva solo con los campos autorizados.
+     - Aplicar la máscara en consultas individuales, listados, búsquedas, exportaciones y objetos anidados.
+  2. *Proyección específica para Contabilidad:*
+     - Una consulta financiera sobre un estudiante solo puede retornar: `estudianteId`, `nombreCompleto`, `codigoEstudiante`, `matriculaId`, `grado`, `seccion`, `estadoMatricula`, `periodoAcademico` y `responsablePagoId`.
+     - Excluir estrictamente: teléfonos de emergencia, observaciones disciplinarias, notas académicas, informes psicológicos y documentos personales.
+  3. *Acceso estrictamente de solo lectura:*
+     - Las referencias compartidas entre departamentos deben ser de solo lectura para el departamento receptor sin permitir mutaciones cruzadas.
 - **Criterios de Aceptación:**
-  - [ ] Contabilidad consulta el contexto de un alumno y recibe únicamente los campos financieros mínimos autorizados.
-  - [ ] Las consultas interdepartamentales no exponen calificaciones, notas de orientación ni expedientes laborales.
-  - [ ] Los departamentos receptores tienen acceso estrictamente de solo lectura sobre las referencias ajenas.
+  - [ ] Consultar un estudiante desde Contabilidad devuelve únicamente los campos autorizados en la proyección.
+  - [ ] Los campos restringidos (notas, disciplina, psicología) no aparecen en JSON, objetos anidados ni búsquedas.
+  - [ ] Un usuario con permiso financiero no adquiere acceso a expedientes académicos completos.
+  - [ ] Las consultas conservan los identificadores estables necesarios para relacionar pagos y matrículas.
+  - [ ] Las respuestas de error o depuración no filtran información confidencial.
 - **Dependencias:** F37-Task01.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F37-Task03] [P0] Validador relacional estricto de referencias interdepartamentales
+### [F37-Task04] [P0] Catálogo declarativo de relaciones interdepartamentales y validación estricta de referencias foráneas
 - **Prioridad:** P0 (Bloqueante / Esencial)
-- **Orden de Ejecución:** 3 (Consistencia relacional y prevención de registros huérfanos)
+- **Orden de Ejecución:** 4 (Consistencia relacional y prevención de registros huérfanos)
 - **Componentes Afectados:**
   - `backend/accounting-service/Code.gs` (`recordStudentPayment`, `createFiscalInvoice`)
   - `backend/academic-service/Code.gs` (`saveStudentEnrollment`)
-  - Hojas de Cálculo: `MatriculasEstudiantes`, `CargosEstudiante`, `Estudiantes`
+  - Hojas de Cálculo: `MatriculasEstudiantes`, `CargosEstudiante`, `Estudiantes`, `CatalogoRelacionesInterdepartamentales`
 - **Subcapacidades Relacionadas:** F37-03, F37-04, F37-07.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_37_AISLAMIENTO_DATOS_ASIGNACION_DEPARTAMENTOS.md` / Sección C (F37-04, F37-07) y Matriz CAR-F37-04, CAR-F37-07.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_37_AISLAMIENTO_DATOS_ASIGNACION_DEPARTAMENTOS.md` / Sección C (F37-04, F37-07), Matriz CAR-F37-04, CAR-F37-07 y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  Es técnicamente posible registrar un pago o factura en Contabilidad enviando un código de matrícula arbitrario que no existe en Secretaría, o que pertenece a otro estudiante. El sistema acepta la transacción financiera sin verificar la existencia activa de la matrícula, generando cuentas por cobrar huérfanas y descuadres de cobranza.
+  La plataforma utiliza identificadores estables (`personaId`, `estudianteId`, `matriculaId`, `pagoId`), pero no comprueba de manera suficiente la existencia, vigencia y autorización de las referencias antes de registrar datos dependientes. Se puede intentar registrar un pago con un código de matrícula arbitrario sin verificar que exista o que pertenezca al estudiante indicado, creando pagos huérfanos y distorsiones financieras.
 - **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Validación previa de existencia y vigencia de referencias:*
-     - Al registrar un pago o cargo, validar obligatoriamente que la `matriculaId` exista en `MatriculasEstudiantes`, se encuentre en estado `Activa` o `Aprobada`, y pertenezca exactamente al `estudianteId` especificado.
-     - Rechazar la operación con error relacional si la matrícula no existe, está cancelada o pertenece a otro ámbito institucional/sede.
-  2. *Prevención de creación artificial de entidades:*
-     - Prohibir terminantemente que una operación de cobro o importación cree automáticamente estudiantes o matrículas ficticias para forzar la transacción.
+  1. *Catálogo de relaciones interdepartamentales:*
+     - Auto-crear la hoja `CatalogoRelacionesInterdepartamentales` (`RelacionId`, `EntidadOrigen`, `EntidadDestino`, `CampoClaveForanea`, `TipoRelacion`, `DepartamentoOrigen`, `DepartamentoDestino`, `CondicionVigencia`, `CamposPermitidosJSON`).
+     - Toda creación o actualización de un registro dependiente debe validar sus referencias antes de escribir:
+       * Existencia real del registro relacionado en su departamento propietario.
+       * Identificador institucional correcto.
+       * Estado activo o condición válida (ej. matrícula en estado `Activa` o `Aprobada`).
+       * Ámbito institucional, sede y año lectivo compatibles.
+       * Correspondencia biunívoca entre `estudianteId` y `matriculaId`.
+  2. *Prohibición de entidades ficticias y manejo histórico:*
+     - Distinguir entre referencia inexistente y referencia a la que no se tiene acceso (rechazar sin revelar datos).
+     - Prohibir terminantemente crear automáticamente matrículas o estudiantes ficticios para forzar la transacción.
+     - Conservar las referencias históricas aunque la entidad relacionada sea archivada o finalice su vigencia temporal.
 - **Criterios de Aceptación:**
-  - [ ] Un pago relacionado con una matrícula válida se asienta correctamente en la cuenta del estudiante.
-  - [ ] Un pago con matrícula inexistente es rechazado de inmediato sin persistir movimientos financieros.
-  - [ ] Un intento de relacionar un pago con un alumno de otra sede o fuera de ámbito es bloqueado con error 403.
-- **Dependencias:** F37-Task01, F37-Task02.
+  - [ ] Crear un pago asociado a una matrícula válida y activa se acepta correctamente.
+  - [ ] Crear un pago con matrícula inexistente se rechaza sin escribir registros.
+  - [ ] Indicar un estudiante y una matrícula que pertenecen a personas distintas se rechaza de inmediato.
+  - [ ] Utilizar una matrícula de otra sede sin autorización se rechaza con error 403.
+  - [ ] Archivar una matrícula no elimina los pagos ni altera la trazabilidad histórica de cobros.
+  - [ ] La validación se aplica tanto en importaciones como en operaciones individuales en backend.
+- **Dependencias:** F37-Task01, F37-Task03.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F37-Task04] [P0] Prevención de escrituras cruzadas e idempotencia en operaciones departamentales
+### [F37-Task05] [P0] Idempotencia, integridad y recuperación de importaciones departamentales
 - **Prioridad:** P0 (Bloqueante / Esencial)
-- **Orden de Ejecución:** 4 (Atomicidad y serialización de operaciones compartidas)
+- **Orden de Ejecución:** 5 (Atomicidad, prevención de duplicados y resiliencia transaccional)
 - **Componentes Afectados:**
-  - `backend/accounting-service/Code.gs` (`importDataWithColumnMapping`, `recordCashBankMovement`)
-  - `backend/academic-service/Code.gs` (`saveDailyAttendance`, `saveClassAttendance`)
+  - `backend/accounting-service/Code.gs` (`importDataWithColumnMapping`, `executeAtomicImportBatch`)
+  - `backend/academic-service/Code.gs`
   - `LockService`
+  - Hoja de Cálculo: `AuditoriaMigraciones`, `RegistroOperacionesImportacion`
 - **Subcapacidades Relacionadas:** F37-09, F37-10.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_37_AISLAMIENTO_DATOS_ASIGNACION_DEPARTAMENTOS.md` / Sección C (F37-09) y Matriz CAR-F37-09.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_37_AISLAMIENTO_DATOS_ASIGNACION_DEPARTAMENTOS.md` / Sección C (F37-09, F37-10), Matriz CAR-F37-09 y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  Cuando dos procesos (ej. una importación masiva de Secretaría y un registro de pagos de Contabilidad) operan simultáneamente sobre hojas que comparten identificadores institucionales, la falta de aislamiento y de claves de idempotencia puede provocar registros duplicados, bloqueos o sobreescritura de celdas.
+  `LockService` serializa las importaciones simultáneas, pero el importador todavía genera duplicados cuando se repite una importación completada. Además, una interrupción durante una escritura puede dejar registros parciales o inconsistentes sin que exista un mecanismo de recuperación o compensación.
 - **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Serialización con LockService por dominio:*
-     - Implementar secciones críticas con `LockService.getScriptLock()` específicas para cada dominio de escritura, evitando bloqueos cruzados innecesarios entre departamentos independientes.
-     - Asignar claves de idempotencia compuestas (`departamento + entidad + operacionId`), de modo que reintentos de red no dupliquen asientos contables ni registros de asistencia.
-  2. *Auditoría estructurada en RegistroEventos:*
-     - Auditar en `RegistroEventos` cada cruce de datos interdepartamental con `moduloOrigen`, `moduloDestino`, `entidad`, `registroId`, `usuarioId` y `resultado`.
+  1. *Claves de idempotencia compuestas y huella de archivo:*
+     - Asignar a cada importación confirmada un identificador único de operación y una clave de idempotencia compuesta por: `departamento + entidad + operacionId + hashContenidoArchivo`.
+     - Si se reintenta la misma operación con el mismo archivo, devolver el resultado previo sin repetir las escrituras.
+     - Si se reutiliza la misma clave con contenido diferente, rechazar la operación por inconsistencia.
+  2. *Registro persistente de estados y recuperación de parciales:*
+     - Registrar en la hoja `RegistroOperacionesImportacion`: estado de la operación (`Preparada`, `Validada`, `En Ejecución`, `Completada`, `Completada Parcialmente`, `Fallida`, `Pendiente de Recuperación`).
+     - Ante interrupciones de red o cuotas de tiempo, registrar con exactitud qué filas se guardaron y cuáles quedaron pendientes.
+     - Permitir reanudar la importación completando únicamente los registros faltantes sin duplicar los ya confirmados.
+     - Proteger secciones críticas con `LockService` delimitando con precisión la sección de escritura por lotes.
 - **Criterios de Aceptación:**
-  - [ ] Dos importaciones concurrentes de departamentos distintos se ejecutan sin mezclar destinos ni registros.
-  - [ ] Reintentar una operación ya confirmada devuelve el resultado previo sin duplicar transacciones.
-  - [ ] Toda operación interdepartamental genera un registro auditable e inmutable en `RegistroEventos`.
-- **Dependencias:** F37-Task01.
+  - [ ] Ejecutar dos veces una importación con la misma clave y contenido crea registros una sola vez.
+  - [ ] Reutilizar una clave de importación con contenido modificado es rechazado.
+  - [ ] Dos importaciones concurrentes del mismo archivo no generan duplicados.
+  - [ ] Interrumpir la operación tras una escritura parcial deja el estado como "Pendiente de Recuperación".
+  - [ ] Reintentar la operación interrumpida no duplica las filas confirmadas y completa el lote.
+- **Dependencias:** F37-Task01, F37-Task02, F37-Task04.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F37-Task05] [P1] Herramienta de diagnóstico de coherencia departamental y registros desalineados
+### [F37-Task06] [P1] Diagnóstico de coherencia departamental y detección de registros desalineados
 - **Prioridad:** P1 (Alta / Importante)
-- **Orden de Ejecución:** 5 (Supervisión y reconciliación de datos)
+- **Orden de Ejecución:** 6 (Supervisión proactiva e integridad interdepartamental)
 - **Componentes Afectados:**
-  - `backend/accounting-service/Code.gs` (`diagnoseCrossDepartmentalCoherence`, `reconcileMisalignedRecord`)
+  - `backend/accounting-service/Code.gs` (`diagnoseCrossDepartmentalCoherence`)
   - `backend/developer-service/Code.gs`
   - Hoja de Cálculo: `AuditoriaCoherenciaDepartamental`
 - **Subcapacidades Relacionadas:** F37-11, F37-12.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_37_AISLAMIENTO_DATOS_ASIGNACION_DEPARTAMENTOS.md` / Sección C (F37-12) y Matriz CAR-F37-12.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_37_AISLAMIENTO_DATOS_ASIGNACION_DEPARTAMENTOS.md` / Sección C (F37-12), Matriz CAR-F37-12 y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  Si un error del pasado o una importación truncada escribió un registro en una hoja equivocada o dejó pagos sin matrícula válida, el sistema carece de un diagnóstico automático que alerte al administrador, manteniendo inconsistencias silenciosas en los informes de gestión.
+  No existe una herramienta que permita detectar sistemáticamente registros guardados en destinos incorrectos, relaciones huérfanas o inconsistencias entre el departamento propietario de una entidad y su ubicación real. La detección depende de hallazgos manuales fortuitos.
 - **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Diagnóstico automatizado de integridad interdepartamental:*
-     - Implementar `diagnoseCrossDepartmentalCoherence(payload)` accesible por Director/Admin que examine:
-       * Pagos en `CargosEstudiante` que apunten a matrículas o estudiantes inexistentes.
-       * Registros cuyo departamento propietario no coincida con el dominio de la hoja receptora.
-       * Referencias cruzadas huérfanas o duplicadas.
-  2. *Reconciliación asistida y trazable:*
-     - Ofrecer función `reconcileMisalignedRecord(payload)` que permita reasignar o subsanar la referencia bajo autorización explícita, conservando el identificador y auditando el motivo en bitácora.
+  1. *Motor automatizado de diagnóstico de coherencia:*
+     - Implementar `diagnoseCrossDepartmentalCoherence(payload)` que compare las asignaciones declaradas con la ubicación real de los registros:
+       * Registros ubicados en un departamento o módulo diferente al propietario.
+       * Registros almacenados en destinos no registrados o inactivos.
+       * Entidades duplicadas entre fuentes supuestamente independientes.
+       * Registros sin identificadores institucionales válidos.
+       * Referencias foráneas a entidades inexistentes o en ámbitos institucionales incorrectos.
+       * Operaciones de importación cuyo estado no coincida con los datos persistidos.
+     - Ejecutar filtros por departamento, módulo, entidad, sede y año lectivo.
+  2. *Reporte estructurado y no destructivo:*
+     - El diagnóstico debe ser estrictamente no destructivo (solo lectura); encontrar anomalías no debe modificar ni borrar registros automáticamente.
+     - Diferenciar errores confirmados de posibles inconsistencias sujetas a revisión.
+     - Mostrar totales por categoría, nivel de gravedad y detalle del registro afectado.
 - **Criterios de Aceptación:**
-  - [ ] El diagnóstico detecta y lista todas las referencias foráneas huérfanas entre departamentos.
-  - [ ] La reconciliación requiere autorización de rol directivo y audita la acción.
-  - [ ] Los reportes distinguen operaciones consistentes de anomalías detectadas.
-- **Dependencias:** F37-Task03, F37-Task04.
+  - [ ] Un registro de prueba en un destino incompatible es identificado de inmediato por el diagnóstico.
+  - [ ] Referencias huérfanas a matrículas o estudiantes inexistentes se detectan y catalogan.
+  - [ ] Ejecutar el diagnóstico no modifica ninguna celda de negocio ni expone datos confidenciales ajenos al rol.
+  - [ ] Las excepciones autorizadas e identificadores históricos no se marcan falsamente como errores.
+- **Dependencias:** F37-Task01, F37-Task04, F37-Task05.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F37-Task06] [P1] Consola de administración de destinos, fuentes y relaciones interdepartamentales
+### [F37-Task07] [P1] Consola administrativa de destinos, fuentes y relaciones interdepartamentales
 - **Prioridad:** P1 (Alta / Importante)
-- **Orden de Ejecución:** 6 (Gobernanza y administración de fuentes en panel de control)
+- **Orden de Ejecución:** 7 (Gobernanza y administración de fuentes en panel de control)
 - **Componentes Afectados:**
   - `dashboard-direccion.html`, `js/config.js`
-  - `backend/accounting-service/Code.gs` (`getSpreadsheetCatalog`, `registerSpreadsheetSource`)
-  - Hoja de Cálculo: `CatalogoSpreadsheets`, `ConfiguracionEnrutamientoDestinos`
+  - `backend/accounting-service/Code.gs` (`getSpreadsheetCatalog`, `registerSpreadsheetSource`, `saveDepartmentalRelationship`)
+  - Hoja de Cálculo: `CatalogoSpreadsheets`, `CatalogoRelacionesInterdepartamentales`, `CatalogoProyeccionesCompartidas`
 - **Subcapacidades Relacionadas:** F37-11.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_37_AISLAMIENTO_DATOS_ASIGNACION_DEPARTAMENTOS.md` / Sección C (F37-11) y Matriz CAR-F37-11.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_37_AISLAMIENTO_DATOS_ASIGNACION_DEPARTAMENTOS.md` / Sección C (F37-11), Matriz CAR-F37-11 y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  La configuración de hojas distribuidas en `CatalogoSpreadsheets` se administra mediante llamadas directas o edición manual de celdas. Dirección no dispone de una vista centralizada donde supervisar qué hojas corresponden a cada departamento y año lectivo.
+  La plataforma dispone de `CatalogoSpreadsheets`, pero no de una consola unificada para administrar qué departamentos pueden utilizar qué entidades, qué campos pueden compartir y qué relaciones están autorizadas. La gestión se realiza mediante llamadas directas o edición manual de celdas por personal técnico.
 - **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Interfaz visual de supervisión de fuentes:*
-     - Crear panel en el dashboard directivo que muestre las fuentes registradas en `CatalogoSpreadsheets`, su dominio (`Secretaria`, `Contabilidad`, `Academico`), estado (`active` / `inactive`), versión de esquema y año lectivo.
-     - Permitir activar o desactivar destinos operativos sin eliminar registros históricos.
-  2. *Control de cambios con confirmación:*
-     - Exigir confirmación administrativa para registrar nuevos destinos o modificar URLs de acceso de hojas departamentales.
+  1. *Consola de administración integral en panel directivo:*
+     - Proveer interfaz en el dashboard de Dirección y Configuración para:
+       * *Departamentos y Módulos:* Visualizar áreas registradas, estado y entidades propietarias.
+       * *Destinos y Fuentes:* Supervisar hojas registradas en `CatalogoSpreadsheets`, año lectivo, sede y estado activo/inactivo.
+       * *Relaciones Interdepartamentales:* Consultar y configurar qué departamentos pueden relacionar entidades ajenas y con qué propósito.
+       * *Proyecciones de Datos:* Seleccionar los campos autorizados que puede recibir cada departamento consumidor.
+  2. *Gobernanza y seguridad de configuración:*
+     - Restringir la administración exclusivamente a roles directivos autorizados.
+     - Advertir sobre dependencias operativas activas antes de desactivar una fuente o relación utilizada.
+     - Registrar en bitácora cada modificación con usuario, fecha, valor anterior y nuevo.
 - **Criterios de Aceptación:**
-  - [ ] El panel directivo visualiza el catálogo completo de hojas departamentales y su estado.
-  - [ ] Desactivar un destino impide nuevas operaciones de escritura en esa hoja sin borrar su historial.
-  - [ ] Todo cambio en la asignación de fuentes queda registrado con responsable y fecha.
-- **Dependencias:** `getSpreadsheetCatalog`.
+  - [ ] La consola muestra con claridad las fuentes, relaciones y proyecciones configuradas.
+  - [ ] Registrar un nuevo destino válido lo deja disponible de inmediato sin alterar los existentes.
+  - [ ] Desactivar un destino bloquea nuevas escrituras sin borrar los registros históricos.
+  - [ ] Modificar una proyección aplica de inmediato la nueva máscara de atributos en consultas posteriores.
+  - [ ] Los usuarios sin permisos administrativos no pueden acceder ni modificar las configuraciones.
+- **Dependencias:** F37-Task01, F37-Task03, F37-Task04.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F37-Task08] [P1] Reasignación asistida y recuperación de registros almacenados en destinos incorrectos
+- **Prioridad:** P1 (Alta / Importante)
+- **Orden de Ejecución:** 8 (Saneamiento asistido y reconciliación de datos mal ubicados)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`reconcileMisalignedRecord`, `executeAssistedReassignment`)
+  - `backend/developer-service/Code.gs`
+  - Hoja de Cálculo: `RegistroEventos`, `AuditoriaCoherenciaDepartamental`
+- **Subcapacidades Relacionadas:** F37-12.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_37_AISLAMIENTO_DATOS_ASIGNACION_DEPARTAMENTOS.md` / Sección C (F37-12), Matriz CAR-F37-12 y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  No existe una herramienta para corregir de forma controlada registros que hayan terminado en una hoja o fuente incorrecta. Aunque el diagnóstico detecte el problema, se carece de un procedimiento seguro para transferir esos registros sin perder identificadores, relaciones financieras o referencias académicas.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Procedimiento de reasignación asistida:*
+     - A partir de los hallazgos del diagnóstico (F37-Task06), permitir seleccionar registros mal ubicados y mostrar: ubicación actual, departamento propietario, destino correcto, ID institucional y relaciones dependientes.
+     - Validar el destino mediante el mecanismo de enrutamiento central y verificar que el usuario tenga autorización.
+     - Comprobar que el registro no exista ya en el destino receptor (evitar fusiones arbitrarias en caso de conflicto).
+     - Conservar exactamente el identificador institucional inmutable y las relaciones con matrículas y pagos.
+  2. *Previsualización y atomicidad:*
+     - Exigir previsualización antes de confirmar la reasignación, permitiendo cancelar sin efectos.
+     - Operación idempotente: si se interrumpe, permitir reanudación sin duplicar registros.
+     - Auditar en `RegistroEventos` el movimiento con ubicación previa, nueva, responsable y justificación.
+- **Criterios de Aceptación:**
+  - [ ] Seleccionar un registro mal ubicado muestra su destino actual y el esperado con sus dependencias.
+  - [ ] La reasignación traslada el registro a la hoja correcta conservando intacto su identificador institucional.
+  - [ ] Las relaciones con pagos o matrículas permanecen válidas y consultables tras el traslado.
+  - [ ] Si existe colisión o duplicado en el destino, la operación se detiene y solicita resolución explícita.
+  - [ ] Toda reasignación asistida queda registrada con trazabilidad completa en la bitácora central.
+- **Dependencias:** F37-Task01, F37-Task04, F37-Task05, F37-Task06.
 - **Estado:** [ ] Pendiente
 
 ---
