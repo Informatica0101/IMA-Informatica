@@ -7807,3 +7807,922 @@
 - **Estado:** [ ] Pendiente
 
 ---
+## FASE 25 — INTEGRACIONES EXTERNAS Y COMPATIBILIDAD INSTITUCIONAL
+
+### P0 — PRIORIDAD CRÍTICA
+
+### [F25-Task01] [P0] [Catálogo de Integraciones - Catálogo Unificado de Integraciones Externas]
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs`
+  - `backend/user-service/Code.gs`
+  - `backend/developer-service/Code.gs`
+  - Hojas `IntegracionesPasarelas`, `CatalogoSpreadsheets`, `CatalogoIntegracionesExternas`
+- **Estado de Partida:** Implementación parcial.
+- **Dependencias Expuestas:** Ninguna obligatoria para crear el catálogo. La incorporación de cada conector depende de su registro y configuración existentes.
+- **Capacidades Relacionadas:** F25-001, F25-016, F25-018.
+- **Problema que Resuelve:**
+  La configuración de integraciones se encuentra distribuida en diferentes registros y servicios. No existe una vista centralizada que permita conocer todas las conexiones externas, sus responsables, permisos, dependencias, estado operativo y últimas ejecuciones.
+- **Requisitos Funcionales:**
+  1. Crear un catálogo unificado denominado `CatalogoIntegracionesExternas` que consolide las integraciones existentes sin duplicar sus configuraciones ni trasladar innecesariamente sus responsabilidades funcionales.
+  2. Registrar para cada integración, como mínimo:
+     - Identificador único de integración (`integracionId`).
+     - Nombre visible y descripción funcional.
+     - Categoría: archivos, hojas de cálculo, SACE, correo, calendario, pasarela de pago, API u otros conectores.
+     - Proveedor o sistema externo.
+     - Servicio interno que utiliza la integración.
+     - Responsable funcional y responsable técnico.
+     - Dirección del intercambio: entrada, salida o bidireccional.
+     - Operaciones admitidas: consultar, importar, exportar, actualizar, sincronizar o recibir notificaciones.
+     - Permisos requeridos (RBAC).
+     - Dependencias internas y externas.
+     - Referencia a la configuración específica del conector.
+     - Versión del conector y del contrato aplicable.
+     - Fecha de registro y última modificación.
+     - Última conexión y última operación satisfactoria.
+     - Estado de configuración y estado operativo.
+     - Resultado de la última ejecución.
+     - Indicador de disponibilidad de credenciales.
+     - Documentación o instrucciones de configuración.
+  3. Distinguir claramente estos estados de integración:
+     - `No configurada`
+     - `Pendiente de autorización`
+     - `Configurada`
+     - `Conectada`
+     - `Activa`
+     - `Suspendida`
+     - `Desconectada`
+     - `Con errores`
+     - `Deshabilitada`
+  4. No considerar una integración operativa únicamente porque exista un registro de configuración.
+- **Administración y Permisos:**
+  - Administrador del Sistema: administrar todas las integraciones.
+  - Contabilidad: gestionar las conexiones financieras que tenga autorizadas.
+  - Dirección: consultar el estado general y las operaciones institucionales.
+  - Responsables técnicos: administrar las conexiones que tengan asignadas.
+  - Otros perfiles: utilizar únicamente las operaciones habilitadas para su rol.
+  - La autorización debe comprobarse en el servidor, no únicamente ocultando opciones en la interfaz.
+- **Cambios Necesarios:**
+  1. Crear el registro centralizado de integraciones en hoja `CatalogoIntegracionesExternas`.
+  2. Incorporar las integraciones existentes de pasarelas, Google Sheets, correo y SACE mediante referencias a sus configuraciones actuales.
+  3. Relacionar los registros del catálogo con los conectores y contratos correspondientes.
+  4. Implementar consultas centralizadas del estado (`getIntegrationsCatalog`).
+  5. Incorporar una interfaz administrativa para consultar, filtrar y administrar integraciones.
+  6. Permitir activar, suspender o deshabilitar una integración sin eliminar su historial.
+  7. Registrar cambios de responsables, permisos y configuración.
+  8. Evitar que el catálogo mantenga copias independientes de credenciales o configuraciones que ya tienen un almacenamiento propio.
+- **Comportamiento Esperado:**
+  Al ingresar al área de integraciones, los usuarios autorizados deben poder consultar todas las conexiones disponibles y conocer cuáles funcionan, cuáles requieren autorización y cuáles presentan errores.
+  Al seleccionar una integración, deben poder consultar sus operaciones, dependencias, responsables, historial y estado de conexión.
+- **Criterios de Aceptación:**
+  - [ ] Todas las integraciones identificadas en la auditoría aparecen en el catálogo.
+  - [ ] Cada integración tiene un identificador único e inequívoco.
+  - [ ] Las configuraciones existentes siguen funcionando después de incorporarse al catálogo.
+  - [ ] El catálogo permite diferenciar configuración, autorización, conexión y operación satisfactoria.
+  - [ ] Una integración deshabilitada no puede ejecutar operaciones ni peticiones.
+  - [ ] Los cambios administrativos quedan registrados en auditoría.
+  - [ ] Un usuario sin privilegios no puede modificar integraciones (rechazo 403 Forbidden).
+  - [ ] La suspensión de una integración no elimina su configuración ni su historial.
+  - [ ] Los errores de conexión se reflejan en el estado operativo sin exponer secretos.
+  - [ ] No existen registros duplicados que representen la misma integración.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F25-Task02] [P0] [Mapeo de Columnas - Persistencia y Administración de Perfiles de Mapeo de Importación]
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs`
+  - Hojas `AuditoriaMigraciones`, `PerfilesMapeoColumnas`
+  - `js/ui-common.js`
+- **Estado de Partida:** Implementación parcial.
+- **Dependencias Expuestas:** F25-002 y F25-005. Reutiliza el importador (`importDataWithColumnMapping`) y la vista previa (`validateImportPreview`).
+- **Capacidades Relacionadas:** F25-003, F25-002, F25-005.
+- **Problema que Resuelve:**
+  Actualmente, el mapeo de columnas se proporciona mediante un objeto JSON en cada operación. Aunque permite importar información con diferentes estructuras, obliga a configurar nuevamente las correspondencias para las importaciones recurrentes. Esto dificulta reutilizar configuraciones entre ciclos académicos, procesos de matrícula, migraciones y actualizaciones de expedientes.
+- **Requisitos Funcionales:**
+  1. Crear una estructura persistente denominada `PerfilesMapeoColumnas`.
+  2. Registrar en cada perfil:
+     - Identificador único (`perfilMapeoId`).
+     - Nombre descriptivo.
+     - Descripción funcional.
+     - Tipo de importación (Matrícula, Calificaciones, Expedientes, Pagos).
+     - Entidad interna de destino.
+     - Formato de archivo compatible (CSV, XLSX).
+     - Fuente de datos, cuando corresponda.
+     - Configuración de columnas (JSON estructurado).
+     - Campo interno asociado a cada columna externa.
+     - Reglas de transformación aplicables.
+     - Formatos de fecha y números esperados.
+     - Campos obligatorios.
+     - Valores predeterminados permitidos.
+     - Reglas de normalización.
+     - Identificador primario utilizado para reconocer registros.
+     - Política de actualización de registros existentes.
+     - Versión del perfil.
+     - Responsable y permisos de utilización.
+     - Fecha de creación y modificación.
+     - Estado: activo, inactivo u obsoleto.
+  3. Configuración individual de correspondencias:
+     - Identidad → Identificador del estudiante (Normalización de espacios y separadores).
+     - Nombres → Nombres (Texto).
+     - Apellidos → Apellidos (Texto).
+     - Fecha Nacimiento → Fecha de nacimiento (Conversión de formato).
+     - Grado → Grado académico (Resolución contra catálogo institucional).
+     - Sección → Sección académica (Resolución según grado).
+     - Correo → Correo electrónico (Validación de formato).
+  4. Transformaciones controladas admitidas:
+     - Eliminar espacios innecesarios (trim).
+     - Normalizar mayúsculas y minúsculas.
+     - Convertir fechas a formato ISO.
+     - Normalizar identificadores oficiales.
+     - Convertir valores equivalentes.
+     - Resolver valores externos contra catálogos internos.
+     - Aplicar valores predeterminados cuando la regla lo permita.
+     - No permitir transformaciones que alteren silenciosamente identificadores o información sensible.
+  5. Reutilización y administración:
+     - Permitir guardar un perfil desde el proceso de importación.
+     - Permitir seleccionar un perfil guardado antes de cargar un archivo.
+     - Permitir modificar correspondencias antes de confirmar.
+     - Permitir duplicar un perfil para crear variantes.
+     - Permitir desactivar perfiles obsoletos sin borrar historiales.
+     - Permitir perfiles privados y compartidos por rol.
+     - Detectar diferencias en encabezados y solicitar ajustes cuando no sea seguro aplicarlo.
+  6. Compatibilidad de versiones:
+     - El perfil debe conservar su versión y las estructuras internas para las que fue diseñado.
+     - Si cambian los campos internos, marcar perfiles incompatibles y solicitar migración sin aplicarlos automáticamente.
+- **Cambios Necesarios:**
+  1. Crear hoja `PerfilesMapeoColumnas`.
+  2. Implementar funciones en backend (`saveMappingProfile`, `getMappingProfiles`, `deleteMappingProfile`).
+  3. Integrar la selección de perfiles en el flujo existente de importación en frontend.
+  4. Incorporar detección automática de encabezados y sugerencias de correspondencia.
+  5. Integrar las reglas de transformación con `validateImportPreview`.
+  6. Registrar el perfil y su versión en `AuditoriaMigraciones`.
+  7. Incorporar controles de permisos y propiedad sobre los perfiles.
+- **Comportamiento Esperado:**
+  Un usuario autorizado debe poder configurar una importación una sola vez, guardar el mapeo y reutilizarlo posteriormente.
+  Cuando se cargue un archivo compatible, el sistema debe recuperar las correspondencias y mostrar una vista previa. Si detecta columnas nuevas, ausentes o incompatibles, debe advertirlo antes de permitir la confirmación.
+- **Criterios de Aceptación:**
+  - [ ] Crear y guardar un perfil de mapeo con todas sus reglas.
+  - [ ] Cerrar el proceso y recuperar el perfil posteriormente desde el catálogo.
+  - [ ] Aplicar el perfil a un archivo con la misma estructura y verificar carga exitosa.
+  - [ ] Comprobar que las correspondencias se recuperan correctamente.
+  - [ ] Probar un archivo con columnas en distinto orden y verificar mapeo exacto por nombre.
+  - [ ] Probar un archivo con encabezados modificados y verificar advertencias.
+  - [ ] Comprobar que las columnas obligatorias sin correspondencia bloquean la importación.
+  - [ ] Verificar que las transformaciones se aplican antes de la validación definitiva.
+  - [ ] Comprobar que un perfil incompatible no se utiliza silenciosamente.
+  - [ ] Verificar que los cambios estructurales generan una nueva versión secuencial del perfil.
+  - [ ] Comprobar que las importaciones anteriores conservan la versión de perfil utilizada.
+  - [ ] Verificar que los usuarios no pueden modificar perfiles fuera de sus permisos autorizados.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F25-Task03] [P0] [Validación de Datos - Detección Avanzada de Duplicados e Integridad Referencial]
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - Hojas `AuditoriaMigraciones`, `Matriculas`, `ExpedientesEstudiantes`, `Usuarios`
+- **Estado de Partida:** Implementación parcial.
+- **Dependencias Expuestas:** F25-002, F25-003 y F25-005. Reutiliza el importador y la vista previa.
+- **Capacidades Relacionadas:** F25-004, F25-002, F25-005.
+- **Problema que Resuelve:**
+  La validación actual comprueba la presencia de un identificador obligatorio, pero no ofrece una detección suficientemente completa de colisiones por identidad, correo y otras referencias. Una importación puede contener estudiantes ya registrados, registros repetidos dentro del propio archivo o referencias a entidades académicas inexistentes.
+- **Requisitos Funcionales:**
+  1. Ampliar el proceso de validación previa para identificar coincidencias y conflictos antes de escribir información.
+  2. Criterios de identificación según entidad:
+     - Para estudiantes: identificador institucional, número de identidad (DNI), identificador externo, correo electrónico y combinaciones de campos.
+     - Para docentes y usuarios: identificador institucional/laboral, correo electrónico, identificador externo y claves únicas.
+     - No utilizar únicamente nombres y apellidos para fusionar registros.
+  3. Clasificación estricta de coincidencias:
+     - `Nuevo`
+     - `Coincidencia exacta con un registro existente`
+     - `Posible duplicado`
+     - `Duplicado dentro del archivo`
+     - `Conflicto entre identificadores`
+     - `Registro incompleto`
+     - `Registro con referencias inválidas`
+     - `Registro apto para actualización`
+  4. Mostrar qué campos produjeron la coincidencia en la vista previa.
+  5. Políticas de tratamiento configurables por tipo de importación:
+     - Crear únicamente registros nuevos.
+     - Omitir registros existentes.
+     - Actualizar campos autorizados.
+     - Reemplazar campos seleccionados.
+     - Enviar coincidencias ambiguas a revisión manual.
+     - Rechazar registros que presenten conflictos.
+     - No sobrescribir datos existentes por campos vacíos en el archivo importado.
+  6. Validación de integridad referencial:
+     - Grado académico existente y activo.
+     - Sección perteneciente al grado indicado.
+     - Período lectivo válido.
+     - Asignatura perteneciente a la estructura curricular correspondiente.
+     - Docente registrado y habilitado.
+     - Responsable vinculado al expediente correcto.
+     - Identificar referencias no resueltas antes de confirmar la importación.
+- **Cambios Necesarios:**
+  1. Ampliar la validación previa (`validateImportPreview`) para detectar colisiones en registros internos.
+  2. Incorporar búsqueda de colisiones por identificadores, DNI y correo electrónico.
+  3. Normalizar valores antes de compararlos (eliminación de guiones, espacios, mayúsculas).
+  4. Implementar reglas de coincidencia por entidad.
+  5. Incorporar políticas de creación, omisión y actualización.
+  6. Incorporar validaciones de referencias académicas y administrativas.
+  7. Integrar los resultados con la vista previa tabular.
+  8. Registrar las coincidencias y decisiones en `AuditoriaMigraciones`.
+- **Comportamiento Esperado:**
+  La vista previa debe informar cuántos registros son nuevos, cuántos coinciden con registros existentes, cuántos presentan posibles duplicados y cuántos contienen referencias inválidas.
+  Los casos ambiguos deben requerir una decisión explícita. El sistema no debe fusionar automáticamente expedientes cuando no exista certeza suficiente.
+- **Criterios de Aceptación:**
+  - [ ] Importar un registro nuevo y comprobar que se clasifica correctamente como nuevo.
+  - [ ] Importar nuevamente el mismo registro y comprobar que no se duplica en el sistema.
+  - [ ] Probar dos registros con el mismo nombre y diferentes identificadores sin fusionarlos.
+  - [ ] Probar dos registros con el mismo identificador y nombres diferentes detectando conflicto.
+  - [ ] Probar coincidencias por correo electrónico.
+  - [ ] Probar identificadores con espacios, guiones y diferencias de formato verificando normalización.
+  - [ ] Detectar duplicados que ocurran dentro del mismo archivo cargado.
+  - [ ] Probar referencias a grados, secciones y asignaturas inexistentes y comprobar bloqueo.
+  - [ ] Comprobar que las coincidencias ambiguas requieren revisión manual obligatoria.
+  - [ ] Verificar que los campos vacíos no eliminan información existente sin una regla expresa.
+  - [ ] Comprobar que un registro rechazado no modifica el expediente original.
+  - [ ] Verificar que todas las decisiones quedan registradas en `AuditoriaMigraciones`.
+- **Estado:** [ ] Pendiente
+
+---
+
+### P1 — PRIORIDAD ALTA
+
+### [F25-Task04] [P1] [Pasarelas de Pago - Recepción Autenticada de Webhooks de Pasarelas de Pago]
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs`
+  - Hojas `IntegracionesPasarelas`, `EventosWebhooksPasarelas`, `MovimientosCajaBancos`, `CargosEstudiante`
+- **Estado de Partida:** Implementación parcial.
+- **Dependencias Expuestas:** Configuración de pasarelas existente (`configureGatewayIntegration`), seguridad HMAC, contratos API y modelo de cuentas por cobrar.
+- **Capacidades Relacionadas:** F25-011, F25-015, F25-016.
+- **Problema que Resuelve:**
+  La plataforma permite configurar pasarelas y realizar pruebas sintéticas de conexión, pero no dispone de un mecanismo completo para recibir y procesar notificaciones asíncronas de los proveedores. Sin esta capacidad, una transacción puede completarse en el proveedor externo sin que la plataforma reciba y procese automáticamente su resultado.
+- **Requisitos Funcionales:**
+  1. Implementar un receptor de eventos externos (`handlePaymentGatewayWebhook`) para procesar notificaciones de las pasarelas configuradas.
+  2. Adaptador específico por proveedor (tarjetas, transferencias bancarias, pasarelas locales e internacionales).
+  3. Recepción de eventos:
+     - Recibir solicitudes HTTP POST del proveedor externo.
+     - Identificar la pasarela de origen mediante endpoint o payload.
+     - Identificar el tipo de evento (`payment.succeeded`, `payment.failed`, `charge.refunded`).
+     - Identificar la transacción externa única.
+     - Validar la autenticidad del mensaje.
+     - Interpretar su contenido y registrar la recepción.
+     - Determinar si el evento ya fue procesado previamente.
+     - Enviar el evento a procesamiento financiero seguro.
+  4. Validación de autenticidad:
+     - Verificar firmas criptográficas (HMAC-SHA256 / RSA) según especificación del proveedor.
+     - Validar secretos o tokens de autenticación compartidos.
+     - Comprobar los encabezados requeridos (Timestamp, Signature).
+     - Validar la integridad del contenido recibido.
+     - Verificar correspondencia con la integración registrada en `IntegracionesPasarelas`.
+     - No utilizar una simple comparación de parámetros del cliente como confirmación de pago.
+  5. Idempotencia obligatoria:
+     - Cada evento debe tener una referencia externa única o clave de idempotencia.
+     - Evitar doble registro de pago, doble aplicación a cuentas por cobrar, doble actualización de saldo, doble notificación o doble asiento contable.
+  6. Procesamiento financiero:
+     - Relacionar transacción externa con referencia de pago interna y estudiante/responsable.
+     - Validar importe, moneda y fecha efectiva.
+     - Distinguir estados: `Pendiente`, `Confirmado`, `Rechazado`, `Cancelado`, `Reembolsado`, `En disputa`, `Pendiente de conciliación`.
+     - No considerar pago confirmado hasta superar validaciones de autenticidad, importe y estado.
+  7. Reintentos y eventos fuera de orden:
+     - Manejar reenvíos del proveedor sin duplicar operaciones.
+     - Manejar eventos recibidos fuera de orden o incompletos.
+     - Conservar todos los eventos recibidos en `EventosWebhooksPasarelas` para auditoría y recuperación.
+- **Cambios Necesarios:**
+  1. Incorporar la recepción de webhooks en `doPost` de `accounting-service`.
+  2. Implementar un adaptador para cada proveedor soportado.
+  3. Incorporar verificación de firmas criptográficas.
+  4. Crear hoja `EventosWebhooksPasarelas` para persistir eventos crudos.
+  5. Implementar control de idempotencia estricto por `transaccionExternaId`.
+  6. Relacionar eventos con cargos en `CargosEstudiante`.
+  7. Incorporar validación de importe, moneda y referencia antes de liquidar.
+  8. Registrar movimientos financieros confirmados en `MovimientosCajaBancos`.
+  9. Incorporar estados de procesamiento y cola de recuperación.
+  10. Integrar el resultado con las herramientas de conciliación bancaria existentes.
+- **Comportamiento Esperado:**
+  Cuando una pasarela confirme una transacción, la plataforma debe recibir el evento, verificarlo, identificar la operación interna y actualizar su estado de manera controlada.
+  Si la notificación no puede verificarse o no coincide con la transacción esperada, debe quedar pendiente de revisión y no modificar los saldos financieros.
+- **Criterios de Aceptación:**
+  - [ ] Recibir un evento válido desde un entorno de pruebas de pasarela y procesarlo exitosamente.
+  - [ ] Rechazar inmediatamente peticiones con firma inválida o adulterada (401/403).
+  - [ ] Rechazar eventos correspondientes a una integración desconocida o deshabilitada.
+  - [ ] Repetir el mismo evento y comprobar que no se duplica el pago ni la liquidación de saldos.
+  - [ ] Probar importes y monedas diferentes a los registrados y verificar marcación como conflicto.
+  - [ ] Probar referencias inexistentes y comprobar encolamiento para revisión manual.
+  - [ ] Probar eventos de pago rechazado, cancelado y reembolsado actualizando el estado correspondiente.
+  - [ ] Probar eventos recibidos fuera de orden sin corromper la máquina de estados financiera.
+  - [ ] Interrumpir el procesamiento y verificar que el evento puede recuperarse desde la bitácora.
+  - [ ] Comprobar que la recepción no modifica saldos antes de validar íntegramente la transacción.
+  - [ ] Verificar que cada evento queda asociado a su transacción interna y comprobante.
+  - [ ] Comprobar que las operaciones financieras resultantes mantienen su trazabilidad contable.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F25-Task05] [P1] [Rendimiento y Volumen - Procesamiento Fraccionado de Importaciones Masivas]
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs`
+  - Hojas `AuditoriaMigraciones`, `BloquesImportacionLotes`
+  - Servicios de Google Apps Script
+- **Estado de Partida:** Requiere mejoras.
+- **Dependencias Expuestas:** F25-002, F25-003, F25-004, F25-005 y F25-015.
+- **Capacidades Relacionadas:** F25-019, F25-002, F25-005.
+- **Problema que Resuelve:**
+  Las importaciones se ejecutan dentro de una solicitud `doPost`. Los archivos con más de 1,000 registros pueden acercarse al límite de tiempo de ejecución de Apps Script (6 minutos), provocar interrupciones y dejar operaciones incompletas. La solución no debe limitarse a reducir la cantidad de filas admitidas, sino permitir procesar grandes importaciones mediante bloques controlados, con persistencia del avance y recuperación.
+- **Requisitos Funcionales:**
+  1. Implementar un mecanismo de procesamiento por lotes (`batch processing`).
+  2. Creación de la importación:
+     - Generar un identificador único de importación (`importacionId`).
+     - Registrar el archivo y su origen.
+     - Guardar el perfil de mapeo utilizado.
+     - Registrar la cantidad de registros detectados.
+     - Ejecutar la validación previa.
+     - Crear un resumen de registros válidos, inválidos y duplicados.
+     - Preparar los bloques de procesamiento.
+     - Conservar una referencia al archivo original o representación persistente para reanudar.
+  3. Procesamiento por bloques:
+     - Utilizar bloques configurables, con un tamaño inicial de referencia de 200 registros.
+     - El tamaño debe poder ajustarse según el tiempo real de procesamiento y límites de cuota.
+     - Cada bloque debe registrar: `importacionId`, número de bloque, rango de registros, cantidad procesada, cantidad correcta, cantidad fallida, fecha de inicio/fin, estado y último registro confirmado.
+  4. Continuación y recuperación:
+     - Si la ejecución termina por tiempo, cuota o fallo temporal, conservar el avance confirmado.
+     - Identificar los bloques pendientes.
+     - Reanudar desde el último punto seguro sin duplicar registros ya aplicados.
+     - Registrar el motivo de la interrupción.
+     - Permitir consultar el estado y avance de la importación.
+     - Evitar que dos ejecuciones procesen simultáneamente el mismo bloque con `LockService`.
+  5. Estados de importación:
+     - `Preparada`
+     - `Validando`
+     - `Pendiente de procesamiento`
+     - `En ejecución`
+     - `Completada`
+     - `Completada con errores`
+     - `Interrumpida`
+     - `Fallida`
+     - `Cancelada`
+- **Cambios Necesarios:**
+  1. Separar la preparación de una importación de su procesamiento definitivo en el backend.
+  2. Implementar almacenamiento persistente del estado de cada importación en `BloquesImportacionLotes`.
+  3. Dividir los registros en bloques de tamaño configurable.
+  4. Incorporar procesamiento reanudable mediante llamadas secuenciales o triggers.
+  5. Implementar protección frente a ejecuciones simultáneas con candados atómicos.
+  6. Incorporar control de idempotencia por registro individual.
+  7. Integrar el avance con `AuditoriaMigraciones`.
+  8. Incorporar endpoint de consulta de progreso (`getImportProgress`).
+  9. Permitir identificar y recuperar bloques fallidos.
+  10. Optimizar las operaciones de lectura y escritura para utilizar procesamiento por lotes.
+- **Comportamiento Esperado:**
+  Una importación grande debe poder continuar a través de varias ejecuciones sin exigir que todo el procesamiento termine dentro de una sola solicitud.
+  El usuario debe poder consultar el progreso y conocer cuántos registros se han procesado, cuántos faltan y cuántos presentan errores.
+  Una interrupción no debe provocar duplicación de registros ni pérdida del avance confirmado.
+- **Criterios de Aceptación:**
+  - [ ] Procesar exitosamente un archivo de 100 registros en un solo bloque.
+  - [ ] Procesar exitosamente un archivo de 1,000 registros fraccionado en bloques de 200.
+  - [ ] Procesar archivos de mayor volumen en un entorno controlado verificando estabilidad.
+  - [ ] Comprobar que los bloques se ejecutan en el orden secuencial esperado.
+  - [ ] Interrumpir deliberadamente una importación y verificar que puede reanudarse desde el último bloque completado.
+  - [ ] Repetir una solicitud de continuación y comprobar que no duplica registros ya importados.
+  - [ ] Intentar ejecutar dos procesos concurrentes sobre el mismo bloque y verificar la protección de exclusión mutua.
+  - [ ] Comprobar que los bloques completados conservan su estado inalterado.
+  - [ ] Verificar que los errores de un bloque no ocultan ni invalidan los resultados de los bloques exitosos.
+  - [ ] Comprobar que la importación termina con un resumen coherente de totales.
+  - [ ] Medir tiempos de ejecución y uso de cuotas confirmando márgenes de seguridad.
+  - [ ] Verificar que las operaciones no exceden los límites de ejecución sin una estrategia de continuación.
+  - [ ] Comprobar que una importación cancelada no continúa ejecutándose automáticamente.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F25-Task06] [P1] [Sincronización - Sincronización y Reconciliación de Información entre Sistemas]
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs`
+  - `backend/developer-service/Code.gs`
+  - Hojas `AuditoriaMigraciones`, `CatalogoSpreadsheets`, `SincronizacionFuentesLogs`
+- **Estado de Partida:** Implementación parcial.
+- **Dependencias Expuestas:** F25-001, F25-004, F25-007 y F25-015.
+- **Capacidades Relacionadas:** F25-014, F25-007, F25-015.
+- **Problema que Resuelve:**
+  La plataforma registra importaciones y operaciones, pero no dispone de un mecanismo completo de reconciliación bidireccional automática. La existencia de conexiones con fuentes externas no garantiza que los cambios realizados en ambos sistemas se mantengan consistentes.
+- **Requisitos Funcionales:**
+  1. Implementar un mecanismo de reconciliación que permita comparar los registros internos con los de una fuente externa autorizada.
+  2. Identificación persistente de registros:
+     - Identificador interno.
+     - Identificador externo.
+     - Fuente de origen.
+     - Fecha de última sincronización.
+     - Fecha de última modificación conocida.
+     - Estado de sincronización.
+     - Versión o referencia de la última operación.
+     - No utilizar el nombre del estudiante o de otra entidad como única referencia.
+  3. Comparación de datos:
+     - Identificar registros nuevos en el origen.
+     - Identificar registros nuevos en la plataforma.
+     - Identificar registros modificados.
+     - Identificar registros sin cambios.
+     - Identificar registros eliminados externamente.
+     - Identificar registros con conflictos.
+     - Identificar registros que no pueden asociarse.
+  4. Autoridad de los datos:
+     - Definir qué sistema tiene autoridad sobre cada campo configurable por entidad y campo.
+     - Ejemplo: la plataforma es fuente principal de expedientes; fuente externa es principal de cobros de banco; ciertos campos requieren actualización manual.
+  5. Resolución de conflictos:
+     - Detectar discrepancias e identificar el valor de cada fuente.
+     - Aplicar la regla de autoridad definida.
+     - Solicitar revisión manual cuando no exista una regla segura.
+     - Registrar la decisión en bitácora.
+     - La eliminación externa no debe borrar automáticamente un expediente interno; aplicar políticas de baja histórica y conservación.
+  6. Ejecución y recuperación:
+     - Permitir sincronización manual y programada autorizada.
+     - Registrar el último punto sincronizado (timestamp/token).
+     - Detectar cambios incrementales desde la última ejecución sin reprocesar registros sin cambios.
+     - Permitir reanudar operaciones interrumpidas.
+- **Cambios Necesarios:**
+  1. Definir identificadores externos persistentes en los esquemas de datos.
+  2. Incorporar hoja `SincronizacionFuentesLogs` para seguimiento de sincronizaciones.
+  3. Implementar función de comparación y detección de diferencias (`reconcileExternalSourceData`).
+  4. Incorporar reglas de autoridad por fuente y campo.
+  5. Implementar resolución de conflictos con cola de revisión manual.
+  6. Integrar los resultados con `AuditoriaMigraciones`.
+  7. Incorporar consultas de diferencias pendientes en la interfaz administrativa.
+  8. Incorporar mecanismos de sincronización incremental cuando el servicio externo los soporte.
+- **Comportamiento Esperado:**
+  La plataforma debe poder determinar qué información cambió, dónde cambió y qué acción corresponde ejecutar.
+  No debe sobrescribir datos internos de manera indiscriminada ni asumir que la información externa siempre es más reciente o más confiable.
+- **Criterios de Aceptación:**
+  - [ ] Sincronizar registros nuevos desde una fuente externa de forma fluida.
+  - [ ] Detectar modificaciones externas e incorporarlas según reglas de autoridad.
+  - [ ] Detectar modificaciones internas y no sobrescribirlas por error.
+  - [ ] Probar cambios simultáneos en ambos sistemas y verificar detección de conflicto.
+  - [ ] Verificar que los conflictos se resuelven según las reglas de autoridad configuradas.
+  - [ ] Probar registros eliminados externamente y verificar que se marcan para baja sin borrado físico.
+  - [ ] Comprobar que una sincronización repetida no genera registros duplicados.
+  - [ ] Interrumpir una sincronización y comprobar que puede reanudarse desde el último punto.
+  - [ ] Verificar que cada cambio conserva su fuente, fecha y usuario en auditoría.
+  - [ ] Comprobar que los registros pendientes de revisión se identifican y presentan en panel.
+  - [ ] Verificar que todas las operaciones quedan registradas en la bitácora.
+  - [ ] Comprobar que las fuentes sin permisos de escritura no reciben actualizaciones indebidas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### P2 — PRIORIDAD MEDIA
+
+### [F25-Task07] [P2] [Calendarios - Integración Externa con Calendarios Institucionales (Google Calendar / iCal)]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - Hoja `CalendarioInstitucional`
+- **Estado de Partida:** Implementación parcial.
+- **Dependencias Expuestas:** F25-001, F25-012, F25-014 y F25-015.
+- **Capacidades Relacionadas:** F25-010, F25-014.
+- **Problema que Resuelve:**
+  La plataforma dispone de un calendario institucional interno y detección de solapamientos, pero no ofrece sincronización bidireccional con calendarios externos.
+- **Requisitos Funcionales:**
+  1. Ampliar el calendario para permitir conexiones externas autorizadas (Google Calendar e intercambio iCalendar `.ics`).
+  2. Distinguir entre exportar un archivo `.ics`, importar eventos y mantener sincronización permanente.
+  3. Operaciones esperadas:
+     - Exportar eventos institucionales a formato estándar iCalendar (`.ics`).
+     - Importar eventos externos desde archivos `.ics`.
+     - Crear, actualizar y cancelar eventos en Google Calendar mediante APIs autorizadas.
+     - Consultar cambios y disponibilidad horaria.
+     - Identificar eventos duplicados mediante correlación de identificadores.
+     - Gestionar calendarios y permisos diferenciados.
+  4. Identificación y sincronización de eventos:
+     - Cada evento sincronizado debe conservar `eventoIdInterno`, `eventoIdExterno`, servicio de origen, calendario asociado, fecha de última sincronización y estado.
+     - Utilizar sincronización incremental mediante tokens cuando el servicio externo lo soporte.
+     - Si un token de sincronización se invalida, realizar una sincronización completa controlada.
+  5. Resolución de conflictos:
+     - Manejar eventos modificados internamente o externamente.
+     - Manejar cancelaciones y eliminaciones.
+     - Gestionar diferencias de zona horaria y eventos recurrentes.
+     - Conservar y aplicar la detección de solapamientos preexistente (`checkCalendarEventOverlap`) al importar eventos externos.
+  6. Seguridad: conexión con permisos específicos y revocables sin exponer calendarios ajenos.
+- **Cambios Necesarios:**
+  1. Incorporar conectores de calendario externos en `user-service`.
+  2. Implementar generador y parseador de archivos iCalendar (`.ics`).
+  3. Implementar integración con Google Calendar API cuando existan credenciales y autorización.
+  4. Relacionar eventos internos y externos en `CalendarioInstitucional`.
+  5. Incorporar sincronización incremental con tokens.
+  6. Integrar la detección de solapamientos existente.
+  7. Implementar resolución de conflictos horológicos.
+  8. Registrar sincronizaciones y errores en bitácora.
+- **Comportamiento Esperado:**
+  Los eventos institucionales autorizados deben poder intercambiarse con calendarios externos sin generar duplicados ni perder información.
+  Los cambios deben identificarse y procesarse conforme a la política de autoridad definida para cada calendario.
+- **Criterios de Aceptación:**
+  - [ ] Exportar eventos institucionales a un archivo `.ics` válido y compatible con clientes de correo.
+  - [ ] Importar un archivo `.ics` válido e incorporar los eventos al calendario interno.
+  - [ ] Probar eventos con diferentes zonas horarias verificando conversión correcta.
+  - [ ] Comprobar soporte para eventos recurrentes sin desfasajes de fecha.
+  - [ ] Conectar un calendario externo de pruebas y crear/actualizar eventos autorizados.
+  - [ ] Comprobar que los cambios externos se identifican y sincronizan en la plataforma.
+  - [ ] Verificar que los eventos no se duplican al repetir la sincronización.
+  - [ ] Probar conflictos entre cambios internos y externos aplicando la política de autoridad.
+  - [ ] Comprobar que se conservan intactas las reglas de detección de solapamientos.
+  - [ ] Revocar una conexión y verificar que las operaciones posteriores quedan bloqueadas.
+  - [ ] Comprobar la recuperación automática ante tokens de sincronización inválidos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F25-Task08] [P2] [Arquitectura de Conectores - Arquitectura Común de Conectores Externos]
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `backend/user-service/Code.gs`
+  - Hojas `CatalogoContratos`, `CatalogoServicios`, `CatalogoIntegracionesExternas`
+- **Estado de Partida:** Implementación parcial.
+- **Dependencias Expuestas:** F25-001, F25-015 y F25-016.
+- **Capacidades Relacionadas:** F25-012, F25-013, F25-016.
+- **Problema que Resuelve:**
+  Las integraciones están implementadas mediante controladores independientes en diferentes servicios. Aunque esto permite que funcionen por separado, puede producir diferencias en la gestión de credenciales, estados, errores, registros, versiones y operaciones comunes.
+- **Requisitos Funcionales:**
+  1. Establecer una estructura común de conectores que permita incorporar servicios externos sin repetir la lógica transversal.
+  2. Definir en cada conector:
+     - Identificador del conector.
+     - Proveedor y tipo de servicio.
+     - Versión del conector.
+     - Operaciones admitidas.
+     - Métodos de autenticación y autorización.
+     - Configuración necesaria y dependencias.
+     - Estados posibles.
+     - Formato de solicitudes y respuestas.
+     - Tratamiento de errores y estrategia de reintentos.
+     - Registro y trazabilidad de operaciones.
+  3. Operaciones comunes estandarizadas:
+     - Validar configuración.
+     - Probar conexión (`testConnection`).
+     - Consultar estado (`getStatus`).
+     - Ejecutar operación (`executeOperation`).
+     - Procesar respuesta y registrar resultado.
+     - Deshabilitar conexión y revocar autorización.
+  4. Separación de responsabilidades:
+     - Separar configuración, autenticación, transporte de red, transformación de datos, validación y trazabilidad.
+     - Los servicios funcionales deben seguir siendo responsables de sus reglas de negocio (ej. un conector de pago entrega una transacción validada, pero el servicio financiero aplica los asientos y saldos).
+- **Cambios Necesarios:**
+  1. Definir un contrato común para conectores en `developer-service`.
+  2. Identificar y modularizar la lógica repetida en los servicios existentes.
+  3. Separar la lógica transversal de la lógica específica de cada proveedor.
+  4. Adaptar progresivamente las integraciones existentes hacia el contrato común.
+  5. Relacionar conectores con `CatalogoIntegracionesExternas`.
+  6. Relacionar versiones con `CatalogoContratos`.
+  7. Centralizar el registro de operaciones y errores.
+- **Comportamiento Esperado:**
+  Los conectores deben operar con una estructura predecible y compartir los mecanismos comunes de configuración, seguridad, monitoreo y recuperación.
+  La incorporación de un nuevo proveedor no debe exigir duplicar los mecanismos de autenticación, registro o administración que ya existen.
+- **Criterios de Aceptación:**
+  - [ ] Identificar y abstraer las operaciones comunes entre los conectores existentes.
+  - [ ] Definir el contrato común de conectores en `CatalogoContratos`.
+  - [ ] Adaptar al menos un conector existente (ej. pasarela de pago o SACE) como implementación de referencia.
+  - [ ] Verificar que el conector adaptado conserva su comportamiento anterior sin regresiones.
+  - [ ] Comprobar que el catálogo puede identificar dinámicamente las capacidades del conector.
+  - [ ] Verificar que los errores se registran de manera uniforme en la bitácora central.
+  - [ ] Comprobar que las credenciales permanecen protegidas y aisladas.
+  - [ ] Verificar que un conector puede deshabilitarse sin afectar el funcionamiento de otros.
+  - [ ] Comprobar que los servicios funcionales conservan la totalidad de sus reglas de negocio.
+  - [ ] Verificar que agregar un nuevo conector no requiere duplicar la infraestructura transversal.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F25-Task09] [P2] [Optimización de E/S - Optimización de Lectura y Escritura por Lotes en Integraciones]
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs`
+  - `backend/developer-service/Code.gs`
+  - Funciones `batchSpreadsheetReadOperations`, `importDataWithColumnMapping`
+- **Estado de Partida:** Mejora complementaria sobre capacidades existentes.
+- **Dependencias Expuestas:** F25-005, F25-007 y F25-019.
+- **Capacidades Relacionadas:** F25-019, F25-007.
+- **Problema que Resuelve:**
+  Las operaciones de intercambio pueden generar múltiples lecturas y escrituras individuales. Esto incrementa el tiempo de ejecución, el consumo de cuotas y la probabilidad de fallos cuando se procesan grandes volúmenes.
+- **Requisitos Funcionales:**
+  1. Optimizar las operaciones de intercambio mediante:
+     - Lectura de rangos estrictamente necesarios.
+     - Escritura por bloques en memoria antes de persistir (`setValues` por lotes).
+     - Agrupación de solicitudes compatibles.
+     - Reducción de llamadas repetitivas a `SpreadsheetApp`.
+     - Control estricto de concurrencia mediante `LockService`.
+     - Control de tamaño de solicitudes y payloads.
+     - Reintentos ante errores temporales con retroceso exponencial (`exponential backoff` con `jitter`).
+     - Registro de operaciones fallidas con causa técnica.
+     - Validación de resultados después de escribir en disco.
+  2. Control de cuotas:
+     - Reconocer errores temporales y límites de consumo de servicios externos y Google APIs.
+     - Diferenciar límites de solicitudes, timeouts, servicio no disponible, errores de autorización y conflictos.
+     - Reintentar errores temporales con límites definidos y detener reintentos ante errores permanentes.
+- **Cambios Necesarios:**
+  1. Identificar operaciones individuales repetitivas en importaciones y exportaciones.
+  2. Agrupar lecturas y escrituras compatibles en matrices en memoria.
+  3. Reducir el volumen de información recuperada en consultas.
+  4. Implementar middleware de reintentos controlados con backoff.
+  5. Incorporar límites de concurrencia y tiempos máximos de espera.
+  6. Medir tiempos y cuotas antes y después de la optimización.
+  7. Registrar métricas de rendimiento en bitácora de auditoría.
+  8. Integrar las optimizaciones con el procesamiento fraccionado de importaciones.
+- **Comportamiento Esperado:**
+  Las operaciones deben procesar los mismos datos con menos llamadas innecesarias y con una recuperación más controlada ante límites o fallos temporales.
+- **Criterios de Aceptación:**
+  - [ ] Medir el rendimiento de una operación antes de optimizarla en tiempo y llamadas API.
+  - [ ] Ejecutar la misma operación mediante procesamiento agrupado y comparar resultados.
+  - [ ] Demostrar reducción en tiempos de ejecución y cantidad de llamadas `SpreadsheetApp`.
+  - [ ] Comprobar que los datos obtenidos y persistidos son 100% equivalentes a la operación original.
+  - [ ] Provocar un error temporal de cuota simulado y verificar el reintento exitoso con backoff.
+  - [ ] Comprobar que los errores permanentes no generan ciclos infinitos de reintento.
+  - [ ] Verificar que las operaciones agrupadas conservan la integridad absoluta de los datos.
+  - [ ] Comprobar que la concurrencia no produce escrituras conflictivas ni pérdida de filas.
+  - [ ] Registrar los resultados comparativos en las bitácoras de rendimiento.
+  - [ ] Verificar que las mejoras no introducen efectos secundarios ni regresiones en servicios existentes.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F25-Task10] [P2] [Trazabilidad - Ampliación de la Trazabilidad y Consulta del Historial de Operaciones]
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs`
+  - `backend/user-service/Code.gs`
+  - Hojas `AuditoriaMigraciones`, `RegistroEventos`, `HistorialOperacionesIntegracion`
+- **Estado de Partida:** Capacidad existente; ampliación y optimización.
+- **Dependencias Expuestas:** F25-001, F25-004, F25-005, F25-006, F25-011 y F25-014.
+- **Capacidades Relacionadas:** F25-018, F25-015, F25-001.
+- **Problema que Resuelve:**
+  La plataforma ya registra ejecuciones, errores y estados de importación. La mejora consiste en ofrecer trazabilidad más detallada y unificada de todas las operaciones externas, incluidas sincronizaciones, webhooks, exportaciones y conectores.
+- **Requisitos Funcionales:**
+  1. Registrar cada operación externa en hoja `HistorialOperacionesIntegracion` con:
+     - Identificador de ejecución (`ejecucionId`).
+     - Integración asociada (`integracionId`).
+     - Tipo de operación (Importación, Exportación, Webhook, Sincronización).
+     - Usuario o proceso automatizado responsable.
+     - Fecha y hora exacta ISO.
+     - Fuente de origen y destino.
+     - Perfil y versión de mapeo utilizado.
+     - Versión de plantilla o contrato aplicable.
+     - Cantidad total de registros.
+     - Cantidad de registros procesados con éxito.
+     - Cantidad de registros fallidos.
+     - Estado final de la operación.
+     - Duración en milisegundos.
+     - Errores y excepciones sanitizadas.
+     - Número de reintentos realizados.
+     - Referencia a operaciones relacionadas (`correlationId`).
+  2. Filtros de consulta en historial:
+     - Por integración.
+     - Por usuario responsable.
+     - Por rango de fechas.
+     - Por tipo de operación.
+     - Por estado final.
+     - Por identificador de ejecución.
+     - Por proveedor externo.
+     - Por tipo de error.
+  3. Detalle de ejecución: qué se intentó ejecutar, qué datos fueron procesados, qué registros fallaron y qué reintentos se realizaron.
+  4. Seguridad: no almacenar contraseñas, tokens, números de tarjetas ni información personal sensible innecesaria en los registros de auditoría.
+- **Cambios Necesarios:**
+  1. Extender el esquema de registro para operaciones externas no cubiertas previamente.
+  2. Relacionar todas las operaciones con `CatalogoIntegracionesExternas`.
+  3. Incorporar referencias a perfiles de mapeo, plantillas y versiones de contrato.
+  4. Unificar la consulta de historial (`getIntegrationOperationLogs`) sin eliminar los registros de `AuditoriaMigraciones`.
+  5. Incorporar filtros de búsqueda y vista de detalle en la interfaz gráfica.
+  6. Incorporar métricas de duración y tasas de éxito.
+  7. Mantener el acceso restringido según rol operativo (RBAC).
+- **Comportamiento Esperado:**
+  Los administradores y auditores podrán consultar el historial unificado de intercambios de datos, identificar qué operaciones fallaron, por qué fallaron y qué reintentos se ejecutaron.
+- **Criterios de Aceptación:**
+  - [ ] Consultar una importación anterior y visualizar su detalle de filas y errores.
+  - [ ] Consultar una exportación de datos y verificar metadatos registrados.
+  - [ ] Consultar un webhook recibido verificando la transacción externa asociada.
+  - [ ] Consultar una sincronización de datos con sus diferencias detectadas.
+  - [ ] Filtrar operaciones por integración, estado y rango de fechas de forma fluida.
+  - [ ] Identificar con precisión el usuario o proceso que inició cada operación.
+  - [ ] Consultar los errores específicos de una ejecución sin ambigüedades.
+  - [ ] Comprobar que los reintentos quedan debidamente vinculados a la operación original.
+  - [ ] Verificar que los registros no exponen credenciales, tokens ni datos personales sensibles.
+  - [ ] Comprobar que los registros históricos preexistentes siguen estando disponibles.
+  - [ ] Verificar que los permisos RBAC limitan la consulta del historial exclusivamente a usuarios autorizados.
+  - [ ] Comprobar que los resultados mostrados en el historial coinciden con las operaciones reales ejecutadas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F25-Task11] [P2] [Versionado - Administración de Versiones y Compatibilidad de Perfiles, Plantillas y Contratos]
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - Hojas `PlantillasSACEVerificadas`, `CatalogoContratos`, `PerfilesMapeoColumnas`
+- **Estado de Partida:** Implementación existente; ampliación de compatibilidad.
+- **Dependencias Expuestas:** F25-001, F25-002 y F25-003.
+- **Capacidades Relacionadas:** F25-017, F25-008, F25-013.
+- **Problema que Resuelve:**
+  La plataforma ya registra versiones de plantillas SACE y contratos API. Al incorporar perfiles reutilizables y nuevos conectores, debe garantizarse que los cambios de estructura no invaliden silenciosamente configuraciones anteriores.
+- **Requisitos Funcionales:**
+  1. Identificar en cada elemento versionado:
+     - Tipo de recurso (Plantilla SACE, Perfil de Mapeo, Contrato API, Esquema de Intercambio).
+     - Identificador del recurso.
+     - Número o etiqueta semántica de versión (ej. `v1.0.0`, `SACE-2026-v2`).
+     - Fecha de creación y fecha de vigencia.
+     - Estado (`Borrador`, `Vigente`, `Obsoleto`, `Deprecado`).
+     - Estructura de datos y campos obligatorios.
+     - Compatibilidad con versiones de esquemas internos.
+     - Registro de cambios (Changelog) respecto a la versión anterior.
+     - Responsable de la versión.
+     - Documentación técnica o normativa relacionada.
+  2. Compatibilidad ante actualizaciones de formatos:
+     - Identificar perfiles y conectores afectados ante cambios en estructuras externas.
+     - Determinar qué campos cambiaron (agregados, eliminados, modificados).
+     - Detectar incompatibilidades antes de la ejecución.
+     - Evitar ejecutar operaciones con formatos obsoletos cuando exista riesgo de corrupción.
+     - Conservar versiones anteriores para permitir consultas y reproducciones históricas.
+     - Permitir migraciones controladas de perfiles de mapeo hacia nuevas versiones.
+- **Cambios Necesarios:**
+  1. Extender el registro de versiones en `CatalogoContratos` y tablas asociadas.
+  2. Incorporar validador de compatibilidad de esquemas entre perfiles y entidades.
+  3. Crear interfaz de visualización de versiones y changelogs.
+  4. Incorporar marcas de advertencia cuando un perfil utilice una versión deprecada.
+  5. Permitir la coexistencia de múltiples versiones de plantillas SACE según el año lectivo evaluado.
+- **Comportamiento Esperado:**
+  Los cambios en formatos externos o contratos no romperán silenciosamente las importaciones en curso. El sistema identificará qué componentes requieren actualización y preservará las versiones históricas.
+- **Criterios de Aceptación:**
+  - [ ] Consultar versiones de plantillas SACE y contratos API existentes en el sistema.
+  - [ ] Crear una nueva versión de prueba de una plantilla y verificar su registro en el catálogo.
+  - [ ] Comprobar que la versión anterior de la plantilla se conserva inalterada.
+  - [ ] Identificar automáticamente los perfiles de mapeo afectados ante cambios de campos en una entidad.
+  - [ ] Verificar que los perfiles incompatibles son marcados y no se ejecutan silenciosamente.
+  - [ ] Comprobar que una operación histórica conserva la versión original del contrato utilizado.
+  - [ ] Verificar que la actualización de una plantilla no altera registros ya procesados en el pasado.
+  - [ ] Comprobar que la versión vigente y activa puede identificarse de manera unívoca.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F25-Task12] [P2] [SACE - Fortalecimiento de la Generación y Validación de Archivos SACE Oficiales]
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs`
+  - Hojas `PlantillasSACEVerificadas`, `CalificacionesEstudiantes`
+- **Estado de Partida:** Completa y verificada; optimización y ampliación controlada.
+- **Dependencias Expuestas:** F25-003, F25-004 y F25-017.
+- **Capacidades Relacionadas:** F25-008, F25-017.
+- **Problema que Resuelve:**
+  La generación de archivos SACE ya valida columnas obligatorias, conserva estados no evaluables y aplica la regla de recuperación identificada en la auditoría. No corresponde reconstruir estas capacidades. La mejora consiste en ampliar la administración de plantillas, la validación de datos y la trazabilidad de los archivos generados, evitando que la compatibilidad dependa de una única estructura fija.
+- **Requisitos Funcionales:**
+  1. Administración ampliada de plantillas SACE:
+     - Mantener plantillas independientes por procedimiento oficial (Matrícula inicial, Calificaciones parciales, Cuadro final de rendimiento).
+     - Identificar la versión oficial de cada plantilla.
+     - Registrar procedencia institucional y fecha de verificación.
+     - Identificar campos obligatorios y opcionales.
+     - Identificar tipos de datos y valores admitidos por la Secretaría de Educación de Honduras.
+     - Detectar cambios de estructura oficial.
+     - Permitir desactivar plantillas obsoletas conservando versiones históricas.
+  2. Validación académica estricta:
+     - Conservar las reglas existentes verificadas: identificación del estudiante (DNI/código SACE), nombre del alumno, calificación ordinaria, calificación de recuperación, estados no evaluables (`Pendiente`, `Exento`, `Ausente`) y cálculo de nota final (`Math.max(ordinaria, recuperacion)`).
+     - No convertir automáticamente valores como `Pendiente`, `Exento` o `Ausente` en cero (0).
+     - La regla de cálculo de recuperación no debe modificarse sin verificar que corresponde al procedimiento oficial y a la plantilla vigente.
+  3. Validaciones adicionales previas a la generación:
+     - Identificar estudiantes matriculados sin correspondencia en el cuadro SACE.
+     - Detectar identificadores repetidos en el grupo evaluado.
+     - Detectar calificaciones fuera de rango (menores a 0 o mayores a 100).
+     - Comprobar campos obligatorios completos.
+     - Validar que el período académico coincida con el ciclo evaluado.
+     - Identificar asignaturas o secciones incompatibles.
+     - Advertir sobre registros incompletos mostrando lista de errores antes de generar el archivo final.
+  4. Evidencia y trazabilidad de generación:
+     - Relacionar cada archivo con plantilla y versión, período académico, asignatura, sección, docente responsable, fecha y hora de generación, datos incluidos y resultado de validación.
+- **Cambios Necesarios:**
+  1. Ampliar la administración de plantillas verificadas en `PlantillasSACEVerificadas`.
+  2. Relacionar plantillas con procedimientos específicos de Secretaría de Educación.
+  3. Integrar validaciones de integridad académica en `fillAndExportSACETemplate`.
+  4. Incorporar control de estudiantes duplicados y notas fuera de rango.
+  5. Incorporar información de procedencia y versión al historial de descargas.
+  6. Mantener el formato de salida requerido por cada plantilla oficial.
+  7. Evitar modificar las reglas académicas ya verificadas sin necesidad demostrada.
+- **Comportamiento Esperado:**
+  El personal docente y de secretaría podrá generar cuadros SACE oficiales con validación previa exhaustiva, garantizando que el archivo cumpla las normativas de la Secretaría de Educación sin alterar calificaciones de los estudiantes.
+- **Criterios de Aceptación:**
+  - [ ] Generar un archivo utilizando la plantilla actualmente verificada y comprobar que se conserva su estructura oficial.
+  - [ ] Verificar que los estados no evaluables (`Pendiente`, `Exento`, `Ausente`) permanecen intactos sin transformarse en cero.
+  - [ ] Probar calificaciones ordinarias y de recuperación verificando el cálculo de nota final SACE.
+  - [ ] Probar valores fuera de rango (< 0 o > 100) y comprobar que son bloqueados con advertencia clara.
+  - [ ] Probar estudiantes duplicados en la lista y verificar detección.
+  - [ ] Probar estudiantes sin identificación válida y comprobar reporte de inconsistencia.
+  - [ ] Comprobar que una plantilla obsoleta genera una advertencia o bloqueo según su nivel de incompatibilidad.
+  - [ ] Verificar que el archivo generado queda vinculado a su plantilla, versión y responsable en auditoría.
+  - [ ] Comprobar que las 53 pruebas de la suite académica existente continúan aprobadas al 100%.
+  - [ ] Verificar que no se presenta el archivo como aceptado por SACE si no se ha realizado una validación oficial de carga.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F25-Task13] [P2] [Contratos API - Ampliación del Intercambio Estructurado mediante API Institucional]
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `backend/user-service/Code.gs`
+  - Hojas `CatalogoContratos`, `CatalogoServicios`
+- **Estado de Partida:** Completa y verificada; ampliación de capacidades.
+- **Dependencias Expuestas:** F25-001, F25-008 y F25-012.
+- **Capacidades Relacionadas:** F25-013, F25-012, F25-016.
+- **Problema que Resuelve:**
+  La plataforma ya cuenta con endpoints y contratos documentados. La mejora consiste en asegurar que las operaciones de intercambio relacionadas con las nuevas integraciones mantengan contratos coherentes, versionados y reutilizables.
+- **Requisitos Funcionales:**
+  1. Definir formalmente en cada contrato API:
+     - Identificador de operación.
+     - Versión semántica del contrato.
+     - Método de transporte (POST).
+     - Estructura de solicitud (JSON Schema).
+     - Estructura de respuesta exitosa.
+     - Campos obligatorios y opcionales.
+     - Tipos de datos e identificadores.
+     - Reglas de validación de negocio.
+     - Permisos requeridos (RBAC/HMAC).
+     - Códigos de resultado y formato estándar de errores.
+     - Límites de consulta y paginación.
+  2. Operaciones relacionadas con integraciones externas:
+     - Consultar integraciones disponibles (`getIntegrationsCatalog`).
+     - Consultar estado de una conexión (`getIntegrationStatus`).
+     - Iniciar una importación masiva (`startBulkImport`).
+     - Consultar el progreso de una importación (`getImportProgress`).
+     - Consultar resultados y errores de una ejecución.
+     - Solicitar una exportación estructurada (`requestDataExport`).
+     - Consultar el resultado de una exportación.
+     - Consultar el estado de sincronización entre fuentes.
+  3. Seguridad: las operaciones que modifican datos deben exigir autorización específica y controles de idempotencia cuando puedan repetirse.
+- **Cambios Necesarios:**
+  1. Incorporar los contratos necesarios para las nuevas operaciones de integración en `CatalogoContratos`.
+  2. Mantener la estructura de los contratos existentes de los microservicios.
+  3. Incorporar control de versiones ante modificaciones estructurales.
+  4. Definir respuestas consistentes con metadatos de ejecución.
+  5. Incorporar paginación universal para resultados extensos.
+  6. Incorporar límites adaptativos de consulta (rate limits).
+  7. Relacionar cada contrato con su conector en el catálogo.
+  8. Documentar ejemplos de solicitudes y respuestas para desarrolladores autorizados.
+- **Comportamiento Esperado:**
+  Los sistemas externos autorizados podrán interoperar con la plataforma mediante contratos claros y predecibles, garantizando seguridad, consistencia de datos y compatibilidad entre versiones.
+- **Criterios de Aceptación:**
+  - [ ] Consultar los contratos existentes en `CatalogoContratos` y verificar su integridad.
+  - [ ] Verificar que los nuevos contratos de integración están debidamente registrados.
+  - [ ] Probar solicitudes válidas e inválidas comprobando validación de esquemas.
+  - [ ] Verificar que las respuestas siguen estrictamente la estructura JSON documentada.
+  - [ ] Comprobar que los permisos institucionales se validan en el servidor antes de responder.
+  - [ ] Probar solicitudes repetidas de operaciones de escritura y comprobar la idempotencia.
+  - [ ] Verificar que los cambios de versión no rompen contratos anteriores sin un procedimiento de deprecación.
+  - [ ] Comprobar que los mensajes de error no revelan información interna de infraestructura.
+  - [ ] Verificar que la documentación de contratos corresponde fielmente a la implementación real.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F25-Task14] [P2] [Supervisión - Mejoras de Administración y Supervisión Centralizada de Integraciones]
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `js/ui-common.js`
+- **Estado de Partida:** Mejora sobre catálogo y trazabilidad existentes.
+- **Dependencias Expuestas:** F25-001, F25-015 y F25-018.
+- **Capacidades Relacionadas:** F25-018, F25-001, F25-015.
+- **Problema que Resuelve:**
+  La plataforma cuenta con registros de migración y eventos, pero necesita una experiencia unificada para supervisar la salud de las conexiones y detectar operaciones que requieren intervención.
+- **Requisitos Funcionales:**
+  1. Incorporar un panel de control y supervisión de integraciones externas con indicadores clave:
+     - Total de integraciones registradas en el catálogo.
+     - Cantidad de integraciones activas y en línea.
+     - Cantidad de integraciones desconectadas o suspendidas.
+     - Cantidad de integraciones con errores recurrentes.
+     - Operaciones pendientes de procesamiento en colas.
+     - Operaciones completadas satisfactoriamente en el día.
+     - Operaciones fallidas que requieren atención.
+     - Fecha y hora de la última ejecución global.
+     - Fecha y hora de la última ejecución satisfactoria.
+     - Errores más frecuentes categorizados.
+     - Tiempo promedio de ejecución por conector.
+     - Volumen total de registros procesados en el período.
+  2. Acceso directo al detalle de cada integración y a sus bitácoras de auditoría.
+  3. Alertas operativas estructuradas ante:
+     - Credenciales de pasarelas o servicios a punto de vencer.
+     - Autorización o token revocado por servicio externo.
+     - Fallos repetidos de conexión o timeouts de red.
+     - Importaciones masivas interrumpidas sin reanudar.
+     - Webhooks de pago recibidos y no procesados.
+     - Sincronizaciones con desfase superior al umbral configurado.
+     - Plantillas o esquemas detectados como incompatibles.
+     - Consumo cercano a límites de cuotas de Apps Script / Google APIs.
+     - Operaciones marcadas para revisión manual obligatoria.
+  4. Diferenciar alertas críticas de advertencias meramente informativas.
+- **Cambios Necesarios:**
+  1. Implementar servicio de métricas de integraciones en `developer-service` (`getIntegrationsHealthMetrics`).
+  2. Integrar datos de `CatalogoIntegracionesExternas`, `AuditoriaMigraciones` y `RegistroEventos`.
+  3. Crear vista de supervisión en el panel de administración institucional.
+  4. Incorporar evaluador de alertas de salud de integraciones.
+  5. Implementar filtros por conector, severidad y estado operativo.
+- **Comportamiento Esperado:**
+  Los administradores podrán conocer de un vistazo el estado de salud de todas las conexiones institucionales, anticiparse a caídas de servicio y atender operaciones con fallos sin demoras.
+- **Criterios de Aceptación:**
+  - [ ] Consultar el estado general de las integraciones en el panel de supervisión.
+  - [ ] Verificar que los indicadores de salud proceden de operaciones reales registradas.
+  - [ ] Identificar de forma inmediata integraciones con errores o desconectadas mediante alertas visuales.
+  - [ ] Consultar el detalle de errores específicos de una conexión con un solo clic.
+  - [ ] Verificar que las alertas operativas corresponden a condiciones reales y no espurias.
+  - [ ] Comprobar que una integración inactiva no se presenta falsamente como operativa.
+  - [ ] Verificar que los usuarios solo consultan información y métricas acordes a su perfil RBAC.
+  - [ ] Comprobar que los indicadores de salud se actualizan inmediatamente después de cada ejecución.
+- **Estado:** [ ] Pendiente
+
+---
