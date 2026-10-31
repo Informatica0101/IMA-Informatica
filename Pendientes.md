@@ -1853,3 +1853,490 @@
 - **Estado:** [ ] Pendiente
 
 ---
+
+# PENDIENTES - FASE 17: PLANILLAS, COMPENSACIONES Y OBLIGACIONES LABORALES
+
+## TAREAS CRÍTICAS (P0 - SEVERIDAD MÁXIMA, CONDICIONES CONTRACTUALES, NOVEDADES Y RETENCIONES DE LEY)
+
+---
+
+### [ ] [F17-Task01] Eliminar el salario fijo y calcular la remuneración según el contrato vigente de cada empleado
+- **Origen del Hallazgo:** `AUDITORIA_FASE_17_PLANILLAS_COMPENSACIONES.md` / Sección E (Brecha E.1) y Sección G (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Integridad financiera, legalidad de pagos y cálculo salarial contractual exacto)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`calculatePayrollPeriod`)
+  - Hoja `ContratosLaborales`
+  - Hoja `ExpedientesLaborales`
+  - Estructuras de planilla y comprobantes de pago
+- **Dependencias Expuestas:** `ContratosLaborales`, `ExpedientesLaborales`, `PlanillasNomenclatura`, `BoletasPago`
+- **Descripción del Alcance:**
+  `calculatePayrollPeriod` utiliza actualmente un salario fijo hardcodeado de L 22,000.00 (`const salarioBase = 22000;`) en lugar de consultar el salario contractual de cada empleado. Esto provoca que trabajadores con condiciones salariales diferentes (docentes, directivos, personal administrativo o de servicio) reciban cálculos idénticos en la nómina.
+  Requerimientos Funcionales Detallados:
+  1. Consulta dinámica y vinculación de contratos laborales:
+     - Obtener el contrato correspondiente a cada empleado mediante su identificador de expediente (`expedienteId`).
+     - Seleccionar el contrato cuya vigencia incluya el período de planilla procesado (`fechaInicio` <= fin de período y (`fechaFin` >= inicio de período o vacía/indefinida)).
+     - Obtener el salario base, jornada laboral, modalidad de pago y demás condiciones económicas aplicables directamente desde el registro contractual.
+     - Admitir empleados con salarios diferentes sin depender de valores predeterminados o constantes fijas en el código.
+  2. Proporcionalidad y modificaciones en el período:
+     - Determinar el salario proporcional exacto cuando el empleado ingresa, finaliza su relación laboral o cambia de condiciones salariales durante el transcurso del período.
+     - Si existen varios contratos o modificaciones salariales dentro de un mismo período, aplicar las condiciones correspondientes a cada intervalo de vigencia de forma ponderada.
+     - Mantener separados los valores contractuales históricos de los valores vigentes.
+  3. Detección y gestión de incidencias contractuales:
+     - Identificar contratos vencidos, futuros, suspendidos, incompletos o superpuestos.
+     - Prohibir taxativamente sustituir silenciosamente un salario contractual inexistente por un valor predeterminado (ej. L 22,000.00).
+     - Si un empleado no tiene contrato vigente válido, debe identificarse como una incidencia que requiere resolución previa antes de incorporarse a la nómina calculada.
+     - Conservar el salario y las condiciones efectivamente utilizadas en el cálculo histórico, de manera que una modificación posterior del contrato no altere retroactivamente una planilla ya calculada o cerrada.
+- **Criterios de Aceptación:**
+  - Al procesar tres empleados con salarios contractuales diferentes, cada uno recibe su cálculo correspondiente de forma individualizada.
+  - Al procesar un empleado que ingresa a mitad del período se calcula el salario proporcional a los días laborados.
+  - Al procesar un empleado cuya fecha de salida ocurre dentro del período se liquida únicamente el tiempo devengado.
+  - Un cambio salarial con vigencia intermedia en el mes aplica ambas condiciones salariales en sus respectivos intervalos.
+  - Intentar procesar un empleado sin contrato vigente genera una incidencia clara y bloquea su inclusión sin asignar salarios arbitrarios.
+  - Los contratos superpuestos o ambiguos impiden un cálculo silenciosamente incorrecto.
+  - Modificar un contrato no altera los resultados de planillas históricas previamente calculadas o cerradas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F17-Task02] Integrar automáticamente las novedades aprobadas en el cálculo de planilla
+- **Origen del Hallazgo:** `AUDITORIA_FASE_17_PLANILLAS_COMPENSACIONES.md` / Sección E (Brecha E.2) y Sección G (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Remuneración integral, compensación de horas extras y deducción de ausencias)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`calculatePayrollPeriod`)
+  - `AprobacionHorasExtras`
+  - `DeduccionesAsistencia`
+  - `SolicitudesVacaciones`
+  - `IncapacidadesMedicas`
+  - `ContratosLaborales`
+  - `PlanillasNomenclatura`
+- **Dependencias Expuestas:** `AprobacionHorasExtras`, `DeduccionesAsistencia`, `SolicitudesVacaciones`, `IncapacidadesMedicas`, `F17-Task01`
+- **Descripción del Alcance:**
+  El motor `calculatePayrollPeriod` inicializa en cero las horas extras, sus importes, las bonificaciones y otras deducciones (`horasExtras = 0; montoHorasExtras = 0; bonificaciones = 0; otrasDed = 0;`), sin incorporar los registros aprobados existentes. Asimismo, las tardanzas y ausencias registradas en `DeduccionesAsistencia` no se trasladan a la planilla.
+  Requerimientos Funcionales Detallados:
+  1. Recopilación e integración de novedades del período:
+     - Consultar las novedades correspondientes a cada empleado y al rango de fechas del período de planilla procesado.
+     - Incorporar únicamente novedades que cuenten con estado formal de aprobación y que no hayan sido procesadas previamente en otra nómina.
+     - Diferenciar nítidamente los tipos de novedad: horas extras aprobadas, tardanzas acumuladas, ausencias injustificadas, permisos remunerados, permisos sin goce de sueldo, incapacidades médicas y bonificaciones autorizadas.
+  2. Trazabilidad e idempotencia de novedades:
+     - Conservar la referencia del registro de origen (`origenRefId`) para cada valor monetario incorporado.
+     - Evitar que una misma novedad se procese más de una vez mediante el marcado de estado a `ProcesadaEnNomina` vinculado al `planillaId`.
+     - Diferenciar novedades pendientes, aprobadas, rechazadas, anuladas y ya incorporadas.
+     - Identificar novedades registradas con posterioridad al cálculo de una planilla pero que corresponden a dicho período.
+     - Evitar que la modificación de una novedad ya incorporada altere silenciosamente una planilla aprobada o cerrada; en su defecto, exigir un ajuste de período o recálculo controlado.
+     - Presentar incidencias cuando existan registros incompletos, duplicados, contradictorios o pendientes de autorización.
+     - Diferenciar ingresos adicionales y deducciones sin agruparlos indiscriminadamente en campos genéricos.
+- **Criterios de Aceptación:**
+  - Las horas extras aprobadas se incorporan exactamente una sola vez en el período correspondiente.
+  - Las tardanzas y ausencias injustificadas se descuentan conforme a las horas/días reales según la política institucional configurada.
+  - Un permiso sin goce de sueldo aprobado se descuenta proporcionalmente al salario diario del trabajador.
+  - Un permiso remunerado o vacación aprobada no genera descuentos indebidos en el salario base.
+  - Una incapacidad médica aceptada por el IHSS se procesa con su subsidio legal y no se califica como ausencia injustificada.
+  - Ejecutar dos veces el cálculo no duplica novedades ni importes devengados o deducidos.
+  - Una novedad rechazada o pendiente no afecta el resultado económico de la planilla.
+  - El detalle de cada concepto permite rastrear el identificador del registro de asistencia u horas extras de origen.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F17-Task03] Implementar las aportaciones patronales y separar los costos institucionales de las deducciones del empleado
+- **Origen del Hallazgo:** `AUDITORIA_FASE_17_PLANILLAS_COMPENSACIONES.md` / Sección C (C.1), Sección E (Brecha E.3) y Sección G (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Costos laborales institucionales, cumplimiento de seguridad social y exactitud contable)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `PlanillasNomenclatura`
+  - `PoliticasFiscales`
+  - `AsientosContables`
+  - `recordAccountingJournalEntry`
+- **Dependencias Expuestas:** `PoliticasFiscales`, `PlanillasNomenclatura`, `AsientosContables`, `F17-Task07`, `F17-Task08`
+- **Descripción del Alcance:**
+  El cálculo contempla actualmente determinadas retenciones del trabajador (IHSS 3.5% y RAP 1.5%), pero omite por completo las aportaciones patronales obligatorias en Honduras: IHSS patronal (~7.2%), RAP patronal (1.5%) e INFOP (1.0%). Esto impide determinar el costo laboral institucional real y registrar todas las obligaciones patronales por pagar en la contabilidad.
+  Requerimientos Funcionales Detallados:
+  1. Separación de conceptos obrero vs patronal:
+     - Incorporar conceptos independientes para las aportaciones del empleado y las aportaciones a cargo del empleador.
+     - Configurar bases de cálculo, porcentajes, techos, exclusiones, condiciones y vigencias para cada aportación.
+     - Implementar los cálculos patronales del IHSS (Régimen de Salud y Maternidad + IVM), RAP e INFOP conforme a las disposiciones legales aplicables al período.
+     - Mantener estrictamente separados: Salario bruto devengado, Deducciones del empleado, Salario neto a pagar, Aportaciones patronales, Costo laboral institucional total y Obligaciones pendientes de pago.
+  2. Protección del salario del trabajador:
+     - Prohibir taxativamente que las aportaciones patronales reduzcan el salario neto del trabajador.
+     - Identificar los conceptos que integran la base de cada aportación patronal, sin asumir que todas utilizan la misma base imponible.
+     - Permitir actualizar porcentajes, techos y reglas mediante parámetros con fecha de vigencia documentada en `PoliticasFiscales`.
+     - Conservar los parámetros aplicados en cada planilla histórica.
+  3. Integración en reportes y contabilidad:
+     - Incorporar los importes patronales en los reportes de costo laboral institucional y en el asiento contable automático.
+     - Desglosar las obligaciones patronales por empleado, departamento y período.
+- **Criterios de Aceptación:**
+  - La aportación patronal se calcula de forma independiente y separada de la deducción obrera.
+  - El salario neto del empleado no disminuye por la incorporación de aportaciones patronales.
+  - Los techos y porcentajes utilizados corresponden a la configuración vigente del período procesado.
+  - Los reportes institucionales muestran por separado el costo salarial, las aportaciones patronales y las deducciones obreras.
+  - Los asientos contables automáticos por partida doble incorporan el gasto patronal (Debe) y las cuentas de pasivo por pagar (Haber) manteniendo equilibrio exacto (`Math.abs(totalDebe - totalHaber) <= 0.01`).
+  - Las aportaciones patronales no se duplican al recalcular o reintentar el procesamiento de la nómina.
+  - Las modificaciones de parámetros normativos no alteran planillas de períodos cerrados.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F17-Task04] Sustituir el cálculo simplificado del ISR por un motor de retención progresiva y anualizada
+- **Origen del Hallazgo:** `AUDITORIA_FASE_17_PLANILLAS_COMPENSACIONES.md` / Sección C (C.1), Sección E (Brecha E.3) y Sección G (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Cumplimiento tributario con el SAR, retención progresiva y prevención de multas)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`calculatePayrollPeriod`)
+  - `PoliticasFiscales`
+  - `configureFiscalPolicy`
+  - `getFiscalPolicies`
+- **Dependencias Expuestas:** `PoliticasFiscales`, `PlanillasNomenclatura`, `F17-Task07`, `F17-Task08`
+- **Descripción del Alcance:**
+  El cálculo actual aplica un 15% fijo sobre el excedente de L 20,000.00 (`salarioBase > 20000 ? (salarioBase - 20000) * 0.15 : 0`), lo cual viola la legislación del Impuesto Sobre la Renta de Honduras (Art. 22). No reproduce el cálculo progresivo anualizado ni contempla deducciones médicas de ley, tramos gravables progresivos, exenciones ni ajustes fiscales.
+  Requerimientos Funcionales Detallados:
+  1. Motor de retención progresiva anualizada:
+     - Implementar el cálculo de retención en la fuente del ISR basado en los tramos oficiales y parámetros fiscales vigentes para cada ejercicio fiscal (ej. escala progresiva del SAR: tramo exento, 15%, 20%, 25%).
+     - Proyectar los ingresos gravables anuales del empleado considerando los meses restantes del año fiscal.
+     - Deducir los gastos médicos de ley que correspondan (deducción automática legalmente autorizada) y aportaciones a la seguridad social deducibles.
+     - Determinar el impuesto anual proyectado aplicando las alícuotas correspondientes a cada tramo gravable progresivo.
+     - Deducir las retenciones ya efectuadas en meses anteriores del ejercicio y dividir el saldo entre los meses restantes del año.
+  2. Tratamiento de incidencias y cambios salariales:
+     - Diferenciar conceptos gravables (sueldos, horas extras, comisiones) de no gravables (13º y 14º mes hasta los topes legales de exención).
+     - Recalcular la proyección ante aumentos salariales, bonificaciones extraordinarias o ingresos a mitad de año fiscal.
+     - Conservar el detalle de la base gravable proyectada, tramo aplicado, impuesto anual estimado y retención mensual del período.
+     - Mantener las tablas fiscales parametrizadas por ejercicio fiscal y fecha de vigencia en `PoliticasFiscales` sin modificar código duro.
+- **Criterios de Aceptación:**
+  - Se valida el cálculo exacto de ingresos anuales ubicados en cada uno de los tramos de la tabla progresiva vigente del SAR.
+  - No se aplica un porcentaje único plano sobre toda la base imponible cuando corresponda tarifa progresiva.
+  - Se aplica correctamente el tratamiento de deducciones personales acreditables conforme a ley.
+  - Al registrar un aumento salarial a mitad del ejercicio, el sistema recalcula la proyección y ajusta la retención mensual proporcionalmente.
+  - Un empleado que ingresa a mitad del año fiscal recibe una proyección basada en los meses efectivos a laborar.
+  - Los resultados se contrastan y coinciden con cálculos independientes basados en los parámetros oficiales del ejercicio del SAR.
+  - La retención de un período no sobrescribe las retenciones históricas de meses anteriores.
+  - La actualización de la tabla tributaria para un nuevo año fiscal no altera los cálculos de planillas cerradas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F17-Task05] Crear el cálculo y procesamiento independiente del décimo tercer y décimo cuarto mes
+- **Origen del Hallazgo:** `AUDITORIA_FASE_17_PLANILLAS_COMPENSACIONES.md` / Sección C (C.1), Sección E (Brecha E.4) y Sección G (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Beneficios sociales obligatorios en Honduras: Aguinaldo y Décimo Cuarto Mes Decreto 135-94)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `PlanillasNomenclatura`
+  - `ContratosLaborales`
+  - `ExpedientesLaborales`
+  - `BoletasPago`
+  - `AsientosContables`
+- **Dependencias Expuestas:** `ContratosLaborales`, `PlanillasNomenclatura`, `BoletasPago`, `AsientosContables`, `F17-Task01`, `F17-Task03`
+- **Descripción del Alcance:**
+  No existe un motor para calcular y procesar las remuneraciones extraordinarias del Décimo Tercer Mes (Aguinaldo, pagadero en diciembre) y Décimo Cuarto Mes de Compensación Social (pagadero en junio conforme al Decreto 135-94). La plataforma no permite gestionar sus períodos de acumulación, proporcionalidad por tiempo laborado, anticipos ni su liquidación al cese laboral.
+  Requerimientos Funcionales Detallados:
+  1. Motor de remuneraciones extraordinarias independientes:
+     - Incorporar el Décimo Tercer y Décimo Cuarto Mes como procesos de planilla extraordinaria diferenciados de la nómina ordinaria mensual.
+     - Administrar por separado los períodos legales de acumulación: 13º mes (1 de diciembre al 30 de noviembre) y 14º mes (1 de julio al 30 de junio).
+     - Calcular el valor completo (un mes de salario ordinario devengado) cuando se cumpla el período de 12 meses completos.
+     - Calcular el valor proporcional matemático en días/meses cuando el empleado tenga menor tiempo de servicio en el período de cómputo.
+  2. Salarios base, anticipos y retenciones:
+     - Utilizar el promedio de salarios ordinarios devengados o el salario vigente conforme a la normativa y jurisprudencia aplicable.
+     - Registrar anticipos previamente otorgados sobre estos beneficios y deducirlos del saldo neto a pagar para evitar duplicaciones.
+     - Aplicar la exención tributaria y de seguridad social correspondiente a estos beneficios conforme a las leyes de Honduras.
+     - Calcular el beneficio proporcional correspondiente en caso de terminación laboral (finiquito).
+  3. Cierre, boletas y contabilidad:
+     - Generar planillas extraordinarias independientes con su propio ciclo de aprobación, cierre y boleta de pago en PDF.
+     - Registrar los asientos contables automáticos en cuentas diferenciadas de pasivo y gasto.
+     - Conservar el historial inmutable de cada beneficio para impedir pagos duplicados.
+- **Criterios de Aceptación:**
+  - Se calcula el beneficio completo para empleados con el período de acumulación completo.
+  - Se calcula el beneficio proporcional exacto para colaboradores con ingresos recientes o períodos fraccionados.
+  - Los anticipos otorgados previamente se descuentan del total del beneficio sin errores de saldo.
+  - Al procesar una desvinculación laboral se liquida el proporcional de 13º y 14º mes devengado a la fecha de salida.
+  - Un beneficio extraordinario ya pagado y cerrado no puede volver a incluirse en otra planilla.
+  - Cada beneficio genera su boleta de pago individual y su asiento contable específico.
+  - Las reglas y períodos históricos se conservan sin alteración tras actualizar parámetros legales futuros.
+- **Estado:** [ ] Pendiente
+
+---
+
+## TAREAS DE ALTA PRIORIDAD (P1 - AMORTIZACIÓN DE PRÉSTAMOS, CATÁLOGO DE CONCEPTOS, DISPERSIÓN ACH Y LOTES)
+
+---
+
+### [ ] [F17-Task06] Automatizar la deducción de anticipos y préstamos y actualizar su amortización al cerrar la planilla
+- **Origen del Hallazgo:** `AUDITORIA_FASE_17_PLANILLAS_COMPENSACIONES.md` / Sección B (B.5), Sección E (Brecha E.5) y Sección G (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Recuperación de cuentas por cobrar a empleados y consistencia de amortizaciones)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `requestEmployeeLoanAdvance`
+  - `approveEmployeeLoanAdvance`
+  - `getLoanAmortizationSchedule`
+  - `AnticiposPrestamosEmpleado`
+  - `calculatePayrollPeriod`
+  - `updatePayrollPeriodStatus`
+- **Dependencias Expuestas:** `AnticiposPrestamosEmpleado`, `PlanillasNomenclatura`, `F17-Task02`, `F17-Task07`
+- **Descripción del Alcance:**
+  La plataforma registra anticipos y préstamos, genera tablas de amortización y calcula cuotas, pero no integra automáticamente esas cuotas en la planilla ni actualiza el saldo pendiente en `AnticiposPrestamosEmpleado` después del cierre formal.
+  Requerimientos Funcionales Detallados:
+  1. Integración automática de cuotas en nómina:
+     - Recuperar las obligaciones aprobadas y vigentes de cada empleado en `AnticiposPrestamosEmpleado`.
+     - Identificar la cuota correspondiente al período de la planilla e incorporarla automáticamente en `otrasDeducciones` sin captura manual.
+     - Distinguir entre anticipos de salario (recuperables en 1 cuota) y préstamos institucionales (amortizables en N cuotas).
+     - Validar que el descuento de la cuota nunca exceda el `SaldoPendiente` de la obligación ni deje un salario neto negativo.
+  2. Actualización de saldos al cierre:
+     - Actualizar la amortización (reducir `SaldoPendiente` e incrementar cuotas pagadas) única y exclusivamente cuando la planilla alcance el estado `Cerrada` o `Aprobada`.
+     - Un cálculo preliminar (`Calculada`) no debe reducir el saldo de la obligación.
+     - Si una planilla se anula o revierte, restituir automáticamente el saldo pendiente o registrar el reverso compensatorio.
+     - Evitar que un mismo préstamo genere dos descuentos dentro del mismo período de pago.
+     - Permitir suspender, renegociar o liquidar anticipadamente una obligación mediante autorización documentada.
+- **Criterios de Aceptación:**
+  - La cuota aprobada de un préstamo se incorpora automáticamente en la nómina del empleado.
+  - El saldo del préstamo en `AnticiposPrestamosEmpleado` permanece intacto mientras la planilla esté en estado preliminar `Calculada`.
+  - Al cerrar la planilla, el saldo pendiente disminuye exactamente por el valor de la cuota y se actualiza el número de cuotas restantes.
+  - La última cuota de amortización ajusta el saldo restante a exactamente 0.00 marcando el préstamo como `Liquidado`.
+  - Reintentar o recalcular la planilla no genera deducciones dobles del mismo préstamo.
+  - La anulación de una planilla restituye el saldo del préstamo con auditoría inmutable.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F17-Task07] Implementar un catálogo dinámico de conceptos salariales, reglas de cálculo y ajustes
+- **Origen del Hallazgo:** `AUDITORIA_FASE_17_PLANILLAS_COMPENSACIONES.md` / Sección B (B.2) y Sección G (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Flexibilidad salarial, parametrización de ingresos/deducciones y reglas de negocio)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `PlanillasNomenclatura`
+  - `PoliticasFiscales`
+  - `dashboard-recursos-humanos.html`
+  - `dashboard-contabilidad.html`
+  - Nueva hoja `CatalogoConceptosPlanilla`
+- **Dependencias Expuestas:** `PlanillasNomenclatura`, `PoliticasFiscales`, `AsientosContables`, `F17-Task01`, `F17-Task03`, `F17-Task04`
+- **Descripción del Alcance:**
+  `PlanillasNomenclatura` contiene conceptos salariales definidos mediante columnas fijas rígidas. No permite administrar adecuadamente conceptos nuevos, bonificaciones personalizadas, comisiones, deducciones voluntarias ni reglas de cálculo dinámicas.
+  Requerimientos Funcionales Detallados:
+  1. Catálogo administrable de conceptos de nómina:
+     - Crear la entidad y hoja `CatalogoConceptosPlanilla` para crear, editar, activar y desactivar conceptos salariales.
+     - Clasificación por categorías: Ingresos ordinarios, Horas extras, Bonificaciones fijas/variables, Comisiones, Incentivos, Deducciones legales, Deducciones voluntarias, Aportaciones patronales, Beneficios y Ajustes extraordinarios.
+     - Atributos por concepto: código único, nombre, descripción, naturaleza contable (Debe/Haber), tipo de cálculo (Fijo, Porcentaje, Proporcional, Fórmula), base de cálculo, frecuencia, vigencia, tratamiento tributario ISR (gravado/exento), tratamiento seguridad social IHSS/RAP (cotizable/no cotizable), cuenta contable asociada y visibilidad en boleta de pago.
+  2. Secuenciación y reglas de cálculo:
+     - Permitir conceptos recurrentes y conceptos de aplicación única.
+     - Asignación por empleado individual, por departamento, por cargo o por estructura salarial.
+     - Establecer orden o prioridad de cálculo cuando un concepto dependa del resultado de otro.
+     - Validar que no existan fórmulas circulares ni referencias a conceptos inexistentes.
+     - Conservar el histórico de reglas y evitar que una modificación futura altere planillas históricas cerradas.
+- **Criterios de Aceptación:**
+  - Se pueden crear y administrar conceptos salariales dinámicos desde la interfaz sin alterar la estructura fija de Sheets.
+  - Una bonificación configurada se aplica únicamente a los colaboradores que cumplan las condiciones de elegibilidad.
+  - Un concepto configurado como costo patronal se incorpora al asiento contable sin reducir el salario neto del empleado.
+  - Los conceptos marcados como no visibles en boleta se procesan para contabilidad sin exponerse al trabajador.
+  - Se vincula cada concepto con su respectiva cuenta contable para el asiento automático.
+  - Se bloquean fórmulas con dependencias circulares o parámetros incompletos.
+  - Desactivar un concepto no altera los registros de planillas cerradas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F17-Task08] Incorporar una interfaz completa de administración de políticas fiscales, laborales y parámetros de cálculo
+- **Origen del Hallazgo:** `AUDITORIA_FASE_17_PLANILLAS_COMPENSACIONES.md` / Sección B (B.7), Sección G y Sección H (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Parametrización contable, gobernanza tributaria y actualización normativa)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`configureFiscalPolicy`, `getFiscalPolicies`)
+  - `PoliticasFiscales`
+  - `dashboard-recursos-humanos.html`
+  - `dashboard-contabilidad.html`
+- **Dependencias Expuestas:** `PoliticasFiscales`, `configureFiscalPolicy`, `F17-Task03`, `F17-Task04`, `F17-Task07`
+- **Descripción del Alcance:**
+  Existen funciones básicas en backend (`configureFiscalPolicy` y `getFiscalPolicies`), pero carecen de una interfaz gráfica completa y amigable para gestionar, auditar y actualizar los parámetros laborales y tributarios de Honduras utilizados en los cálculos.
+  Requerimientos Funcionales Detallados:
+  1. Consola administrativa de políticas y techos:
+     - Visualizar y administrar parámetros por tipo de obligación: ISR (tabla progresiva anual del SAR), IHSS (techos de Salud y Maternidad / IVM y tasas obrero-patronales), RAP (techo y porcentajes), INFOP (1.0% patronal), salario mínimo por actividad económica y recargos de horas extras del Art. 330.
+     - Consultar valores activos, versiones y fechas de vigencia.
+     - Crear y modificar parámetros sin tocar directamente Google Sheets, exigiendo fuente normativa oficial (acuerdo ejecutivo, ley o decreto) y justificación.
+  2. Trazabilidad y control de vigencias:
+     - Almacenar historial de versiones de cada parámetro con usuario que autorizó el cambio y timestamp.
+     - Identificar parámetros próximos a vencer o sin vigencia definida.
+     - Modo borrador/revisión: permitir preparar actualizaciones normativas (ej. cambio anual de techos del IHSS o tramos del ISR) y someterlas a validación antes de su activación.
+     - Advertir visualmente si una planilla se va a procesar con parámetros legales vencidos o desactualizados.
+     - Evitar que una actualización se aplique retroactivamente sobre planillas de períodos cerrados.
+- **Criterios de Aceptación:**
+  - El contador o administrador puede actualizar los techos del IHSS y tramos del ISR desde la interfaz.
+  - Toda modificación de un parámetro exige registrar la fuente normativa de respaldo.
+  - Un usuario sin permisos de rol financiero no puede modificar los parámetros legales.
+  - Los parámetros con vigencia futura no afectan los cálculos de nóminas del período corriente.
+  - Al consultar una planilla histórica se visualizan con exactitud los parámetros legales vigentes al momento de su cierre.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F17-Task09] Implementar la generación masiva y distribución segura de comprobantes de pago
+- **Origen del Hallazgo:** `AUDITORIA_FASE_17_PLANILLAS_COMPENSACIONES.md` / Sección B (B.6) y Sección G (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Entrega de comprobantes de pago, privacidad salarial y comunicación al personal)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`generatePayrollReceiptPDF`, `getStaffPayrollReceipt`)
+  - `BoletasPago`
+  - `PlanillasNomenclatura`
+  - `backend/user-service/Code.gs`
+  - Portal de autoservicio del empleado
+- **Dependencias Expuestas:** `generatePayrollReceiptPDF`, `BoletasPago`, `sendMultiChannelNotification`, Google Drive
+- **Descripción del Alcance:**
+  La generación individual de boletas PDF está implementada y verificada, pero no existe un flujo de distribución masiva que permita generar y enviar las boletas de pago a toda la planilla de colaboradores de forma controlada y segura.
+  Requerimientos Funcionales Detallados:
+  1. Generación y distribución en lote:
+     - Seleccionar una planilla en estado `Cerrada` y generar en lote todas las boletas de pago en PDF membretado.
+     - Enviar los comprobantes por correo electrónico a la dirección institucional de cada empleado registrado en `Usuarios`.
+     - Mostrar vista previa de cantidad de boletas, empleados con correo válido e incidencias por correos faltantes antes del envío masivo.
+     - Envío individualizado estricto: garantizar que ningún colaborador reciba la boleta de otro empleado.
+  2. Seguridad y privacidad del contenido:
+     - Prohibir incluir salarios o datos financieros sensibles en el asunto o cuerpo abierto del correo electrónico.
+     - Enlace seguro protegido por token de sesión o archivo PDF adjunto con clave.
+     - Registrar estado de distribución de cada comprobante: `Pendiente`, `Enviado`, `Fallido`, `Reintentable`.
+     - Permitir reintentar únicamente los envíos que hayan fallado sin duplicar los correos ya entregados exitosamente.
+     - Mantener la disponibilidad permanente de descarga histórica de la boleta desde el portal de autoservicio (`getEmployeeSelfServicePortal`).
+     - Bloquear la distribución masiva si la planilla no ha sido aprobada y cerrada formalmente.
+- **Criterios de Aceptación:**
+  - Se pueden generar y despachar todas las boletas de una planilla cerrada con una sola acción administrativa.
+  - Cada colaborador recibe exclusivamente su propia boleta de pago.
+  - Los empleados sin correo institucional válido quedan listados como incidencias a resolver.
+  - Un fallo de conexión en el servidor de correo permite reintentar solo los envíos pendientes sin duplicados.
+  - El sistema impide despachar boletas de planillas que permanezcan en estado preliminar `Calculada`.
+  - La boleta continúa accesible y descargable desde el portal de autoservicio del empleado.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F17-Task10] Incorporar exportación bancaria para dispersión masiva de salarios
+- **Origen del Hallazgo:** `AUDITORIA_FASE_17_PLANILLAS_COMPENSACIONES.md` / Sección G y Sección H (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Eficiencia en tesorería escolar, pagos ACH y automatización bancaria)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `PlanillasNomenclatura`
+  - `ContratosLaborales`
+  - `ExpedientesLaborales`
+  - `AsientosContables`
+  - `dashboard-contabilidad.html`
+- **Dependencias Expuestas:** `PlanillasNomenclatura`, `ExpedientesLaborales`, Datos bancarios de empleados
+- **Descripción del Alcance:**
+  No existe una función de exportación bancaria que permita preparar y generar archivos estructurados de pago masivo (formato ACH o transferencias interbancarias de Honduras) a partir de una planilla aprobada y cerrada.
+  Requerimientos Funcionales Detallados:
+  1. Generador de archivos de dispersión de fondos:
+     - Seleccionar una planilla en estado `Cerrada` y preparar el archivo de dispersión bancaria para su carga en banca corporativa.
+     - Recuperar los salarios netos aprobados y los datos bancarios validados del empleado (banco destino, número de cuenta, tipo de cuenta, DNI/RTN).
+     - Formatos estructurados configurables según el banco receptor (ej. BAC Credomatic, Banco Ficohsa, Banco Atlántida o formato estándar ACH).
+     - Validación previa: identificar y separar empleados con cuentas bancarias incompletas o inválidas antes de generar el archivo.
+  2. Control de tesorería y seguridad:
+     - Resumen previo: cantidad de transferencias, importe total a dispersar y empleados excluidos.
+     - Evitar que una misma planilla genere archivos de pago duplicados sin una advertencia explícita al operador.
+     - Auditoría estricta: registrar quién generó el archivo, timestamp y hash del contenido para conciliar con el extracto bancario.
+     - Protección de datos bancarios: limitar la exportación y visualización a roles autorizados (`Contador`, `Director`, `Administrador`).
+     - Diferenciar claramente la generación del archivo plano de la confirmación efectiva de las transferencias.
+- **Criterios de Aceptación:**
+  - La sumatoria de las transferencias del archivo bancario generado coincide exactamente con el total neto de la planilla cerrada.
+  - Los colaboradores con datos de cuenta bancaria incompletos se excluyen y se presentan en un reporte de incidencias.
+  - El archivo generado respeta las especificaciones técnicas del formato bancario seleccionado.
+  - Se bloquea la generación duplicada accidental del mismo lote de pago bancario.
+  - Los datos bancarios y salarios netos permanecen estrictamente protegidos bajo permisos RBAC.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F17-Task11] Integrar correctamente las obligaciones patronales con la contabilidad por partida doble
+- **Origen del Hallazgo:** `AUDITORIA_FASE_17_PLANILLAS_COMPENSACIONES.md` / Sección B (B.7), Sección E y Sección G (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Consistencia contable, balance por partida doble y provisiones laborales)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`updatePayrollPeriodStatus`, `recordAccountingJournalEntry`)
+  - `AsientosContables`
+  - `PlanillasNomenclatura`
+  - `dashboard-contabilidad.html`
+- **Dependencias Expuestas:** `recordAccountingJournalEntry`, `AsientosContables`, `PlanillasNomenclatura`, `F17-Task03`, `F17-Task07`
+- **Descripción del Alcance:**
+  La integración contable actual asienta únicamente salarios brutos (5101), deducciones obreras (2101) y neto por pagar (1101). Al incorporar aportaciones patronales de ley (IHSS, RAP, INFOP) y nuevos conceptos salariales, la integración debe ampliarse para contabilizar el costo patronal institucional completo sin desbalancear la partida doble.
+  Requerimientos Funcionales Detallados:
+  1. Asiento contable integral de nómina:
+     - Conservar el asiento equilibrado existente ampliándolo con líneas contables para aportaciones patronales.
+     - Cuentas de Gasto (Debe): Salarios ordinarios (5101), Horas extras y recargos (5102), Aportaciones patronales IHSS (5103), Aportaciones patronales RAP (5104), Aporte patronal INFOP (5105).
+     - Cuentas de Pasivo por Pagar (Haber): Retenciones obreras IHSS por pagar (2101), Retenciones obreras RAP por pagar (2102), Retenciones ISR por pagar (2103), Obligaciones patronales IHSS por pagar (2104), Obligaciones patronales RAP por pagar (2105), INFOP por pagar (2106), Préstamos y anticipos por cobrar (1105 - acreditación de saldo), y Sueldos netos por pagar / Bancos (1101).
+  2. Verificación de balance y trazabilidad:
+     - Validar que la sumatoria total del Debe sea idéntica a la sumatoria del Haber (`Math.abs(totalDebe - totalHaber) <= 0.01`).
+     - Vincular el identificador del asiento contable generado (`AST-...`) con el `planillaId` en `PlanillasNomenclatura`.
+     - Evitar generar asientos contables duplicados ante reintentos o consultas de estado de la planilla.
+     - Manejo de correcciones: si una planilla cerrada se rectifica, generar un asiento de ajuste contable compensatorio documentado sin alterar el asiento original.
+- **Criterios de Aceptación:**
+  - El asiento contable generado refleja el gasto laboral completo (salarios brutos + aportes patronales) equilibrado contra pasivos y bancos.
+  - La sumatoria de débitos y créditos coincide con una tolerancia máxima de 0.01 Lempiras.
+  - Las obligaciones patronales incrementan el gasto institucional y no reducen el salario neto de los colaboradores.
+  - Reintentar la operación de cierre de planilla no genera un asiento contable duplicado.
+  - Los totales contables coinciden exactamente con el resumen de nómina presentado a Recursos Humanos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F17-Task12] Mejorar el procesamiento de planillas por lotes y la revisión comparativa de resultados
+- **Origen del Hallazgo:** `AUDITORIA_FASE_17_PLANILLAS_COMPENSACIONES.md` / Sección B (B.3) y Sección G (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Productividad en Recursos Humanos, detección de variaciones y auditoría previa al cierre)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`calculatePayrollPeriod`, `getPayrollPeriodSummary`)
+  - `PlanillasNomenclatura`
+  - `dashboard-recursos-humanos.html`
+  - `dashboard-contabilidad.html`
+- **Dependencias Expuestas:** `calculatePayrollPeriod`, `getPayrollPeriodSummary`, `F17-Task01`, `F17-Task02`, `F17-Task07`
+- **Descripción del Alcance:**
+  El ciclo de planilla existe y funciona en su flujo básico, pero carece de capacidades para procesar por lotes segmentados (departamentos, tipos de contrato, frecuencias de pago) y para comparar variaciones atípicas de nómina respecto a meses anteriores antes de la aprobación definitiva.
+  Requerimientos Funcionales Detallados:
+  1. Procesamiento y segmentación por lotes:
+     - Permitir preparar y calcular la planilla filtrando por departamento, cargo, tipo de contrato o modalidad de pago.
+     - Visualizar el resumen consolidado de nómina con navegación inmediata hacia el detalle individual de cada colaborador.
+     - Contadores de estado: cantidad de empleados incluidos, procesados satisfactoriamente, excluidos por incidencias y pendientes de validación.
+  2. Análisis comparativo intermensual de variaciones:
+     - Identificar colaboradores con variaciones salariales significativas respecto al mes anterior (ej. variación > 10% en ingresos o deducciones).
+     - Mostrar las causas de las variaciones: nuevas horas extras, inicio de amortización de préstamos, cambio salarial de contrato o ausencias.
+     - Permitir recalcular únicamente los colaboradores corregidos sin necesidad de procesar nuevamente a toda la plantilla.
+     - Comparar dos períodos fiscales cualesquiera mostrando diferencias absolutas y porcentuales por rubro.
+- **Criterios de Aceptación:**
+  - Se puede calcular y consultar la nómina segmentando por departamentos o categorías de empleados.
+  - El sistema detecta y resalta visualmente variaciones atípicas de sueldo neto respecto al mes previo.
+  - Se puede consultar el desglose de causas que originaron la diferencia salarial de un colaborador.
+  - Los totales individuales suman con exactitud milimétrica el consolidado general de la planilla.
+  - La interfaz permite buscar y filtrar colaboradores por nombre, puesto o estado de cálculo sin recargar la pantalla.
+- **Estado:** [ ] Pendiente
+
+---
+
+## TAREAS DE ASEGURAMIENTO Y CALIDAD (P2 - SUITE DE REGRESIÓN DE LA FASE 17)
+
+---
+
+### [ ] [F17-Task13] Implementar una suite automatizada de pruebas de cálculo, integración y regresión de planillas
+- **Origen del Hallazgo:** `AUDITORIA_FASE_17_PLANILLAS_COMPENSACIONES.md` / Sección G y Sección H (P2)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media-alta (Aseguramiento de calidad, prevención de regresiones y precisión matemática salarial)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `backend/developer-service/Code.gs`
+  - `tests/regression/academic-grading-suite.js`
+- **Dependencias Expuestas:** Suites de pruebas del sistema, endpoints de nómina, horas extras y contabilidad
+- **Descripción del Alcance:**
+  Incorporar una suite integral automatizada `runPhase17PayrollAndCompensationRegressionSuite` que valide de manera continua la exactitud matemática de las planillas, retenciones hondureñas, horas extras, amortización de préstamos y la integración contable.
+  Requerimientos Funcionales Detallados:
+  1. Batería de pruebas por áreas temáticas:
+     - Salarios contractuales: salarios diferenciados por empleado, vigencias contractuales y proporcionalidad en ingresos/salidas intermedias.
+     - Horas extras y novedades: recargos del Art. 330 (25% diurna, 50% nocturna), deducciones de tardanzas y permisos sin goce.
+     - Deducciones de ley y aportes patronales: techos y alícuotas del IHSS (3.5% obrero / ~7.2% patronal), RAP (1.5% obrero / 1.5% patronal) e INFOP (1.0% patronal).
+     - ISR progresivo: proyección anual, deducción médica de L 40,000.00 y aplicación de tramos del Art. 22 de la Ley del ISR.
+     - Amortización de préstamos: deducción de cuota y actualización de saldo al cierre sin duplicaciones.
+     - Décimo tercer y décimo cuarto mes: cálculo completo y proporcional con anticipos deducidos.
+     - Integración contable: verificación de balance por partida doble en el asiento generado (`totalDebe === totalHaber`).
+     - Boletas y autoservicio: generación de PDF y aislamiento estricto ABAC frente a accesos ajenos.
+  2. Reporte de resultados con desglose de pruebas ejecutadas, métricas de cobertura y prevención de regresiones en las Fases 9, 10, 11, 15 y 16.
+- **Criterios de Aceptación:**
+  - La suite de regresión valida los cálculos de planilla con 100% de éxito en entorno controlado.
+  - Se ejecutan pruebas de estrés con salarios extremos y empleados con múltiples novedades sin desbordamientos aritméticos.
+  - Las pruebas operan sobre datos aislados sin alterar las planillas reales de producción.
+  - La suite no produce regresiones en las 53 pruebas previas verificadas del sistema.
+- **Estado:** [ ] Pendiente
+
+---
