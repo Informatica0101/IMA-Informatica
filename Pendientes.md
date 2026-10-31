@@ -10766,3 +10766,379 @@
 - **Estado:** [ ] Pendiente
 
 ---
+
+
+---
+
+# FASE 30: CONSOLIDACIÓN, CERTIFICACIÓN INTERNA Y MEJORA CONTINUA
+
+## RESUMEN DE SUB-CAPACIDADES Y TAREAS TÉCNICAS (FASE 30)
+
+| ID | Prioridad | Tarea Técnica / Requisito | Componentes Principales | Subcapacidad | Estado |
+|---|---|---|---|---|---|
+| [F30-Task01] | P0 | Orquestador de Transacciones Interdepartamentales y Compensación Automática | `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs` | F30-01, F30-08 | [ ] Pendiente |
+| [F30-Task02] | P0 | Motor de Integridad Referencial Cruzada y Detección de Registros Huérfanos | `backend/developer-service/Code.gs` | F30-02, F30-05 | [ ] Pendiente |
+| [F30-Task03] | P0 | Versionado Histórico de Políticas y Tarifas en Cálculos Financieros | `backend/accounting-service/Code.gs` | F30-03 | [ ] Pendiente |
+| [F30-Task04] | P0 | Protocolo Criptográfico de Enlaces Temporales para Documentos Sensibles | `backend/user-service/Code.gs`, `backend/academic-service/Code.gs` | F30-04 | [ ] Pendiente |
+| [F30-Task05] | P0 | Asistente de Simulación de Impacto Previo a la Restauración (Dry-Run Restore) | `backend/academic-service/Code.gs` | F30-08 | [ ] Pendiente |
+| [F30-Task06] | P1 | Consola Unificada de Trazabilidad y Correlación de Eventos (Trace ID) | `backend/user-service/Code.gs`, `backend/developer-service/Code.gs` | F30-05 | [ ] Pendiente |
+| [F30-Task07] | P1 | Pasarela Alternativa de Envíos Masivos y Gestión de Cuotas de Notificación | `backend/user-service/Code.gs` | F30-06 | [ ] Pendiente |
+| [F30-Task08] | P1 | Motor de Delegación Temporal de Responsabilidades y Sustituciones Directivas | `backend/user-service/Code.gs` | F30-07 | [ ] Pendiente |
+| [F30-Task09] | P1 | Tablas de Agregación Precalculadas para Optimización de Rendimiento | `backend/developer-service/Code.gs`, `backend/academic-service/Code.gs` | F30-09 | [ ] Pendiente |
+| [F30-Task10] | P1 | Clasificación Automatizada y Acuerdos de Nivel de Servicio (SLA) en Tickets | `backend/user-service/Code.gs` | F30-13 | [ ] Pendiente |
+| [F30-Task11] | P1 | Sistema de Alertas Tempranas Push ante Degradación de Salud de Microservicios | `backend/developer-service/Code.gs` | F30-15 | [ ] Pendiente |
+| [F30-Task12] | P2 | Manuales Operativos Interactivos y Guías de Usuario por Departamento | `docs/manuals/`, `js/ui-common.js` | F30-11 | [ ] Pendiente |
+| [F30-Task13] | P2 | Módulo de Inducción, Capacitación y Certificación de Competencias del Personal | `js/games-adapter.js`, `dashboard-direccion.html` | F30-12 | [ ] Pendiente |
+| [F30-Task14] | P2 | Guía de Procedimientos de Contingencia y Recuperación Operativa (Runbooks) | `docs/runbooks/` | F30-11, F30-08 | [ ] Pendiente |
+| [F30-Task15] | P2 | Protocolo Formal de Autorización de Go-Live y Actas de Certificación Departamental | `backend/user-service/Code.gs`, `dashboard-direccion.html` | F30-14, F30-15 | [ ] Pendiente |
+
+---
+
+### BLOQUE 1. INTEGRACIÓN INTERDEPARTAMENTAL Y ROBUSTEZ TRANSACCIONAL (P0)
+
+### [F30-Task01] [P0] Orquestador de Transacciones Interdepartamentales y Compensación Automática
+- **Orden de Ejecución:** 1
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`executeInterdepartmentalTransactionSaga`, `rollbackTransactionSagaStep`)
+  - `backend/accounting-service/Code.gs`
+  - Hoja: `TransaccionesInterdepartamentales`
+- **Subcapacidades Relacionadas:** F30-01, F30-08.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-01) y Sección G.
+- **Problema Detectado y Riesgos:**
+  Cuando un proceso institucional atraviesa múltiples departamentos (como Admisión $\rightarrow$ Matrícula $\rightarrow$ Generación de Aranceles Financieros), si ocurre un fallo en una etapa posterior (por ejemplo, timeout o error en el servicio contable), la entidad creada previamente en secretaría queda en un estado parcial inconsistente sin compensación automática, requiriendo depuración manual.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Coordinador de transacciones tipo saga:*
+     - Registrar en `TransaccionesInterdepartamentales`: `sagaId`, `proceso` (`ADMISION_MATRICULA_COBRO`, `COMPRA_RECEPCION_INVENTARIO`, `PAGO_FACTURA_ASIENTO`), `estado` (`INICIADA`, `EN_CURSO`, `COMPLETADA`, `COMPENSANDO`, `FALLIDA`), `pasosJSON`.
+     - Definir funciones de compensación inversa por cada paso ejecutado con éxito.
+     - Si cualquier paso falla, ejecutar secuencialmente las compensaciones en orden inverso sin dejar registros huérfanos.
+  2. *Idempotencia y reanudación controlada:*
+     - Manejar reintentos seguros mediante `sagaId` único.
+     - Notificar a Dirección y al administrador técnico ante fallos irrecuperables.
+- **Criterios de Aceptación:**
+  - [ ] Un fallo simulado durante la generación del arancel financiero revierte limpiamente la matrícula y notifica el error.
+  - [ ] La transacción completada con éxito asienta todos los registros con su `sagaId` trazable en los distintos servicios.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task02] [P0] Motor de Integridad Referencial Cruzada y Detección de Registros Huérfanos
+- **Orden de Ejecución:** 2
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs` (`auditCrossSheetReferentialIntegrity`, `repairOrphanedRecordRelationships`)
+  - Hoja: `AuditoriaIntegridadReferencial`
+- **Subcapacidades Relacionadas:** F30-02, F30-05.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-02).
+- **Problema Detectado y Riesgos:**
+  Google Sheets no provee llaves foráneas nativas. Si un usuario, estudiante o docente es modificado o archivado directamente, pueden subsistir registros huérfanos en `RelacionesFamiliares`, `AsignacionesDocentes`, `CalificacionesEstudiantes` o `CargosEstudiante`, generando contradicciones lógicas.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Validación cruzada de relaciones maestras:*
+     - Validar que todo `expedienteId` en `MatriculasEstudiantes` y `CalificacionesEstudiantes` exista en `ExpedientesEstudiantes`.
+     - Validar que todo `personaId` o `userId` en relaciones laborales y familiares exista en `Usuarios`.
+     - Validar que todo `cargoId` en `PagosEstudiante` exista en `CargosEstudiante`.
+  2. *Informe de discrepancias y resolución asistida:*
+     - Generar matriz de discrepancias clasificadas por severidad (`CRITICA`, `ADVERTENCIA`).
+     - Proporcionar acción de reparación controlada: archivado preventivo de registros huérfanos sin borrado destructivo.
+- **Criterios de Aceptación:**
+  - [ ] La rutina detecta e informa el 100% de inconsistencias referenciales entre tablas.
+  - [ ] Las acciones de reparación conservan bitácora de auditoría detallando los registros intervenidos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task03] [P0] Versionado Histórico de Políticas y Tarifas en Cálculos Financieros
+- **Orden de Ejecución:** 3
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`getHistoricalBillingPolicy`, `freezeChargeFinancialTerms`)
+  - Hoja: `PoliticasTarifariasHistoricas`
+- **Subcapacidades Relacionadas:** F30-03.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-03).
+- **Problema Detectado y Riesgos:**
+  Los cálculos de aranceles y mensualidades leen tarifas de parámetros globales. Si se actualiza el costo de matrícula para el año 2027, una reimpresión o recálculo extemporáneo de un estado de cuenta del 2025 podría tomar la tarifa nueva por error si no se congela la regla aplicable a la fecha del cobro.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Registro inmutable de condiciones financieras:*
+     - Al generar cualquier cargo en `CargosEstudiante`, vincular un `snapshotReglas` o `politicaId` histórico.
+     - Conservar en el cargo: arancel base, porcentaje de descuento pactado, tasa de recargo por mora aplicable en ese ejercicio fiscal.
+  2. *Inmutabilidad de cobros cerrados:*
+     - Prohibir que actualizaciones de parámetros generales alteren cargos ya liquidados o facturados.
+- **Criterios de Aceptación:**
+  - [ ] Un cambio en los aranceles vigentes no modifica los importes ni los saldos históricos de períodos lectivos previos.
+  - [ ] Los reportes financieros reproducen exactamente los valores consolidados originales.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task04] [P0] Protocolo Criptográfico de Enlaces Temporales para Documentos Sensibles
+- **Orden de Ejecución:** 4
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`generateSecureDocumentAccessUrl`, `verifySecureDocumentAccessUrl`)
+  - `backend/academic-service/Code.gs`
+- **Subcapacidades Relacionadas:** F30-04.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-04) y Sección F.
+- **Problema Detectado y Riesgos:**
+  Los documentos institucionales (boletas de calificaciones oficiales, recibos de pago con datos fiscales SAR y contratos laborales) almacenados en Google Drive podrían compartirse inadvertidamente con enlaces directos si no se valida la sesión y vigencia del solicitante.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Firma criptográfica de enlaces:*
+     - Generar URLs de acceso temporal con firma HMAC-SHA256: `docId`, `solicitanteUserId`, `expiracionEpoch` (máximo 15 minutos), `firmaToken`.
+     - Validar que el usuario que descarga el documento tenga sesión activa y autorización legítima sobre el expediente.
+  2. *Bloqueo de enlaces vencidos o manipulados:*
+     - Denegar la descarga si la firma no coincide o si ha expirado la ventana de tiempo.
+     - Registrar evento de auditoría de seguridad ante intentos de acceso no autorizados.
+- **Criterios de Aceptación:**
+  - [ ] Un enlace manipulado o expirado rechaza la descarga y emite advertencia de seguridad.
+  - [ ] Los usuarios legítimos descargan sus documentos sin fricción dentro del período de validez.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task05] [P0] Asistente de Simulación de Impacto Previo a la Restauración (Dry-Run Restore)
+- **Orden de Ejecución:** 5
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`previewBackupRestoreImpact`, `compareBackupDiffWithLiveSpreadsheet`)
+  - Hoja: `SimulacionesRestauracion`
+- **Subcapacidades Relacionadas:** F30-08.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-08).
+- **Problema Detectado y Riesgos:**
+  La función de restauración actual aplica los datos del respaldo directamente tras ingresar el token `"RESTORE-CONFIRMED"`, sin brindar un informe previo de qué filas o tablas van a ser sobrescritas, modificadas o preservadas, lo que podría provocar reemplazos imprevistos en producción.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Modo de simulación (Dry-Run):*
+     - Comparar hoja por hoja el archivo de respaldo JSON contra la base viva de Google Sheets.
+     - Reportar: número de filas coincidentes, filas nuevas a insertar, filas que serán actualizadas, discrepancias en esquemas y registros históricos protegidos (`preserveHistoricGrades`).
+  2. *Resumen ejecutivo de impacto:*
+     - Generar reporte en pantalla detallando tablas críticas afectadas antes de solicitar la confirmación definitiva.
+- **Criterios de Aceptación:**
+  - [ ] El administrador puede previsualizar el diff exacto antes de autorizar cualquier restauración real.
+  - [ ] No se modifica ninguna celda en el modo de simulación.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 2. OBSERVABILIDAD, NOTIFICACIONES Y GESTIÓN DE INCIDENCIAS (P1)
+
+### [F30-Task06] [P1] Consola Unificada de Trazabilidad y Correlación de Eventos (Trace ID)
+- **Orden de Ejecución:** 6
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`getCorrelatedTransactionAuditTrace`)
+  - `backend/developer-service/Code.gs`
+  - `dashboards/dashboard-direccion.html`, `js/ui-common.js`
+- **Subcapacidades Relacionadas:** F30-05.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-05).
+- **Problema Detectado y Riesgos:**
+  Los eventos se registran en hojas de log independientes (`LogsSistema`, `RegistroEventos`, `AuditoriaMigraciones`). Rastrear una transacción compleja interservicios requiere cruzar manualmente marcas de tiempo entre distintas tablas.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Inyección transversal de `correlationId`:*
+     - Inyectar en cada petición un encabezado `correlationId` que viaje a través de todas las llamadas entre microservicios.
+  2. *Visor unificado de trazabilidad en UI:*
+     - Permitir a Dirección y TI buscar por `correlationId` o identificador de entidad (`EXP-001`, `PAG-102`) y desplegar en una línea temporal todos los eventos asociados con su severidad, servicio y usuario ejecutor.
+- **Criterios de Aceptación:**
+  - [ ] Una consulta por `correlationId` reúne cronológicamente todas las operaciones generadas en distintos microservicios.
+  - [ ] Interfaz accesible únicamente para perfiles con permisos de auditoría.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task07] [P1] Pasarela Alternativa de Envíos Masivos y Gestión de Cuotas de Notificación
+- **Orden de Ejecución:** 7
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`checkEmailQuotaAvailability`, `sendMultiChannelNotificationWithFallback`)
+- **Subcapacidades Relacionadas:** F30-06.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-06).
+- **Problema Detectado y Riesgos:**
+  El servicio de correo de Google Apps Script posee cuotas diarias estrictas. En períodos de alta demanda (como el envío masivo de calificaciones bimestrales o estados de cuenta), la cuota se agota sin posibilidad de continuar notificando a los acudientes.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Monitoreo continuo de cuotas:*
+     - Evaluar `MailApp.getRemainingDailyEmails()`.
+     - Si la cuota remanente desciende del 15%, pausar envíos no prioritarios y emitir alerta al administrador.
+  2. *Conmutación a pasarela externa o retención en cola:*
+     - Enrutar notificaciones urgentes a través de una API SMTP alternativa configurada o retenerlas en cola de espera para el siguiente ciclo diario sin pérdida de mensajes.
+- **Criterios de Aceptación:**
+  - [ ] El sistema previene el desbordamiento de cuota de correo de Google Apps Script.
+  - [ ] Ningún aviso institucional se pierde; quedan encolados para su despacho seguro posterior.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task08] [P1] Motor de Delegación Temporal de Responsabilidades y Sustituciones Directivas
+- **Orden de Ejecución:** 8
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`createTemporaryRoleDelegation`, `getActiveRoleDelegations`, `revokeRoleDelegation`)
+  - Hoja: `DelegacionesResponsabilidad`
+- **Subcapacidades Relacionadas:** F30-07.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-07).
+- **Problema Detectado y Riesgos:**
+  Si un Director o Administrador se encuentra de viaje, permiso o incapacidad médica, los procesos que exigen su aprobación exclusiva (> L 50,000 en compras, aprobación de planificaciones, cierre de actas) quedan bloqueados indefinidamente.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Delegación formal con vigencia temporal:*
+     - Parámetros: `titularUserId`, `delegadoUserId`, `rolDelegado`, `fechaInicio`, `fechaFin`, `alcanceOperaciones`, `aprobadorId`.
+     - Verificación automática de expiración: al cumplirse la `fechaFin`, los permisos delegados se revocan inmediatamente.
+  2. *Trazabilidad de doble firma:*
+     - Registrar en la auditoría que la operación fue ejecutada por el delegado en representación del titular.
+- **Criterios de Aceptación:**
+  - [ ] El delegado puede aprobar operaciones autorizadas dentro de la ventana de vigencia estipulada.
+  - [ ] Transcurrida la fecha límite, el sistema revoca automáticamente el acceso sin intervención manual.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task09] [P1] Tablas de Agregación Precalculadas para Optimización de Rendimiento
+- **Orden de Ejecución:** 9
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs` (`refreshAggregatedMetricsTables`)
+  - `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`
+  - Hojas: `TablasAgregadasAcademicas`, `TablasAgregadasFinancieras`
+- **Subcapacidades Relacionadas:** F30-09.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-09).
+- **Problema Detectado y Riesgos:**
+  Al crecer el volumen de datos en Google Sheets por encima de las 10,000 filas (asistencia, calificaciones acumuladas, movimientos contables), las consultas en vivo de tableros directivos experimentan latencias de hasta 4 segundos.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Generación de agregaciones en memoria por lotes:*
+     - Computar resúmenes por ciclo lectivo, grado y sección: total inscritos, promedio general, porcentaje de morosidad, saldo acumulado en caja.
+     - Almacenar resultados consolidados en hojas de agregación para consulta instantánea (< 500 ms).
+  2. *Disparador programado y refresco bajo demanda:*
+     - Programar ejecución automática en horario nocturno o trigger tras cierres bimestrales.
+- **Criterios de Aceptación:**
+  - [ ] Las consultas de dashboards ejecutivos responden en menos de 1 segundo leyendo de las tablas agregadas.
+  - [ ] La información consolidada coincide al 100% con los datos transaccionales de origen.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task10] [P1] Clasificación Automatizada y Acuerdos de Nivel de Servicio (SLA) en Tickets
+- **Orden de Ejecución:** 10
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`submitProblemTicket`, `getProblemTicketsWithSLA`, `updateTicketSLAStatus`)
+  - Hoja: `TicketsSoporte`
+- **Subcapacidades Relacionadas:** F30-13.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-13).
+- **Problema Detectado y Riesgos:**
+  El módulo actual de tickets no categoriza por severidad técnica ni calcula los tiempos de resolución comprometidos, dificultando la priorización oportuna de incidencias críticas frente a solicitudes de mejora menores.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Clasificación de incidencias y SLA paramétrico:*
+     - Niveles: P0 (Crítico - 4 horas), P1 (Alto - 24 horas), P2 (Medio - 72 horas), P3 (Bajo - 1 semana).
+     - Asignación de fecha límite de resolución (`fechaVencimientoSLA`) según la prioridad del reporte.
+  2. *Semáforo visual de cumplimiento:*
+     - Indicar en el tablero de TI: `EnPlazo`, `ProximoAVencer`, `Vencido`.
+- **Criterios de Aceptación:**
+  - [ ] Cada nuevo ticket registrado recibe automáticamente su categoría y fecha límite de atención.
+  - [ ] El administrador puede filtrar y resolver los incidentes respetando la prioridad y SLA.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task11] [P1] Sistema de Alertas Tempranas Push ante Degradación de Salud de Microservicios
+- **Orden de Ejecución:** 11
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs` (`dispatchHealthAlertWebhook`, `monitorPlatformHealthThresholds`)
+- **Subcapacidades Relacionadas:** F30-15.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-15).
+- **Problema Detectado y Riesgos:**
+  Si un microservicio pierde conectividad con su Spreadsheet o experimenta un incremento crítico de latencia (> 5,000 ms), los administradores solo lo detectan si ingresan manualmente a la consola de diagnósticos.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Umbrales de salud automáticos:*
+     - Chequeo periódico de latencia, tasa de errores en los últimos 30 minutos y disponibilidad de memoria.
+  2. *Despachador de notificaciones de emergencia:*
+     - Emitir alerta push o webhook ante 3 fallos consecutivos en `getServiceHealthDiagnostics`.
+- **Criterios de Aceptación:**
+  - [ ] Una degradación inducida en un servicio genera inmediatamente una alerta de emergencia a los administradores.
+  - [ ] Se registran las causas del incidente en la bitácora de observabilidad técnica.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 3. DOCUMENTACIÓN, CAPACITACIÓN Y CERTIFICACIÓN INSTITUCIONAL (P2)
+
+### [F30-Task12] [P2] Manuales Operativos Interactivos y Guías de Usuario por Departamento
+- **Orden de Ejecución:** 12
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `docs/manuals/manual-direccion.md`, `docs/manuals/manual-secretaria.md`, `docs/manuals/manual-docentes.md`, `docs/manuals/manual-contabilidad.md`
+  - `js/ui-common.js` (ayuda contextual y tooltips de procedimiento)
+- **Subcapacidades Relacionadas:** F30-11.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-11).
+- **Problema Detectado y Riesgos:**
+  Falta de documentación de usuario final orientada a los procedimientos cotidianos por departamento, generando errores de operación o solicitudes de soporte innecesarias.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Manuales por departamento:*
+     - Documentar paso a paso: pase de lista, ingreso de notas, rectificaciones, cobranzas, emisión de recibos y arqueo de caja.
+  2. *Integración de ayuda contextual:*
+     - Botón de ayuda interactiva en cada dashboard que abre la guía correspondiente a la vista activa.
+- **Criterios de Aceptación:**
+  - [ ] Cada rol institucional dispone de su manual correspondiente actualizado y accesible desde el panel.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task13] [P2] Módulo de Inducción, Capacitación y Certificación de Competencias del Personal
+- **Orden de Ejecución:** 13
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `js/games-adapter.js`, `dashboard-direccion.html`
+  - Hoja: `CapacitacionesPersonal`
+- **Subcapacidades Relacionadas:** F30-12.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-12).
+- **Problema Detectado y Riesgos:**
+  La incorporación de nuevos docentes o personal administrativo carece de un mecanismo formal para comprobar que comprenden las políticas de seguridad, registro de calificaciones y uso de la plataforma.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Cuestionarios de inducción interactivos:*
+     - Módulos de aprendizaje con evaluación de comprensión sobre políticas institucionales y manejo del sistema.
+  2. *Registro institucional de certificación:*
+     - Asentar en `CapacitacionesPersonal` el puntaje obtenido y fecha de aprobación del personal.
+- **Criterios de Aceptación:**
+  - [ ] El sistema registra y certifica la capacitación aprobada del empleado antes de habilitar permisos avanzados.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task14] [P2] Guía de Procedimientos de Contingencia y Recuperación Operativa (Runbooks)
+- **Orden de Ejecución:** 14
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `docs/runbooks/runbook-recuperacion-desastres.md`, `docs/runbooks/runbook-interrupcion-gas.md`
+- **Subcapacidades Relacionadas:** F30-11, F30-08.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-11).
+- **Problema Detectado y Riesgos:**
+  Ante una interrupción imprevista de Google Workspace o falla de cuotas en producción, el personal técnico de guardia debe disponer de instrucciones paso a paso para ejecutar contingencias sin improvisaciones.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Protocolos de emergencia (Runbooks):*
+     - Instrucciones detalladas de restauración de copias de seguridad en Drive.
+     - Procedimiento de conmutación a modo de contingencia fuera de línea (`PersistenceManager`).
+     - Protocolo de reanudación y conciliación de saldos tras la recuperación del servicio.
+- **Criterios de Aceptación:**
+  - [ ] Los Runbooks técnicos cubren de forma autosuficiente los escenarios de fallo mayor y contingencia.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task15] [P2] Protocolo Formal de Autorización de Go-Live y Actas de Certificación Departamental
+- **Orden de Ejecución:** 15
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`submitDepartmentalCertificationApproval`, `getDepartmentalCertifications`)
+  - `dashboard-direccion.html`
+  - Hoja: `CertificacionesInstitucionales`
+- **Subcapacidades Relacionadas:** F30-14, F30-15.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección E (CERT-01 a CERT-13) y Sección H.
+- **Problema Detectado y Riesgos:**
+  La puesta en marcha definitiva de la plataforma requiere la firma y consentimiento formal de cada líder departamental (Director, Secretaría, Contador, Coordinador Académico), impidiendo despliegues no avalados colegiadamente.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Firma digital de actas de aceptación:*
+     - Registro formal por departamento de las 13 áreas de certificación interna (`CERT-01` a `CERT-13`).
+     - Opciones: `APROBADA`, `APROBADA_CON_OBSERVACIONES`, `RECHAZADA`.
+  2. *Generación de Acta de Certificación Institucional descargable:*
+     - Consolidar en un documento PDF oficial el estado de todas las áreas y las firmas de los responsables.
+- **Criterios de Aceptación:**
+  - [ ] Todos los líderes departamentales registran formalmente su visto bueno o requerimientos pendientes.
+  - [ ] Se emite el Acta Oficial de Certificación y Autorización de Go-Live institucional.
+- **Estado:** [ ] Pendiente
+
+---
