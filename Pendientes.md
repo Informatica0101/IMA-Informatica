@@ -13175,195 +13175,497 @@
 
 ---
 
-### [F34-Task01] [P0] Unificación del ciclo de vida de justificaciones de asistencia y sincronización con listas de clase
+### [F34-Task01] [P0] Unificación del ciclo de vida de las justificaciones de asistencia y sincronización con los registros académicos
 - **Prioridad:** P0 (Crítica)
+- **Orden de Ejecución:** 1 (Dependencia base para sincronización académica)
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs` (`submitStudentAbsenceJustification`, `reviewAbsenceJustification`, `updateRequestStatus`)
-  - `backend/academic-service/Code.gs` (`reviewAttendanceJustification`, `RegistrosAsistencia`, `SesionesAsistencia`)
-  - Hojas: `SolicitudesTramites`, `JustificacionesAsistencia`, `RegistrosAsistencia`
+  - `backend/academic-service/Code.gs` (`submitAttendanceJustification`, `reviewAttendanceJustification`, `RegistrosAsistencia`, `SesionesAsistencia`, `JustificacionesAsistencia`)
+  - Hojas de Cálculo: `SolicitudesTramites`, `JustificacionesAsistencia`, `RegistrosAsistencia`, `SesionesAsistencia`
 - **Subcapacidades Relacionadas:** F34-01, F34-07, F34-12.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-12) y Matriz CAR-F34-03.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-12), Matriz CAR-F34-03 y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  Existe una dualidad arquitectónica en el procesamiento de excusas y justificaciones de inasistencia: mientras `user-service` escribe y procesa solicitudes en `SolicitudesTramites`, la actualización efectiva de las listas de asistencia del docente (`RegistrosAsistencia` con `Justificada = true`) solo se ejecuta en `reviewAttendanceJustification` de `academic-service`. Como resultado, las justificaciones aprobadas por Secretaría en la bandeja institucional no impactan las inasistencias en los registros de aula, generando inasistencias injustificadas erróneas y sanciones académicas indebidas.
-- **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Unificación de disparo o servicio compartido:*
-     - Al aprobar una justificación en `reviewAbsenceJustification` (o mediante `processWorkflowDecision`), invocar o ejecutar la reconciliación con `RegistrosAsistencia` vinculando la fecha afectada (`fechaAusencia`) y el estudiante (`estudianteId`).
-     - Marcar el registro de asistencia como `Justificada = true` y actualizar el estado de asistencia a `Justificada` en todas las sesiones y asignaturas correspondientes a la fecha aprobada.
-  2. *Idempotencia y prevención de desajustes:*
-     - Asegurar que la reversión o anulación de una justificación revierta el estado de la asistencia a su condición original previa (`Inasistencia Injustificada`).
-  3. *Parametrización configurable:*
-     - Configuración institucional en `ConfiguracionInstitucional`: `JUSTIFICACION_IMPACTO_AUTOMATICO_ASISTENCIA` (Valores: `INMEDIATO_AL_APROBAR`, `REQUIERE_CONFORMIDAD_DOCENTE`).
+  Existen dos implementaciones independientes para presentar y revisar excusas estudiantiles:
+  1. El servicio de usuarios registra solicitudes en `SolicitudesTramites`.
+  2. El servicio académico registra justificaciones en `JustificacionesAsistencia` y es el único que actualiza `RegistrosAsistencia` (`Justificada = true`).
+  Como consecuencia directa, una excusa aprobada desde el flujo administrativo en Secretaría puede no reflejarse en la asistencia académica, produciendo inconsistencias críticas entre la resolución administrativa y los registros que consultan los docentes, derivando en inasistencias injustificadas erróneas y sanciones académicas indebidas para el estudiante.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Ciclo de vida unificado e inequívoco:*
+     - Establecer un único ciclo de vida institucional para las justificaciones de asistencia, independientemente de la interfaz o departamento desde el que se presenten.
+     - Mantener una relación relacional inequívoca entre:
+       * Solicitud original (`solicitudId` / `justificacionId`).
+       * Estudiante (`estudianteId` / `userId`).
+       * Representante legal o tutor que la presentó.
+       * Fechas y sesiones de asistencia afectadas (`fechaAusencia`, `periodo`).
+       * Evidencias adjuntas (`adjuntoUrl`, hash criptográfico).
+       * Revisiones y decisiones (`revisadoPor`, `observacionesAdmin`).
+       * Resolución final (`EstadoRevision`).
+       * Registros académicos actualizados (`RegistrosAsistencia`).
+  2. *Sincronización académica atómica sin re-captura manual:*
+     - La aprobación administrativa en `reviewAbsenceJustification` (o mediante `processWorkflowDecision`) debe producir automáticamente la actualización académica correspondiente en `RegistrosAsistencia` sin requerir que Secretaría vuelva a registrar manualmente la justificación en otro módulo.
+     - La actualización debe afectar exclusivamente las fechas y sesiones comprendidas en la justificación aprobada.
+     - En solicitudes que cubran varios días o períodos extendidos, identificar con precisión las sesiones de clase afectadas (`SesionesAsistencia`) y aplicar la justificación únicamente a las que correspondan.
+  3. *Segregación estricta de estados y justificaciones parciales:*
+     - Una solicitud en estado pendiente, observada o rechazada bajo ninguna circunstancia debe modificar los registros de asistencia como si estuviera aprobada.
+     - Conservar en el modelo la distinción entre:
+       * Justificación recibida.
+       * Justificación en revisión.
+       * Justificación aprobada.
+       * Inasistencia justificada.
+       * Inasistencia todavía pendiente de justificar.
+     - Permitir resoluciones administrativas con *justificación parcial*, cuando solo algunas fechas o sesiones del rango solicitado hayan sido aceptadas y validadas por Secretaría.
+  4. *Idempotencia, prevención de duplicados y reversibilidad:*
+     - Evitar que una misma aprobación repetida actualice dos veces los mismos registros de asistencia.
+     - Asegurar que la anulación, revocación o rechazo posterior de una justificación revierta coherentemente el estado de la asistencia a su condición original previa (`Inasistencia Injustificada`) sin borrar la evidencia histórica.
+     - Registrar los resultados de la sincronización y registrar en log estructurado los fallos que impidan actualizar la asistencia.
+     - Permitir reintentar una sincronización fallida sin duplicar registros ni alterar decisiones anteriores.
+  5. *Parametrización configurable en plataforma:*
+     - En caso de discrepancias entre políticas institucionales, incorporar en `ConfiguracionInstitucional`:
+       * `JUSTIFICACION_IMPACTO_AUTOMATICO_ASISTENCIA`: Valores `INMEDIATO_AL_APROBAR_SECRETARIA` (por defecto) vs. `REQUIERE_CONFORMIDAD_PREVIA_DOCENTE`.
+       * `PERMITIR_JUSTIFICACION_PARCIAL_DIAS`: Valores `HABILITADO` (permite aprobar días seleccionados del rango) vs. `TODO_O_NADA` (exige aprobar o rechazar el bloque completo).
 - **Criterios de Aceptación:**
-  - [ ] La aprobación de una justificación de ausencia en la bandeja de Secretaría actualiza automáticamente los registros de asistencia del estudiante en la fecha indicada.
-  - [ ] El docente visualiza en su lista de clase que la inasistencia está justificada con referencia al número de trámite.
-  - [ ] La anulación de una justificación revierte coherentemente el estado de inasistencia sin corromper el historial.
+  - [ ] Presentar una excusa desde el portal del representante y comprobar que se conserva su identificador único durante todo el proceso.
+  - [ ] Aprobarla desde el flujo administrativo y verificar que las sesiones afectadas se actualizan en `RegistrosAsistencia` (`Justificada = true` y `EstadoAsistencia = "Justificada"`).
+  - [ ] Comprobar que una excusa rechazada, observada o pendiente no modifica la asistencia en ningún aula.
+  - [ ] Aprobar una excusa que cubra varias fechas y verificar que solo se actualizan las sesiones comprendidas en el período autorizado.
+  - [ ] Ejecutar dos veces la misma operación de aprobación y comprobar que no se duplican cambios ni registros.
+  - [ ] Simular un fallo durante la sincronización y comprobar que el sistema conserva la resolución y permite completar la actualización sin duplicarla.
+  - [ ] Verificar que la asistencia y el expediente muestran exactamente la misma resolución.
+  - [ ] Comprobar que las modificaciones quedan registradas con fecha, responsable y solicitud de origen.
+- **Dependencias:** F34-Task03 (acceso contextual docente a justificaciones resultantes), F34-Task04 (integridad criptográfica de evidencias adjuntas).
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F34-Task02] [P0] Bandeja de salida institucional y registro de acuses de entrega y lectura
+### [F34-Task04] [P0] Integridad criptográfica, versionado y protección contra sustitución de evidencias documentales
 - **Prioridad:** P0 (Crítica)
+- **Orden de Ejecución:** 2 (Garantía de inmutabilidad previa a aprobaciones y firmas)
 - **Componentes Afectados:**
-  - `backend/user-service/Code.gs` (`getDepartmentalOutbox`, `recordDocumentDeliveryReceipt`, `recordDocumentOpenReceipt`)
+  - `backend/user-service/Code.gs` (`submitInstitutionalFormRequest`, `submitStudentAbsenceJustification`, `verifyDocumentEvidenceIntegrity`)
+  - `backend/academic-service/Code.gs` (`submitAttendanceJustification`)
   - `backend/accounting-service/Code.gs`
-  - Hoja: `EntregasDocumentales`
-- **Subcapacidades Relacionadas:** F34-02, F34-09, F34-10.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-02) y Matriz CAR-F34-02.
+  - Hojas de Cálculo: `SolicitudesTramites`, `JustificacionesAsistencia`, `EvidenciasDocumentales`
+- **Subcapacidades Relacionadas:** F34-05, F34-09, F34-10.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-10), Matriz CAR-F34-05 y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  No existe una bandeja formal de salida donde los departamentos (Secretaría, Dirección, Contabilidad) puedan auditar las comunicaciones y documentos emitidos hacia familias o personal, ni se distingue entre un mensaje despachado, un documento efectivamente entregado y una consulta o lectura real por el destinatario, impidiendo sustentar notificaciones legales o citaciones formales.
-- **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Servicio de bandeja de salida:*
-     - Implementar `getDepartmentalOutbox(payload)` filtrando por departamento emisor, rango de fechas y tipo de comunicación.
-     - Mostrar destinatarios, documento adjunto, fecha de despacho, estado de entrega (`Preparado`, `Despachado`, `Entregado`, `Leído`, `Fallido`) y acuse de recibo.
-  2. *Registro de entrega y lectura (Acuses de Recibo):*
-     - Auto-crear la hoja `EntregasDocumentales` (`EntregaID`, `DocumentoId`, `TramiteId`, `EmisorUserId`, `DepartamentoEmisor`, `DestinatarioUserId`, `FechaDespacho`, `FechaEntrega`, `FechaLectura`, `IpLectura`, `HashAcuse`).
-     - Al abrir el destinatario el documento o trámite en su portal, registrar atómicamente `FechaLectura` e IP sin alterar estados de aprobación.
-  3. *Parametrización configurable:*
-     - Ajuste `EXIGIR_CONFIRMACION_EXPLICITA_RECEPCION` (Valores: `TRUE` para citaciones y resoluciones sancionatorias, `FALSE` para comunicados informativos ordinarios).
+  Los archivos adjuntos se almacenan en Google Drive y se referencian mediante URLs o IDs de archivo, pero no se calcula ni se almacena un hash SHA-256 del contenido binario recibido. Si un archivo es sustituido, editado o corrompido en el almacenamiento externo, el sistema carece de mecanismos para detectar que la evidencia actual difiere de la aportada originalmente, comprometiendo la legalidad de autorizaciones, excusas médicas y resoluciones disciplinarias.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Cálculo y persistencia de hash criptográfico SHA-256:*
+     - Calcular obligatoriamente el hash SHA-256 del contenido binario de cada archivo en el momento exacto de su recepción en servidor.
+     - Almacenar junto al registro documental estructurado:
+       * Identificador del archivo (`evidenciaId`).
+       * Identificador de la solicitud (`solicitudId`).
+       * Nombre original del archivo.
+       * Tipo MIME verificado.
+       * Tamaño exacto en bytes.
+       * Fecha y hora ISO de recepción.
+       * Usuario que lo aportó (`userId`).
+       * Hash criptográfico SHA-256 en hexadecimal.
+       * Identificador de versión (`versionNumero`).
+       * Ubicación y referencia segura de almacenamiento en Google Drive.
+  2. *Auditoría activa y verificación de integridad:*
+     - Comprobar la integridad del archivo al consultarlo, revisarlo o descargarlo en operaciones críticas.
+     - Detectar discrepancias entre el hash del contenido actual en Drive y el hash registrado originalmente.
+     - Registrar los fallos de integridad como incidencias de seguridad (`EVIDENCE_TAMPERING_DETECTED`) y evitar que el sistema presente el archivo como evidencia válida cuando no pueda verificarse.
+  3. *Inmutabilidad y versionado ante subsanaciones:*
+     - Impedir la sustitución silenciosa o sobrescritura de un documento que haya servido de base para aprobar o firmar una solicitud.
+     - Si el solicitante aporta una fotografía o documento corregido tras una observación, almacenar una nueva versión documental vinculada (`v2`, `v3`) conservando intacta la versión previa para auditoría histórica.
+     - Permitir múltiples archivos adjuntos por solicitud, conservando cada uno su propio hash y metadatos independientes.
+     - Mantener la protección de privacidad de los archivos en Drive, garantizando que la comprobación de integridad no requiera hacer públicos los enlaces.
+  4. *Parametrización configurable en plataforma:*
+     - Ajuste institucional en `ConfiguracionInstitucional`: `BLOQUEO_AUTOMATICO_POR_DISCREPANCIA_HASH` (Valores: `ESTRICTO_BLOQUEAR_ACCESO_Y_NOTIFICAR_AUDITORIA` vs. `ADVERTENCIA_VISUAL_REVISOR`).
 - **Criterios de Aceptación:**
-  - [ ] El personal departamental puede consultar la bandeja de salida con todos los documentos emitidos y sus estados.
-  - [ ] El sistema distingue claramente entre despacho, entrega efectiva y lectura por el destinatario.
-  - [ ] Se genera un registro verificable con marca temporal e IP cuando el usuario accede formalmente al documento.
+  - [ ] Subir un archivo y comprobar que se calcula y almacena su hash SHA-256.
+  - [ ] Descargar el mismo archivo y comprobar que el hash recalculado coincide exactamente.
+  - [ ] Sustituir o modificar el archivo en el almacenamiento y verificar que el sistema detecta y alerta la discrepancia.
+  - [ ] Presentar una nueva evidencia subsanada y comprobar que la original sigue disponible y consultable por los roles autorizados.
+  - [ ] Aprobar una solicitud y comprobar que la decisión queda vinculada a los hashes de las evidencias efectivamente revisadas.
+  - [ ] Verificar que un usuario sin permisos no puede sustituir ni eliminar archivos aprobados.
+  - [ ] Simular un fallo al calcular o verificar el hash y comprobar que el archivo no se marca como verificado.
+  - [ ] Comprobar que cada adjunto de una solicitud mantiene un identificador y hash independiente.
+  - [ ] Verificar que los enlaces privados continúan protegidos contra accesos no autenticados.
+  - [ ] Comprobar que las evidencias históricas pueden verificarse sin alterar su contenido ni marcas temporales.
+- **Dependencias:** Almacenamiento documental existente, sistema de permisos, F34-Task01.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F34-Task03] [P0] Acceso contextual docente (ABAC) a justificaciones y resoluciones de sus estudiantes
+### [F34-Task03] [P0] Consulta contextual de justificaciones de asistencia para docentes mediante permisos ABAC
 - **Prioridad:** P0 (Crítica)
+- **Orden de Ejecución:** 3 (Control de acceso basado en atributos y privacidad docente)
 - **Componentes Afectados:**
   - `backend/academic-service/Code.gs` (`getTeacherStudentJustifications`)
   - `backend/user-service/Code.gs`
   - `js/teacher.js`
+  - `teacher-dashboard.html`
 - **Subcapacidades Relacionadas:** F34-01, F34-04, F34-11.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-11) y Matriz CAR-F34-04.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-11), Matriz CAR-F34-04 y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  Los docentes no cuentan con una vía para consultar las justificaciones de inasistencia o solicitudes de los alumnos a los que imparten clase en el período lectivo activo. O bien quedan desinformados del motivo de la ausencia, o tendrían que recibir permisos administrativos globales que expondrían notas internas y expedientes de estudiantes ajenos a su carga horaria.
-- **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Filtro de control de acceso basado en atributos (ABAC):*
-     - Implementar `getTeacherStudentJustifications(payload)` validando que el docente solicitante (`_verifiedUserId`) posea asignación académica activa en `AsignacionesDocentes` con el grado, sección o asignatura del estudiante afectado.
-     - Rechazar con error 403 cualquier intento de consultar justificaciones de alumnos fuera de su ámbito docente.
-  2. *Segregación de información confidencial:*
-     - Exponer al docente únicamente la fecha, el motivo general justificado y las observaciones públicas de Secretaría.
-     - Ocultar estrictamente las observaciones administrativas privadas, diagnósticos clínicos confidenciales o disputas de custodia familiar.
+  Los docentes no disponen de una consulta específica que les permita visualizar las justificaciones de inasistencia de los estudiantes matriculados en sus asignaturas. La protección contextual para padres ya está implementada, pero falta extender el acceso a los docentes según sus asignaciones académicas efectivas. Si se les concediera acceso global verían expedientes de otros grupos y notas privadas, y si no se les concede quedan desinformados del motivo de la inasistencia.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Control de acceso basado en atributos (ABAC):*
+     - Incorporar la consulta `getTeacherStudentJustifications(payload)` validando en backend la relación entre:
+       * Docente autenticado (`_verifiedUserId`).
+       * Asignaturas que imparte (`AsignacionesDocentes`).
+       * Secciones o grupos asignados activamente.
+       * Estudiantes matriculados en sus listas (`MatriculasEstudiantes`).
+       * Fechas y sesiones de clase afectadas (`SesionesAsistencia`).
+     - La consulta debe limitarse estrictamente a los estudiantes asignados en el período lectivo correspondiente.
+     - Cuando una justificación afecte varias asignaturas impartidas por distintos docentes, cada docente debe consultar únicamente las sesiones que le corresponden en su horario.
+  2. *Segregación de confidencialidad y datos sensibles:*
+     - Mostrar únicamente la información indispensable para la función docente:
+       * Nombre del estudiante y grado/sección.
+       * Fecha o período justificado.
+       * Estado de la solicitud (`Aprobada`, `Pendiente`, `Rechazada`).
+       * Resultado de la revisión administrativa.
+       * Observaciones públicas de Secretaría.
+       * Evidencias autorizadas para conocimiento docente.
+     - Ocultar estrictamente notas administrativas internas, detalles clínicos reservados, información médica innecesaria o disputas de custodia legal familiar.
+  3. *Constancia de conocimiento docente:*
+     - Permitir que el docente registre una constancia digital de conocimiento o conformidad sobre la inasistencia justificada sin alterar la resolución emitida por Secretaría.
+     - Mantener el acceso contextual histórico cuando el docente cambie de sección o finalice el período académico según las directrices institucionales.
+  4. *Parametrización configurable en plataforma:*
+     - Parámetro en `ConfiguracionInstitucional`: `DOCENTE_VISIBILIDAD_EVIDENCIAS_MEDICAS` (Valores: `SOLO_DICTAMEN_SECRETARIA` [recomendado por privacidad] vs. `PERMITIR_VER_CONSTANCIA_MEDICA_COMPLETA`).
 - **Criterios de Aceptación:**
-  - [ ] El docente consulta únicamente las justificaciones de los alumnos asignados a sus asignaturas o secciones.
-  - [ ] Las consultas de estudiantes ajenos son rechazadas en backend con error de autorización.
-  - [ ] Los comentarios administrativos internos y datos sensibles no se exponen al docente.
+  - [ ] Un docente consulta exclusivamente las justificaciones de estudiantes matriculados en sus secciones y asignaturas activas.
+  - [ ] Un docente no puede consultar justificaciones de alumnos que no pertenecen a su asignación académica (rechazo con error 403).
+  - [ ] Si una excusa cubre varias asignaturas, cada docente visualiza únicamente las sesiones correspondientes a su carga horaria.
+  - [ ] Alterar manualmente identificadores en la solicitud no permite eludir los filtros ABAC ni acceder a expedientes ajenos.
+  - [ ] La consulta docente no expone observaciones administrativas privadas ni información sensible no pertinente.
+  - [ ] El docente puede registrar constancia de conocimiento sin modificar la decisión tomada por Secretaría.
+  - [ ] Todos los intentos de acceso no autorizado son auditados en `RegistroEventos`.
+  - [ ] La consulta se integra en la interfaz docente sin interferir con la bandeja de tareas y entregas de aula virtual.
+- **Dependencias:** F34-Task01 (unificación de justificaciones), sistema de asignaciones docentes y matrícula.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F34-Task04] [P0] Aseguramiento criptográfico de adjuntos y evidencias documentales
+### [F34-Task02] [P0] Bandeja de salida institucional y control de entregas con acuses de recibo
 - **Prioridad:** P0 (Crítica)
+- **Orden de Ejecución:** 4 (Trazabilidad y fehaciencia de comunicaciones despachadas)
 - **Componentes Afectados:**
-  - `backend/user-service/Code.gs` (`submitInstitutionalFormRequest`, `submitStudentAbsenceJustification`)
+  - `backend/user-service/Code.gs` (`getDepartmentalOutbox`, `recordDocumentDeliveryReceipt`, `recordDocumentOpenReceipt`, `sendInstitutionalDispatch`)
   - `backend/accounting-service/Code.gs`
-  - Hoja: `SolicitudesTramites`, `JustificacionesAsistencia`
-- **Subcapacidades Relacionadas:** F34-05, F34-09, F34-10.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-10) y Matriz CAR-F34-05.
+  - Hoja de Cálculo: `EntregasDocumentales`
+- **Subcapacidades Relacionadas:** F34-02, F34-09, F34-10.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-02), Matriz CAR-F34-02 y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  Los archivos adjuntos de las solicitudes (justificantes médicos, constancias) se almacenan como URLs o IDs de Google Drive sin calcular su resumen criptográfico. Si el archivo en Drive es sustituido o editado posteriormente, no existe forma de auditar si la resolución administrativa se basó en el documento original o en uno adulterado.
-- **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Cálculo y persistencia de hash SHA-256:*
-     - Al subir y registrar un adjunto en `submitStudentAbsenceJustification` o `submitInstitutionalFormRequest`, calcular y almacenar el hash `SHA-256` del binario recibido.
-     - Almacenar el hash en columna dedicada `AdjuntoHashSha256` en `SolicitudesTramites` y `JustificacionesAsistencia`.
-  2. *Verificación de integridad en revisión:*
-     - Al abrir el revisor o auditor el adjunto desde la bandeja, proporcionar una función de verificación que compare el hash actual del archivo con el registrado al momento del envío, alertando si el archivo sufrió alteraciones.
+  Existe consulta de trámites enviados por usuarios mediante `getAdministrativeRequests`, pero no existe una bandeja formal de salida para que Secretaría, Dirección, Contabilidad y otros departamentos puedan controlar los documentos que emiten y verificar qué ocurrió después del envío. Actualmente no se diferencian de forma suficiente el envío solicitado, la entrega, la apertura, la lectura y la recepción formal, dejando a la institución sin respaldo legal probatorio ante citaciones o notificaciones oficiales.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Bandeja de salida personal y departamental:*
+     - Incorporar vistas de bandeja de salida personal (`mis despachos`) y departamental (`despachos del departamento`).
+     - Registrar y consultar cada emisión con:
+       * Identificador único de entrega (`entregaId`).
+       * Identificador del documento (`documentoId`).
+       * Identificador del trámite o expediente relacionado (`tramiteId`).
+       * Remitente (`emisorUserId`).
+       * Departamento de origen.
+       * Destinatario o destinatarios (individual o lista).
+       * Fecha y hora ISO de emisión y despacho.
+       * Documento y versión exacta enviada.
+       * Archivos adjuntos y sus hashes asociados.
+       * Medio o canal de entrega (portal institucional, correo, notificación push).
+       * Estado individualizado de cada destinatario.
+  2. *Diferenciación rigurosa de estados y acontecimientos de entrega:*
+     - Diferenciar inequívocamente y sin equiparaciones automáticas:
+       * `Preparado`: Documento elaborado en borrador.
+       * `Envío Solicitado`: Encolado para despacho.
+       * `Enviado`: Emitido por el servidor.
+       * `Entregado`: Depositado en el canal o casilla del destinatario.
+       * `Abierto o Consultado`: El destinatario abrió o descargó el documento.
+       * `Recibido Formalmente`: El destinatario confirmó la recepción expresa.
+       * `Respondido`: El trámite derivó en una contestación.
+       * `Devuelto o Rechazado`: Rebotado por dirección inválida o rechazo.
+       * `Fallido`: Error técnico de transmisión.
+     - Regla estricta: La apertura de una notificación o recepción de un correo jamás debe interpretarse como recepción formal de un documento oficial vinculante.
+  3. *Acuses de recibo verificables y reenvíos:*
+     - Generar acuse de recibo con identificador único, marca temporal, IP y hash del documento recibido al momento en que el destinatario confirme la recepción.
+     - En envíos multidestinatario, conservar el estado de entrega y lectura independiente para cada uno.
+     - Permitir reenviar documentos ante fallos de entrega sin sobrescribir ni borrar los intentos fallidos previos.
+     - Mantener la relación con el expediente original evitando generar copias huérfanas.
+  4. *Parametrización configurable en plataforma:*
+     - Parámetro en `ConfiguracionInstitucional`: `MODALIDAD_ACUSE_RECIBO_NOTIFICACIONES`: Valores `EXPLICITO_CLIC_CONFIRMACION` (exige botón de aceptación de recibido) vs. `AUTOMATICO_POR_LECTURA` (toma la apertura como recepción con advertencia).
 - **Criterios de Aceptación:**
-  - [ ] Cada archivo adjunto registrado en un trámite cuenta con su hash SHA-256 almacenado en base de datos.
-  - [ ] La plataforma detecta y alerta si un archivo adjunto ha sido modificado con posterioridad a su recepción inicial.
-  - [ ] Se conserva la inmutabilidad de las evidencias que respaldan aprobaciones o resoluciones.
+  - [ ] Emitir un documento desde un departamento y comprobar que aparece de inmediato en su bandeja de salida.
+  - [ ] Verificar que remitente, destinatario, fecha, versión documental y hashes quedan registrados en `EntregasDocumentales`.
+  - [ ] Comprobar que un fallo de transmisión no se marque falsamente como entrega exitosa.
+  - [ ] Abrir el documento desde la cuenta del destinatario y verificar que se registra la consulta sin marcarlo automáticamente como "Recibido Formalmente".
+  - [ ] Confirmar formalmente la recepción y comprobar la generación del acuse con IP y marca de tiempo.
+  - [ ] Enviar a múltiples destinatarios y verificar que cada uno conserva su propio estado de lectura y entrega.
+  - [ ] Intentar consultar la bandeja de salida de otro departamento sin autorización y verificar que el acceso es denegado (error 403).
+  - [ ] Comprobar que un reenvío conserva el historial del intento previo sin destruirlo.
+  - [ ] Modificar una copia posterior del documento y verificar que el acuse original permanece vinculado a la versión efectivamente recibida.
+- **Dependencias:** F34-Task04 (integridad criptográfica), F34-Task06 (notificaciones de envío y entrega), historial institucional.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F34-Task05] [P1] Historial estructurado de asignaciones, reasignaciones y traspasos
+### [F34-Task05] [P1] Historial de asignaciones, reasignaciones y revisión individual o colegiada
 - **Prioridad:** P1 (Alta)
+- **Orden de Ejecución:** 5 (Coordinación administrativa multidepartamental)
 - **Componentes Afectados:**
-  - `backend/user-service/Code.gs` (`reassignAdministrativeRequest`, `getWorkflowHistory`)
-  - Hoja: `HistorialAsignacionesTramites`
+  - `backend/user-service/Code.gs` (`reassignAdministrativeRequest`, `getWorkflowHistory`, `saveApprovalWorkflow`, `processWorkflowDecision`)
+  - Hoja de Cálculo: `HistorialAsignacionesTramites`, `FlujosAprobacion`
 - **Subcapacidades Relacionadas:** F34-04, F34-07, F34-09.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-04) y Matriz CAR-F34-07.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-04), Matriz CAR-F34-07 y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  Al reasignar una solicitud de un funcionario o departamento a otro, solo se sobreescribe el campo `asignadoA` en `SolicitudesTramites`. Se pierde la trazabilidad de quién ordenó la reasignación, en qué fecha ocurrió y cuál fue el motivo o fundamento del traslado.
+  El sistema permite modificar el responsable mediante `siguienteAsignadoA` y `updateRequestStatus`, pero no conserva un historial estructurado de los traspasos (se sobrescribe el responsable actual). Tampoco existe soporte para asignar un trámite a varios responsables que deban revisar o aprobar de forma concurrente o colegiada (ej. Secretaría + Orientación + Dirección), arriesgando aprobaciones unilaterales en trámites que requieren consenso.
 - **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Bitácora de reasignaciones:*
-     - Auto-crear la hoja `HistorialAsignacionesTramites` (`AsignacionId`, `SolicitudId`, `AsignadoPorUserId`, `ResponsableAnterior`, `NuevoResponsable`, `DepartamentoDestino`, `MotivoReasignacion`, `FechaHoraAsignacion`).
-     - Registrar un evento cada vez que un trámite sea transferido entre usuarios o departamentos.
-  2. *Validación de destinatarios válidos:*
-     - Validar que el nuevo responsable sea un usuario activo con permisos en el departamento destino antes de completar la reasignación.
+  1. *Bitácora estructurada de asignaciones y traspasos:*
+     - Registrar en la hoja `HistorialAsignacionesTramites`:
+       * Identificador de asignación (`asignacionId`).
+       * Documento o solicitud (`solicitudId`).
+       * Departamento de origen y departamento de destino.
+       * Responsable anterior y nuevo responsable (`userId`).
+       * Usuario que ordenó la asignación o traspaso.
+       * Fecha y hora ISO exacta.
+       * Motivo fundamentado del cambio.
+       * Tipo de asignación: inicial, reasignación, delegación temporal o transferencia departamental.
+     - Validar que el usuario destinatario esté activo en el sistema y pertenezca al departamento correspondiente antes de procesar el traspaso.
+  2. *Revisión colegiada y reglas de aprobación configurables:*
+     - Permitir asignar un trámite a múltiples responsables concurrentes o secuenciales.
+     - Implementar motor de resolución según reglas configurables en el flujo:
+       * `TODOS_DEBEN_APROBAR` (unanimidad obligatoria).
+       * `BASTA_UNO` (primer responsable que apruebe libera el trámite).
+       * `MAYORIA_SIMPLE` (más del 50% de las decisiones emitidas deben ser favorables).
+       * `NUMERO_FIJO` (requiere un mínimo de N aprobaciones).
+     - Mostrar qué responsables ya completaron su intervención y cuáles siguen pendientes en la bandeja de trabajo.
+     - Evitar que una decisión individual cierre o apruebe definitivamente un proceso que requiere múltiples aprobaciones colegiadas.
+     - Registrar delegaciones temporales de funciones con fecha de inicio y caducidad automática.
+  3. *Parametrización configurable en plataforma:*
+     - Ajuste por tipo de trámite en `FlujosAprobacion`: `REGLA_APROBACION_COLEGIADA` (`TODOS`, `UNO`, `MAYORIA`) y `PERMITIR_REASIGNACION_POR_REVISOR` (Valores: `SOLO_SUPERVISOR_O_ADMIN`, `CUALQUIER_INTEGRANTE_DEPARTAMENTO`).
 - **Criterios de Aceptación:**
-  - [ ] Toda reasignación de un trámite queda registrada con autor, motivo, responsable anterior y nuevo responsable.
-  - [ ] El historial del trámite muestra la cronología completa de asignaciones y traspasos.
-  - [ ] Se impide la reasignación a usuarios inactivos o sin permisos en el departamento.
+  - [ ] Asignar una solicitud y comprobar que se registra autor, destinatario, fecha y departamento en la bitácora.
+  - [ ] Reasignar la solicitud y verificar que se conservan el responsable anterior y el motivo sin sobrescribir la historia.
+  - [ ] Intentar asignar a un usuario inactivo o ajeno al departamento y comprobar que la operación es rechazada.
+  - [ ] Asignar un documento a varios responsables colegiados y verificar que cada uno registra su decisión independiente.
+  - [ ] Comprobar que una aprobación individual no finaliza un trámite configurado como unánime o colegiado.
+  - [ ] Verificar que una regla de mayoría simple se resuelve de forma matemáticamente exacta al registrar las decisiones.
+  - [ ] Comprobar que las delegaciones temporales expiran automáticamente pasada la fecha límite autorizada.
+  - [ ] Consultar el historial y comprobar la secuencia cronológica completa de traspasos y decisiones colegiadas.
+- **Dependencias:** Motor de flujos de aprobación, sistema de usuarios y departamentos, F34-Task08.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F34-Task06] [P1] Notificaciones multicanal reactivas por cambio de estado de trámite
+### [F34-Task09] [P1] Observaciones granulares y subsanación por campo o documento
 - **Prioridad:** P1 (Alta)
+- **Orden de Ejecución:** 6 (Subsanación quirúrgica sin reproceso global)
 - **Componentes Afectados:**
-  - `backend/user-service/Code.gs` (`processWorkflowDecision`, `updateRequestStatus`, `sendMultiChannelNotification`)
+  - `backend/user-service/Code.gs` (`processWorkflowDecision`, `submitFormCorrection`, `getWorkflowHistory`)
+  - `js/student.js`, `js/teacher.js`
+  - Hoja de Cálculo: `ObservacionesSubsanacionTramite`, `RevisionesDecisionesTramite`
+- **Subcapacidades Relacionadas:** F34-05, F34-07, F34-10.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-05) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  El motor de decisiones actual permite registrar observaciones públicas e internas, pero no ofrece un mecanismo para marcar un campo, dato o archivo específico como observado. Esto obliga a los funcionarios a devolver o rechazar la solicitud completa, forzando a las familias a llenar de nuevo todo el formulario o volver a subir documentos que ya estaban correctos, generando fricción y retrasos operativos.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Marcado quirúrgico de observaciones:*
+     - Permitir vincular una observación a un elemento concreto del expediente:
+       * Un campo específico del formulario dinámico.
+       * Un archivo adjunto o evidencia particular (ej. fotografía ilegible de carnet).
+       * Una fecha o período determinado.
+       * La solicitud completa en casos generales.
+     - Registrar para cada elemento observado: campo afectado, motivo de la observación, fecha límite de subsanación y si es subsanable o definitivo.
+  2. *Bloqueo de campos validados y subsanación focalizada:*
+     - Al entrar en estado `Requiere Corrección`, bloquear contra edición los campos y archivos que ya fueron validados y aceptados por el revisor, permitiendo al solicitante editar únicamente los elementos explícitamente observados.
+     - Conservar las respuestas originales y generar una nueva versión vinculada para las correcciones aportadas.
+     - Permitir al solicitante responder puntualmente a cada observación con comentarios o nuevas evidencias.
+     - Mantener la estricta distinción entre notas internas administrativas y requerimientos públicos al solicitante.
+     - Determinar automáticamente cuándo se han solventado todas las observaciones obligatorias para reanudar el trámite hacia la siguiente fase de aprobación.
+  3. *Parametrización configurable en plataforma:*
+     - Parámetro en `ConfiguracionInstitucional`: `MODO_SUBSANACION_CAMPOS`: Valores `QUIRURGICO_CONGELAR_VALIDADOS` (por defecto) vs. `REAPERTURA_TOTAL_FORMULARIO` (permite editar cualquier campo durante la corrección).
+- **Criterios de Aceptación:**
+  - [ ] Marcar un archivo adjunto específico como observado y verificar que los demás documentos del trámite permanecen validados.
+  - [ ] Solicitar la corrección de un campo específico y comprobar que el solicitante ve resaltado exactamente qué debe corregir.
+  - [ ] Comprobar que los campos aceptados quedan bloqueados contra modificación si la política así lo establece.
+  - [ ] Aportar una nueva evidencia subsanada y verificar que se genera una nueva versión sin destruir el archivo inicial.
+  - [ ] Confirmar que las observaciones internas no se exponen al remitente en su consola de subsanación.
+  - [ ] Resolver una observación y verificar que el estado del trámite avanza solo cuando todas las correcciones obligatorias han sido aprobadas.
+- **Dependencias:** F34-Task04 (integridad criptográfica), F34-Task05, motor de decisiones y formularios.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F34-Task06] [P1] Notificaciones multicanal reactivas, preferencias y agrupación de avisos
+- **Prioridad:** P1 (Alta)
+- **Orden de Ejecución:** 7 (Comunicación oportuna y mitigación de fatiga de avisos)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`sendMultiChannelNotification`, `dispatchWorkflowNotification`, `retryFailedNotificationsQueue`)
+  - Hoja de Cálculo: `RegistroNotificaciones`, `PreferenciasNotificaciones`
 - **Subcapacidades Relacionadas:** F34-06, F34-08.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-08) y Matriz CAR-F34-08.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-08), Matriz CAR-F34-08 y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  Cuando Secretaría u Orientación emite una decisión (por ejemplo, `Requiere Corrección` o `Aprobada`), no se dispara una notificación externa (correo o WhatsApp) al padre o solicitante, lo que obliga al usuario a revisar manualmente la plataforma y ocasiona demoras en la subsanación de trámites urgentes.
-- **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Despacho automático de notificaciones:*
-     - Al procesar una decisión en `processWorkflowDecision` o `updateRequestStatus`, disparar una notificación dirigida al `userId` del solicitante a través de `sendMultiChannelNotification`.
-     - Plantillas personalizadas según la decisión: `TRAMITE_APROBADO`, `TRAMITE_RECHAZADO`, `TRAMITE_SUBSANACION_REQUERIDA`.
-  2. *Enlace seguro contextual:*
-     - Incluir en la notificación la referencia al trámite y el enlace al portal institucional, sin exponer información privada sensible en el cuerpo del mensaje.
+  La integración actual genera notificaciones básicas al presentar una solicitud, pero no comunica de manera automática y reactiva los cambios de estado posteriores (`Requiere Corrección`, `Aprobada`, `Rechazada`). Además, no existe una estrategia para agrupar avisos menores, arriesgando fatiga por saturación de mensajes que induce a los usuarios a ignorar avisos críticos o citaciones institucionales.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Despacho reactivo multicanal por eventos de ciclo de vida:*
+     - Disparar avisos automáticos vinculados a los acontecimientos clave del documento:
+       * Solicitud recibida formalmente.
+       * Trámite asignado o reasignado a un responsable.
+       * Solicitud observada / Subsanación requerida (indicando plazo e instrucciones).
+       * Evidencia complementaria solicitada.
+       * Solicitud aprobada o rechazada (con observaciones públicas).
+       * Documento firmado oficialmente.
+       * Despacho y entrega confirmada.
+     - Determinar destinatarios según el rol y su vinculación legal contextual.
+     - Enlaces directos seguros que validen credenciales y permisos al abrir el documento.
+     - Protección estricta: Jamás incluir notas administrativas internas ni datos confidenciales en el texto de correos o mensajes WhatsApp.
+  2. *Agrupación de avisos y preferencias de usuario:*
+     - Diferenciar avisos urgentes/críticos (despacho inmediato e individual) de notificaciones informativas de baja prioridad.
+     - Implementar mecanismo de digest o resumen consolidado para eventos informativos no urgentes para evitar saturación de bandejas.
+     - Registrar el estado de cada notificación: `Generada`, `Pendiente de Envío`, `Enviada`, `Entregada`, `Fallida`.
+     - Reintentos controlados con retroceso exponencial sin duplicar envíos exitosos.
+  3. *Parametrización configurable en plataforma:*
+     - Configuración institucional en `ConfiguracionInstitucional`: `CANALES_NOTIFICACION_TRAMITES`: Lista configurable (`EMAIL`, `SMS`, `WHATSAPP`, `PUSH_INTERNA`) y `FRECUENCIA_RESUMEN_INFORMATIVO` (`INMEDIATO`, `DIARIO_18HRS`).
 - **Criterios de Aceptación:**
-  - [ ] El solicitante recibe una notificación automática al cambiar el estado de su trámite.
-  - [ ] Los mensajes de subsanación informan claramente el motivo público y la fecha límite de corrección.
-  - [ ] No se transmiten datos privados confidenciales en el texto de correos o avisos externos.
+  - [ ] Cambiar una solicitud a `Requiere Corrección` y verificar que el solicitante recibe la notificación externa con las instrucciones públicas.
+  - [ ] Aprobar o rechazar un trámite y verificar el despacho del aviso con el resultado oficial.
+  - [ ] Comprobar que las notas internas y comentarios privados jamás se transmiten en mensajes externos.
+  - [ ] Verificar que los docentes reciben únicamente notificaciones de justificaciones de sus propios alumnos.
+  - [ ] Reintentar un envío fallido y verificar que no se duplica la notificación al destinatario.
+  - [ ] Comprobar que la agrupación de avisos informativos no retrasa las alertas críticas o citaciones urgentes.
+  - [ ] Abrir el enlace de notificación con un usuario no autorizado y comprobar que el acceso es denegado.
+- **Dependencias:** F34-Task02 (bandeja de salida), F34-Task05 (asignaciones), centro de notificaciones multicanal.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F34-Task07] [P1] Delimitación y advertencia legal sobre firmas electrónicas bajo normativa hondureña
+### [F34-Task07] [P1] Delimitación del alcance de las firmas institucionales y requisitos para mecanismos de firma legal
 - **Prioridad:** P1 (Alta)
+- **Orden de Ejecución:** 8 (Seguridad jurídica y cumplimiento del Decreto 149-2013)
 - **Componentes Afectados:**
-  - `backend/user-service/Code.gs` (`registerDocumentSignature`, `getWorkflowHistory`)
+  - `backend/user-service/Code.gs` (`registerDocumentSignature`, `getWorkflowHistory`, `verifyDocumentSignature`)
   - `docs/architecture/`
-  - Certificados emitidos y vistas de visualización de firmas
+  - Certificados digitales emitidos y visualizadores de firmas
+  - Hoja de Cálculo: `FirmasConformidades`
 - **Subcapacidades Relacionadas:** F34-06, F34-10.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-06) y Matriz CAR-F34-06.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-06), Matriz CAR-F34-06 y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  La plataforma registra conformidades digitales con tokens `VERIF-` pero puede inducir a confusión si se presenta ante autoridades externas como una "Firma Electrónica Avanzada", la cual bajo el Decreto 149-2013 de Honduras exige certificados digitales emitidos por prestadores acreditados.
-- **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Leyenda legal y tipificación de firma:*
-     - Catalogar explícitamente en el sistema y en los documentos generados el tipo de firma: `Conformidad Electrónica Institucional Autenticada` vs. `Firma Electrónica Avanzada Externa`.
-     - Incluir en el reporte y comprobante de firma la advertencia legal indicando el alcance interno institucional del mecanismo de autenticación y verificación.
-  2. *Parametrización de requerimiento de firma:*
-     - Parámetro configurable por tipo de trámite: `NIVEL_FIRMA_REQUERIDO` (Valores: `CONFORMIDAD_SIMPLE_SESION`, `FIRMA_DIGITAL_INSTITUCIONAL_TOKEN`, `FIRMA_ELECTRONICA_AVANZADA_CERTIFICADA`).
+  El sistema registra conformidades autenticadas mediante `registerDocumentSignature` con tokens pseudo-aleatorios `VERIF-XXXXXXXX`. Sin embargo, estos mecanismos son aprobaciones internas basadas en sesión y no equivalen a una Firma Electrónica Avanzada bajo la Ley sobre Firmas Electrónicas de Honduras (Decreto 149-2013 y Acuerdo 041-2014). Presentarlos erróneamente como "firmas digitales certificadas" expone a la institución a impugnaciones legales de nulidad en contratos laborales, títulos oficiales o actos disciplinarios graves.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Diferenciación conceptual y advertencia legal expresa:*
+     - Diferenciar inequívocamente en la base de datos, en la interfaz y en los documentos generados:
+       * `Aprobación Administrativa`: Aprobación operativa de paso en el flujo.
+       * `Conformidad Digital Institucional`: Consentimiento autenticado en plataforma mediante sesión y token interno `VERIF-`.
+       * `Constancia de Conocimiento`: Toma de razón (ej. docente enterado de inasistencia).
+       * `Firma Electrónica Avanzada / Certificada`: Firma criptográfica con certificado digital emitido por prestador acreditado.
+     - Mostrar una advertencia legal clara en el visor, constancias y documentos generados indicando que la conformidad registrada tiene valor institucional interno conforme al reglamento escolar.
+     - Prohibir terminantemente el uso de expresiones engañosas como "Certificado por Autoridad Certificadora" en sellos internos.
+  2. *Requisitos de firma según nivel de riesgo y preparación para integración externa:*
+     - Catalogar por tipo documental el nivel de firma exigido.
+     - Cuando se vincule un mecanismo de firma avanzada externa, registrar: identidad del firmante, documento y versión firmada, evidencia de autenticación PKI, referencia del certificado, resultado de validación CRL/OCSP y hash del documento firmado.
+     - Asegurar que la introducción de firmas externas no invalide ni borre el historial de conformidades institucionales previas.
+  3. *Parametrización configurable en plataforma:*
+     - Configuración institucional en `ConfiguracionInstitucional`: `NIVEL_FIRMA_REQUERIDO_POR_TIPO_TRAMITE`: Mapeo JSON de trámites a niveles (`CONFORMIDAD_SESION`, `CONFORMIDAD_TOKEN_VERIF`, `FIRMA_AVANZADA_CERTIFICADA`).
 - **Criterios de Aceptación:**
-  - [ ] Los comprobantes y vistas de firma identifican claramente el nivel legal del mecanismo empleado.
-  - [ ] La plataforma advierte cuando un trámite oficial externo requiera firma avanzada certificada conforme al Decreto 149-2013.
+  - [ ] Registrar una conformidad y verificar que los comprobantes la identifican explícitamente como aprobación interna institucional.
+  - [ ] Comprobar que los tokens `VERIF-` no se presenten como certificados digitales emitidos por una autoridad de certificación acreditada.
+  - [ ] Modificar el documento con posterioridad y comprobar que la firma previa no se traslada a la nueva versión.
+  - [ ] Comprobar que un trámite configurado para requerir firma externa no pueda completarse únicamente con una conformidad simple de sesión.
+  - [ ] Consultar el historial de firmas y verificar la conservación inalterable de los registros previos.
+  - [ ] Revisar la advertencia legal en comprobantes y validar que describe con precisión técnica su alcance jurídico.
+- **Dependencias:** F34-Task04 (integridad criptográfica de documentos), generación de documentos y CUV.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F34-Task08] [P2] Consola unificada de bandejas con filtros avanzados y diseño responsivo
-- **Prioridad:** P2 (Media)
+### [F34-Task08] [P1] Bandeja personal unificada, indicadores de atención y control de SLA
+- **Prioridad:** P1 (Alta)
+- **Orden de Ejecución:** 9 (Eficiencia operativa y seguimiento de vencimientos)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`getUserWorkInbox`, `calculateRequestSlaMetrics`, `getDepartmentalWorkInbox`)
+  - `js/student.js`, `js/teacher.js`, `js/accounting.js`
+  - Hoja de Cálculo: `ConfiguracionSLA`, `SolicitudesTramites`
+- **Subcapacidades Relacionadas:** F34-01, F34-03, F34-04.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-01), Matriz CAR-F34-01 y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  Existe una bandeja departamental mediante `getDepartmentalWorkInbox`, pero no una vista personal unificada que consolide todos los documentos asignados nominalmente a un usuario independientemente del departamento de procedencia. Tampoco existen indicadores para detectar solicitudes próximas a vencer o atrasadas respecto a los tiempos máximos de respuesta (SLA), generando cuellos de botella no detectados.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Bandeja personal unificada:*
+     - Implementar `getUserWorkInbox(payload)` que reúna todas las tareas y solicitudes asignadas directamente a la persona (`userId`), segregando:
+       * Tareas asignadas nominalmente al usuario como responsable principal.
+       * Solicitudes asignadas al departamento (pendientes de toma de responsabilidad).
+       * Trámites en los que participa como revisor colegiado.
+       * Documentos donde solo debe registrar toma de conocimiento.
+       * Historial de solicitudes que ya atendió.
+  2. *Motor de cálculo de SLA y tiempos de atención:*
+     - Auto-crear la hoja `ConfiguracionSLA` (`TipoTramite`, `Departamento`, `Prioridad`, `PlazoMaximoHoras`, `HorasAlertaVencimiento`).
+     - Calcular en tiempo real: tiempo transcurrido desde la recepción, tiempo desde la última asignación, tiempo restante antes de vencer el SLA y tiempo de retraso.
+     - Categorizar visualmente: `En Plazo`, `Próximo a Vencer` (alerta ámbar), `Vencido` (alerta roja), `Suspendido por Causa Justificada` y `Resuelto`.
+     - Permitir suspender justificadamente el cómputo de SLA cuando el trámite esté en espera de información externa requerida al solicitante.
+     - Indicadores agregados para Dirección que identifiquen acumulación de solicitudes por departamento o funcionario.
+  3. *Parametrización configurable en plataforma:*
+     - Parámetro en `ConfiguracionInstitucional`: `CONSIDERAR_DIAS_HABILES_EN_SLA`: Valores `DIAS_HABILES_EXCLUIR_FINES_Y_FERIADOS` vs. `DIAS_CALENDARIO_CORRIDOS`.
+- **Criterios de Aceptación:**
+  - [ ] Un funcionario consulta en su bandeja personal todos los documentos asignados a su persona provenientes de distintos departamentos.
+  - [ ] Los documentos departamentales no asignados nominalmente se distinguen claramente de las tareas personales.
+  - [ ] El tiempo restante de atención se calcula con exactitud según la prioridad y el SLA configurado.
+  - [ ] Las solicitudes vencidas se identifican con alerta visual destacada y notifican al supervisor si aplica escalamiento.
+  - [ ] Suspender una solicitud por requerimiento de subsanación detiene correctamente el cómputo del SLA.
+  - [ ] La Dirección puede consultar métricas consolidadas de tiempos de respuesta por departamento.
+- **Dependencias:** F34-Task05 (asignaciones estructuradas), sistema de notificaciones y permisos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F34-Task10] [P2] Filtros multicriterio, búsqueda avanzada, paginación y ordenamiento reactivo
+- **Prioridad:** P2 (Media / Mejora)
+- **Orden de Ejecución:** 10 (Usabilidad y escalabilidad de consultas documentales)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`getAdministrativeRequestsAdvancedFilter`, `getDepartmentalWorkInbox`)
+  - `js/student.js`, `js/accounting.js`
+- **Subcapacidades Relacionadas:** F34-03, F34-08.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-03), Matriz CAR-F34-09 y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  Las consultas actuales poseen filtros básicos en memoria del cliente por usuario o estudiante. A medida que el volumen histórico de solicitudes crece (cientos o miles por año), transferir todos los registros al navegador causa lentitud, desbordamiento de memoria y carece de búsquedas por rangos de fechas, estado, departamento y prioridad combinadas.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Motor de filtrado multicriterio en servidor:*
+     - Incorporar filtros combinables en backend: por estudiante, empleado, departamento, remitente, destinatario, responsable asignado, tipo de trámite, rango de fechas, estado, prioridad y texto libre en asunto/descripción.
+     - Permitir ordenamiento reactivo por: fecha de recepción, antigüedad, fecha de vencimiento SLA, prioridad y estado.
+  2. *Paginación eficiente y estados visuales:*
+     - Implementar paginación en servidor (`limite`, `offset`) para consultar grandes volúmenes sin sobrecargar el cliente.
+     - Mantener los criterios de búsqueda al navegar entre páginas.
+     - Botón de limpieza rápida de filtros y recuperación de la vista por defecto.
+     - Estados visuales claros: cargando, sin coincidencias encontradas y error de consulta.
+     - Garantizar que los filtros respeten las restricciones de autorización sin exponer datos de otros departamentos.
+- **Criterios de Aceptación:**
+  - [ ] Filtrar por estudiante y rango de fechas y comprobar que los resultados coinciden con exactitud.
+  - [ ] Combinar simultáneamente estado, departamento y prioridad en una sola consulta.
+  - [ ] Ordenar por antigüedad y verificar que los resultados respetan el orden seleccionado.
+  - [ ] Navegar entre páginas y comprobar que los filtros se mantienen inalterados.
+  - [ ] Limpiar los filtros y comprobar el restablecimiento de los resultados iniciales.
+  - [ ] Comprobar que grandes volúmenes de datos se paginan eficientemente sin degradar el rendimiento del navegador.
+- **Dependencias:** F34-Task08, servicios de consulta de bandejas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F34-Task11] [P2] Interfaz responsiva y experiencia móvil para bandejas documentales
+- **Prioridad:** P2 (Media / Mejora)
+- **Orden de Ejecución:** 11 (Accesibilidad táctil y movilidad en teléfonos)
 - **Componentes Afectados:**
   - `js/student.js`, `js/teacher.js`, `js/accounting.js`
   - `student-dashboard.html`, `teacher-dashboard.html`, `dashboard-recursos-humanos.html`
-- **Subcapacidades Relacionadas:** F34-01, F34-03, F34-05.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-03) y Sección E.
+- **Subcapacidades Relacionadas:** F34-01, F34-03, F34-11.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección E, Matriz CAR-F34-10 y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  Las tablas de visualización de trámites y solicitudes en frontend presentan sobrecarga de columnas y desbordamiento horizontal en pantallas móviles, dificultando la lectura de observaciones y la revisión ágil por parte de directivos y docentes en dispositivos móviles.
-- **Requisitos Funcionales y Técnicos Convergentes:**
-  1. *Consola responsiva de bandejas:*
-     - Implementar vista adaptable que colapse registros en tarjetas móviles optimizadas en pantallas menores a 768px.
-     - Barra de filtros reactivos con búsqueda en tiempo real por estudiante, estado, prioridad y rango de fechas.
-  2. *Insignias visuales de SLA:*
-     - Mostrar etiquetas de estado con código de color (`Enviada` en azul, `Requiere Corrección` en ámbar, `Aprobada` en verde, `Vencida` en rojo).
+  Las tablas de solicitudes institucionales presentan numerosas columnas que provocan desbordamiento horizontal en pantallas de teléfonos móviles. Padres, docentes y directivos que acceden desde smartphones encuentran dificultades para leer observaciones completas o presionar botones de acción táctiles, desincentivando la resolución ágil de trámites.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Diseño responsivo basado en tarjetas táctiles:*
+     - Adaptar las bandejas personales, departamentales y de salida: sustituir tablas extensas por tarjetas responsivas compactas en pantallas menores a 768px.
+     - Cada tarjeta móvil debe sintetizar: identificador, estudiante o empleado, tipo de documento, estado con insignia de color, prioridad, fecha y responsable actual.
+     - Botones de acción táctiles con dimensiones accesibles (mínimo 44x44px): Abrir, Revisar, Observar, Aprobar, Firmar e Historial.
+  2. *Visor móvil de adjuntos y accesibilidad visual:*
+     - Adaptar el visor de imágenes y documentos PDF para visualización fluida y zoom en pantallas pequeñas.
+     - Identificar prioridades y estados mediante combinaciones de íconos, texto y color para asegurar accesibilidad a usuarios con daltonismo.
+     - Preservar íntegra la funcionalidad completa en escritorios de pantalla ancha.
 - **Criterios de Aceptación:**
-  - [ ] Las bandejas de entrada y salida son plenamente operables desde teléfonos móviles sin desbordamiento horizontal.
-  - [ ] Los filtros reactivos permiten localizar solicitudes de inmediato sin recargas completas.
-  - [ ] Las prioridades y estados se identifican mediante código de color intuitivo.
+  - [ ] Acceder a las bandejas desde teléfonos móviles y comprobar que no existe desbordamiento horizontal.
+  - [ ] Visualizar los trámites en tarjetas responsivas con información clara y legible.
+  - [ ] Abrir documentos adjuntos y verificar su correcta visualización en pantallas táctiles.
+  - [ ] Ejecutar aprobaciones, observaciones y firmas directamente desde dispositivos móviles.
+  - [ ] Los filtros y controles permanecen plenamente accesibles y operables de forma táctil.
+- **Dependencias:** F34-Task10, componentes visuales de bandejas.
 - **Estado:** [ ] Pendiente
 
 ---
