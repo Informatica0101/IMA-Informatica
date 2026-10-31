@@ -5665,76 +5665,981 @@
 
 ---
 
-### [F23-Task01] [P0] [Motor de Workflows - Concurrencia y Candado Atómico en Transiciones]
+## FASE 23 — MOTOR INSTITUCIONAL DE FLUJOS DE TRABAJO Y ARQUITECTURA DISTRIBUIDA MULTICUENTA
+
+### P0 — PRIORIDAD CRÍTICA
+
+### [F23-Task01] [P0] [Motor de Workflows - Integridad Transaccional, Candados Atómicos y Autorización de Decisiones]
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs`
   - `js/api.js`
 - **Dependencias Expuestas:** `SolicitudesTramites`, `RevisionesDecisionesTramite`, `FlujosAprobacion`, `LockService`.
-- **Descripción del Alcance:**
-  Implementar protección de concurrencia mediante `LockService.getScriptLock()` en `processWorkflowDecision` para evitar condiciones de carrera cuando múltiples revisores evalúan la misma solicitud en paralelo. Validar de forma estricta que el usuario ejecutor posea el rol o identificador asignado a la etapa activa antes de autorizar el cambio de estado.
+- **Capacidades Relacionadas:** F23-002, F23-013, F23-014.
+- **Problema Detectado:**
+  El procesamiento de decisiones de aprobación presenta riesgos de concurrencia y validación insuficiente de las transiciones. Dos revisores podrían intentar resolver simultáneamente una misma etapa. Además, la secuencia de aprobación no debe depender de información proporcionada por el cliente, como `siguienteAsignadoA` o `nuevoEstadoSolicitud`.
+- **Requisitos Funcionales:**
+  1. Proteger las decisiones mediante mecanismos de exclusión mutua adecuados (`LockService.getScriptLock()`) para evitar que dos operaciones modifiquen simultáneamente el mismo trámite.
+  2. Antes de aceptar una decisión, recuperar el estado actual de la solicitud y comprobar que coincide con el estado esperado.
+  3. Identificar la etapa activa a partir de la definición y el estado persistido del workflow.
+  4. Validar que el usuario autenticado sea el responsable autorizado de esa etapa o pertenezca al grupo de aprobadores habilitados.
+  5. Comprobar que la operación solicitada esté permitida para el estado actual.
+  6. Impedir que el cliente determine libremente el siguiente responsable, la siguiente etapa o el estado final.
+  7. Calcular las transiciones en el servidor utilizando la definición vigente del flujo.
+  8. Impedir que una decisión se aplique dos veces.
+  9. Registrar la decisión y actualizar el estado de la solicitud de manera consistente.
+  10. Registrar quién realizó la operación, cuándo, sobre qué etapa y cuál fue su resultado.
+  11. Diferenciar los errores de autorización, conflicto de estado, duplicación y fallo de almacenamiento.
+- **Comportamiento Esperado:**
+  Cuando dos revisores intenten resolver la misma solicitud simultáneamente, solamente una operación válida podrá completar la transición. La segunda deberá recibir un resultado de conflicto o de etapa ya resuelta, sin sobrescribir la decisión anterior.
+  Una solicitud no podrá avanzar si el usuario no tiene autorización, si la etapa no está activa o si no se cumplen sus precondiciones.
 - **Criterios de Aceptación:**
-  - [ ] Las solicitudes concurrentes obtienen el candado atómico o retornan error controlado de contención.
-  - [ ] Se rechaza la decisión con `403 Forbidden` si el usuario no tiene autorización para la etapa actual.
-  - [ ] Las transiciones válidas actualizan coherentemente el estado en `SolicitudesTramites` y agregan la fila en `RevisionesDecisionesTramite`.
+  - [ ] Ejecutar dos decisiones simultáneas sobre una misma etapa y comprobar que solamente una se registra como decisión efectiva.
+  - [ ] Intentar aprobar una etapa desde una cuenta sin autorización y verificar su rechazo.
+  - [ ] Manipular los parámetros de siguiente responsable y siguiente estado desde el cliente y comprobar que son ignorados o rechazados en favor de la definición del servidor.
+  - [ ] Intentar aprobar una etapa que ya fue resuelta y comprobar detección de conflicto.
+  - [ ] Intentar avanzar una solicitud desde un estado anterior inválido.
+  - [ ] Simular un error durante el almacenamiento y comprobar que no se produce una transición inconsistente.
+  - [ ] Verificar que las decisiones válidas conservan su historial inalterado.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F23-Task02] [P0] [Arquitectura Distribuida - Estandarización de SpreadsheetRouter Ubicuo]
+### [F23-Task02] [P0] [Motor de Workflows - Idempotencia de Solicitudes, Decisiones y Operaciones Institucionales]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - `js/api.js`
+- **Dependencias Expuestas:** `SolicitudesTramites`, `RevisionesDecisionesTramite`, `F23-Task01`.
+- **Capacidades Relacionadas:** F23-002, F23-015, F23-025, F23-026.
+- **Problema Detectado:**
+  El envío repetido de formularios y las llamadas interservicio pueden generar registros, tareas, decisiones o acciones duplicadas cuando el usuario vuelve a pulsar un botón, pierde la conexión o el servicio no responde a tiempo.
+- **Requisitos Funcionales:**
+  1. Incorporar identificadores únicos de operación para las solicitudes que puedan repetirse.
+  2. Admitir una clave de idempotencia (`Idempotency-Key`) en los envíos de trámites y operaciones sensibles.
+  3. Asociar cada clave con el usuario, tipo de operación y resultado correspondiente.
+  4. Guardar la relación entre la clave y el registro generado.
+  5. Si se recibe nuevamente la misma operación, devolver el resultado previamente registrado cuando corresponda.
+  6. Rechazar la reutilización de una misma clave con un contenido diferente.
+  7. Controlar la duplicación en las decisiones de aprobación.
+  8. Extender la protección a las acciones interservicio y a las tareas generadas por eventos.
+  9. Evitar que un reintento genere varias notificaciones o ejecute dos veces una operación externa.
+  10. Definir una política de conservación de las claves procesadas.
+- **Comportamiento Esperado:**
+  Una operación debe poder repetirse técnicamente sin que sus efectos se dupliquen.
+  Si una solicitud se registra correctamente, pero la respuesta no llega al navegador, el siguiente intento debe recuperar el resultado original y no crear otro trámite.
+- **Criterios de Aceptación:**
+  - [ ] Enviar dos veces el mismo formulario con idéntica clave y verificar que se devuelve el mismo resultado sin duplicar registros.
+  - [ ] Repetir una solicitud después de una interrupción de conexión y recuperar el trámite original.
+  - [ ] Reutilizar una clave con contenido diferente y verificar el rechazo de la solicitud.
+  - [ ] Repetir una decisión de aprobación y comprobar que no se duplica la transición.
+  - [ ] Repetir una solicitud interservicio y verificar la idempotencia.
+  - [ ] Comprobar que no se generan registros ni acciones duplicadas.
+  - [ ] Verificar que dos solicitudes legítimas diferentes puedan procesarse independientemente.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task03] [P0] [Arquitectura Distribuida - Enrutador Universal de Spreadsheets y Resolución Dinámica de Fuentes de Datos]
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs`
   - `backend/academic-service/Code.gs`
   - `backend/accounting-service/Code.gs`
-- **Dependencias Expuestas:** `CatalogoSpreadsheets`, `resolveSpreadsheetSource`, `getOrCreateSheet`.
-- **Descripción del Alcance:**
-  Estandarizar la función `resolveSpreadsheetSource` a través de todos los microservicios backend, permitiendo que las consultas y escrituras a tablas de alto volumen (calificaciones, asistencias, kardex de inventario, bitácoras) se dirijan dinámicamente a la hoja de cálculo asignada por año lectivo y dominio, superando la limitación del `SPREADSHEET_ID` estático.
+- **Dependencias Expuestas:** `CatalogoSpreadsheets`, `F23-Task04`.
+- **Capacidades Relacionadas:** F23-008, F23-009.
+- **Problema Detectado:**
+  Existe un catálogo de fuentes distribuidas en el servicio contable, pero la resolución de datos no está estandarizada en todos los servicios. Persisten referencias rígidas a `SPREADSHEET_ID`, especialmente en servicios académicos y de usuarios. Esto limita la distribución de información por cuentas, departamentos, dominios y ciclos lectivos.
+- **Requisitos Funcionales:**
+  1. Establecer un mecanismo común (`resolveSpreadsheetSource`) para resolver la fuente de datos que corresponde a cada operación.
+  2. Utilizar el catálogo de fuentes existente como referencia arquitectónica, conservando su funcionalidad y ampliándolo cuando sea necesario.
+  3. Permitir registrar múltiples Spreadsheets por:
+     - Dominio institucional.
+     - Departamento.
+     - Área de responsabilidad.
+     - Ciclo lectivo.
+     - Tipo de información.
+     - Cuenta propietaria.
+     - Servicio responsable.
+  4. Permitir definir una fuente predeterminada cuando no exista una partición específica.
+  5. Resolver automáticamente la fuente adecuada según el contexto de la consulta.
+  6. Evitar que cada servicio tenga que mantener una tabla independiente de identificadores de Spreadsheets.
+  7. Incorporar validaciones de existencia, disponibilidad, autorización y compatibilidad de esquema.
+  8. Permitir registrar versiones de esquema.
+  9. Detectar fuentes inexistentes, deshabilitadas, duplicadas o incompatibles.
+  10. Mantener referencias históricas a las fuentes utilizadas por registros y operaciones anteriores.
+  11. Permitir agregar nuevas fuentes sin modificar manualmente todas las funciones que consultan información.
+- **Comportamiento Esperado:**
+  Cuando un módulo solicite información de un dominio y ciclo lectivo determinados, el enrutador deberá identificar la fuente correspondiente y proporcionar acceso únicamente si el servicio tiene autorización.
+  La ausencia de una fuente no debe provocar una lectura silenciosa desde un Spreadsheet incorrecto.
 - **Criterios de Aceptación:**
-  - [ ] Si existe una hoja particionada activa en `CatalogoSpreadsheets`, el servicio opera transparentemente sobre ella.
-  - [ ] Si no existe una partición específica, recurre de forma segura al spreadsheet principal predeterminado.
-  - [ ] La resolución de fuentes distribuidas incluye caché en memoria para minimizar llamadas `getDataRange()`.
+  - [ ] Registrar fuentes de diferentes dominios y ciclos lectivos.
+  - [ ] Resolver fuentes desde los servicios académico, usuario y contable de manera transparente.
+  - [ ] Comprobar que un ciclo lectivo no consulte datos de otro ciclo sin autorización explícita.
+  - [ ] Intentar consultar una fuente inexistente y verificar el manejo seguro del error.
+  - [ ] Deshabilitar una fuente y comprobar que se rechaza su utilización.
+  - [ ] Registrar una nueva partición sin tener que modificar cada consumidor.
+  - [ ] Comprobar la compatibilidad de esquemas entre particiones.
+  - [ ] Verificar que las referencias históricas no cambian al registrar nuevas fuentes.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F23-Task03] [P1] [Bandeja Unificada de Tareas Pendientes e Inbox Departamental]
+### [F23-Task04] [P0] [Arquitectura Distribuida - Catálogo Institucional de Cuentas, Servicios y Permisos Distribuidos]
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `CatalogoServicios`, `CatalogoSpreadsheets`, `F23-Task03`.
+- **Capacidades Relacionadas:** F23-023, F23-024, F23-008, F23-009.
+- **Problema Detectado:**
+  El catálogo actual de Spreadsheets y el registro de microservicios no proporcionan todavía una administración suficientemente completa de los servicios distribuidos y sus cuentas propietarias. La plataforma debe admitir que diferentes roles o departamentos administren sus propios proyectos Apps Script y sus propios archivos de almacenamiento, sin que la división de cuentas impida la comunicación institucional.
+- **Requisitos Funcionales:**
+  1. Ampliar el catálogo central para registrar cada servicio distribuido.
+  2. Asociar cada servicio con:
+     - Identificador único.
+     - Departamento o rol responsable.
+     - Cuenta propietaria.
+     - Proyecto Apps Script.
+     - Endpoint desplegado.
+     - Spreadsheet asociado.
+     - Dominio de datos.
+     - Estado de disponibilidad.
+     - Versión del contrato de comunicación.
+     - Permisos concedidos.
+  3. Permitir que un responsable registre un servicio bajo su cuenta de Google.
+  4. Permitir que un responsable registre o asocie su Spreadsheet.
+  5. Establecer relaciones entre los servicios y los recursos que administran.
+  6. Permitir registrar varios servicios para un mismo departamento cuando sea necesario.
+  7. Permitir que un servicio atienda más de un dominio de información si sus permisos lo autorizan.
+  8. Incorporar estados de servicio: registrado, activo, degradado, desconectado, suspendido y retirado.
+  9. Permitir habilitar y revocar relaciones de comunicación.
+  10. Conservar el historial de cambios de propietario, responsables, endpoints y recursos.
+  11. Detectar servicios duplicados y registros huérfanos.
+- **Comportamiento Esperado:**
+  El servicio central debe conocer qué servicios existen, quién los administra, qué datos gestionan y qué operaciones están autorizados a realizar.
+  La incorporación de un nuevo departamento no debe requerir reconstruir manualmente la arquitectura de comunicación.
+- **Criterios de Aceptación:**
+  - [ ] Registrar servicios de al menos dos cuentas de Google diferentes.
+  - [ ] Asociar a cada servicio su propio Spreadsheet.
+  - [ ] Consultar los servicios registrados desde el servicio central.
+  - [ ] Revocar un servicio sin eliminar su historial ni romper auditorías.
+  - [ ] Cambiar el responsable y verificar las autorizaciones actualizadas.
+  - [ ] Intentar registrar un servicio duplicado y verificar su rechazo.
+  - [ ] Consultar un servicio suspendido y comprobar que se bloquean peticiones.
+  - [ ] Comprobar que los permisos de almacenamiento y los privilegios institucionales se administran por separado.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task05] [P0] [Seguridad y Red - Protocolo Universal de Comunicación Interservicio y Gestión de Credenciales]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `backend/developer-service/Code.gs`
+- **Dependencias Expuestas:** `F23-Task04`.
+- **Capacidades Relacionadas:** F23-010, F23-023, F23-025, F23-029.
+- **Problema Detectado:**
+  Existe comunicación mediante HMAC-SHA256, pero la autenticación y autorización no están estandarizadas para todos los servicios. La utilización de claves estáticas compartidas aumenta el riesgo de exposición y dificulta la revocación selectiva.
+- **Requisitos Funcionales:**
+  1. Establecer un protocolo común de comunicación entre los servicios.
+  2. Identificar de manera inequívoca al servicio emisor y receptor.
+  3. Firmar las solicitudes utilizando HMAC-SHA256 cuando corresponda al mecanismo de autenticación adoptado.
+  4. Incluir identificador de solicitud, fecha de emisión, identificador de correlación y protección contra repetición.
+  5. Validar la firma antes de ejecutar operaciones.
+  6. Implementar control de vigencia de solicitudes.
+  7. Gestionar secretos fuera del código fuente y del navegador (`PropertiesService`).
+  8. Incorporar rotación de claves sin interrumpir innecesariamente la comunicación.
+  9. Permitir revocar credenciales de un servicio sin afectar a los demás.
+  10. Establecer permisos por operación, no solamente por servicio.
+  11. Separar consultas, modificaciones, operaciones administrativas y acciones sensibles.
+  12. Mantener compatibilidad de versiones del protocolo.
+  13. Evitar que una respuesta autenticada se interprete automáticamente como una autorización para modificar cualquier recurso.
+  14. Validar el contenido y la estructura de cada solicitud y respuesta.
+- **Comportamiento Esperado:**
+  Un servicio debe poder comunicarse con otro servicio perteneciente a una cuenta diferente, siempre que exista una autorización explícita.
+  Un servicio no debe poder suplantar a otro ni utilizar sus credenciales para acceder a operaciones ajenas.
+- **Criterios de Aceptación:**
+  - [ ] Comunicación autenticada entre dos cuentas diferentes con verificación de firma HMAC.
+  - [ ] Rechazar solicitudes sin firma o con firma incorrecta.
+  - [ ] Rechazar solicitudes expiradas por tiempo de vigencia.
+  - [ ] Rechazar repetición de solicitudes (protección anti-replay).
+  - [ ] Ejecutar rotación de credenciales sin interrupción de servicio.
+  - [ ] Revocación individual de un servicio específico.
+  - [ ] Rechazar intento de ejecutar una operación no autorizada.
+  - [ ] Inspeccionar el frontend para comprobar que no contiene secretos ni claves de servicio.
+  - [ ] Verificar que los errores no exponen claves ni tokens en texto plano.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task06] [P0] [Auditoría Criptográfica - Protección de Decisiones Históricas y Auditoría Anti-Manipulación]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `RevisionesDecisionesTramite`, `F23-Task01`, `F23-Task13`.
+- **Capacidades Relacionadas:** F23-003, F23-012, F23-028.
+- **Problema Detectado:**
+  El historial de decisiones está implementado y verificado funcionalmente, pero los registros no disponen de garantías suficientes frente a modificaciones posteriores no autorizadas.
+- **Requisitos Funcionales:**
+  1. Conservar los registros históricos de decisiones.
+  2. Evitar modificaciones y eliminaciones silenciosas de eventos anteriores.
+  3. Incorporar un mecanismo de integridad criptográfica.
+  4. Evaluar el encadenamiento de hashes entre eventos consecutivos (`hashPrevio`, `hashActual`).
+  5. Registrar identificador del evento, proceso, actor, operación, fecha y datos relevantes.
+  6. Permitir verificar la integridad de una secuencia histórica mediante una función de auditoría.
+  7. Registrar intentos de modificación o eliminación no autorizada.
+  8. Mantener separados los registros de auditoría y los datos operativos modificables.
+  9. Permitir registrar correcciones mediante nuevos eventos vinculados, sin reescribir silenciosamente el historial.
+  10. Restringir las operaciones administrativas sobre los registros históricos.
+- **Comportamiento Esperado:**
+  Si una decisión histórica cambia de manera no autorizada, la verificación de integridad debe detectar la alteración.
+  Las correcciones legítimas deben quedar documentadas como nuevos eventos vinculados al registro original.
+- **Criterios de Aceptación:**
+  - [ ] Crear una secuencia de decisiones encadenadas por hash.
+  - [ ] Verificar la integridad matemática de la secuencia histórica.
+  - [ ] Modificar un registro histórico de prueba y comprobar que la auditoría detecta la alteración.
+  - [ ] Registrar una corrección autorizada como nuevo evento vinculado.
+  - [ ] Comprobar que la secuencia histórica conserva todos los eventos originales.
+  - [ ] Intentar eliminar registros mediante una cuenta sin privilegios y verificar su bloqueo.
+- **Estado:** [ ] Pendiente
+
+---
+
+### P1 — PRIORIDAD ALTA
+
+### [F23-Task07] [P1] [Motor de Workflows - Reglas Configurables, Condiciones y Enrutamiento de Procesos]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `FlujosAprobacion`, `F23-Task01`, `F23-Task10`.
+- **Capacidades Relacionadas:** F23-001, F23-005, F23-014.
+- **Problema Detectado:**
+  Los flujos utilizan estructuras JSON y transiciones predominantemente lineales. La selección de responsables y etapas depende parcialmente de parámetros enviados por el frontend y de lógica de negocio dispersa.
+- **Requisitos Funcionales:**
+  1. Ampliar la definición de flujos para admitir condiciones evaluables.
+  2. Definir reglas mediante operadores controlados:
+     - Igualdad y desigualdad.
+     - Comparaciones numéricas (mayor, menor, rangos).
+     - Comparaciones de fechas.
+     - Existencia o ausencia de valores.
+     - Condiciones AND y OR compuestas.
+     - Combinaciones de condiciones y pertenencia a categorías.
+  3. Permitir reglas basadas en datos del trámite, departamento, tipo de operación, monto, ciclo lectivo y rol.
+  4. Definir destinos de transición según el resultado de las condiciones.
+  5. Permitir establecer aprobadores adicionales según umbrales económicos o de riesgo.
+  6. Permitir rutas alternativas por departamento o categoría.
+  7. Validar las expresiones antes de guardar el flujo.
+  8. Impedir la ejecución de código arbitrario introducido en las condiciones.
+  9. Ejecutar la evaluación estrictamente en el servidor.
+  10. Registrar qué regla se evaluó y qué resultado produjo en la bitácora.
+  11. Definir un comportamiento explícito cuando ninguna condición coincide.
+  12. Permitir establecer rutas predeterminadas (fallback routes).
+  13. Versionar las reglas junto con la definición del flujo.
+- **Comportamiento Esperado:**
+  Una operación debe avanzar por la ruta correspondiente a sus datos reales, sin depender de instrucciones manipulables desde el cliente.
+  Ejemplo: una requisición que supere un umbral económico deberá incorporar el nivel de aprobación adicional establecido en su configuración.
+- **Criterios de Aceptación:**
+  - [ ] Crear una regla basada en un monto numérico.
+  - [ ] Probar valores inferiores, iguales y superiores al umbral verificando las ramas resultantes.
+  - [ ] Crear una regla con compuertas AND y otra con OR.
+  - [ ] Comprobar rutas alternativas válidas.
+  - [ ] Introducir una condición sintácticamente inválida y verificar su rechazo.
+  - [ ] Intentar introducir una expresión ejecutable arbitraria y verificar que es sanitizada.
+  - [ ] Modificar los parámetros enviados por el frontend y comprobar que la decisión final depende de las reglas del servidor.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task08] [P1] [Motor de Workflows - Diseñador Configurable de Flujos y Validación de Estructuras]
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs`
   - `js/api.js`
-- **Dependencias Expuestas:** `SolicitudesTramites`, `RevisionesDecisionesTramite`, `CargosEstudiante`, `OrdenesCompra`.
-- **Descripción del Alcance:**
-  Desarrollar la función `getUnifiedWorkInbox` en `backend/user-service/Code.gs` que agregue y clasifique todas las tareas, solicitudes y revisiones pendientes asignadas directamente al usuario autenticado o a su rol operativo (Dirección, Secretaría, Contabilidad, Docentes, Orientación).
+- **Dependencias Expuestas:** `FlujosAprobacion`, `F23-Task07`, `F23-Task10`.
+- **Capacidades Relacionadas:** F23-001, F23-005, F23-021, F23-031.
+- **Problema Detectado:**
+  Las definiciones de workflow se almacenan como JSON plano en `PasosEtapasJSON`, sin una herramienta visual suficientemente completa para construir y validar procesos complejos.
+- **Requisitos Funcionales:**
+  1. Proporcionar una interfaz administrativa para configurar procesos sin editar directamente JSON.
+  2. Permitir agregar, modificar, eliminar y ordenar etapas.
+  3. Definir responsables individuales, roles y departamentos.
+  4. Definir estados iniciales, intermedios y terminales.
+  5. Configurar transiciones permitidas.
+  6. Configurar condiciones y rutas alternativas.
+  7. Configurar pasos paralelos.
+  8. Configurar tiempos límite y reglas de escalamiento.
+  9. Mostrar visualmente el recorrido del proceso.
+  10. Validar que todas las rutas tengan un destino válido.
+  11. Detectar etapas sin responsables asignados.
+  12. Detectar rutas sin salida y ciclos involuntarios.
+  13. Detectar estados terminales inaccesibles.
+  14. Permitir guardar borradores sin activar inmediatamente el flujo.
+  15. Proporcionar una vista previa de ejecución con datos de prueba.
+  16. Generar una definición estructurada compatible con el motor de ejecución.
+  17. Mantener compatibilidad con los workflows existentes.
+  18. Permitir consultar y comparar versiones anteriores.
+- **Comportamiento Esperado:**
+  El administrador podrá configurar un proceso desde una interfaz visual, validarlo y publicarlo sin tener que modificar código fuente.
+  La definición resultante deberá ser interpretada por el mismo motor común, no por un ejecutor independiente.
 - **Criterios de Aceptación:**
-  - [ ] Devuelve una lista ordenada por fecha de vencimiento y prioridad de trámites pendientes.
-  - [ ] Aísla las tareas confidenciales garantizando que cada usuario sólo visualice las que le competen.
-  - [ ] Soporta paginación y filtros por departamento, tipo de trámite y estado.
+  - [ ] Crear un flujo completo desde la interfaz.
+  - [ ] Agregar y reorganizar etapas secuenciales y condicionales.
+  - [ ] Configurar responsables y condiciones evaluables.
+  - [ ] Intentar publicar una ruta incompleta y verificar advertencias de validación.
+  - [ ] Visualizar el recorrido del diagrama de flujo.
+  - [ ] Ejecutar una prueba de simulación con datos de prueba.
+  - [ ] Publicar una nueva versión y comprobar que las instancias anteriores conservan su definición original.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F23-Task04] [P1] [Evaluador de Reglas de Enrutamiento y Compuertas Lógicas]
+### [F23-Task09] [P1] [Bandeja de Entrada - Bandeja Unificada de Trabajo Institucional]
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs`
-- **Dependencias Expuestas:** `FlujosAprobacion`, `processWorkflowDecision`.
-- **Descripción del Alcance:**
-  Crear el motor de evaluación de reglas condicionales para transiciones automáticas en flujos de trabajo. Si una etapa posee reglas en su JSON (ej. `{ "monto_gt": 50000, "nextStep": "Aprobacion_Rector" }`), el motor calcula automáticamente el siguiente destino y asignado sin depender del valor enviado por el frontend.
+  - `js/api.js`
+- **Dependencias Expuestas:** `F23-Task02`, `F23-Task07`, `F23-Task15`.
+- **Capacidades Relacionadas:** F23-004, F23-016, F23-022, F23-030.
+- **Problema Detectado:**
+  Las tareas, aprobaciones y solicitudes se encuentran distribuidas entre diferentes registros y módulos. No existe una bandeja consolidada que permita conocer las responsabilidades pendientes de cada usuario.
+- **Requisitos Funcionales:**
+  1. Consolidar las tareas provenientes de los diferentes módulos.
+  2. Incorporar aprobaciones pendientes, trámites, revisiones, solicitudes administrativas y otras actividades que utilicen el motor común.
+  3. Crear una vista personal según el usuario autenticado.
+  4. Crear una vista departamental según sus permisos.
+  5. Diferenciar las tareas asignadas directamente de las tareas disponibles para un grupo o rol.
+  6. Mostrar:
+     - Tipo de actividad.
+     - Descripción.
+     - Proceso relacionado.
+     - Solicitante.
+     - Responsable.
+     - Departamento.
+     - Prioridad.
+     - Estado.
+     - Fecha de creación.
+     - Fecha límite.
+     - Tiempo restante o retraso.
+     - Acción disponible.
+  7. Incorporar filtros y búsqueda.
+  8. Permitir ordenar por prioridad, vencimiento y fecha.
+  9. Permitir abrir directamente el trámite original.
+  10. Actualizar el estado de las tareas después de cada decisión.
+  11. Evitar duplicados al consolidar registros.
+  12. Mostrar indicadores de carga por responsable.
+  13. Permitir identificar tareas sin asignar y tareas bloqueadas.
+- **Mejoras de Experiencia Esperadas:**
+  - Indicadores visuales de vencimiento (semáforo de criticidad).
+  - Filtros persistentes por estado y departamento.
+  - Búsqueda por identificador y solicitante.
+  - Acceso rápido a las tareas urgentes.
+  - Separación entre pendientes personales y departamentales.
+  - Identificación clara de tareas que requieren acción y tareas informativas.
 - **Criterios de Aceptación:**
-  - [ ] Las decisiones calculan la siguiente etapa en base a las reglas configuradas en `PasosEtapasJSON`.
-  - [ ] Se previenen manipulaciones maliciosas de saltos de etapa o auto-aprobaciones forzadas.
-  - [ ] Se registran bitácoras estructuradas de cada evaluación condicional ejecutada.
+  - [ ] Crear tareas desde dos módulos diferentes (ej. compras y trámites escolares).
+  - [ ] Comprobar que ambas aparecen en la bandeja correspondiente del revisor.
+  - [ ] Verificar que cada usuario visualiza únicamente las actividades autorizadas.
+  - [ ] Reasignar una tarea y comprobar la actualización inmediata de la bandeja.
+  - [ ] Completar una tarea y verificar su retiro de la bandeja de pendientes.
+  - [ ] Aplicar filtros simultáneos y verificar ordenamiento.
+  - [ ] Verificar que una misma actividad no aparece duplicada.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F23-Task05] [P2] [Motor de Escalamiento Automático y Control de SLA]
+### [F23-Task10] [P1] [Motor de Workflows - Procesos Paralelos y Compuertas de Convergencia (Fork / Join)]
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs`
-- **Dependencias Expuestas:** `SolicitudesTramites`, `FlujosAprobacion`, notificaciones multicanal.
-- **Descripción del Alcance:**
-  Implementar la función `processWorkflowSLAEscalations` diseñada para ejecutarse periódicamente mediante un temporizador GAS (`Time-driven trigger`). La función inspecciona solicitudes no resueltas que hayan excedido el SLA estipulado en su etapa actual y las escala automáticamente al supervisor jerárquico, emitiendo alertas por notificación institucional.
+- **Dependencias Expuestas:** `FlujosAprobacion`, `F23-Task07`, `F23-Task08`.
+- **Capacidades Relacionadas:** F23-021, F23-001, F23-005.
+- **Problema Detectado:**
+  El motor actual utiliza secuencias lineales. No puede representar adecuadamente operaciones que necesitan revisiones simultáneas de varios departamentos.
+- **Requisitos Funcionales:**
+  1. Permitir dividir un proceso en varias ramas independientes (Fork).
+  2. Crear pasos paralelos que puedan ejecutarse simultáneamente por diferentes revisores.
+  3. Establecer si se requiere la finalización de todas las ramas o de una cantidad determinada (Join).
+  4. Permitir definir reglas AND (todas las ramas aprobadas) y OR (primera rama aprobada).
+  5. Registrar el estado individual de cada rama independiente.
+  6. Impedir que el proceso principal avance antes de cumplir las condiciones de convergencia.
+  7. Permitir que una rama sea rechazada sin perder el historial de las demás.
+  8. Definir qué ocurre cuando una rama queda bloqueada o vence.
+  9. Permitir que las ramas tengan responsables y departamentos diferentes.
+  10. Conservar la relación entre las tareas paralelas y el proceso principal.
+- **Comportamiento Esperado:**
+  Una solicitud puede enviarse simultáneamente a dos departamentos (ej. Dirección y Administración). El proceso continuará cuando se cumpla la condición configurada.
 - **Criterios de Aceptación:**
-  - [ ] Identifica trámites estancados comparando `FechaSolicitud` / última decisión contra el tiempo límite configurado.
-  - [ ] Reasigna la solicitud al rol superior inmediato y actualiza el estado a `Escalada_Por_Vencimiento`.
-  - [ ] Despacha notificación de alerta al nuevo asignado y al usuario afectado.
+  - [ ] Crear dos ramas paralelas sobre un mismo trámite.
+  - [ ] Completar solamente una rama y comprobar que el proceso no avanza cuando se requiere compuerta AND.
+  - [ ] Completar ambas ramas y comprobar la convergencia y avance al siguiente estado.
+  - [ ] Probar una condición de convergencia OR.
+  - [ ] Rechazar una rama y comprobar la propagación del rechazo según las reglas del flujo.
+  - [ ] Simular una rama bloqueada y verificar aislamiento.
+  - [ ] Comprobar que no se dupliquen las etapas posteriores a la convergencia.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task11] [P1] [Operaciones y SLA - Gestión de SLA, Vencimientos y Escalamiento Automático]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `SolicitudesTramites`, `F23-Task09`, `F23-Task15`.
+- **Capacidades Relacionadas:** F23-006, F23-012, F23-027, F23-030.
+- **Problema Detectado:**
+  No existe un mecanismo completo para controlar los tiempos de respuesta de las etapas ni para escalar automáticamente los trámites estancados.
+- **Requisitos Funcionales:**
+  1. Configurar tiempos máximos por tipo de trámite y etapa (SLA en horas o días hábiles).
+  2. Permitir establecer plazos por departamento y nivel de prioridad.
+  3. Definir calendarios y horarios laborales cuando sean necesarios.
+  4. Establecer anticipación de recordatorios antes del vencimiento.
+  5. Configurar escalamiento por incumplimiento hacia el supervisor jerárquico.
+  6. Notificar al responsable antes del vencimiento.
+  7. Notificar al supervisor cuando se incumpla el SLA.
+  8. Permitir reasignación automática cuando exista una regla autorizada.
+  9. Registrar el momento en que comienza y termina cada etapa.
+  10. Calcular tiempos de espera y tiempos efectivos de atención.
+  11. Excluir periodos suspendidos cuando la política lo permita.
+  12. Evitar que tareas finalizadas continúen generando alertas.
+  13. Controlar la ejecución repetida de los procesos de revisión de vencimientos mediante temporizadores GAS.
+- **Comportamiento Esperado:**
+  Los procesos deben poder supervisarse mediante plazos configurables. Una tarea vencida debe identificarse y generar las acciones de escalamiento establecidas.
+  Los temporizadores deben tolerar retrasos de ejecución propios de los activadores y no asumir que una tarea programada se ejecuta exactamente en el segundo previsto.
+- **Criterios de Aceptación:**
+  - [ ] Configurar un SLA para una etapa de trámite.
+  - [ ] Crear una tarea con vencimiento asignado.
+  - [ ] Comprobar emisión de recordatorios preventivos.
+  - [ ] Simular vencimiento de plazo y verificar escalamiento automático.
+  - [ ] Completar la tarea antes del vencimiento y verificar que no se generen alertas posteriores.
+  - [ ] Ejecutar dos veces el proceso de revisión periódica y comprobar que no se duplican los escalamientos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task12] [P1] [Resiliencia - Sistema de Reintentos, Colas y Recuperación de Operaciones Interservicio]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - `backend/developer-service/Code.gs`
+- **Dependencias Expuestas:** `F23-Task02`, `F23-Task05`, `F23-Task14`.
+- **Capacidades Relacionadas:** F23-011, F23-025, F23-026.
+- **Problema Detectado:**
+  La comunicación actual dispone de un fallback local limitado, pero no existe una política general de reintentos y recuperación para todos los servicios distribuidos.
+- **Requisitos Funcionales:**
+  1. Incorporar una cola persistente de operaciones pendientes en Google Sheets.
+  2. Registrar cada operación con identificador único y estado (`Pendiente`, `EnProceso`, `Fallido`, `Completado`).
+  3. Diferenciar errores temporales (red, timeouts) de errores permanentes (403 Forbidden, 400 Bad Request).
+  4. Implementar retroceso exponencial (`exponential backoff`) con variación aleatoria (`jitter`).
+  5. Establecer un máximo de intentos configurables.
+  6. Respetar los tiempos de espera de cada servicio.
+  7. Evitar reintentos simultáneos excesivos que saturen las cuotas.
+  8. Permitir reanudar operaciones después de una interrupción de ejecución.
+  9. Identificar operaciones que requieren intervención administrativa (Dead Letter Queue).
+  10. Permitir reintentos manuales autorizados desde panel administrativo.
+  11. Evitar que una respuesta tardía genere duplicaciones de datos.
+  12. Incorporar una bandeja de operaciones fallidas o pendientes de recuperación.
+  13. Registrar el resultado de cada intento en la bitácora.
+  14. Incorporar mecanismos de aislamiento temporal (Circuit Breaker) para servicios que presentan fallos repetidos.
+  15. Permitir restablecer la comunicación cuando el servicio vuelva a estar disponible.
+- **Comportamiento Esperado:**
+  Cuando un servicio no responda, la operación deberá permanecer registrada como pendiente o fallida, según corresponda. El sistema podrá recuperarla sin volver a ejecutar acciones ya completadas.
+- **Criterios de Aceptación:**
+  - [ ] Simular timeout de red y verificar encolamiento en reintentos.
+  - [ ] Simular error temporal y comprobar retroceso exponencial.
+  - [ ] Simular error permanente y comprobar que no se reintenta indefinidamente.
+  - [ ] Comprobar el número máximo de intentos configurados.
+  - [ ] Restablecer el servicio caído y reprocesar la operación con éxito.
+  - [ ] Comprobar que no se duplican los efectos de una operación completada.
+  - [ ] Verificar que una operación irrecuperable queda marcada para intervención manual.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task13] [P1] [Observabilidad - Registro Estructurado y Trazabilidad Universal de Eventos con Correlation ID]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `backend/developer-service/Code.gs`
+- **Dependencias Expuestas:** `F23-Task05`.
+- **Capacidades Relacionadas:** F23-003, F23-012, F23-025, F23-028.
+- **Problema Detectado:**
+  Existe registro de eventos y correlation ID, pero no se ha estandarizado su propagación ni su relación con todas las operaciones del motor.
+- **Requisitos Funcionales:**
+  1. Estandarizar la estructura de eventos de auditoría institucional.
+  2. Incluir identificador de evento único.
+  3. Incluir identificador de proceso o trámite.
+  4. Incluir `correlationId` propagado universalmente en el payload.
+  5. Identificar el servicio emisor y el servicio receptor.
+  6. Identificar al usuario o proceso automatizado que originó el evento.
+  7. Registrar fecha y hora precisa en formato ISO 8601.
+  8. Registrar operación, resultado y severidad (`INFO`, `WARN`, `ERROR`, `SECURITY`).
+  9. Registrar errores y trazas de excepción sanitizadas.
+  10. Propagar el `correlationId` a todos los servicios involucrados en una transacción.
+  11. Permitir consultar el recorrido completo de una operación distribuida a través de su identificador de correlación.
+  12. Separar los eventos operativos de los datos de negocio sensibles.
+  13. Evitar almacenar credenciales, contraseñas, secretos o información confidencial en los logs.
+  14. Permitir filtrar eventos por proceso, servicio, usuario, severidad y rango de fechas.
+- **Comportamiento Esperado:**
+  Una operación que atraviese varios servicios debe poder reconstruirse íntegramente utilizando su identificador de correlación.
+- **Criterios de Aceptación:**
+  - [ ] Ejecutar una operación entre varios microservicios.
+  - [ ] Consultar todos sus eventos y verificar que comparten el mismo `correlationId`.
+  - [ ] Simular un error en un servicio secundario y verificar su registro correlacionado.
+  - [ ] Comprobar que los logs no exponen credenciales ni secretos.
+  - [ ] Consultar eventos filtrados por servicio, severidad y periodo.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task14] [P1] [Rendimiento - Procesamiento Asíncrono y Ejecución por Lotes de Operaciones Pesadas]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - `backend/developer-service/Code.gs`
+- **Dependencias Expuestas:** `F23-Task12`, `F23-Task13`.
+- **Capacidades Relacionadas:** F23-011, F23-025, F23-026.
+- **Problema Detectado:**
+  Las transiciones pueden ejecutar acciones pesadas dentro de la misma llamada `doPost`, aumentando el riesgo de superar los límites de ejecución de Apps Script (6 minutos).
+- **Requisitos Funcionales:**
+  1. Separar la confirmación de una transición de las acciones secundarias que pueden diferirse (notificaciones por correo, generación de reportes, emisión de asientos).
+  2. Permitir registrar trabajos asíncronos en una cola de despacho.
+  3. Dividir operaciones extensas en unidades pequeñas y recuperables.
+  4. Incorporar procesamiento por lotes (`batch processing`).
+  5. Guardar el avance y puntero de cada trabajo diferido.
+  6. Permitir reanudar trabajos interrumpidos por límites de cuota de tiempo.
+  7. Establecer límites de procesamiento por ejecución para mantenerse bajo los 6 minutos.
+  8. Priorizar operaciones institucionales críticas sobre tareas accesorias.
+  9. Evitar que tareas de larga duración bloqueen la respuesta al usuario en el navegador.
+  10. Permitir consultar el estado de ejecución de los trabajos asíncronos.
+  11. Gestionar errores y reintentos para tareas secundarias fallidas.
+  12. Utilizar procesamiento síncrono solamente cuando sea indispensable para garantizar la consistencia inmediata de la operación.
+- **Comportamiento Esperado:**
+  La aprobación de un trámite debe poder confirmarse sin esperar a que terminen todas las operaciones secundarias, siempre que el contrato del proceso permita ese desacoplamiento.
+  Las acciones posteriores deberán quedar registradas y ejecutarse de manera controlada.
+- **Criterios de Aceptación:**
+  - [ ] Aprobar una operación que genere varias acciones secundarias y comprobar que la respuesta HTTP es inmediata.
+  - [ ] Interrumpir deliberadamente un trabajo en ejecución y verificar su reanudación correcta.
+  - [ ] Verificar que no se repitan acciones secundarias ya completadas.
+  - [ ] Simular una operación que exceda el tiempo de ejecución y comprobar que el estado general refleja el avance pendiente.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task15] [P1] [Notificaciones - Sistema Centralizado de Notificaciones por Eventos del Workflow]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `F23-Task09`, `F23-Task12`, `F23-Task13`.
+- **Capacidades Relacionadas:** F23-016, F23-006, F23-004.
+- **Problema Detectado:**
+  Las notificaciones están distribuidas en diferentes funciones y no todas las transiciones generan avisos automáticos consistentes.
+- **Requisitos Funcionales:**
+  1. Centralizar la generación de notificaciones vinculadas a eventos del motor de flujos.
+  2. Admitir notificaciones por:
+     - Creación de solicitudes.
+     - Asignación de tareas.
+     - Cambio de responsable o derivación.
+     - Aprobación de etapa.
+     - Rechazo definitivo.
+     - Devolución para correcciones.
+     - Vencimiento próximo de SLA.
+     - Escalamiento jerárquico.
+     - Finalización y resolución del trámite.
+     - Error crítico de procesamiento.
+  3. Permitir configurar destinatarios por rol, departamento o usuario individual.
+  4. Permitir definir plantillas dinámicas con variables de contexto.
+  5. Incluir datos contextuales y enlaces directos a la operación.
+  6. Diferenciar notificaciones informativas de tareas que requieren acción.
+  7. Registrar el estado del envío en la bitácora.
+  8. Evitar envíos duplicados de notificaciones.
+  9. Permitir configuración de preferencias de notificación para avisos opcionales.
+  10. Mantener los avisos obligatorios de seguridad y responsabilidad institucional.
+  11. Permitir reintentar entregas fallidas.
+  12. Evitar que una notificación enviada se interprete erróneamente como una aprobación de facto.
+- **Comportamiento Esperado:**
+  Los cambios del proceso generarán notificaciones mediante un mecanismo común, sin que cada módulo implemente su propio sistema aislado.
+- **Criterios de Aceptación:**
+  - [ ] Crear una solicitud y verificar que se despachan los avisos al asignado.
+  - [ ] Aprobar y rechazar una etapa y verificar las notificaciones resultantes.
+  - [ ] Simular un error de envío y comprobar que se encola para reintento.
+  - [ ] Comprobar que no se envían notificaciones duplicadas ante reintentos.
+  - [ ] Verificar que los destinatarios no reciben información ajena a sus permisos de acceso.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task16] [P1] [Seguridad y Roles - Delegación Temporal de Aprobaciones Integrada con los Workflows]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `F23-Task01`, `F23-Task09`.
+- **Capacidades Relacionadas:** F23-007.
+- **Problema Detectado:**
+  Existe una implementación parcial de delegación, pero no se ha integrado de manera completa con las asignaciones y etapas activas de los procesos.
+- **Requisitos Funcionales:**
+  1. Permitir delegar temporalmente responsabilidades de aprobación por ausencia o vacaciones.
+  2. Definir fecha y hora de inicio y finalización de la delegación.
+  3. Permitir establecer el alcance por tipo de operación, monto o departamento.
+  4. Identificar al responsable titular original y al usuario delegado.
+  5. Validar que el delegado tenga los permisos institucionales necesarios para asumir la responsabilidad.
+  6. Aplicar la delegación a las etapas pendientes correspondientes en la bandeja unificada.
+  7. Registrar las decisiones tomadas por el delegado diferenciando claramente su identidad de la responsabilidad titular.
+  8. Permitir revocar anticipadamente una delegación activa.
+  9. Impedir que una delegación vencida continúe autorizando decisiones.
+  10. Evitar delegaciones circulares o en cascada no autorizadas.
+  11. Permitir configurar si la delegación incluye tareas ya asignadas o solamente tareas nuevas.
+- **Comportamiento Esperado:**
+  Durante una ausencia autorizada, las aprobaciones podrán continuar sin necesidad de modificar manualmente cada proceso configurado.
+- **Criterios de Aceptación:**
+  - [ ] Crear una delegación temporal con rango de fechas.
+  - [ ] Comprobar la transferencia de autorizaciones a la bandeja del delegado.
+  - [ ] Intentar delegar a un usuario sin privilegios suficientes y verificar el rechazo.
+  - [ ] Revocar anticipadamente la delegación y comprobar el cese inmediato de privilegios.
+  - [ ] Verificar que tras expirar la fecha fin, el delegado ya no puede autorizar trámites.
+  - [ ] Consultar el historial de decisiones y comprobar que se identifican tanto el titular como el delegado.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task17] [P1] [Ciclo de Vida de Trámites - Devolución, Rechazo y Corrección Controlada de Trámites]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `SolicitudesTramites`, `RevisionesDecisionesTramite`, `F23-Task01`, `F23-Task07`.
+- **Capacidades Relacionadas:** F23-018, F23-014.
+- **Problema Detectado:**
+  Las devoluciones están implementadas parcialmente y las observaciones no siempre son obligatorias.
+- **Requisitos Funcionales:**
+  1. Exigir una justificación obligatoria en devoluciones para corrección y rechazos definitivos.
+  2. Diferenciar formalmente devolución para corrección (`DEVUELTO_CORRECCION`) de rechazo definitivo (`RECHAZADO`).
+  3. Identificar los campos, anexos o documentos que deben corregirse cuando corresponda.
+  4. Permitir que el solicitante corrija exclusivamente la información autorizada.
+  5. Conservar la versión anterior de la solicitud antes de las correcciones.
+  6. Registrar las modificaciones posteriores con trazabilidad de cambios.
+  7. Permitir reenviar el trámite a revisión una vez completadas las correcciones.
+  8. Determinar qué etapas deben repetirse después de una corrección según las reglas del flujo.
+  9. Impedir modificaciones de campos reservados que no corresponden al solicitante.
+  10. Notificar al solicitante las observaciones y acciones necesarias de corrección.
+- **Comportamiento Esperado:**
+  Una solicitud devuelta debe regresar al responsable correspondiente para su corrección, conservando las decisiones y observaciones anteriores.
+- **Criterios de Aceptación:**
+  - [ ] Intentar devolver una solicitud sin observaciones y comprobar que la operación es rechazada.
+  - [ ] Devolver la solicitud con observaciones válidas y verificar el cambio de estado a `Requiere Corrección`.
+  - [ ] Corregir la información requerida como solicitante y reenviar a revisión.
+  - [ ] Verificar el historial de versiones y decisiones preservando los eventos previos.
+  - [ ] Comprobar que las etapas se repiten o reanudan según las reglas configuradas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task18] [P1] [Ciclo de Vida de Trámites - Cancelación y Desistimiento de Solicitudes por el Solicitante]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `SolicitudesTramites`, `F23-Task01`, `F23-Task12`.
+- **Capacidades Relacionadas:** F23-019.
+- **Problema Detectado:**
+  No existe una capacidad formal para que el solicitante retire un trámite cuando todavía es posible cancelarlo.
+- **Requisitos Funcionales:**
+  1. Permitir al solicitante gestionar el desistimiento o cancelación de un trámite propio.
+  2. Definir en qué estados iniciales o intermedios se permite el desistimiento voluntario.
+  3. Impedir la cancelación cuando la operación ya haya producido efectos irreversibles (ej. pagos aplicados, actas emitidas), salvo procedimiento de reversión formal.
+  4. Registrar el motivo detallado del desistimiento.
+  5. Notificar a los revisores y responsables involucrados en la etapa activa.
+  6. Cancelar automáticamente las tareas pendientes asociadas en la bandeja unificada.
+  7. Detener recordatorios, alertas y temporizadores de escalamiento de SLA.
+  8. Registrar en auditoría las acciones que ya se habían ejecutado previo a la cancelación.
+  9. Permitir que un administrador gestione excepciones justificadas de cancelación.
+  10. Mantener el expediente histórico del proceso cancelado con estado `Desistida_Por_Usuario`.
+- **Comportamiento Esperado:**
+  El solicitante podrá desistir de operaciones pendientes dentro de las condiciones permitidas, sin eliminar los registros ni alterar el historial de auditoría.
+- **Criterios de Aceptación:**
+  - [ ] Cancelar un trámite recién presentado y comprobar su paso a estado `Desistida_Por_Usuario`.
+  - [ ] Intentar cancelar un trámite ya resuelto o aprobado definitivamente y comprobar su bloqueo.
+  - [ ] Cancelar un trámite con aprobaciones parciales y verificar la detención de etapas subsiguientes.
+  - [ ] Verificar la cancelación y retiro de tareas dependientes en la bandeja unificada.
+  - [ ] Comprobar que se detienen los temporizadores y recordatorios de SLA.
+  - [ ] Consultar el historial y verificar el registro del motivo de desistimiento.
+- **Estado:** [ ] Pendiente
+
+---
+
+### P2 — PRIORIDAD MEDIA
+
+### [F23-Task19] [P2] [Distribución de Carga - Asignación Automática y Reparto Equilibrado de Trabajo]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `F23-Task09`, `F23-Task11`.
+- **Capacidades Relacionadas:** F23-022, F23-030, F23-004.
+- **Problema Detectado:**
+  La asignación de responsables depende de mecanismos manuales y no existe un sistema de distribución equilibrada de tareas.
+- **Requisitos Funcionales:**
+  1. Permitir definir grupos de responsables elegibles por departamento o rol.
+  2. Distribuir tareas automáticamente mediante algoritmo Round-Robin.
+  3. Incorporar criterios de carga de trabajo basados en tareas activas por usuario.
+  4. Considerar tareas pendientes, vencidas y niveles de prioridad al balancear.
+  5. Permitir establecer límites de tareas activas concurrentes por responsable.
+  6. Excluir automáticamente a usuarios ausentes, con licencias, inactivos o sin permisos vigentes.
+  7. Permitir establecer especialidades o áreas de competencia dentro del grupo.
+  8. Permitir ponderar la carga según la complejidad del tipo de trámite.
+  9. Registrar el criterio y algoritmo que determinó cada asignación en la bitácora.
+  10. Permitir reasignaciones autorizadas por supervisores.
+  11. Evitar que dos asignaciones simultáneas excedan los límites máximos de carga.
+  12. Permitir que un supervisor modifique la asignación cuando exista una causa justificada.
+- **Comportamiento Esperado:**
+  Las tareas podrán asignarse automáticamente al responsable elegible con menor carga o siguiendo el criterio de distribución configurado.
+- **Criterios de Aceptación:**
+  - [ ] Distribuir varias tareas consecutivas mediante Round-Robin y verificar rotación equitativa.
+  - [ ] Distribuir tareas considerando la carga actual de trabajo de los revisores.
+  - [ ] Excluir de la asignación a un usuario marcado con licencia o inactivo.
+  - [ ] Comprobar que se respetan los límites máximos de asignación concurrente.
+  - [ ] Ejecutar asignaciones concurrentes y verificar que no se produzcan sobrecargas.
+  - [ ] Consultar el registro de auditoría de asignación automática.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task20] [P2] [Analítica - Métricas, Analítica y Supervisión del Rendimiento de Procesos]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `F23-Task11`, `F23-Task13`.
+- **Capacidades Relacionadas:** F23-027, F23-030, F23-012.
+- **Problema Detectado:**
+  No existe una herramienta suficientemente desarrollada para identificar cuellos de botella, medir tiempos de resolución y supervisar el rendimiento de los departamentos.
+- **Requisitos Funcionales:**
+  1. Calcular tiempo total de resolución de inicio a fin del trámite.
+  2. Calcular tiempo promedio de atención por etapa.
+  3. Calcular tiempos de espera en cola antes de ser tomado por el revisor.
+  4. Calcular tiempos efectivos de atención activa.
+  5. Medir porcentajes de cumplimiento de SLA por departamento y trámite.
+  6. Identificar etapas y transiciones que concentran los mayores retrasos (cuellos de botella).
+  7. Identificar responsables o departamentos con cargas excesivas o demoras recurrentes.
+  8. Medir volúmenes de solicitudes recibidas, aprobadas, rechazadas, devueltas y pendientes.
+  9. Permitir filtrar métricas por departamento, ciclo lectivo, tipo de operación y revisor.
+  10. Mostrar tendencias históricas y evolución de tiempos de respuesta.
+  11. Permitir comparar periodos académicos o meses de gestión.
+  12. Identificar procesos que permanecen estancados o bloqueados por dependencias externas.
+  13. Exportar resultados en formatos estructurados (CSV/JSON/PDF).
+  14. Separar las métricas operativas de datos personales innecesarios para privacidad.
+  15. Permitir configurar umbrales de alerta temprana por acumulación de trabajo.
+- **Comportamiento Esperado:**
+  La dirección y los responsables departamentales podrán identificar qué procesos tardan más, dónde se acumulan las tareas y qué áreas necesitan redistribución de responsabilidades.
+- **Criterios de Aceptación:**
+  - [ ] Generar procesos de prueba con diferentes tiempos de resolución.
+  - [ ] Consultar el cuadro de mando de analítica de procesos y verificar la exactitud de los tiempos calculados.
+  - [ ] Comparar rendimiento entre departamentos o etapas.
+  - [ ] Filtrar indicadores por ciclo lectivo y tipo de trámite.
+  - [ ] Identificar correctamente una etapa con cuello de botella simulado.
+  - [ ] Exportar las métricas y comprobar su consistencia con los datos reales.
+  - [ ] Verificar los controles RBAC sobre la visualización de analíticas departamentales.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task21] [P2] [Gestión Documental - Administración Avanzada del Archivo y Conservación de Trámites]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `F23-Task06`, `F23-Task13`.
+- **Capacidades Relacionadas:** F23-020.
+- **Problema Detectado:**
+  El archivo de trámites está implementado parcialmente y su depuración es principalmente manual.
+- **Requisitos Funcionales:**
+  1. Establecer políticas de conservación y retención por tipo de trámite según directrices institucionales.
+  2. Archivar automáticamente los procesos finalizados cuando expire su periodo activo.
+  3. Diferenciar formalmente el estado de archivo histórico de la eliminación física de registros.
+  4. Mantener acceso de sólo lectura autorizado a los expedientes archivados.
+  5. Conservar documentos, firmas digitales y referencias asociadas en almacenamiento seguro.
+  6. Permitir búsquedas históricas sobre el archivo pasivo por CUV, fecha o solicitante.
+  7. Establecer restricciones estrictas de eliminación física según las leyes de retención aplicables.
+  8. Permitir la exportación íntegra de expedientes archivados en paquetes estructurados.
+  9. Registrar todas las operaciones de archivo, desarchivo y consulta en la bitácora de seguridad.
+  10. Evitar que las tareas de depuración eliminen registros requeridos por otros módulos contables o académicos.
+- **Comportamiento Esperado:**
+  Los procesos resueltos podrán pasar a un almacenamiento histórico organizado, sin perder su trazabilidad ni sus relaciones institucionales.
+- **Criterios de Aceptación:**
+  - [ ] Archivar un trámite finalizado y verificar su traslado a la partición o estado de archivo.
+  - [ ] Consultar el trámite archivado mediante búsqueda por identificador y verificar lectura correcta.
+  - [ ] Comprobar que conserva intactos los documentos adjuntos y las firmas registradas.
+  - [ ] Intentar archivar un proceso activo y comprobar que la operación es rechazada.
+  - [ ] Ejecutar una política de retención automática y verificar la integridad de las referencias vinculadas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task22] [P2] [Monitoreo y Salud - Supervisión de Disponibilidad y Salud de Servicios Distribuidos]
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs`
+- **Dependencias Expuestas:** `CatalogoServicios`, `F23-Task04`, `F23-Task05`.
+- **Capacidades Relacionadas:** F23-024, F23-026.
+- **Problema Detectado:**
+  Existe una herramienta de supervisión parcial, pero no ofrece una visión completa de la disponibilidad de todas las cuentas y servicios registrados.
+- **Requisitos Funcionales:**
+  1. Consultar periódicamente la disponibilidad y latencia de cada microservicio registrado (Health Check).
+  2. Verificar la comunicación bidireccional con cada endpoint Apps Script.
+  3. Comprobar la validez de la autenticación HMAC y autorizaciones de acceso.
+  4. Identificar fallos de acceso o errores de permisos hacia los Spreadsheets subyacentes.
+  5. Registrar tiempos de respuesta y latencia de red.
+  6. Clasificar el estado del servicio en: `Disponible`, `Degradado`, `Desconectado`, `ErrorAutenticacion`.
+  7. Registrar fecha y hora de la última comunicación exitosa con cada nodo.
+  8. Identificar patrones de fallos continuos o intermitentes.
+  9. Notificar inmediatamente a los administradores ante caídas de servicios críticos.
+  10. Mostrar un panel centralizado de salud de infraestructura distribuida en tiempo real.
+  11. Permitir consultar el historial cronológico de incidentes por servicio.
+  12. Detectar servicios que dejaron de responder tras un nuevo despliegue o rotación de credenciales.
+- **Comportamiento Esperado:**
+  El administrador podrá identificar qué servicios funcionan, cuáles tienen problemas de autorización y cuáles están completamente desconectados.
+- **Criterios de Aceptación:**
+  - [ ] Supervisar dos servicios pertenecientes a cuentas de Google diferentes.
+  - [ ] Simular la desconexión de uno de ellos y verificar su detección y marcación como `Desconectado`.
+  - [ ] Restablecer el servicio y verificar la actualización automática a `Disponible`.
+  - [ ] Simular un error de clave HMAC y verificar que se distingue de una caída física de red.
+  - [ ] Consultar el panel central de salud y el historial de eventos de disponibilidad.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task23] [P2] [Rendimiento y Cuotas - Optimización del Motor de Flujos y Consumo de Cuotas de Google Apps Script]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - `backend/developer-service/Code.gs`
+- **Dependencias Expuestas:** `F23-Task03`, `F23-Task12`, `F23-Task14`.
+- **Capacidades Relacionadas:** F23-011, F23-009, F23-014.
+- **Problema Detectado:**
+  Las operaciones sincrónicas, las consultas repetidas y el almacenamiento centralizado pueden generar contención, consumo elevado de cuotas y fallos por límites de ejecución.
+- **Requisitos Funcionales:**
+  1. Medir y supervisar el consumo de recursos por servicio y cuenta propietaria (llamadas `UrlFetchApp`, operaciones `SpreadsheetApp`, triggers).
+  2. Registrar tiempos de ejecución de cada endpoint Apps Script.
+  3. Reducir lecturas y escrituras redundantes utilizando arreglos en memoria y operaciones por lotes.
+  4. Agrupar operaciones compatibles en una única llamada de almacenamiento.
+  5. Utilizar caché en memoria (`CacheService`) exclusivamente para datos cuya consistencia eventual sea admisible.
+  6. Implementar paginación obligatoria en consultas extensas de trámites y bandejas de trabajo.
+  7. Evitar recuperar todas las filas de la hoja para renderizar vistas de pendientes.
+  8. Procesar lotes con límites de tamaño adaptativos.
+  9. Supervisar bloqueos de concurrencia y tiempos de espera en `LockService`.
+  10. Distribuir la carga de I/O entre múltiples particiones de Spreadsheets según el catálogo institucional.
+  11. Incorporar indicadores de consumo y alertas tempranas por proximidad al 80% de las cuotas diarias de Google.
+  12. Permitir configurar umbrales de advertencia personalizados por servicio.
+  13. Diferenciar límites por usuario, por proyecto Apps Script y por cuenta de Google Workspace.
+  14. Evitar que la distribución de cuentas se utilice indebidamente para evadir políticas o restricciones de Google.
+- **Comportamiento Esperado:**
+  El sistema deberá mantener un rendimiento estable, identificar los servicios sobrecargados y distribuir operaciones cuando la arquitectura y las autorizaciones lo permitan.
+- **Criterios de Aceptación:**
+  - [ ] Ejecutar pruebas de carga sintéticas y medir tiempos de respuesta y llamadas a Google APIs.
+  - [ ] Comprobar que las consultas paginadas reducen drásticamente la transferencia de datos innecesarios.
+  - [ ] Simular límites de ejecución de 6 minutos y comprobar que los trabajos extensos se fraccionan de forma reanudable.
+  - [ ] Comparar métricas de consumo de celdas y tiempo de ejecución antes y después de la optimización.
+  - [ ] Verificar que el uso de caché no genera inconsistencias en estados de decisiones críticas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task24] [P2] [Gobernanza - Mejora del Versionamiento y Compatibilidad de Definiciones de Workflow]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `FlujosAprobacion`, `F23-Task08`.
+- **Capacidades Relacionadas:** F23-001, F23-031.
+- **Problema Detectado:**
+  El versionamiento secuencial de definiciones ya está implementado y verificado, pero necesita una administración más completa para soportar modificaciones estructurales y procesos en ejecución.
+- **Requisitos Funcionales:**
+  1. Conservar todas las versiones históricas publicadas de las definiciones de flujo.
+  2. Permitir la comparación visual y estructural entre dos versiones de un mismo flujo (Diff de etapas y reglas).
+  3. Identificar claramente adiciones, modificaciones y eliminaciones de etapas, responsables y compuertas.
+  4. Permitir crear borradores de trabajo (`Borrador`) sin alterar el flujo activo en producción (`Publicado`).
+  5. Ejecutar validaciones estructurales completas antes de autorizar la publicación de una nueva versión.
+  6. Definir qué versión rige para las nuevas solicitudes iniciadas.
+  7. Mantener vinculadas las instancias de trámites en curso a la versión exacta con la que fueron creadas.
+  8. Permitir migraciones controladas de instancias activas hacia la nueva versión mediante procedimiento administrativo explícito.
+  9. Registrar autor, fecha, hora y justificación de cada cambio de versión.
+  10. Impedir que una actualización de configuración altere silenciosamente las reglas de trámites activos.
+- **Comportamiento Esperado:**
+  Las definiciones podrán evolucionar sin alterar las reglas que gobiernan las instancias que ya están en ejecución.
+- **Criterios de Aceptación:**
+  - [ ] Publicar una versión 1.0 de un flujo institucional.
+  - [ ] Crear un borrador, modificar etapas y publicar la versión 2.0.
+  - [ ] Comparar estructuralmente la versión 1.0 con la 2.0 e identificar diferencias.
+  - [ ] Iniciar un trámite en v1.0 y otro en v2.0 y verificar que cada uno sigue su propia definición.
+  - [ ] Comprobar que los trámites en curso en v1.0 no se ven afectados por la publicación de v2.0.
+  - [ ] Ejecutar una migración controlada de prueba con autorización y verificar la actualización del puntero de versión.
+- **Estado:** [ ] Pendiente
+
+---
+
+### P3 — PRIORIDAD BAJA
+
+### [F23-Task25] [P3] [Consultas y Trazabilidad - Optimización de Consultas y Visualización del Historial de Procesos]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `RevisionesDecisionesTramite`, `F23-Task13`.
+- **Capacidades Relacionadas:** F23-003, F23-020.
+- **Problema Detectado:**
+  El historial está completo y verificado, pero necesita optimización para consultas extensas y expedientes con numerosos eventos.
+- **Requisitos Funcionales:**
+  1. Implementar paginación en la consulta de historial de trámites (`getWorkflowHistory`).
+  2. Permitir filtrar el historial por etapa, revisor, rango de fechas y tipo de decisión.
+  3. Consultar y reconstruir el historial completo de un trámite distribuido entre múltiples particiones.
+  4. Presentar con claridad decisiones, fechas, firmas y observaciones registradas.
+  5. Separar observaciones públicas (visibles al solicitante) de observaciones internas reservadas.
+  6. Permitir localizar el evento de auditoría original a partir de una tarea en la bandeja unificada.
+  7. Mantener estricto orden cronológico en la línea de tiempo.
+  8. Evitar consultas innecesarias a hojas de cálculo secundarias si no hay eventos registrados.
+- **Criterios de Aceptación:**
+  - [ ] Consultar expedientes con historiales extensos (> 50 eventos) y verificar paginación fluida.
+  - [ ] Aplicar filtros combinados y verificar exactitud de los eventos devueltos.
+  - [ ] Comprobar el orden cronológico estricto de las transiciones.
+  - [ ] Verificar que los solicitantes no pueden visualizar observaciones internas marcadas como confidenciales.
+  - [ ] Comprobar que la paginación no omite ni duplica eventos históricos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task26] [P3] [Firmas Institucionales - Optimización de Firmas y Conformidades dentro de los Procesos]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `FirmasConformidades`, `F23-Task06`, `F23-Task24`.
+- **Capacidades Relacionadas:** F23-017.
+- **Estado de Partida:** Completa y verificada. No requiere reconstrucción.
+- **Requisitos Funcionales:**
+  1. Conservar el mecanismo existente de registro de firmas y conformidades en `FirmasConformidades`.
+  2. Mantener la vinculación estrecha entre firma, documento emitido, usuario firmante, proceso y etapa del workflow.
+  3. Preservar los mecanismos de integridad criptográfica existentes (cálculo y validación de hash SHA-256).
+  4. Permitir consultar y previsualizar las conformidades firmadas directamente desde el historial del proceso.
+  5. Mejorar la presentación visual del estado de firma en la interfaz institucional.
+  6. Diferenciar claramente los estados: `Pendiente de Firma`, `Firmado`, `Rechazado`, `Firma Inválida / Revocada`.
+  7. Evitar registrar dos veces la misma conformidad sobre una etapa resuelta.
+  8. Mantener inalterables las firmas históricas aunque el flujo cambie de versión o estructura.
+- **Criterios de Aceptación:**
+  - [ ] Firmar digitalmente una etapa de workflow de prueba.
+  - [ ] Consultar la conformidad y verificar su vinculación con el documento y la decisión.
+  - [ ] Intentar firmar dos veces la misma etapa y comprobar que se bloquea la duplicación.
+  - [ ] Publicar una nueva versión del flujo y comprobar que las firmas de instancias previas permanecen válidas.
+  - [ ] Verificar que la verificación criptográfica confirma la autenticidad de la firma registrada.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F23-Task27] [P3] [Calidad y Testing - Ampliación de Pruebas Automatizadas de Integración y Regresión]
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs`
+  - `tests/regression/academic-grading-suite.js`
+- **Dependencias Expuestas:** Todas las tareas implementadas de la Fase 23 (`F23-Task01` a `F23-Task26`).
+- **Capacidades Relacionadas:** F23-032 y todas las subcapacidades de la Fase 23.
+- **Problema Detectado:**
+  La suite de pruebas existente está implementada parcialmente y no cubre suficientemente los escenarios de concurrencia, multicuenta, recuperación y ejecución distribuida.
+- **Requisitos Funcionales:**
+  1. Ampliar las pruebas automatizadas de definiciones, validación estructural y transiciones de flujos.
+  2. Validar exhaustivamente permisos y roles RBAC/ABAC sobre cada etapa.
+  3. Ejecutar pruebas de estrés con decisiones simultáneas concurrentes para validar `LockService`.
+  4. Probar escenarios de solicitudes duplicadas para verificar el motor de idempotencia.
+  5. Probar procesos paralelos con compuertas de bifurcación y convergencia AND/OR.
+  6. Validar condiciones de enrutamiento basadas en reglas de negocio y montos.
+  7. Probar temporizadores, vencimientos de SLA y escalamiento jerárquico automático.
+  8. Probar delegaciones temporales de aprobación por ausencia.
+  9. Probar comunicación autenticada entre microservicios de diferentes cuentas mediante HMAC.
+  10. Probar revocación de credenciales y aislamiento de servicios no autorizados.
+  11. Probar simulación de servicios caídos o desconectados.
+  12. Validar colas de reintentos con retroceso exponencial.
+  13. Probar recuperación y reanudación de trabajos extensos interrumpidos.
+  14. Verificar la integridad de la cadena criptográfica de hash en el historial de auditoría.
+  15. Probar compatibilidad hacia atrás entre diferentes versiones publicadas de un mismo workflow.
+  16. Probar resolución dinámica de fuentes de datos mediante `resolveSpreadsheetSource`.
+  17. Asegurar no regresión de todas las funcionalidades y suites previas (Fases 9, 10, 11, 15, 16, 17, 18, 19, 20, 21, 22).
+- **Comportamiento Esperado:**
+  Las nuevas implementaciones deberán contar con pruebas reproducibles que permitan comprobar que las capacidades existentes continúan funcionando y que las nuevas no introducen regresiones en el ecosistema.
+- **Criterios de Aceptación:**
+  - [ ] Ejecutar la suite completa y verificar resultados 100% reproducibles y exitosos.
+  - [ ] Comprobar que los casos multicuenta se ejecutan en cuentas y servicios de prueba independientes.
+  - [ ] Verificar que los escenarios de concurrencia e idempotencia se cubren y pasan satisfactoriamente.
+  - [ ] Comprobar que cualquier regresión en funcionalidades previas bloquea la aprobación de la entrega.
+  - [ ] Generar un reporte estructurado de resultados por subcapacidad y cobertura de pruebas.
+  - [ ] Todas las pruebas de regresión previas (53/53) se mantienen aprobadas al 100%.
 - **Estado:** [ ] Pendiente
 
 ---
