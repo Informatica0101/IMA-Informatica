@@ -9128,3 +9128,311 @@
 - **Estado:** [ ] Pendiente
 
 ---
+## FASE 27 — PLATAFORMA TÉCNICA, CONTINUIDAD Y RECUPERACIÓN
+
+### P0 — PRIORIDAD CRÍTICA
+
+### [F27-Task01] [P0] [Observabilidad Preventiva - Monitor Preventivo de Cuotas, Límites de Ejecución y Capacidad de Servicios GAS]
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs`
+  - `backend/user-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - Hojas `MonitoreoCuotasLimites`, `RegistroEventos`
+  - `js/ui-common.js`
+- **Subcapacidades Relacionadas:** F27-001, F27-005, F27-007.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Expuestas:** Observabilidad existente (`getServiceHealthDiagnostics`, `logStructuredEvent`).
+- **Problema Detectado:**
+  La plataforma dispone de mecanismos para consultar el estado de los servicios, comprobar conectividad y registrar errores. Sin embargo, no cuenta con un sistema preventivo que permita detectar cuándo el consumo de cuotas, las ejecuciones o las llamadas a servicios externos se aproximan a sus límites operativos. Actualmente, el sistema detecta errores cuando ya se han producido, sin anticipación suficiente para evitar interrupciones por agotamiento de `UrlFetchApp`, cuotas de Sheets/Drive/Mail, exceso de ejecuciones o límites de concurrencia.
+- **Requisitos Funcionales:**
+  1. Inventario centralizado de límites y cuotas operativas:
+     - Registrar límites aplicables a: `UrlFetchApp`, Google Sheets, Google Drive, Google Mail (`MailApp`), Google Calendar, servicios de almacenamiento, APIs externas, ejecuciones simultáneas, tiempo máximo de ejecución (6 min), activadores programados y límites por usuario/proyecto.
+     - Registrar para cada cuota: servicio, identificador de cuota, unidad de medida, límite aplicable según tipo de cuenta Google Workspace, período de reinicio (diario/horario), fuente de información, fecha de actualización, umbral de advertencia (80%), umbral crítico y estado de disponibilidad.
+     - Si un límite no puede consultarse por API, registrarlo como valor configurado documentado indicando procedencia y fecha.
+  2. Medición activa del consumo:
+     - Registrar por solicitud: cantidad de llamadas, servicio utilizado, timestamp, componente emisor, usuario/contexto, tipo de operación, resultado, duración, consumo estimado, errores asociados y reintentos.
+     - Contabilizar tanto solicitudes exitosas como fallidas (que también consumen cuota).
+     - Agrupar métricas por servicio, endpoint/acción, componente, día, ventana temporal y proceso.
+  3. Umbrales preventivos configurables:
+     - Estados: `Normal`, `Advertencia` (al 80%), `Crítico` (configurable), `Límite alcanzado`.
+     - Identificar claramente en la UI si la métrica es oficial de Google o estimada por el sistema.
+  4. Proyección analítica de agotamiento:
+     - Estimar tiempo hasta el agotamiento según consumo acumulado, velocidad reciente, horarios pico y tiempo restante hasta el reinicio.
+  5. Alertas automáticas desduplicadas:
+     - Disparar alertas tempranas al alcanzar el 80% y umbral crítico, o ante tendencias de agotamiento anticipado.
+     - Agrupar alertas repetitivas de un mismo incidente para evitar saturación de notificaciones.
+  6. Panel de consumo y capacidad en UI:
+     - Vista administrativa filtrable por servicio y período con porcentaje de utilización, procesos con mayor consumo y alertas activas.
+  7. Protección preventiva no destructiva:
+     - Posponer procesos no críticos, agrupar operaciones o limitar procesamiento simultáneo ante riesgo inminente de agotamiento, sin bloquear operaciones académicas o financieras esenciales basadas en estimaciones imprecisas.
+- **Cambios Necesarios:**
+  - Ampliar el sistema de observabilidad en `developer-service` (`checkGoogleApiQuotaUsage`, `recordResourceConsumption`).
+  - Crear hoja `MonitoreoCuotasLimites` para inventario y agregados de consumo.
+  - Integrar contadores de consumo en llamadas `UrlFetchApp`, `SpreadsheetApp` y `DriveApp`.
+  - Incorporar motor de cálculo de proyecciones y umbrales preventivos.
+  - Integrar alertas tempranas con `RegistroEventos` y centro de notificaciones.
+  - Crear vista de capacidad en el panel de desarrollador/administrador.
+- **Comportamiento Esperado:**
+  El sistema detecta anticipadamente condiciones de consumo anormal y permite que los responsables actúen antes de que una cuota provoque una interrupción.
+- **Criterios de Aceptación:**
+  - [ ] Cada servicio supervisado tiene identificados sus límites aplicables o la condición por la que no pueden determinarse.
+  - [ ] Las operaciones instrumentadas generan métricas de consumo en tiempo real.
+  - [ ] El sistema calcula la utilización respecto al límite correspondiente de forma matemática exacta.
+  - [ ] Al alcanzar el 80% del límite configurado, se genera una advertencia preventiva estructurada.
+  - [ ] Al alcanzar el umbral crítico, se genera una alerta de alta prioridad hacia los administradores.
+  - [ ] Las alertas repetidas de un mismo incidente se agrupan o actualizan, evitando duplicaciones.
+  - [ ] El panel administrativo permite identificar con claridad los servicios y operaciones que consumen más recursos.
+  - [ ] Una métrica sin datos suficientes se identifica como desconocida, no como consumo cero.
+  - [ ] La propia medición no genera una cantidad de llamadas que contribuya significativamente al agotamiento de cuotas.
+  - [ ] Los mecanismos de protección no bloquean operaciones críticas por estimaciones no verificadas.
+  - [ ] Se comprueba la procedencia y fecha de cada límite registrado.
+  - [ ] Las alertas y métricas continúan funcionando tras una interrupción y recuperación del servicio.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F27-Task02] [P0] [Resiliencia y Concurrencia - Cola Persistente de Procesamiento Asíncrono, Reintentos Controlados y Circuit Breaker]
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs`
+  - `backend/user-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - Hojas `ColaTareasAsincronas`, `CircuitBreakerEstados`
+  - `js/api.js`
+- **Subcapacidades Relacionadas:** F27-005, F27-006, F27-008.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Expuestas:** Idempotencia, registro estructurado, concurrencia (`LockService`) y supervisión de servicios.
+- **Problema Detectado:**
+  La plataforma dispone de mecanismos de fallback en determinadas operaciones de delegación interservicios, pero los reintentos de llamadas externas pueden ejecutarse dentro del hilo sincrónico de la solicitud original. Esto provoca que una operación del usuario permanezca esperando mientras el sistema intenta comunicarse repetidamente con un servicio secundario, consumiendo tiempo de ejecución, arriesgando timeouts de 6 minutos y saturando servicios con fallos temporales.
+- **Requisitos Funcionales:**
+  1. Cola persistente de tareas en hoja `ColaTareasAsincronas`:
+     - Registrar por tarea: `tareaId`, tipo de operación, servicio destino, fecha creación, fecha última ejecución, número de intentos, máx intentos, próxima ejecución, prioridad, estado (`Pendiente`, `EnProceso`, `Completada`, `Reintentable`, `Fallida`, `Suspendida`, `RequiereIntervencion`, `Cancelada`), `solicitudIdOriginal`, payload mínimo y resultado/error.
+     - Almacenamiento persistente en base de datos independiente de variables en memoria o duración de ejecución.
+  2. Clasificación formal de operaciones:
+     - Sincrónicas obligatorias: validación de permisos, confirmación de matrícula, verificación de cobro, lectura de datos indispensables.
+     - Asíncronas diferibles: notificaciones multicanal, envío de correos, generación de reportes secundarios, sincronizaciones externas no urgentes.
+  3. Desacoplamiento de la solicitud original:
+     - Validar la solicitud principal, persistir la tarea secundaria en cola, confirmar almacenamiento y retornar respuesta inmediata al usuario.
+  4. Motor centralizado de reintentos con retroceso exponencial:
+     - Diferenciar errores temporales (red, timeouts) de permanentes (403, 400).
+     - Retroceso exponencial con variación aleatoria (`jitter`), límite máximo de intentos y de tiempo de permanencia.
+     - No reintentar indefinidamente ni reintentar errores permanentes de datos o credenciales.
+  5. Patrón Circuit Breaker por dependencia externa:
+     - Estados: `Cerrado` (operación normal), `Abierto` (suspensión de llamadas no esenciales ante fallos recurrentes), `Semiabierto` (pruebas controladas de recuperación).
+     - Configuración aislada por dependencia para que la caída de un proveedor no afecte a los demás.
+  6. Control de concurrencia y prevención de duplicados:
+     - Evitar que dos ejecutores procesen la misma tarea con `LockService`.
+     - Detectar y recuperar tareas abandonadas por interrupción de Apps Script.
+  7. Panel de administración y gestión manual:
+     - Vista de tareas pendientes, fallidas, reintentos y estado de circuitos con opción de reintento manual idempotente.
+- **Cambios Necesarios:**
+  - Crear hojas `ColaTareasAsincronas` y `CircuitBreakerEstados`.
+  - Implementar middleware en backend (`enqueueAsyncTask`, `processAsyncTaskQueue`, `executeWithCircuitBreaker`).
+  - Separar acciones secundarias en `user-service`, `accounting-service` y `academic-service`.
+  - Integrar activador programado (`Time-driven trigger`) para procesar la cola en segundo plano.
+  - Conectar con firmas de idempotencia (`getIdempotencyPayloadSignature`).
+- **Comportamiento Esperado:**
+  Una falla de un servicio secundario deja una tarea pendiente y permite que la operación principal continúe cuando sea seguro. La plataforma procesa las tareas posteriormente, controla los reintentos y suspende temporalmente llamadas a servicios con fallos repetidos.
+- **Criterios de Aceptación:**
+  - [ ] Una tarea asíncrona permanece almacenada persistentemente después de finalizar la solicitud HTTP original.
+  - [ ] La solicitud principal no espera innecesariamente a que se completen operaciones secundarias (respuesta < 2s).
+  - [ ] Una tarea conserva su identificador y estado durante todo su ciclo de vida.
+  - [ ] Los errores temporales generan reintentos conforme a la política de retroceso exponencial.
+  - [ ] Los errores permanentes no generan ciclos de reintentos indefinidos.
+  - [ ] Un servicio con fallos repetidos activa su Circuit Breaker pasando a estado Abierto.
+  - [ ] El circuito semiabierto permite pruebas controladas de recuperación.
+  - [ ] La recuperación del servicio restablece el procesamiento de tareas pendientes.
+  - [ ] Una tarea no puede ejecutarse simultáneamente por dos trabajadores concurrentes.
+  - [ ] Una interrupción abrupta de la ejecución no pierde la tarea en cola.
+  - [ ] Una tarea con resultado incierto se verifica antes de repetirse.
+  - [ ] Las operaciones secundarias fallidas no invalidan una operación principal ya completada con éxito.
+  - [ ] El panel administrativo muestra los estados y resultados reales de la cola y permite reintentos seguros.
+- **Estado:** [ ] Pendiente
+
+---
+
+### P1 — PRIORIDAD ALTA
+
+### [F27-Task03] [P1] [Recuperación Granular - Centro de Restauración Granular por Hojas, Entidades y Conjuntos Relacionados]
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs`
+  - `backend/developer-service/Code.gs`
+  - Hojas de respaldo JSON en Drive, `RegistroEventos`, `HistorialRestauraciones`
+- **Subcapacidades Relacionadas:** F27-003, F27-004.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Expuestas:** Motor de respaldos, checksum SHA-256 y protección histórica de calificaciones (`preserveHistoricGrades`).
+- **Problema que Resuelve:**
+  El motor de respaldos y restauración ya permite crear copias JSON, calcular checksum SHA-256, consultar respaldos y ejecutar restauraciones protegidas mediante confirmación obligatoria `RESTORE-CONFIRMED`. También incorpora protección que conserva calificaciones oficiales. Sin embargo, la restauración opera sobre el conjunto completo de hojas del respaldo y no permite seleccionar de manera controlada una tabla o un grupo de entidades específico (`targetSheets`), limitando la recuperación puntual ante corrupciones aisladas sin sobrescribir información reciente de otras áreas.
+- **Requisitos Funcionales:**
+  1. Selección granular de restauración por parámetro `targetSheets`:
+     - Permitir restaurar todas las hojas, una hoja específica (ej. `targetSheets: ["AsignacionesDocentes"]`), varias hojas seleccionadas o un conjunto lógico de entidades relacionadas.
+     - Validar que los nombres de hoja existan en el respaldo y en la estructura actual.
+     - Una selección vacía no debe interpretarse jamás como restauración total.
+  2. Catálogo y previsualización de elementos recuperables:
+     - Consultar contenido del respaldo: nombre de hoja, cantidad de filas, encabezados, versión, checksum y dependencias.
+     - Vista previa antes de confirmar mostrando registros a recuperar, registros a conservar, posibles conflictos y diferencias de estructura.
+  3. Estrategias de restauración configurables:
+     - Reemplazo controlado (sustituir contenido de la hoja autorizada).
+     - Fusión (`merge`) basada en identificadores estables sin depender de posición de filas.
+     - Recuperación de registros eliminados.
+  4. Análisis y advertencia de dependencias entre hojas:
+     - Identificar dependencias relacionales (ej. Asignaciones relacionadas con Docentes y Asignaturas; Matrículas con Estudiantes).
+     - Advertir si una restauración aislada dejará referencias huérfanas antes de confirmar.
+  5. Preservación innegociable de calificaciones históricas oficiales:
+     - Mantener `preserveHistoricGrades: true` sobre `CalificacionesEstudiantes` y `RecuperacionesEstudiante`, fusionando notas vivas con el respaldo para no perder calificaciones asentadas con posterioridad.
+  6. Integridad criptográfica previa:
+     - Validar checksum SHA-256 del archivo JSON antes de procesar; rechazar copias corruptas o adulteradas.
+  7. Respaldo de seguridad previo obligatorio:
+     - Antes de modificar datos, generar automáticamente una copia de seguridad de las hojas que serán afectadas; si falla la creación de la copia previa, abortar la restauración.
+  8. Recuperación ante restauraciones interrumpidas y auditoría:
+     - Registrar avance por hoja para permitir reanudar o revertir mediante el respaldo previo.
+     - Registrar en `HistorialRestauraciones`: usuario, fecha, archivo respaldo, hojas restauradas, estrategia, registros recuperados/preservados y confirmación administrativa.
+- **Cambios Necesarios:**
+  - Ampliar `restoreSystemBackup` en `academic-service` para recibir y procesar `targetSheets` y `restoreStrategy`.
+  - Incorporar validación de dependencias relacionales en `developer-service`.
+  - Implementar generador de respaldo previo automático antes de aplicar cambios.
+  - Incorporar vista previa estructurada en el centro de recuperación.
+  - Mantener intactas las validaciones de checksum SHA-256 y el código `confirmCode: "RESTORE-CONFIRMED"`.
+- **Comportamiento Esperado:**
+  Un administrador autorizado puede seleccionar una o varias hojas y recuperar su información sin sobrescribir innecesariamente las demás fuentes. Antes de ejecutar, conoce el alcance real de la operación y cuenta con respaldo previo automático.
+- **Criterios de Aceptación:**
+  - [ ] Es posible seleccionar una hoja específica del respaldo (ej. `targetSheets: ["AsignacionesDocentes"]`) y restaurarla aisladamente.
+  - [ ] Las hojas no seleccionadas en `targetSheets` permanecen 100% intactas sin modificación de datos.
+  - [ ] Una selección de hojas inválida o vacía es rechazada antes de modificar cualquier información.
+  - [ ] La vista previa identifica con exactitud los elementos y filas que serán modificados.
+  - [ ] Las dependencias obligatorias se identifican y advierten antes de ejecutar la restauración.
+  - [ ] El checksum SHA-256 del archivo de respaldo se valida obligatoriamente antes de abrirlo.
+  - [ ] Un archivo de respaldo corrupto o modificado es rechazado inmediatamente.
+  - [ ] La protección de calificaciones históricas oficiales se mantiene activa e inalterable.
+  - [ ] Se genera un respaldo de seguridad previo automático de las hojas afectadas antes de escribir.
+  - [ ] Si la creación del respaldo previo falla, la restauración se cancela automáticamente.
+  - [ ] La operación queda completamente documentada en el historial de auditoría con cantidades de registros afectados.
+  - [ ] Un usuario sin rol `Administrador` o `Desarrollador` no puede ejecutar restauraciones.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F27-Task04] [P1] [Telemetría y Rendimiento - Telemetría Continua y Panel Unificado de Rendimiento por Servicio y Endpoint]
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs`
+  - `backend/user-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - Hojas `MetricasRendimientoEndpoints`, `RegistroEventos`
+  - `js/ui-common.js`
+- **Subcapacidades Relacionadas:** F27-007, F27-001, F27-002.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Expuestas:** Registro estructurado (`logStructuredEvent`) y medición de consumo.
+- **Problema Detectado:**
+  La plataforma cuenta con mecanismos de observabilidad y suites sintéticas de concurrencia, pero el monitoreo del rendimiento depende de pruebas puntuales. Falta telemetría continua que permita identificar cómo se comportan los endpoints y operaciones durante el uso normal de la plataforma: cuáles acciones son más lentas, qué servicios presentan mayor latencia, qué consultas consumen más tiempo en Google Sheets y qué operaciones provocan cuellos de botella.
+- **Requisitos Funcionales:**
+  1. Instrumentación continua de solicitudes en backend:
+     - Registrar por llamada relevante: servicio, acción/endpoint, timestamp, duración en ms, código de respuesta, `correlationId`, operaciones de lectura/escritura a Sheets, llamadas externas y tamaño de respuesta.
+     - Sanitizar registros para no capturar contraseñas ni datos sensibles.
+  2. Métricas estadísticas de latencia:
+     - Calcular sobre ventanas de tiempo: promedio, mínimo, máximo, mediana, percentil 90 (p90), percentil 95 (p95) y percentil 99 (p99).
+     - No utilizar únicamente promedios para no ocultar operaciones atípicas lentas.
+  3. Métricas de tasas de error:
+     - Porcentaje de error por endpoint y servicio diferenciando fallos técnicos de errores de validación funcional.
+  4. Detección automática de operaciones lentas:
+     - Umbrales configurables por tipo de operación (ej. consulta simple > 1500ms, reporte masivo > 8000ms).
+     - Desglosar tiempo consumido en: procesamiento JS, Google Sheets I/O, llamadas HTTP externas.
+  5. Trazabilidad de solicitudes distribuidas mediante `correlationId`:
+     - Analizar la traza completa de llamadas entre frontend y microservicios con sus duraciones parciales.
+  6. Cuadro de mando administrativo de rendimiento:
+     - Vistas: resumen general de latencia y errores, rendimiento por servicio, rendimiento por acción, tiempos de acceso a almacenamiento y procesos programados.
+     - Filtros por servicio, acción, fecha y rango de latencia.
+  7. Detección de anomalías y tendencias:
+     - Identificar incrementos repentinos de latencia o picos anormales de solicitudes.
+  8. Eficiencia y retención de métricas:
+     - Agregación periódica de métricas y depuración controlada para no saturar el almacenamiento de hojas.
+- **Cambios Necesarios:**
+  - Incorporar interceptores de tiempo en `doPost` de cada microservicio backend.
+  - Crear hoja `MetricasRendimientoEndpoints` para almacenar muestras agregadas.
+  - Implementar servicio de análisis estadístico en `developer-service` (`getEndpointPerformanceMetrics`).
+  - Crear panel visual de telemetría en la interfaz de desarrollador/administrador.
+  - Establecer activador diario de agregación y rotación de métricas.
+- **Comportamiento Esperado:**
+  La plataforma permite identificar qué operaciones presentan problemas de rendimiento y dónde se origina la degradación, distinguiendo si la demora proviene del código interno, de Sheets o de APIs externas.
+- **Criterios de Aceptación:**
+  - [ ] Las operaciones backend instrumentadas registran su duración exacta en milisegundos.
+  - [ ] Las métricas pueden agruparse por servicio, endpoint y ventana temporal.
+  - [ ] El sistema calcula mediana, p90 y p95 cuando existe volumen suficiente de datos.
+  - [ ] Es posible identificar en el panel las 5 operaciones más lentas del sistema.
+  - [ ] Es posible identificar los endpoints con mayor tasa de fallos técnicos.
+  - [ ] Las solicitudes distribuidas conservan y propagan su identificador de correlación.
+  - [ ] El panel permite filtrar métricas por servicio, acción y rango de fechas.
+  - [ ] Es posible comparar el rendimiento antes y después de una actualización o despliegue.
+  - [ ] Las operaciones que superan sus umbrales generan eventos de advertencia en observabilidad.
+  - [ ] La telemetría no almacena credenciales, tokens ni datos personales sensibles.
+  - [ ] El volumen de registros de telemetría se mantiene acotado mediante políticas de retención.
+- **Estado:** [ ] Pendiente
+
+---
+
+### P2 — PRIORIDAD MEDIA
+
+### [F27-Task05] [P2] [Continuidad Offline - Continuidad Operativa Fuera de Línea y Sincronización Diferida Académica]
+- **Componentes Afectados:**
+  - `js/api.js`
+  - `js/teacher.js`
+  - `backend/academic-service/Code.gs`
+  - Hojas `RegistrosAsistencia`, `CalificacionesEstudiantes`
+  - Almacenamiento local del navegador (`localStorage` / `IndexedDB`)
+- **Subcapacidades Relacionadas:** F27-008, F27-006.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias Expuestas:** Idempotencia (`getIdempotencyPayloadSignature`), sincronización, validación académica y almacenamiento local.
+- **Problema Detectado:**
+  La plataforma dispone de fallback local en delegaciones interservicios, pero no cuenta con una estrategia estandarizada de funcionamiento fuera de línea para la captura de información académica crítica en el aula. La pérdida de conectividad durante la jornada de clases impide a los docentes registrar asistencias o capturar borradores de calificaciones, aun cuando los datos podrían guardarse localmente y sincronizarse de forma diferida al restablecerse la red.
+- **Requisitos Funcionales:**
+  1. Operaciones académicas habilitadas fuera de línea:
+     - Asistencia: consultar listas descargadas, registrar presentes, ausencias, tardanzas, justificaciones y observaciones permitidas.
+     - Calificaciones: consultar nóminas y asignaturas descargadas, capturar calificaciones como borradores locales (`esBorrador: true`) y editar notas locales no sincronizadas.
+     - Bloquear operaciones que exijan validación en vivo del servidor (ej. cierre oficial de actas, promociones).
+  2. Preparación y descarga de datos locales con conexión activa:
+     - Descargar listas de estudiantes, asignaturas autorizadas, horarios y reglas de evaluación para la sesión de trabajo.
+  3. Almacenamiento local persistente y seguro:
+     - Guardar en almacenamiento estructurado del navegador (`IndexedDB` / `localStorage` cifrado) con metadatos: `operacionLocalId`, `userId`, tipo operación, timestamp de captura local, versión de datos y estado.
+     - No depender de variables volátiles en memoria; resistir el cierre o recarga de la página.
+  4. Estados de sincronización transparentes en UI:
+     - `Guardado local`, `Pendiente de sincronización`, `En proceso`, `Sincronizado`, `Rechazado`, `En conflicto`.
+     - Nunca presentar un dato guardado localmente como registrado oficialmente en el sistema hasta recibir confirmación del backend.
+  5. Sincronización automática y manual:
+     - Detección de recuperación de conectividad (`navigator.onLine` / eventos de red) y disparo de sincronización por lotes.
+     - Botón de sincronización manual con indicador de cantidad de operaciones pendientes.
+  6. Idempotencia y protección contra duplicados:
+     - Cada operación local conserva su identificador único; reintentos no deben crear filas duplicadas en `RegistrosAsistencia` ni en calificaciones.
+  7. Validación estricta en servidor antes de aplicar:
+     - Validar permisos docentes, correspondencia de grado/sección, estados de períodos (rechazar si el período se cerró mientras estaba desconectado) y rangos numéricos.
+     - Conservar por separado la fecha real de captura en aula y la fecha de recepción en servidor.
+  8. Detección y resolución de conflictos:
+     - Detectar colisiones si otro usuario o proceso modificó la calificación en el servidor durante la desconexión.
+     - No aplicar política ciega de "el último gana"; presentar diferencias y solicitar confirmación al docente autorizado.
+  9. Aislamiento y seguridad local:
+     - Limpiar datos locales al cerrar sesión formal para evitar que otro usuario del mismo dispositivo acceda a información de alumnos ajenos.
+- **Cambios Necesarios:**
+  - Implementar módulo `OfflineSyncManager` en `js/api.js`.
+  - Adaptar formularios de asistencia en `js/teacher.js` para operar en modo offline-first con indicador visual de conectividad.
+  - Implementar endpoint en backend `syncOfflineAttendanceAndGrades` con validaciones de período y candados atómicos.
+  - Registrar eventos de sincronización diferida en auditoría.
+- **Comportamiento Esperado:**
+  Un docente puede preparar sus listas y capturar asistencias o borradores de calificaciones sin conexión a internet. Al restablecerse la red, la plataforma sincroniza las operaciones válidas, detecta conflictos y actualiza los registros oficiales sin duplicaciones.
+- **Criterios de Aceptación:**
+  - [ ] El docente puede consultar listas de alumnos previamente descargadas estando sin conexión a internet.
+  - [ ] Es posible registrar asistencias completas de un grupo en modo fuera de línea.
+  - [ ] Es posible capturar calificaciones parciales como borradores locales en modo fuera de línea.
+  - [ ] Las operaciones pendientes se conservan íntegras tras cerrar y volver a abrir el navegador.
+  - [ ] La interfaz gráfica distingue claramente entre datos guardados localmente y registros confirmados oficialmente por el servidor.
+  - [ ] Al detectar conexión, el sistema inicia automáticamente la sincronización de tareas pendientes.
+  - [ ] La interfaz proporciona un botón funcional para sincronización manual inmediata.
+  - [ ] Una operación sincronizada no se duplica en la base de datos ante reintentos de red.
+  - [ ] El servidor valida rigurosamente los permisos docentes y períodos académicos antes de persistir.
+  - [ ] Una operación capturada para un período que fue cerrado durante la desconexión es rechazada con aviso claro.
+  - [ ] Las modificaciones concurrentes entre local y servidor se detectan y presentan como conflicto para revisión.
+  - [ ] Se conservan en auditoría la fecha/hora original de captura en el aula y la fecha de sincronización en el servidor.
+  - [ ] Una sincronización interrumpida a la mitad puede reanudarse sin pérdida ni duplicación de registros.
+  - [ ] Cerrar sesión limpia de forma segura el almacenamiento local para prevenir exposición de datos a terceros.
+- **Estado:** [ ] Pendiente
+
+---
