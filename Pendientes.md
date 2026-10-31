@@ -10766,3 +10766,3191 @@
 - **Estado:** [ ] Pendiente
 
 ---
+
+---
+
+# FASE 30: CONSOLIDACIÓN, CERTIFICACIÓN INTERNA Y MEJORA CONTINUA
+
+## RESUMEN DE SUB-CAPACIDADES Y TAREAS TÉCNICAS (FASE 30)
+
+| ID | Prioridad | Orden Secuencial | Tarea Técnica / Requisito | Componentes Principales | Subcapacidad | Estado |
+|---|---|---|---|---|---|---|
+| [F30-Task02] | P0 | 1 | Motor de Integridad Referencial Cruzada y Gestión de Registros Huérfanos | `backend/developer-service/Code.gs` | F30-02, F30-05 | [ ] Pendiente |
+| [F30-Task03] | P0 | 2 | Versionado Histórico de Políticas, Aranceles y Parámetros de Cálculo | `backend/accounting-service/Code.gs` | F30-03 | [ ] Pendiente |
+| [F30-Task04] | P0 | 3 | Acceso Seguro y Temporal a Documentos Institucionales Sensibles | `backend/user-service/Code.gs`, `backend/academic-service/Code.gs` | F30-04 | [ ] Pendiente |
+| [F30-Task01] | P0 | 4 | Orquestador de Transacciones Interdepartamentales y Compensación Automática | `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs` | F30-01, F30-08 | [ ] Pendiente |
+| [F30-Task05] | P0 | 5 | Asistente de Simulación de Impacto Previo a la Restauración de Respaldos (Dry-Run) | `backend/academic-service/Code.gs` | F30-08 | [ ] Pendiente |
+| [F30-Task16] | P0 | 6 | Integración Financiera de Biblioteca, Transporte, Tienda y Cafetería | `backend/accounting-service/Code.gs` | F30-01, F30-02, F30-03 | [ ] Pendiente |
+| [F30-Task17] | P0 | 7 | Ampliación de Pruebas Automatizadas End-to-End y Cobertura de Fallos Interdepartamentales | `tests/regression/academic-grading-suite.js`, `backend/developer-service/Code.gs` | F30-14, F30-01 | [ ] Pendiente |
+| [F30-Task06] | P1 | 8 | Consola Unificada de Trazabilidad y Correlación de Eventos Interservicios (Trace ID) | `backend/user-service/Code.gs`, `backend/developer-service/Code.gs` | F30-05 | [ ] Pendiente |
+| [F30-Task10] | P1 | 9 | Clasificación Automática de Incidencias y Gestión Paramétrica de SLA | `backend/user-service/Code.gs` | F30-13 | [ ] Pendiente |
+| [F30-Task11] | P1 | 10 | Alertas Tempranas Push ante Degradación y Fallos de Microservicios | `backend/developer-service/Code.gs` | F30-15 | [ ] Pendiente |
+| [F30-Task07] | P1 | 11 | Gestión de Cuotas y Pasarela Alternativa para Notificaciones Masivas | `backend/user-service/Code.gs` | F30-06 | [ ] Pendiente |
+| [F30-Task08] | P1 | 12 | Delegación Temporal de Responsabilidades y Sustituciones Administrativas | `backend/user-service/Code.gs` | F30-07 | [ ] Pendiente |
+| [F30-Task09] | P1 | 13 | Tablas de Agregación Precalculadas y Optimización de Consultas Consolidadas | `backend/developer-service/Code.gs`, `backend/academic-service/Code.gs` | F30-09 | [ ] Pendiente |
+| [F30-Task18] | P1 | 14 | Telemetría Sistemática de Rendimiento, Estabilidad y Capacidad Institucional | `backend/developer-service/Code.gs` | F30-09, F30-15 | [ ] Pendiente |
+| [F30-Task19] | P1 | 15 | Actualización Controlada de Dashboards Ejecutivos e Indicadores Institucionales | `dashboards/dashboard-direccion.html`, `backend/user-service/Code.gs` | F30-10, F30-09 | [ ] Pendiente |
+| [F30-Task20] | P1 | 16 | Reconciliación Automatizada de Operaciones y Resultados entre Módulos | `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs` | F30-01, F30-02, F30-03 | [ ] Pendiente |
+| [F30-Task12] | P2 | 17 | Manuales Operativos y Guías de Usuario por Departamento con Ayuda Contextual | `docs/manuals/`, `js/ui-common.js` | F30-11 | [ ] Pendiente |
+| [F30-Task14] | P2 | 18 | Runbooks y Procedimientos de Contingencia y Recuperación Operativa | `docs/runbooks/` | F30-11, F30-08 | [ ] Pendiente |
+| [F30-Task13] | P2 | 19 | Módulo de Inducción, Capacitación y Certificación de Competencias del Personal | `js/games-adapter.js`, `dashboard-direccion.html` | F30-12 | [ ] Pendiente |
+| [F30-Task15] | P2 | 20 | Protocolo Formal de Autorización de Go-Live y Certificación Departamental | `backend/user-service/Code.gs`, `dashboard-direccion.html` | F30-14, F30-15 | [ ] Pendiente |
+
+---
+
+### BLOQUE 1. INTEGRACIÓN INTERDEPARTAMENTAL, INTEGRIDAD Y ROBUSTEZ TRANSACCIONAL (P0)
+
+### [F30-Task02] [P0] Motor de Integridad Referencial Cruzada y Gestión de Registros Huérfanos
+- **Orden de Ejecución:** 1
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs` (`auditCrossSheetReferentialIntegrity`, `repairOrphanedRecordRelationships`, `configureReferentialIntegrityRules`)
+  - Hoja: `AuditoriaIntegridadReferencial`, `ConfiguracionIntegridad`
+- **Subcapacidades Relacionadas:** F30-02, F30-05.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-02).
+- **Problema Detectado y Riesgos:**
+  Google Sheets no impone de forma nativa restricciones de claves foráneas ni reglas de eliminación en cascada. La integridad depende de validaciones implementadas en los servicios y de que las modificaciones se realicen mediante los procedimientos oficiales. Existe riesgo severo de registros huérfanos cuando una identidad, expediente o relación se archiva, modifica o elimina sin actualizar las referencias dependientes.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Motor centralizado de validación de integridad referencial:*
+     - Comprobar relaciones obligatorias y opcionales entre entidades institucionales:
+       - Usuarios y expedientes de estudiantes (`Usuarios` $\leftrightarrow$ `ExpedientesEstudiantes`).
+       - Usuarios y expedientes laborales (`Usuarios` $\leftrightarrow$ `ExpedientesLaborales`).
+       - Estudiantes y matrículas (`ExpedientesEstudiantes` $\leftrightarrow$ `MatriculasEstudiantes`).
+       - Estudiantes y relaciones familiares (`ExpedientesEstudiantes` $\leftrightarrow$ `RelacionesFamiliares`).
+       - Estudiantes y cargos financieros (`ExpedientesEstudiantes` $\leftrightarrow$ `CargosEstudiante`).
+       - Docentes y asignaciones académicas (`Usuarios`/`Docentes` $\leftrightarrow$ `AsignacionesDocentes`).
+       - Compras y órdenes de compra (`SolicitudesCompra` $\leftrightarrow$ `OrdenesCompra`).
+       - Órdenes de compra y recepciones (`OrdenesCompra` $\leftrightarrow$ `RecepcionesCompra`).
+       - Recepciones e inventario (`RecepcionesCompra` $\leftrightarrow$ `InventariosKardex`).
+       - Pagos y cargos (`PagosEstudiante` $\leftrightarrow$ `CargosEstudiante`).
+       - Movimientos contables y documentos de origen (`LibroDiarioAsientos` $\leftrightarrow$ `DocumentosOrigen`).
+       - Préstamos de biblioteca y ejemplares (`BibliotecaPrestamos` $\leftrightarrow$ `BibliotecaEjemplares`).
+       - Asignaciones de transporte y estudiantes (`TransporteAsignaciones` $\leftrightarrow$ `ExpedientesEstudiantes`).
+  2. *Detección exhaustiva de anomalías:*
+     - Referencias inexistentes o rotas.
+     - Identificadores duplicados.
+     - Relaciones incompletas.
+     - Registros que apuntan a entidades archivadas indebidamente.
+     - Entidades sin relaciones obligatorias.
+     - Relaciones contradictorias entre hojas.
+  3. *Reglas de integridad configurables por tipo de relación:*
+     - Tipologías: Obligatoria, Opcional, Uno a uno (1:1), Uno a varios (1:N), Varios a varios (N:M).
+     - Relación Histórica: Inmutable y conservada aunque cambie el estado operativo de la entidad relacionada.
+     - Si surge discrepancia sobre la severidad de una relación, habilitar parámetro configurable en la plataforma (`ESTRICTA_BLOQUEANTE` vs `PERMISIVA_AUDITABLE`).
+  4. *Modos de ejecución y reportes:*
+     - Ejecución bajo demanda y revisiones programadas automáticas.
+     - Informe estructurado: identificador del registro, entidad afectada, relación esperada, referencia encontrada y gravedad (`CRITICA`, `ADVERTENCIA`).
+     - Las validaciones diagnósticas no modifican datos en modo lectura.
+  5. *Mecanismos de corrección controlada:*
+     - Proponer la relación correcta cuando exista evidencia identificable.
+     - Permitir corrección autorizada por el usuario competente, registrando valor anterior y nuevo en bitácora.
+     - Prohibir terminantemente reparaciones automáticas destructivas o ambiguas.
+     - Impedir que la baja de una entidad con dependencias destruya información histórica: utilizar archivado, desactivación o baja lógica.
+     - En operaciones masivas de modificación, comprobar previamente las dependencias y previsualizar los efectos colaterales.
+- **Criterios de Aceptación:**
+  - [ ] Se detectan referencias inexistentes y duplicadas en el 100% de las entidades evaluadas.
+  - [ ] Se identifican correctamente los registros dependientes antes de archivar o desactivar una entidad.
+  - [ ] Las validaciones no modifican datos durante una ejecución de diagnóstico.
+  - [ ] Las reparaciones autorizadas dejan un registro de auditoría completo con valor previo y posterior.
+  - [ ] Las relaciones históricas se conservan tras cambios de grado, sección, rol, estado laboral o situación administrativa.
+  - [ ] Una ejecución repetida produce resultados consistentes y no introduce nuevas inconsistencias.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task03] [P0] Versionado Histórico de Políticas, Aranceles y Parámetros de Cálculo
+- **Orden de Ejecución:** 2
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`getHistoricalBillingPolicy`, `freezeChargeFinancialTerms`, `compareBillingPolicyVersions`)
+  - Hoja: `PoliticasTarifariasHistoricas`, `ParametrosInstitucionales`
+- **Subcapacidades Relacionadas:** F30-03.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-03).
+- **Problema Detectado y Riesgos:**
+  Los cálculos financieros dependen de parámetros institucionales que cambian entre períodos. Si se modifica una tarifa, descuento, recargo o regla de cálculo, una consulta o recálculo histórico podría utilizar erróneamente los valores actuales en lugar de los vigentes cuando se generó el cargo original, alterando facturas emitidas, estados de cuenta históricos y reportes contables.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Versionado formal de parámetros de cálculo financiero:*
+     - Aranceles de matrícula ordinaria y extraordinaria.
+     - Mensualidades y colegiaturas por nivel/grado.
+     - Cuotas extraordinarias y aranceles de graduación.
+     - Recargos por mora y tasas punitivas.
+     - Descuentos institucionales (pronto pago, hermanos).
+     - Becas y convenios de cooperación.
+     - Políticas de redondeo y precisión monetaria.
+     - Reglas de imputación y distribución de pagos parciales.
+     - Impuestos y parámetros fiscales aplicables (exenciones ISV Art. 15).
+  2. *Estructura del registro inmutable de versión:*
+     - Identificador de política (`politicaId`), institución/sede aplicable, ciclo lectivo o intervalo de vigencia (`fechaInicio`, `fechaFin`).
+     - Fecha de creación, fecha de entrada en vigor, usuario responsable.
+     - Valores anteriores y nuevos, motivo justificado del cambio, estado de aprobación directiva.
+  3. *Enlace inmutable y conservación de cobros:*
+     - Al generar un cargo en `CargosEstudiante`, factura fiscal SAR o comprobante, almacenar una referencia a la versión de política (`politicaId`) y una copia inmutable (snapshot JSON) de los valores aplicados.
+     - Prohibir que una actualización de parámetros modifique automáticamente cargos o documentos ya emitidos.
+  4. *Diferenciación estricta de modalidades de cálculo:*
+     - Recalcular una operación con sus parámetros originales históricos.
+     - Simular un escenario con parámetros actuales (modo sandbox sin alterar base viva).
+     - Rectificar formalmente una operación mediante autorización directiva y registro de contrasiento.
+     - En caso de disputa entre recálculo automático o inmutabilidad absoluta, implementar parámetro configurable (`INMUTABILIDAD_ESTRICTA_CONGELADA` vs `RECALCULO_DINAMICO_VERSIONADO`).
+  5. *Herramientas de auditoría y comparación:*
+     - Comparador interactivo entre versiones para identificar variaciones de conceptos, montos o reglas.
+     - Los cambios retroactivos exigen autorización mancomunada de Dirección y Contabilidad con justificación obligatoria.
+- **Criterios de Aceptación:**
+  - [ ] Un estado de cuenta histórico conserva sus importes intactos tras modificar los aranceles actuales.
+  - [ ] Es posible consultar qué versión de parámetros generó cada cargo específico.
+  - [ ] Se puede reproducir un cálculo histórico con fidelidad idéntica utilizando su versión original.
+  - [ ] Los cambios retroactivos quedan identificados y exigen autorización formal.
+  - [ ] Las simulaciones con parámetros nuevos no modifican registros contables existentes.
+  - [ ] Los reportes históricos y actuales mantienen consistencia y cuadre matemático entre sí.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task04] [P0] Acceso Seguro y Temporal a Documentos Institucionales Sensibles
+- **Orden de Ejecución:** 3
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`generateSecureDocumentAccessUrl`, `verifySecureDocumentAccessUrl`, `revokeDocumentAccessTokens`)
+  - `backend/academic-service/Code.gs`
+  - Hoja: `TokensAccesoDocumentos`
+- **Subcapacidades Relacionadas:** F30-04.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-04) y Sección F.
+- **Problema Detectado y Riesgos:**
+  Los documentos institucionales (boletas de calificaciones oficiales, recibos de pago con datos fiscales SAR, contratos laborales y expedientes confidenciales) almacenados en Google Drive corren riesgo de accesos no autorizados o enlaces públicos compartidos si no se centraliza la autorización mediante tokens criptográficos con tiempo de vida restringido.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Centralización de la autorización de descargas:*
+     - Validar antes de entregar cualquier archivo: identidad autenticada, vigencia de sesión, roles RBAC/ABAC, relación legítima con el expediente (estudiante, tutor legal, docente asignado, directivo), estado del documento y alcance institucional.
+  2. *Tokens firmados criptográficamente y enlaces efímeros:*
+     - Generar URLs temporales con firma HMAC-SHA256 conteniendo: identificador del documento (`docId`), solicitante autenticado (`solicitanteUserId`), operación autorizada (`VIEW`, `DOWNLOAD`), fecha de emisión, fecha de expiración y nonce/JTI único para impedir reutilización no autorizada.
+     - Tiempo de expiración configurable: valor inicial de 15 minutos, ajustable por parámetro institucional según el nivel de sensibilidad (`TIEMPO_EXPIRACION_ENLACES_MINUTOS`).
+  3. *Blindaje de almacenamiento y privacidad:*
+     - Prohibir terminantemente hacer públicos los archivos en Google Drive para facilitar su descarga.
+     - No exponer identificadores internos, rutas de Drive ni credenciales de almacenamiento al cliente.
+     - Validar que modificar parámetros en la URL (tampering de `docId`) deniegue inmediatamente la entrega.
+  4. *Revocación activa y auditoría estricta:*
+     - Invalidar tokens automáticamente ante: deshabilitación de cuenta, revocación de roles, baja del documento o detección de comportamiento anómalo.
+     - Registrar intentos de descarga, accesos rechazados, expiraciones y revocaciones en bitácora, sanitizando tokens completos y datos sensibles.
+- **Criterios de Aceptación:**
+  - [ ] Un usuario no autorizado no puede descargar un documento sensible aunque conozca su identificador.
+  - [ ] La manipulación del identificador en la URL es rechazada de forma inmediata por el servidor.
+  - [ ] Un enlace expirado o revocado genera error de acceso denegado.
+  - [ ] La revocación de permisos de un usuario impide nuevas descargas de forma instantánea.
+  - [ ] Los archivos en Drive conservan sus permisos privados institucionales.
+  - [ ] Los accesos y rechazos quedan registrados en auditoría sin filtrar información sensible o credenciales.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task01] [P0] Orquestador de Transacciones Interdepartamentales y Compensación Automática
+- **Orden de Ejecución:** 4
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`executeInterdepartmentalTransactionSaga`, `rollbackTransactionSagaStep`, `resumeInterdepartmentalTransaction`)
+  - `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs`
+  - Hoja: `TransaccionesInterdepartamentales`, `IncidenciasTransaccionales`
+- **Subcapacidades Relacionadas:** F30-01, F30-08.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-01) y Sección G.
+- **Problema Detectado y Riesgos:**
+  Las operaciones que atraviesan varios microservicios carecen de un mecanismo uniforme de coordinación distribuida (patrón Saga). Una falla en una etapa intermedia o tardía (ej. error al generar aranceles contables tras haber creado el expediente y la matrícula) deja registros huérfanos o inconsistentes sin compensación automática, requiriendo conciliación manual propensa a errores.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Coordinador de transacciones distribuidas por etapas:*
+     - Metadatos por transacción: identificador único de transacción (`sagaId`), identificador de correlación interservicios (`correlationId`), proceso de negocio, estado general, etapas ejecutadas, resultado individual por paso, marcas de tiempo, microservicio responsable y payload mínimo para recuperación o compensación.
+     - Estados explícitos de ciclo de vida: `Pendiente`, `En_Ejecucion`, `Completada`, `Fallida`, `Pendiente_Compensacion`, `Compensada`, `Requiere_Intervencion_Manual`.
+     - Si surge disputa sobre la estrategia ante fallos, permitir configurar el comportamiento (`COMPENSACION_AUTOMATICA_INVERSA` vs `PAUSA_PARA_REANUDACION_ASISTIDA`).
+  2. *Procesos interdepartamentales cubiertos:*
+     - Admisión $\rightarrow$ Expediente $\rightarrow$ Matrícula $\rightarrow$ Asignación Académica $\rightarrow$ Cargo Arancelario Inicial.
+     - Contratación $\rightarrow$ Expediente Laboral $\rightarrow$ Usuario $\rightarrow$ Permisos $\rightarrow$ Registro en Planilla Salarial.
+     - Compra $\rightarrow$ Aprobación Jerárquica $\rightarrow$ Orden $\rightarrow$ Recepción $\rightarrow$ Kardex Inventario $\rightarrow$ Cuenta por Pagar.
+     - Pago $\rightarrow$ Actualización de Cargo $\rightarrow$ Comprobante $\rightarrow$ Asiento Contable por Partida Doble.
+     - Multas o consumos de servicios complementarios $\rightarrow$ Cargo Financiero en Cuenta Estudiantil.
+     - Anulación de operaciones $\rightarrow$ Reversión simétrica de efectos colaterales.
+  3. *Idempotencia, compensación y reanudación:*
+     - Idempotencia estricta mediante claves hash que impidan duplicar expedientes, matrículas, cobros o asientos contables.
+     - Acciones compensatorias preservando trazabilidad: prohibido borrar registros; registrar marcas de anulación/compensación.
+     - Generar ticket de incidencia automática con contexto técnico cuando una compensación automática falle.
+     - Capacidad de reanudar una transacción interrumpida desde la última etapa válida sin duplicar pasos previos.
+     - Aislamiento de responsabilidades: el orquestador interactúa únicamente a través de las APIs autorizadas de cada microservicio.
+- **Criterios de Aceptación:**
+  - [ ] Una falla inducida en cualquier etapa no produce duplicados ni registros inconsistentes en otros servicios.
+  - [ ] Los pasos completados quedan identificados y son auditables con su `sagaId` y `correlationId`.
+  - [ ] Las compensaciones generan trazabilidad y conservan los registros originales con estado compensado.
+  - [ ] Las solicitudes repetidas con el mismo identificador no duplican efectos secundarios.
+  - [ ] Las transacciones que requieren intervención manual aparecen en una bandeja de incidencias para resolución.
+  - [ ] Se verifica la recuperación exitosa de una matrícula interrumpida antes de generar el cargo financiero.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task05] [P0] Asistente de Simulación de Impacto Previo a la Restauración de Respaldos (Dry-Run)
+- **Orden de Ejecución:** 5
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`previewBackupRestoreImpact`, `compareBackupDiffWithLiveSpreadsheet`, `executeSelectiveRestoreWithIntegrity`)
+  - Hoja: `SimulacionesRestauracion`
+- **Subcapacidades Relacionadas:** F30-08.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-08).
+- **Problema Detectado y Riesgos:**
+  El mecanismo actual restaura hojas completas directamente tras ingresar el token `"RESTORE-CONFIRMED"`, sin brindar una previsualización detallada del impacto. Una restauración accidental puede sobrescribir transacciones recientes, revertir calificaciones cerradas o desvincular relaciones operativas.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Simulación de restauración (Dry-Run sin efectos secundarios):*
+     - Comparar hoja por hoja el archivo de respaldo seleccionado contra la base viva de Google Sheets sin alterar datos.
+     - Resumen cuantitativo y cualitativo: registros idénticos, registros existentes solo en el respaldo, registros existentes solo en el estado actual, registros modificados, colisiones de IDs y dependencias rotas.
+  2. *Alcance del análisis de impacto:*
+     - Evaluar efectos sobre: Matrículas, Calificaciones, Expedientes, Cargos, Pagos, Asientos Contables, Planillas, Inventario, Usuarios, Relaciones Familiares y Parámetros Institucionales.
+     - Mostrar advertencias explícitas sobre datos que se perderían, recuperarían o sobrescribirían.
+     - Comprobación de compatibilidad de esquemas entre el backup y la versión actual de la base de datos.
+  3. *Restauración selectiva controlada y salvaguardas:*
+     - Permitir restauración selectiva por conjunto de datos solo si no se vulnera la integridad referencial.
+     - Parámetro configurable para la protección de notas históricas (`PRESERVAR_CALIFICACIONES_HISTORICAS_EN_RESTORE`).
+     - Validación de integridad de archivo: hashes SHA-256, estructura JSON y metadatos del backup.
+     - Requerir confirmación reforzada y crear obligatoriamente un respaldo del estado vivo inmediatamente antes de aplicar la restauración definitiva.
+     - Ejecutar suite de integridad referencial posterior al proceso de recuperación.
+- **Criterios de Aceptación:**
+  - [ ] La simulación se ejecuta sin modificar ninguna celda o documento vivo.
+  - [ ] Se identifican con precisión matemática registros agregados, eliminados y modificados.
+  - [ ] Se detectan conflictos de identificadores y advertencias por sobrescritura de transacciones posteriores.
+  - [ ] Se genera automáticamente un respaldo previo al inicio de cualquier restauración definitiva.
+  - [ ] La restauración queda auditada y es seguida por chequeos de integridad referencial automáticos.
+  - [ ] Se comprueba la respuesta controlada ante una restauración fallida y su protocolo de contingencia.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task16] [P0] Integración Financiera de Biblioteca, Transporte, Tienda y Cafetería
+- **Orden de Ejecución:** 6
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`integrateComplementaryServiceCharge`, `reconcileComplementaryChargesWithLedger`, `validateFamilyCreditLimitExceeded`)
+  - Hojas: `CargosEstudiante`, `CreditoFamiliarLimites`, `BibliotecaIncidencias`, `TransporteAsignaciones`, `TiendaOrdenes`, `CafeteriaOrdenes`
+- **Subcapacidades Relacionadas:** F30-01, F30-02, F30-03.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-01) y Sección G.
+- **Problema Detectado y Riesgos:**
+  Las operaciones de biblioteca (multas por retraso o extravío), transporte (rutas y mensualidades), cafetería y tienda escolar generan registros en sus propios módulos que en ocasiones no se sincronizan automáticamente con el estado de cuenta consolidado del estudiante o apoderado, causando cobros omitidos o conciliaciones contables manuales.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Integración automática con cuentas por cobrar centralizadas:*
+     - Toda obligación financiera originada en servicios complementarios debe generar un cargo trazable en `CargosEstudiante`.
+     - Metadatos obligatorios: identificador de operación de origen (`origenId`), estudiante/apoderado responsable, concepto detallado, monto, fecha, usuario/proceso originador, estado de autorización y estado de cobranza.
+  2. *Servicios cubiertos y reglas de negocio:*
+     - Multas de biblioteca por atraso, deterioro o pérdida de ejemplares físicos.
+     - Contratación de servicio de transporte escolar ordinario o salidas extracurriculares.
+     - Consumos autorizados de cafetería y compras en tienda escolar.
+     - Convenios familiares de crédito escolar (`FamilyCreditAuthorization`).
+     - Si hay disputa sobre la obligatoriedad de autorización previa del apoderado para consumos menores, permitir configurar el umbral (`MONTO_MAXIMO_CONSUMO_SIN_AUTORIZACION_PREVIA`).
+  3. *Control de límites de crédito e idempotencia:*
+     - Comprobar saldo disponible del límite de crédito familiar antes de autorizar ventas a crédito.
+     - Mecanismos de idempotencia para impedir duplicar cargos ante reintentos de conexión.
+     - Capacidad de anular o rectificar cargos generando notas de crédito o reversiones sin borrar el historial.
+     - Segregación estricta entre registros operativos y asientos contables para evitar doble contabilización.
+     - Herramienta de conciliación periódica entre módulos complementarios y el libro contable de Tesorería.
+- **Criterios de Aceptación:**
+  - [ ] Una multa registrada en biblioteca genera su cargo financiero correspondiente en el estado de cuenta.
+  - [ ] Las contrataciones de transporte generan los cargos periódicos estipulados en la configuración.
+  - [ ] Un consumo a crédito que exceda el límite autorizado es bloqueado por el servidor.
+  - [ ] Los reintentos de red no duplican cargos ni comprobantes.
+  - [ ] Las anulaciones generan contrasientos y actualizan el saldo conservando el historial.
+  - [ ] Tesorería puede auditar el origen exacto y detalle de cada cargo complementario.
+  - [ ] Los reportes financieros concilian al 100% con los balances operativos de los servicios complementarios.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task17] [P0] Ampliación de Pruebas Automatizadas End-to-End y Cobertura de Fallos Interdepartamentales
+- **Orden de Ejecución:** 7
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `tests/regression/academic-grading-suite.js`
+  - `backend/developer-service/Code.gs` (`runEndToEndInterdepartmentalRegressionSuite`)
+- **Subcapacidades Relacionadas:** F30-14, F30-01.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección D (INT-01 a INT-16) y Sección H.
+- **Problema Detectado y Riesgos:**
+  Aunque existen 53 pruebas pasando, la auditoría evidenció que las pruebas actuales se concentran en lógica unitaria de evaluación y asistencia, mientras que los recorridos completos interdepartamentales (INT-01 a INT-16) presentan una cobertura de fallo, recuperación y concurrencia que debe ser automatizada y sistematizada para evitar regresiones invisibles en producción.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Cobertura automatizada de los 16 recorridos interdepartamentales (INT-01 a INT-16):*
+     - INT-01: Admisión y Matrícula Completa con generación de cargos arancelarios.
+     - INT-02: Cambio de Grado/Sección con preservación de historial de calificaciones.
+     - INT-03: Registro, revisión de actas, cierre y publicación de calificaciones ponderadas.
+     - INT-04: Registro de asistencia, deduplicación atómica y despacho de alertas tempranas.
+     - INT-05: Confirmación de pago, comprobante fiscal SAR y asiento contable por partida doble.
+     - INT-06: Anulación de pago, reversión contable y reactivación de saldo en cargo.
+     - INT-07: Contratación de personal, habilitación de usuario RBAC y alta en nómina salarial.
+     - INT-08: Modificación de roles y revocación inmediata de sesiones activas.
+     - INT-09: Solicitud, validación presupuestaria y aprobación jerárquica de compras (> L 50,000).
+     - INT-10: Recepción de mercancía física, actualización de Kardex y cuenta por pagar.
+     - INT-11: Procesamiento de planilla con deducciones hondureñas (IHSS/RAP/ISR) y pólizas contables.
+     - INT-12: Emisión y cuadre de reportes institucionales contra fuentes transaccionales.
+     - INT-13: Emisión de constancias con CUV y descarga autenticada con tokens firmados.
+     - INT-14: Notificación multicanal con clave de deduplicación y control de entrega.
+     - INT-15: Recuperación idempotente ante interrupciones de red sin duplicidad de datos.
+     - INT-16: Despliegue seguro con validación previa de contratos y chequeos de salud.
+  2. *Escenarios obligatorios de fallo, concurrencia y estrés:*
+     - Fallo en etapa intermedia con verificación de compensación.
+     - Reintentos con payloads idénticos para confirmar idempotencia.
+     - Solicitudes concurrentes sobre el mismo estudiante o cuenta.
+     - Pérdida de conexión tras confirmación en backend.
+     - Permisos revocados en mitad de una transacción.
+     - Ejecución sobre datos sintéticos aislados sin alterar tablas de producción.
+  3. *Generación de reportes de ejecución:*
+     - Detallar: prueba, resultado esperado, resultado observado, duración, versión evaluada y estado.
+     - Prohibir que la suite reporte éxito si se omiten pruebas obligatorias.
+- **Criterios de Aceptación:**
+  - [ ] Los 16 recorridos integrales cuentan con pruebas automatizadas ejecutables en Node.js y Apps Script.
+  - [ ] Cada proceso crítico cuenta con casos de prueba de fallo y compensación verificados.
+  - [ ] Se verifica la ausencia de duplicados ante solicitudes repetidas.
+  - [ ] Los resultados de las pruebas se vinculan formalmente al identificador de versión desplegada.
+  - [ ] La suite se ejecuta en un entorno aislado sin corromper la base de datos real.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 2. OBSERVABILIDAD, COMUNICACIÓN Y GESTIÓN OPERATIVA (P1)
+
+### [F30-Task06] [P1] Consola Unificada de Trazabilidad y Correlación de Eventos Interservicios (Trace ID)
+- **Orden de Ejecución:** 8
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`getCorrelatedTransactionAuditTrace`, `propagateCorrelationContext`)
+  - `backend/developer-service/Code.gs`
+  - `dashboards/dashboard-direccion.html`, `js/ui-common.js`
+- **Subcapacidades Relacionadas:** F30-05.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-05).
+- **Problema Detectado y Riesgos:**
+  Los eventos de auditoría se registran en hojas independientes (`LogsSistema`, `RegistroEventos`, `AuditoriaMigraciones`). Rastrear un incidente que atraviesa múltiples microservicios exige cruzar manualmente marcas de tiempo entre distintas hojas, demorando el diagnóstico y la resolución de fallos críticos.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Propagación obligatoria del identificador `correlationId`:*
+     - Inyectar en cada transacción un identificador de correlación que viaje a través de todas las llamadas entre microservicios y tareas asíncronas.
+     - Estructura del evento: `logId`, `correlationId`, `sagaId`, servicio, operación, usuario/proceso, fecha, estado, severidad, duración, código de error y punteros a eventos anterior/posterior.
+  2. *Visor unificado de trazabilidad institucional:*
+     - Búsqueda avanzada por: `correlationId`, `sagaId`, usuario ejecutor, estudiante/empleado afectado, microservicio, tipo de operación, rango de fechas, severidad y código de error.
+     - Vista cronológica ordenada por operación, destacando etapas exitosas, fallidas, reintentadas y compensadas.
+     - Identificación visual de operaciones pendientes o sin evento final de confirmación.
+  3. *Seguridad de auditoría y paginación:*
+     - Aislamiento RBAC: restringir acceso al visor únicamente a Dirección y Administradores de TI.
+     - Sanitización obligatoria: prohibido registrar contraseñas, tokens completos o datos bancarios.
+     - Soporte para paginación y exportación de reportes de auditoría en formatos estructurados.
+- **Criterios de Aceptación:**
+  - [ ] Una búsqueda por `correlationId` consolida cronológicamente la totalidad de llamadas interservicios.
+  - [ ] Se identifican claramente las etapas fallidas o inconclusas de una transacción.
+  - [ ] Los usuarios sin permisos de auditoría no pueden acceder al visor ni manipular parámetros de consulta.
+  - [ ] Los filtros y paginación responden con estabilidad sobre volúmenes masivos de registros.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task10] [P1] Clasificación Automática de Incidencias y Gestión Paramétrica de SLA
+- **Orden de Ejecución:** 9
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`submitProblemTicket`, `getProblemTicketsWithSLA`, `updateTicketSLAStatus`, `calculateTicketSLAThresholds`)
+  - Hoja: `TicketsSoporte`, `ConfiguracionSLA`
+- **Subcapacidades Relacionadas:** F30-13.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-13).
+- **Problema Detectado y Riesgos:**
+  El módulo de tickets de soporte institucional no categoriza automáticamente la severidad ni gestiona acuerdos de nivel de servicio (SLA) para primera respuesta y solución, provocando demoras en la atención de fallos críticos que afectan la operación diaria.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Clasificación por severidad institucional:*
+     - P0 (Crítica): Interrupción grave para la integridad, seguridad o continuidad de la plataforma.
+     - P1 (Alta): Afectación importante de un proceso institucional o de múltiples usuarios.
+     - P2 (Media): Fallo funcional limitado con alternativa operativa viable disponible.
+     - P3 (Baja): Solicitud de mejora, duda funcional o inconveniente menor no urgente.
+  2. *Evaluación automática y confirmación autorizada:*
+     - Evaluar automáticamente severidad según: tipo de problema, módulo, usuarios impactados y riesgo de datos.
+     - Permitir a un responsable de soporte confirmar o modificar la prioridad, registrando motivo formal en bitácora.
+  3. *Gestión paramétrica de SLA y estados de ticket:*
+     - Parámetros configurables de SLA por severidad (tiempos objetivo para primera respuesta, diagnóstico y solución).
+     - Soporte para calendarios laborales y horarios hábiles institucionales excluyendo feriados.
+     - Ciclo de vida: `Nuevo`, `Clasificado`, `Asignado`, `En_Diagnostico`, `En_Desarrollo`, `En_Validacion`, `Resuelto`, `Cerrado`, `Reabierto`, `Bloqueado`.
+     - Alertas antes del vencimiento y escalamiento jerárquico ante incumplimiento.
+     - Vinculación con incidencias relacionadas, tareas técnicas del backlog, versiones y capturas de evidencia.
+- **Criterios de Aceptación:**
+  - [ ] Cada nuevo ticket recibe una clasificación de severidad coherente y fecha límite de SLA calculada.
+  - [ ] Las modificaciones de severidad quedan auditadas con usuario y justificación.
+  - [ ] Se emiten alertas preventivas antes de que un ticket alcance su tiempo límite de atención.
+  - [ ] Los reportes estadísticos reflejan métricas reales de cumplimiento y tiempos promedio de resolución.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task11] [P1] Alertas Tempranas Push ante Degradación y Fallos de Microservicios
+- **Orden de Ejecución:** 10
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs` (`dispatchHealthAlertWebhook`, `monitorPlatformHealthThresholds`, `acknowledgeHealthAlert`)
+  - Hoja: `AlertasSaludServicios`
+- **Subcapacidades Relacionadas:** F30-15.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-15).
+- **Problema Detectado y Riesgos:**
+  Aunque existen diagnósticos de salud (`getServiceHealthDiagnostics`), no hay un mecanismo automatizado que notifique a los administradores de TI ante caídas o degradaciones de latencia persistentes, dependiendo de la revisión manual periódica del panel de control.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Monitor centralizado de umbrales operativos:*
+     - Evaluar periódicamente: disponibilidad, latencia de base de datos, fallos de ejecución, errores de acceso a Google Sheets, bloqueos por concurrencia (`LockService`), cola de tareas pendientes y fallos de notificaciones.
+     - Umbrales configurables por microservicio.
+  2. *Prevención de tormentas de alertas y despacho multicanal:*
+     - Ventanas de observación y filtros de persistencia para evitar alertas innecesarias ante fallos transitorios aislados (ej. exigir 3 fallos consecutivos).
+     - Despacho mediante canales configurables: correo electrónico, webhook externo (Slack/Telegram) o mensajería interna, sin hacer obligatorio un proveedor externo privado.
+  3. *Ciclo de atención y registro histórico:*
+     - Opciones para reconocer, asignar y cerrar alertas.
+     - Metadatos registrados: fecha, servicio afectado, indicador disparador, valor observado, umbral, responsable notificado, estado y duración total del incidente.
+     - Si la pasarela de notificación externa falla, el incidente debe quedar registrado indefectiblemente en la hoja local de auditoría.
+- **Criterios de Aceptación:**
+  - [ ] Una degradación persistente genera de forma automática la alerta a los responsables designados.
+  - [ ] Las fluctuaciones transitorias aisladas no saturan las bandejas con avisos duplicados.
+  - [ ] Los administradores pueden reconocer, dar seguimiento y cerrar las alertas en el panel.
+  - [ ] Se conserva el registro histórico completo y la duración de cada incidente de salud técnica.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task07] [P1] Gestión de Cuotas y Pasarela Alternativa para Notificaciones Masivas
+- **Orden de Ejecución:** 11
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`checkEmailQuotaAvailability`, `sendMultiChannelNotificationWithFallback`, `manageNotificationQueuePriority`)
+  - Hoja: `NotificacionesEnviadas`, `ColaNotificaciones`
+- **Subcapacidades Relacionadas:** F30-06.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-06).
+- **Problema Detectado y Riesgos:**
+  Los envíos masivos institucionales (boletines de notas, recordatorios de cobro, comunicados generales) dependen de la cuota diaria de Google Apps Script. Su agotamiento puede paralizar alertas críticas de inasistencia o seguridad escolar.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Administrador centralizado de cuotas de despacho:*
+     - Monitoreo continuo de `MailApp.getRemainingDailyEmails()`.
+     - Umbral de alerta configurable: valor inicial del 85% de consumo de cuota, sin codificarlo como constante fija (`UMBRAL_ALERTA_CUOTA_CORREO_PORCENTAJE`).
+  2. *Cola priorizada por categoría de mensaje:*
+     - Niveles de prioridad: Críticas (seguridad/salud), Operativas (matrículas/cobros), Académicas (notas/tareas), Informativas y Masivas.
+     - Priorizar envíos críticos impidiendo que los comunicados masivos bloqueen notificaciones urgentes.
+  3. *Pasarela alternativa y conmutación segura:*
+     - Habilitar pasarela alternativa mediante API SMTP externa como opción configurable cuando exista proveedor institucional autorizado.
+     - Si no hay proveedor alternativo habilitado, pausar envíos masivos reteniendo los mensajes en cola segura sin pérdida de información.
+     - Reintentos con retroceso exponencial (exponential backoff), control de tasa (rate limiting), deduplicación y reporte de entregas y rechazos.
+     - Proteger credenciales de pasarelas externas en almacenamiento seguro del servidor (Script Properties).
+- **Criterios de Aceptación:**
+  - [ ] El sistema identifica el consumo elevado de cuota y emite advertencia preventiva.
+  - [ ] Las notificaciones críticas se despachan prioritariamente frente a campañas masivas.
+  - [ ] La conmutación entre canales no genera envíos duplicados ni pérdida de mensajes en cola.
+  - [ ] Los administradores pueden pausar, inspeccionar y reanudar la cola de notificaciones.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task08] [P1] Delegación Temporal de Responsabilidades y Sustituciones Administrativas
+- **Orden de Ejecución:** 12
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`createTemporaryRoleDelegation`, `getActiveRoleDelegations`, `revokeRoleDelegation`, `verifyActionDelegationPermission`)
+  - Hoja: `DelegacionesResponsabilidad`
+- **Subcapacidades Relacionadas:** F30-07.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-07).
+- **Problema Detectado y Riesgos:**
+  Las ausencias o vacaciones de directores, administradores y coordinadores paralizan autorizaciones clave (compras mayores a L 50,000, revisión de actas de notas, planificaciones pedagógicas). No existe un mecanismo formal para delegar temporalmente atribuciones específicas sin otorgar cuentas compartidas o privilegios permanentes.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Estructura formal de la delegación temporal:*
+     - Parámetros: usuario delegante (`titularUserId`), usuario receptor (`delegadoUserId`), conjunto explícito de facultades delegadas, área institucional, fecha/hora inicio, fecha/hora fin, motivo formal y autorizador jerárquico.
+     - Delegar facultades puntuales sin conceder la totalidad de privilegios del delegante.
+     - Bloquear delegaciones circulares o cadenas no autorizadas de delegación.
+  2. *Vigencia automática y trazabilidad de doble identidad:*
+     - Revocación automática inmediata al cumplirse la fecha/hora de término.
+     - Opción de revocación anticipada bajo demanda por el titular o Dirección.
+     - Registro explícito en auditoría de la doble identidad: quién ejecutó la acción en representación de qué titular.
+     - Respetar reglas de aprobación mancomunada existentes en transacciones financieras de alto impacto.
+- **Criterios de Aceptación:**
+  - [ ] El usuario delegado puede ejecutar exclusivamente las facultades autorizadas durante la ventana de vigencia.
+  - [ ] Una delegación vencida o revocada es rechazada de forma inmediata por el backend.
+  - [ ] Los eventos de auditoría registran con claridad al delegante y al ejecutor delegado.
+  - [ ] No es posible delegar permisos superiores a los que ostenta legítimamente el delegante.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task09] [P1] Tablas de Agregación Precalculadas y Optimización de Consultas Consolidadas
+- **Orden de Ejecución:** 13
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs` (`refreshAggregatedMetricsTables`, `getAggregatedDashboardData`)
+  - `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`
+  - Hojas: `TablasAgregadasAcademicas`, `TablasAgregadasFinancieras`, `TablasAgregadasOperativas`
+- **Subcapacidades Relacionadas:** F30-09.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-09).
+- **Problema Detectado y Riesgos:**
+  Al superar las 10,000 filas en tablas transaccionales de calificaciones, asistencia o movimientos contables, las consultas consolidadas experimentan latencias de más de 3 segundos, arriesgando timeouts y afectando la experiencia en dashboards de gestión directiva.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Estructuras de agregación precalculadas:*
+     - Consolidar indicadores clave por ciclo, grado, sección y departamento: matrícula acumulada, porcentaje de asistencia, rendimiento y reprobación, balance de caja, cuentas por cobrar, ejecución presupuestaria e inventario.
+     - Mantener vinculación transparente entre el dato consolidado y las tablas transaccionales de origen.
+  2. *Estrategias de actualización y consistencia:*
+     - Actualización incremental por eventos, sincronización programada nocturna y reconstrucción completa bajo demanda.
+     - Registrar fecha y hora de última agregación (`ultimaActualizacionTimestamp`); reflejar visualmente en pantalla si la información es en tiempo real o corresponde a un corte programado.
+     - Mecanismos de detección de discrepancias entre los totales agregados y las transacciones fuente.
+     - Optimización de paginación y lecturas por lotes en memoria.
+     - Prohibir que los dashboards ejecuten cálculos independientes: deben consumir resultados oficiales de los motores centrales.
+- **Criterios de Aceptación:**
+  - [ ] Se documenta una reducción medible en los tiempos de respuesta de dashboards a menos de 1 segundo.
+  - [ ] Los valores agregados coinciden al 100% con los datos transaccionales de origen.
+  - [ ] Una modificación relevante actualiza o invalida los agregados correspondientes.
+  - [ ] La reconstrucción de tablas agregadas no altera ni duplica transacciones históricas.
+  - [ ] Pruebas ejecutadas con éxito sobre volúmenes representativos mayores a 10,000 filas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task18] [P1] Telemetría Sistemática de Rendimiento, Estabilidad y Capacidad Institucional
+- **Orden de Ejecución:** 14
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs` (`recordServicePerformanceMetric`, `getServicePerformanceTrendsReport`)
+  - Hoja: `MetricasRendimientoServicios`
+- **Subcapacidades Relacionadas:** F30-09, F30-15.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-09) y Sección F.
+- **Problema Detectado y Riesgos:**
+  Aunque existen optimizaciones en Google Apps Script, no se dispone de telemetría sistemática y continua para medir la evolución del rendimiento con el crecimiento del volumen de datos y la concurrencia simultánea, dificultando la detección proactiva de cuellos de botella.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Captura estructurada de telemetría por endpoint:*
+     - Registrar por llamada: servicio, acción, tiempo de respuesta (latencia de red percibida), tiempo de ejecución en Apps Script, tasa de errores, reintentos, tiempo de espera en bloqueos (`LockService`), filas procesadas, tamaño del payload y consumo estimado de cuotas.
+  2. *Indicadores de rendimiento en operaciones clave:*
+     - Consultas individuales, reportes consolidados, matrículas masivas, cierre de actas de notas, generación de nóminas, conciliación bancaria y emisión de boletas.
+     - Definir objetivos de rendimiento (SLO) basados en mediciones reales y no en estimaciones arbitrarias.
+  3. *Tendencias históricas y comparación entre versiones:*
+     - Reportes comparativos de rendimiento antes y después de cada despliegue de versión.
+     - Identificación de degradaciones progresivas de tiempo de respuesta para alimentar el backlog de optimización técnica.
+- **Criterios de Aceptación:**
+  - [ ] Las operaciones críticas generan telemetría sistemática sin penalizar los tiempos de ejecución.
+  - [ ] Se identifican con precisión las consultas con mayor latencia y cuellos de botella por concurrencia.
+  - [ ] Es posible comparar el rendimiento cuantitativo entre distintas versiones del software.
+  - [ ] Los umbrales y objetivos de rendimiento se encuentran debidamente documentados.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task19] [P1] Actualización Controlada de Dashboards Ejecutivos e Indicadores Institucionales
+- **Orden de Ejecución:** 15
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `dashboards/dashboard-direccion.html`, `js/ui-common.js`
+  - `backend/user-service/Code.gs`, `backend/developer-service/Code.gs`
+- **Subcapacidades Relacionadas:** F30-10, F30-09.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-10).
+- **Problema Detectado y Riesgos:**
+  Los tableros ejecutivos directivos dependen de refrescos bajo demanda manuales, arriesgando la toma de decisiones basada en información obsoleta. Asimismo, existe el riesgo de que distintos paneles calculen indicadores equivalentes con fórmulas o criterios dispares.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Gobernanza y cálculo unificado de indicadores:*
+     - Definir por indicador: fuente oficial única, fórmula matemática estandarizada, frecuencia de corte, responsable y grado de precisión.
+     - Prohibir terminantemente que vistas cliente realicen cálculos matemáticos dispares sobre métricas compartidas.
+  2. *Actualización y visualización contextual:*
+     - Diferenciar claramente datos en tiempo real de agregaciones periódicas o saldos históricos cerrados.
+     - Mostrar en la interfaz: fecha y hora de corte del dato (`FechaCorte`), estado de actualización y alertas visuales si la información se encuentra desfasada.
+     - Filtros multicriterio: período lectivo, nivel educativo, grado, sección, departamento y centro de costo.
+     - Desglose jerárquico (drill-down) desde la cifra consolidada hacia los registros individuales respetando los permisos RBAC.
+     - Exportación de reportes asegurando que los archivos generados coincidan exactamente con las cifras en pantalla.
+- **Criterios de Aceptación:**
+  - [ ] Los indicadores institucionales provienen de fuentes oficiales estandarizadas.
+  - [ ] Los paneles de control de distintos roles muestran valores idénticos bajo los mismos criterios y fecha de corte.
+  - [ ] Se indica con total claridad la antigüedad y momento de última sincronización de los datos.
+  - [ ] Las exportaciones reflejan fielmente las cifras visualizadas en la interfaz directiva.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task20] [P1] Reconciliación Automatizada de Operaciones y Resultados entre Módulos
+- **Orden de Ejecución:** 16
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`reconcileCrossModuleTransactions`, `resolveTransactionDiscrepancy`)
+  - `backend/academic-service/Code.gs`
+  - Hoja: `ConciliacionesIntermodulares`, `DiscrepanciasDetectadas`
+- **Subcapacidades Relacionadas:** F30-01, F30-02, F30-03.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-01) y Sección G.
+- **Problema Detectado y Riesgos:**
+  A pesar de las validaciones relacionales, pueden suscitarse operaciones incompletas que no generaron un error fatal visible en su momento (ej. matrícula creada sin cargo inicial por interrupción de red, o pago asentado sin póliza contable asociada), requiriendo un motor periódico de reconciliación cruzada.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Rutina de reconciliación automatizada intermodular:*
+     - Matrículas vs Expedientes y Cargos Arancelarios Iniciales.
+     - Pagos vs Cargos Estudiantiles, Comprobantes Fiscales y Asientos de Caja/Bancos.
+     - Anulaciones de Pago vs Contrasientos y Saldos en Estado de Cuenta.
+     - Compras vs Órdenes, Recepciones, Kardex de Inventario y Cuentas por Pagar.
+     - Planillas Salariales vs Marcajes de Asistencia, Deducciones Laborales y Pólizas Contables.
+     - Calificaciones Publicadas vs Actas de Notas Cerradas y Boletines Oficiales.
+     - Multas/Consumos de Servicios Complementarios vs Cargos Financieros Efectivos.
+  2. *Clasificación de discrepancias y resolución asistida:*
+     - Detectar: efectos no generados, efectos duplicados, importes divergentes, estados contradictorios o ausencia de documentos de respaldo.
+     - Clasificar entre: discrepancia en tránsito normal vs error confirmado de inconsistencia.
+     - Asignar discrepancias a responsables departamentales para corrección controlada a través de las interfaces oficiales.
+     - Prohibir modificaciones destructivas automáticas sobre datos históricos cuya causa no haya sido certificada.
+- **Criterios de Aceptación:**
+  - [ ] El motor de conciliación detecta operaciones incompletas o asientos duplicados entre módulos.
+  - [ ] Se emite informe de discrepancias con punteros directos a los registros involucrados.
+  - [ ] Las acciones correctivas quedan debidamente auditadas y verificadas en la siguiente pasada del motor.
+  - [ ] Se generan indicadores cuantitativos de operaciones conciliadas vs discrepantes.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 3. DOCUMENTACIÓN, CAPACITACIÓN Y PREPARACIÓN INSTITUCIONAL (P2)
+
+### [F30-Task12] [P2] Manuales Operativos y Guías de Usuario por Departamento con Ayuda Contextual
+- **Orden de Ejecución:** 17
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `docs/manuals/` (`manual-direccion.md`, `manual-secretaria.md`, `manual-coordinacion.md`, `manual-docentes.md`, `manual-contabilidad.md`, `manual-rrhh.md`, `manual-operaciones.md`, `manual-estudiantes-familias.md`, `manual-administracion-tecnica.md`)
+  - `js/ui-common.js` (modal interactivo de ayuda contextual y buscador)
+- **Subcapacidades Relacionadas:** F30-11.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-11).
+- **Problema Detectado y Riesgos:**
+  Existe documentación técnica de arquitectura, pero faltan manuales de usuario final orientados a procedimientos integrales por rol. Los usuarios dependen continuamente del equipo de desarrollo para solventar inquietudes operativas rutinarias.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Manuales por departamento y rol:*
+     - Dirección, Secretaría, Coordinación Académica, Docentes, Contabilidad/Tesorería, Recursos Humanos, Operaciones, Estudiantes, Padres/Tutores y Administración Técnica.
+     - Contenido por procedimiento: propósito, requisitos previos, roles necesarios, paso a paso detallado, datos requeridos, validaciones del sistema, documentos emitidos, notificaciones automáticas, errores comunes y acciones de contingencia.
+  2. *Referencias visuales y actualización gráfica:*
+     - Capturas de pantalla actualizadas y diagramas de flujo de trabajo reales.
+     - Explicación de estados de trámites, matrículas, notas, pagos y cierres de actas.
+  3. *Ayuda contextual integrada y versionado:*
+     - Botón de ayuda interactiva en cada dashboard que abre la guía correspondiente a la vista activa.
+     - Motor de búsqueda por palabras clave y categorías temáticas.
+     - Versionado de manuales con registro de fecha de última revisión.
+     - Procedimiento para reportar errores técnicos adjuntando evidencias sin exponer datos PII innecesarios.
+- **Criterios de Aceptación:**
+  - [ ] Cada rol institucional dispone de su manual correspondiente publicado y accesible desde el panel.
+  - [ ] Los procedimientos coinciden fielmente con el comportamiento real del sistema.
+  - [ ] El buscador de ayuda contextual retorna guías relevantes por rol y palabra clave.
+  - [ ] Las actualizaciones de software desencadenan la revisión de los manuales afectados.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task14] [P2] Runbooks y Procedimientos de Contingencia y Recuperación Operativa
+- **Orden de Ejecución:** 18
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `docs/runbooks/` (`runbook-caida-servicio.md`, `runbook-indisponibilidad-sheets.md`, `runbook-fallo-autenticacion.md`, `runbook-concurrencia-bloqueos.md`, `runbook-recuperacion-pagos.md`, `runbook-contingencia-offline.md`, `runbook-cuotas-correo.md`, `runbook-restauracion-backup.md`, `runbook-rollback-despliegue.md`)
+- **Subcapacidades Relacionadas:** F30-11, F30-08.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-11) y Sección F.
+- **Problema Detectado y Riesgos:**
+  Ante una falla crítica de infraestructura, agotamiento de cuotas en Google Apps Script o indisponibilidad de red, el personal técnico de guardia carece de protocolos estandarizados (Runbooks) para diagnosticar, mitigar y restablecer los servicios sin improvisaciones que puedan dañar datos.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Runbooks técnicos de contingencia:*
+     - Caída o latencia crítica de microservicios.
+     - Indisponibilidad o errores de acceso a Google Sheets / Drive.
+     - Fallos de autenticación o invalidación masiva de sesiones.
+     - Bloqueos de concurrencia y contención en `LockService`.
+     - Pagos o matrículas registradas sin confirmación completa.
+     - Inconsistencias entre cargos arancelarios y pólizas contables.
+     - Fallos de sincronización fuera de línea (`PersistenceManager`).
+     - Agotamiento de cuotas de correo y Google APIs.
+     - Restauración de copias de seguridad desde Drive.
+     - Reversión o rollback técnico post-despliegue.
+  2. *Estructura estandarizada por protocolo:*
+     - Síntomas observables, posibles causas raíz, severidad, verificaciones iniciales, acciones autorizadas, acciones prohibidas, procedimiento paso a paso de recuperación, criterios de escalamiento y validaciones posteriores.
+     - Preservación de evidencias forenses previa a cualquier reinicio o intervención.
+     - Definición de responsables titulares y sustitutos.
+     - Objetivos cuantitativos de recuperación: RTO (Recovery Time Objective) y RPO (Recovery Point Objective) por proceso.
+     - Realización de simulacros controlados periódicos para validar la viabilidad práctica de los Runbooks.
+- **Criterios de Aceptación:**
+  - [ ] Los 9 Runbooks de contingencia se encuentran completamente redactados y validados.
+  - [ ] Se definen roles de emergencia, responsables de sustitución y rutas de escalamiento técnico.
+  - [ ] Los procedimientos de contingencia han sido puestos a prueba mediante simulaciones controladas.
+  - [ ] Las instrucciones documentadas corresponden a las herramientas y capacidades reales de la plataforma.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task13] [P2] Módulo de Inducción, Capacitación y Certificación de Competencias del Personal
+- **Orden de Ejecución:** 19
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `js/games-adapter.js`, `dashboard-direccion.html`, `dashboard-recursos-humanos.html`
+  - Hoja: `CapacitacionesPersonal`, `CursosInduccion`
+- **Subcapacidades Relacionadas:** F30-12.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección C (F30-12).
+- **Problema Detectado y Riesgos:**
+  La habilitación de funciones operativas críticas a nuevos empleados carece de un mecanismo formal para verificar y certificar que han comprendido las políticas institucionales de seguridad, evaluación de notas y manejo de datos confidenciales, originando errores humanos evitables.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Entorno institucional de capacitación guiada:*
+     - Rutas formativas asignadas según departamento, cargo y permisos: lecciones, guías paso a paso, videos explicativos, simuladores interactivos de operaciones rutinarias (sin alterar datos de producción) y cuestionarios de evaluación.
+     - Escenarios prácticos de errores comunes para asegurar que el personal comprende cómo actuar ante situaciones imprevistas.
+  2. *Evaluaciones y umbrales de aprobación paramétricos:*
+     - Evaluaciones prácticas con casos de estudio y validación de decisiones.
+     - Puntaje mínimo de aprobación configurable según la criticidad del rol (`PUNTAJE_MINIMO_CERTIFICACION_ROL`).
+     - Parámetro para definir si la certificación es obligatoria antes de habilitar permisos sensibles (`REQUERIR_CERTIFICACION_PREVIA_OPERACIONES_SENSIBLES`), garantizando que no se bloqueen funciones básicas de consulta.
+  3. *Registro institucional de competencias:*
+     - Asentar en `CapacitacionesPersonal`: usuario, curso/ruta, versión del material, fechas de inicio y término, intentos, puntaje obtenido, competencias aprobadas y capacitador responsable.
+     - Emisión de constancias de certificación interna con fecha de caducidad y recertificación obligatoria ante reformas importantes de software o normativa.
+- **Criterios de Aceptación:**
+  - [ ] Las rutas de capacitación se asignan automáticamente según el rol del usuario creado o modificado.
+  - [ ] Las simulaciones interactivas se ejecutan sin interactuar con la base de datos de producción.
+  - [ ] Las certificaciones alcanzadas son consultables por Dirección y Recursos Humanos.
+  - [ ] El sistema respeta la política configurable de bloqueo o advertencia ante falta de certificación previa.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F30-Task15] [P2] Protocolo Formal de Autorización de Go-Live y Certificación Departamental
+- **Orden de Ejecución:** 20
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`submitDepartmentalCertificationApproval`, `getDepartmentalCertifications`, `generateGoLiveAcceptanceCertificate`)
+  - `dashboard-direccion.html`
+  - Hoja: `CertificacionesInstitucionales`, `ActasGoLive`
+- **Subcapacidades Relacionadas:** F30-14, F30-15.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md` / Sección E (CERT-01 a CERT-13) y Sección H.
+- **Problema Detectado y Riesgos:**
+  El paso a producción de nuevas versiones en Google Apps Script depende de despliegues manuales sin un protocolo colegiado formal que valide y documente el visto bueno de los responsables departamentales (Dirección, Secretaría, Contabilidad, Docencia, TI), arriesgando publicaciones sin consenso institucional.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Ficha formal y estados del despliegue:*
+     - Estados: `En_Preparacion`, `En_Validacion_Tecnica`, `Pendiente_Aprobacion`, `Aprobado`, `Rechazado`, `En_Despliegue`, `En_Observacion`, `Completado`, `Revertido`.
+     - Ficha de despliegue obligatoria: versión, cambios incluidos, módulos involucrados, migraciones requeridas, análisis de riesgos, resultados de pruebas automatizadas, respaldo previo verificado y estrategia de reversión.
+  2. *Checklist automatizado y criterios de reversión:*
+     - Validaciones previas de integridad: contratos interservicios, compatibilidad de esquemas, ejecución de suites de regresión al 100% y salud operativa.
+     - Bloqueo estricto de aprobación ante fallos críticos pendientes sin excepción formal justificada y autorizada.
+     - Criterios objetivos de rollback ante fallos de integridad, degradación severa de rendimiento o interrupción de autenticación.
+     - Distinguir entre rollback de código, reversión de configuración y restauración de datos.
+  3. *Certificación colegiada por departamento:*
+     - Evaluación de las 13 áreas clave: CERT-01 a CERT-13.
+     - Registro por departamento: responsable que valida, dictamen (`APROBADA`, `APROBADA_CON_OBSERVACIONES`, `RECHAZADA`), fecha, versión evaluada y pendientes menores aceptados.
+     - Generación del Acta Institucional de Certificación y Autorización de Go-Live en PDF descargable con firmas formales.
+     - Período de observación post-despliegue con telemetría activa.
+- **Criterios de Aceptación:**
+  - [ ] Cada despliegue cuenta con su ficha técnica completa y validaciones previas aprobadas.
+  - [ ] No es posible autorizar un pase a producción si existen incidencias críticas bloqueantes sin excepción justificada.
+  - [ ] Los líderes departamentales emiten y firman digitalmente sus certificaciones de área.
+  - [ ] El procedimiento de reversión se encuentra probado y listo para actuar ante contingencias.
+  - [ ] Se emite el Acta Oficial de Go-Live y se documentan los resultados del período de observación posterior.
+- **Estado:** [ ] Pendiente
+
+---
+
+---
+
+# FASE 31: DISEÑADOR UNIVERSAL DE DOCUMENTOS Y PLANTILLAS
+
+## RESUMEN DE SUB-CAPACIDADES Y TAREAS TÉCNICAS (FASE 31)
+
+| ID | Prioridad | Orden Secuencial | Tarea Técnica / Requisito | Componentes Principales | Subcapacidad | Estado |
+|---|---|---|---|---|---|---|
+| [F31-T01] | P0 | 1 | Editor Universal de Documentos Enriquecidos (WYSIWYG) | `backend/accounting-service/Code.gs`, `js/teacher.js`, `js/ui-common.js` | F31-01, F31-02, F31-10 | [ ] Pendiente |
+| [F31-T02] | P0 | 2 | Motor de Maquetación, Paginación y Fidelidad de Impresión | `backend/accounting-service/Code.gs`, `js/ui-common.js` | F31-02, F31-10 | [ ] Pendiente |
+| [F31-T03] | P0 | 3 | Importación Avanzada de Documentos DOCX (Word 2013-2017+) | `backend/accounting-service/Code.gs`, `js/teacher.js` | F31-08 | [ ] Pendiente |
+| [F31-T04] | P0 | 4 | Importación Avanzada de PDF y Reutilización de Documentos Preimpresos | `js/teacher.js`, `backend/accounting-service/Code.gs` | F31-09, F31-02 | [ ] Pendiente |
+| [F31-T05] | P0 | 5 | Sistema de Campos Dinámicos, Variables Institucionales y Secciones Repetibles | `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs` | F31-06, F31-23 | [ ] Pendiente |
+| [F31-T06] | P0 | 6 | Generación Masiva de Documentos y Procesamiento Resiliente por Lotes | `backend/accounting-service/Code.gs` | F31-07, F31-19 | [ ] Pendiente |
+| [F31-T07] | P1 | 7 | Constructor Visual Universal de Formularios Digitales | `backend/user-service/Code.gs`, `js/ui-common.js` | F31-04, F31-11 | [ ] Pendiente |
+| [F31-T08] | P1 | 8 | Motor Centralizado de Reglas Condicionales y Formularios Dinámicos | `backend/user-service/Code.gs`, `js/ui-common.js` | F31-05 | [ ] Pendiente |
+| [F31-T09] | P1 | 9 | Guardado de Borradores, Continuidad de Formularios y Recuperación de Respuestas | `backend/user-service/Code.gs`, `js/ui-common.js` | F31-05, F31-18 | [ ] Pendiente |
+| [F31-T10] | P1 | 10 | Sistema de Estilos Institucionales y Componentes Documentales Reutilizables | `backend/accounting-service/Code.gs`, `js/ui-common.js` | F31-03 | [ ] Pendiente |
+| [F31-T11] | P1 | 11 | Integración Automática de Documentos Emitidos con Expedientes y Procesos | `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs` | F31-16, F31-22 | [ ] Pendiente |
+| [F31-T12] | P1 | 12 | Ampliación del Catálogo Universal de Documentos y Trámites Departamentales | `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs` | F31-22 | [ ] Pendiente |
+| [F31-T13] | P1 | 13 | Gestión Avanzada de Versiones y Ciclo de Vida Inmutable de Plantillas | `backend/accounting-service/Code.gs` | F31-13 | [ ] Pendiente |
+| [F31-T14] | P1 | 14 | Administración Granular de Permisos y Flujos de Aprobación Documental | `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs` | F31-14 | [ ] Pendiente |
+| [F31-T15] | P1 | 15 | Seguridad Avanzada y Validación Criptográfica de Archivos Documentales | `backend/academic-service/Code.gs`, `backend/user-service/Code.gs` | F31-15, F31-17 | [ ] Pendiente |
+| [F31-T16] | P1 | 16 | Fortalecimiento de Firmas, Conformidades y Evidencias de Aprobación | `backend/user-service/Code.gs` | F31-11, F31-15 | [ ] Pendiente |
+| [F31-T23] | P1 | 17 | Banco de Pruebas Documentales y Validación de Fidelidad Multi-Formato | `tests/regression/academic-grading-suite.js`, `backend/developer-service/Code.gs` | F31-19, F31-20 | [ ] Pendiente |
+| [F31-T24] | P1 | 18 | Optimización del Rendimiento y Resiliencia del Procesamiento Documental | `backend/accounting-service/Code.gs`, `backend/developer-service/Code.gs` | F31-19 | [ ] Pendiente |
+| [F31-T17] | P2 | 19 | Optimización de Experiencia Móvil, Accesibilidad y Usabilidad del Diseñador | `js/ui-common.js`, `css/style.css` | F31-18 | [ ] Pendiente |
+| [F31-T18] | P2 | 20 | Generación de Códigos QR Dinámicos y Verificación Documental CUV Ampliada | `backend/accounting-service/Code.gs`, `js/teacher.js` | F31-23 | [ ] Pendiente |
+| [F31-T19] | P2 | 21 | Plantillas Multilingües Sincronizadas y Localización Documental | `backend/accounting-service/Code.gs` | F31-23 | [ ] Pendiente |
+| [F31-T20] | P2 | 22 | Revisión Colaborativa y Comentarios en Borradores de Plantillas | `backend/accounting-service/Code.gs`, `js/teacher.js` | F31-14, F31-20, F31-23 | [ ] Pendiente |
+| [F31-T21] | P2 | 23 | Búsqueda Avanzada, Clasificación y Administración del Repositorio Documental | `backend/accounting-service/Code.gs`, `js/teacher.js` | F31-12 | [ ] Pendiente |
+| [F31-T22] | P2 | 24 | Auditoría Documental Ampliada, Trazabilidad y Métricas Operativas | `backend/user-service/Code.gs`, `backend/accounting-service/Code.gs` | F31-20 | [ ] Pendiente |
+
+---
+
+### BLOQUE 1. EDICIÓN Y COMPOSICIÓN DOCUMENTAL — PRIORIDAD P0
+
+### [F31-T01] [P0] Editor Universal de Documentos Enriquecidos (WYSIWYG)
+- **Orden de Ejecución:** 1
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`saveDocumentTemplateWysiwyg`, `previewWysiwygDocument`)
+  - `js/teacher.js`, `js/ui-common.js`
+  - Hoja: `PlantillasEscolares`
+- **Subcapacidades Relacionadas:** F31-01, F31-02, F31-10.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-01, F31-02) y Backlog de Implementación F31-T01.
+- **Problema o Carencia:**
+  La plataforma permite configurar contenido HTML y posicionar campos dinámicos sobre documentos PDF, pero todavía no ofrece una experiencia completa de edición de documentos desde cero. El editor actual no sustituye las capacidades de un procesador de textos para elaborar circulares, actas, contratos, reglamentos, constancias, informes y documentos institucionales extensos.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Edición de contenido:*
+     - Crear documentos en blanco y a partir de plantillas existentes.
+     - Insertar, seleccionar, modificar, copiar, cortar, pegar y eliminar contenido.
+     - Deshacer y rehacer operaciones con pila de historial fluida.
+     - Seleccionar fragmentos, párrafos, tablas e imágenes.
+     - Permitir copiar contenido desde otras aplicaciones conservando, cuando sea posible, el formato compatible.
+     - Opciones configurables de pegado: conservar formato original, adaptar al estilo del documento o pegar únicamente texto plano (`MODO_PEGADO_PREDETERMINADO`).
+     - Mantener la edición fluida en documentos extensos sin bloqueos de memoria.
+  2. *Formato de texto:*
+     - Familia tipográfica, tamaño, color y resaltado.
+     - Negrita, cursiva, subrayado, tachado y subíndice/superíndice.
+     - Alineación izquierda, derecha, centrada y justificada.
+     - Interlineado, espaciado anterior y posterior, sangrías y tabulaciones.
+     - Listas numeradas y con viñetas, incluyendo listas multinivel.
+     - Estilos reutilizables para títulos (H1, H2, H3), subtítulos, párrafos, citas y notas.
+     - Aplicación y actualización coherente de estilos en todo el documento.
+  3. *Configuración de página:*
+     - Tamaños normalizados A4, Carta (Letter), Oficio (Legal) y tamaños personalizados.
+     - Orientación vertical y horizontal con márgenes independientes (superior, inferior, izquierdo, derecho).
+     - Saltos de página y de sección controlados.
+     - Columnas y distribución de contenido periodístico/multicolumna.
+     - Configuración diferenciada de encabezados y pies de página.
+     - Numeración automática de páginas con formato (`Página X de Y`), posición y numeración inicial configurable.
+     - Diferenciación de primera página y páginas pares e impares.
+  4. *Tablas estructuradas:*
+     - Insertar tablas y configurar filas y columnas.
+     - Agregar y eliminar filas o columnas dinámicamente.
+     - Combinar y dividir celdas horizontal y verticalmente.
+     - Configurar bordes, colores, alineación, márgenes internos (padding) y dimensiones.
+     - Controlar ajuste de texto y tamaño de celdas evitando que excedan los márgenes de impresión.
+     - Permitir que las tablas continúen entre páginas controlando el comportamiento de sus filas (evitar cortes a mitad de renglón).
+     - Permitir marcar filas de encabezado para que se repitan en páginas posteriores.
+  5. *Imágenes y elementos insertables:*
+     - Insertar imágenes desde archivos o recursos institucionales autorizados.
+     - Modificar tamaño, proporción, alineación y posición relativa.
+     - Controlar el ajuste del texto alrededor de las imágenes (en línea, cuadrado, detrás/delante del texto).
+     - Insertar logotipos, sellos, líneas divisoras, formas y otros elementos gráficos.
+     - Permitir insertar enlaces e identificativos institucionales, asegurando que las imágenes embebidas no desaparezcan al exportar o trasladar el documento.
+  6. *Compatibilidad y coexistencia:*
+     - Separar el contenido, los estilos y la configuración de página para permitir su reutilización.
+     - Representación de página visual que se aproxime fielmente al resultado final de impresión.
+     - Conservar la compatibilidad con el editor PDF Overlay, que debe continuar disponible para trabajar sobre documentos preimpresos.
+- **Criterios de Aceptación:**
+  - [ ] Se puede crear, editar, guardar, cerrar y volver a abrir un documento sin perder su contenido ni formato.
+  - [ ] Las operaciones de deshacer y rehacer funcionan sobre las acciones principales.
+  - [ ] Se pueden insertar y modificar tablas con celdas combinadas.
+  - [ ] Los saltos de página, encabezados, pies y numeración se conservan en el PDF.
+  - [ ] La vista previa y el archivo exportado mantienen una distribución coherente.
+  - [ ] Los documentos extensos no producen bloqueos, pérdida de contenido ni degradación inaceptable del editor.
+  - [ ] El editor PDF Overlay sigue funcionando de forma independiente y compatible con el nuevo editor.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T02] [P0] Motor de Maquetación, Paginación y Fidelidad de Impresión
+- **Orden de Ejecución:** 2
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`renderPaginatedDocumentHtml`, `validateDocumentLayoutPrintability`)
+  - `js/ui-common.js`
+- **Subcapacidades Relacionadas:** F31-02, F31-10.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-02, F31-10) y Backlog de Implementación F31-T02.
+- **Problema o Carencia:**
+  La generación PDF ya produce documentos de varias páginas y supera pruebas básicas de impresión. Sin embargo, se requiere ampliar la maquetación para asegurar que el motor conserve fielmente diseños complejos elaborados con el editor enriquecido o importados desde DOCX/PDF, evitando cortes inadecuados de tablas o imágenes desplazadas.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Fidelidad de representación física:*
+     - Representación de páginas que respete estrictamente los límites físicos del papel (A4, Carta, Oficio).
+     - Correspondencia milimétrica entre las dimensiones del editor y las dimensiones del PDF generado.
+     - Control estricto de saltos automáticos y manuales de página.
+  2. *Prevención de desbordamientos y cortes:*
+     - Evitar encabezados y pies superpuestos al contenido.
+     - Evitar que párrafos, títulos o filas de tablas queden divididos de manera inadecuada (control de líneas viudas y huérfanas).
+     - Permitir controlar si un párrafo debe mantenerse junto al siguiente (`keep_with_next`).
+     - Mantener encabezados de tabla al continuar una tabla en otra página.
+     - Controlar imágenes para que no se desplacen, deformen o invadan márgenes.
+  3. *Secciones y tipografías:*
+     - Soportar documentos con orientación (vertical/horizontal) y márgenes diferentes por sección.
+     - Diferenciar encabezados y pies de primera página, páginas pares e impares.
+     - Gestión de fuentes instaladas, fuentes web incorporadas y sustituciones tipográficas controladas.
+     - Evitar cortes de texto, caracteres sustituidos, elementos invisibles y páginas vacías inesperadas.
+     - Mantener enlaces, numeración, tablas y elementos gráficos durante la exportación.
+  4. *Herramientas de validación:*
+     - Validaciones previas a la exportación para detectar desbordamientos y advertir al usuario.
+     - Vista previa de impresión con navegación fluida entre páginas antes de emitir.
+- **Criterios de Aceptación:**
+  - [ ] Se generan documentos de varias páginas con tablas extensas, imágenes y encabezados diferenciados.
+  - [ ] No se pierden filas, párrafos, imágenes ni elementos por desbordamientos.
+  - [ ] Los encabezados de tablas se repiten cuando se configura esa opción.
+  - [ ] Los márgenes y tamaños de papel coinciden con la configuración seleccionada.
+  - [ ] La vista previa permite detectar los mismos problemas que aparecerían en el PDF.
+  - [ ] Se comprueba el resultado en documentos de distintas extensiones y complejidades.
+  - [ ] Se verifica la impresión desde navegadores de escritorio y dispositivos móviles compatibles.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T03] [P0] Importación Avanzada de Documentos DOCX (Word 2013-2017+)
+- **Orden de Ejecución:** 3
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`importDocxDocumentBinary`, `parseOpenXmlDocumentStructure`)
+  - `js/teacher.js`
+  - Hoja: `PlantillasEscolares`
+- **Subcapacidades Relacionadas:** F31-08.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-08) y Backlog de Implementación F31-T03.
+- **Problema o Carencia:**
+  La importación actual permite recuperar contenido textual y generar borradores HTML, pero no reconstruye de forma suficiente la estructura interna de documentos DOCX. Esto limita la reutilización de documentos institucionales elaborados previamente en procesadores de texto Word (2013, 2016 y 2017).
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Compatibilidad OpenXML completa:*
+     - Importar archivos DOCX generados por Word 2013, 2016 y 2017, así como versiones posteriores.
+     - Reconocer las estructuras OpenXML correspondientes y advertir formatos binarios antiguos no soportados (.doc de Word 97-2003).
+     - No presentar un archivo como totalmente compatible cuando solo se haya recuperado su texto.
+  2. *Elementos que deben recuperarse y mapearse:*
+     - Texto y estructura de párrafos, tipografías, tamaños, colores y estilos.
+     - Títulos y jerarquías de encabezados (H1, H2, H3).
+     - Alineación, interlineado, sangrías y listas multinivel.
+     - Tablas con bordes, dimensiones relativas, alineación y celdas combinadas o anidadas.
+     - Imágenes incrustadas, extrayéndolas como adjuntos y preservando su posición relativa y proporciones.
+     - Encabezados, pies de página, numeración de páginas y listas.
+     - Márgenes, orientación, tamaño de papel, saltos de página y de sección.
+     - Hipervínculos, notas al pie y marcadores que puedan convertirse en variables dinámicas.
+  3. *Conversión, revisión y seguridad:*
+     - Convertir el DOCX en un borrador editable en el diseñador sin alterar el archivo original.
+     - Informe de importación detallando elementos conservados, transformados, omitidos o sustituidos.
+     - Permitir corregir manualmente los elementos cuya conversión no sea exacta antes de guardar.
+     - Prohibición estricta de ejecución de macros, scripts VBA o contenidos activos procedentes de los archivos importados.
+- **Criterios de Aceptación:**
+  - [ ] Se importan documentos de prueba creados con Word 2013, 2016 y 2017.
+  - [ ] Se conservan textos, estilos, tablas, imágenes, encabezados y configuración de página en los casos compatibles.
+  - [ ] Las tablas anidadas y las celdas combinadas se recuperan correctamente cuando estén soportadas.
+  - [ ] Se identifican los elementos no compatibles y no se descartan silenciosamente.
+  - [ ] El documento original permanece intacto en Google Drive.
+  - [ ] Se comparan visualmente el original y el resultado importado mediante un conjunto de documentos representativos.
+  - [ ] La importación de un archivo inválido, incompleto o manipulado no bloquea el sistema ni compromete otros documentos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T04] [P0] Importación Avanzada de PDF y Reutilización de Documentos Preimpresos
+- **Orden de Ejecución:** 4
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `js/teacher.js` (`openPdfOverlayEditor`, `renderPdfPage`, `savePdfOverlayTemplate`)
+  - `backend/accounting-service/Code.gs`
+  - Hoja: `PlantillasEscolares`
+- **Subcapacidades Relacionadas:** F31-09, F31-02.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-09) y Backlog de Implementación F31-T04.
+- **Problema o Carencia:**
+  El editor PDF Overlay permite visualizar documentos y posicionar campos superpuestos. Sin embargo, visualizar un PDF y superponer campos no equivale a interpretar, editar o reutilizar toda su estructura documental ni diferenciar entre PDFs vectoriales nativos y documentos escaneados.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Análisis e importación de archivos PDF:*
+     - Importar PDF digitales con texto seleccionable y PDF escaneados compuestos por imágenes de mapa de bits.
+     - Identificar si cada página contiene texto vectorial, imágenes o combinación de ambos.
+     - Conservar el archivo PDF original como fuente inalterable de referencia en Google Drive.
+     - Mantener el orden, tamaño, orientación y rotación de las páginas importadas.
+     - Reconocer, cuando sea técnicamente viable, formularios PDF interactivos existentes (AcroForms) y sus campos.
+  2. *Reutilización de documentos preimpresos:*
+     - Trabajar sobre el PDF original como fondo fijo inalterable y colocar campos dinámicos superpuestos encima.
+     - Definir el tipo de documento: formulario rellenable, documento de emisión oficial o plantilla de impresión.
+     - Incorporar OCR cuando exista una capacidad técnicamente disponible para recuperar texto de documentos escaneados, diferenciando con claridad el texto reconocido por OCR del texto vectorial original.
+     - Herramientas de alineación, ajuste magnético a rejilla, selección múltiple y posicionamiento milimétrico de campos superpuestos.
+     - Seleccionar páginas específicas para aplicar campos dinámicos.
+     - Mantener la alineación de los campos con el documento base en diferentes tamaños de pantalla y durante la exportación final a PDF.
+- **Criterios de Aceptación:**
+  - [ ] Se importan PDF digitales y escaneados de varias páginas conservando orientación y dimensiones originales.
+  - [ ] Los campos superpuestos mantienen su posición milimétrica exacta al generar el PDF final.
+  - [ ] El sistema no presenta un PDF escaneado como si su texto fuera editable cuando no se ha aplicado OCR.
+  - [ ] El documento fuente no se altera en el almacenamiento.
+  - [ ] La descarga final conserva el fondo original y los campos dinámicos agregados.
+  - [ ] El editor Overlay continúa siendo plenamente funcional en navegadores y dispositivos compatibles.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T05] [P0] Sistema de Campos Dinámicos, Variables Institucionales y Secciones Repetibles
+- **Orden de Ejecución:** 5
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`renderDynamicDocumentTemplate`, `evaluateTemplateLoopingSections`)
+  - `backend/academic-service/Code.gs`
+  - Hoja: `CatalogoVariablesDocumentales`
+- **Subcapacidades Relacionadas:** F31-06, F31-23.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-06) y Backlog de Implementación F31-T05.
+- **Problema o Carencia:**
+  El catálogo actual permite insertar variables individuales escalares relacionadas con estudiantes, institución, trámites y documentos. No obstante, no ofrece una solución completa para representar colecciones de datos de longitud variable dentro de una plantilla, como asignaturas, calificaciones, responsables, conceptos de cobro o registros de asistencia.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Catálogo centralizado de variables dinámicas:*
+     - Mantener catálogo clasificado por entidad y departamento (Estudiante, Familia, Personal, Académico, Financiero, Administrativo).
+     - Nombre legible, descripción, tipo de dato, origen y perfiles autorizados para su uso.
+     - Diferenciar campos individuales, campos calculados y colecciones iterables.
+     - Incorporar nuevas fuentes institucionales sin necesidad de modificar individualmente cada plantilla.
+  2. *Secciones repetibles (Looping Tags):*
+     - Bloques de iteración: `{{#each asignaturas}}...{{/each}}`, `{{#each cargos}}...{{/each}}`, `{{#each abonos}}...{{/each}}`.
+     - Tablas dinámicas con filas generadas automáticamente según los registros reales del alumno o trámite.
+     - Definir encabezados, filas de detalle y filas de totales/subtotales calculados.
+     - Configuración de comportamiento cuando la colección está vacía (`TEXTO_VACIO`, `OCULTAR_TABLA`, `ADVERTENCIA_BLOQUEANTE`).
+     - Filtros y ordenamientos autorizados sobre los elementos de la colección.
+     - Anidamiento de estructuras repetibles controlado y predecible.
+  3. *Ejemplos y fuentes cubiertas:*
+     - Boletines y cuadros de notas con asignaturas, períodos, calificaciones ponderadas y observaciones.
+     - Estados de cuenta con conceptos, cargos arancelarios, abonos, descuentos y saldos.
+     - Constancias con múltiples responsables, tutores o participantes.
+     - Informes de asistencia acumulada e incidencias disciplinarias.
+     - Documentos administrativos con inventario de bienes o insumos despachados.
+  4. *Resolución segura y preservación de valores:*
+     - Resolver únicamente variables autorizadas para el usuario y contexto mediante validación estricta en servidor.
+     - Formatos configurables para fechas (`formatDate`), cantidades, moneda hondureña (`formatCurrency:"HNL"`) y conversión de números a letras (`numberToWords`).
+     - Evitar que datos ingresados por usuarios se interpreten como código ejecutable.
+     - Capturar instantánea inmutable de los datos utilizados al momento de generar el documento oficial, asegurando que cambios posteriores en expedientes, notas o cobros no alteren documentos históricos emitidos.
+- **Criterios de Aceptación:**
+  - [ ] Las variables escalares existentes continúan funcionando con compatibilidad retrospectiva total.
+  - [ ] Una plantilla puede generar tablas con cantidades diferentes de filas según los registros de la base de datos.
+  - [ ] Las colecciones vacías, incompletas o con valores nulos se procesan según su configuración.
+  - [ ] Los cálculos y totales coinciden con los datos de origen de las hojas transaccionales.
+  - [ ] Los datos no autorizados no pueden recuperarse mediante manipulación de variables o peticiones directas.
+  - [ ] Los documentos generados conservan una instantánea de los valores utilizados al emitir.
+  - [ ] Los cambios posteriores en expedientes, notas o pagos no modifican documentos emitidos anteriormente.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T06] [P0] Generación Masiva de Documentos y Procesamiento Resiliente por Lotes
+- **Orden de Ejecución:** 6
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`generateBulkSchoolDocumentsBatch`, `downloadDocumentPackageZip`, `resumeBulkGenerationProcess`)
+  - Hoja: `DocumentosEscolaresEmitidos`, `LotesGeneracionDocumental`
+- **Subcapacidades Relacionadas:** F31-07, F31-19.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-07) y Backlog de Implementación F31-T06.
+- **Problema o Carencia:**
+  La generación individual y por lotes está contemplada en el motor actual, pero se requiere una solución operativa completa para emitir documentos de grupos, grados, secciones o conjuntos de usuarios sin depender de una ejecución sincrónica prolongada que pueda agotar las cuotas o tiempos máximos de Google Apps Script.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Selección y previsualización de destinatarios:*
+     - Seleccionar grupos mediante filtros autorizados: grado, sección, nivel, departamento o lote de expedientes.
+     - Mostrar el número exacto de destinatarios antes de iniciar el procesamiento.
+     - Seleccionar la plantilla y verificar que corresponde a una versión publicada y aprobada.
+     - Previsualizar una muestra aleatoria antes de lanzar la generación masiva completa.
+  2. *Procesamiento resiliente en bloques:*
+     - Ejecución segmentada en bloques (ej. 10 a 15 documentos por bloque) con persistencia de estado intermedio en `LotesGeneracionDocumental`.
+     - Mostrar barra de progreso en tiempo real identificando documentos exitosos, fallidos y pendientes.
+     - Concurrencia atómica con `LockService` garantizando numeración correlativa secuencial y CUV único sin colisiones.
+     - Los fallos individuales en un registro no invalidan ni detienen el resto del lote.
+  3. *Reanudación, descarga consolidada y auditoría:*
+     - Capacidad de reanudar un lote interrumpido procesando únicamente los elementos pendientes, sin regenerar ni duplicar correlativos de documentos ya emitidos.
+     - Generación de paquete ZIP descargable conteniendo todos los archivos PDF emitidos con nomenclatura de archivo estandarizada.
+     - Registro de auditoría completo: usuario que inició, fecha, plantilla, versión, destinatarios y resultado.
+     - Políticas de expiración y limpieza automática de archivos temporales en Drive.
+- **Criterios de Aceptación:**
+  - [ ] Se generan documentos para grupos con diferentes cantidades de destinatarios sin exceder tiempos de ejecución de Apps Script.
+  - [ ] Cada documento contiene los datos del destinatario correcto.
+  - [ ] El progreso refleja los resultados reales y los fallos individuales no abortan el lote completo.
+  - [ ] Los reintentos no duplican documentos ni correlativos institucionales.
+  - [ ] El paquete ZIP contiene todos los documentos exitosos organizados con nombres legibles.
+  - [ ] Se puede consultar el historial del proceso y verificar los límites reales antes de configurar tamaños de lote.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 2. FORMULARIOS DIGITALES Y AUTOMATIZACIÓN — PRIORIDAD P1
+
+### [F31-T07] [P1] Constructor Visual Universal de Formularios Digitales
+- **Orden de Ejecución:** 7
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`saveInstitutionalFormSchema`, `getFormSchemaWithFields`)
+  - `js/ui-common.js` (Constructor visual arrastrar y soltar)
+  - Hoja: `FormulariosInstitucionales`
+- **Subcapacidades Relacionadas:** F31-04, F31-11.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-04) y Backlog de Implementación F31-T07.
+- **Problema o Carencia:**
+  La plataforma permite almacenar definiciones de formularios y procesar solicitudes, pero la configuración basada en estructuras JSON no ofrece a los responsables institucionales una experiencia suficientemente accesible para diseñar y mantener formularios complejos.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Constructor visual interactivo:*
+     - Crear formularios desde cero o duplicar formularios existentes mediante interfaz visual de arrastrar y soltar.
+     - Reordenar campos y secciones, agruparlos por categorías y crear formularios multipágina.
+     - Configurar títulos, instrucciones y descripciones por sección.
+     - Previsualizar el formulario en vistas de escritorio y móvil durante el diseño.
+     - Guardar borradores sin publicarlos, duplicar, versionar y archivar formularios.
+  2. *Catálogo completo de tipos de campos:*
+     - Texto corto y texto multilínea, número entero y decimal.
+     - Fecha, hora, fecha y hora combinadas, correo electrónico y teléfono.
+     - Listas desplegables, selección múltiple, botones de opción (radio) y casillas de verificación (checkboxes).
+     - Campos de dirección, firma manuscrita digitalizada, adjuntos de archivos y campos calculados.
+     - Campos ocultos controlados por el sistema, separadores y textos informativos.
+     - Selectores alimentados dinámicamente por catálogos institucionales autorizados (grados, secciones, materias).
+  3. *Propiedades y configuración de campos:*
+     - Etiqueta visible, descripción y texto de ayuda (placeholder), valor predeterminado.
+     - Obligatoriedad (requerido/opcional), longitud mínima y máxima, límites numéricos y formato/patrón regex de validación con mensaje de error personalizado.
+     - Identificador estable del campo para conservar compatibilidad entre versiones.
+     - Configuración de adjuntos por tipos MIME y tamaño máximo permitido.
+  4. *Vinculación con plantillas documentales:*
+     - Asociar un formulario con una o varias plantillas autorizadas.
+     - Mapear las respuestas del formulario a las variables dinámicas de la plantilla.
+     - Permitir formularios que solo recopilen información sin emitir documentos, así como formularios que generen automáticamente un documento oficial tras su aprobación.
+- **Criterios de Aceptación:**
+  - [ ] Se pueden crear formularios complejos con todos los tipos de campos implementados sin escribir JSON manual.
+  - [ ] Se pueden reorganizar campos y páginas conservando sus propiedades al guardar y reabrir.
+  - [ ] Las respuestas se almacenan con identificadores estables y no se alteran al editar versiones posteriores.
+  - [ ] Los formularios publicados se pueden diligenciar desde los perfiles autorizados y generan el documento correspondiente.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T08] [P1] Motor Centralizado de Reglas Condicionales y Formularios Dinámicos
+- **Orden de Ejecución:** 8
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`evaluateFormConditionalLogic`, `validateFormSubmissionRules`)
+  - `js/ui-common.js`
+  - Hoja: `FormulariosInstitucionales`
+- **Subcapacidades Relacionadas:** F31-05.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-05) y Backlog de Implementación F31-T08.
+- **Problema o Carencia:**
+  La lógica condicional funciona en determinados formularios mediante scripts particulares en el cliente, pero carece de un motor centralizado, estandarizado y verificable en servidor para impedir inconsistencias o peticiones manipuladas.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Constructor y evaluador de reglas condicionales:*
+     - Reglas condicionales configurables visualmente desde el constructor.
+     - Operadores de comparación: Igual, Diferente, Mayor que, Menor que, Contiene, No contiene, Está vacío y No está vacío.
+     - Agrupación lógica de condiciones mediante operadores booleanos AND y OR.
+  2. *Acciones dinámicas sobre el formulario:*
+     - Mostrar u ocultar campos individuales o secciones completas.
+     - Habilitar o deshabilitar campos según elecciones previas.
+     - Cambiar dinámicamente la obligatoriedad de un campo (ej. requerir documento de traslado únicamente si el estudiante proviene de otro colegio).
+     - Ramificaciones entre páginas del formulario y campos calculados en tiempo real.
+     - Detección y prevención de referencias circulares o dependencias contradictorias antes de publicar el formulario.
+  3. *Validación en servidor y seguridad:*
+     - Validar las reglas condicionales tanto en cliente como en el backend.
+     - Los campos ocultados dinámicamente no deben bloquear el envío por reglas de obligatoriedad que ya no aplican.
+     - Rechazar en servidor envíos manipulados que intenten inyectar valores en campos que debían estar deshabilitados u ocultos.
+     - Definir política para respuestas de campos que dejan de ser visibles al cambiar una opción previa.
+- **Criterios de Aceptación:**
+  - [ ] Se pueden configurar y evaluar reglas con combinaciones AND y OR complejas.
+  - [ ] La visibilidad y obligatoriedad cambian en tiempo real de forma idéntica en escritorio y dispositivos móviles.
+  - [ ] El servidor rechaza peticiones que violen las reglas condicionales configuradas.
+  - [ ] Se detectan e informan dependencias circulares o reglas inválidas antes de la publicación.
+  - [ ] Se pueden probar las reglas en un entorno de simulación previo al lanzamiento.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T09] [P1] Guardado de Borradores, Continuidad de Formularios y Recuperación de Respuestas
+- **Orden de Ejecución:** 9
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`saveFormDraftSubmission`, `getFormDraftSubmission`, `resolveFormSubmissionConflict`)
+  - `js/ui-common.js`, `js/persistence.js`
+  - Hoja: `BorradoresFormularios`, `SolicitudesTramites`
+- **Subcapacidades Relacionadas:** F31-05, F31-18.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-05, F31-18) y Backlog de Implementación F31-T09.
+- **Problema o Carencia:**
+  Los trámites institucionales extensos que requieren múltiples pasos y adjuntos pueden perderse si el usuario sufre un cierre accidental, interrupción de conexión o cambio de dispositivo antes de enviar, perjudicando los procesos de matrícula y solicitudes.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Persistencia temporal de borradores:*
+     - Guardado automático periódico en segundo plano y guardado manual con indicación de fecha y hora.
+     - Recuperación fluida del último estado guardado al reanudar la sesión en cualquier dispositivo.
+     - Permitir guardar formularios incompletos identificando campos pendientes y errores de validación sin enviar la solicitud formal.
+  2. *Ciclo de vida y corrección de solicitudes:*
+     - Estados diferenciados: `Borrador`, `Enviado`, `En_Revision`, `Observado`, `Aprobado`, `Rechazado` y `Cerrado`.
+     - Permitir subsanar una solicitud observada corrigiendo los campos señalados sin generar un nuevo trámite duplicado.
+     - Mantener los archivos adjuntos cargados vinculados al borrador de forma segura.
+  3. *Control de concurrencia y expiración:*
+     - Controlar conflictos de edición simultánea si el formulario se accede desde múltiples sesiones.
+     - Políticas configurables de expiración y purga de borradores abandonados (`DIAS_EXPIRACION_BORRADORES`).
+     - Protección contra envíos dobles mediante tokens de transacción (idempotencia).
+- **Criterios de Aceptación:**
+  - [ ] Un formulario incompleto se guarda en borrador y se recupera intacto tras cerrar la sesión o perder conexión.
+  - [ ] El envío definitivo no se duplica ante doble pulsación del botón o reintentos de red.
+  - [ ] Una solicitud observada puede ser editada y reenviada conservando su número de trámite original.
+  - [ ] Los borradores no son accesibles por usuarios externos no autorizados y caducan según la política configurada.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T10] [P1] Sistema de Estilos Institucionales y Componentes Documentales Reutilizables
+- **Orden de Ejecución:** 10
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`saveCorporateStyleLibrary`, `getCorporateStyleLibrary`, `applyCorporateStyleToTemplate`)
+  - `js/ui-common.js`
+  - Hoja: `EstilosCorporativosDocumentales`, `ComponentesDocumentalesReutilizables`
+- **Subcapacidades Relacionadas:** F31-03.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-03) y Backlog de Implementación F31-T10.
+- **Problema o Carencia:**
+  Las plantillas configuran formatos y estilos de forma aislada, originando inconsistencias visuales en el uso de membretes, sellos, paletas de colores corporativos y tipografías entre departamentos que deberían compartir una identidad visual uniforme.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Perfiles de diseño e identidad institucional:*
+     - Configurar perfiles corporativos con logotipos oficiales en alta resolución, encabezados, pies de página, sellos digitales y datos de contacto.
+     - Paletas de colores aprobadas y tipografías autorizadas con tamaños jerárquicos.
+     - Estilos reutilizables para títulos, subtítulos, texto normal, tablas y notas legales al pie.
+  2. *Bloques y componentes institucionales reutilizables:*
+     - Bloques predefinidos: bloques de firmas mancomunadas, declaraciones juradas, advertencias legales y cajas de contacto.
+     - Diseños diferenciados por departamento o categoría documental.
+     - Encabezados y pies de página distintos para la primera página y para páginas pares/impares (impresión dúplex).
+     - Configuración de la ubicación del CUV, código QR, folio correlativo y fecha de emisión.
+  3. *Gobernanza y resolución de conflictos:*
+     - Las nuevas plantillas heredan automáticamente el perfil de diseño institucional asignado.
+     - Permitir excepciones locales justificadas en plantillas particulares sin alterar el perfil global.
+     - Los cambios en los perfiles globales de diseño aplican únicamente a nuevas emisiones, respetando la inmutabilidad de los documentos emitidos históricos.
+- **Criterios de Aceptación:**
+  - [ ] Se pueden crear y asignar perfiles de diseño institucional por departamento.
+  - [ ] Las nuevas plantillas heredan los estilos y componentes corporativos de forma transparente.
+  - [ ] Las modificaciones en la identidad visual no alteran retrospectivamente documentos ya emitidos.
+  - [ ] Los encabezados y pies diferenciados (primera página y páginas pares/impares) se renderizan fielmente en el PDF.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T11] [P1] Integración Automática de Documentos Emitidos con Expedientes y Procesos
+- **Orden de Ejecución:** 11
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`linkIssuedDocumentToStudentFile`, `linkIssuedDocumentToEmployeeFile`)
+  - `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`
+  - Hoja: `DocumentosEscolaresEmitidos`, `DocumentosEstudiante`, `DocumentosEmpleado`, `ExpedientesEstudiantes`
+- **Subcapacidades Relacionadas:** F31-16, F31-22.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-16, F31-22) y Backlog de Implementación F31-T11.
+- **Problema o Carencia:**
+  Existen vínculos parciales entre documentos emitidos, expedientes de estudiantes y trámites, pero se requiere consolidar la cobertura para asegurar que todo documento generado (constancias, certificaciones, contratos, amonestaciones) se archive automáticamente en el expediente correcto sin intervención manual.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Indexación automática transversal:*
+     - Asociar documentos emitidos con expedientes de estudiantes, expedientes laborales de docentes/personal, responsables de familia y expedientes de trámites administrativos.
+     - Registrar metadatos completos: tipo documental, CUV, número correlativo, destinatario, fecha, plantilla, versión y usuario emisor.
+     - Diferenciar documentos generados automáticamente por el sistema de documentos externos escaneados y cargados al expediente.
+  2. *Consulta y filtrado centralizado:*
+     - Consultar y descargar documentos directamente desde la ficha del expediente en los dashboards respectivos (Secretaría, Dirección, Recursos Humanos, Contabilidad).
+     - Filtros multicriterio: tipo de documento, fecha, estado, departamento y emisor.
+     - Evitar asociaciones ambiguas cuando existan homónimos mediante validación de identificador único institucional.
+     - Permitir corregir una asociación errónea mediante una operación auditada con justificación obligatoria.
+     - Mantener la integridad de las referencias históricas aunque el expediente sea archivado o transferido.
+- **Criterios de Aceptación:**
+  - [ ] Los documentos emitidos se asocian de forma automática e inmediata al expediente correspondiente.
+  - [ ] Los documentos de un estudiante o empleado no son visibles en expedientes ajenos.
+  - [ ] Las referencias se conservan intactas tras cambios de estado, grado o baja del expediente.
+  - [ ] Se registran en auditoría todas las correcciones o traslados de asociación documental.
+  - [ ] El acceso respeta estrictamente los permisos del expediente y la confidencialidad del documento.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T12] [P1] Ampliación del Catálogo Universal de Documentos y Trámites Departamentales
+- **Orden de Ejecución:** 12
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`initializeDepartmentalDocumentCatalog`)
+  - `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`
+  - Hoja: `PlantillasEscolares`, `CatalogoTramitesInstitucionales`
+- **Subcapacidades Relacionadas:** F31-22.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-22) y Backlog de Implementación F31-T12.
+- **Problema o Carencia:**
+  El catálogo actual contempla constancias escolares y recibos de pago, pero no cubre suficientemente los procesos documentales de todos los departamentos (RRHH, Dirección, Docencia, Operaciones), requiriendo unificar la creación de plantillas bajo el mismo motor universal.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Cobertura departamental estandarizada:*
+     - Secretaría: Constancias de estudio, certificados de notas oficiales, historiales académicos, constancias de matrícula, autorizaciones, solicitudes de traslado y comunicaciones a familias.
+     - Dirección y Administración: Circulares, memorandos, actas de asamblea, resoluciones, acuerdos directivos y comunicaciones oficiales.
+     - Docencia y Coordinación: Informes bimestrales de rendimiento, reportes de evaluación por competencias, actas de reuniones de área, planificaciones y reportes de seguimiento conductual.
+     - Contabilidad y Finanzas: Recibos oficiales, estados de cuenta, comprobantes de retención, notificaciones de cobro y actas de arqueo de caja.
+     - Recursos Humanos: Contratos laborales y adendas, constancias de trabajo, solicitudes de permisos/vacaciones, actas de descargo y amonestaciones.
+     - Operaciones: Formularios de despacho de inventario, actas de recepción de bienes, contratos de transporte y autorizaciones de retiro de alumnos.
+  2. *Automatización de trámites de principio a fin:*
+     - Iniciar el trámite desde una plantilla del catálogo departamental.
+     - Recuperar datos del expediente, completar campos mediante formulario, someter a flujo de aprobación, emitir PDF final con CUV, indexar en el expediente y notificar a los interesados.
+- **Criterios de Aceptación:**
+  - [ ] Se pueden crear y administrar documentos de diferentes departamentos utilizando el mismo motor central.
+  - [ ] Cada categoría documental dispone de sus propios campos, flujos de aprobación y permisos aislados.
+  - [ ] Las plantillas de un departamento no son accesibles por perfiles sin autorización.
+  - [ ] Se comprueba la ejecución completa de un trámite documental desde su solicitud hasta su archivo en expediente.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T13] [P1] Gestión Avanzada de Versiones y Ciclo de Vida Inmutable de Plantillas
+- **Orden de Ejecución:** 13
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`createDocumentTemplateVersion`, `compareTemplateVersions`, `restoreTemplateVersion`)
+  - Hoja: `PlantillasEscolares`, `HistorialVersionesPlantillas`
+- **Subcapacidades Relacionadas:** F31-13.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-13) y Backlog de Implementación F31-T13.
+- **Problema o Carencia:**
+  La plataforma registra versiones numéricas y protege documentos emitidos, pero se necesita un ciclo de vida formal que distinga entre borradores, versiones en revisión, aprobadas, publicadas y archivadas, permitiendo comparar cambios y restaurar versiones previas de forma auditable.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Ciclo de vida formal de plantillas:*
+     - Estados: `Borrador`, `En_Revision`, `Aprobada`, `Publicada`, `Archivada` y `Obsoleta`.
+     - Versionado secuencial inmutable: cambios menores (`v1.1`, `v1.2`) y cambios mayores (`v2.0`).
+     - Registrar autor, fecha y hora, motivo justificado y resumen detallado de los cambios realizados.
+     - Programación de fechas de vigencia: fecha de entrada en vigor y fecha límite de validez.
+  2. *Comparación y restauración segura:*
+     - Herramienta visual de comparación (diff) entre dos versiones mostrando variaciones de texto, formato, campos y reglas.
+     - Restaurar una versión anterior como una nueva versión activa, sin eliminar el historial intermedio.
+     - Retirar o archivar una plantilla impidiendo su uso en nuevos trámites pero conservando el acceso a documentos históricos emitidos bajo dicha versión.
+     - Detectar ediciones concurrentes para prevenir sobrescrituras silenciosas mediante control de versiones optimista.
+- **Criterios de Aceptación:**
+  - [ ] Se conserva el historial completo e inmutable de todas las versiones de cada plantilla.
+  - [ ] El comparador identifica con precisión las diferencias de texto, campos y diseño entre dos versiones.
+  - [ ] La restauración crea una nueva versión sin destruir versiones previas.
+  - [ ] Los documentos emitidos conservan inalterada la referencia a la versión exacta con la que fueron generados.
+  - [ ] Los trámites en curso mantienen la versión vigente al momento de su inicio.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T14] [P1] Administración Granular de Permisos y Flujos de Aprobación Documental
+- **Orden de Ejecución:** 14
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`manageDocumentPermissions`, `processDocumentApprovalStep`)
+  - `backend/user-service/Code.gs`
+  - Hoja: `PermisosDocumentales`, `FlujosAprobacionDocumentos`
+- **Subcapacidades Relacionadas:** F31-14.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-14) y Backlog de Implementación F31-T14.
+- **Problema o Carencia:**
+  La plataforma cuenta con permisos por roles generales, pero el sistema documental requiere una granularidad precisa para definir quién puede crear, editar, emitir, aprobar, archivar, descargar o compartir plantillas y documentos específicos según su departamento o confidencialidad.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Matriz granular de permisos documentales:*
+     - Operaciones: Crear plantillas, Editar plantillas asignadas, Duplicar, Consultar catálogo, Emitir documentos individuales/masivos, Diseñar formularios, Revisar y aprobar, Publicar versiones, Archivar y Descargar/Imprimir.
+     - Alcance de autorización: Por rol, usuario individual, departamento, categoría documental, plantilla específica o expediente institucional.
+  2. *Flujos de aprobación multinivel:*
+     - Configurar etapas secuenciales de aprobación con responsables asignados.
+     - Decisiones: `Aprobar`, `Rechazar` o `Solicitar_Correcciones` con comentarios obligatorios.
+     - Notificación automática a los participantes de la siguiente etapa.
+     - Impedir la autoaprobación de plantillas cuando la política institucional exija separación de responsabilidades.
+     - Delegación temporal de aprobación autorizada vinculada a [F30-Task08].
+  3. *Seguridad y aplicación estricta en servidor:*
+     - Validación obligatoria en el backend (no limitarse a ocultar botones en el frontend).
+     - Bloquear consultas directas o manipulación de parámetros de URL para acceder a documentos fuera de alcance.
+     - Revocación inmediata: al retirar un permiso, las peticiones subsiguientes son denegadas automáticamente.
+- **Criterios de Aceptación:**
+  - [ ] Los permisos se configuran y aplican de forma granular por operación, departamento y plantilla.
+  - [ ] Los endpoints del backend rechazan cualquier operación no autorizada mediante validación estricta de sesión.
+  - [ ] Las aprobaciones quedan firmadas digitalmente y asociadas a una versión inmutable.
+  - [ ] La revocación de permisos surte efecto inmediato en la siguiente llamada a la API.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T15] [P1] Seguridad Avanzada y Validación Criptográfica de Archivos Documentales
+- **Orden de Ejecución:** 15
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`validateBinaryAttachmentSecurity`, `sanitizeUploadedDocumentContent`)
+  - `backend/user-service/Code.gs`
+- **Subcapacidades Relacionadas:** F31-15, F31-17.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-15, F31-17) y Backlog de Implementación F31-T15.
+- **Problema o Carencia:**
+  La plataforma valida extensiones y tamaños de adjuntos, pero se requiere endurecimiento contra archivos con contenidos maliciosos encubiertos (ejecutables renombrados, macros embebidas o ataques de inyección) para proteger la información institucional y personal almacenada en Google Drive.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Validación binaria de archivos (Magic Numbers):*
+     - Validar la firma binaria real del archivo contrastándola con el tipo MIME declarado (PDF, PNG, JPG, DOCX).
+     - Rechazar archivos ejecutables (.exe, .bat, .cmd, .sh, .vbs, .js) y archivos con doble extensión.
+     - Deshabilitar o neutralizar macros VBA, scripts y acciones ejecutables embebidas en documentos importados.
+  2. *Sanitización y mitigación de inyecciones:*
+     - Sanitizar contenidos HTML importados para prevenir cross-site scripting (XSS).
+     - Prevenir inyecciones de fórmulas (CSV/Excel Formula Injection) cuando datos de formularios se exporten a hojas de cálculo.
+     - Validar archivos comprimidos ZIP previniendo ataques de bomba de descompresión (zip bombs) o rutas relativas maliciosas.
+  3. *Privacidad y control de enlaces:*
+     - Garantizar que los archivos en Google Drive permanezcan en carpetas privadas con permisos controlados.
+     - Acceso mediante enlaces temporales firmados criptográficamente (HMAC-SHA256) con expiración configurable.
+     - Auditoría estricta de descargas, accesos rechazados y expiraciones sin exponer datos PII.
+- **Criterios de Aceptación:**
+  - [ ] Un archivo ejecutable con extensión `.pdf` renombrada es bloqueado y rechazado por el servidor.
+  - [ ] Los scripts o macros dentro de archivos importados son desarmados sin interrumpir el sistema.
+  - [ ] Los documentos privados no se pueden descargar mediante enlaces públicos ni manipulación de identificadores.
+  - [ ] Todos los accesos a documentos sensibles quedan registrados en la bitácora de seguridad.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T16] [P1] Fortalecimiento de Firmas, Conformidades y Evidencias de Aprobación
+- **Orden de Ejecución:** 16
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`registerDocumentSignature`, `verifyDocumentSignatureIntegrity`)
+  - Hoja: `FirmasConformidades`, `DocumentosEscolaresEmitidos`
+- **Subcapacidades Relacionadas:** F31-11, F31-15.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-11) y Backlog de Implementación F31-T16.
+- **Problema o Carencia:**
+  El registro de firmas con token y hash aporta trazabilidad, pero se requiere diferenciar con rigor técnico y legal entre aceptación electrónica simple, conformidad registrada, firma manuscrita digitalizada y firma electrónica avanzada bajo el marco normativo aplicable (Decreto 149-2013).
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Diferenciación de modalidades de firma:*
+     - Aceptación simple (checkbox de consentimiento con marca de tiempo e IP).
+     - Firma manuscrita digitalizada (trazo capturado en Canvas incrustado visualmente).
+     - Firma electrónica institucional (asociada a la identidad del usuario con hash SHA-256 del documento y token de verificación).
+  2. *Metadatos y sellado de integridad:*
+     - Identidad del firmante (`userId`, DNI, rol), contexto de la operación, fecha/hora exacta.
+     - Hash criptográfico SHA-256 del documento al momento de la firma para verificar que el contenido no ha cambiado posteriormente.
+     - Soporte para flujos de múltiples firmantes con orden secuencial de intervención obligatorio.
+     - Imposibilidad de reutilizar una evidencia de firma en otro documento o versión distinta.
+  3. *Certificado de evidencia de firma:*
+     - Generar hoja de evidencias o resumen de firmas anexable al documento PDF con código de verificación.
+- **Criterios de Aceptación:**
+  - [ ] Cada firma queda indisolublemente vinculada al hash de la versión exacta del documento firmado.
+  - [ ] Cualquier alteración posterior del archivo se detecta al recalcular el hash criptográfico.
+  - [ ] La interfaz comunica con total claridad el alcance y tipo de firma registrado sin atribuir falsas equivalencias legales.
+  - [ ] Se respeta el orden estricto de intervención en flujos de firmas mancomunadas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T23] [P1] Banco de Pruebas Documentales y Validación de Fidelidad Multi-Formato
+- **Orden de Ejecución:** 17
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `tests/regression/academic-grading-suite.js`
+  - `backend/developer-service/Code.gs` (`runDocumentDesignerRegressionSuite`)
+- **Subcapacidades Relacionadas:** F31-19, F31-20.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección E (DOC-01 a DOC-30) y Backlog de Implementación F31-T23.
+- **Problema o Carencia:**
+  La plataforma cuenta con 53 pruebas automáticas pasando, pero se necesita un banco de pruebas específico y exhaustivo para validar la fidelidad visual, importación DOCX/PDF, paginación, combinación de datos y generación masiva sin regresiones en actualizaciones futuras.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Banco de archivos de referencia y escenarios obligatorios:*
+     - Archivos DOCX de prueba (Word 2013, 2016, 2017): documentos extensos, tablas complejas con celdas combinadas, imágenes ajustadas y encabezados diferenciados.
+     - Archivos PDF de prueba: digitales con texto vectorial, escaneados (mapa de bits), páginas rotadas y formularios interactivos.
+     - Formularios: validación de obligatoriedad, reglas condicionales AND/OR, campos calculados y recuperación de borradores.
+     - Emisión: combinación con variables escalares, secciones repetibles (`{{#each}}`), generación masiva y reintentos ante fallos.
+  2. *Automatización y comparación de fidelidad:*
+     - Aserciones automatizadas en Node.js y Apps Script para validar contratos, hashes de integridad y consistencia relacional.
+     - Verificación de ausencia de pérdidas de contenido, desbordamientos de márgenes y páginas en blanco inesperadas.
+     - Registro de resultados vinculados a la versión evaluada.
+- **Criterios de Aceptación:**
+  - [ ] El banco de pruebas se ejecuta de forma automatizada y reproducible en el entorno de desarrollo y CI.
+  - [ ] Cubre la totalidad de los 30 escenarios de la matriz de pruebas funcionales (DOC-01 a DOC-30).
+  - [ ] Se detectan e informan regresiones de formato, pérdidas de texto o fallos de cálculo dinámico.
+  - [ ] Las pruebas se ejecutan sobre datos sintéticos sin corromper la base de datos de producción.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T24] [P1] Optimización del Rendimiento y Resiliencia del Procesamiento Documental
+- **Orden de Ejecución:** 18
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`optimizeDocumentProcessingMemory`, `monitorDocumentGenerationQuotas`)
+  - `backend/developer-service/Code.gs`
+- **Subcapacidades Relacionadas:** F31-19.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-19) y Backlog de Implementación F31-T24.
+- **Problema o Carencia:**
+  El procesamiento de documentos pesados con imágenes de alta resolución o la generación simultánea de múltiples certificados puede provocar saturación de memoria en Google Apps Script o exceder los límites de tiempo de ejecución (6 minutos).
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Gestión eficiente de recursos y memoria:*
+     - Optimización de carga evitando almacenar documentos completos no utilizados en variables globales de Apps Script.
+     - Procesamiento por bloques dimensionados según el consumo real medido de CPU y cuota de Drive.
+     - Optimización y compresión ligera de imágenes en cliente antes del envío para previsualización.
+     - Limpieza sistemática de archivos temporales generados durante conversiones o empaquetamientos ZIP.
+  2. *Resiliencia operativa:*
+     - Manejo de reintentos exponenciales ante fallos transitorios de red con Google Drive.
+     - Liberación garantizada de bloqueos de concurrencia (`LockService.releaseLock()`) en bloques `finally`.
+     - Evitar que la ejecución de un proceso documental masivo bloquee consultas concurrentes de otros usuarios.
+- **Criterios de Aceptación:**
+  - [ ] Se demuestra la generación estable de documentos con imágenes pesadas sin agotar la memoria de Apps Script.
+  - [ ] Las operaciones interrumpidas no dejan bloqueos activos en `LockService` ni archivos temporales huérfanos.
+  - [ ] Se documentan las métricas reales de tiempo y consumo de cuota por operación.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 3. EXPERIENCIA, VERIFICACIÓN Y CAPACIDADES AVANZADAS — PRIORIDAD P2
+
+### [F31-T17] [P2] Optimización de Experiencia Móvil, Accesibilidad y Usabilidad del Diseñador
+- **Orden de Ejecución:** 19
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `js/ui-common.js`, `js/teacher.js`, `css/style.css`
+- **Subcapacidades Relacionadas:** F31-18.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-18) y Backlog de Implementación F31-T17.
+- **Problema o Carencia:**
+  Las herramientas de diseño visual y edición de campos superpuestos sobre PDF presentan limitaciones en dispositivos móviles (dificultad para arrastrar con precisión táctil, controles fuera de vista o menús contextuales invasivos).
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Adaptación táctil del editor visual:*
+     - Controles táctiles precisos para mover, redimensionar y alinear cajas de texto superpuestas en pantallas pequeñas.
+     - Soporte para gestos de pellizco para zoom (pinch-to-zoom) y desplazamiento panorámico sin deseleccionar elementos.
+     - Modo de previsualización de lectura independiente de las barras de herramientas de edición.
+  2. *Accesibilidad WCAG 2.2 AA y formularios móviles:*
+     - Formularios multipágina optimizados para diligenciamiento vertical sin desplazamientos horizontales.
+     - Navegación por teclado completa con indicador de foco visible en todos los botones y campos interactivos.
+     - Contraste de colores accesible, mensajes de validación contextuales junto al campo correspondiente y soporte para lectores de pantalla (`aria-live`).
+- **Criterios de Aceptación:**
+  - [ ] Se puede completar y firmar un formulario institucional multipágina desde un teléfono móvil con fluidez.
+  - [ ] Se pueden ajustar campos superpuestos con precisión táctil sin desbordar el área visible.
+  - [ ] Cumple con las pautas de accesibilidad WCAG 2.2 AA en contrastes, etiquetas y navegación asistida.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T18] [P2] Generación de Códigos QR Dinámicos y Verificación Documental CUV Ampliada
+- **Orden de Ejecución:** 20
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`injectQRCodeInDocumentPdf`, `verifySchoolDocumentByCUV`)
+  - `js/teacher.js`
+  - Hoja: `DocumentosEscolaresEmitidos`
+- **Subcapacidades Relacionadas:** F31-23.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-23) y Backlog de Implementación F31-T18.
+- **Problema o Carencia:**
+  Actualmente el Código Único de Verificación (CUV) se plasma únicamente como texto alfanumérico, exigiendo que terceros que deseen autenticar un certificado deban escribir manualmente el código en lugar de escanear un código QR con su smartphone.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Generación e incrustación de Código QR:*
+     - Generar automáticamente código QR dinámico por cada documento emitido que encadene la URL oficial de verificación: `https://[dominio]/verify?cuv=CUV-YYYY-XXXXXX`.
+     - Configurar tamaño, posición y visibilidad del QR en la plantilla (membrete o pie de página).
+     - Garantizar contraste y legibilidad óptima tanto en pantalla como al imprimir en blanco y negro.
+  2. *Portal público de verificación seguro:*
+     - Desplegar resultado oficial: estado del documento (`Válido`, `Revocado`, `Sustituido`), fecha de emisión, tipo documental, nombre del titular y emisor institucional.
+     - Protección estricta de datos personales: no exponer notas individuales confidenciales, teléfonos ni direcciones en la consulta pública.
+     - Registro de auditoría de consultas de verificación para detectar posibles sondeos maliciosos.
+- **Criterios de Aceptación:**
+  - [ ] Cada documento oficial emitido incorpora un código QR escaneable y nítido.
+  - [ ] Al escanear el QR se abre la página oficial confirmando la validez del documento en menos de 2 segundos.
+  - [ ] La consulta pública no expone información sensible protegida por la ley de privacidad.
+  - [ ] El QR permanece asociado de forma inmutable al documento emitido.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T19] [P2] Plantillas Multilingües Sincronizadas y Localización Documental
+- **Orden de Ejecución:** 21
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`configureMultilingualDocumentTemplate`, `getLocalizedTemplateContent`)
+  - Hoja: `PlantillasEscolares`
+- **Subcapacidades Relacionadas:** F31-23.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-23) y Backlog de Implementación F31-T19.
+- **Problema o Carencia:**
+  Para emitir documentos en otros idiomas (como constancias en inglés para aplicaciones al extranjero), las instituciones suelen duplicar plantillas de forma manual, ocasionando desincronización de formatos y divergencias de mantenimiento.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Estructura multilingüe sincronizada:*
+     - Asociar múltiples variantes lingüísticas (Español / Inglés) a una misma plantilla lógica maestra.
+     - Mantener idénticos los identificadores de variables dinámicas, reglas de formato y esquemas de CUV.
+     - Permitir traducir textos fijos, etiquetas y encabezados sin alterar el origen de los datos institucionales.
+  2. *Localización y selección en emisión:*
+     - Selector de idioma al momento de emitir el documento individual o por lotes.
+     - Aplicación de formatos regionales correspondientes al idioma seleccionado (fechas y puntuación decimal).
+     - Advertir al usuario si una variante lingüística se encuentra desactualizada respecto a la plantilla principal.
+- **Criterios de Aceptación:**
+  - [ ] Se pueden crear y vincular traducciones oficiales dentro de una misma plantilla maestra.
+  - [ ] El documento se genera en el idioma elegido manteniendo la sustitución exacta de las variables dinámicas.
+  - [ ] Los correlativos y códigos CUV se mantienen consistentes independientemente del idioma de emisión.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T20] [P2] Revisión Colaborativa y Comentarios sobre Plantillas
+- **Orden de Ejecución:** 22
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`addTemplateReviewComment`, `getTemplateReviewComments`, `resolveTemplateReviewComment`)
+  - `js/teacher.js`
+  - Hoja: `ComentariosRevisionPlantillas`
+- **Subcapacidades Relacionadas:** F31-14, F31-20, F31-23.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-14, F31-23) y Backlog de Implementación F31-T20.
+- **Problema o Carencia:**
+  La creación y ajuste de nuevas plantillas institucionales antes de su aprobación carece de un espacio de comunicación interna formal, obligando a coordinadores, secretaría y dirección a realizar observaciones fuera del sistema.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Comentarios y notas de revisión:*
+     - Permitir a revisores autorizados insertar comentarios asociados al documento completo o a fragmentos específicos.
+     - Registrar autor, fecha y hora, estado de la observación (`Pendiente`, `Resuelta`, `Descartada`) y respuestas en hilo.
+     - Solicitar modificaciones formales al creador de la plantilla antes de elevarla a publicación.
+  2. *Aislamiento y trazabilidad:*
+     - Los comentarios de revisión son de carácter estrictamente interno y no aparecen jamás en el documento PDF emitido.
+     - Condicionar la aprobación directiva final a la resolución de las observaciones obligatorias pendientes.
+- **Criterios de Aceptación:**
+  - [ ] Los revisores pueden dejar y responder observaciones sobre versiones en borrador.
+  - [ ] Las notas de revisión se conservan para auditoría y nunca se filtran al archivo final generado.
+  - [ ] Se restringe la visualización de comentarios según el departamento y roles autorizados.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T21] [P2] Búsqueda Avanzada, Clasificación y Administración del Repositorio Documental
+- **Orden de Ejecución:** 23
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`searchDocumentRepositoryAdvanced`, `manageDocumentCategoriesAndTags`)
+  - `js/teacher.js`, `js/ui-common.js`
+- **Subcapacidades Relacionadas:** F31-12.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-12) y Backlog de Implementación F31-T21.
+- **Problema o Carencia:**
+  El catálogo actual filtra plantillas básicas por departamento y categoría, pero a medida que el acervo documental crece con cientos de emisiones y plantillas departamentales, se requiere una búsqueda avanzada y clasificación ágil para localizar archivos sin latencia.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Búsqueda avanzada y filtros combinados:*
+     - Búsqueda por nombre, código interno, descripción, categoría, departamento, etiquetas personalizadas y responsable.
+     - Filtros por estado: Activas, En Borrador, En Revisión, Aprobadas, Archivadas y Obsoletas.
+     - Búsqueda de documentos emitidos por CUV, número correlativo, estudiante, empleado o fecha de emisión.
+  2. *Organización y acceso seguro:*
+     - Marcado de plantillas favoritas y lista de documentos utilizados recientemente.
+     - Aplicación estricta de permisos RBAC sobre los resultados para impedir que usuarios no autorizados descubran la existencia de documentos confidenciales.
+- **Criterios de Aceptación:**
+  - [ ] Los filtros de búsqueda se combinan de forma fluida retornando resultados en menos de 1 segundo.
+  - [ ] Es posible localizar cualquier documento emitido mediante su CUV o número correlativo.
+  - [ ] Los resultados de búsqueda respetan rigurosamente el alcance de permisos del usuario en sesión.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F31-T22] [P2] Auditoría Documental Ampliada, Trazabilidad y Métricas Operativas
+- **Orden de Ejecución:** 24
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`getDocumentLifecycleAuditTrail`, `getDocumentOperationalMetrics`)
+  - `backend/accounting-service/Code.gs`
+  - Hoja: `RegistroEventosDocumentales`, `LogsSistema`
+- **Subcapacidades Relacionadas:** F31-20.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md` / Sección B (F31-20) y Backlog de Implementación F31-T22.
+- **Problema o Carencia:**
+  La plataforma registra eventos en bitácoras generales, pero se requiere un seguimiento especializado del ciclo de vida documental que permita a los directivos reconstruir la historia completa de una plantilla, formulario o certificado desde su creación hasta su archivo.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Eventos del ciclo de vida registrados:*
+     - Creación, modificación, duplicación, cambio de versión, envío a revisión, aprobación/rechazo, publicación, emisión individual o por lotes, descargas, impresiones, firmas registradas, consultas CUV, asociación a expedientes y archivado.
+     - Metadatos: identificador del evento, usuario responsable, rol activo, fecha/hora, entidad afectada, acción, resultado, motivo y tiempo de procesamiento.
+  2. *Consultas directivas e indicadores operativos:*
+     - Consultar la línea de tiempo completa del ciclo de vida de un documento o plantilla.
+     - Métricas operativas: total de documentos emitidos por departamento, tasa de errores en generación, documentos más solicitados y tiempos promedio de aprobación.
+     - Protección inmutable de los registros contra edición manual y sanitización de datos personales en los logs técnicos.
+- **Criterios de Aceptación:**
+  - [ ] Cualquier acción relevante sobre una plantilla o documento genera un evento trazable en la bitácora.
+  - [ ] Es posible reconstruir la secuencia histórica completa de cualquier documento mediante su identificador o CUV.
+  - [ ] Los registros de auditoría no pueden ser alterados ni eliminados por usuarios ordinarios.
+  - [ ] Los tableros directivos reflejan métricas verídicas de emisión y uso documental.
+- **Estado:** [ ] Pendiente
+
+---
+
+---
+
+# FASE 32: EDITOR VISUAL DE PDF Y CAMPOS SUPERPUESTOS
+
+## RESUMEN DE SUB-CAPACIDADES Y TAREAS TÉCNICAS (FASE 32)
+
+| ID | Prioridad | Orden Secuencial | Tarea Técnica / Requisito | Componentes Principales | Subcapacidad | Estado |
+|---|---|---|---|---|---|---|
+| [F32-Task01] | P0 | 1 | Motor de Estampado Binario y Aplanado de Campos sobre el PDF Original | `backend/accounting-service/Code.gs`, `js/teacher.js` | F32-09, F32-10 | [ ] Pendiente |
+| [F32-Task02] | P0 | 2 | Sistema de Coordenadas de Precisión, Entradas Numéricas y Rejilla Magnética | `teacher-dashboard.html`, `js/teacher.js` | F32-03, F32-05 | [ ] Pendiente |
+| [F32-Task03] | P0 | 3 | Motor Inteligente de Ajuste Tipográfico y Control de Desbordamiento (Auto-Shrink) | `js/teacher.js`, `backend/accounting-service/Code.gs` | F32-05, F32-11 | [ ] Pendiente |
+| [F32-Task04] | P1 | 4 | Selección Múltiple, Edición Conjunta y Alineación Avanzada de Campos | `js/teacher.js`, `teacher-dashboard.html` | F32-05 | [ ] Pendiente |
+| [F32-Task05] | P1 | 5 | Ampliación de Tipos de Campos y Controles de Captura Especializados | `js/teacher.js`, `backend/accounting-service/Code.gs` | F32-04, F32-06 | [ ] Pendiente |
+| [F32-Task06] | P1 | 6 | Generador de Formularios Web Dinámicos Vinculado a Plantillas PDF | `js/ui-common.js`, `backend/user-service/Code.gs` | F32-07, F32-08 | [ ] Pendiente |
+| [F32-Task07] | P1 | 7 | Captura Real de Firmas Manuscritas y Generación de Códigos QR de Verificación | `js/teacher.js`, `backend/accounting-service/Code.gs` | F32-04, F32-08 | [ ] Pendiente |
+| [F32-Task08] | P1 | 8 | Autoguardado, Recuperación de Borradores y Control de Concurrencia del Editor | `js/teacher.js`, `backend/accounting-service/Code.gs` | F32-09 | [ ] Pendiente |
+| [F32-Task11] | P1 | 9 | Suite Automatizada de Pruebas de Fidelidad Geométrica, Compatibilidad y Regresión PDF | `tests/regression/academic-grading-suite.js`, `backend/developer-service/Code.gs` | F32-11 | [ ] Pendiente |
+| [F32-Task13] | P1 | 10 | Motor Unificado de Reglas de Validación y Restricciones de Formularios | `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs` | F32-07, F32-08 | [ ] Pendiente |
+| [F32-Task09] | P2 | 11 | Detector Heurístico de Líneas Guía, Casillas y Espacios de Captura | `js/teacher.js` | F32-02 | [ ] Pendiente |
+| [F32-Task10] | P2 | 12 | Motor OCR y Reconocimiento Semántico Asistido para Documentos Escaneados | `backend/developer-service/Code.gs`, `js/teacher.js` | F32-02, F32-10 | [ ] Pendiente |
+| [F32-Task12] | P2 | 13 | Biblioteca de Plantillas, Duplicación y Reutilización de Formatos Institucionales | `backend/accounting-service/Code.gs`, `teacher-dashboard.html` | F32-01, F32-09 | [ ] Pendiente |
+
+---
+
+### BLOQUE 1. INTEGRIDAD DOCUMENTAL Y PRECISIÓN DE GENERACIÓN (P0)
+
+### [F32-Task01] [P0] Motor de Estampado Binario y Aplanado de Campos sobre el PDF Original
+- **Orden de Ejecución:** 1
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`stampOverlayFieldsOnPdfBinary`, `generateFlattenedSchoolDocumentPdf`, `verifySchoolDocumentByCUV`)
+  - `js/teacher.js`
+  - Hoja: `DocumentosEscolaresEmitidos`, `PlantillasEscolares`
+- **Subcapacidades Relacionadas:** F32-09, F32-10.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (10), Sección G y Backlog F32-Task01.
+- **Problema Detectado y Riesgos:**
+  La plataforma conserva las coordenadas relativas de los campos y registra emisiones oficiales con correlativo y CUV. Sin embargo, la generación documental todavía depende principalmente de la conversión de HTML a PDF. No está consolidada la incorporación directa de los valores sobre el archivo PDF binario original, impidiendo garantizar que los documentos generados conserven exactamente el diseño, dimensiones y geometría del documento preimpreso.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Motor de composición y estampado binario:*
+     - Abrir el archivo binario original del PDF y agregar contenido sobre sus páginas sin reconstruirlas mediante HTML.
+     - Recuperar la configuración de `overlayFields` y asociar cada valor capturado con su campo correspondiente.
+     - Convertir coordenadas normalizadas en coordenadas reales del documento: posición horizontal ($X$), vertical ($Y$), ancho ($W$) y alto ($H$).
+     - Considerar dimensiones reales de cada página, su orientación y rotación, así como los límites de cuadros de página PDF (`MediaBox`, `CropBox` y `BleedBox`).
+     - Resolver matemáticamente la diferencia entre el origen de coordenadas de la interfaz (esquina superior izquierda, eje Y hacia abajo) y el formato PDF (esquina inferior izquierda, eje Y hacia arriba):
+       $$X_{pdf} = xRatio 	imes Ancho_{pagina}, \quad Y_{pdf} = Alto_{pagina} - (yRatio + hRatio) 	imes Alto_{pagina}$$
+     - Aplicar los valores capturados exactamente sobre la página correspondiente manteniendo intactos elementos gráficos, textos, imágenes, fondos, sellos, membretes, logotipos, tablas y líneas del documento original.
+  2. *Tipos de campos procesados y modalidades de emisión:*
+     - Estampar: texto plano, texto multilínea, fechas, casillas marcadas, selecciones, firmas manuscritas digitalizadas, imágenes y códigos QR.
+     - Modalidad interactiva vs aplanada: permitir emitir PDF interactivo con campos rellenables activos o PDF aplanado (*flattened*) donde los valores quedan incrustados visualmente al contenido sin controles editables. En caso de discrepancia en requerimientos, habilitar parámetro configurable en la plantilla (`MODO_EMISION_PDF`: `APLANADO_INMUTABLE` vs `INTERACTIVO_RELLENABLE`).
+     - Configurar fuentes tipográficas, tamaños, alineación, colores y ajuste de texto.
+  3. *Trazabilidad, CUV y atomicidad:*
+     - Incorporar el CUV (`CUV-YYYY-XXXXXX`) y el número correlativo anual (`YYYY-XXXXXX`) en el pie o encabezado sin alterar la integridad del documento base.
+     - Generar el hash criptográfico SHA-256 del documento final una vez completadas todas las operaciones de estampado.
+     - Bloqueo de concurrencia atómico mediante `LockService.getScriptLock()` para impedir colisiones o folios duplicados.
+     - Si la operación falla, rechazar la transacción y no registrar como emitido un documento incompleto o corrupto.
+- **Criterios de Aceptación:**
+  - [ ] Genera documentos a partir de PDFs de una página y multipágina verticales y horizontales conservando el 100% del fondo original.
+  - [ ] Los valores aparecen exactamente en las coordenadas configuradas sin desplazamiento geométrico perceptible.
+  - [ ] Se verifica en Adobe Acrobat Reader, Foxit y lectores web independientes que los campos aplanados no son editables.
+  - [ ] La modalidad interactiva conserva los campos activos cuando así se configure.
+  - [ ] El CUV y correlativo identifican unívocamente el documento emitido y su hash coincide en la base de datos.
+  - [ ] Los reintentos de red no producen documentos duplicados con folios inconsistentes.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F32-Task02] [P0] Sistema de Coordenadas de Precisión, Entradas Numéricas y Rejilla Magnética
+- **Orden de Ejecución:** 2
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `teacher-dashboard.html` (`#field-props-form`)
+  - `js/teacher.js` (`updateFieldPropsPanel`, `applyFieldCoordInputs`, `toggleGridSnapping`)
+- **Subcapacidades Relacionadas:** F32-03, F32-05.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (4), Sección G y Backlog F32-Task02.
+- **Problema Detectado y Riesgos:**
+  El editor utiliza `xRatio`, `yRatio`, `wRatio` y `hRatio`, lo que mantiene la posición relativa al variar el zoom. Sin embargo, la colocación depende exclusivamente del mouse y los valores de posición solo se leen como texto informativo, sin permitir entradas numéricas de precisión ni rejilla magnética para alinear casillas contiguas en formularios densos.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Entradas numéricas bidireccionales de coordenadas:*
+     - Entradas numéricas editables en el panel de propiedades para: X, Y, Ancho y Alto.
+     - Permitir introducir y visualizar valores en porcentajes (`%`) y en unidades físicas reales: milímetros (`mm`) y puntos tipográficos PDF (`pt`).
+     - Conversión automática bidireccional entre unidades sin pérdida de precisión ni redondeos acumulativos.
+     - Permitir configurar el origen de referencia (esquina superior izquierda por defecto).
+  2. *Rejilla visual y ajuste magnético (Snap to Grid):*
+     - Rejilla visual superpuesta activable y desactivable con espaciado configurable (1%, 2%, 5% o medidas en mm).
+     - Ajuste magnético de campos a: líneas de rejilla, bordes de página, bordes de otros campos y centros de elementos cercanos.
+     - Guías dinámicas de alineación inteligente (*smart guides*) que se iluminan cuando dos o más campos comparten bordes o centros.
+     - Restricción de campos dentro de los límites físicos de la página salvo excepción autorizada.
+     - Mantener la precisión geométrica inalterada independientemente del nivel de zoom del visor.
+- **Criterios de Aceptación:**
+  - [ ] El usuario puede posicionar un campo introduciendo valores numéricos exactos en milímetros, puntos o porcentaje.
+  - [ ] Al cambiar el nivel de zoom o rotación de página, la posición del campo permanece milimétricamente inalterada.
+  - [ ] El ajuste magnético facilita alinear casillas adyacentes sin generar desplazamientos acumulativos al arrastrar.
+  - [ ] Las coordenadas guardadas en la plantilla reproducen fielmente la misma posición al reabrir el editor y al generar el PDF.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F32-Task03] [P0] Motor Inteligente de Ajuste Tipográfico y Control de Desbordamiento (Auto-Shrink)
+- **Orden de Ejecución:** 3
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `js/teacher.js` (`calculateAutoShrinkFontSize`)
+  - `backend/accounting-service/Code.gs`
+- **Subcapacidades Relacionadas:** F32-05, F32-11.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (5, 11), Sección G y Backlog F32-Task03.
+- **Problema Detectado y Riesgos:**
+  Los textos extensos (nombres largos, motivos de excusas, observaciones pedagógicas) quedan truncados o desbordan la caja si las dimensiones son fijas, comprometiendo la legibilidad y validez oficial del certificado.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Ajuste tipográfico automático (Auto-Shrink):*
+     - Reducción progresiva y controlada del tamaño de fuente cuando el texto no quepa en el ancho o alto disponible.
+     - Configuración de tamaño preferido, tamaño máximo y tamaño mínimo admisible por campo (ej. mínimo 7 pt para garantizar legibilidad en impresión).
+     - Cálculo de espacio ocupado mediante métricas tipográficas reales basadas en Canvas `measureText()` y fuentes PDF reales.
+  2. *Políticas configurables de desbordamiento:*
+     - Opciones disponibles por campo:
+       - `REDUCCION_AUTOMATICA`: Reduce el tamaño de fuente hasta el límite mínimo configurado.
+       - `AJUSTE_MULTILINEA`: Divide en líneas aprovechando el espacio vertical disponible.
+       - `RESTRICCION_LONGITUD`: Limita caracteres impidiendo ingresar más texto del permitido.
+       - `AMPLIACION_DINAMICA`: Expande el campo hacia abajo si no invade elementos contiguos.
+       - `ADVERTENCIA_BLOQUEANTE`: Advierte durante la previsualización y bloquea la emisión si se pierde contenido.
+  3. *Tratamiento de campos multilínea y caracteres especiales:*
+     - Respetar saltos de línea explícitos (`
+`) y espaciado entre renglones sin superponer caracteres.
+     - Soporte completo de acentos, eñes y signos de puntuación en español bajo codificación UTF-8.
+- **Criterios de Aceptación:**
+  - [ ] Nombres extensos o compuestos se ajustan reduciendo la fuente sin perder apellidos ni truncar caracteres.
+  - [ ] El tamaño de fuente respeta estrictamente el umbral mínimo configurado para impedir textos ilegibles.
+  - [ ] Los campos multilínea realizan saltos de línea automáticos dentro de los márgenes de la caja sin desbordar el casillero preimpreso.
+  - [ ] La previsualización en pantalla y el archivo PDF definitivo muestran exactamente el mismo tamaño y distribución de texto.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 2. HERRAMIENTAS DE EDICIÓN Y CAPACIDADES DE FORMULARIOS (P1)
+
+### [F32-Task04] [P1] Selección Múltiple, Edición Conjunta y Alineación Avanzada de Campos
+- **Orden de Ejecución:** 4
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `js/teacher.js` (`initMultiFieldSelection`, `alignSelectedFields`, `distributeSelectedFields`, `groupSelectedFields`)
+  - `teacher-dashboard.html`
+- **Subcapacidades Relacionadas:** F32-05.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (3, 5) y Backlog F32-Task04.
+- **Problema Detectado y Riesgos:**
+  La edición se realiza exclusivamente sobre campos individuales, dificultando el diseño de documentos con decenas de casillas repetitivas (fichas de calificaciones o tablas de asistencia).
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Mecanismos de selección múltiple:*
+     - Selección con combinación de teclas (`Clic + Shift`).
+     - Selección elástica por arrastre de marco rectangular (marquee selection).
+     - Selección desde la lista de campos del panel lateral o selección de todos los campos de la página activa.
+  2. *Operaciones y alineación en bloque:*
+     - Mover simultáneamente el conjunto de campos seleccionados conservando distancias relativas.
+     - Alinear por: Izquierda, Centro horizontal, Derecha, Arriba, Centro vertical y Abajo.
+     - Distribuir uniformemente espacios horizontales y verticales.
+     - Igualar ancho y alto tomando como base el primer campo seleccionado.
+     - Agrupar y desagrupar campos para moverlos como una sola unidad lógica.
+     - Duplicar y copiar/pegar conjuntos de campos asignando identificadores únicos independientes.
+     - Bloquear campos para evitar modificaciones accidentales.
+     - Historial de deshacer/rehacer (Undo/Redo) para todas las operaciones en grupo.
+- **Criterios de Aceptación:**
+  - [ ] Permite seleccionar varios campos con Shift o marco rectangular y alinearlos con un solo clic.
+  - [ ] Las distancias distribuidas de forma uniforme son geométricamente exactas.
+  - [ ] Las operaciones en bloque conservan íntegras las propiedades individuales (fuente dinámica, validaciones) de cada campo.
+  - [ ] Deshacer restaura el estado previo del grupo seleccionado de forma consistente.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F32-Task05] [P1] Ampliación de Tipos de Campos y Controles de Captura Especializados
+- **Orden de Ejecución:** 5
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `js/teacher.js` (`addOverlayField`, `renderOverlayFieldsForCurrentPage`)
+  - `teacher-dashboard.html`
+  - `backend/accounting-service/Code.gs`
+- **Subcapacidades Relacionadas:** F32-04, F32-06.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (6) y Backlog F32-Task05.
+- **Problema Detectado y Riesgos:**
+  El editor dispone de texto corto, multilínea, fecha, checkbox y firma, careciendo de controles especializados para cálculos, monedas, listas desplegables o selecciones excluyentes requeridas en trámites institucionales y boletas de pago.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Controles numéricos y financieros:*
+     - Campo numérico entero y decimal con validación de rangos (mínimo, máximo, decimales).
+     - Campo monetario en Lempiras (`HNL`) formateado visualmente (`L. 0.00`) conservando el valor numérico en el modelo.
+  2. *Controles de selección estructurada:*
+     - Listas desplegables con opciones manuales o alimentadas por catálogos institucionales.
+     - Grupos de botones de radio (Radio Group) mutuamente excluyentes vinculados a una misma variable.
+     - Selección múltiple de casillas con límites mínimos y máximos de selección.
+  3. *Campos calculados y gráficos:*
+     - Campos calculados con fórmulas sencillas dependientes de otros campos con prevención de referencias circulares.
+     - Controles de fecha y hora con restricciones de intervalos y valores predeterminados dinámicos.
+     - Imágenes y fotografías adjuntas vinculadas al expediente institucional con ajuste de proporciones.
+     - Código QR dinámico enlazado al portal de verificación CUV.
+- **Criterios de Aceptación:**
+  - [ ] Se pueden insertar y configurar controles numéricos, monetarios, desplegables, radios y calculados.
+  - [ ] Los radios de un mismo grupo respetan la exclusión mutua tanto en web como en el PDF final.
+  - [ ] Los campos calculados se actualizan en tiempo real al modificar los valores de origen.
+  - [ ] Las opciones y propiedades de cada control se serializan y recuperan intactas en la plantilla.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F32-Task06] [P1] Generador de Formularios Web Dinámicos Vinculado a Plantillas PDF
+- **Orden de Ejecución:** 6
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `js/ui-common.js` (`renderWebFormFromPdfOverlayTemplate`)
+  - `backend/user-service/Code.gs`, `backend/accounting-service/Code.gs`
+  - Hoja: `SolicitudesTramites`
+- **Subcapacidades Relacionadas:** F32-07, F32-08.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección A (1), Sección B (7, 8) y Backlog F32-Task06.
+- **Problema Detectado y Riesgos:**
+  No se debe forzar a padres o alumnos a manipular un visor PDF complejo en pantallas de teléfonos móviles para rellenar trámites; debe existir un generador automático de formularios web limpios cuyas respuestas se mapeen exactamente a los campos del PDF oficial.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Generación automática de formulario web accesible:*
+     - Generar formulario web responsivo a partir de los `overlayFields` y `camposJSON` de la plantilla publicada.
+     - Mapeo bidireccional estricto entre el control HTML de captura y las coordenadas del campo en el PDF.
+     - Organización en secciones lógicas con títulos e instrucciones de ayuda contextual.
+     - Permitir reordenar la presentación de preguntas sin alterar la ubicación física de los campos en el PDF preimpreso.
+  2. *Autocompletado con fuentes dinámicas institucionales:*
+     - Precargar datos existentes del expediente del alumno: `{{estudiante.nombreCompleto}}`, `{{estudiante.identidad}}`, `{{estudiante.grado}}`, `{{estudiante.seccion}}`, `{{institucion.nombre}}`, `{{institucion.anoLectivo}}`.
+     - Diferenciar campos editables por el usuario de campos institucionales bloqueados de solo lectura.
+     - Validación en cliente y servidor con guardado de borradores recuperables.
+     - Vista previa del PDF resultante antes del envío definitivo.
+- **Criterios de Aceptación:**
+  - [ ] El formulario web generado permite completar un trámite en móviles de forma limpia y accesible.
+  - [ ] Los campos institucionales protegidos no pueden ser alterados por el solicitante.
+  - [ ] Las respuestas capturadas se estampan con precisión exacta en las casillas correspondientes del PDF.
+  - [ ] La previsualización refleja con exactitud la apariencia del documento final antes de confirmar.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F32-Task07] [P1] Captura Real de Firmas Manuscritas y Generación de Códigos QR de Verificación
+- **Orden de Ejecución:** 7
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `js/teacher.js` (`openSignaturePadModal`, `injectSignatureInOverlayField`)
+  - `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs`
+  - Hoja: `FirmasConformidades`, `DocumentosEscolaresEmitidos`
+- **Subcapacidades Relacionadas:** F32-04, F32-08.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (6, 8) y Backlog F32-Task07.
+- **Problema Detectado y Riesgos:**
+  El tipo de campo de firma reserva un área visual en el diseñador, pero se requiere un capturador táctil fluido con trazo suavizado en Canvas y la capacidad de estampar la firma y el código QR de verificación CUV como elementos gráficos de alta resolución sin deformaciones.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Captura táctil e incrustación de firma:*
+     - Modal de firma manuscrita para mouse, stylus o pantalla táctil con anti-aliasing y botón de borrado/limpieza.
+     - Conversión a imagen PNG transparente con conservación de proporciones, adaptándola al área delimitada del PDF.
+     - Vinculación formal de la firma con el usuario en sesión, fecha/hora y hash SHA-256 en `FirmasConformidades`.
+     - Diferenciar claramente firma manuscrita digitalizada de firma electrónica criptográfica certificada.
+  2. *Códigos QR dinámicos para verificación CUV:*
+     - Control de código QR posicionable sobre cualquier página del PDF.
+     - Generar el QR apuntando a la URL del portal de validación oficial: `https://[dominio]/verify?cuv=CUV-YYYY-XXXXXX`.
+     - Resolución nítida garantizada para impresión física y escaneo con smartphone.
+     - El portal de verificación muestra el estado del documento, emisor y fecha sin exponer datos PII sensibles.
+- **Criterios de Aceptación:**
+  - [ ] Permite capturar firmas en dispositivos táctiles con trazo fluido y fondo transparente.
+  - [ ] La firma se incorpora al PDF final exactamente en el recuadro asignado sin deformaciones de escala.
+  - [ ] El código QR se imprime nítidamente y al escanearse conduce al portal oficial de verificación del CUV.
+  - [ ] Un documento o CUV alterado es detectado y rechazado por el validador público.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F32-Task08] [P1] Autoguardado, Recuperación de Borradores y Control de Concurrencia del Editor
+- **Orden de Ejecución:** 8
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `js/teacher.js` (`initPdfTemplateAutoSave`, `checkTemplateLockStatus`)
+  - `backend/accounting-service/Code.gs`
+  - Hoja: `PlantillasEscolares`, `BorradoresPlantillas`
+- **Subcapacidades Relacionadas:** F32-09.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (9) y Backlog F32-Task08.
+- **Problema Detectado y Riesgos:**
+  Una desconexión transitoria de red o cierre accidental de pestaña durante el diseño de un formulario complejo puede ocasionar la pérdida total de horas de trabajo de posicionamiento. Asimismo, la edición simultánea por dos operadores puede provocar sobrescrituras accidentales.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Autoguardado periódico y recuperación de sesión:*
+     - Guardado automático local en IndexedDB/LocalStorage cada 30 segundos y tras cambios estructurales.
+     - Al reabrir el editor, detectar borradores no sincronizados y ofrecer restaurarlos con un solo clic.
+     - Indicador visual del estado de guardado en la barra superior: `Guardando...`, `Guardado`, `Cambios pendientes` o `Error de conexión`.
+  2. *Control de concurrencia y prevención de sobrescrituras:*
+     - Bloqueo optimista registrando el usuario que está editando la plantilla y su marca de tiempo.
+     - Advertir al segundo usuario si la plantilla está siendo editada en otra sesión y permitir abrir en modo solo lectura.
+     - Separación estricta entre borradores de trabajo y versiones oficiales publicadas.
+- **Criterios de Aceptación:**
+  - [ ] El diseño de campos se recupera íntegro tras una desconexión intencional o recarga forzada de la pestaña.
+  - [ ] El estado del guardado se comunica en tiempo real de forma clara en la interfaz.
+  - [ ] Se detectan ediciones simultáneas y se impide la sobrescritura silenciosa de plantillas.
+  - [ ] La recuperación de un borrador no afecta las versiones publicadas activas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F32-Task11] [P1] Suite Automatizada de Pruebas de Fidelidad Geométrica, Compatibilidad y Regresión PDF
+- **Orden de Ejecución:** 9
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `tests/regression/academic-grading-suite.js`
+  - `backend/developer-service/Code.gs` (`runPdfOverlayFidelityRegressionSuite`)
+- **Subcapacidades Relacionadas:** F32-11.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección F (PDF-01 a PDF-30), Sección G y Backlog F32-Task11.
+- **Problema Detectado y Riesgos:**
+  La fidelidad de posicionamiento e integridad del PDF no debe depender exclusivamente de revisiones visuales manuales. Se requiere una suite de regresión automatizada que certifique que las actualizaciones de código no introduzcan derivas en las coordenadas ni desalineaciones al generar documentos finales.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Aserciones geométricas y tipográficas automatizadas:*
+     - Validar que las coordenadas deserializadas `(xRatio, yRatio, wRatio, hRatio)` mantengan precisión idéntica con tolerancia menor al 0.001%.
+     - Validar que variaciones de zoom (0.5x, 1.0x, 2.5x) o de dimensiones de página conserven la posición matemática de los campos.
+     - Validar el comportamiento del motor de auto-shrink tipográfico ante cadenas de prueba extensas.
+     - Validar renderizado de caracteres españoles y acentos sin corrupción Unicode.
+  2. *Verificación de los 30 escenarios obligatorios (PDF-01 a PDF-30):*
+     - Carga de PDF válido, corrupto, multipágina, orientación horizontal/vertical, inserción, arrastre, eliminación, duplicación, alineación, autoguardado, obligatoriedad, formatos de fecha, multilínea, firmas, CUV, apertura en visores independientes y control de acceso.
+  3. *Detección de regresiones visuales:*
+     - Documentos de referencia para comparar coordenadas esperadas vs observadas con umbral de tolerancia estricto.
+- **Criterios de Aceptación:**
+  - [ ] La suite de pruebas se ejecuta de forma automatizada en Node.js y Apps Script pasando al 100%.
+  - [ ] Detecta intencionalmente cualquier desplazamiento introducido en las coordenadas de prueba.
+  - [ ] Certifica que los 30 escenarios funcionales de la auditoría se encuentran cubiertos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F32-Task13] [P1] Motor Unificado de Reglas de Validación y Restricciones de Formularios
+- **Orden de Ejecución:** 10
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`validateTemplateFieldRules`, `validateDocumentEmissionPayload`)
+  - `backend/user-service/Code.gs`
+  - Hoja: `PlantillasEscolares`, `FormulariosInstitucionales`
+- **Subcapacidades Relacionadas:** F32-07, F32-08.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (7) y Backlog F32-Task13.
+- **Problema Detectado y Riesgos:**
+  Existe riesgo de que el editor visual, el formulario web de captura y el generador final de PDF manejen reglas de validación discrepantes, permitiendo que datos inválidos o incompletos burlen las comprobaciones si una petición se envía directamente al backend.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Reglas de validación unificadas por campo:*
+     - Obligatoriedad (requerido/opcional), longitud mínima y máxima de texto.
+     - Límites numéricos (mínimo, máximo, cantidad fija de decimales).
+     - Máscaras de entrada y patrones regex para DNI/identidad, teléfonos y correos.
+     - Restricciones de fechas (ej. fecha de fin posterior a fecha de inicio, prohibir fechas futuras).
+     - Cantidad mínima y máxima de selecciones en casillas y listas.
+  2. *Validación cruzada institucional y de backend:*
+     - Validar que códigos de matrícula o IDs de estudiantes existan legítimamente en el sistema institucional.
+     - Las mismas reglas configuradas en la plantilla se aplican en: editor, formulario web de captura, guardado de borradores y generación definitiva del PDF.
+     - El backend valida obligatoriamente la carga útil antes de permitir la emisión oficial con CUV.
+     - Mensajes de error contextuales que señalan con precisión el campo defectuoso y cómo corregirlo, conservando los datos válidos previamente ingresados.
+- **Criterios de Aceptación:**
+  - [ ] Se impide la emisión de cualquier documento si existen campos obligatorios vacíos o formatos inválidos.
+  - [ ] Las solicitudes directas a la API que contengan datos no conformes son rechazadas por el backend.
+  - [ ] Los mensajes de error identifican claramente el campo con problemas y no borran los datos válidos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 3. RECONOCIMIENTO AUTOMÁTICO Y PROCESAMIENTO INTELIGENTE (P2)
+
+### [F32-Task09] [P2] Detector Heurístico de Líneas Guía, Casillas y Espacios de Captura
+- **Orden de Ejecución:** 11
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `js/teacher.js` (`detectFormLinesHeuristic`, `suggestOverlayFieldsFromCanvas`)
+- **Subcapacidades Relacionadas:** F32-02.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (2), Sección G y Backlog F32-Task09.
+- **Problema Detectado y Riesgos:**
+  Los documentos preimpresos suelen contener patrones repetitivos de líneas de llenado o casillas de verificación que actualmente obligan al diseñador a colocar manualmente cada recuadro uno por uno.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Análisis visual de píxeles en Canvas:*
+     - Analizar la matriz de imagen del PDF renderizado en busca de líneas horizontales continuas y rectángulos vacíos.
+     - Identificar posibles casillas de verificación (cuadrados de 10 a 20 pt) y líneas de escritura.
+     - Estimar dimensiones y proponer cajas sugeridas posicionadas automáticamente sobre las áreas detectadas.
+  2. *Revisión y confirmación humana:*
+     - Mostrar las sugerencias como cajas preliminares resaltadas con borde punteado.
+     - Permitir al diseñador aceptar, ajustar o descartar individualmente o en bloque las sugerencias.
+     - La detección heurística opera como un asistente acelerador, sin sustituir jamás la aprobación humana.
+- **Criterios de Aceptación:**
+  - [ ] Identifica con éxito líneas de llenado y casillas en formularios estructurados.
+  - [ ] El diseñador puede aceptar o rechazar sugerencias con un solo clic.
+  - [ ] Las cajas aceptadas se integran normalmente al conjunto de campos con coordenadas normalizadas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F32-Task10] [P2] Motor OCR y Reconocimiento Semántico Asistido para Documentos Escaneados
+- **Orden de Ejecución:** 12
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs` (`processScannedPdfOcrRecognition`)
+  - `js/teacher.js`
+- **Subcapacidades Relacionadas:** F32-02, F32-10.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (2, 10), Sección G y Backlog F32-Task10.
+- **Problema Detectado y Riesgos:**
+  Los documentos escaneados antiguos que carecen de texto digital seleccionable no ofrecen detección automática de etiquetas impresas ("Nombre del Estudiante:", "Grado:"), obligando a una transcripción manual.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Detección de contenido escaneado:*
+     - Comprobar si las páginas contienen texto digital seleccionable (`page.getTextContent()`).
+     - Si la página es predominantemente una imagen de mapa de bits, advertir al usuario y sugerir escaneo OCR asistido.
+  2. *Reconocimiento semántico asistido:*
+     - Conexión opcional con motor OCR ligero para extraer palabras clave y coordenadas aproximadas en español.
+     - Proponer campos de texto situados a la derecha de etiquetas reconocidas ("Nombre:", "DNI:").
+     - Mantener el PDF escaneado original intacto en el fondo sin alteraciones destructivas de píxeles.
+- **Criterios de Aceptación:**
+  - [ ] Detecta con precisión si un PDF requiere OCR y emite la recomendación pertinente.
+  - [ ] Las sugerencias semánticas reconocen etiquetas comunes en documentos escolares en español.
+  - [ ] El archivo PDF original permanece inalterado.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F32-Task12] [P2] Biblioteca de Plantillas, Duplicación y Reutilización de Formatos Institucionales
+- **Orden de Ejecución:** 13
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`duplicateSchoolDocumentTemplate`, `getPreloadedSchoolFormTemplates`)
+  - `teacher-dashboard.html`, `js/teacher.js`
+  - Hoja: `PlantillasEscolares`
+- **Subcapacidades Relacionadas:** F32-01, F32-09.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md` / Sección B (1, 9), Sección H y Backlog F32-Task12.
+- **Problema Detectado y Riesgos:**
+  Para diseñar formatos con pequeñas variaciones (excusas de primaria vs secundaria, o constancias de conducta), los secretarios deben recrear todos los campos desde cero si no pueden clonar plantillas existentes.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Duplicación de plantillas con un solo clic:*
+     - Duplicar una plantilla PDF existente clonando su PDF base, metadatos y la totalidad de sus `overlayFields` bajo un nuevo `plantillaId` y título editable.
+     - La nueva plantilla es completamente independiente: sus modificaciones posteriores no alteran la plantilla matriz ni los documentos emitidos bajo versiones previas.
+  2. *Catálogo de formatos escolares hondureños precargados:*
+     - Biblioteca de formatos institucionales de uso frecuente: Excusas estudiantiles por inasistencia, Solicitud de matrícula ordinaria, Compromiso de convivencia y Pagaré de colegiatura.
+     - Permitir a la institución subir sus propios formatos preimpresos y clasificarlos por categoría y ciclo lectivo.
+     - Archivo controlado de plantillas obsoletas impidiendo su uso en nuevos trámites pero preservando el histórico.
+- **Criterios de Aceptación:**
+  - [ ] Permite clonar cualquier plantilla PDF conservando el 100% de sus campos y coordenadas.
+  - [ ] La copia es independiente y puede editarse sin afectar la plantilla original ni los registros históricos.
+  - [ ] La biblioteca de formatos permite iniciar nuevos trámites a partir de plantillas modelo precargadas.
+- **Estado:** [ ] Pendiente
+
+---
+
+---
+
+# FASE 33: FORMULARIOS INSTITUCIONALES Y TRÁMITES DIGITALES
+
+## RESUMEN DE SUB-CAPACIDADES Y TAREAS TÉCNICAS (FASE 33)
+
+| ID | Prioridad | Orden Secuencial | Tarea Técnica / Requisito | Componentes Principales | Subcapacidad | Estado |
+|---|---|---|---|---|---|---|
+| [F33-Task01] | P0 | 1 | Motor de Modalidades de Trámite: Formulario en Línea, Descarga Vacía e Impresión Física | `backend/user-service/Code.gs`, `backend/accounting-service/Code.gs` | F33-01, F33-03 | [ ] Pendiente |
+| [F33-Task02] | P0 | 2 | Persistencia de Borradores en Servidor y Sincronización Multidispositivo | `backend/user-service/Code.gs`, `js/student.js`, `js/ui-common.js` | F33-04 | [ ] Pendiente |
+| [F33-Task03] | P0 | 3 | Subsanación Granular y Congelamiento de Campos Validados | `backend/user-service/Code.gs`, `js/student.js` | F33-10, F33-11 | [ ] Pendiente |
+| [F33-Task10] | P1 | 4 | Suite Automatizada de Pruebas del Ciclo de Vida de Trámites y Regresión | `tests/regression/academic-grading-suite.js`, `backend/developer-service/Code.gs` | F33-14, F33-16 | [ ] Pendiente |
+| [F33-Task04] | P1 | 5 | Consola Unificada de Gestión de Trámites y Bandejas Operativas por SLA | `dashboards/dashboard-secretaria.html`, `dashboards/dashboard-direccion.html` | F33-16 | [ ] Pendiente |
+| [F33-Task05] | P1 | 6 | Motor de Distribución Dinámica, Asignación Automática y Delegación Temporal | `backend/user-service/Code.gs` | F33-08, F33-09 | [ ] Pendiente |
+| [F33-Task06] | P1 | 7 | Validaciones Cruzadas Institucionales y Detección Inteligente de Trámites Duplicados | `backend/user-service/Code.gs`, `backend/academic-service/Code.gs` | F33-05, F33-07 | [ ] Pendiente |
+| [F33-Task07] | P1 | 8 | Fortalecimiento de la Trazabilidad Documental, Integridad Criptográfica y Ciclo de Vida de Firmas | `backend/user-service/Code.gs`, `backend/accounting-service/Code.gs` | F33-12, F33-14 | [ ] Pendiente |
+| [F33-Task09] | P2 | 9 | Constancias de Recepción Física con Código QR y Verificación Documental | `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs` | F33-03, F33-13 | [ ] Pendiente |
+| [F33-Task08] | P2 | 10 | Paquetes de Trámites Agrupados y Solicitudes Recurrentes Anuales | `backend/user-service/Code.gs`, `js/student.js` | F33-01, F33-03 | [ ] Pendiente |
+
+---
+
+### BLOQUE 1. CAPTURA INTEGRAL, MODALIDADES Y BORRADORES (P0)
+
+### [F33-Task01] [P0] Motor de Modalidades de Trámite: Formulario en Línea, Descarga Vacía e Impresión Física
+- **Orden de Ejecución:** 1
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`getFormBlankTemplatePdf`, `registerPhysicalFormReception`)
+  - `backend/accounting-service/Code.gs`
+  - Hoja: `FormulariosInstitucionales`, `SolicitudesTramites`, `DocumentosEstudiante`
+- **Subcapacidades Relacionadas:** F33-01, F33-03.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md` / Sección C (F33-01, F33-03) y Plan de Implementación F33-Task01.
+- **Problema Detectado y Riesgos:**
+  La plataforma permite completar y enviar formularios digitalmente, pero las modalidades de descarga en blanco e impresión física no están completamente desarrolladas. La prueba de descarga del formulario vacío fue satisfactoria, pero la versión imprimible requiere ajustes de maquetación para asegurar espacios suficientes de escritura manual a tinta e instrucciones de presentación física en ventanilla escolar.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Mecanismo de presentación configurable por trámite:*
+     - Completar y enviar en línea desde el portal web.
+     - Descargar formulario vacío en PDF oficial.
+     - Generar versión imprimible optimizada para diligenciamiento manual a tinta.
+     - Registrar posteriormente la recepción física del formulario y sus anexos digitalizados en ventanilla.
+     - Configuración por formulario: definir cuáles modalidades están habilitadas (`MODALIDADES_PERMITIDAS`: `SOLO_ONLINE`, `SOLO_FISICA`, `HIBRIDA_ONLINE_Y_FISICA`).
+  2. *Generación de formulario vacío limpio:*
+     - Generar el PDF vacío a partir de la definición vigente, sin respuestas de usuarios, datos personales ajenos, valores privados ni información de borradores.
+  3. *Versión imprimible de alta fidelidad:*
+     - Identidad visual institucional completa (encabezados, logotipos, membretes, títulos y advertencias legales).
+     - Márgenes y áreas seguras de impresión con líneas continuas/punteadas y espacios amplios para escritura manual.
+     - Casillas de verificación con dimensiones adecuadas para marcar con bolígrafo.
+     - Campos de fecha, DNI/identidad, firmas y recuadro de observaciones.
+     - Saltos de página controlados y numeración formal de páginas.
+     - Contraste optimizado para legibilidad en impresión monocromática (blanco y negro).
+  4. *Instrucciones y radicación de trámites físicos:*
+     - Instrucciones de diligenciamiento impresas: secciones obligatorias, documentos requeridos y ventanilla de entrega.
+     - Registrar la recepción física asociándola a un trámite existente o creando un expediente nuevo:
+       - Tipo de trámite, persona que presenta, estudiante/titular relacionado, fecha y hora exacta, funcionario receptor, documentos entregados, observaciones iniciales y archivo escaneado/fotografiado adjunto.
+     - Conservar inmutable la versión de la definición del formulario utilizada para generar el documento descargable o impreso.
+- **Criterios de Aceptación:**
+  - [ ] Generar un formulario vacío y comprobar que no incluya respuestas, datos ajenos ni información residual de borradores.
+  - [ ] Imprimir formularios de una y varias páginas y verificar que no existan campos cortados, superpuestos o sin espacio para escribir.
+  - [ ] Comprobar que la impresión en escala de grises conserve total legibilidad y nitidez.
+  - [ ] Desactivar la modalidad física en un trámite y verificar que se oculten las opciones de descarga para impresión física.
+  - [ ] Registrar una recepción física en ventanilla y verificar que se vincule al expediente correcto con sus adjuntos escaneados.
+  - [ ] Una modificación posterior de la plantilla no altera los documentos descargados o radicados bajo versiones previas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F33-Task02] [P0] Persistencia de Borradores en Servidor y Sincronización Multidispositivo
+- **Orden de Ejecución:** 2
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`saveFormDraftSubmission`, `getFormDraftSubmission`, `discardFormDraft`, `resolveDraftConcurrencyConflict`)
+  - `js/student.js`, `js/ui-common.js`
+  - Hoja: `BorradoresTramites`
+- **Subcapacidades Relacionadas:** F33-04.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md` / Sección C (F33-04) y Plan de Implementación F33-Task02.
+- **Problema Detectado y Riesgos:**
+  Los borradores se conservan principalmente en `LocalStorage`. Esto permite recuperar el trabajo en el mismo navegador, pero no garantiza continuidad entre dispositivos y expone al usuario a perder información si limpia los datos del navegador, cambia de equipo o utiliza otra sesión.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Persistencia de borradores en el backend (`BorradoresTramites`):*
+     - Estructura: `[draftId, formId, versionFormulario, userId, estudianteId, respuestasJSON, adjuntosTemporalesJSON, fechaCreacion, fechaUltimaModificacion, estadoBorrador, versionEdicion, fechaUltimoGuardadoConfirmado]`.
+     - Permitir iniciar el trámite en una computadora y continuarlo en un teléfono móvil recuperando datos y adjuntos.
+  2. *Autoguardado inteligente y estados de sincronización:*
+     - Autoguardado tras cambios relevantes, cambio de sección o abandono de campo sin saturar la red con peticiones por tecla.
+     - Indicador visual claro del estado: `Guardando...`, `Guardado`, `Pendiente de sincronización` o `Error de conexión`.
+     - Guardado manual explícito como alternativa para el usuario.
+  3. *Control de concurrencia y recuperación ante fallos de conexión:*
+     - Control mediante número de versión de edición (`versionEdicion`). Detectar y advertir si dos sesiones modifican el mismo borrador antes de sobrescribir.
+     - Mantener cambios locales temporalmente si se interrumpe la red, sincronizando al reanudar sin duplicar registros.
+     - Distinguir archivos adjuntos temporales de los archivos formalmente presentados con la solicitud definitiva.
+     - Reglas de expiración y limpieza automática de borradores abandonados (configurable, por defecto 30 días, `DIAS_EXPIRACION_BORRADORES`).
+     - Tratamiento ante cambios de versión del formulario: advertir si el borrador necesita actualización o migración.
+     - Privacidad estricta: los borradores solo son accesibles por su propietario y no aparecen en bandejas de solicitudes recibidas.
+- **Criterios de Aceptación:**
+  - [ ] Iniciar un formulario en computadora, guardar y recuperarlo intacto desde un teléfono móvil con la misma cuenta.
+  - [ ] Borrar los datos del navegador local y comprobar que el borrador del servidor sigue disponible para su recuperación.
+  - [ ] Interrumpir la conexión durante la edición y verificar que se informe qué cambios están pendientes sin perder datos.
+  - [ ] Abrir el mismo borrador en dos sesiones simultáneas y comprobar que se detecta el conflicto de edición.
+  - [ ] Un usuario no puede consultar borradores de otros estudiantes manipulando identificadores de petición.
+  - [ ] Al presionar enviar formalmente, el borrador se convierte en solicitud definitiva sin duplicidad de datos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F33-Task03] [P0] Subsanación Granular y Congelamiento de Campos Validados
+- **Orden de Ejecución:** 3
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`requestFormCorrectionStep`, `submitFormCorrectionRevision`, `validateSubsanacionPermissions`)
+  - `js/student.js`
+  - Hoja: `SolicitudesTramites`, `RevisionesDecisionesTramite`
+- **Subcapacidades Relacionadas:** F33-10, F33-11.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md` / Sección C (F33-10) y Plan de Implementación F33-Task03.
+- **Problema Detectado y Riesgos:**
+  La plataforma permite solicitar correcciones mediante `SOLICITAR_CORRECCION` y el estado `Requiere_Informacion`, pero la reapertura del formulario no garantiza que únicamente puedan modificarse los campos observados. Esto expone información ya validada a cambios innecesarios o no autorizados.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Mecanismo de observaciones vinculadas a campos y adjuntos:*
+     - Registrar por observación: campo/sección/documento observado, valor original, motivo, instrucción de subsanación, revisor responsable, fecha de solicitud, plazo límite de respuesta y estado de la observación.
+  2. *Reapertura dirigida y congelamiento de datos válidos:*
+     - Habilitar para edición exclusivamente los campos o documentos observados.
+     - Bloquear en modo solo lectura (`read-only`) todos los campos previamente validados, tanto en interfaz como mediante validación estricta en el backend.
+     - Permitir observaciones generales sin que ello habilite automáticamente la edición de todo el formulario.
+     - Estados individuales por observación: `Pendiente`, `Corregida`, `Validada`, `No_Subsanada`.
+  3. *Comparación de versiones e impacto en aprobaciones:*
+     - Al reenviar, generar nueva versión de las respuestas conservando el `solicitudId` original e indexar en el historial.
+     - Presentar al revisor un comparador visual que destaque: campos modificados, valores previos vs nuevos y archivos sustituidos.
+     - Permitir aceptar o rechazar individualmente cada subsanación.
+     - Regla de impacto en aprobaciones previas: cambios menores (datos de contacto) no reinician aprobaciones sustantivas previas; cambios sustantivos reactivan únicamente las etapas del flujo afectadas (`REINICIO_SELECTIVO_APROBACIONES`).
+- **Criterios de Aceptación:**
+  - [ ] Solicitar la corrección de un único campo y comprobar que solo ese control quede editable en la interfaz del usuario.
+  - [ ] Intentar modificar un campo bloqueado mediante petición directa a la API; el servidor rechaza la modificación.
+  - [ ] Corregir un dato y verificar que el valor anterior se conserve intacto en el historial para auditoría.
+  - [ ] Reenviar la solicitud corregida conservando el identificador único del expediente.
+  - [ ] El revisor puede comparar las versiones y confirmar que cada observación fue atendida satisfactoriamente.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 2. BANDEJAS OPERATIVAS, ASIGNACIÓN Y CONTROL DE TIEMPOS (P1)
+
+### [F33-Task10] [P1] Suite Automatizada de Pruebas del Ciclo de Vida de Trámites y Regresión
+- **Orden de Ejecución:** 4
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `tests/regression/academic-grading-suite.js`
+  - `backend/developer-service/Code.gs` (`runInstitutionalFormsLifecycleRegressionSuite`)
+- **Subcapacidades Relacionadas:** F33-14, F33-16.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md` / Sección F (F24-01 a F24-24) y Plan de Implementación F33-Task10.
+- **Problema Detectado y Riesgos:**
+  Las pruebas actuales no se encuentran consolidadas en una suite específica y automatizada que certifique de forma continua que las mejoras en borradores, subsanación granular, bandejas operativas y paquetes no provoquen regresiones en el ciclo de vida de los trámites.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Automatización integral de los 24 escenarios de la matriz F24-01 a F24-24:*
+     - F24-01: Configuración de trámites y permisos.
+     - F24-02/03: Inicio de trámites como estudiante y como apoderado legal.
+     - F24-04: Persistencia y recuperación de borradores multi-dispositivo.
+     - F24-05/06: Generación de formularios vacíos e imprimibles limpios.
+     - F24-07: Carga y validación de adjuntos seguros.
+     - F24-08: Envío oficial e identificador único atómico.
+     - F24-09/10: Asignación a bandeja departamental y registro de observaciones internas/públicas.
+     - F24-11/12: Subsanación dirigida y reenvío versionado.
+     - F24-13/14: Aprobación/rechazo y firmas digitales por token.
+     - F24-15: Emisión de PDF definitivo con CUV inmutable.
+     - F24-16/17: Historial cronológico completo y archivo de expediente.
+     - F24-18: Bloqueo de accesos no autorizados y manipulación de parámetros (IDOR).
+     - F24-19/20: Resiliencia ante caídas de red y prevención de duplicados concurrentes.
+     - F24-21/22: Modificación de plantillas y desactivación controlada sin alterar históricos.
+     - F24-23/24: Consulta responsiva móvil y bandejas de filtrado operativo.
+  2. *Pruebas negativas, de concurrencia y regresión:*
+     - Validar rechazo ante usuarios sin permisos, tokens expirados, archivos corruptos y estados inválidos.
+     - Ejecución sobre datos sintéticos aislados sin contaminar registros reales de producción.
+- **Criterios de Aceptación:**
+  - [ ] La suite se ejecuta de forma automatizada y reproducible pasando al 100% de aserciones.
+  - [ ] Comprueba que los escenarios de inicio, revisión, corrección, aprobación y archivo operan de extremo a extremo.
+  - [ ] Se detectan e informan regresiones en permisos RBAC o en la integridad del legajo documental.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F33-Task04] [P1] Consola Unificada de Gestión de Trámites y Bandejas Operativas por SLA
+- **Orden de Ejecución:** 5
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `dashboards/dashboard-secretaria.html`, `dashboards/dashboard-direccion.html`
+  - `backend/user-service/Code.gs` (`getDepartmentalRequestsQueue`, `updateRequestOperationalPriority`)
+  - Hoja: `SolicitudesTramites`
+- **Subcapacidades Relacionadas:** F33-16.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md` / Sección C (F33-16) y Plan de Implementación F33-Task04.
+- **Problema Detectado y Riesgos:**
+  La plataforma permite consultar solicitudes con filtros básicos, pero carece de una consola administrativa integral para gestionar el volumen operativo desde Secretaría y Dirección. La falta de semáforos de vencimiento, prioridades y carga de trabajo dificulta priorizar solicitudes urgentes.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Bandeja operativa centralizada por vistas de estado:*
+     - Segmentación: `Recibidas_Sin_Clasificar`, `Pendientes_Asignacion`, `Asignadas_A_Mi`, `En_Revision`, `Observadas_Esperando_Familia`, `Pendientes_Firma`, `Vencidas`, `Aprobadas` y `Archivadas`.
+     - Filtros combinables: tipo de trámite, departamento, estado, prioridad, responsable, estudiante, grado/sección y rango de fechas.
+     - Búsqueda instantánea por identificador (`SOL-FRM-...`), DNI del estudiante o nombre del apoderado.
+  2. *Semáforos de SLA y control de tiempos hábiles:*
+     - Indicadores visuales de cumplimiento: Verde (`En plazo`), Amarillo (`Próximo a vencer < 4h`), Rojo (`Vencido`).
+     - Cálculo de plazos en horas o días hábiles conforme al calendario institucional (excluyendo fines de semana y feriados).
+     - Suspensión del cómputo de SLA mientras el trámite esté en espera de información por parte del solicitante (`Requiere_Informacion`), reanudándose al recibir la corrección.
+  3. *Acciones masivas y optimización de rendimiento:*
+     - Acciones masivas controladas para asignar responsables, clasificar o cambiar prioridad.
+     - Paginación y carga progresiva en servidor para manejar miles de solicitudes sin degradación en el navegador.
+     - Métricas de carga de trabajo por funcionario y departamento para balanceo operativo.
+- **Criterios de Aceptación:**
+  - [ ] Secretaría y Dirección pueden filtrar, buscar y gestionar solicitudes en una consola unificada.
+  - [ ] Los vencimientos por SLA se calculan con precisión respetando días hábiles y suspensiones justificadas.
+  - [ ] Las solicitudes vencidas se destacan con alertas visuales y permiten reasignación inmediata.
+  - [ ] Las acciones masivas se aplican exclusivamente a los registros seleccionados sin afectar expedientes ajenos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F33-Task05] [P1] Motor de Distribución Dinámica, Asignación Automática y Delegación Temporal
+- **Orden de Ejecución:** 6
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`assignRequestToResponsible`, `reassignDepartmentalRequest`, `evaluateRequestRoutingRules`)
+  - Hoja: `FlujosAprobacion`, `SolicitudesTramites`, `DelegacionesResponsabilidad`
+- **Subcapacidades Relacionadas:** F33-08, F33-09.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md` / Sección C (F33-08, F33-09) y Plan de Implementación F33-Task05.
+- **Problema Detectado y Riesgos:**
+  Los flujos actuales asignan responsables de forma estática. No existe distribución automática según características del expediente (ej. enrutar solicitudes al coordinador del nivel Primaria o Secundaria) ni delegación automática de atribuciones ante ausencias o vacaciones de funcionarios.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Reglas de distribución y balanceo automático:*
+     - Criterios de enrutamiento: departamento competente, grado académico, nivel, jornada, sede o categoría del trámite.
+     - Métodos de asignación: a una persona específica, a un grupo de trabajo, a una cola departamental o por distribución equitativa de carga de trabajo (round-robin balanceado).
+  2. *Delegaciones temporales por ausencia:*
+     - Configurar usuario titular, delegado, período de vigencia (inicio y fin), tipos de trámites cubiertos y facultades delegadas.
+     - Durante la vigencia, redirigir automáticamente nuevas asignaciones al sustituto y permitirle despachar la bandeja del titular.
+     - Registro de doble identidad: asentar en auditoría que la decisión fue tomada por el delegado en representación del titular.
+     - Prevención de delegaciones circulares o a usuarios inactivos sin permisos.
+  3. *Reglas de escalamiento por vencimiento de SLA:*
+     - Si una solicitud permanece desatendida al alcanzar el 80% del tiempo límite, notificar al supervisor o elevar su prioridad automáticamente.
+- **Criterios de Aceptación:**
+  - [ ] Las solicitudes se dirigen automáticamente al departamento o coordinador correspondiente según el grado del estudiante.
+  - [ ] Las delegaciones programadas se activan y expiran en las fechas estipuladas sin intervención manual.
+  - [ ] El sustituto solo puede actuar dentro del alcance expresamente delegado.
+  - [ ] El escalamiento ante vencimiento de plazos notifica a los supervisores correspondientes.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F33-Task06] [P1] Validaciones Cruzadas Institucionales y Detección Inteligente de Trámites Duplicados
+- **Orden de Ejecución:** 7
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`validateCrossInstitutionalRequestRules`, `detectDuplicateActiveRequests`)
+  - `backend/academic-service/Code.gs`
+  - Hoja: `SolicitudesTramites`, `ExpedientesEstudiantes`
+- **Subcapacidades Relacionadas:** F33-05, F33-07.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md` / Sección C (F33-05, F33-07) y Plan de Implementación F33-Task06.
+- **Problema Detectado y Riesgos:**
+  Padres o estudiantes pueden enviar reiteradas veces la misma solicitud de constancia o excusa por desconocimiento del estado de su trámite anterior, saturando las colas con solicitudes idénticas activas o ingresando datos contradictorios con el expediente escolar.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Validación cruzada contra datos maestros institucionales:*
+     - Contrastar respuestas contra `ExpedientesEstudiantes`, matrículas activas y parentesco registrado en `RelacionesFamiliares`.
+     - Clasificar resultados: coincidencia, discrepancia informativa o inconsistencia bloqueante.
+     - Comportamiento configurable por campo ante discrepancias (`BLOQUEAR_ENVIO`, `ADVERTIR_USUARIO`, `SOLICITAR_REVISION_ADMINISTRATIVA`).
+  2. *Detección inteligente de trámites duplicados activos:*
+     - Analizar titular, tipo de trámite, período académico y ventana temporal configurable.
+     - Advertir al usuario si ya tiene una solicitud idéntica en estado `Enviada`, `En_Revision` o `Requiere_Informacion`, ofreciendo consultarla en vez de duplicarla.
+     - Permitir al personal administrativo marcar un duplicado como legítimo, duplicado confirmado o cancelado con motivo justificado.
+     - Concurrencia atómica para evitar que dos envíos simultáneos superen la validación por condición de carrera.
+- **Criterios de Aceptación:**
+  - [ ] Detecta inconsistencias con el expediente académico y aplica la regla configurada antes del envío.
+  - [ ] Identifica solicitudes duplicadas activas y emite advertencia clara al usuario.
+  - [ ] Dos envíos simultáneos no generan trámites duplicados no permitidos.
+  - [ ] Las validaciones cruzadas no exponen datos privados de otros estudiantes en los mensajes de error.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F33-Task07] [P1] Fortalecimiento de la Trazabilidad Documental, Integridad Criptográfica y Ciclo de Vida de Firmas
+- **Orden de Ejecución:** 8
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`registerDocumentSignature`, `verifyDocumentSignatureIntegrity`, `getCompleteRequestDossierAuditTrail`)
+  - `backend/accounting-service/Code.gs`
+  - Hoja: `SolicitudesTramites`, `RevisionesDecisionesTramite`, `FirmasConformidades`, `DocumentosEscolaresEmitidos`
+- **Subcapacidades Relacionadas:** F33-12, F33-14.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md` / Sección C (F33-12, F33-14) y Plan de Implementación F33-Task07.
+- **Problema Detectado y Riesgos:**
+  Se requiere consolidar la relación indisoluble entre la solicitud original, sus evidencias adjuntas, las subsanaciones intermedias, las firmas electrónicas registradas y el documento final PDF emitido con CUV, certificando que el archivo final no haya sufrido alteraciones posteriores.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Integridad criptográfica mediante Hash SHA-256:*
+     - Calcular el hash SHA-256 sobre los bytes exactos del documento final PDF firmado y registrarlo en `FirmasConformidades`.
+     - Comprobación de integridad: al consultar o descargar el documento, recalcular el hash; si difiere, alertar sobre alteración documental.
+     - Vincular cada firma a la versión exacta del documento; si el trámite sufre correcciones posteriores, la firma anterior no convalida la nueva versión.
+  2. *Expediente documental institucional unificado (Legajo Digital):*
+     - Ficha consolidada que integra: solicitud original, versiones de subsanación, evidencias adjuntas, historial de decisiones de revisores con marcas de tiempo, firmas registradas y PDF emitido con su CUV y correlativo anual.
+     - Consulta pública del CUV que certifique autenticidad sin revelar datos confidenciales protegidos.
+- **Criterios de Aceptación:**
+  - [ ] El hash SHA-256 coincide exactamente con el archivo almacenado en Drive.
+  - [ ] Cualquier alteración manual del archivo PDF firmado es detectada por el verificador de integridad.
+  - [ ] Una firma registrada no puede reutilizarse en otra versión o trámite distinto.
+  - [ ] El expediente unificado permite auditar el ciclo de vida completo de principio a fin.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 3. AUTOMATIZACIÓN AVANZADA Y AMPLIACIÓN DE CAPACIDADES (P2)
+
+### [F33-Task09] [P2] Constancias de Recepción Física con Código QR y Verificación Documental
+- **Orden de Ejecución:** 9
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`generatePhysicalFilingReceiptPdf`)
+  - `backend/user-service/Code.gs`
+  - Hoja: `ConstanciasRecepcionFisica`, `SolicitudesTramites`
+- **Subcapacidades Relacionadas:** F33-03, F33-13.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md` / Sección C (F33-03, F33-13) y Plan de Implementación F33-Task09.
+- **Problema Detectado y Riesgos:**
+  Al radicar un trámite en ventanilla física, el solicitante requiere un comprobante institucional descargable o imprimible que certifique la entrega de documentos, la fecha y el funcionario receptor, permitiendo seguimiento mediante código QR.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Generación automática de constancia de radicación en PDF:*
+     - Emitir comprobante al registrar una recepción física con: membrete institucional, identificador de radicación, número de solicitud, titular, persona que entrega, fecha/hora, funcionario receptor, relación de documentos entregados y observaciones.
+     - Soporte para recepciones parciales: señalar claramente qué documentos se recibieron y cuáles quedan pendientes.
+     - Generación de constancias complementarias vinculadas a la radicación inicial.
+  2. *Código QR de seguimiento en línea:*
+     - Incrustar código QR que conduzca a la página oficial de verificación de estado del trámite sin exponer datos sensibles no autenticados.
+     - Permitir reimprimir la constancia manteniendo el identificador y fecha de emisión original.
+- **Criterios de Aceptación:**
+  - [ ] Al radicar documentos en ventanilla se emite de inmediato la constancia PDF con código QR.
+  - [ ] El código QR permite a la familia consultar el estado del trámite escaneándolo con su teléfono.
+  - [ ] Las recepciones parciales identifican con total claridad los documentos pendientes de entrega.
+  - [ ] La constancia queda indexada en el expediente institucional del estudiante.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F33-Task08] [P2] Paquetes de Trámites Agrupados y Solicitudes Recurrentes Anuales
+- **Orden de Ejecución:** 10
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`createBundleFormRequest`, `getBundleRequestProgress`)
+  - `js/student.js`
+  - Hoja: `PaquetesTramites`
+- **Subcapacidades Relacionadas:** F33-01, F33-03.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md` / Sección C (F33-01) y Plan de Implementación F33-Task08.
+- **Problema Detectado y Riesgos:**
+  En temporadas de matrícula o inicio de año escolar, los padres deben buscar y llenar múltiples trámites independientes (matrícula, ficha médica, transporte, salidas autorizadas), generando fatiga de captura y solicitudes incompletas.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Paquetes de trámites encadenados (Bundles):*
+     - Agrupar varios formularios relacionados bajo un solo proceso guiado con barra de progreso consolidada.
+     - Reutilización de datos compartidos: los datos generales ingresados en el primer formulario se propagan automáticamente a los demás del paquete sin duplicar captura.
+     - Mantener expedientes individuales e independientes para cada formulario del paquete, respetando sus propios flujos de revisión.
+  2. *Solicitudes recurrentes y campañas anuales:*
+     - Generar paquetes de actualización periódica anual con precarga de datos del año anterior para confirmación o modificación de variaciones.
+     - Asignar paquetes masivamente a grupos de estudiantes por grado o sección con monitoreo directivo de avance global.
+- **Criterios de Aceptación:**
+  - [ ] Las familias pueden completar un paquete de trámites agrupados en un solo recorrido fluido.
+  - [ ] Los datos generales se comparten entre los formularios del paquete evitando capturas redundantes.
+  - [ ] Cada trámite conserva su propio expediente y trazabilidad de aprobación individual.
+  - [ ] La institución puede supervisar el porcentaje de avance global de la campaña por grado o sección.
+- **Estado:** [ ] Pendiente
+
+---
+
+## FASE 34: BANDEJAS DE ENTRADA Y SALIDA, REVISIÓN Y FIRMAS
+
+---
+
+### [F34-Task01] [P0] Unificación del ciclo de vida de las justificaciones de asistencia y sincronización con los registros académicos
+- **Prioridad:** P0 (Crítica)
+- **Orden de Ejecución:** 1 (Dependencia base para sincronización académica)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`submitStudentAbsenceJustification`, `reviewAbsenceJustification`, `updateRequestStatus`)
+  - `backend/academic-service/Code.gs` (`submitAttendanceJustification`, `reviewAttendanceJustification`, `RegistrosAsistencia`, `SesionesAsistencia`, `JustificacionesAsistencia`)
+  - Hojas de Cálculo: `SolicitudesTramites`, `JustificacionesAsistencia`, `RegistrosAsistencia`, `SesionesAsistencia`
+- **Subcapacidades Relacionadas:** F34-01, F34-07, F34-12.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-12), Matriz CAR-F34-03 y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  Existen dos implementaciones independientes para presentar y revisar excusas estudiantiles:
+  1. El servicio de usuarios registra solicitudes en `SolicitudesTramites`.
+  2. El servicio académico registra justificaciones en `JustificacionesAsistencia` y es el único que actualiza `RegistrosAsistencia` (`Justificada = true`).
+  Como consecuencia directa, una excusa aprobada desde el flujo administrativo en Secretaría puede no reflejarse en la asistencia académica, produciendo inconsistencias críticas entre la resolución administrativa y los registros que consultan los docentes, derivando en inasistencias injustificadas erróneas y sanciones académicas indebidas para el estudiante.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Ciclo de vida unificado e inequívoco:*
+     - Establecer un único ciclo de vida institucional para las justificaciones de asistencia, independientemente de la interfaz o departamento desde el que se presenten.
+     - Mantener una relación relacional inequívoca entre:
+       * Solicitud original (`solicitudId` / `justificacionId`).
+       * Estudiante (`estudianteId` / `userId`).
+       * Representante legal o tutor que la presentó.
+       * Fechas y sesiones de asistencia afectadas (`fechaAusencia`, `periodo`).
+       * Evidencias adjuntas (`adjuntoUrl`, hash criptográfico).
+       * Revisiones y decisiones (`revisadoPor`, `observacionesAdmin`).
+       * Resolución final (`EstadoRevision`).
+       * Registros académicos actualizados (`RegistrosAsistencia`).
+  2. *Sincronización académica atómica sin re-captura manual:*
+     - La aprobación administrativa en `reviewAbsenceJustification` (o mediante `processWorkflowDecision`) debe producir automáticamente la actualización académica correspondiente en `RegistrosAsistencia` sin requerir que Secretaría vuelva a registrar manualmente la justificación en otro módulo.
+     - La actualización debe afectar exclusivamente las fechas y sesiones comprendidas en la justificación aprobada.
+     - En solicitudes que cubran varios días o períodos extendidos, identificar con precisión las sesiones de clase afectadas (`SesionesAsistencia`) y aplicar la justificación únicamente a las que correspondan.
+  3. *Segregación estricta de estados y justificaciones parciales:*
+     - Una solicitud en estado pendiente, observada o rechazada bajo ninguna circunstancia debe modificar los registros de asistencia como si estuviera aprobada.
+     - Conservar en el modelo la distinción entre:
+       * Justificación recibida.
+       * Justificación en revisión.
+       * Justificación aprobada.
+       * Inasistencia justificada.
+       * Inasistencia todavía pendiente de justificar.
+     - Permitir resoluciones administrativas con *justificación parcial*, cuando solo algunas fechas o sesiones del rango solicitado hayan sido aceptadas y validadas por Secretaría.
+  4. *Idempotencia, prevención de duplicados y reversibilidad:*
+     - Evitar que una misma aprobación repetida actualice dos veces los mismos registros de asistencia.
+     - Asegurar que la anulación, revocación o rechazo posterior de una justificación revierta coherentemente el estado de la asistencia a su condición original previa (`Inasistencia Injustificada`) sin borrar la evidencia histórica.
+     - Registrar los resultados de la sincronización y registrar en log estructurado los fallos que impidan actualizar la asistencia.
+     - Permitir reintentar una sincronización fallida sin duplicar registros ni alterar decisiones anteriores.
+  5. *Parametrización configurable en plataforma:*
+     - En caso de discrepancias entre políticas institucionales, incorporar en `ConfiguracionInstitucional`:
+       * `JUSTIFICACION_IMPACTO_AUTOMATICO_ASISTENCIA`: Valores `INMEDIATO_AL_APROBAR_SECRETARIA` (por defecto) vs. `REQUIERE_CONFORMIDAD_PREVIA_DOCENTE`.
+       * `PERMITIR_JUSTIFICACION_PARCIAL_DIAS`: Valores `HABILITADO` (permite aprobar días seleccionados del rango) vs. `TODO_O_NADA` (exige aprobar o rechazar el bloque completo).
+- **Criterios de Aceptación:**
+  - [ ] Presentar una excusa desde el portal del representante y comprobar que se conserva su identificador único durante todo el proceso.
+  - [ ] Aprobarla desde el flujo administrativo y verificar que las sesiones afectadas se actualizan en `RegistrosAsistencia` (`Justificada = true` y `EstadoAsistencia = "Justificada"`).
+  - [ ] Comprobar que una excusa rechazada, observada o pendiente no modifica la asistencia en ningún aula.
+  - [ ] Aprobar una excusa que cubra varias fechas y verificar que solo se actualizan las sesiones comprendidas en el período autorizado.
+  - [ ] Ejecutar dos veces la misma operación de aprobación y comprobar que no se duplican cambios ni registros.
+  - [ ] Simular un fallo durante la sincronización y comprobar que el sistema conserva la resolución y permite completar la actualización sin duplicarla.
+  - [ ] Verificar que la asistencia y el expediente muestran exactamente la misma resolución.
+  - [ ] Comprobar que las modificaciones quedan registradas con fecha, responsable y solicitud de origen.
+- **Dependencias:** F34-Task03 (acceso contextual docente a justificaciones resultantes), F34-Task04 (integridad criptográfica de evidencias adjuntas).
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F34-Task04] [P0] Integridad criptográfica, versionado y protección contra sustitución de evidencias documentales
+- **Prioridad:** P0 (Crítica)
+- **Orden de Ejecución:** 2 (Garantía de inmutabilidad previa a aprobaciones y firmas)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`submitInstitutionalFormRequest`, `submitStudentAbsenceJustification`, `verifyDocumentEvidenceIntegrity`)
+  - `backend/academic-service/Code.gs` (`submitAttendanceJustification`)
+  - `backend/accounting-service/Code.gs`
+  - Hojas de Cálculo: `SolicitudesTramites`, `JustificacionesAsistencia`, `EvidenciasDocumentales`
+- **Subcapacidades Relacionadas:** F34-05, F34-09, F34-10.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-10), Matriz CAR-F34-05 y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  Los archivos adjuntos se almacenan en Google Drive y se referencian mediante URLs o IDs de archivo, pero no se calcula ni se almacena un hash SHA-256 del contenido binario recibido. Si un archivo es sustituido, editado o corrompido en el almacenamiento externo, el sistema carece de mecanismos para detectar que la evidencia actual difiere de la aportada originalmente, comprometiendo la legalidad de autorizaciones, excusas médicas y resoluciones disciplinarias.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Cálculo y persistencia de hash criptográfico SHA-256:*
+     - Calcular obligatoriamente el hash SHA-256 del contenido binario de cada archivo en el momento exacto de su recepción en servidor.
+     - Almacenar junto al registro documental estructurado:
+       * Identificador del archivo (`evidenciaId`).
+       * Identificador de la solicitud (`solicitudId`).
+       * Nombre original del archivo.
+       * Tipo MIME verificado.
+       * Tamaño exacto en bytes.
+       * Fecha y hora ISO de recepción.
+       * Usuario que lo aportó (`userId`).
+       * Hash criptográfico SHA-256 en hexadecimal.
+       * Identificador de versión (`versionNumero`).
+       * Ubicación y referencia segura de almacenamiento en Google Drive.
+  2. *Auditoría activa y verificación de integridad:*
+     - Comprobar la integridad del archivo al consultarlo, revisarlo o descargarlo en operaciones críticas.
+     - Detectar discrepancias entre el hash del contenido actual en Drive y el hash registrado originalmente.
+     - Registrar los fallos de integridad como incidencias de seguridad (`EVIDENCE_TAMPERING_DETECTED`) y evitar que el sistema presente el archivo como evidencia válida cuando no pueda verificarse.
+  3. *Inmutabilidad y versionado ante subsanaciones:*
+     - Impedir la sustitución silenciosa o sobrescritura de un documento que haya servido de base para aprobar o firmar una solicitud.
+     - Si el solicitante aporta una fotografía o documento corregido tras una observación, almacenar una nueva versión documental vinculada (`v2`, `v3`) conservando intacta la versión previa para auditoría histórica.
+     - Permitir múltiples archivos adjuntos por solicitud, conservando cada uno su propio hash y metadatos independientes.
+     - Mantener la protección de privacidad de los archivos en Drive, garantizando que la comprobación de integridad no requiera hacer públicos los enlaces.
+  4. *Parametrización configurable en plataforma:*
+     - Ajuste institucional en `ConfiguracionInstitucional`: `BLOQUEO_AUTOMATICO_POR_DISCREPANCIA_HASH` (Valores: `ESTRICTO_BLOQUEAR_ACCESO_Y_NOTIFICAR_AUDITORIA` vs. `ADVERTENCIA_VISUAL_REVISOR`).
+- **Criterios de Aceptación:**
+  - [ ] Subir un archivo y comprobar que se calcula y almacena su hash SHA-256.
+  - [ ] Descargar el mismo archivo y comprobar que el hash recalculado coincide exactamente.
+  - [ ] Sustituir o modificar el archivo en el almacenamiento y verificar que el sistema detecta y alerta la discrepancia.
+  - [ ] Presentar una nueva evidencia subsanada y comprobar que la original sigue disponible y consultable por los roles autorizados.
+  - [ ] Aprobar una solicitud y comprobar que la decisión queda vinculada a los hashes de las evidencias efectivamente revisadas.
+  - [ ] Verificar que un usuario sin permisos no puede sustituir ni eliminar archivos aprobados.
+  - [ ] Simular un fallo al calcular o verificar el hash y comprobar que el archivo no se marca como verificado.
+  - [ ] Comprobar que cada adjunto de una solicitud mantiene un identificador y hash independiente.
+  - [ ] Verificar que los enlaces privados continúan protegidos contra accesos no autenticados.
+  - [ ] Comprobar que las evidencias históricas pueden verificarse sin alterar su contenido ni marcas temporales.
+- **Dependencias:** Almacenamiento documental existente, sistema de permisos, F34-Task01.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F34-Task03] [P0] Consulta contextual de justificaciones de asistencia para docentes mediante permisos ABAC
+- **Prioridad:** P0 (Crítica)
+- **Orden de Ejecución:** 3 (Control de acceso basado en atributos y privacidad docente)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`getTeacherStudentJustifications`)
+  - `backend/user-service/Code.gs`
+  - `js/teacher.js`
+  - `teacher-dashboard.html`
+- **Subcapacidades Relacionadas:** F34-01, F34-04, F34-11.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-11), Matriz CAR-F34-04 y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  Los docentes no disponen de una consulta específica que les permita visualizar las justificaciones de inasistencia de los estudiantes matriculados en sus asignaturas. La protección contextual para padres ya está implementada, pero falta extender el acceso a los docentes según sus asignaciones académicas efectivas. Si se les concediera acceso global verían expedientes de otros grupos y notas privadas, y si no se les concede quedan desinformados del motivo de la inasistencia.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Control de acceso basado en atributos (ABAC):*
+     - Incorporar la consulta `getTeacherStudentJustifications(payload)` validando en backend la relación entre:
+       * Docente autenticado (`_verifiedUserId`).
+       * Asignaturas que imparte (`AsignacionesDocentes`).
+       * Secciones o grupos asignados activamente.
+       * Estudiantes matriculados en sus listas (`MatriculasEstudiantes`).
+       * Fechas y sesiones de clase afectadas (`SesionesAsistencia`).
+     - La consulta debe limitarse estrictamente a los estudiantes asignados en el período lectivo correspondiente.
+     - Cuando una justificación afecte varias asignaturas impartidas por distintos docentes, cada docente debe consultar únicamente las sesiones que le corresponden en su horario.
+  2. *Segregación de confidencialidad y datos sensibles:*
+     - Mostrar únicamente la información indispensable para la función docente:
+       * Nombre del estudiante y grado/sección.
+       * Fecha o período justificado.
+       * Estado de la solicitud (`Aprobada`, `Pendiente`, `Rechazada`).
+       * Resultado de la revisión administrativa.
+       * Observaciones públicas de Secretaría.
+       * Evidencias autorizadas para conocimiento docente.
+     - Ocultar estrictamente notas administrativas internas, detalles clínicos reservados, información médica innecesaria o disputas de custodia legal familiar.
+  3. *Constancia de conocimiento docente:*
+     - Permitir que el docente registre una constancia digital de conocimiento o conformidad sobre la inasistencia justificada sin alterar la resolución emitida por Secretaría.
+     - Mantener el acceso contextual histórico cuando el docente cambie de sección o finalice el período académico según las directrices institucionales.
+  4. *Parametrización configurable en plataforma:*
+     - Parámetro en `ConfiguracionInstitucional`: `DOCENTE_VISIBILIDAD_EVIDENCIAS_MEDICAS` (Valores: `SOLO_DICTAMEN_SECRETARIA` [recomendado por privacidad] vs. `PERMITIR_VER_CONSTANCIA_MEDICA_COMPLETA`).
+- **Criterios de Aceptación:**
+  - [ ] Un docente consulta exclusivamente las justificaciones de estudiantes matriculados en sus secciones y asignaturas activas.
+  - [ ] Un docente no puede consultar justificaciones de alumnos que no pertenecen a su asignación académica (rechazo con error 403).
+  - [ ] Si una excusa cubre varias asignaturas, cada docente visualiza únicamente las sesiones correspondientes a su carga horaria.
+  - [ ] Alterar manualmente identificadores en la solicitud no permite eludir los filtros ABAC ni acceder a expedientes ajenos.
+  - [ ] La consulta docente no expone observaciones administrativas privadas ni información sensible no pertinente.
+  - [ ] El docente puede registrar constancia de conocimiento sin modificar la decisión tomada por Secretaría.
+  - [ ] Todos los intentos de acceso no autorizado son auditados en `RegistroEventos`.
+  - [ ] La consulta se integra en la interfaz docente sin interferir con la bandeja de tareas y entregas de aula virtual.
+- **Dependencias:** F34-Task01 (unificación de justificaciones), sistema de asignaciones docentes y matrícula.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F34-Task02] [P0] Bandeja de salida institucional y control de entregas con acuses de recibo
+- **Prioridad:** P0 (Crítica)
+- **Orden de Ejecución:** 4 (Trazabilidad y fehaciencia de comunicaciones despachadas)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`getDepartmentalOutbox`, `recordDocumentDeliveryReceipt`, `recordDocumentOpenReceipt`, `sendInstitutionalDispatch`)
+  - `backend/accounting-service/Code.gs`
+  - Hoja de Cálculo: `EntregasDocumentales`
+- **Subcapacidades Relacionadas:** F34-02, F34-09, F34-10.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-02), Matriz CAR-F34-02 y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  Existe consulta de trámites enviados por usuarios mediante `getAdministrativeRequests`, pero no existe una bandeja formal de salida para que Secretaría, Dirección, Contabilidad y otros departamentos puedan controlar los documentos que emiten y verificar qué ocurrió después del envío. Actualmente no se diferencian de forma suficiente el envío solicitado, la entrega, la apertura, la lectura y la recepción formal, dejando a la institución sin respaldo legal probatorio ante citaciones o notificaciones oficiales.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Bandeja de salida personal y departamental:*
+     - Incorporar vistas de bandeja de salida personal (`mis despachos`) y departamental (`despachos del departamento`).
+     - Registrar y consultar cada emisión con:
+       * Identificador único de entrega (`entregaId`).
+       * Identificador del documento (`documentoId`).
+       * Identificador del trámite o expediente relacionado (`tramiteId`).
+       * Remitente (`emisorUserId`).
+       * Departamento de origen.
+       * Destinatario o destinatarios (individual o lista).
+       * Fecha y hora ISO de emisión y despacho.
+       * Documento y versión exacta enviada.
+       * Archivos adjuntos y sus hashes asociados.
+       * Medio o canal de entrega (portal institucional, correo, notificación push).
+       * Estado individualizado de cada destinatario.
+  2. *Diferenciación rigurosa de estados y acontecimientos de entrega:*
+     - Diferenciar inequívocamente y sin equiparaciones automáticas:
+       * `Preparado`: Documento elaborado en borrador.
+       * `Envío Solicitado`: Encolado para despacho.
+       * `Enviado`: Emitido por el servidor.
+       * `Entregado`: Depositado en el canal o casilla del destinatario.
+       * `Abierto o Consultado`: El destinatario abrió o descargó el documento.
+       * `Recibido Formalmente`: El destinatario confirmó la recepción expresa.
+       * `Respondido`: El trámite derivó en una contestación.
+       * `Devuelto o Rechazado`: Rebotado por dirección inválida o rechazo.
+       * `Fallido`: Error técnico de transmisión.
+     - Regla estricta: La apertura de una notificación o recepción de un correo jamás debe interpretarse como recepción formal de un documento oficial vinculante.
+  3. *Acuses de recibo verificables y reenvíos:*
+     - Generar acuse de recibo con identificador único, marca temporal, IP y hash del documento recibido al momento en que el destinatario confirme la recepción.
+     - En envíos multidestinatario, conservar el estado de entrega y lectura independiente para cada uno.
+     - Permitir reenviar documentos ante fallos de entrega sin sobrescribir ni borrar los intentos fallidos previos.
+     - Mantener la relación con el expediente original evitando generar copias huérfanas.
+  4. *Parametrización configurable en plataforma:*
+     - Parámetro en `ConfiguracionInstitucional`: `MODALIDAD_ACUSE_RECIBO_NOTIFICACIONES`: Valores `EXPLICITO_CLIC_CONFIRMACION` (exige botón de aceptación de recibido) vs. `AUTOMATICO_POR_LECTURA` (toma la apertura como recepción con advertencia).
+- **Criterios de Aceptación:**
+  - [ ] Emitir un documento desde un departamento y comprobar que aparece de inmediato en su bandeja de salida.
+  - [ ] Verificar que remitente, destinatario, fecha, versión documental y hashes quedan registrados en `EntregasDocumentales`.
+  - [ ] Comprobar que un fallo de transmisión no se marque falsamente como entrega exitosa.
+  - [ ] Abrir el documento desde la cuenta del destinatario y verificar que se registra la consulta sin marcarlo automáticamente como "Recibido Formalmente".
+  - [ ] Confirmar formalmente la recepción y comprobar la generación del acuse con IP y marca de tiempo.
+  - [ ] Enviar a múltiples destinatarios y verificar que cada uno conserva su propio estado de lectura y entrega.
+  - [ ] Intentar consultar la bandeja de salida de otro departamento sin autorización y verificar que el acceso es denegado (error 403).
+  - [ ] Comprobar que un reenvío conserva el historial del intento previo sin destruirlo.
+  - [ ] Modificar una copia posterior del documento y verificar que el acuse original permanece vinculado a la versión efectivamente recibida.
+- **Dependencias:** F34-Task04 (integridad criptográfica), F34-Task06 (notificaciones de envío y entrega), historial institucional.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F34-Task05] [P1] Historial de asignaciones, reasignaciones y revisión individual o colegiada
+- **Prioridad:** P1 (Alta)
+- **Orden de Ejecución:** 5 (Coordinación administrativa multidepartamental)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`reassignAdministrativeRequest`, `getWorkflowHistory`, `saveApprovalWorkflow`, `processWorkflowDecision`)
+  - Hoja de Cálculo: `HistorialAsignacionesTramites`, `FlujosAprobacion`
+- **Subcapacidades Relacionadas:** F34-04, F34-07, F34-09.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-04), Matriz CAR-F34-07 y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  El sistema permite modificar el responsable mediante `siguienteAsignadoA` y `updateRequestStatus`, pero no conserva un historial estructurado de los traspasos (se sobrescribe el responsable actual). Tampoco existe soporte para asignar un trámite a varios responsables que deban revisar o aprobar de forma concurrente o colegiada (ej. Secretaría + Orientación + Dirección), arriesgando aprobaciones unilaterales en trámites que requieren consenso.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Bitácora estructurada de asignaciones y traspasos:*
+     - Registrar en la hoja `HistorialAsignacionesTramites`:
+       * Identificador de asignación (`asignacionId`).
+       * Documento o solicitud (`solicitudId`).
+       * Departamento de origen y departamento de destino.
+       * Responsable anterior y nuevo responsable (`userId`).
+       * Usuario que ordenó la asignación o traspaso.
+       * Fecha y hora ISO exacta.
+       * Motivo fundamentado del cambio.
+       * Tipo de asignación: inicial, reasignación, delegación temporal o transferencia departamental.
+     - Validar que el usuario destinatario esté activo en el sistema y pertenezca al departamento correspondiente antes de procesar el traspaso.
+  2. *Revisión colegiada y reglas de aprobación configurables:*
+     - Permitir asignar un trámite a múltiples responsables concurrentes o secuenciales.
+     - Implementar motor de resolución según reglas configurables en el flujo:
+       * `TODOS_DEBEN_APROBAR` (unanimidad obligatoria).
+       * `BASTA_UNO` (primer responsable que apruebe libera el trámite).
+       * `MAYORIA_SIMPLE` (más del 50% de las decisiones emitidas deben ser favorables).
+       * `NUMERO_FIJO` (requiere un mínimo de N aprobaciones).
+     - Mostrar qué responsables ya completaron su intervención y cuáles siguen pendientes en la bandeja de trabajo.
+     - Evitar que una decisión individual cierre o apruebe definitivamente un proceso que requiere múltiples aprobaciones colegiadas.
+     - Registrar delegaciones temporales de funciones con fecha de inicio y caducidad automática.
+  3. *Parametrización configurable en plataforma:*
+     - Ajuste por tipo de trámite en `FlujosAprobacion`: `REGLA_APROBACION_COLEGIADA` (`TODOS`, `UNO`, `MAYORIA`) y `PERMITIR_REASIGNACION_POR_REVISOR` (Valores: `SOLO_SUPERVISOR_O_ADMIN`, `CUALQUIER_INTEGRANTE_DEPARTAMENTO`).
+- **Criterios de Aceptación:**
+  - [ ] Asignar una solicitud y comprobar que se registra autor, destinatario, fecha y departamento en la bitácora.
+  - [ ] Reasignar la solicitud y verificar que se conservan el responsable anterior y el motivo sin sobrescribir la historia.
+  - [ ] Intentar asignar a un usuario inactivo o ajeno al departamento y comprobar que la operación es rechazada.
+  - [ ] Asignar un documento a varios responsables colegiados y verificar que cada uno registra su decisión independiente.
+  - [ ] Comprobar que una aprobación individual no finaliza un trámite configurado como unánime o colegiado.
+  - [ ] Verificar que una regla de mayoría simple se resuelve de forma matemáticamente exacta al registrar las decisiones.
+  - [ ] Comprobar que las delegaciones temporales expiran automáticamente pasada la fecha límite autorizada.
+  - [ ] Consultar el historial y comprobar la secuencia cronológica completa de traspasos y decisiones colegiadas.
+- **Dependencias:** Motor de flujos de aprobación, sistema de usuarios y departamentos, F34-Task08.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F34-Task09] [P1] Observaciones granulares y subsanación por campo o documento
+- **Prioridad:** P1 (Alta)
+- **Orden de Ejecución:** 6 (Subsanación quirúrgica sin reproceso global)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`processWorkflowDecision`, `submitFormCorrection`, `getWorkflowHistory`)
+  - `js/student.js`, `js/teacher.js`
+  - Hoja de Cálculo: `ObservacionesSubsanacionTramite`, `RevisionesDecisionesTramite`
+- **Subcapacidades Relacionadas:** F34-05, F34-07, F34-10.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-05) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  El motor de decisiones actual permite registrar observaciones públicas e internas, pero no ofrece un mecanismo para marcar un campo, dato o archivo específico como observado. Esto obliga a los funcionarios a devolver o rechazar la solicitud completa, forzando a las familias a llenar de nuevo todo el formulario o volver a subir documentos que ya estaban correctos, generando fricción y retrasos operativos.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Marcado quirúrgico de observaciones:*
+     - Permitir vincular una observación a un elemento concreto del expediente:
+       * Un campo específico del formulario dinámico.
+       * Un archivo adjunto o evidencia particular (ej. fotografía ilegible de carnet).
+       * Una fecha o período determinado.
+       * La solicitud completa en casos generales.
+     - Registrar para cada elemento observado: campo afectado, motivo de la observación, fecha límite de subsanación y si es subsanable o definitivo.
+  2. *Bloqueo de campos validados y subsanación focalizada:*
+     - Al entrar en estado `Requiere Corrección`, bloquear contra edición los campos y archivos que ya fueron validados y aceptados por el revisor, permitiendo al solicitante editar únicamente los elementos explícitamente observados.
+     - Conservar las respuestas originales y generar una nueva versión vinculada para las correcciones aportadas.
+     - Permitir al solicitante responder puntualmente a cada observación con comentarios o nuevas evidencias.
+     - Mantener la estricta distinción entre notas internas administrativas y requerimientos públicos al solicitante.
+     - Determinar automáticamente cuándo se han solventado todas las observaciones obligatorias para reanudar el trámite hacia la siguiente fase de aprobación.
+  3. *Parametrización configurable en plataforma:*
+     - Parámetro en `ConfiguracionInstitucional`: `MODO_SUBSANACION_CAMPOS`: Valores `QUIRURGICO_CONGELAR_VALIDADOS` (por defecto) vs. `REAPERTURA_TOTAL_FORMULARIO` (permite editar cualquier campo durante la corrección).
+- **Criterios de Aceptación:**
+  - [ ] Marcar un archivo adjunto específico como observado y verificar que los demás documentos del trámite permanecen validados.
+  - [ ] Solicitar la corrección de un campo específico y comprobar que el solicitante ve resaltado exactamente qué debe corregir.
+  - [ ] Comprobar que los campos aceptados quedan bloqueados contra modificación si la política así lo establece.
+  - [ ] Aportar una nueva evidencia subsanada y verificar que se genera una nueva versión sin destruir el archivo inicial.
+  - [ ] Confirmar que las observaciones internas no se exponen al remitente en su consola de subsanación.
+  - [ ] Resolver una observación y verificar que el estado del trámite avanza solo cuando todas las correcciones obligatorias han sido aprobadas.
+- **Dependencias:** F34-Task04 (integridad criptográfica), F34-Task05, motor de decisiones y formularios.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F34-Task06] [P1] Notificaciones multicanal reactivas, preferencias y agrupación de avisos
+- **Prioridad:** P1 (Alta)
+- **Orden de Ejecución:** 7 (Comunicación oportuna y mitigación de fatiga de avisos)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`sendMultiChannelNotification`, `dispatchWorkflowNotification`, `retryFailedNotificationsQueue`)
+  - Hoja de Cálculo: `RegistroNotificaciones`, `PreferenciasNotificaciones`
+- **Subcapacidades Relacionadas:** F34-06, F34-08.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-08), Matriz CAR-F34-08 y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  La integración actual genera notificaciones básicas al presentar una solicitud, pero no comunica de manera automática y reactiva los cambios de estado posteriores (`Requiere Corrección`, `Aprobada`, `Rechazada`). Además, no existe una estrategia para agrupar avisos menores, arriesgando fatiga por saturación de mensajes que induce a los usuarios a ignorar avisos críticos o citaciones institucionales.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Despacho reactivo multicanal por eventos de ciclo de vida:*
+     - Disparar avisos automáticos vinculados a los acontecimientos clave del documento:
+       * Solicitud recibida formalmente.
+       * Trámite asignado o reasignado a un responsable.
+       * Solicitud observada / Subsanación requerida (indicando plazo e instrucciones).
+       * Evidencia complementaria solicitada.
+       * Solicitud aprobada o rechazada (con observaciones públicas).
+       * Documento firmado oficialmente.
+       * Despacho y entrega confirmada.
+     - Determinar destinatarios según el rol y su vinculación legal contextual.
+     - Enlaces directos seguros que validen credenciales y permisos al abrir el documento.
+     - Protección estricta: Jamás incluir notas administrativas internas ni datos confidenciales en el texto de correos o mensajes WhatsApp.
+  2. *Agrupación de avisos y preferencias de usuario:*
+     - Diferenciar avisos urgentes/críticos (despacho inmediato e individual) de notificaciones informativas de baja prioridad.
+     - Implementar mecanismo de digest o resumen consolidado para eventos informativos no urgentes para evitar saturación de bandejas.
+     - Registrar el estado de cada notificación: `Generada`, `Pendiente de Envío`, `Enviada`, `Entregada`, `Fallida`.
+     - Reintentos controlados con retroceso exponencial sin duplicar envíos exitosos.
+  3. *Parametrización configurable en plataforma:*
+     - Configuración institucional en `ConfiguracionInstitucional`: `CANALES_NOTIFICACION_TRAMITES`: Lista configurable (`EMAIL`, `SMS`, `WHATSAPP`, `PUSH_INTERNA`) y `FRECUENCIA_RESUMEN_INFORMATIVO` (`INMEDIATO`, `DIARIO_18HRS`).
+- **Criterios de Aceptación:**
+  - [ ] Cambiar una solicitud a `Requiere Corrección` y verificar que el solicitante recibe la notificación externa con las instrucciones públicas.
+  - [ ] Aprobar o rechazar un trámite y verificar el despacho del aviso con el resultado oficial.
+  - [ ] Comprobar que las notas internas y comentarios privados jamás se transmiten en mensajes externos.
+  - [ ] Verificar que los docentes reciben únicamente notificaciones de justificaciones de sus propios alumnos.
+  - [ ] Reintentar un envío fallido y verificar que no se duplica la notificación al destinatario.
+  - [ ] Comprobar que la agrupación de avisos informativos no retrasa las alertas críticas o citaciones urgentes.
+  - [ ] Abrir el enlace de notificación con un usuario no autorizado y comprobar que el acceso es denegado.
+- **Dependencias:** F34-Task02 (bandeja de salida), F34-Task05 (asignaciones), centro de notificaciones multicanal.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F34-Task07] [P1] Delimitación del alcance de las firmas institucionales y requisitos para mecanismos de firma legal
+- **Prioridad:** P1 (Alta)
+- **Orden de Ejecución:** 8 (Seguridad jurídica y cumplimiento del Decreto 149-2013)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`registerDocumentSignature`, `getWorkflowHistory`, `verifyDocumentSignature`)
+  - `docs/architecture/`
+  - Certificados digitales emitidos y visualizadores de firmas
+  - Hoja de Cálculo: `FirmasConformidades`
+- **Subcapacidades Relacionadas:** F34-06, F34-10.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-06), Matriz CAR-F34-06 y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  El sistema registra conformidades autenticadas mediante `registerDocumentSignature` con tokens pseudo-aleatorios `VERIF-XXXXXXXX`. Sin embargo, estos mecanismos son aprobaciones internas basadas en sesión y no equivalen a una Firma Electrónica Avanzada bajo la Ley sobre Firmas Electrónicas de Honduras (Decreto 149-2013 y Acuerdo 041-2014). Presentarlos erróneamente como "firmas digitales certificadas" expone a la institución a impugnaciones legales de nulidad en contratos laborales, títulos oficiales o actos disciplinarios graves.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Diferenciación conceptual y advertencia legal expresa:*
+     - Diferenciar inequívocamente en la base de datos, en la interfaz y en los documentos generados:
+       * `Aprobación Administrativa`: Aprobación operativa de paso en el flujo.
+       * `Conformidad Digital Institucional`: Consentimiento autenticado en plataforma mediante sesión y token interno `VERIF-`.
+       * `Constancia de Conocimiento`: Toma de razón (ej. docente enterado de inasistencia).
+       * `Firma Electrónica Avanzada / Certificada`: Firma criptográfica con certificado digital emitido por prestador acreditado.
+     - Mostrar una advertencia legal clara en el visor, constancias y documentos generados indicando que la conformidad registrada tiene valor institucional interno conforme al reglamento escolar.
+     - Prohibir terminantemente el uso de expresiones engañosas como "Certificado por Autoridad Certificadora" en sellos internos.
+  2. *Requisitos de firma según nivel de riesgo y preparación para integración externa:*
+     - Catalogar por tipo documental el nivel de firma exigido.
+     - Cuando se vincule un mecanismo de firma avanzada externa, registrar: identidad del firmante, documento y versión firmada, evidencia de autenticación PKI, referencia del certificado, resultado de validación CRL/OCSP y hash del documento firmado.
+     - Asegurar que la introducción de firmas externas no invalide ni borre el historial de conformidades institucionales previas.
+  3. *Parametrización configurable en plataforma:*
+     - Configuración institucional en `ConfiguracionInstitucional`: `NIVEL_FIRMA_REQUERIDO_POR_TIPO_TRAMITE`: Mapeo JSON de trámites a niveles (`CONFORMIDAD_SESION`, `CONFORMIDAD_TOKEN_VERIF`, `FIRMA_AVANZADA_CERTIFICADA`).
+- **Criterios de Aceptación:**
+  - [ ] Registrar una conformidad y verificar que los comprobantes la identifican explícitamente como aprobación interna institucional.
+  - [ ] Comprobar que los tokens `VERIF-` no se presenten como certificados digitales emitidos por una autoridad de certificación acreditada.
+  - [ ] Modificar el documento con posterioridad y comprobar que la firma previa no se traslada a la nueva versión.
+  - [ ] Comprobar que un trámite configurado para requerir firma externa no pueda completarse únicamente con una conformidad simple de sesión.
+  - [ ] Consultar el historial de firmas y verificar la conservación inalterable de los registros previos.
+  - [ ] Revisar la advertencia legal en comprobantes y validar que describe con precisión técnica su alcance jurídico.
+- **Dependencias:** F34-Task04 (integridad criptográfica de documentos), generación de documentos y CUV.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F34-Task08] [P1] Bandeja personal unificada, indicadores de atención y control de SLA
+- **Prioridad:** P1 (Alta)
+- **Orden de Ejecución:** 9 (Eficiencia operativa y seguimiento de vencimientos)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`getUserWorkInbox`, `calculateRequestSlaMetrics`, `getDepartmentalWorkInbox`)
+  - `js/student.js`, `js/teacher.js`, `js/accounting.js`
+  - Hoja de Cálculo: `ConfiguracionSLA`, `SolicitudesTramites`
+- **Subcapacidades Relacionadas:** F34-01, F34-03, F34-04.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-01), Matriz CAR-F34-01 y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  Existe una bandeja departamental mediante `getDepartmentalWorkInbox`, pero no una vista personal unificada que consolide todos los documentos asignados nominalmente a un usuario independientemente del departamento de procedencia. Tampoco existen indicadores para detectar solicitudes próximas a vencer o atrasadas respecto a los tiempos máximos de respuesta (SLA), generando cuellos de botella no detectados.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Bandeja personal unificada:*
+     - Implementar `getUserWorkInbox(payload)` que reúna todas las tareas y solicitudes asignadas directamente a la persona (`userId`), segregando:
+       * Tareas asignadas nominalmente al usuario como responsable principal.
+       * Solicitudes asignadas al departamento (pendientes de toma de responsabilidad).
+       * Trámites en los que participa como revisor colegiado.
+       * Documentos donde solo debe registrar toma de conocimiento.
+       * Historial de solicitudes que ya atendió.
+  2. *Motor de cálculo de SLA y tiempos de atención:*
+     - Auto-crear la hoja `ConfiguracionSLA` (`TipoTramite`, `Departamento`, `Prioridad`, `PlazoMaximoHoras`, `HorasAlertaVencimiento`).
+     - Calcular en tiempo real: tiempo transcurrido desde la recepción, tiempo desde la última asignación, tiempo restante antes de vencer el SLA y tiempo de retraso.
+     - Categorizar visualmente: `En Plazo`, `Próximo a Vencer` (alerta ámbar), `Vencido` (alerta roja), `Suspendido por Causa Justificada` y `Resuelto`.
+     - Permitir suspender justificadamente el cómputo de SLA cuando el trámite esté en espera de información externa requerida al solicitante.
+     - Indicadores agregados para Dirección que identifiquen acumulación de solicitudes por departamento o funcionario.
+  3. *Parametrización configurable en plataforma:*
+     - Parámetro en `ConfiguracionInstitucional`: `CONSIDERAR_DIAS_HABILES_EN_SLA`: Valores `DIAS_HABILES_EXCLUIR_FINES_Y_FERIADOS` vs. `DIAS_CALENDARIO_CORRIDOS`.
+- **Criterios de Aceptación:**
+  - [ ] Un funcionario consulta en su bandeja personal todos los documentos asignados a su persona provenientes de distintos departamentos.
+  - [ ] Los documentos departamentales no asignados nominalmente se distinguen claramente de las tareas personales.
+  - [ ] El tiempo restante de atención se calcula con exactitud según la prioridad y el SLA configurado.
+  - [ ] Las solicitudes vencidas se identifican con alerta visual destacada y notifican al supervisor si aplica escalamiento.
+  - [ ] Suspender una solicitud por requerimiento de subsanación detiene correctamente el cómputo del SLA.
+  - [ ] La Dirección puede consultar métricas consolidadas de tiempos de respuesta por departamento.
+- **Dependencias:** F34-Task05 (asignaciones estructuradas), sistema de notificaciones y permisos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F34-Task10] [P2] Filtros multicriterio, búsqueda avanzada, paginación y ordenamiento reactivo
+- **Prioridad:** P2 (Media / Mejora)
+- **Orden de Ejecución:** 10 (Usabilidad y escalabilidad de consultas documentales)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`getAdministrativeRequestsAdvancedFilter`, `getDepartmentalWorkInbox`)
+  - `js/student.js`, `js/accounting.js`
+- **Subcapacidades Relacionadas:** F34-03, F34-08.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-03), Matriz CAR-F34-09 y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  Las consultas actuales poseen filtros básicos en memoria del cliente por usuario o estudiante. A medida que el volumen histórico de solicitudes crece (cientos o miles por año), transferir todos los registros al navegador causa lentitud, desbordamiento de memoria y carece de búsquedas por rangos de fechas, estado, departamento y prioridad combinadas.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Motor de filtrado multicriterio en servidor:*
+     - Incorporar filtros combinables en backend: por estudiante, empleado, departamento, remitente, destinatario, responsable asignado, tipo de trámite, rango de fechas, estado, prioridad y texto libre en asunto/descripción.
+     - Permitir ordenamiento reactivo por: fecha de recepción, antigüedad, fecha de vencimiento SLA, prioridad y estado.
+  2. *Paginación eficiente y estados visuales:*
+     - Implementar paginación en servidor (`limite`, `offset`) para consultar grandes volúmenes sin sobrecargar el cliente.
+     - Mantener los criterios de búsqueda al navegar entre páginas.
+     - Botón de limpieza rápida de filtros y recuperación de la vista por defecto.
+     - Estados visuales claros: cargando, sin coincidencias encontradas y error de consulta.
+     - Garantizar que los filtros respeten las restricciones de autorización sin exponer datos de otros departamentos.
+- **Criterios de Aceptación:**
+  - [ ] Filtrar por estudiante y rango de fechas y comprobar que los resultados coinciden con exactitud.
+  - [ ] Combinar simultáneamente estado, departamento y prioridad en una sola consulta.
+  - [ ] Ordenar por antigüedad y verificar que los resultados respetan el orden seleccionado.
+  - [ ] Navegar entre páginas y comprobar que los filtros se mantienen inalterados.
+  - [ ] Limpiar los filtros y comprobar el restablecimiento de los resultados iniciales.
+  - [ ] Comprobar que grandes volúmenes de datos se paginan eficientemente sin degradar el rendimiento del navegador.
+- **Dependencias:** F34-Task08, servicios de consulta de bandejas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F34-Task11] [P2] Interfaz responsiva y experiencia móvil para bandejas documentales
+- **Prioridad:** P2 (Media / Mejora)
+- **Orden de Ejecución:** 11 (Accesibilidad táctil y movilidad en teléfonos)
+- **Componentes Afectados:**
+  - `js/student.js`, `js/teacher.js`, `js/accounting.js`
+  - `student-dashboard.html`, `teacher-dashboard.html`, `dashboard-recursos-humanos.html`
+- **Subcapacidades Relacionadas:** F34-01, F34-03, F34-11.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección E, Matriz CAR-F34-10 y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  Las tablas de solicitudes institucionales presentan numerosas columnas que provocan desbordamiento horizontal en pantallas de teléfonos móviles. Padres, docentes y directivos que acceden desde smartphones encuentran dificultades para leer observaciones completas o presionar botones de acción táctiles, desincentivando la resolución ágil de trámites.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Diseño responsivo basado en tarjetas táctiles:*
+     - Adaptar las bandejas personales, departamentales y de salida: sustituir tablas extensas por tarjetas responsivas compactas en pantallas menores a 768px.
+     - Cada tarjeta móvil debe sintetizar: identificador, estudiante o empleado, tipo de documento, estado con insignia de color, prioridad, fecha y responsable actual.
+     - Botones de acción táctiles con dimensiones accesibles (mínimo 44x44px): Abrir, Revisar, Observar, Aprobar, Firmar e Historial.
+  2. *Visor móvil de adjuntos y accesibilidad visual:*
+     - Adaptar el visor de imágenes y documentos PDF para visualización fluida y zoom en pantallas pequeñas.
+     - Identificar prioridades y estados mediante combinaciones de íconos, texto y color para asegurar accesibilidad a usuarios con daltonismo.
+     - Preservar íntegra la funcionalidad completa en escritorios de pantalla ancha.
+- **Criterios de Aceptación:**
+  - [ ] Acceder a las bandejas desde teléfonos móviles y comprobar que no existe desbordamiento horizontal.
+  - [ ] Visualizar los trámites en tarjetas responsivas con información clara y legible.
+  - [ ] Abrir documentos adjuntos y verificar su correcta visualización en pantallas táctiles.
+  - [ ] Ejecutar aprobaciones, observaciones y firmas directamente desde dispositivos móviles.
+  - [ ] Los filtros y controles permanecen plenamente accesibles y operables de forma táctil.
+- **Dependencias:** F34-Task10, componentes visuales de bandejas.
+- **Estado:** [ ] Pendiente
+
+---
+
+## FASE 35: IMPORTADOR INTELIGENTE DE EXCEL, CSV Y HOJAS DE CÁLCULO
+
+---
+
+### [F35-Task01] [P0] Motor de reconocimiento semántico de encabezados y mapeo interactivo de columnas
+- **Prioridad:** P0 (Crítica)
+- **Orden de Ejecución:** 1 (Independencia posicional y correspondencia semántica)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`suggestColumnMappings`, `validateImportPreview`)
+  - `js/teacher.js`, `teacher-dashboard.html`
+  - Hoja de Cálculo: `CatalogoCamposImportacion`
+- **Subcapacidades Relacionadas:** F35-01, F35-02, F35-03, F35-04, F35-05.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md` / Sección C (F35-03, F35-04) y Matriz CAR-F35-01, CAR-F35-03.
+- **Problema Detectado y Riesgos:**
+  El importador actual asume rígidamente la primera fila como encabezados y toma la primera columna como identificador único sin permitir correspondencias semánticas ni interacción de usuario. Si las columnas de un archivo cambian de orden o utilizan sinónimos habituales (ej. `Alumno`, `No. Cuenta`, `Mes a cancelar`, `Cantidad`), el sistema desalinea los datos, provocando corrupción de expedientes y registros contables erróneos.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Diccionario de sinónimos y coincidencia difusa:*
+     - Implementar un analizador semántico en cliente/servidor que reconozca sinónimos frecuentes en español:
+       * `Alumno`, `Estudiante`, `Educando`, `Discente` -> `Estudiante Relacionado`.
+       * `No. Cuenta`, `Cta`, `Cuenta`, `Codigo Cliente` -> `Cuenta Relacionada`.
+       * `Cantidad`, `Valor`, `Monto`, `Total`, `Importe` -> `Importe de la Operación`.
+       * `Mes a cancelar`, `Periodo`, `Cuota`, `Mes` -> `Período Cobrado`.
+       * `ID registro`, `Ref`, `Referencia`, `Operacion` -> `Identificador de Operación`.
+     - Aplicar algoritmo de distancia de Levenshtein y normalización de texto (minúsculas, sin tildes ni caracteres especiales).
+     - La correspondencia debe basarse en el significado y no en la posición fija de la columna.
+  2. *Interfaz de mapeo interactivo:*
+     - Presentar una tabla clara donde cada columna del archivo muestre ejemplos de valores encontrados y un selector desplegable con los campos descriptivos de destino.
+     - Indicador visual del nivel de confianza: Confirmada (verde), Sugerida (azul), Ambigua (amarillo) y Sin Asignar (gris).
+     - Permitir excluir columnas innecesarias y seleccionar la fila real de encabezados (manejando encabezados desplazados en filas 2 a 10 por títulos o logotipos).
+  3. *Parametrización configurable en plataforma:*
+     - Parámetro en `ConfiguracionInstitucional`: `UMBRAL_CONFIANZA_MAPEADO_AUTOMATICO` (Porcentaje mínimo de coincidencia, por defecto 80%) y `EXIGIR_CONFIRMACION_MANUAL_MAPEO` (Valores: `SIEMPRE` vs. `SOLO_SI_HAY_AMBIGUEDADES`).
+- **Criterios de Aceptación:**
+  - [ ] Un archivo con columnas en orden alterado reconoce las correspondencias correctas por su significado.
+  - [ ] Un archivo con encabezados desplazados (fila 4) permite al usuario elegir la fila correcta sin desfasar los datos.
+  - [ ] Las columnas no mapeadas o excluidas no se importan ni alteran campos de destino.
+  - [ ] Las coincidencias ambiguas requieren confirmación explícita del usuario y no se asignan a ciegas.
+  - [ ] La interfaz permite modificar manualmente cualquier asignación sugerida antes de continuar.
+- **Dependencias:** F35-Task02 (normalización de tipos).
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-Task02] [P0] Normalizador de tipos de datos, formatos regionales y preservación de identificadores
+- **Prioridad:** P0 (Crítica)
+- **Orden de Ejecución:** 2 (Integridad de datos crudos antes de validaciones)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`normalizeImportValue`, `validateImportPreview`)
+  - `js/teacher.js`
+- **Subcapacidades Relacionadas:** F35-06, F35-07.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md` / Sección C (F35-06) y Matriz CAR-F35-06.
+- **Problema Detectado y Riesgos:**
+  SheetJS y las funciones de lectura convierten automáticamente identificadores alfanuméricos con ceros a la izquierda (`00125`) a números enteros (`125`), corrompen números largos (>15 dígitos) por redondeo de punto flotante de JavaScript o notación científica, y malinterpretan fechas ambiguas (`01/02/2026`) según la zona horaria del navegador, generando identificadores irreconocibles y desfases de calendario.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Lectura de texto estricta y preservación de ceros a la izquierda:*
+     - Forzar en SheetJS la opción `raw: false` y tratamiento de celdas como texto plano para identificadores, códigos de matrícula, números de cuenta y números de identidad/DNI.
+     - Preservar íntegros los ceros iniciales (`00125` debe conservarse como cadena `"00125"`).
+     - Impedir la notación científica en códigos largos (ej. tarjetas, referencias bancarias de 16-20 dígitos).
+  2. *Normalización regional de fechas y cantidades monetarias:*
+     - Manejar formatos de fecha con detección inteligente y configuración explícita: `DD/MM/AAAA` (estándar regional hondureño) vs. `MM/DD/AAAA` o `AAAA-MM-DD`.
+     - Si una fecha es ambigua (ambos dígitos <= 12), solicitar confirmación explícita al usuario en la vista previa.
+     - Normalizar importes monetarios admitiendo formatos europeos/latinoamericanos (`1.250,50`) y anglosajones (`1,250.50`), convirtiendo a decimal estándar flotante de 2 decimales sin pérdida de centavos.
+     - Preservar caracteres especiales, tildes y el signo `+` en números telefónicos (`+504`).
+  3. *Parametrización configurable en plataforma:*
+     - Configuración en `ConfiguracionInstitucional`: `FORMATO_FECHA_IMPORTACION_PREDETERMINADO` (`DD/MM/AAAA` vs `AAAA-MM-DD`) y `SEPARADOR_DECIMAL_IMPORTACION` (`PUNTO` vs `COMA` vs `AUTO_DETECTAR`).
+- **Criterios de Aceptación:**
+  - [ ] Identificadores con ceros iniciales conservan exactamente su longitud y caracteres en el modelo final.
+  - [ ] Códigos largos de más de 15 dígitos no sufren truncamiento ni conversión a notación científica.
+  - [ ] Las cantidades con separadores de miles y decimales se normalizan exactamente a su valor numérico real.
+  - [ ] Fechas ambiguas son detectadas y resueltas conforme a la política regional configurada.
+  - [ ] Caracteres con acentos y letras `ñ` se preservan sin corrupción de codificación UTF-8.
+- **Dependencias:** F35-Task01.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-Task03] [P0] Validación de referencias relacionales y detección inteligente de duplicados
+- **Prioridad:** P0 (Crítica)
+- **Orden de Ejecución:** 3 (Consistencia relacional y prevención de colisiones)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`validateImportReferencesAndDuplicates`)
+  - `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`
+  - Hojas de Cálculo: `Estudiantes`, `MatriculasEstudiantes`, `CatalogoCuentasContables`, `CargosEstudiante`
+- **Subcapacidades Relacionadas:** F35-08, F35-09.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md` / Sección C (F35-08, F35-09) y Matriz CAR-F35-08, CAR-F35-09.
+- **Problema Detectado y Riesgos:**
+  El importador actual valida únicamente que el campo identificador no esté vacío, pero no comprueba si las entidades relacionadas (alumno, cuenta, matrícula) existen en el sistema ni verifica si el registro ya fue importado con anterioridad. Esto permite insertar transacciones huérfanas o duplicar pagos masivamente ante reintentos.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Validación de referencias cruzadas:*
+     - Verificar contra las hojas de la base de datos la existencia real de las entidades foráneas:
+       * El `estudianteId` debe existir en `Estudiantes`.
+       * La `matriculaId` debe coincidir con el estudiante y el ciclo lectivo activo.
+       * El `noCuenta` debe pertenecer al responsable financiero vinculado al estudiante.
+     - Marcar como error bloqueante cualquier fila con referencias inexistentes o cruzadas incorrectamente.
+  2. *Detección de duplicados internos y externos:*
+     - *Duplicados internos:* Detectar filas duplicadas dentro del mismo archivo (mismo identificador de operación o combinación clave estudiante + concepto + mes).
+     - *Duplicados externos:* Comparar contra la base de datos existente para clasificar cada fila en:
+       * `Crear`: Registro nuevo que no existe en la plataforma.
+       * `Actualizar`: Registro existente que contiene valores modificados.
+       * `Sin Cambios`: Registro existente con exactamente la misma información (se omite por defecto).
+       * `Conflicto / Ambigüedad`: Mismo identificador con datos contradictorios o inconsistentes.
+  3. *Parametrización configurable en plataforma:*
+     - Parámetro en `ConfiguracionInstitucional`: `POLITICA_DUPLICADOS_IMPORTACION`: Valores `OMITIR_EXISTENTES` (por defecto) vs. `ACTUALIZAR_EXISTENTES` vs. `RECHAZAR_LOTE_COMPLETO`.
+- **Criterios de Aceptación:**
+  - [ ] Se detecta y rechaza cualquier fila que haga referencia a un estudiante o matrícula inexistente.
+  - [ ] Las filas con identificadores repetidos dentro del archivo son señaladas como duplicadas.
+  - [ ] Los registros existentes idénticos son clasificados como "Sin Cambios" y no se duplican en la base de datos.
+  - [ ] Las posibles colisiones o actualizaciones son presentadas al usuario con comparativa de valores actuales vs nuevos.
+- **Dependencias:** F35-Task01, F35-Task02.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-Task04] [P0] Simulación obligatoria en vista previa y ejecución atómica por lotes
+- **Prioridad:** P0 (Crítica)
+- **Orden de Ejecución:** 4 (Comprobación previa sin efectos y atomicidad de escritura)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`validateImportPreview`, `importDataWithColumnMapping`)
+  - `js/teacher.js`, `teacher-dashboard.html`
+  - Hojas de destino según módulo
+- **Subcapacidades Relacionadas:** F35-10, F35-11, F35-12, F35-18.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md` / Sección C (F35-10, F35-11, F35-12) y Matriz CAR-F35-10, CAR-F35-12.
+- **Problema Detectado y Riesgos:**
+  Actualmente, el botón de confirmación en la interfaz envía directamente los datos a procesar sin obligar a revisar una simulación de los efectos. Además, la función en backend solo registra un resumen en `AuditoriaMigraciones` sin ejecutar inserciones reales en las tablas de negocio, careciendo de ScriptLock y control transaccional por lotes.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Simulación y vista previa obligatoria sin guardar:*
+     - Exigir un paso intermedio no destructivo de simulación que analice todas las filas y devuelva:
+       * Total de filas analizadas.
+       * Conteo por categoría: `Crear`, `Actualizar`, `Sin Cambios`, `Omitir`, `Revisión` y `Error`.
+       * Lista de los primeros 10 errores y advertencias detallados.
+     - Bloquear el botón de "Confirmar Importación" si existen errores bloqueantes en el lote.
+  2. *Ejecución real atómica y concurrencia controlada:*
+     - Implementar la inserción real en las hojas de cálculo correspondientes según el módulo destino (`CargosEstudiante`, `Estudiantes`, etc.).
+     - Utilizar `LockService.getScriptLock()` con espera de 30 segundos para garantizar atomicidad contra importaciones concurrentes.
+     - Asignar una clave de idempotencia (`idempotencyKey` o `ejecucionId`) única por lote, impidiendo que reintentos de red dupliquen inserciones.
+     - Fragmentación en lotes (chunks) de máximo 200 filas para prevenir exceder los límites de tiempo de Apps Script (360 segundos).
+  3. *Parametrización configurable en plataforma:*
+     - Parámetro en `ConfiguracionInstitucional`: `MODO_TRANSACCIONAL_IMPORTACION`: Valores `TODO_O_NADA` (si falla una fila se rechaza el lote completo) vs. `IMPORTAR_VALIDOS_DESCARTAR_FALLIDOS`.
+- **Criterios de Aceptación:**
+  - [ ] La vista previa simula los efectos sin alterar ninguna celda en la base de datos de negocio.
+  - [ ] El botón de confirmación permanece deshabilitado mientras existan errores relacionales o estructurales sin resolver.
+  - [ ] Las inserciones reales se efectúan en las hojas correctas preservando todos los campos mapeados.
+  - [ ] Dos ejecuciones simultáneas se serializan mediante LockService sin colisión de registros.
+  - [ ] Repetir la solicitud con la misma clave de idempotencia devuelve el resultado previo sin reinsertar duplicados.
+- **Dependencias:** F35-Task03.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-Task05] [P0] Historial estructurado y motor de reversión selectiva de importaciones
+- **Prioridad:** P0 (Crítica)
+- **Orden de Ejecución:** 5 (Trazabilidad forense y desecho seguro de lotes)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`revertImportBatch`, `getMigrationLogs`, `getImportBatchDetail`)
+  - Hoja de Cálculo: `AuditoriaMigraciones`, `DetalleRegistrosImportados`
+- **Subcapacidades Relacionadas:** F35-13, F35-15, F35-16.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md` / Sección C (F35-15) y Matriz CAR-F35-15.
+- **Problema Detectado y Riesgos:**
+  No existe ninguna función para revertir una importación errónea. Si un funcionario carga un archivo con tarifas o asignaciones incorrectas, el personal se ve obligado a depurar manualmente miles de celdas en Google Sheets, con alto riesgo de borrar operaciones legítimas preexistentes.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Registro granular de entidades importadas:*
+     - Auto-crear la hoja `DetalleRegistrosImportados` (`EjecucionId`, `HojaDestino`, `FilaId`, `AccionRealizada`, `ValoresPreviosJSON`, `ValoresNuevosJSON`, `EstadoReversion`).
+     - Vincular cada fila insertada o actualizada con su `ejecucionId` de lote.
+  2. *Motor de reversión selectiva e inteligente:*
+     - Implementar `revertImportBatch(payload)` con validación de seguridad:
+       * Si el registro fue *Creado*: eliminar la fila o marcarla como eliminada lógicamente, **únicamente si no tiene transacciones secundarias dependientes** (ej. no se puede revertir un cargo si ya tiene un pago aplicado).
+       * Si el registro fue *Actualizado*: restaurar exactamente los valores previos almacenados en `ValoresPreviosJSON`.
+     - Si un registro sufrió modificaciones posteriores manuales, no revertirlo automáticamente: marcarlo como `Requiere Intervención` y explicar el motivo al usuario.
+     - Registrar en `AuditoriaMigraciones` el evento formal de reversión con fecha, usuario responsable e IP.
+- **Criterios de Aceptación:**
+  - [ ] Cada importación registra la lista exacta de identificadores creados y valores previos modificados.
+  - [ ] Ejecutar la reversión de un lote creado sin dependencias restaura la base de datos a su estado original.
+  - [ ] La reversión detecta registros que recibieron cambios posteriores y evita sobrescribirlos silenciosamente.
+  - [ ] Toda reversión queda auditada con responsable, fecha y resultado detallado.
+- **Dependencias:** F35-Task04.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-Task06] [P1] Perfiles de mapeo reutilizables por formato y origen
+- **Prioridad:** P1 (Alta)
+- **Orden de Ejecución:** 6 (Eficiencia en cargas recurrentes)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`saveImportMappingProfile`, `getImportMappingProfiles`, `deleteImportMappingProfile`)
+  - `js/teacher.js`, `teacher-dashboard.html`
+  - Hoja de Cálculo: `PerfilesMapeoImportacion`
+- **Subcapacidades Relacionadas:** F35-14.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md` / Sección C (F35-14) y Matriz CAR-F35-14.
+- **Problema Detectado y Riesgos:**
+  Instituciones que importan periódicamente extractos bancarios del mismo banco o reportes de sistemas externos deben configurar manualmente el mapeo de columnas cada vez, aumentando el tiempo operativo y arriesgando errores humanos por fatiga de configuración.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Persistencia de perfiles de mapeo:*
+     - Auto-crear la hoja `PerfilesMapeoImportacion` (`PerfilId`, `NombrePerfil`, `ModuloDestino`, `OrigenDatos`, `MapeoColumnasJSON`, `ConfiguracionRegionalJSON`, `CreadoPor`, `EsPublico`).
+     - Permitir al usuario guardar un mapeo exitoso con un nombre representativo (ej. `Extracto Banco Atlántida CSV`, `Reporte Matrícula SACE`).
+  2. *Reutilización automática y detección de cambios de estructura:*
+     - Al cargar un archivo, si coincide con los encabezados de un perfil guardado, sugerir aplicar el perfil automáticamente.
+     - Si el archivo del proveedor presenta ligeras variaciones (ej. una columna nueva), identificar las diferencias y solicitar confirmación únicamente para las columnas modificadas.
+- **Criterios de Aceptación:**
+  - [ ] El usuario puede guardar la configuración de correspondencias de un archivo validado.
+  - [ ] Al cargar un archivo posterior con la misma estructura, el perfil se aplica de inmediato.
+  - [ ] Si el proveedor altera columnas, el sistema resalta las diferencias sin invalidar todo el perfil.
+- **Dependencias:** F35-Task01.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-Task07] [P1] Descarga de informes de error y registros observados
+- **Prioridad:** P1 (Alta)
+- **Orden de Ejecución:** 7 (Autonomía de corrección de datos para el usuario)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`generateImportErrorReportCSV`, `validateImportPreview`)
+  - `js/teacher.js`
+- **Subcapacidades Relacionadas:** F35-13, F35-17.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md` / Sección C (F35-13) y Matriz CAR-F35-13.
+- **Problema Detectado y Riesgos:**
+  Cuando un archivo con cientos de filas contiene 15 filas con errores, el sistema muestra advertencias genéricas o trunca la lista a los primeros 10 errores en pantalla. El usuario no puede identificar con precisión qué filas fallaron ni corregirlas sin revisar el archivo completo manualmente.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Generación de reporte detallado de rechazos:*
+     - Generar un archivo descargable (CSV/XLSX) que contenga exclusivamente las filas rechazadas o en conflicto.
+     - Añadir dos columnas al inicio del archivo descargado: `NumeroFilaOriginal` y `MotivoExactoError` (ej. `Fila 42: Estudiante ID-502 no encontrado`).
+  2. *Facilidad de reingreso:*
+     - El archivo descargado debe conservar el formato y encabezados originales para que el usuario pueda corregir los valores erróneos y volverlo a subir directamente sin reformatear.
+- **Criterios de Aceptación:**
+  - [ ] El usuario puede descargar un CSV con todas las filas observadas y su motivo exacto.
+  - [ ] El reporte identifica la fila, la columna y la regla de negocio incumplida.
+  - [ ] El archivo de rechazos corregido puede cargarse de nuevo sin necesidad de pasos adicionales.
+- **Dependencias:** F35-Task03, F35-Task04.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-Task08] [P1] Procesamiento por bloques y respaldo del archivo de trabajo
+- **Prioridad:** P1 (Alta)
+- **Orden de Ejecución:** 8 (Resiliencia ante cuotas de infraestructura Google Apps Script)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`processImportChunk`, `backupImportSourceFile`)
+  - `js/teacher.js`
+- **Subcapacidades Relacionadas:** F35-18, F35-19.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md` / Sección C (F35-18, F35-19) y Matriz CAR-F35-18, CAR-F35-19.
+- **Problema Detectado y Riesgos:**
+  Google Apps Script impone un límite estricto de tiempo de ejecución de 6 minutos y límites de memoria en payloads JSON. Cargar un archivo con miles de filas en una sola llamada provoca timeouts (`Exceeded maximum execution time`), dejando la importación truncada a la mitad y en estado corrupto.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Procesamiento secuencial por bloques (Chunking):*
+     - En el frontend, segmentar archivos de más de 200 filas en lotes secuenciales de 150-200 registros.
+     - Enviar cada bloque con `ejecucionId`, `numeroLote` y `totalLotes`.
+     - Mostrar una barra de progreso porcentual fluida en la interfaz.
+  2. *Respaldo seguro en Google Drive:*
+     - Guardar una copia cifrada/privada del archivo original en una carpeta protegida de Google Drive (`Drive/Auditoria/Importaciones/`) antes de iniciar la ejecución, permitiendo auditorías forenses posteriores.
+- **Criterios de Aceptación:**
+  - [ ] Archivos de más de 1,000 filas se procesan por bloques sin exceder los límites de tiempo de GAS.
+  - [ ] La interfaz refleja el progreso en tiempo real de cada bloque procesado.
+  - [ ] Si un bloque intermedio falla, el sistema identifica el punto de interrupción y permite reanudar sin duplicar filas previas.
+  - [ ] El archivo original queda respaldado en Google Drive vinculado al identificador de importación.
+- **Dependencias:** F35-Task04.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-Task09] [P2] Asistente guiado responsivo en 4 pasos y optimización móvil
+- **Prioridad:** P2 (Media / Mejora)
+- **Orden de Ejecución:** 9 (Experiencia de usuario y accesibilidad multidispositivo)
+- **Componentes Afectados:**
+  - `js/teacher.js`, `teacher-dashboard.html`
+- **Subcapacidades Relacionadas:** F35-17, F35-20.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md` / Sección C (F35-17) y Sección G.
+- **Problema Detectado y Riesgos:**
+  El modal actual (`#modal-excel-importer`) es una ventana monolítica que no guía al usuario a través de un flujo claro, carece de indicadores de progreso por etapas y no está adaptada para teléfonos o tablets, provocando confusión en secretarios y administradores durante la importación.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Asistente por etapas (Wizard):*
+     - Reestructurar el modal en un asistente guiado de 4 pasos secuenciales:
+       * *Paso 1: Carga y Detección:* Selección de archivo, hoja y delimitadores.
+       * *Paso 2: Correspondencias:* Mapeo interactivo de columnas con sugerencias semánticas.
+       * *Paso 3: Validación y Simulación:* Matriz de efectos (Crear/Actualizar/Omitir) y visualización de errores.
+       * *Paso 4: Confirmación y Resultados:* Ejecución real, estadísticas finales y descarga de rechazos.
+     - Permitir regresar a pasos anteriores sin perder la configuración ni los mapeos ya definidos.
+  2. *Diseño responsivo móvil:*
+     - Adaptar tablas y controles para visualización fluida en pantallas menores a 768px, sustituyendo filas anchas por tarjetas de correspondencia apiladas.
+- **Criterios de Aceptación:**
+  - [ ] El usuario completa la importación mediante un asistente intuitivo paso a paso con indicador de avance.
+  - [ ] Regresar a un paso previo conserva los mapeos y opciones seleccionadas sin reiniciar el proceso.
+  - [ ] La interfaz es plenamente operable en dispositivos móviles sin desbordamiento horizontal.
+- **Dependencias:** F35-Task01, F35-Task04.
+- **Estado:** [ ] Pendiente
+
+---

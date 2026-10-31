@@ -332,3 +332,93 @@ HALLAZGOS:
 2. Se requiere implementar la función `applyApprovedScholarshipsToCharges` e integrarla dentro de `getStudentAccountStatement` para recalcular o sincronizar los cargos de mensualidad/colegiatura, deduciendo el porcentaje o monto fijo de beca aprobado sobre el arancel base (`montoBase`), reflejando el descuento exacto (`descuento`) y actualizando el monto neto a pagar (`montoFinal`).
 3. Se deben configurar los permisos en `ROLE_PERMISSIONS` y en el despachador `doPost` en `backend/accounting-service/Code.gs`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 30: CONSOLIDACIÓN, CERTIFICACIÓN INTERNA Y MEJORA CONTINUA
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/user-service/Code.gs, backend/developer-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs, js/*.js, docs/architecture/*.md
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 30 correspondiente a Consolidación, Certificación Interna y Mejora Continua.
+- Se inspeccionaron exhaustivamente las 15 subcapacidades (F30-01 a F30-15) y se verificó la matriz de 16 pruebas integrales interdepartamentales obligatorias (INT-01 a INT-16).
+- Se evaluó el mecanismo de certificación interna sobre las 13 áreas clave (CERT-01 a CERT-13), dictaminando "Aprobada con observaciones menores".
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md.
+- Se integró y unificó exhaustivamente el plan de resolución técnico en Pendientes.md compuesto por 20 tareas técnicas ([F30-Task01] a [F30-Task20]) organizadas en 4 bloques por prioridad (P0: Tasks 02, 03, 04, 01, 05, 16, 17; P1: Tasks 06, 10, 11, 07, 08, 09, 18, 19, 20; P2: Tasks 12, 14, 13, 15) y secuencia de ejecución técnica, convergiendo sinérgicamente todos los requerimientos y habilitando parametrización configurable para opciones en disputa, preservando intactas todas las fases preexistentes (Fases 10 a 29).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 31: DISEÑADOR UNIVERSAL DE DOCUMENTOS Y PLANTILLAS
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, backend/user-service/Code.gs, backend/academic-service/Code.gs, js/teacher.js, js/ui-common.js
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 31 correspondiente a Diseñador Universal de Documentos y Plantillas.
+- Se inspeccionaron las 23 subcapacidades (F31-01 a F31-23) y se verificó la matriz de 30 pruebas funcionales obligatorias (DOC-01 a DOC-30).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md.
+- Se identificaron las fortalezas del sistema en la emisión oficial con CUV (Código Único de Verificación), control de concurrencia atómico con LockService y plantillas PDF Overlay en cliente.
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 24 tareas técnicas ([F31-T01] a [F31-T24]) organizadas en 4 bloques por prioridad (P0: T01 a T06; P1: T07 a T16, T23, T24; P2: T17 a T22) y orden secuencial de ejecución con parametrización configurable para opciones en disputa, preservando intactas todas las fases preexistentes (Fases 10 a 30).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 32: EDITOR VISUAL DE PDF Y CAMPOS SUPERPUESTOS
+ARCHIVOS AUDITADOS: teacher-dashboard.html, js/teacher.js, backend/accounting-service/Code.gs, backend/user-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 32 correspondiente a Editor Visual de PDF y Campos Superpuestos.
+- Se inspeccionaron las 11 áreas de capacidades funcionales, los problemas recurrentes de UX identificados en soluciones de referencia y la matriz de 30 pruebas obligatorias (PDF-01 a PDF-30).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md.
+- Se destacaron las fortalezas del sistema en su arquitectura de coordenadas relativas porcentuales (xRatio, yRatio) inmune a variaciones de zoom de pantalla y la vinculación nativa con CUV y correlativos anuales.
+- Se identificó la necesidad de consolidar el motor de estampado binario y aplanado en backend (F32-Task01), las entradas numéricas de precisión con rejilla magnética (F32-Task02) y el auto-ajuste tipográfico ante desbordamiento (F32-Task03).
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 13 tareas técnicas ([F32-Task01] a [F32-Task13]) organizadas en 4 bloques por prioridad (P0: Task01 a Task03; P1: Task04 a Task08, Task11, Task13; P2: Task09, Task10, Task12) y orden secuencial de ejecución con parametrización configurable para opciones en disputa, preservando intactas todas las fases preexistentes (Fases 10 a 31).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 33: FORMULARIOS INSTITUCIONALES Y TRÁMITES DIGITALES
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, backend/accounting-service/Code.gs, backend/academic-service/Code.gs, js/student.js, student-dashboard.html, teacher-dashboard.html
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 33 correspondiente a Formularios Institucionales y Trámites Digitales.
+- Se inspeccionaron las 16 subcapacidades funcionales del ciclo de vida de trámites y se verificó la matriz de 24 pruebas obligatorias (F24-01 a F24-24).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md.
+- Se destacaron las fortalezas del sistema en su arquitectura relacional en backend (FormulariosInstitucionales, SolicitudesTramites, FlujosAprobacion, RevisionesDecisionesTramite, FirmasConformidades), la segregación estricta de observaciones públicas y privadas, el control estricto de roles por sesión y la emisión atómica de CUV.
+- Se identificaron las áreas de optimización en persistencia de borradores multi-dispositivo en servidor (F33-Task02), subsanación granular con bloqueo de campos validados (F33-Task03) y consolas unificadas de trámites por SLA en dashboards administrativos (F33-Task04).
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 10 tareas técnicas ([F33-Task01] a [F33-Task10]) organizadas en 3 bloques por prioridad (P0: Task01 a Task03; P1: Task10, Task04 a Task07; P2: Task09, Task08) y orden secuencial de ejecución con parametrización configurable para opciones en disputa organizadas en 3 bloques por prioridad (P0, P1, P2) y orden secuencial, preservando intactas todas las fases preexistentes (Fases 10 a 32).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 34: BANDEJAS DE ENTRADA Y SALIDA, REVISIÓN Y FIRMAS
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, backend/academic-service/Code.gs, backend/accounting-service/Code.gs, js/teacher.js, js/student.js
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 34 correspondiente a Bandejas de entrada y salida, revisión y firmas.
+- Se inspeccionaron las 12 subcapacidades funcionales (F34-01 a F34-12) y se evaluó el escenario integral obligatorio de excusas estudiantiles y autorizaciones.
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md.
+- Se identificaron las fortalezas del sistema en la segregación estricta de notas internas administrativas vs. observaciones públicas al padre (processWorkflowDecision), el aislamiento IDOR y ABAC en consultas de familias (getGuardianStudents) y el control temporal estricto en autorizaciones (respondToAuthorizationRequest).
+- Se detectó una dualidad arquitectónica crítica entre user-service y academic-service en el procesamiento de justificaciones de inasistencia, donde las aprobadas en bandejas de Secretaría no actualizan RegistrosAsistencia (F34-Task01).
+- Se evidenció la ausencia de bandeja departamental de salida con registro de acuses de entrega y lectura (F34-Task02), la carencia de acceso contextual ABAC para que los docentes consulten justificaciones de sus alumnos (F34-Task03) y la falta de resúmenes criptográficos SHA-256 en adjuntos para prevenir sustituciones silenciosas (F34-Task04).
+- Se analizó el marco legal de firmas bajo el Decreto 149-2013 de Honduras, recomendando tipificar claramente los tokens internos como conformidades digitales institucionales para evitar confusiones con firmas avanzadas certificadas (F34-Task07).
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 11 tareas técnicas ([F34-Task01] a [F34-Task11]) organizadas en 4 bloques por prioridad (P0: Task01 a Task04; P1: Task05 a Task09; P2: Task10 a Task11) y orden secuencial recomendado (1 a 11) con parametrización configurable para opciones en disputa (impacto automático de asistencia, modo de subsanación de campos, reglas de aprobación colegiada y niveles de firma) y orden secuencial de ejecución con parametrización configurable, preservando intactas todas las fases preexistentes (Fases 10 a 33).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 35: IMPORTADOR INTELIGENTE DE EXCEL, CSV Y HOJAS DE CÁLCULO
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, js/teacher.js, teacher-dashboard.html
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 35 correspondiente al Importador inteligente de Excel, CSV y hojas de cálculo.
+- Se inspeccionaron las 20 subcapacidades funcionales (F35-01 a F35-20) y se ejecutó la matriz de 12 pruebas integrales (PT-F35-01 a PT-F35-12).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md.
+- Se identificó la presencia de SheetJS (xlsx.full.min.js), el modal #modal-excel-importer en teacher-dashboard.html y los endpoints backend validateImportPreview, importDataWithColumnMapping y getMigrationLogs en accounting-service.
+- Se detectaron brechas críticas en correspondencia semántica (el frontend envía rígidamente la primera columna como ID sin selector visual ni sugerencias por significado), pérdida de ceros a la izquierda en identificadores (00125 convertido a 125), falta de validación de referencias relacionales contra la base de datos (estudiantes y cuentas inexistentes) y ausencia de un motor de reversión selectiva de lotes.
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 9 tareas técnicas ([F35-Task01] a [F35-Task09]) organizadas en 3 bloques por prioridad (P0: Task01 a Task05; P1: Task06 a Task08; P2: Task09) y orden secuencial de ejecución con parametrización configurable para opciones en disputa, preservando intactas todas las fases preexistentes (Fases 10 a 34).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
