@@ -4242,3 +4242,393 @@
 - **Estado:** [ ] Pendiente
 
 ---
+
+# PENDIENTES - FASE 20: BIBLIOTECA INSTITUCIONAL Y RECURSOS EDUCATIVOS
+
+## TAREAS CRÍTICAS (P0 - INTEGRIDAD DEL CATÁLOGO, CIRCULACIÓN, PREVENCIÓN DE ERRORES 500 Y CONCURRENCIA)
+
+---
+
+### [ ] [F20-Task01] Implementación de funciones backend faltantes para biblioteca
+- **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E (Defecto 1), Sección G y Plan de Trabajo P0
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Funciones cableadas en enrutador doPost y ROLE_PERMISSIONS pero no declaradas, originando errores fatales de ejecución ReferenceError)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (nuevas funciones `reserveLibraryBook`, `getLibraryReservations`, `recordLibraryIncident`, `getLibraryIncidents`, `manageDigitalResource`, `getDigitalResources`)
+  - `BibliotecaReservas`
+  - `BibliotecaIncidencias`
+  - `RecursosDigitalesBiblioteca`
+- **Dependencias Expuestas:** `BibliotecaReservas`, `BibliotecaIncidencias`, `RecursosDigitalesBiblioteca`, `ROLE_PERMISSIONS`
+- **Descripción del Alcance:**
+  Los endpoints `reserveLibraryBook`, `getLibraryReservations`, `recordLibraryIncident`, `getLibraryIncidents`, `manageDigitalResource` y `getDigitalResources` están registrados en `ROLE_PERMISSIONS` y en el despachador `doPost` de `Code.gs`, pero no tienen ninguna implementación JavaScript en el backend. Cuando el frontend invoca cualquiera de estas acciones, el servidor arroja un error crítico de función no declarada.
+  Requerimientos Funcionales Detallados:
+  1. Implementación de Reservas y Listas de Espera:
+     - `reserveLibraryBook`: registrar solicitudes de reserva en `BibliotecaReservas` (`ReservaID`, `EjemplarID`, `UserId`, `FechaSolicitud`, `FechaExpiracion`, `EstadoReserva`, `Observaciones`). Validar que el ejemplar se encuentre actualmente en préstamo y que el usuario no tenga ya una reserva activa para la misma obra.
+     - `getLibraryReservations`: consultar y filtrar reservas por `userId`, `ejemplarId` o `estadoReserva` (`Pendiente`, `Asignada`, `Completada`, `Cancelada`, `Expirada`).
+  2. Implementación de Incidencias y Daños Bibliotecarios:
+     - `recordLibraryIncident`: registrar reportes de deterioro, pérdida o páginas rotas en `BibliotecaIncidencias` (`IncidenciaID`, `PrestamoID`, `EjemplarID`, `UserId`, `TipoIncidencia`, `Descripcion`, `Estado`, `Resolucion`, `Observaciones`). Si la incidencia es grave o pérdida, actualizar el estado del ejemplar a `damaged` o `lost` en `BibliotecaEjemplares`.
+     - `getLibraryIncidents`: consultar y filtrar incidencias por ejemplar, usuario o estado.
+  3. Implementación de Recursos Educativos Digitales:
+     - `manageDigitalResource`: registrar o actualizar materiales en `RecursosDigitalesBiblioteca` (`RecursoID`, `Titulo`, `AutorColaboradores`, `Categoria`, `FormatoUrl`, `NivelPermisosJSON`, `Estado`, `Observaciones`). Validar formato y URL autorizada.
+     - `getDigitalResources`: consultar recursos filtrando por categoría y nivel de permisos del usuario.
+- **Criterios de Aceptación:**
+  - Invocar desde el frontend o mediante API cualquiera de las 6 funciones y recibir una respuesta exitosa (`status: "success"`) con persistencia en su respectiva hoja.
+  - Al reservar un libro prestado, se genera la reserva con fecha de expiración y orden de lista de espera.
+  - Al reportar una incidencia de extravío, el libro deja de figurar como disponible en el catálogo.
+  - La consulta de recursos digitales devuelve los materiales activos respetando los permisos del rol.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F20-Task02] Conexión y activación del módulo de Biblioteca en la interfaz institucional
+- **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E (Defecto 2), Sección G y Plan de Trabajo P0
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Código de frontend huérfano, falta de navegación en dashboards y operatividad de la interfaz)
+- **Archivos Involucrados:**
+  - `dashboard-contabilidad.html`
+  - `dashboard-director.html`
+  - `js/accounting.js` (`switchTab`, `renderBibliotecaModule`)
+- **Dependencias Expuestas:** `js/accounting.js`, `dashboard-contabilidad.html`, `F20-Task01`
+- **Descripción del Alcance:**
+  La función `renderBibliotecaModule` está completamente codificada en `js/accounting.js` (con 5 subpestañas: Catálogo & Ejemplares, Préstamos, Reservas, Incidencias, Recursos Digitales), pero no existe el caso `else if (tab === 'biblioteca')` en la función `switchTab` de navegación ni existe un botón en `dashboard-contabilidad.html` para acceder a ella, dejando el módulo inaccesible para los operadores escolares.
+  Requerimientos Funcionales Detallados:
+  1. Habilitación de la pestaña en `dashboard-contabilidad.html`:
+     - Agregar el botón de acceso visual "Biblioteca" con icono representativo (`fas fa-book-reader`) en la barra de navegación de módulos de contabilidad/administración.
+  2. Enrutamiento en `switchTab`:
+     - Incorporar en `window.switchTab` el bloque para ejecutar `renderBibliotecaModule(container)` cuando `tab === 'biblioteca'`.
+  3. Conexión de subpestañas operativas:
+     - Asegurar la interacción fluida entre las subpestañas (`libros`, `prestamos`, `reservas`, `incidencias`, `digitales`) con carga reactiva de datos del backend.
+- **Criterios de Aceptación:**
+  - Al hacer clic en el botón "Biblioteca" del dashboard, se despliega la interfaz del módulo sin errores de consola.
+  - Se puede navegar entre las 5 subpestañas y cada una carga sus datos correspondientes desde Google Sheets.
+  - Los formularios de registro y modales de préstamo operan de forma interactiva y notifican al usuario.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F20-Task03] Normalización relacional del catálogo: separación entre Obras y Ejemplares
+- **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E (Defecto 3), Sección C y Plan de Trabajo P0
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Normalización de datos bibliográficos, modelo FRBR/RDA y prevención de duplicidad de obras)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`manageLibraryBook`, `getLibraryBooks`, nuevas funciones `manageBibliographicWork`, `getBibliographicWorks`)
+  - Hoja `BibliotecaCatalogoObras`
+  - `BibliotecaEjemplares`
+  - `js/accounting.js`
+- **Dependencias Expuestas:** `BibliotecaEjemplares`, `BibliotecaPrestamos`, `F20-Task01`
+- **Descripción del Alcance:**
+  La hoja `BibliotecaEjemplares` almacena en una sola fila el título, autor, ISBN y categoría junto con el identificador del ejemplar físico (`EjemplarID`). Si la biblioteca adquiere 10 copias de un mismo libro, se deben duplicar 10 veces todos los metadatos bibliográficos, provocando inconsistencias ante correcciones editoriales.
+  Requerimientos Funcionales Detallados:
+  1. Hoja maestra `BibliotecaCatalogoObras`:
+     - Almacenar los metadatos bibliográficos de la obra: `ObraID`, `IsbnCodigo`, `Titulo`, `Subtitulo`, `AutoresJSON`, `Editorial`, `EdicionAno`, `Idioma`, `Categoria`, `MateriaAcademica`, `NivelEducativo`, `PortadaUrl`, `Descripcion`, `PalabrasClave`, `EstadoObra`.
+  2. Reestructuración de `BibliotecaEjemplares`:
+     - Almacenar las copias físicas individuales vinculadas a la obra: `EjemplarID`, `ObraID`, `CodigoBarrasQR`, `UbicacionFisica` (Edificio/Estante/Nivel), `CondicionFisica` (`Nuevo`, `Bueno`, `Deteriorado`), `EstadoDisponibilidad` (`available`, `on_loan`, `reserved`, `maintenance`, `lost`, `disposed`), `Observaciones`.
+  3. Consultas consolidadas:
+     - Al consultar una obra, mostrar la ficha bibliográfica única con el desglose de cuántos ejemplares existen en total, cuántos están disponibles en estantería y cuántos están prestados o en mantenimiento.
+- **Criterios de Aceptación:**
+  - Se puede registrar una obra bibliográfica una sola vez y asociarle múltiples ejemplares físicos independientes.
+  - Modificar los datos de la obra (ej. corregir nombre de la editorial) actualiza la ficha global sin tocar los registros de préstamos de sus ejemplares.
+  - Cada ejemplar físico mantiene su propio estado de disponibilidad y ubicación física aislada.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F20-Task04] Control de políticas de circulación, límites de préstamo y bloqueo por mora
+- **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E (Defecto 4), Sección C y Plan de Trabajo P0
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Políticas institucionales de circulación, límites por rol escolar y prevención de retención indebida de libros)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`processLibraryLoan`, `getLibraryLoans`)
+  - `BibliotecaPrestamos`
+  - Hoja `BibliotecaPoliticasCirculacion`
+- **Dependencias Expuestas:** `BibliotecaPrestamos`, `BibliotecaEjemplares`, `ROLE_PERMISSIONS`
+- **Descripción del Alcance:**
+  `processLibraryLoan` aplica una fecha fija de devolución a 7 días sin importar el perfil del usuario, y no valida cuántos libros tiene prestados actualmente, permitiendo que un alumno retire cantidades excesivas de material sin devolver los anteriores.
+  Requerimientos Funcionales Detallados:
+  1. Políticas de circulación configurables por rol:
+     - Estudiante: máximo 2 libros simultáneos, período de préstamo de 7 días calendario.
+     - Docente / Profesor: máximo 5 libros simultáneos, período de préstamo de 15 días calendario.
+     - Personal Administrativo / Dirección: máximo 3 libros simultáneos, período de 15 días.
+     - Obras de Referencia / Consulta en Sala (Diccionarios, enciclopedias): no prestables a domicilio (préstamo interno de 1 día).
+  2. Validación y bloqueo preventivo:
+     - Antes de conceder un nuevo préstamo, verificar cuántos préstamos activos (`on_loan`) mantiene el `userId`.
+     - Si ha alcanzado el límite configurado para su rol, rechazar el préstamo informando el tope máximo permitido.
+     - Si el usuario mantiene algún préstamo con fecha de devolución vencida no devuelto (`mora activa`), bloquear la emisión de nuevos préstamos hasta que regularice su situación.
+- **Criterios de Aceptación:**
+  - Un estudiante con 2 libros en préstamo intenta solicitar un 3º y el sistema rechaza la operación por límite de cupo alcanzado.
+  - Un usuario con un libro vencido no puede recibir nuevos préstamos hasta devolver el material atrasado.
+  - Un docente puede recibir hasta 5 libros con fecha de retorno configurada a 15 días.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F20-Task05] Control de concurrencia e idempotencia en circulación bibliotecaria
+- **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E, Sección F (PT-20-24, PT-20-25) y Plan de Trabajo P0
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Integridad transaccional, prevención de doble asignación de ejemplares y protección de reintentos)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`processLibraryLoan`, `reserveLibraryBook`)
+  - `BibliotecaPrestamos`
+  - `BibliotecaEjemplares`
+- **Dependencias Expuestas:** `LockService`, `BibliotecaPrestamos`, `BibliotecaEjemplares`
+- **Descripción del Alcance:**
+  Las operaciones de préstamo y reserva no utilizan candados de concurrencia. Si dos bibliotecarios intentan prestar el mismo ejemplar simultáneamente, o si un usuario reintenta la solicitud por lentitud de red, se pueden generar préstamos dobles sobre el mismo libro físico.
+  Requerimientos Funcionales Detallados:
+  1. Bloqueo transaccional atómico:
+     - Adquirir candado de script (`LockService.getScriptLock()`) al inicio de `processLibraryLoan` y `reserveLibraryBook`.
+     - Re-leer el estado más reciente del ejemplar en `BibliotecaEjemplares` para asegurar que continúa en estado `available`.
+     - Si ya fue prestado por otra transacción milisegundos antes, liberar el candado y responder con error controlado.
+  2. Claves de idempotencia:
+     - Evitar que una doble pulsación de botón registre dos préstamos idénticos mediante clave única de operación (`ejemplarId + userId + fechaActual`).
+- **Criterios de Aceptación:**
+  - Dos solicitudes simultáneas sobre el mismo ejemplar resultan en un préstamo exitoso y un rechazo controlado.
+  - Los reintentos de red no duplican las filas de préstamo en `BibliotecaPrestamos`.
+- **Estado:** [ ] Pendiente
+
+---
+
+## TAREAS DE ALTA PRIORIDAD (P1 - EVALUACIÓN EN DEVOLUCIÓN, RENOVACIONES, OPAC ESCOLAR, ALERTAS Y VÍNCULO CURRICULAR)
+
+---
+
+### [ ] [F20-Task06] Flujo de devolución con inspección física y derivación a incidencias
+- **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E, Sección F (PT-20-21) y Plan de Trabajo P1
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Preservación del fondo bibliográfico, control de deterioro y reporte inmediato de averías)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`processLibraryLoan`, `recordLibraryIncident`)
+  - `BibliotecaPrestamos`
+  - `BibliotecaEjemplares`
+  - `BibliotecaIncidencias`
+  - `js/accounting.js`
+- **Dependencias Expuestas:** `BibliotecaPrestamos`, `BibliotecaEjemplares`, `F20-Task01`
+- **Descripción del Alcance:**
+  Al procesar una devolución con `accion: "Devolucion"`, el sistema cambia incondicionalmente el libro a `available` sin permitir evaluar el estado físico en que se entrega. Si el libro fue devuelto roto, rayado o sin páginas, vuelve a estar disponible para préstamo erróneamente.
+  Requerimientos Funcionales Detallados:
+  1. Inspección física obligatoria al devolver:
+     - Permitir registrar en la devolución la condición física del material: `Excelente`, `Bueno`, `DeterioradoNormal`, `DañadoGrave`, `Incompleto/FaltanPaginas`.
+     - Si la condición es `Excelente` o `Bueno`, cerrar el préstamo y marcar el ejemplar como `available`.
+     - Si la condición es `DañadoGrave` o `Incompleto`, cambiar el estado del ejemplar a `maintenance` (en reparación) o `damaged` (dañado fuera de servicio).
+     - Generar automáticamente la incidencia en `BibliotecaIncidencias` vinculada al préstamo y al usuario que entregó el material dañado.
+  2. Cálculo de días de mora:
+     - Calcular automáticamente si hubo retraso respecto a la `FechaDevolucionPrevista` y registrar los días de mora acumulados.
+- **Criterios de Aceptación:**
+  - Devolver un libro en buen estado lo restituye a disponibilidad para préstamo.
+  - Devolver un libro dañado lo coloca en estado de reparación y registra la incidencia asociada al estudiante responsable.
+  - Se calculan de forma exacta los días de retraso si el libro fue entregado después de la fecha límite.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F20-Task07] Renovaciones de préstamo con bloqueo automático por reservas en lista de espera
+- **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E, Sección C y Plan de Trabajo P1
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Equidad en el acceso a recursos bibliográficos, control de lista de espera y límites de renovación)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (nueva función `renewLibraryLoan`, `processLibraryLoan`)
+  - `BibliotecaPrestamos`
+  - `BibliotecaReservas`
+- **Dependencias Expuestas:** `BibliotecaPrestamos`, `BibliotecaReservas`, `F20-Task01`
+- **Descripción del Alcance:**
+  No existe la capacidad de renovar préstamos. Los usuarios deben devolver el libro físicamente y solicitarlo de nuevo, y no se comprueba si otros estudiantes están esperando la obra mediante una reserva activa.
+  Requerimientos Funcionales Detallados:
+  1. Función `renewLibraryLoan`:
+     - Permitir solicitar la renovación de un préstamo activo antes de su vencimiento.
+     - Validar que el usuario no haya excedido el número máximo de renovaciones permitidas por obra (predeterminado: máximo 1 renovación).
+  2. Bloqueo por reservas pendientes:
+     - Antes de conceder la renovación, verificar si existen solicitudes activas en `BibliotecaReservas` para la misma obra.
+     - Si existen reservas en lista de espera de otros usuarios, bloquear la renovación obligando a entregar el libro en su fecha para atender a los estudiantes en espera.
+- **Criterios de Aceptación:**
+  - Un usuario puede renovar su préstamo extendiendo la fecha de vencimiento según las reglas de su rol.
+  - Si la obra cuenta con una reserva pendiente de otro estudiante, el sistema rechaza la renovación informando de la lista de espera.
+  - Se impide renovar un préstamo más de las veces autorizadas por la política de circulación.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F20-Task08] Portal OPAC de consulta y autoservicio para estudiantes y docentes
+- **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E, Sección C (2.10) y Plan de Trabajo P1
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Experiencia de usuario estudiantil, fomento de la lectura escolar y autoservicio digital)
+- **Archivos Involucrados:**
+  - `dashboard-estudiante.html`
+  - `dashboard-profesor.html`
+  - `js/student.js`
+  - `js/teacher.js`
+  - `backend/accounting-service/Code.gs` (`getLibraryBooks`, `getLibraryLoans`, `reserveLibraryBook`)
+- **Dependencias Expuestas:** `getLibraryBooks`, `getLibraryLoans`, `reserveLibraryBook`, `F20-Task01`
+- **Descripción del Alcance:**
+  Los estudiantes y profesores no disponen de una vista amigable donde buscar libros en el catálogo escolar, verificar en qué estantería se encuentran físicamente, consultar la fecha límite de sus préstamos activos o solicitar la reserva de un libro prestado.
+  Requerimientos Funcionales Detallados:
+  1. Buscador bibliográfico escolar (OPAC):
+     - Buscador intuitivo con filtros por título, autor, materia y disponibilidad.
+     - Tarjetas de libros con portada, descripción, número de ejemplares disponibles y ubicación en la biblioteca.
+  2. Panel personal de préstamos del usuario:
+     - Listado de libros que el estudiante tiene actualmente en su poder con la fecha de devolución prevista y semáforo de vencimiento (verde: a tiempo, amarillo: vence hoy, rojo: atrasado).
+     - Botón de solicitar renovación si las reglas lo permiten.
+     - Botón de reservar si el libro no tiene ejemplares disponibles en estantería.
+- **Criterios de Aceptación:**
+  - Los alumnos y docentes pueden buscar y localizar obras en el catálogo desde su portal personal.
+  - Cada usuario visualiza únicamente sus propios préstamos y fechas de entrega.
+  - La interfaz se adapta limpiamente a dispositivos móviles y computadoras.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F20-Task09] Notificaciones multicanal de vencimientos y disponibilidad de reservas
+- **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E, Sección C (2.6, 2.10) y Plan de Trabajo P1
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Reducción de morosidad en biblioteca, aviso oportuno de reservas disponibles y comunicación familiar)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (nueva función `checkAndDispatchLibraryAlerts`)
+  - `backend/user-service/Code.gs` (`sendMultiChannelNotification`)
+  - `BibliotecaPrestamos`
+  - `BibliotecaReservas`
+- **Dependencias Expuestas:** `sendMultiChannelNotification`, `BibliotecaPrestamos`, `BibliotecaReservas`
+- **Descripción del Alcance:**
+  No se emiten recordatorios previos al vencimiento de un préstamo bibliotecario ni se notifica automáticamente a un estudiante cuando el libro que reservó ha sido devuelto y está listo para ser retirado en el mostrador.
+  Requerimientos Funcionales Detallados:
+  1. Recordatorios preventivos de devolución:
+     - Evaluación diaria de préstamos próximos a vencer: despachar aviso institucional 24 horas antes de la fecha límite de entrega.
+     - Aviso de mora al día siguiente del vencimiento con instrucciones para la devolución inmediata.
+  2. Notificación de reserva disponible:
+     - Al procesar la devolución de un ejemplar que posee reservas pendientes en `BibliotecaReservas`, asignar el ejemplar a la primera reserva en cola y enviar notificación inmediata al estudiante beneficiario indicando el plazo límite para retirarlo (ej. 48 horas).
+     - Si expira el plazo sin que el alumno retire el libro, liberar la reserva y notificar al siguiente en la lista de espera.
+- **Criterios de Aceptación:**
+  - El sistema envía notificación previa antes de que venza el plazo de entrega del libro.
+  - Al devolver un libro reservado, el solicitante en lista de espera recibe el aviso de disponibilidad.
+  - Las alertas utilizan claves de deduplicación diaria para evitar mensajes repetitivos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F20-Task10] Asociación curricular de obras bibliográficas con asignaturas y niveles
+- **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E, Sección C (2.8) y Plan de Trabajo P1
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Apoyo pedagógico, bibliografía recomendada por materia y pertinencia académica)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (nuevas funciones `linkBookToSubject`, `getBooksBySubject`)
+  - Hoja `BibliotecaAsociacionesCurriculares`
+  - `BibliotecaCatalogoObras`
+  - `js/teacher.js`
+- **Dependencias Expuestas:** `BibliotecaCatalogoObras`, Malla curricular académica
+- **Descripción del Alcance:**
+  Los libros del catálogo no están asociados con las asignaturas ni con los planes de estudio de la institución. Los docentes no pueden publicar listas de lecturas obligatorias o sugeridas para su clase directamente desde la biblioteca.
+  Requerimientos Funcionales Detallados:
+  1. Vínculo curricular de obras:
+     - Asociar obras del catálogo a combinaciones de: Grado/Nivel educativo, Asignatura y Parcial/Período.
+     - Clasificación pedagógica: `LecturaObligatoria`, `LecturaSugerida`, `MaterialConsultaTecnica`.
+  2. Consulta de bibliografía de curso:
+     - Permitir a los estudiantes de una clase consultar en un solo clic la bibliografía recomendada para sus materias activas y verificar en tiempo real si hay copias disponibles en la biblioteca física o enlaces en la biblioteca digital.
+- **Criterios de Aceptación:**
+  - Un docente puede vincular títulos del catálogo como lecturas recomendadas para su clase.
+  - Los alumnos inscritos en la materia visualizan la lista bibliográfica con la disponibilidad de ejemplares.
+- **Estado:** [ ] Pendiente
+
+---
+
+## TAREAS DE PRIORIDAD MEDIA (P2 - INTEGRACIÓN PATRIMONIAL, CÓDIGOS QR Y ADQUISICIONES)
+
+---
+
+### [ ] [F20-Task11] Integración de colecciones bibliográficas con el inventario patrimonial
+- **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E, Sección C (2.13) y Plan de Trabajo P2
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Control de activos institucionales, capitalización de colecciones valiosas y trazabilidad de bajas)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `BibliotecaEjemplares`
+  - `ActivosPatrimoniales`
+  - `BajasBienes`
+- **Dependencias Expuestas:** `ActivosPatrimoniales`, `BibliotecaEjemplares`, `F19-Task08`
+- **Descripción del Alcance:**
+  Existe duplicidad conceptual entre los bienes de biblioteca y el inventario general. Las enciclopedias costosas, colecciones históricas o dispositivos de lectura digital (kindles/tablets) deben integrarse con el inventario patrimonial sin crear dos sistemas independientes de control.
+  Requerimientos Funcionales Detallados:
+  1. Vinculación opcional con código patrimonial:
+     - Permitir que un ejemplar de biblioteca almacene un campo `ActivoPatrimonialID` cuando corresponda a un bien capitalizable institucional.
+     - Las bajas por pérdida o daño irreparable en biblioteca deben actualizar de forma coordinada el estado en `ActivosPatrimoniales` y registrar el acta en `BajasBienes`.
+- **Criterios de Aceptación:**
+  - Un ejemplar marcado como activo patrimonial conserva su vínculo con la ficha de activos.
+  - La baja formal en biblioteca actualiza el registro patrimonial sin generar inconsistencias contables.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F20-Task12] Identificación y escaneo de ejemplares mediante códigos QR y códigos de barras
+- **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E, Sección C (2.2) y Plan de Trabajo P2
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Agilidad en mostrador de préstamo, reducción de errores de digitación y etiquetado físico)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `BibliotecaEjemplares`
+  - `dashboard-contabilidad.html`
+  - `js/accounting.js`
+- **Dependencias Expuestas:** `BibliotecaEjemplares`, `F20-Task01`
+- **Descripción del Alcance:**
+  Los préstamos y devoluciones requieren teclear manualmente los identificadores de los libros (`LIB-...`), lo que retrasa la atención en horas punta de recreo y propicia errores de captura.
+  Requerimientos Funcionales Detallados:
+  1. Generación e impresión de etiquetas con código de barras/QR:
+     - Generar dinámicamente etiquetas para lomo o portada con el código del ejemplar, título resumido, signatura de estantería y código QR/barra legible.
+     - Permitir utilizar lectores ópticos USB o cámaras móviles en el mostrador para escanear el libro y el carné del estudiante, completando el préstamo en menos de 5 segundos.
+- **Criterios de Aceptación:**
+  - Se pueden imprimir etiquetas adhesivas individuales o por pliego para los ejemplares físicos.
+  - El escaneo del código QR en el formulario de préstamo rellena automáticamente el ejemplar y abre la ficha del libro.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F20-Task13] Solicitudes de adquisición bibliográfica y sugerencias de compra escolar
+- **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E, Sección C (2.12) y Plan de Trabajo P2
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Desarrollo de colecciones, detección de necesidades pedagógicas e integración con compras)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (nuevas funciones `submitBookPurchaseSuggestion`, `getPurchaseSuggestions`)
+  - Hoja `BibliotecaSugerenciasCompra`
+  - `SolicitudesCompra`
+- **Dependencias Expuestas:** `SolicitudesCompra`, `F18-Task03`
+- **Descripción del Alcance:**
+  No existe un canal para que docentes o bibliotecarios registren sugerencias formales de adquisición de libros agotados o títulos necesarios para nuevos cursos, ni su integración con las solicitudes de compra institucionales.
+  Requerimientos Funcionales Detallados:
+  1. Buzón digital de sugerencias bibliográficas:
+     - Formulario para registrar: título, autor, editorial, ISBN referencial, cantidad solicitada, justificación pedagógica y docente solicitante.
+     - Verificar si el libro ya existe en el catálogo y su demanda histórica antes de autorizar.
+     - Al ser aprobada por Dirección, permitir convertir la sugerencia en una solicitud interna de compra (`createPurchaseRequest`) de la Fase 18.
+- **Criterios de Aceptación:**
+  - Los profesores pueden enviar sugerencias de libros justificando la necesidad para su clase.
+  - Dirección puede aprobar o rechazar la solicitud, y las aprobadas se enlazan con el módulo de compras.
+- **Estado:** [ ] Pendiente
+
+---
+
+## TAREAS DE ASEGURAMIENTO Y CALIDAD (P0 - SUITE INTEGRAL DE REGRESIÓN DE BIBLIOTECA)
+
+---
+
+### [ ] [F20-Task14] Implementar suite automatizada de pruebas y regresión integral de biblioteca
+- **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección G (P0), Sección F y Plan de Trabajo F20-14
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Aseguramiento continuo de integridad en catálogo bibliográfico, préstamos, reservas y no regresión)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `backend/developer-service/Code.gs`
+  - `tests/regression/academic-grading-suite.js`
+- **Dependencias Expuestas:** Todas las tareas de la Fase 20 (`F20-Task01` a `F20-Task13`), suites de pruebas del ecosistema institucional
+- **Descripción del Alcance:**
+  Implementar la suite integral automatizada `runPhase20LibraryAndResourcesRegressionSuite` que valide de manera continua el catálogo de obras y ejemplares, circulación de préstamos, devoluciones con inspección física, reservas con lista de espera, control de morosidad, recursos digitales y no regresión de las fases previas.
+  Requerimientos Funcionales Detallados:
+  1. Batería obligatoria de pruebas de aceptación:
+     - Catálogo: registro de obras, gestión de ejemplares individuales con IDs únicos, búsqueda y filtrado.
+     - Circulación: emisión de préstamo, rechazo de préstamo sobre libro ya prestado, validación de límite máximo de libros por rol de usuario.
+     - Devoluciones: cierre de préstamo, restitución a disponible en buen estado, derivación a mantenimiento ante daño físico.
+     - Reservas: creación de reserva sobre libro prestado, bloqueo de renovación ante reserva activa en lista de espera.
+     - Incidencias y digitales: registro de pérdida de ejemplar, consulta de recursos digitales con control de permisos RBAC.
+     - Concurrencia: verificación de bloqueo mediante `LockService` ante solicitudes simultáneas de préstamo.
+  2. No regresión del ecosistema:
+     - Garantizar que la suite opere en entorno controlado sin alterar registros de producción ni las 53 pruebas de regresión previas de las Fases 9, 10, 11, 15, 16, 17, 18, 19 y 21.
+- **Criterios de Aceptación:**
+  - La suite de regresión ejecuta todas las pruebas de biblioteca y recursos educativos con el 100% de éxito (`PASS`).
+  - Se valida el correcto funcionamiento de las 6 funciones previamente ausentes en backend.
+  - Las suites de regresión previas (53/53 pruebas) se mantienen aprobadas al 100%.
+- **Estado:** [ ] Pendiente
+
+---
