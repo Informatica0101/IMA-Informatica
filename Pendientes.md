@@ -6643,3 +6643,1167 @@
 - **Estado:** [ ] Pendiente
 
 ---
+## FASE 24 — INFORMES, INDICADORES Y ANÁLISIS INSTITUCIONAL
+
+### BLOQUE 1. Integridad, normalización y acceso a la información
+
+### [F24-Task01] [P0] [Catálogo de Informes - Catálogo Centralizado de Informes Institucionales con Permisos por Perfil]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `js/ui-common.js`
+- **Dependencias Expuestas:** Diccionario de indicadores (`F24-Task02`), control de permisos existente y servicios de generación actuales.
+- **Capacidades Relacionadas:** F24-001, F24-002, F24-010.
+- **Problema Detectado:**
+  Los informes institucionales están implementados mediante funciones independientes. No existe un catálogo centralizado que permita conocer qué informes están disponibles, qué información contienen, qué parámetros aceptan y qué perfiles pueden consultarlos.
+- **Requisitos Funcionales:**
+  1. Crear un catálogo institucional único que consolide los informes existentes de las áreas académica, financiera, administrativa y operativa.
+  2. Registrar para cada informe:
+     - Identificador único.
+     - Nombre visible.
+     - Descripción funcional.
+     - Categoría y área responsable.
+     - Fuente o servicio de datos.
+     - Parámetros y filtros disponibles.
+     - Indicadores incluidos.
+     - Formatos de exportación admitidos.
+     - Perfiles y permisos requeridos.
+     - Estado de disponibilidad.
+  3. Incorporar los informes existentes, incluidos:
+     - Informe financiero y cobranza (`REP-CONT-01`).
+     - Rendimiento académico por grado y sección (`REP-ACAD-01`).
+     - Informes administrativos de expedientes y movimientos (`getStudentFileAdministrativeReports`).
+     - Informe consolidado de asistencia y convivencia (`generateConsolidatedAttendanceAndCoexistenceReport`).
+     - Informe de capacidad y ocupación de secciones (`getSectionCapacityAnalyticsReport`).
+     - Comparativo financiero multianual (`getComparativeFinancialSummary`).
+  4. Permitir que el catálogo se amplíe cuando se incorporen nuevos informes, sin tener que reconstruir la interfaz global.
+  5. Diferenciar informes institucionales predeterminados, informes personalizados y aquellos disponibles únicamente para determinados departamentos.
+  6. Incorporar búsqueda por nombre, categoría, descripción y área.
+  7. Evitar registros duplicados y permitir desactivar informes obsoletos sin eliminar su historial de utilización.
+  8. Proporcionar a la interfaz únicamente los informes que el usuario tenga autorización para consultar.
+- **Cambios Necesarios:**
+  - Incorporar un servicio centralizado de consulta del catálogo (`getInstitutionalReportsCatalog`).
+  - Integrar las definiciones de los informes actualmente dispersos.
+  - Incorporar metadatos y permisos por informe en matriz central.
+  - Adaptar el acceso desde la interfaz global para que utilice el catálogo en lugar de mantener listas independientes.
+  - Conservar los servicios de generación existentes y conectarlos mediante sus identificadores y parámetros correspondientes.
+- **Comportamiento Esperado:**
+  Al ingresar al apartado de informes, cada usuario encontrará un catálogo organizado según sus permisos y responsabilidades. Al seleccionar un informe, la interfaz conocerá qué filtros debe presentar, qué servicio debe consultar y qué formatos están disponibles.
+  La incorporación de un nuevo informe no deberá requerir duplicar la lógica de navegación, autorización y presentación.
+- **Criterios de Aceptación:**
+  - [ ] El catálogo incluye todos los informes existentes identificados en la auditoría.
+  - [ ] Los informes aparecen clasificados en las categorías correspondientes.
+  - [ ] Cada informe devuelve sus metadatos completos y permisos requeridos.
+  - [ ] Los usuarios sin autorización no reciben ni visualizan informes restringidos.
+  - [ ] Un acceso directo a un informe no autorizado es rechazado también en el servidor (403 Forbidden).
+  - [ ] Desactivar un informe impide nuevas consultas, pero conserva sus registros históricos de utilización.
+  - [ ] Agregar un informe nuevo al catálogo permite visualizarlo sin modificar manualmente cada panel.
+  - [ ] Los informes existentes siguen generando exactamente los mismos resultados después de integrarse al catálogo.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F24-Task02] [P0] [Indicadores Centrales - Diccionario Semántico Centralizado de Indicadores Institucionales]
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** Catálogo de informes (`F24-Task01`), servicios académicos, financieros y administrativos existentes.
+- **Capacidades Relacionadas:** F24-005, F24-006, F24-007, F24-008.
+- **Problema Detectado:**
+  Las fórmulas de los indicadores están distribuidas entre distintos servicios. Esto permite que un mismo concepto pueda calcularse de forma diferente en un panel, un informe o una consulta de otro módulo. La plataforma necesita una definición institucional única para cada indicador.
+- **Requisitos Funcionales:**
+  1. Crear un registro centralizado de indicadores (`DiccionarioIndicadoresInstitucionales`) que permita definir:
+     - Identificador único.
+     - Nombre y descripción.
+     - Área: académica, financiera, administrativa u operativa.
+     - Finalidad.
+     - Fórmula o regla de cálculo.
+     - Unidad de medida.
+     - Fuente de datos.
+     - Campos requeridos.
+     - Estados incluidos y excluidos.
+     - Filtros compatibles.
+     - Dimensiones de agrupación.
+     - Frecuencia de actualización.
+     - Responsable funcional.
+     - Versión de la definición.
+     - Fecha de vigencia.
+  2. Incorporar las definiciones de los indicadores existentes, sin alterar sus fórmulas verificadas.
+  3. Normalizar los indicadores académicos:
+     - Matrícula activa y retirada.
+     - Promedios.
+     - Aprobación y reprobación.
+     - Distribución de calificaciones.
+     - Ausentismo.
+     - Ocupación de secciones.
+     - Riesgo académico.
+  4. Normalizar los indicadores financieros:
+     - Ingresos confirmados.
+     - Egresos devengados.
+     - Balance neto.
+     - Cartera recuperada.
+     - Morosidad.
+     - Flujo de caja.
+     - Ejecución presupuestaria.
+  5. Incorporar los indicadores administrativos y operativos:
+     - Personal activo.
+     - Asistencia del personal.
+     - Solicitudes pendientes.
+     - Trámites resueltos.
+     - Tiempo de resolución.
+  6. Permitir que los indicadores se consulten desde diferentes informes y paneles sin volver a implementar sus fórmulas.
+  7. Permitir nuevas versiones de una definición cuando cambien las reglas institucionales.
+  8. Conservar la definición histórica aplicada a períodos anteriores.
+  9. Distinguir entre indicadores que admiten cálculo en tiempo real y aquellos que utilizan información agregada.
+  10. Incorporar descripciones comprensibles para que los usuarios conozcan qué representa cada indicador y cómo se interpreta.
+- **Cambios Necesarios:**
+  - Crear el registro centralizado de definiciones en tabla o esquema persistente.
+  - Identificar y vincular las fórmulas actuales con sus indicadores correspondientes.
+  - Sustituir gradualmente los cálculos duplicados por consultas a las definiciones normalizadas.
+  - Mantener adaptadores para los servicios que ya generan resultados válidos.
+  - Incorporar control de versiones y vigencia de las definiciones.
+- **Comportamiento Esperado:**
+  Un indicador debe tener una sola definición institucional. Los diferentes módulos podrán consumirlo, pero no deberán implementar versiones independientes de su fórmula.
+  Por ejemplo, el porcentaje de aprobación mostrado en el panel de dirección deberá coincidir con el del informe académico cuando ambos utilicen el mismo período, universo de estudiantes y filtros.
+- **Criterios de Aceptación:**
+  - [ ] Cada indicador tiene un identificador y una definición verificable.
+  - [ ] Las fórmulas existentes se documentan y se comparan con sus resultados actuales antes de migrarlas.
+  - [ ] Los paneles y los informes que utilizan el mismo indicador producen resultados matemáticamente equivalentes.
+  - [ ] Los cambios de fórmula generan una nueva versión secuencial.
+  - [ ] Los informes históricos conservan la versión utilizada originalmente.
+  - [ ] Las definiciones identifican las exclusiones y reglas de cálculo.
+  - [ ] Un indicador no puede publicarse si carece de fuente, fórmula o unidad cuando estas sean necesarias.
+  - [ ] Las fórmulas financieras mantienen la exclusión estricta de operaciones pendientes, canceladas o rechazadas.
+  - [ ] Los indicadores académicos mantienen las reglas de publicación y evaluación existentes (excluyendo borradores).
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F24-Task03] [P0] [Filtros y Dimensiones - Normalización de Filtros Temporales y Estructura Institucional]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `js/ui-common.js`
+- **Dependencias Expuestas:** Catálogo de informes (`F24-Task01`), diccionario de indicadores (`F24-Task02`), configuración académica e institucional existente.
+- **Capacidades Relacionadas:** F24-003, F24-004.
+- **Problema Detectado:**
+  Los filtros actuales admiten fechas y años lectivos, pero necesitan validaciones más estrictas. Los filtros estructurales tampoco cuentan con una relación dependiente suficientemente completa entre grados y secciones.
+- **Requisitos Funcionales:**
+  1. Normalizar los parámetros temporales de los informes:
+     - Fecha inicial (`fechaInicio`).
+     - Fecha final (`fechaFin`).
+     - Año lectivo (`anoLectivo`).
+     - Período académico (`periodo`).
+     - Período fiscal (`ejercicioFiscal`).
+     - Intervalo personalizado.
+  2. Validar rangos invertidos (`fechaInicio > fechaFin`), fechas inválidas y períodos incompatibles.
+  3. Diferenciar períodos académicos, calendarios y fiscales sin solapamientos indebidos.
+  4. Permitir filtros por:
+     - Departamento.
+     - Nivel educativo.
+     - Grado.
+     - Sección.
+     - Asignatura.
+     - Docente.
+     - Estudiante.
+     - Estado del registro.
+     - Categorías financieras.
+     - Otros criterios compatibles con cada informe.
+  5. Implementar filtros dependientes en cascada:
+     - Al seleccionar un nivel educativo, mostrar los grados correspondientes.
+     - Al seleccionar un grado, mostrar únicamente sus secciones válidas.
+     - Al seleccionar una sección, limitar los docentes y asignaturas a las relaciones correspondientes, cuando aplique.
+  6. Permitir seleccionar varios valores (multiselect) cuando el informe lo admita.
+  7. Incorporar una opción para limpiar filtros individuales y restablecer todos los filtros predeterminados.
+  8. Conservar los filtros al navegar desde un panel hacia un informe detallado.
+  9. Impedir que los filtros permitan consultar información fuera del ámbito autorizado del usuario.
+- **Cambios Necesarios:**
+  - Normalizar la validación de fechas y períodos en los servicios que reciben parámetros de consulta.
+  - Incorporar las relaciones dependientes en los controles de selección de la interfaz gráfica.
+  - Adaptar las consultas para utilizar los identificadores institucionales y no depender únicamente de nombres visibles.
+  - Unificar el tratamiento de filtros entre los informes académicos, financieros y administrativos.
+- **Comportamiento Esperado:**
+  Los filtros deben funcionar como un conjunto coherente. Seleccionar un grado limitará las secciones disponibles y la consulta resultante. Cambiar el período actualizará todos los valores dependientes del informe.
+  Los filtros no deben modificar ni ampliar los permisos del usuario.
+- **Criterios de Aceptación:**
+  - [ ] Un rango de fechas invertido se rechaza con un mensaje de validación claro.
+  - [ ] Los períodos fiscales cruzados se procesan correctamente según las reglas del informe.
+  - [ ] Al cambiar el grado, las secciones disponibles en la interfaz se actualizan automáticamente.
+  - [ ] Una sección no perteneciente al grado seleccionado no puede enviarse como filtro válido.
+  - [ ] Los filtros combinados devuelven únicamente los registros que cumplen todas las condiciones.
+  - [ ] Los filtros no aplicables a un informe no se muestran en pantalla.
+  - [ ] Los cambios de filtros actualizan los resultados y no conservan cifras de consultas anteriores.
+  - [ ] Los usuarios no pueden ampliar su ámbito de consulta modificando los identificadores enviados al servidor.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F24-Task04] [P0] [Arquitectura Distribuida - Estandarización de Consultas entre Servicios y Fuentes Distribuidas]
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** Diccionario semántico (`F24-Task02`), filtros normalizados (`F24-Task03`), catálogo de fuentes existente y servicios de los diferentes módulos.
+- **Capacidades Relacionadas:** F24-024, F24-025, F24-008.
+- **Problema Detectado:**
+  La resolución de fuentes de datos está parcialmente normalizada en el servicio financiero, pero no existe una estrategia universal para los informes que consultan datos distribuidos entre diferentes servicios y hojas de cálculo. Esto puede provocar diferencias, duplicaciones, resultados incompletos o dificultades para identificar el origen de la información.
+- **Requisitos Funcionales:**
+  1. Estandarizar la identificación de fuentes de datos de los informes institucionales.
+  2. Permitir identificar para cada fuente:
+     - Servicio responsable.
+     - Identificador de origen (`fuenteId`).
+     - Institución o ámbito al que pertenece.
+     - Período o partición anual.
+     - Versión del esquema.
+     - Fecha de actualización.
+     - Estado de disponibilidad (`active`, `degraded`, `disabled`).
+  3. Normalizar las relaciones entre:
+     - Estudiantes.
+     - Usuarios.
+     - Matrículas.
+     - Grados y secciones.
+     - Períodos académicos.
+     - Operaciones financieras.
+     - Departamentos.
+     - Responsables.
+  4. Evitar contabilizar dos veces una misma operación por encontrarse en fuentes diferentes.
+  5. Identificar registros incompletos, duplicados o incompatibles.
+  6. Permitir combinar fuentes cuando exista una relación válida entre ellas.
+  7. Diferenciar los resultados completos de los parciales cuando una partición no esté disponible.
+  8. Identificar qué fuentes participaron en la generación de cada informe.
+  9. Mantener el aislamiento de permisos en las consultas distribuidas.
+  10. Incorporar mecanismos de control cuando una fuente no responda o devuelva información desactualizada.
+- **Cambios Necesarios:**
+  - Extender la resolución de fuentes existente (`resolveSpreadsheetSource`) hacia los servicios que participan en informes institucionales.
+  - Normalizar los identificadores y metadatos de las fuentes en catálogo central.
+  - Incorporar validaciones de integridad referencial entre registros vinculados.
+  - Adaptar las consultas consolidadas para que registren el origen de cada conjunto de datos.
+  - Incorporar estados de disponibilidad y actualización en el informe resultante.
+- **Comportamiento Esperado:**
+  Un informe consolidado debe conocer qué fuentes utilizó y si todas respondieron correctamente.
+  Si una fuente no está disponible, el sistema no debe presentar un resultado parcial como si fuera completo. Debe identificar la limitación y permitir distinguir los datos disponibles de los pendientes.
+- **Criterios de Aceptación:**
+  - [ ] Los informes identifican explícitamente sus fuentes de datos en la respuesta.
+  - [ ] Los registros relacionados se vinculan mediante identificadores válidos sin pérdida de referencias.
+  - [ ] Una misma operación no se contabiliza dos veces al consultar múltiples particiones.
+  - [ ] Las fuentes no disponibles generan un estado identificable de advertencia.
+  - [ ] Los informes parciales no se presentan como completos sin indicar fuentes faltantes.
+  - [ ] Los datos históricos utilizan la partición correspondiente al ciclo analizado.
+  - [ ] Los permisos se verifican también en las consultas distribuidas a través de HMAC.
+  - [ ] Los resultados consolidados coinciden con los resultados de referencia calculados sobre los registros fuente.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 2. Rendimiento, agregación y explotación histórica
+
+### [F24-Task05] [P1] [Rendimiento y Almacenamiento - DataMart Institucional y Motor de Agregaciones Históricas]
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `backend/developer-service/Code.gs`
+- **Dependencias Expuestas:** Diccionario semántico (`F24-Task02`), estandarización de fuentes (`F24-Task04`), límites y rendimiento (`F24-Task06`).
+- **Capacidades Relacionadas:** F24-016, F24-017, F24-024.
+- **Problema Detectado:**
+  Los cálculos actuales recorren hojas transaccionales completas en tiempo real. Esto aumenta los tiempos de consulta y el consumo de cuotas de Google Apps Script. La auditoría identifica la necesidad de incorporar estructuras de agregación que permitan consultar indicadores históricos sin recalcular todos los registros en cada solicitud.
+- **Requisitos Funcionales:**
+  1. Crear una estructura de almacenamiento de agregados institucionales (`ResumenesIndicadoresHistoricos`).
+  2. Incorporar agregaciones para:
+     - Matrícula por día, período, grado y sección.
+     - Rendimiento por período, asignatura, grado y sección.
+     - Aprobación y reprobación.
+     - Asistencia y ausentismo.
+     - Ocupación de secciones.
+     - Ingresos y egresos por período y categoría.
+     - Cartera pendiente y recuperada.
+     - Ejecución presupuestaria.
+     - Indicadores administrativos y operativos.
+  3. Incorporar agregaciones diarias y periódicas según la naturaleza del indicador.
+  4. Permitir consultar acumulados mensuales, trimestrales, semestrales y anuales utilizando los datos agregados.
+  5. Mantener relación entre cada agregado y:
+     - Indicador.
+     - Período.
+     - Fuente.
+     - Dimensiones.
+     - Versión de fórmula.
+     - Fecha de cálculo.
+  6. Implementar actualización incremental cuando cambien los registros fuente.
+  7. Permitir reconstruir los agregados de un período cuando se detecten inconsistencias (`rebuildAggregatedPeriodData`).
+  8. Evitar duplicaciones al ejecutar varias veces un mismo proceso de agregación.
+  9. Separar los agregados actuales de los históricos cerrados.
+  10. Permitir consultar la fecha y el estado de actualización de cada agregado.
+  11. Mantener la posibilidad de contrastar los resultados agregados con los registros originales para auditoría.
+- **Cambios Necesarios:**
+  - Incorporar las estructuras de almacenamiento para los indicadores agregados en hojas dedicadas.
+  - Implementar procesos de consolidación programados mediante activadores Apps Script.
+  - Integrar el diccionario de indicadores con el motor de agregación.
+  - Incorporar mecanismos de actualización incremental ante eventos transaccionales.
+  - Implementar controles de integridad y reconstrucción masiva.
+  - Adaptar los informes para consultar agregados cuando sean adecuados y recurrir a datos transaccionales cuando necesiten detalle.
+- **Comportamiento Esperado:**
+  Los paneles y los informes históricos deben consultar preferentemente los datos agregados disponibles, evitando recorrer repetidamente todas las hojas transaccionales.
+  Los informes detallados deben seguir permitiendo acceder a los registros originales cuando el usuario tenga autorización.
+- **Criterios de Aceptación:**
+  - [ ] Los agregados coinciden exactamente con los cálculos de referencia realizados sobre los registros fuente.
+  - [ ] Ejecutar dos veces el mismo proceso de agregación no duplica valores.
+  - [ ] Modificar un registro transaccional actualiza los agregados afectados según la estrategia definida.
+  - [ ] Los períodos cerrados conservan inalterados sus resultados históricos agregados.
+  - [ ] La reconstrucción de un período produce los mismos resultados que el cálculo original.
+  - [ ] Cada agregado identifica su fecha de actualización y versión de fórmula.
+  - [ ] Un agregado desactualizado no se presenta como vigente ante el usuario.
+  - [ ] Los informes detallados siguen recuperando los registros individuales originales.
+  - [ ] Las consultas habituales utilizan agregados cuando estos están disponibles y son compatibles con los filtros solicitados.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F24-Task06] [P1] [Rendimiento y Cuotas - Optimización de Consultas, Paginación y Control de Cuotas GAS]
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** DataMart (`F24-Task05`), catálogo de indicadores (`F24-Task02`), consultas de fuentes normalizadas (`F24-Task04`).
+- **Capacidades Relacionadas:** F24-017, F24-002.
+- **Problema Detectado:**
+  Las consultas que recorren hojas con miles de filas pueden acercarse al límite de ejecución de Google Apps Script (6 minutos). La arquitectura necesita optimizar las operaciones y evitar que informes extensos bloqueen la generación de resultados.
+- **Requisitos Funcionales:**
+  1. Implementar paginación obligatoria para informes detallados extensos (`page`, `pageSize`, `totalPages`, `totalRecords`).
+  2. Evitar recuperar columnas o registros que no sean necesarios para la consulta en memoria.
+  3. Utilizar operaciones por lotes en lugar de lecturas celda por celda.
+  4. Aprovechar los agregados precalculados del DataMart.
+  5. Incorporar caché en memoria (`CacheService`) para consultas repetidas con parámetros equivalentes.
+  6. Definir reglas estrictas de invalidación de caché cuando cambien los datos fuente subyacentes.
+  7. Incorporar límites configurables para:
+     - Registros por página.
+     - Volumen máximo de exportación directa.
+     - Duración de consultas en tiempo real.
+     - Número de operaciones concurrentes con `LockService`.
+  8. Identificar consultas pesadas que requieren procesamiento diferido o asíncrono.
+  9. Registrar tiempos de respuesta y volumen de datos procesado en cada informe.
+  10. Manejar fallos por cuotas o límites de ejecución sin entregar resultados incompletos como definitivos.
+  11. Permitir que una consulta extensa pueda continuar mediante procesamiento por lotes cuando sea necesario.
+- **Cambios Necesarios:**
+  - Optimizar las consultas existentes de informes evitando llamadas redundantes a `getDataRange()`.
+  - Incorporar paginación consistente en backend y controles de avance en la interfaz.
+  - Integrar caché con el mecanismo de actualización de datos.
+  - Utilizar procesamiento por lotes para grandes volúmenes.
+  - Incorporar métricas de rendimiento por informe en bitácoras de auditoría.
+  - Implementar control de errores y recuperación de consultas interrumpidas.
+- **Comportamiento Esperado:**
+  Los informes pequeños deben responder directamente. Los informes extensos deben utilizar paginación, agregación o procesamiento por lotes según su volumen.
+  La interfaz debe mostrar claramente cuándo una consulta continúa procesándose y cuándo ha terminado.
+- **Criterios de Aceptación:**
+  - [ ] Recorrer todas las páginas devuelve todos los registros sin omisiones ni duplicaciones.
+  - [ ] Los filtros aplicados se mantienen idénticos entre páginas consecutivas.
+  - [ ] Las consultas repetidas con mismos parámetros reutilizan resultados válidos en caché.
+  - [ ] Una modificación de los datos fuente invalida inmediatamente los resultados en caché.
+  - [ ] Los informes extensos no dependen de una única ejecución que exceda los límites del servicio.
+  - [ ] Los errores por cuotas se registran y presentan de manera controlada al usuario.
+  - [ ] Se registran tiempos de respuesta y cantidades procesadas en los eventos de auditoría.
+  - [ ] Las pruebas comparativas demuestran una mejora medible en tiempos de respuesta frente a las consultas originales.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F24-Task07] [P1] [Analítica Histórica - Motor de Tendencias y Series Históricas Académicas y Administrativas]
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `js/ui-common.js`
+- **Dependencias Expuestas:** Diccionario de indicadores (`F24-Task02`), DataMart (`F24-Task05`), comparación financiera existente.
+- **Capacidades Relacionadas:** F24-011, F24-012.
+- **Problema Detectado:**
+  Existe una proyección financiera semestral, pero faltan mecanismos equivalentes para analizar la evolución histórica de matrícula, calificaciones y otros indicadores institucionales.
+- **Requisitos Funcionales:**
+  1. Incorporar series temporales para indicadores académicos, financieros, administrativos y operativos.
+  2. Permitir consultar:
+     - Evolución de matrícula por ciclo lectivo y mes.
+     - Evolución de tasas de aprobación y reprobación.
+     - Evolución de promedios académicos generales y por área.
+     - Evolución de asistencia y ausentismo.
+     - Evolución de ingresos y egresos comparativos.
+     - Evolución de morosidad institucional.
+     - Evolución de volumen de trámites y tiempos promedio de resolución.
+  3. Permitir comparar períodos equivalentes (ej. primer trimestre 2024 vs primer trimestre 2025).
+  4. Mostrar variaciones absolutas y porcentuales relativas.
+  5. Identificar máximos, mínimos y promedios en la serie.
+  6. Permitir agrupar por mes, trimestre, semestre y año, cuando corresponda.
+  7. Diferenciar períodos completos e incompletos con marcas visibles.
+  8. Permitir visualizar valores en gráficos interactivos y tablas numéricas estructuradas.
+  9. Mantener la definición histórica del indicador según su versión en la fecha evaluada.
+  10. Incorporar acceso al detalle de los datos que componen un punto de la serie cuando los permisos lo permitan.
+- **Cambios Necesarios:**
+  - Integrar los indicadores analíticos con las estructuras del DataMart.
+  - Incorporar endpoints de consulta de series temporales (`getTimeSeriesAnalytics`).
+  - Extender la comparación existente para que pueda utilizarse también en indicadores académicos y administrativos.
+  - Incorporar visualizaciones gráficas y selectores de período en los paneles de control.
+- **Comportamiento Esperado:**
+  El usuario podrá seleccionar un indicador y consultar cómo ha evolucionado a través de distintos períodos. Podrá identificar cambios, comparar años lectivos y examinar los valores que componen cada resultado.
+- **Criterios de Aceptación:**
+  - [ ] Los valores de la serie temporal coinciden con los informes individuales de cada período.
+  - [ ] Los períodos aparecen presentados en estricto orden cronológico.
+  - [ ] Los períodos sin datos se identifican claramente y no se convierten arbitrariamente en ceros.
+  - [ ] Los cambios de fórmula se identifican en la serie histórica.
+  - [ ] Los porcentajes de variación utilizan una base matemática válida sin errores por división por cero.
+  - [ ] Los valores representados en gráficos coinciden exactamente con los datos tabulares.
+  - [ ] La comparación de períodos incompletos presenta una advertencia clara al usuario.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 3. Informes exportables, personalizados y programados
+
+### [F24-Task08] [P1] [Exportación Universal - Exportador Universal de Informes CSV y XLSX con Seguridad Anti-Inyección]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `js/ui-common.js`
+- **Dependencias Expuestas:** Catálogo de informes (`F24-Task01`), permisos existentes, consultas optimizadas (`F24-Task06`).
+- **Capacidades Relacionadas:** F24-013, F24-010.
+- **Problema Detectado:**
+  La exportación actual depende principalmente de la impresión del navegador mediante `window.print()`. Esto no proporciona archivos estructurados adecuados para análisis, procesamiento y reutilización de datos.
+- **Requisitos Funcionales:**
+  1. Incorporar exportación directa desde el servicio de informes en backend.
+  2. Implementar como mínimo:
+     - CSV estructurado con codificación UTF-8 y BOM para compatibilidad con Excel.
+     - XLSX nativo generado en servidor o binario compatible.
+  3. Mantener la impresión o generación PDF existente como opción complementaria.
+  4. Exportar los datos resultantes de la consulta autorizada, conservando:
+     - Filtros aplicados.
+     - Período de referencia.
+     - Encabezados descriptivos.
+     - Ordenamiento vigente en pantalla.
+     - Agrupaciones y jerarquías.
+     - Totales y subtotales calculados.
+     - Unidades de medida asociadas.
+  5. Incorporar nombres de archivo estandarizados y descriptivos (ej. `Informe_Rendimiento_7mo_2026_2026-05-10.csv`).
+  6. Permitir exportar informes completos o filtrados según selección del usuario.
+  7. Gestionar grandes volúmenes mediante generación por lotes para evitar timeouts.
+  8. Incorporar metadatos de generación:
+     - Nombre del informe.
+     - Fecha y hora de generación ISO.
+     - Período consultado.
+     - Filtros aplicados.
+     - Usuario generador y rol operativo.
+  9. Mantener los formatos numéricos y las fechas en estándares internacionales.
+  10. Proteger la exportación contra fórmulas maliciosas en archivos CSV y XLSX (sanitización de prefijos `=`, `+`, `-`, `@` para prevenir CSV Injection).
+  11. Evitar que se incluyan campos restringidos o confidenciales no autorizados.
+  12. Registrar las exportaciones relevantes en la bitácora de auditoría institucional.
+- **Cambios Necesarios:**
+  - Incorporar un servicio de exportación reutilizable (`exportInstitutionalReportToFile`).
+  - Adaptar los informes existentes para producir una estructura de datos exportable normalizada.
+  - Implementar generación CSV con escapado seguro y XLSX.
+  - Integrar botones de descarga directa en el visor modal actual (`modal-report-viewer`).
+  - Incorporar controles de autorización estrictos en el servidor antes de generar archivos.
+  - Implementar manejo de archivos temporales y limpieza periódica en Google Drive cuando corresponda.
+- **Comportamiento Esperado:**
+  El usuario podrá consultar un informe y descargar sus resultados en un formato adecuado para su uso posterior, sin depender de copiar tablas desde el navegador.
+  Los archivos deben representar exactamente los datos que el usuario está autorizado a consultar.
+- **Criterios de Aceptación:**
+  - [ ] Los archivos CSV y XLSX contienen exactamente los mismos registros que la consulta original en pantalla.
+  - [ ] Los filtros aplicados en pantalla se conservan reflejados en el archivo exportado.
+  - [ ] Los encabezados, totales y subtotales se exportan correctamente.
+  - [ ] Los caracteres especiales (tildes, eñes) se conservan intactos en UTF-8.
+  - [ ] Los valores numéricos no se convierten incorrectamente en fechas o cadenas corruptas.
+  - [ ] Las fórmulas potencialmente peligrosas en campos de texto se neutralizan ante inyección CSV.
+  - [ ] Un usuario sin permiso de exportación no puede generar el archivo mediante una petición directa al backend.
+  - [ ] La exportación no incluye información fuera del ámbito autorizado del usuario.
+  - [ ] Los archivos grandes se generan mediante procesamiento controlado sin timeouts.
+  - [ ] Los archivos generados pueden abrirse correctamente con Excel, LibreOffice y herramientas compatibles.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F24-Task09] [P2] [Informes Personalizados - Constructor de Informes Personalizados y Plantillas Reutilizables]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - `js/ui-common.js`
+- **Dependencias Expuestas:** Catálogo de informes (`F24-Task01`), diccionario semántico (`F24-Task02`), filtros normalizados (`F24-Task03`), exportador (`F24-Task08`).
+- **Capacidades Relacionadas:** F24-020, F24-001.
+- **Problema Detectado:**
+  No existe una interfaz que permita a los usuarios autorizados adaptar informes seleccionando columnas, agrupaciones y criterios de consulta.
+- **Requisitos Funcionales:**
+  1. Incorporar un constructor visual de informes para usuarios con privilegios analíticos.
+  2. Permitir seleccionar:
+     - Informe o fuente de datos de origen.
+     - Columnas visibles disponibles.
+     - Orden de las columnas en la tabla.
+     - Filtros aplicables por defecto.
+     - Criterios de agrupación (por grado, por departamento, por cuenta).
+     - Criterios de ordenamiento ascendente o descendente.
+     - Cálculo de totales y subtotales.
+     - Campos de resumen e indicadores clave.
+     - Formato de visualización tabular o gráfica.
+  3. Permitir guardar configuraciones como informes personalizados persistentes.
+  4. Permitir duplicar una configuración existente como punto de partida.
+  5. Permitir editar, renombrar y eliminar configuraciones propias.
+  6. Permitir compartir informes configurados con otros usuarios o roles autorizados.
+  7. Diferenciar:
+     - Informes personales (visibles solo al creador).
+     - Informes compartidos departamentales.
+     - Plantillas institucionales oficiales.
+  8. Permitir configurar permisos específicos de consulta, edición, exportación y programación.
+  9. Restringir los campos disponibles en el constructor según el perfil del usuario autenticado.
+  10. Utilizar el diccionario semántico para seleccionar indicadores existentes, evitando duplicar fórmulas.
+  11. Incorporar vista previa interactiva antes de guardar la plantilla.
+  12. Permitir que una plantilla guardada vuelva a ejecutarse en cualquier momento con datos actualizados.
+- **Cambios Necesarios:**
+  - Incorporar una estructura persistente para guardar configuraciones de informes en hoja `InformesPersonalizadosConfig`.
+  - Crear la interfaz de construcción y edición de informes en el frontend.
+  - Implementar validación de campos y combinaciones permitidas en el servidor.
+  - Integrar el constructor con el catálogo general y las definiciones de indicadores.
+  - Incorporar permisos específicos para administración de informes personalizados.
+- **Comportamiento Esperado:**
+  Un usuario autorizado podrá adaptar un informe a sus necesidades sin solicitar una modificación del código. Podrá guardar su configuración y volver a utilizarla con nuevos períodos o filtros.
+  El constructor no deberá permitir ejecutar consultas arbitrarias ni acceder a campos restringidos.
+- **Criterios de Aceptación:**
+  - [ ] Un usuario autorizado puede crear y guardar una configuración personalizada de informe.
+  - [ ] La configuración se conserva íntegra al cerrar sesión y volver a abrir el informe.
+  - [ ] Los filtros y columnas guardados se aplican correctamente en la consulta.
+  - [ ] Los usuarios sin permisos de edición no pueden modificar plantillas institucionales oficiales.
+  - [ ] Los campos restringidos o confidenciales no aparecen disponibles en el constructor.
+  - [ ] Una configuración personalizada utiliza estrictamente las fórmulas centrales de los indicadores.
+  - [ ] Duplicar un informe crea una copia independiente sin alterar el original.
+  - [ ] Eliminar una configuración personal no afecta los datos fuente ni otros informes institucionales.
+  - [ ] Los informes compartidos respetan los permisos de acceso asignados.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F24-Task10] [P1] [Automatización - Programador Automático de Generación de Informes Calendarizados]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - `backend/developer-service/Code.gs`
+- **Dependencias Expuestas:** Catálogo (`F24-Task01`), permisos, exportador (`F24-Task08`), distribución (`F24-Task11`).
+- **Capacidades Relacionadas:** F24-014, F24-018.
+- **Problema Detectado:**
+  No existe un mecanismo para calendarizar la generación automática de informes mediante procesos programados.
+- **Requisitos Funcionales:**
+  1. Permitir programar informes periódicos:
+     - Diarios.
+     - Semanales (día específico de la semana).
+     - Mensuales (día del mes o primer/último día).
+     - Trimestrales.
+     - Semestrales.
+     - Anuales (cierre de ciclo lectivo o fiscal).
+  2. Configurar en cada programación:
+     - Informe seleccionado.
+     - Filtros aplicables.
+     - Período dinámico de datos (ej. "mes anterior", "ciclo actual").
+     - Frecuencia de ejecución.
+     - Hora planificada.
+     - Zona horaria de la institución.
+     - Fecha de inicio de vigencia.
+     - Fecha de finalización.
+     - Formato de salida (PDF, CSV, XLSX).
+     - Destinatarios autorizados.
+  3. Permitir pausar, reanudar, modificar y cancelar programaciones activas.
+  4. Mantener un historial completo de ejecuciones programadas en hoja `HistorialInformesProgramados`.
+  5. Registrar resultados satisfactorios, tiempos y volumen generado.
+  6. Incorporar reintentos controlados con retroceso exponencial ante fallos temporales.
+  7. Evitar ejecuciones duplicadas mediante marcas de exclusión mutua.
+  8. Permitir programaciones institucionales y personales según los permisos asignados.
+  9. Revalidar los permisos del destinatario y del creador antes de generar cada informe.
+  10. Gestionar cambios en los permisos del creador o de los destinatarios (desactivar si el creador pierde privilegios).
+  11. Permitir programaciones de informes personalizados cuando estén formalmente autorizadas.
+- **Cambios Necesarios:**
+  - Incorporar almacenamiento de programaciones en hoja `ProgramacionInformes`.
+  - Implementar un mecanismo de ejecución mediante activadores temporales Apps Script (`Time-driven triggers`).
+  - Integrar el programador con los servicios de generación y exportación de informes.
+  - Incorporar control de estados de ejecución y política de reintentos.
+  - Registrar cada ejecución en las bitácoras de auditoría institucional.
+  - Evitar depender de una única ejecución prolongada fraccionando envíos en colas asíncronas.
+- **Comportamiento Esperado:**
+  Una programación activa generará el informe en la fecha y frecuencia configuradas. Si falla, quedará registrada y podrá reintentarse sin producir duplicaciones.
+  Las programaciones deben continuar funcionando de manera controlada aunque el usuario creador deje de tener acceso.
+- **Criterios de Aceptación:**
+  - [ ] Una programación válida ejecuta y genera el informe en la frecuencia configurada.
+  - [ ] La zona horaria institucional se respeta estrictamente en los disparos.
+  - [ ] Pausar o cancelar una programación impide inmediatamente nuevas ejecuciones.
+  - [ ] Las ejecuciones fallidas quedan registradas con causa detallada y alerta.
+  - [ ] Los reintentos automáticos no duplican informes ni envían correos repetidos.
+  - [ ] Los permisos de acceso a los datos se comprueban nuevamente en cada ejecución calendarizada.
+  - [ ] Una programación no distribuye datos a destinatarios que hayan perdido autorización.
+  - [ ] El historial permite identificar cada ejecución histórica, fecha y estado final.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F24-Task11] [P1] [Distribución y Seguridad - Distribución Segura y Compartición de Informes Institucionales]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** Programador (`F24-Task10`), exportador (`F24-Task08`), catálogo y permisos (`F24-Task01`).
+- **Capacidades Relacionadas:** F24-015, F24-010.
+- **Problema Detectado:**
+  No existe un mecanismo institucional para enviar informes automáticamente por correo electrónico ni para compartirlos mediante enlaces temporales protegidos.
+- **Requisitos Funcionales:**
+  1. Permitir distribuir informes generados a destinatarios autorizados de forma segura.
+  2. Incorporar despacho por correo electrónico institucional (`MailApp` / notificaciones multicanal).
+  3. Permitir seleccionar destinatarios individuales y grupos o departamentos institucionales.
+  4. Permitir adjuntar archivos estructurados o enviar enlaces temporales protegidos.
+  5. Incorporar enlaces de acceso seguro con:
+     - Identificador criptográfico único.
+     - Fecha y hora de vencimiento.
+     - Estado activo o revocado.
+     - Lista de destinatarios autorizados por email/userId.
+     - Permisos de solo consulta sin reenvío no autorizado.
+  6. Evitar enlaces públicos o URLs abiertas que permitan acceder a información institucional restringida sin autenticación.
+  7. Revalidar los permisos institucionales al momento en que el usuario abre un enlace compartido.
+  8. Permitir revocar anticipadamente el acceso a un enlace distribuido.
+  9. Registrar fecha, usuario emisor, informe, destinatarios y aperturas en bitácora de distribución.
+  10. Integrar la distribución con las programaciones automáticas de informes.
+  11. Permitir notificar inmediatamente a los administradores ante fallos de entrega.
+  12. Evitar envíos duplicados mediante claves de idempotencia en la distribución.
+- **Cambios Necesarios:**
+  - Incorporar un servicio de distribución institucional (`distributeInstitutionalReport`).
+  - Integrar el envío con el programador de tareas y el exportador de archivos.
+  - Implementar control de acceso y verificación de identidad en enlaces temporales.
+  - Incorporar registro de entregas en hoja `DistribucionInformesLogs`.
+  - Implementar plantillas de correo institucionales formales con advertencias de confidencialidad.
+  - Añadir controles de validación de destinatarios y permisos antes del despacho.
+- **Comportamiento Esperado:**
+  Un informe podrá enviarse automáticamente a los responsables autorizados. Si se utiliza un enlace, el acceso estará sujeto a identidad, permisos y vigencia.
+  El archivo enviado no debe contener información que el destinatario no tenga derecho a consultar.
+- **Criterios de Aceptación:**
+  - [ ] Un informe puede enviarse exitosamente a un destinatario institucional autorizado.
+  - [ ] Un intento de envío a un destinatario no autorizado es bloqueado por el servidor.
+  - [ ] Un enlace temporal vencido o revocado impide el acceso al informe.
+  - [ ] La modificación o revocación de permisos se refleja inmediatamente en el siguiente intento de acceso.
+  - [ ] Todos los envíos de informes quedan debidamente registrados en la bitácora de auditoría.
+  - [ ] Un fallo de entrega de correo no se registra falsamente como envío satisfactorio.
+  - [ ] Los reintentos controlados no generan envíos duplicados hacia los destinatarios.
+  - [ ] La distribución automática conserva fielmente los filtros y el período de datos configurados.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 4. Gestión institucional, objetivos y alertas
+
+### [F24-Task12] [P2] [Gobierno Institucional - Sistema Institucional de Metas, Objetivos y Cumplimiento de Indicadores]
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `js/ui-common.js`
+- **Dependencias Expuestas:** Diccionario semántico (`F24-Task02`), series históricas (`F24-Task07`), paneles por rol (`F24-Task13`).
+- **Capacidades Relacionadas:** F24-021, F24-008.
+- **Problema Detectado:**
+  No existe una estructura para registrar metas institucionales y comparar los resultados reales con los objetivos establecidos.
+- **Requisitos Funcionales:**
+  1. Incorporar un registro central de metas institucionales en hoja `MetasIndicadoresInstitucionales`.
+  2. Permitir asociar cada meta con un indicador del diccionario semántico centralizado.
+  3. Configurar en cada meta:
+     - Nombre de la meta.
+     - Descripción y justificación estratégica.
+     - Indicador asociado (`indicadorId`).
+     - Valor objetivo cuantitativo.
+     - Unidad de medida correspondiente.
+     - Período de evaluación (año lectivo, semestre, mes).
+     - Área responsable (Académica, Financiera, Administrativa).
+     - Departamento específico.
+     - Usuario responsable asignado.
+     - Fecha de inicio.
+     - Fecha de finalización.
+     - Estado (`Planificada`, `EnSeguimiento`, `Cumplida`, `NoCumplida`, `Cancelada`).
+  4. Permitir definir metas institucionales globales, departamentales y académicas por grado/sección.
+  5. Incorporar metas financieras cuando existan datos presupuestarios compatibles.
+  6. Permitir consultar en tiempo real:
+     - Valor objetivo planeado.
+     - Valor actual alcanzado.
+     - Diferencia absoluta y desvío.
+     - Porcentaje de cumplimiento alcanzado.
+     - Evolución del cumplimiento a lo largo del período.
+  7. Mantener historial de modificaciones de metas y reajustes aprobados.
+  8. Permitir establecer metas sucesivas por períodos continuos.
+  9. Diferenciar formalmente metas alcanzadas, en curso, vencidas y aquellas sin datos suficientes.
+  10. Restringir la creación, reajuste y eliminación de metas exclusivamente a perfiles autorizados (Dirección y Administrador).
+- **Cambios Necesarios:**
+  - Incorporar almacenamiento de metas en base de datos persistente.
+  - Integrar las metas con las fórmulas del diccionario de indicadores.
+  - Crear interfaz de configuración y seguimiento visual de metas (barras de avance y porcentajes).
+  - Integrar resultados de cumplimiento en los paneles de control por rol.
+  - Incorporar historial de auditoría para modificaciones de objetivos.
+- **Comportamiento Esperado:**
+  Dirección podrá definir objetivos institucionales y consultar su cumplimiento. Los responsables de cada área podrán consultar las metas correspondientes a sus departamentos.
+  Los resultados se calcularán utilizando el indicador asociado, sin crear fórmulas paralelas.
+- **Criterios de Aceptación:**
+  - [ ] Una meta tiene un indicador, período y responsable claramente identificables.
+  - [ ] El valor actual alcanzado coincide exactamente con el cálculo del indicador correspondiente.
+  - [ ] El porcentaje de cumplimiento se calcula correctamente en base al objetivo.
+  - [ ] Las metas vencidas se identifican y clasifican automáticamente.
+  - [ ] Los cambios en los objetivos de una meta conservan su trazabilidad histórica de modificaciones.
+  - [ ] Los usuarios sin permisos no pueden crear, alterar ni eliminar metas institucionales.
+  - [ ] Los períodos sin datos operativos no generan porcentajes de cumplimiento ficticios.
+  - [ ] Los cuadros de mando muestran de forma clara y fidedigna el progreso de las metas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F24-Task13] [P1] [Cuadros de Mando - Integración y Ampliación de Paneles Institucionales por Rol]
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `backend/user-service/Code.gs`
+  - `js/ui-common.js`
+  - `app/html/dashboards/dynamic-dashboard.html`
+- **Dependencias Expuestas:** Catálogo (`F24-Task01`), diccionario (`F24-Task02`), filtros (`F24-Task03`), series históricas (`F24-Task07`), metas (`F24-Task12`).
+- **Capacidades Relacionadas:** F24-009, F24-010, F24-023.
+- **Problema Detectado:**
+  Existen paneles y servicios analíticos por área, pero falta una integración gráfica global que permita consultar los indicadores de manera coherente desde un espacio institucional unificado.
+- **Requisitos Funcionales:**
+  1. Integrar los paneles existentes en una experiencia de usuario institucional unificada.
+  2. Mantener vistas diferenciadas según el perfil operativo:
+     - Dirección y Rectoría.
+     - Coordinación Académica.
+     - Administración y Contabilidad.
+     - Secretaría General.
+     - Docentes.
+  3. Permitir que cada panel departamental presente:
+     - Indicadores principales en tarjetas de resumen (KPI cards).
+     - Comparaciones temporales y variaciones.
+     - Gráficos de tendencias históricas.
+     - Seguimiento de metas institucionales.
+     - Alertas tempranas activas.
+     - Enlaces directos hacia los informes detallados correspondientes.
+  4. Permitir configurar los widgets visibles cuando el usuario tenga autorización administrativa.
+  5. Permitir organizar y ordenar los widgets sin alterar las definiciones semánticas de los indicadores.
+  6. Conservar las preferencias individuales de visualización por usuario en almacenamiento local.
+  7. Permitir filtros globales en el panel (por período, grado, sección) que se apliquen simultáneamente a los widgets compatibles.
+  8. Permitir abrir el detalle de cualquier indicador haciendo clic sobre su tarjeta o gráfico.
+  9. Mantener los filtros activos al navegar desde un widget hacia su informe detallado correspondiente.
+  10. Mostrar visiblemente la fecha y hora de la última actualización de datos en cada indicador.
+  11. Gestionar estados de carga, ausencia de datos y errores por widget de forma aislada e independiente.
+  12. Mantener un diseño totalmente adaptable a dispositivos móviles y pantallas táctiles (Tailwind CSS responsivo).
+- **Requisitos Específicos por Perfil:**
+  - **Dirección / Rectoría:** Matrícula total y evolución, retención y permanencia, rendimiento académico general, tasa de asistencia institucional, ingresos y egresos consolidados, ejecución presupuestaria global, cumplimiento de metas institucionales y alertas críticas.
+  - **Coordinación Académica:** Tasas de aprobación y reprobación, promedios por grado y sección, ausentismo recurrente, asignaturas con bajo rendimiento relativo, alertas tempranas pedagógicas y avance de planificaciones docentes.
+  - **Contabilidad / Administración:** Ingresos confirmados por caja y bancos, egresos devengados, cuentas por cobrar y por pagar, índice de morosidad, antigüedad de saldos, flujo de caja proyectado y ejecución presupuestaria por categoría.
+  - **Secretaría:** Matrícula por ciclo lectivo, estado de expedientes de estudiantes, trámites y solicitudes pendientes, trámites resueltos, tiempos promedio de atención y movimientos de matrícula (traslados y reincorporaciones).
+  - **Docentes:** Promedios de sus asignaturas asignadas, distribución de calificaciones en sus secciones, asistencia de sus alumnos, estudiantes en riesgo pedagógico y evaluaciones pendientes de calificación.
+- **Cambios Necesarios:**
+  - Integrar los servicios analíticos existentes en endpoints de dashboards consolidados.
+  - Adaptar el motor de dashboard dinámico (`dynamic-dashboard.html`) para consumir el catálogo de indicadores.
+  - Incorporar configuración de widgets por perfil en metadatos del sistema.
+  - Integrar barra de filtros globales de panel.
+  - Implementar navegación contextual desde widgets hacia el visor modal de informes (`displayReportModal`).
+  - Conservar y reforzar los controles de ámbito y permisos RBAC/ABAC existentes en el backend.
+- **Comportamiento Esperado:**
+  Cada usuario accederá a un panel adaptado a sus responsabilidades. Los indicadores serán coherentes con los informes y permitirán profundizar en los resultados sin perder el contexto.
+- **Criterios de Aceptación:**
+  - [ ] Cada perfil institucional visualiza únicamente los widgets e indicadores correspondientes a sus permisos.
+  - [ ] Los valores numéricos de los indicadores en el panel coinciden exactamente con sus informes correspondientes.
+  - [ ] Los filtros globales del panel actualizan simultáneamente todos los widgets compatibles.
+  - [ ] Los enlaces hacia detalles de indicadores conservan íntegros los filtros aplicados en el panel.
+  - [ ] Los widgets que experimenten un error de datos no bloquean ni afectan a los demás widgets independientes.
+  - [ ] La fecha y hora de actualización es claramente visible para el usuario en cada tarjeta.
+  - [ ] Las preferencias individuales de ordenamiento no modifican las vistas de otros usuarios.
+  - [ ] Los usuarios no pueden agregar ni visualizar widgets que expongan información fuera de su ámbito autorizado.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F24-Task14] [P2] [Alertas y Monitoreo - Ampliación de Alertas Tempranas a Indicadores Financieros y Operativos]
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs`
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** Diccionario de indicadores (`F24-Task02`), metas (`F24-Task12`), paneles (`F24-Task13`).
+- **Capacidades Relacionadas:** F24-022, F24-006, F24-007.
+- **Problema Detectado:**
+  Existe un mecanismo de alertas tempranas para riesgo académico, pero no se dispone de una cobertura equivalente para detectar situaciones relevantes en morosidad, gastos y otros indicadores financieros u operativos.
+- **Requisitos Funcionales:**
+  1. Ampliar el evaluador de alertas tempranas para procesar condiciones sobre indicadores institucionales financieros y operativos.
+  2. Incorporar reglas configurables para:
+     - Incremento anormal de la morosidad institucional (ej. mora > 15% de cartera activa).
+     - Disminución crítica en la recuperación de cobros mensuales.
+     - Sobrecostos en órdenes de compra y requisiciones de almacén.
+     - Desviaciones presupuestarias superiores a umbrales configurados por partida.
+     - Incrementos inusuales de gastos imprevistos en caja chica o cuentas por pagar.
+     - Caídas abruptas en la proyección de ingresos por mensualidades.
+     - Acumulación excesiva de trámites administrativos pendientes en secretaría u orientación.
+     - Aumento injustificado en los tiempos promedio de resolución de trámites.
+  3. Permitir configurar umbrales de activación por período y área responsable.
+  4. Definir usuarios y roles destinatarios de las alertas según el departamento afectado.
+  5. Incorporar niveles de severidad (`Baja`, `Media`, `Alta`, `Crítica`).
+  6. Evitar el despacho repetitivo de alertas ante una misma condición persistente.
+  7. Mantener un historial completo de alertas emitidas en hoja `AlertasInstitucionalesLogs`.
+  8. Permitir reconocer, documentar revisión y cerrar formalmente una alerta activa.
+  9. Identificar con precisión el indicador, período y condición cuantitativa que originaron la alerta.
+  10. Mantener estricta separación de acceso entre alertas académicas, financieras y operativas.
+  11. Restringir la visualización y gestión de alertas según el perfil y permisos del usuario.
+- **Cambios Necesarios:**
+  - Extender el evaluador de alertas existente en el backend (`evaluateAndDispatchInstitutionalAlerts`).
+  - Integrar las reglas de evaluación con el diccionario centralizado de indicadores.
+  - Incorporar interfaz de configuración de umbrales para administradores.
+  - Integrar las alertas en los paneles de control y en el centro de notificaciones multicanal.
+  - Incorporar máquina de estados para el seguimiento de alertas (`Activa`, `EnRevision`, `Mitigada`, `Cerrada`).
+- **Comportamiento Esperado:**
+  Cuando un indicador alcance una condición configurada, el sistema generará una alerta para los responsables correspondientes.
+  Las alertas deben ser señales de revisión, no conclusiones automáticas de fraude, negligencia o incumplimiento.
+- **Criterios de Aceptación:**
+  - [ ] Una condición que supera el umbral configurado genera una alerta institucional estructurada.
+  - [ ] Una condición que permanece dentro de los rangos normales no genera alertas espurias.
+  - [ ] La alerta identifica claramente el indicador, período, valor observado y umbral límite.
+  - [ ] Los destinatarios de la notificación corresponden exclusivamente a los roles autorizados para el área.
+  - [ ] Una misma condición no resuelta no produce notificaciones duplicadas ilimitadas.
+  - [ ] Los responsables autorizados pueden reconocer y cerrar formalmente la alerta.
+  - [ ] El historial de alertas conserva todos los cambios de estado y notas de revisión.
+  - [ ] Las alertas académicas preexistentes siguen funcionando correctamente sin regresiones.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F24-Task15] [P2] [Eficiencia Operativa - Indicadores de Tiempos de Resolución y Eficiencia Administrativa]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** Diccionario de indicadores (`F24-Task02`), filtros (`F24-Task03`), fuentes administrativas normalizadas (`F24-Task04`).
+- **Capacidades Relacionadas:** F24-007, F24-008.
+- **Problema Detectado:**
+  Los informes administrativos permiten consultar trámites y movimientos, pero faltan métricas de tiempos de resolución y seguimiento de eficiencia operativa.
+- **Requisitos Funcionales:**
+  1. Incorporar indicadores cuantitativos para trámites y solicitudes institucionales:
+     - Cantidad total de solicitudes recibidas en el período.
+     - Cantidad de solicitudes actualmente pendientes de resolución.
+     - Cantidad de solicitudes resueltas satisfactoriamente.
+     - Cantidad de solicitudes que superaron el tiempo límite estipulado (vencidas).
+     - Tiempo promedio de resolución (en horas y días hábiles).
+     - Tiempo mediano de resolución para eliminar sesgos por valores atípicos.
+     - Tiempo máximo registrado en un trámite resuelto.
+     - Volumen de solicitudes atendidas por cada responsable individual.
+     - Volumen de solicitudes procesadas por departamento institucional.
+     - Porcentaje global de cumplimiento de plazos establecidos (SLA operativo).
+  2. Diferenciar formalmente en el cálculo las fechas de creación, asignación, inicio de atención, resolución y cierre definitivo.
+  3. Permitir filtrar las métricas por tipo de trámite, departamento, responsable y período de tiempo.
+  4. Diferenciar solicitudes canceladas voluntariamente, rechazadas con justificación, reabiertas y completadas.
+  5. Identificar solicitudes que han sufrido múltiples derivaciones o cambios de responsable.
+  6. Permitir comparar tiempos de resolución entre períodos consecutivos.
+  7. Integrar los resultados analíticos en los paneles de control de administración y dirección.
+- **Cambios Necesarios:**
+  - Identificar los registros que almacenan el ciclo de vida de los trámites (`SolicitudesTramites`, `RevisionesDecisionesTramite`).
+  - Incorporar funciones de cálculo de duración y métricas de rendimiento en el backend.
+  - Normalizar los estados incluidos y excluidos según las reglas semánticas.
+  - Integrar los nuevos indicadores con el diccionario semántico centralizado.
+  - Adaptar los informes administrativos existentes para presentar métricas de eficiencia.
+- **Comportamiento Esperado:**
+  La institución podrá conocer cuántos trámites se reciben, cuánto tardan en resolverse y qué departamentos acumulan solicitudes pendientes.
+  Los tiempos deben calcularse a partir de eventos reales y no de fechas estimadas.
+- **Criterios de Aceptación:**
+  - [ ] El tiempo de resolución calculado coincide exactamente con la diferencia entre las fechas de inicio y finalización del trámite.
+  - [ ] Los trámites aún no resueltos no se contabilizan erróneamente como resueltos o completados.
+  - [ ] Las solicitudes canceladas y rechazadas se clasifican y contabilizan según las reglas documentadas.
+  - [ ] Los trámites reabiertos conservan su trazabilidad e historial de tiempos acumulados.
+  - [ ] Los promedios y medianas calculados corresponden estrictamente a los registros fuente analizados.
+  - [ ] Los filtros por departamento y responsable aplican de forma fidedigna sobre los indicadores.
+  - [ ] Los indicadores de eficiencia se presentan de manera coherente en informes y cuadros de mando.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 5. Analítica institucional avanzada
+
+### [F24-Task16] [P2] [Analítica Académica Avanzada - Análisis de Cohortes y Seguimiento Longitudinal de Estudiantes]
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** Protección histórica existente, DataMart (`F24-Task05`), series históricas (`F24-Task07`), filtros (`F24-Task03`).
+- **Capacidades Relacionadas:** F24-A03, F24-005.
+- **Problema Detectado:**
+  No existe un mecanismo para analizar grupos de estudiantes a lo largo de varios ciclos académicos, lo que limita el estudio de permanencia, rendimiento y evolución institucional.
+- **Requisitos Funcionales:**
+  1. Incorporar capacidades de agrupación de estudiantes por cohortes históricas.
+  2. Permitir definir cohortes según:
+     - Año de ingreso a la institución.
+     - Ciclo académico de inicio.
+     - Nivel educativo de matrícula inicial.
+     - Grado inicial.
+     - Programa o modalidad académica, cuando corresponda.
+  3. Seguir longitudinalmente la evolución de cada cohorte a través de los sucesivos años lectivos.
+  4. Consultar y graficar para cada cohorte:
+     - Matrícula inicial de la cohorte.
+     - Estudiantes que permanecen activos ciclo a ciclo.
+     - Traslados de grado o sección.
+     - Retiros definitivos registrados.
+     - Estudiantes egresados o graduados.
+     - Tasa de permanencia porcentual.
+     - Evolución del rendimiento académico promedio de la cohorte.
+     - Tasa de reprobación acumulada.
+  5. Permitir comparar visual y numéricamente dos o más cohortes diferentes.
+  6. Diferenciar con precisión estudiantes que se trasladan internamente de aquellos que desertan o abandonan la institución.
+  7. Mantener identificadores históricos estables que vinculen al alumno a través de los ciclos.
+  8. Respetar estrictamente los permisos RBAC/ABAC sobre la consulta de información individual y anonimizar datos cuando se presenten métricas agregadas.
+- **Cambios Necesarios:**
+  - Incorporar mecanismos de identificación y etiquetado de cohortes en el modelo de datos.
+  - Integrar los registros históricos de matrículas y movimientos de expedientes estudiantiles.
+  - Incorporar endpoints de consulta longitudinal (`getStudentCohortLongitudinalAnalytics`).
+  - Integrar los resultados analíticos con el DataMart y las vistas de series históricas.
+  - Crear componentes visuales de seguimiento matricial de cohortes en la interfaz.
+- **Comportamiento Esperado:**
+  La institución podrá seleccionar una cohorte de ingreso y seguir su evolución durante diferentes años lectivos, identificando permanencia, rendimiento y movimientos.
+- **Criterios de Aceptación:**
+  - [ ] Cada estudiante se vincula de manera unívoca con la cohorte correspondiente a su ingreso.
+  - [ ] Las promociones o cambios de grado ordinarios no alteran la pertenencia a la cohorte original.
+  - [ ] Los traslados internos de sección no se contabilizan erróneamente como deserción.
+  - [ ] Los retiros definitivos se contabilizan fidedignamente según su estado y fecha efectiva.
+  - [ ] Las cifras agregadas de la cohorte coinciden con los registros históricos individuales de matrícula.
+  - [ ] La comparación entre diferentes cohortes utiliza períodos y métricas equivalentes.
+  - [ ] Los resultados analíticos históricos permanecen estables ante cambios en la configuración académica actual.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F24-Task17] [P2] [Analítica de Riesgos - Detección de Anomalías en Indicadores Financieros y Operativos]
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs`
+  - `backend/developer-service/Code.gs`
+- **Dependencias Expuestas:** Indicadores centralizados (`F24-Task02`), DataMart (`F24-Task05`), tendencias (`F24-Task07`), alertas (`F24-Task14`).
+- **Capacidades Relacionadas:** F24-A02, F24-022.
+- **Problema Detectado:**
+  La detección de riesgo está presente en el área académica, pero no existe una capacidad equivalente para identificar patrones inusuales en operaciones financieras y administrativas.
+- **Requisitos Funcionales:**
+  1. Incorporar motor de análisis de anomalías sobre indicadores y transacciones financieras y operativas.
+  2. Evaluar y detectar automáticamente:
+     - Gastos inusuales que superen en más de 2 desviaciones estándar el promedio histórico de la partida.
+     - Variaciones abruptas o caídas imprevistas en los flujos diarios de ingresos.
+     - Cambios atípicos en las tasas de morosidad por nivel o grado.
+     - Desviaciones presupuestarias no justificadas en centros de costo.
+     - Potenciales duplicaciones de pagos o movimientos con referencias o montos idénticos.
+     - Incrementos inesperados en el volumen de requisiciones de materiales.
+     - Acumulación anormal de solicitudes no atendidas en un área específica.
+  3. Permitir configurar umbrales cuantitativos y reglas estadísticas de detección.
+  4. Identificar con claridad el período, la partida y los valores de referencia que originaron la anomalía.
+  5. Diferenciar formalmente anomalías detectadas por reglas fijas de aquellas basadas en análisis estadístico descriptivo.
+  6. Permitir a los responsables revisar, justificar o descartar falsos positivos documentando la razón.
+  7. Registrar en bitácora todas las revisiones y acciones correctivas tomadas.
+  8. Evitar categorizar automáticamente una anomalía como fraude o irregularidad penal; debe tratarse estrictamente como una señal para revisión humana.
+- **Cambios Necesarios:**
+  - Extender los mecanismos analíticos del backend con algoritmos de detección de valores atípicos (outliers).
+  - Integrar datos históricos del DataMart para calcular medias y varianzas de referencia.
+  - Incorporar reglas estadísticas configurables en metadatos del servicio contable.
+  - Crear una vista de auditoría y revisión de anomalías operativas en el panel de control.
+  - Registrar los estados y dictámenes de revisión de anomalías en hoja de bitácora.
+- **Comportamiento Esperado:**
+  El sistema identificará variaciones que merecen revisión y ofrecerá información suficiente para que el responsable investigue su origen.
+- **Criterios de Aceptación:**
+  - [ ] Una variación que cumple con la regla de anomalía genera una bandera de advertencia en el sistema.
+  - [ ] La ficha de anomalía presenta con transparencia el valor observado y los valores históricos de referencia.
+  - [ ] Los falsos positivos pueden ser marcados como revisados y justificados por los auditores autorizados.
+  - [ ] Las anomalías no disparan automáticamente bloqueos o sanciones irreversibles sin intervención humana.
+  - [ ] Únicamente los usuarios con roles de supervisión o auditoría pueden consultar las banderas de anomalía.
+  - [ ] El historial conserva íntegramente las revisiones, comentarios y resoluciones registradas.
+  - [ ] Las reglas y umbrales de detección pueden ajustarse sin modificar el código fuente de los informes.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F24-Task18] [P2] [Informes Consolidados - Informes Institucionales Consolidados y Análisis Multidimensional]
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `js/ui-common.js`
+- **Dependencias Expuestas:** Catálogo (`F24-Task01`), diccionario (`F24-Task02`), fuentes normalizadas (`F24-Task04`), DataMart (`F24-Task05`), exportador (`F24-Task08`).
+- **Capacidades Relacionadas:** F24-A06, F24-A07, F24-001.
+- **Problema Detectado:**
+  Existen informes consolidados parciales, pero la integración entre áreas no está suficientemente extendida. La institución necesita informes ejecutivos que reúnan indicadores relacionados sin duplicar cálculos ni perder el origen de los datos.
+- **Requisitos Funcionales:**
+  1. Ampliar y formalizar los informes ejecutivos consolidados:
+     - Resumen Ejecutivo Institucional (Rectoría).
+     - Informe Consolidado de Matrícula y Retención.
+     - Informe Integrado de Rendimiento Académico y Asistencia.
+     - Informe Consolidado de Situación Financiera y Flujo de Fondos.
+     - Informe de Ejecución Presupuestaria y Costos Operativos.
+     - Informe Consolidado de Gestión de Expedientes y Movimientos.
+     - Informe Integrado de Productividad y Trámites Administrativos.
+  2. Permitir agrupar y desagregar los resultados consolidados por:
+     - Período o ciclo lectivo.
+     - Departamento institucional.
+     - Nivel educativo.
+     - Grado y sección.
+     - Categoría financiera.
+     - Usuario responsable.
+  3. Permitir la comparación analítica entre unidades institucionales utilizando indicadores normalizados.
+  4. Permitir visualizar indicadores de distintas áreas en una misma vista correlacionada (ej. asistencia vs rendimiento).
+  5. Mantener claramente identificable la fuente de datos que respalda cada sección del informe.
+  6. Evitar duplicar registros u operaciones al cruzar información de diferentes microservicios.
+  7. Incorporar navegación interactiva hacia el detalle transaccional de cada sección del informe.
+  8. Respetar estrictamente las barreras de permisos RBAC de cada área en los bloques consolidados.
+  9. Permitir la exportación íntegra del informe consolidado en formatos estructurados y PDF formal.
+- **Cambios Necesarios:**
+  - Ampliar los servicios de generación de informes para orquestar consultas a múltiples dominios.
+  - Integrar las llamadas con el diccionario semántico centralizado.
+  - Utilizar las fuentes normalizadas y agregados del DataMart para minimizar el tiempo de respuesta.
+  - Incorporar componentes de visualización multidimensional en la interfaz gráfica.
+  - Integrar la navegación contextual hacia los informes específicos de cada área.
+  - Adaptar el exportador universal para generar documentos consolidados con tablas múltiples.
+- **Comportamiento Esperado:**
+  Dirección podrá consultar un informe institucional que reúna los indicadores principales de diferentes áreas y profundizar en cada uno sin perder los filtros ni la trazabilidad.
+- **Criterios de Aceptación:**
+  - [ ] Cada indicador incluido en el informe consolidado conserva su definición institucional original.
+  - [ ] Los datos consolidados coinciden exactamente con los informes individuales correspondientes de cada módulo.
+  - [ ] No existen duplicaciones de registros ni conteos dobles derivados de la combinación de fuentes.
+  - [ ] Las unidades comparadas utilizan criterios y períodos homogéneos.
+  - [ ] Las vistas de detalle muestran únicamente la información que el usuario está autorizado a consultar.
+  - [ ] Los fallos o retrasos en una fuente secundaria se identifican explícitamente sin enmascarar datos.
+  - [ ] La exportación estructurada conserva fielmente la estructura matricial y los valores numéricos del informe.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F24-Task19] [P2] [Control Presupuestario - Seguimiento de Objetivos Presupuestarios y Desviaciones Financieras]
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs`
+- **Dependencias Expuestas:** Diccionario (`F24-Task02`), metas (`F24-Task12`), alertas (`F24-Task14`), fuentes normalizadas (`F24-Task04`).
+- **Capacidades Relacionadas:** F24-A05, F24-006.
+- **Problema Detectado:**
+  La auditoría confirma que ya existen mecanismos de disponibilidad presupuestaria y ejecución presupuestaria. Sin embargo, estas capacidades deben integrarse con el sistema general de indicadores, metas y paneles para facilitar el seguimiento de desviaciones.
+- **Requisitos Funcionales:**
+  1. Reutilizar e integrar los mecanismos presupuestarios existentes en el marco analítico institucional.
+  2. Integrar en un cuadro comparativo unificado:
+     - Presupuesto institucional aprobado por partida y centro de costo.
+     - Presupuesto comprometido en órdenes de compra y contratos vigentes.
+     - Presupuesto ejecutado y devengado en asientos contables.
+     - Saldo disponible real en tiempo real.
+     - Ingresos proyectados según tarifas de cobro y matrícula.
+     - Ingresos efectivamente confirmados en caja y bancos.
+     - Gastos proyectados versus gastos reales devengados.
+  3. Permitir analizar las desviaciones financieras por:
+     - Período o ejercicio fiscal.
+     - Código de cuenta contable.
+     - Categoría de gasto o ingreso.
+     - Departamento institucional.
+     - Proyecto o unidad operativa, cuando exista.
+  4. Calcular automáticamente variaciones absolutas y porcentuales entre lo presupuestado y lo ejecutado.
+  5. Identificar y clasificar situaciones de sobreejecución y subejecución presupuestaria.
+  6. Incorporar alertas configurables ante desviaciones que superen los márgenes de tolerancia institucionales.
+  7. Permitir la consulta interactiva de los movimientos contables individuales que originaron una desviación.
+  8. Conservar de forma histórica e inalterable los períodos fiscales anteriores cerrados.
+- **Cambios Necesarios:**
+  - Integrar los informes presupuestarios existentes (`getBudgetExecutionReport`, `checkBudgetAvailability`) con el diccionario de indicadores.
+  - Incorporar componentes visuales de seguimiento presupuestario (gráficos de ejecución vs presupuesto).
+  - Integrar las metas financieras en los paneles de administración y contabilidad.
+  - Extender el sistema de alertas tempranas hacia las desviaciones presupuestarias no justificadas.
+  - Reutilizar las reglas contables existentes de doble partida sin duplicar cálculos de saldos.
+- **Comportamiento Esperado:**
+  Contabilidad y dirección podrán conocer cuánto se ha presupuestado, comprometido y ejecutado, así como identificar diferencias y consultar sus movimientos de origen.
+- **Criterios de Aceptación:**
+  - [ ] Los valores consolidados coinciden exactamente con los informes presupuestarios y contables existentes.
+  - [ ] Los montos comprometidos no se confunden ni se suman erróneamente a los gastos efectivamente ejecutados.
+  - [ ] Los saldos disponibles se calculan con exactitud (`Aprobado - Comprometido - Ejecutado`).
+  - [ ] Las desviaciones reflejan fidedignamente sus valores absolutos y porcentuales.
+  - [ ] La suma de los movimientos de detalle coincide al 100% con el total de la partida presupuestaria.
+  - [ ] Los ejercicios fiscales anteriores conservan sus resultados históricos inalterables.
+  - [ ] Los usuarios sin permisos contables no pueden consultar información presupuestaria restringida.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F24-Task20] [P2] [Interoperabilidad - API de Consulta y Exportación Estructurada de Indicadores Institucionales]
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** Diccionario (`F24-Task02`), catálogo (`F24-Task01`), filtros (`F24-Task03`), fuentes normalizadas (`F24-Task04`), paginación y rendimiento (`F24-Task06`).
+- **Capacidades Relacionadas:** F24-A08, F24-008.
+- **Problema Detectado:**
+  Los servicios existentes devuelven estructuras JSON, pero no se ha identificado una capa institucional estandarizada para consumir indicadores e informes desde otras herramientas autorizadas.
+- **Requisitos Funcionales:**
+  1. Estandarizar la interfaz de programación y formato de respuestas JSON para consulta de indicadores analíticos.
+  2. Permitir la consulta de métricas utilizando los identificadores semánticos definidos en el diccionario institucional.
+  3. Incorporar parámetros de consulta universales y normalizados:
+     - `periodo` / `anoLectivo`.
+     - `filtros` (grado, seccion, departamento, cuenta).
+     - `agrupacion` (porGrado, porMes, porDepartamento).
+     - `paginacion` (`page`, `limit`).
+     - `ordenamiento` (`campo`, `direccion`).
+  4. Devolver en cada respuesta estructurada:
+     - Identificador del indicador.
+     - Valor cuantitativo o serie de datos.
+     - Unidad de medida oficial.
+     - Período evaluado.
+     - Marca temporal de última actualización.
+     - Fuente o servicio de datos participante.
+     - Versión semántica de la definición aplicada.
+  5. Incorporar validación estricta de permisos de acceso en base a tokens HMAC y roles RBAC autorizados.
+  6. Registrar en bitácora de seguridad todas las consultas de la API analítica.
+  7. Incorporar límites adaptativos de volumen y frecuencia de consulta (rate limiting) para proteger las cuotas de Google Apps Script.
+  8. Permitir exportación estructurada en JSON schema estandarizado para sistemas externos autorizados.
+  9. Versionar explícitamente los contratos de respuesta de la API para garantizar compatibilidad hacia atrás.
+  10. Evitar estrictamente la exposición de identificadores internos sensibles, contraseñas o datos personales en las respuestas analíticas.
+- **Cambios Necesarios:**
+  - Crear una capa de despacho estructurada en el backend (`getInstitutionalIndicatorApi`).
+  - Integrar el diccionario semántico con los contratos de la API.
+  - Estandarizar las respuestas de error y códigos de estado (400, 401, 403, 404, 429, 500).
+  - Incorporar middleware de validación de cuotas y permisos.
+  - Documentar formalmente los endpoints analíticos en las especificaciones del sistema.
+- **Comportamiento Esperado:**
+  Los componentes autorizados podrán consultar indicadores institucionales mediante una estructura común, sin tener que conocer la implementación interna de cada servicio.
+- **Criterios de Aceptación:**
+  - [ ] Las respuestas de la API cumplen estrictamente con la especificación JSON documentada.
+  - [ ] Los indicadores se consultan de forma fidedigna mediante sus identificadores institucionales oficiales.
+  - [ ] Los parámetros de filtro y períodos se aplican correctamente sobre las consultas.
+  - [ ] Los permisos institucionales se validan en el servidor antes de despachar información.
+  - [ ] Las consultas de gran volumen respetan los límites de paginación y cuotas establecidos.
+  - [ ] Los contratos de respuesta están debidamente versionados.
+  - [ ] Las respuestas analíticas no exponen datos sensibles o no autorizados.
+  - [ ] Los valores devueltos por la API coinciden exactamente con los informes que utilizan los mismos parámetros.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 6. Validación, regresión y conservación de capacidades existentes
+
+### [F24-Task21] [P0] [Validación y Regresión - Validación Integral y Pruebas de Regresión de Informes e Indicadores]
+- **Componentes Afectados:**
+  - `backend/developer-service/Code.gs`
+  - `tests/regression/academic-grading-suite.js`
+- **Dependencias Expuestas:** Todas las tareas anteriores de la Fase 24 (`F24-Task01` a `F24-Task20`).
+- **Capacidades Relacionadas:** F24-001 a F24-025 y F24-A01 a F24-A08.
+- **Problema Detectado:**
+  La auditoría declara completas y verificadas varias capacidades fundamentales. Las nuevas implementaciones deben conservar sus resultados y evitar que la centralización, las agregaciones o las exportaciones alteren las reglas ya comprobadas.
+- **Requisitos Funcionales:**
+  1. Mantener inalterables los resultados de los informes y servicios analíticos existentes:
+     - Informe financiero y cobranza confirmada (`REP-CONT-01`).
+     - Rendimiento académico por grado y sección (`REP-ACAD-01`).
+     - Indicadores curriculares de notas publicadas (`getCurricularAnalyticsReport`).
+     - Resumen financiero de caja y bancos (`getFinancialSummary`).
+     - Comparativo financiero multianual por cuentas (`getComparativeFinancialSummary`).
+     - Proyección de flujo de caja semestral (`getCashFlowSixMonthProjection`).
+     - Indicadores de ejecución y disponibilidad presupuestaria (`checkBudgetAvailability`, `getBudgetExecutionReport`).
+  2. Conservar las exclusiones financieras estrictas: no contabilizar jamás operaciones pendientes, canceladas o rechazadas como ingresos efectivos.
+  3. Conservar las reglas académicas estrictas: no contabilizar jamás borradores o notas no publicadas en promedios y reportes oficiales.
+  4. Mantener los controles de permisos y aislamiento de ámbito por rol (RBAC/ABAC) existentes.
+  5. Mantener la marca temporal ISO de generación en todos los reportes generados.
+  6. Mantener los eventos de trazabilidad y auditoría estructurada (`REPORT_GENERATED`, `REPORT_FAILED`).
+  7. Conservar el esquema de particiones históricas mediante `CatalogoSpreadsheets`.
+  8. Comprobar la equivalencia matemática absoluta entre los cálculos originales y los centralizados en el diccionario semántico.
+  9. Comprobar la equivalencia de resultados entre las consultas directas en tiempo real y las consultas sobre el DataMart de agregaciones.
+  10. Verificar que los cuadros de mando, informes tabulares y exportaciones descargables produzcan resultados completamente consistentes entre sí.
+- **Cambios Necesarios:**
+  - Ampliar la suite de regresión del sistema (`runPhase24ReportsAndAnalyticsRegressionSuite`).
+  - Incorporar conjuntos de datos de prueba de referencia con resultados matemáticos precalculados.
+  - Añadir pruebas automatizadas para el catálogo central y el diccionario semántico.
+  - Añadir pruebas de estrés y reconstrucción histórica en el DataMart.
+  - Incorporar pruebas de integridad y neutralización de fórmulas en exportadores CSV/XLSX.
+  - Incorporar pruebas de rechazo de accesos no autorizados en informes y paneles.
+  - Verificar continuamente que los cambios no introduzcan regresiones sobre las 53 pruebas de regresión preexistentes.
+- **Comportamiento Esperado:**
+  Las nuevas implementaciones deberán contar con pruebas reproducibles que permitan comprobar que las capacidades existentes continúan funcionando y que las nuevas no introducen regresiones en el ecosistema analítico.
+- **Criterios de Aceptación:**
+  - [ ] La suite de regresión existente mantiene el 100% de sus 53 pruebas aprobadas.
+  - [ ] Los informes financieros conservan sus exclusiones estrictas de transacciones no confirmadas.
+  - [ ] Los informes académicos conservan sus reglas de exclusión de calificaciones en borrador.
+  - [ ] Los indicadores del diccionario semántico centralizado producen resultados idénticos a los cálculos originales.
+  - [ ] Los datos agregados del DataMart coinciden exactamente con los cálculos sobre registros transaccionales fuente.
+  - [ ] Los archivos exportados coinciden en un 100% con los datos consultados en pantalla.
+  - [ ] Los accesos directos o no autorizados continúan siendo rechazados con código de seguridad.
+  - [ ] Las particiones históricas conservan íntegros sus resultados ante cambios en ciclos actuales.
+  - [ ] Todos los eventos de generación y fallos continúan registrándose en la bitácora de auditoría.
+  - [ ] Cualquier inconsistencia o regresión detectada bloquea la entrega hasta su resolución.
+- **Estado:** [ ] Pendiente
+
+---
