@@ -14200,3 +14200,218 @@
 - **Estado:** [ ] Pendiente
 
 ---
+
+## FASE 35 (PARTE B): REGISTRO CENTRAL DE IDENTIFICADORES Y REGLAS DE NUMERACIÓN
+
+---
+
+### [F35-ID-Task01] [P0] Consolidación del motor central de numeración y eliminación de generadores ad-hoc
+- **Prioridad:** P0 (Bloqueante / Esencial)
+- **Orden de Ejecución:** 1 (Infraestructura transversal de identidad)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`generateInstitutionalId`)
+  - `backend/academic-service/Code.gs` (`generateInstitutionalId`)
+  - `backend/accounting-service/Code.gs`
+  - Hoja de Cálculo: `SecuenciasIDs`
+- **Subcapacidades Relacionadas:** F35-ID-01, F35-ID-05, F35-ID-06, F35-ID-08.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_REGISTRO_CENTRAL_IDENTIFICADORES_NUMERACION.md` / Sección B, E y Matriz CAR-ID-01, CAR-ID-06, CAR-ID-09.
+- **Problema Detectado y Riesgos:**
+  Existe duplicación de código en la función `generateInstitutionalId` entre `user-service` y `academic-service`, mientras que más de 150 puntos en todos los servicios generan identificadores mediante timestamps crudos (`Date.now()`, `Math.random()`) en trámites (`TRAM-`), justificaciones (`JUST-`), decisiones (`DEC-`), firmas (`SIG-`) y pagos. Esto produce identificadores no correlativos, antiestéticos, no auditables e incapaces de soportar secuencias oficiales institucionales.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Unificación del motor central de asignación:*
+     - Centralizar `generateInstitutionalId` como la única función canónica de asignación de secuencias, sincronizando o compartiendo su lógica para eliminar la duplicación de código entre servicios.
+     - Implementar bloqueo atómico con `LockService.getScriptLock()` (espera de hasta 10 segundos) con lectura de la hoja `SecuenciasIDs` y actualización inmediata antes de liberar el candado.
+  2. *Reemplazo progresivo de generadores ad-hoc:*
+     - Migrar los puntos de creación de identificadores operativos para utilizar el motor central con prefijos configurados (`TRM-`, `JST-`, `DEC-`, `SIG-`, `MOV-`).
+     - Preservar la clave técnica interna inmutable (`personaId` / `registroId`) separada del identificador oficial visible.
+  3. *Parametrización configurable en plataforma:*
+     - Parámetro en `ConfiguracionInstitucional`: `FALLBACK_TIMESTAMP_SI_TIMEOUT_LOCK`: Valores `LANZAR_ERROR_Y_REINTENTAR` (estricto por defecto) vs. `GENERAR_TIMESTAMP_CON_FLAG_AUDITORIA`.
+- **Criterios de Aceptación:**
+  - [ ] El motor central genera secuencias consecutivas con relleno de ceros configurable sin colisiones.
+  - [ ] Se elimina la duplicación de lógica entre los servicios de usuario y académico.
+  - [ ] Las solicitudes concurrentes se serializan mediante `LockService` garantizando números estrictamente distintos.
+  - [ ] La tabla `SecuenciasIDs` mantiene actualizado el `UltimoNumero` y fecha para cada tipo de entidad.
+- **Dependencias:** Sistema base de persistencia y LockService.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-ID-Task02] [P0] Catálogo configurable de formatos oficiales y ámbitos institucionales de unicidad
+- **Prioridad:** P0 (Bloqueante / Esencial)
+- **Orden de Ejecución:** 2 (Formatos parametrizables y segmentación por sede)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`configureSequencePattern`, `generateInstitutionalId`)
+  - `backend/accounting-service/Code.gs`
+  - Hoja de Cálculo: `DefinicionesNumeracion`, `SecuenciasIDs`
+- **Subcapacidades Relacionadas:** F35-ID-02, F35-ID-03, F35-ID-04.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_REGISTRO_CENTRAL_IDENTIFICADORES_NUMERACION.md` / Sección B, E y Matriz CAR-ID-02, CAR-ID-03.
+- **Problema Detectado y Riesgos:**
+  El motor actual utiliza un formato fijo e inalterable: `pfx + padStart(6, '0')`. No permite incorporar componentes variables como el año lectivo (`MAT-YYYY-#####`), sufijos, separadores configurables (`/`, `-`, `.`) ni segmentar la numeración por sede o institución independiente, forzando a todas las sedes a compartir la misma secuencia o colisionar.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Estructura de definiciones de numeración:*
+     - Auto-crear la hoja `DefinicionesNumeracion` (`DefinicionId`, `EntidadTipo`, `AmbitoInstitucional`, `Prefijo`, `Separador`, `ComponenteAno`, `LongitudDigitos`, `Sufijo`, `NumeroInicial`, `Incremento`, `PatronGenerado`, `Estado`, `FechaModificacion`, `ModificadoPor`).
+     - Admitir patrones configurables como:
+       * `EST-#####` -> `EST-00001`
+       * `MAT-YYYY-#####` -> `MAT-2026-00001`
+       * `EXP/###/YYYY` -> `EXP/001/2026`
+       * `FAC-SSS-PPP-########` -> numeración tributaria fiscal autorizada
+  2. *Ámbitos institucionales de unicidad:*
+     - Permitir segmentar la secuencia por sede o institución (`GLOBAL`, `SEDE_CENTRAL`, `SEDE_NORTE`, etc.).
+     - Dos entidades con el mismo prefijo pueden coexistir únicamente si sus ámbitos de unicidad están explícitamente separados y no comparten espacio de identificación.
+  3. *Inmutabilidad de identificadores emitidos:*
+     - La modificación del formato o prefijo de una serie afecta únicamente a las emisiones futuras; los registros previamente asignados conservan intacto su código sin modificaciones retroactivas.
+- **Criterios de Aceptación:**
+  - [ ] El administrador puede configurar el patrón oficial para cada entidad incluyendo año dinámico y longitud numérica.
+  - [ ] Los identificadores se generan siguiendo con exactitud el patrón configurado.
+  - [ ] La numeración por sede se mantiene en contadores independientes sin interferencias cruzadas.
+  - [ ] Modificar una serie no altera los identificadores históricos ya asignados.
+- **Dependencias:** F35-ID-Task01.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-ID-Task03] [P0] Validador de colisiones potenciales y solapamiento entre formatos
+- **Prioridad:** P0 (Bloqueante / Esencial)
+- **Orden de Ejecución:** 3 (Prevención de ambigüedades e inconsistencias)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`validateSequencePatternCompatibility`)
+  - Hoja de Cálculo: `DefinicionesNumeracion`
+- **Subcapacidades Relacionadas:** F35-ID-03, F35-ID-04.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_REGISTRO_CENTRAL_IDENTIFICADORES_NUMERACION.md` / Sección C, E y Matriz CAR-ID-04.
+- **Problema Detectado y Riesgos:**
+  No existe ninguna verificación al dar de alta una nueva serie de numeración. Si un usuario crea una serie con prefijo `EST-#####` y otro define `EST-000##` o `EST#####` en el mismo ámbito, se generarán colisiones inevitables y registros duplicados que romperán las relaciones relacionales de la plataforma.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Análisis sintáctico y de solapamiento de patrones:*
+     - Al registrar o modificar una serie en `DefinicionesNumeracion`, analizar si el nuevo patrón produce expresiones regulares que intersecten con series existentes en el mismo ámbito institucional.
+     - Detectar colisiones directas (`REG-#####` vs `REG-#####`) y solapamientos condicionales por año (`MAT-YYYY-#####` vs `MAT-2026-#####`).
+     - Rechazar la activación de cualquier serie potencialmente ambigua explicando con precisión el conflicto detectado.
+  2. *Normalización canónica de comparación:*
+     - Comprobar que la validación de unicidad trate de manera normalizada mayúsculas/minúsculas y espacios invisibles para impedir que `EST-001` y `est-001` coexistan como registros distintos.
+- **Criterios de Aceptación:**
+  - [ ] El sistema bloquea el registro de dos series que produzcan el mismo patrón en el mismo ámbito.
+  - [ ] Se detectan y alertan solapamientos condicionales por componentes de fecha o sede.
+  - [ ] La validación se ejecuta en servidor impidiendo elusiones desde el navegador.
+- **Dependencias:** F35-ID-Task02.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-ID-Task04] [P0] Integración del control de numeración en importaciones y gestión de los 5 casos (A-E)
+- **Prioridad:** P0 (Bloqueante / Esencial)
+- **Orden de Ejecución:** 4 (Convergencia con el importador inteligente de datos)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`validateImportPreview`, `importDataWithColumnMapping`)
+  - `backend/user-service/Code.gs` (`resolveImportIdentifierPolicy`)
+  - Hoja de Cálculo: `SecuenciasIDs`, `IdentificadoresHistoricosExternos`
+- **Subcapacidades Relacionadas:** F35-ID-05, F35-ID-09, F35-ID-10.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_REGISTRO_CENTRAL_IDENTIFICADORES_NUMERACION.md` / Sección F y Matriz CAR-ID-07, CAR-ID-11, CAR-ID-12.
+- **Problema Detectado y Riesgos:**
+  El importador procesa identificadores de archivos externos sin coordinarse con `SecuenciasIDs`. Si se importa un lote con IDs superiores o desfasados, el contador no se actualiza (provocando futuras colisiones) o sobrescribe identificadores legítimos preexistentes.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Implementación de los 5 casos normativos de importación:*
+     - *Caso A (Formato coincide y está libre):* Conservar el ID como oficial si la política lo permite y actualizar el contador si el número es superior.
+     - *Caso B (Número superior al contador actual):* Conservar el ID, avanzar el contador hasta ese valor sin generar registros intermedios artificiales (sin rellenar huecos).
+     - *Caso C (ID ocupado por otro registro):* Detectar el conflicto; si es una persona diferente, asignar un nuevo ID oficial libre y guardar el código de origen como referencia histórica.
+     - *Caso D (IDs antiguos inferiores libres):* Conservarlos si están libres sin retroceder el contador general de la serie.
+     - *Caso E (Formato no cumple el patrón oficial):* Asignar un ID oficial correlativo nuevo y almacenar el código del archivo como identificador externo/histórico.
+  2. *Parametrización configurable en plataforma:*
+     - Parámetro en `ConfiguracionInstitucional`: `POLITICA_IMPORTACION_IDENTIFICADORES`: Valores `CONSERVAR_SI_ESTA_LIBRE` (por defecto) vs. `REASIGNAR_SIEMPRE_NUEVO_OFICIAL` vs. `RECHAZAR_SI_NO_COINCIDE_PATRON`.
+- **Criterios de Aceptación:**
+  - [ ] Importar un ID superior al contador (ej. 413 sobre 300) actualiza la secuencia a 414 sin crear registros intermedios ficticios.
+  - [ ] Importar un ID ocupado no sobrescribe al titular actual y propone un ID libre preservando el código original en histórico.
+  - [ ] Los códigos con formatos ajenos reciben un ID oficial válido y mantienen su código previo como referencia.
+  - [ ] La simulación de importación presenta con claridad las decisiones de numeración antes de confirmar.
+- **Dependencias:** F35-ID-Task02, F35-Task03 (importador).
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-ID-Task05] [P0] Conservación relacional de identificadores históricos y externos
+- **Prioridad:** P0 (Bloqueante / Esencial)
+- **Orden de Ejecución:** 5 (Identidad estable y trazabilidad de orígenes externos)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`registerExternalIdentifier`, `resolveRecordByIdentifier`)
+  - Hoja de Cálculo: `IdentificadoresHistoricosExternos`
+- **Subcapacidades Relacionadas:** F35-ID-07, F35-ID-10, F35-ID-12.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_REGISTRO_CENTRAL_IDENTIFICADORES_NUMERACION.md` / Sección B, E y Matriz CAR-ID-10, CAR-ID-20.
+- **Problema Detectado y Riesgos:**
+  Cuando un estudiante o empleado proviene de otra institución o del sistema gubernamental SACE, su código anterior no se almacena de forma estructurada. Si se busca por su código previo o si un banco reporta pagos con referencias externas, la búsqueda falla al consultar únicamente el ID oficial visible.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Estructura relacional de identificadores externos e históricos:*
+     - Auto-crear la hoja `IdentificadoresHistoricosExternos` (`MapeoId`, `RegistroInternoId`, `EntidadTipo`, `IdentificadorOficialActual`, `CodigoExternoHistorico`, `SistemaOrigen`, `TipoReferencia`, `FechaVinculacion`, `EsActivo`, `NotasAuditoria`).
+     - Distinguir entre:
+       * `IDENTIFICADOR_ANTERIOR`: Código que tuvo en la misma institución antes de un cambio de serie.
+       * `REFERENCIA_EXTERNA_SACE`: Código oficial del sistema gubernamental.
+       * `REFERENCIA_EXTERNA_BANCARIA`: Código o cuenta de recaudación en banco.
+       * `IDENTIFICADOR_SISTEMA_PREVIO`: Código en sistema legado migrado.
+  2. *Búsqueda y resolución bidireccional:*
+     - Implementar `resolveRecordByIdentifier(payload)` que busque primero por ID oficial y, si no encuentra, busque en `IdentificadoresHistoricosExternos` resolviendo al registro correcto.
+     - Garantizar unicidad de referencias externas por combinación `SistemaOrigen + EntidadTipo + CodigoExterno`.
+- **Criterios de Aceptación:**
+  - [ ] Se puede localizar un expediente tanto por su identificador oficial actual como por su código SACE o histórico.
+  - [ ] El sistema distingue el sistema de origen de cada referencia externa.
+  - [ ] Intentar vincular la misma referencia externa de un mismo sistema a dos registros distintos es rechazado por duplicidad.
+  - [ ] Modificar el código oficial no destruye ni altera sus referencias históricas asociadas.
+- **Dependencias:** F35-ID-Task01.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-ID-Task06] [P1] Motor de reconstrucción, auditoría y corrección de secuencias
+- **Prioridad:** P1 (Alta / Importante)
+- **Orden de Ejecución:** 6 (Recuperación ante desastres y auditoría de integridad)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`recalculateSequenceCounters`, `auditSequenceIntegrity`)
+  - Hoja de Cálculo: `SecuenciasIDs`, `AuditoriaSecuencias`
+- **Subcapacidades Relacionadas:** F35-ID-11, F35-ID-15, F35-ID-17.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_REGISTRO_CENTRAL_IDENTIFICADORES_NUMERACION.md` / Sección E, G y Matriz CAR-ID-17.
+- **Problema Detectado y Riesgos:**
+  Al restaurar un respaldo antiguo de la hoja de cálculo o tras limpiezas de datos, el contador en `SecuenciasIDs` puede quedar por debajo del mayor identificador realmente emitido. El sistema comenzaría a generar números ya utilizados, provocando colisiones masivas en nuevas altas.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Auditoría activa y detección de inconsistencias:*
+     - Implementar `auditSequenceIntegrity(payload)` que compare el `UltimoNumero` registrado en `SecuenciasIDs` contra el máximo valor numérico real extraído de las tablas de datos (`Estudiantes`, `MatriculasEstudiantes`, etc.).
+     - Alertar de inmediato si el contador almacenado es inferior al mayor emitido (`CONTADOR_DESFASADO_RIESGO_COLISION`).
+  2. *Reconstrucción automática segura:*
+     - Implementar `recalculateSequenceCounters(payload)` accesible únicamente para Administrador/Director que ajuste `UltimoNumero = max(numerosRealesEmitidos)`, garantizando que la siguiente emisión sea estrictamente superior a todos los códigos existentes.
+     - Prohibir terminantemente que la reconstrucción cree registros intermedios o altere registros existentes.
+- **Criterios de Aceptación:**
+  - [ ] Si se detecta un contador inferior al mayor ID de la base, el sistema emite una alerta bloqueante.
+  - [ ] La función de reconstrucción sitúa el contador por encima de todos los identificadores válidos existentes.
+  - [ ] La operación de recálculo queda registrada en bitácora con usuario, fecha y valores anterior/nuevo.
+- **Dependencias:** F35-ID-Task01, F35-ID-Task02.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-ID-Task07] [P1] Consola administrativa de gestión de series, versionado y control de permisos
+- **Prioridad:** P1 (Alta / Importante)
+- **Orden de Ejecución:** 7 (Gobernanza administrativa y control de acceso)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`getSequenceDefinitions`, `updateSequenceDefinition`)
+  - `teacher-dashboard.html`, `dashboard-direccion.html`, `js/config.js`
+  - Hoja de Cálculo: `DefinicionesNumeracion`, `AuditoriaSecuencias`
+- **Subcapacidades Relacionadas:** F35-ID-11, F35-ID-13, F35-ID-14, F35-ID-18.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_REGISTRO_CENTRAL_IDENTIFICADORES_NUMERACION.md` / Sección E, G y Matriz CAR-ID-13, CAR-ID-15, CAR-ID-18.
+- **Problema Detectado y Riesgos:**
+  La administración de secuencias se realiza mediante edición directa de celdas en Google Sheets por parte de técnicos. No existe una interfaz con permisos segregados donde Dirección o Secretaría puedan consultar el último número emitido, ver el estado de las series o solicitar un cambio de prefijo con aprobación auditada.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Consola de supervisión y control de series:*
+     - Proveer interfaz en el panel de Dirección y Configuración para visualizar:
+       * Tipo de entidad y ámbito institucional.
+       * Formato oficial activo y patrón generado.
+       * Último número emitido y siguiente código previsto.
+       * Total de registros que utilizan la definición.
+       * Historial de cambios con usuario, fecha y justificación.
+  2. *Segregación de permisos y versionado:*
+     - Exigir roles `Director` o `Administrador` para modificar o crear definiciones de numeración.
+     - Prohibir eliminar definiciones que ya cuenten con registros asociados; permitir únicamente marcar como `Inactiva` o `Sustituida`.
+     - Exigir confirmación reforzada (con ingreso de contraseña o token) si se intenta adelantar o modificar manualmente un contador.
+- **Criterios de Aceptación:**
+  - [ ] Solo usuarios autorizados pueden consultar y administrar la configuración de numeración.
+  - [ ] Los usuarios ordinarios no tienen acceso a modificar contadores ni formatos.
+  - [ ] Todo cambio en una definición queda asentado en bitácora con trazabilidad completa.
+  - [ ] No es posible eliminar una serie que tenga identificadores emitidos en uso.
+- **Dependencias:** F35-ID-Task02, F35-ID-Task06.
+- **Estado:** [ ] Pendiente
+
+---

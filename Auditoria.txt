@@ -422,3 +422,19 @@ RESULTADO DE EVALUACIÓN:
 - Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
 - Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 35 (PARTE B): REGISTRO CENTRAL DE IDENTIFICADORES Y REGLAS DE NUMERACIÓN
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, backend/academic-service/Code.gs, backend/accounting-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal del Registro Central de Identificadores y Reglas de Numeración.
+- Se inspeccionaron las 15 subcapacidades funcionales (F35-ID-01 a F35-ID-15), la lista maestra CAR-ID-01 a CAR-ID-20 y los 24 escenarios de prueba (PT-ID-01 a PT-ID-24).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_35_REGISTRO_CENTRAL_IDENTIFICADORES_NUMERACION.md.
+- Se identificó la existencia del motor generateInstitutionalId en user-service y academic-service con LockService (10s) sobre la hoja SecuenciasIDs, pero con duplicación de código entre ambos servicios y rigidez de formato (prefijo + padStart(6, '0')).
+- Se detectó una severa proliferación de identificadores ad-hoc generados mediante timestamps (Date.now(), Math.random()) en más de 150 puntos de código para trámites, justificaciones, firmas y pagos, impidiendo numeraciones correlativas institucionales.
+- Se identificó la carencia de ámbitos institucionales de unicidad por sede, la falta de almacenamiento relacional de identificadores históricos/externos (códigos SACE o previos), y la falta de coordinación en importaciones ante números superiores (Caso B) o colisiones (Caso C).
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 7 tareas técnicas ([F35-ID-Task01] a [F35-ID-Task07]) organizadas en 2 bloques por prioridad (P0: Task01 a Task05; P1: Task06 a Task07) y orden secuencial recomendado (1 a 7) con parametrización configurable, preservando intactas todas las fases preexistentes (Fases 10 a 35 parte A).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================

@@ -3656,3 +3656,18 @@ Archivos Modificados / Creados:
 
 3. Auditoria.txt
    - Inserción de la entrada formal de auditoría diagnóstica de la Fase 35 detallando la evaluación de SheetJS en cliente, endpoints en accounting-service, pérdida de formato en identificadores numéricos, carencia de interfaz de mapeo semántico interactivo y falta de reversión segura.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-31
+TAREA: Auditoría Funcional, Técnica y Documental — Fase 35 (Parte B): Registro Central de Identificadores y Reglas de Numeración
+-------------------------------------------------------------------------------
+
+Archivos Modificados / Creados:
+1. AUDITORIA_FASE_35_REGISTRO_CENTRAL_IDENTIFICADORES_NUMERACION.md
+   - Creación del informe exhaustivo de auditoría independiente. Incluye identificación y alcance (A), estado actual e inventario real con tabla de clasificadores (B), comparación funcional externa con Frappe, Odoo y PowerSchool (C), lista maestra de características CAR-ID-01 a CAR-ID-20 (D), brechas y riesgos técnicos identificados (E), resultados de la matriz de pruebas obligatorias PT-ID-01 a PT-ID-24 (F), plan de resolución priorizado en 2 bloques (G), cobertura cuantitativa y dictamen de certificación (H).
+
+2. Pendientes.md
+   - Incorporación, unificación y convergencia exhaustiva de las 7 tareas técnicas del Registro Central de Identificadores ([F35-ID-Task01] a [F35-ID-Task07]) organizadas estrictamente por prioridad (P0: Task01 a Task05; P1: Task06 a Task07) y orden secuencial de ejecución (1 a 7) al final del archivo, manteniendo íntegras las tareas anteriores de las Fases 10 a 35 (importador).
+
+3. Auditoria.txt
+   - Inserción de la entrada formal de auditoría diagnóstica detallando la inspección de generateInstitutionalId, SecuenciasIDs, proliferación de más de 150 puntos de generación con Date.now(), falta de ámbitos por sede y ausencia de soporte para los 5 casos normativos de importación.
