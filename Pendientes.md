@@ -1363,3 +1363,493 @@
 - **Estado:** [ ] Pendiente
 
 ---
+
+# PENDIENTES - FASE 16: RECURSOS HUMANOS Y ADMINISTRACIÓN DEL PERSONAL
+
+## TAREAS CRÍTICAS (P0 - SEVERIDAD MÁXIMA, ESTRUCTURA ORGANIZATIVA, ROLES INTERNOS Y DESVINCULACIÓN COORDINADA)
+
+---
+
+### [ ] [F16-Task01] Crear un catálogo dinámico de roles internos organizativos y administrar sus asignaciones
+- **Origen del Hallazgo:** `AUDITORIA_FASE_16_RECURSOS_HUMANOS.md` / Sección F (Brecha F.1) y Sección H (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Gobernanza institucional, responsabilidades organizativas y separación estricta de permisos vs funciones)
+- **Archivos Involucrados:**
+  - `backend/user-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `dashboard-recursos-humanos.html`
+  - `AsignacionesAmbitosRoles`
+  - Nuevo catálogo lógico `CatalogoRolesInternos`
+- **Dependencias Expuestas:** `AsignacionesAmbitosRoles`, `CatalogoDepartamentos`, `AreasCurricularesExtensiones`, `ROLE_PERMISSIONS`
+- **Descripción del Alcance:**
+  La plataforma permite asignar ámbitos y responsabilidades mediante `assignRoleScope`, pero utiliza valores de `ScopeType` sin un catálogo formal que normalice las responsabilidades organizativas. No existe una interfaz completa para administrar estos roles internos, sus características, departamentos relacionados y vigencias. Esto puede provocar nombres duplicados, responsabilidades inconsistentes y dificultad para conocer qué personas ocupan cada función institucional.
+  Requerimientos Funcionales Detallados:
+  1. Catálogo administrable de responsabilidades internas:
+     - Crear un catálogo formal para registrar: nombre de la responsabilidad, código interno único, descripción, departamento asociado (si aplica), área académica asociada (si aplica), tipo de responsabilidad (administrativa, académica, operativa o de supervisión), vigencia predeterminada, estado (activo o inactivo), responsable principal y posibilidad de suplencia.
+     - Permitir crear responsabilidades personalizadas (ej. «Coordinador del Área de Informática», «Encargado de Laboratorio de Ciencias», «Responsable de Pastoral») sin modificar código duro.
+     - Permitir editar la descripción y configuración de una responsabilidad sin alterar las asignaciones históricas.
+  2. Asignación y ciclo de vida de responsabilidades:
+     - Permitir asignar una responsabilidad a uno o varios empleados simultáneamente.
+     - Permitir que un empleado ejerza varias responsabilidades institucionales a la vez sin duplicar su expediente laboral.
+     - Establecer fechas de inicio y finalización para cada asignación con validación estricta de vigencia.
+     - Registrar quién creó, autorizó, modificó o revocó cada asignación inmutablemente.
+     - Permitir consultar las responsabilidades vigentes e históricas por empleado, departamento o área académica.
+     - Detectar asignaciones incompatibles o duplicadas por errores tipográficos.
+     - Permitir designar un suplente temporal con fechas de vigencia acotadas.
+     - Permitir desactivar una responsabilidad sin borrar las asignaciones históricas.
+  3. Separación obligatoria entre responsabilidad organizativa y permisos de acceso:
+     - El catálogo no debe modificar ni sustituir `ROLE_PERMISSIONS`. Una responsabilidad como «Coordinador de Matemáticas» identifica una función institucional; no debe conceder automáticamente acceso administrativo global en la plataforma.
+     - Si una responsabilidad necesita permisos específicos, la relación debe configurarse mediante una asociación explícita y verificable con los permisos existentes, limitada exclusivamente al ámbito asignado.
+     - La plataforma debe distinguir nítidamente entre: persona con una responsabilidad, persona con autorización para realizar una operación, persona que supervisa una unidad, y persona que sustituye temporalmente a otra.
+  4. Interfaz y adaptaciones técnicas:
+     - Adaptar `assignRoleScope` para referenciar responsabilidades del catálogo formal en lugar de cadenas libres, conservando compatibilidad con las asignaciones previas.
+     - Incorporar consola administrativa en `dashboard-recursos-humanos.html` con filtros por departamento, área, empleado, responsabilidad y vigencia.
+- **Criterios de Aceptación:**
+  - Se puede crear una responsabilidad nueva desde la interfaz sin alterar el código fuente.
+  - El sistema genera o valida un identificador único persistente para cada responsabilidad.
+  - No se permiten responsabilidades duplicadas por diferencias de mayúsculas, espacios o acentos normalizados.
+  - Se puede asignar la misma responsabilidad a distintas personas cuando la configuración lo permita.
+  - Se puede asignar más de una responsabilidad al mismo empleado conservando su expediente único.
+  - Las fechas de vigencia se aplican correctamente y una asignación vencida deja de mostrarse como activa.
+  - Un suplente temporal solo ejerce facultades durante el período expresamente autorizado.
+  - Revocar una responsabilidad no elimina su historial ni destruye evidencias previas.
+  - Crear o asignar una responsabilidad no concede permisos administrativos automáticamente en `ROLE_PERMISSIONS`.
+  - Todas las operaciones quedan registradas con autor, fecha y justificación.
+  - Las asignaciones existentes continúan funcionando tras la incorporación del catálogo.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F16-Task02] Implementar la asignación institucional de docentes a áreas académicas, independiente de la carga lectiva
+- **Origen del Hallazgo:** `AUDITORIA_FASE_16_RECURSOS_HUMANOS.md` / Sección F (Brecha F.2) y Sección H (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Estructura académica institucional, comités pedagógicos y desacoplamiento de asignaturas)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `AreasCurricularesExtensiones`
+  - `CoordinacionesArea`
+  - `AsignacionesDocentes`
+  - Nueva entidad lógica `DocentesAreasAcademicas`
+  - `dashboard-recursos-humanos.html`
+- **Dependencias Expuestas:** `AreasCurricularesExtensiones`, `CoordinacionesArea`, `AsignacionesDocentes`, `ExpedientesLaborales`, `F16-Task01`
+- **Descripción del Alcance:**
+  Las áreas curriculares existen en `AreasCurricularesExtensiones`, y las coordinaciones se administran mediante `CoordinacionesArea`. Sin embargo, no existe una relación institucional independiente que permita registrar que un docente pertenece formalmente a una o varias áreas académicas sin requerir una asignación de asignaturas en el período lectivo vigente. Actualmente, una asignación vinculada a cursos o materias no sustituye la pertenencia a una academia docente o área de conocimiento.
+  Requerimientos Funcionales Detallados:
+  1. Relación independiente docente - área académica:
+     - Crear la entidad y hoja `DocentesAreasAcademicas` vinculando docentes y áreas de forma independiente de la carga horaria.
+     - Permitir asignar un docente a una o varias áreas académicas (ej. pertenecer simultáneamente a Matemáticas y a Informática).
+     - Permitir que un área tenga múltiples docentes adscritos.
+     - Permitir que un docente pertenezca a un área aunque no tenga clases o secciones asignadas en el período activo (ej. docentes en investigación, en suplencia o con carga de coordinación pura).
+     - Definir el tipo de vinculación: Docente integrante, Docente titular o especialista, Coordinador de área, Responsable auxiliar o Colaborador temporal.
+     - Establecer fechas de inicio y finalización de la pertenencia al área con motivo de la asignación.
+  2. Consultas y articulación curricular:
+     - Consultar integrantes por área académica e historial de pertenencia.
+     - Consultar todas las áreas asignadas a un docente.
+     - Relacionar las áreas con las asignaturas correspondientes sin duplicar la definición en el catálogo de asignaturas.
+     - Permitir emitir convocatorias y circulares dirigidas exclusivamente a los integrantes de un área.
+     - Permitir conformar comités pedagógicos por área y nivel educativo.
+  3. Gestión unificada de coordinadores de área:
+     - Aprovechar `CoordinacionesArea` sin crear estructuras paralelas duplicadas, manteniendo coherencia con el catálogo de roles internos (`F16-Task01`).
+     - Distinguir nítidamente entre: docentes integrantes, coordinador titular, coordinador suplente, coordinador anterior y responsable temporal.
+     - Garantizar que los coordinadores solo puedan consultar y supervisar datos dentro del ámbito exacto de su área autorizada.
+- **Criterios de Aceptación:**
+  - Se puede asignar un docente a varias áreas académicas desde la interfaz.
+  - Se pueden asignar varios docentes a una misma área sin crear expedientes laborales duplicados.
+  - La pertenencia formal a un área no exige una asignación lectiva de clases activa en el período.
+  - Se pueden listar todos los docentes adscritos a un área académica en tiempo real.
+  - Se pueden listar todas las áreas a las que pertenece un docente.
+  - Se puede designar un coordinador titular y suplente por área.
+  - Las asignaciones históricas permanecen inmutables al rotar de área o coordinador.
+  - Un docente desvinculado no puede figurar como asignado activo en ningún área.
+  - La desactivación de un área no elimina el historial académico ni las asignaciones anteriores.
+  - Las asignaciones de clases en `AsignacionesDocentes` no se alteran ni duplican.
+  - Los permisos de supervisión del coordinador se mantienen limitados a las asignaturas y docentes de su área.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F16-Task03] Implementar el flujo de desvinculación laboral con revocación coordinada de accesos y asignaciones
+- **Origen del Hallazgo:** `AUDITORIA_FASE_16_RECURSOS_HUMANOS.md` / Sección F (Brecha F.3) y Sección H (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Seguridad de la información, prevención de accesos residuales e integridad en el cese laboral)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `backend/user-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `ExpedientesLaborales`
+  - `HistorialAdscripciones`
+  - `Usuarios`
+  - `AsignacionesDocentes`
+  - `CoordinacionesArea`
+  - `AsignacionesAmbitosRoles`
+  - Registros de turnos y sustituciones
+- **Dependencias Expuestas:** `ExpedientesLaborales`, `HistorialAdscripciones`, `Usuarios`, `AsignacionesDocentes`, `CoordinacionesArea`, `AsignacionesAmbitosRoles`, `F16-Task01`, `F16-Task02`
+- **Descripción del Alcance:**
+  `updateEmployeeLaborStatus` cambia el estado laboral y registra la fecha de salida, pero no ejecuta de forma coordinada todas las operaciones necesarias para cerrar la relación laboral. La auditoría identificó que pueden quedar adscripciones activas en `HistorialAdscripciones`, cuentas de usuario activas en `Usuarios`, sesiones/tokens vigentes, asignaciones docentes activas o responsabilidades institucionales abiertas, permitiendo que una persona desvinculada conserve accesos.
+  Requerimientos Funcionales Detallados:
+  1. Flujo integral de desvinculación (Offboarding):
+     - Registrar la solicitud de desvinculación validando que el empleado exista y su estado permita la operación.
+     - Registrar fecha efectiva de salida, motivo estructurado, usuario autorizador y documentación de respaldo adjunta.
+     - Actualizar el estado laboral en `ExpedientesLaborales` a `Retirado` o `Desvinculado`.
+     - Cerrar todas las adscripciones vigentes en `HistorialAdscripciones` marcándolas como `Inactiva` con timestamp de salida.
+     - Finalizar las responsabilidades y ámbitos institucionales en `AsignacionesAmbitosRoles`.
+     - Finalizar o reasignar coordinaciones en `CoordinacionesArea` y suplencias activas.
+     - Cerrar las asignaciones docentes en `AsignacionesDocentes` a partir de la fecha efectiva para evitar clases huérfanas.
+     - Desactivar la cuenta en `Usuarios` e invalidar tokens, credenciales y sesiones en tiempo real.
+     - Impedir nuevas operaciones del empleado a partir de la fecha efectiva de salida.
+     - Conservar permanentemente el expediente laboral, contratos, asistencias y calificaciones históricas (prohibición de borrado físico).
+     - Identificar y listar tareas pendientes (ej. entrega de equipos, traspaso de expedientes, reasignación de cursos).
+  2. Coordinación y resiliencia entre microservicios:
+     - No asumir transacciones atómicas distribuidas en Google Sheets. Implementar una operación coordinada, registrada paso a paso de forma idempotente con registro de estados de ejecución.
+     - Si alguna etapa secundaria falla (ej. cierre de sustitución), el proceso debe quedar identificado como incompleto y permitir reanudación sin duplicar operaciones.
+     - La revocación de accesos en `Usuarios` debe ejecutarse con prioridad inmediata; un fallo posterior en el cierre académico no debe reactivar el acceso del usuario desvinculado.
+  3. Cierre documental y liquidación:
+     - Registrar período trabajado, salarios pendientes, vacaciones acumuladas no gozadas (conforme al Art. 348 del Código de Trabajo), deducciones, indemnizaciones y prestaciones que correspondan.
+     - No emitir cálculos definitivos sin validación previa y autorización de Dirección/Contabilidad.
+     - Emitir registro de auditoría `EMPLOYEE_OFFBOARDED_CASCADED` conservando el autor real y, si intervino un asistente delegado, también el titular delegante.
+- **Criterios de Aceptación:**
+  - Una desvinculación confirmada bloquea de inmediato el inicio de sesión y las llamadas a la API desde la fecha efectiva.
+  - Se invalidan tokens de sesión activos del empleado desvinculado.
+  - No se eliminan físicamente expedientes, contratos, registros de asistencia ni evaluaciones de notas históricas.
+  - Las adscripciones en `HistorialAdscripciones` pasan a estado inactivo.
+  - Las asignaciones de clases posteriores a la fecha efectiva se cierran o marcan para reasignación.
+  - Las responsabilidades organizativas y coordinaciones quedan finalizadas.
+  - Una re-ejecución del proceso no duplica registros ni corrompe el historial.
+  - Si una etapa falla, el sistema identifica las tareas pendientes sin reactivar las cuentas.
+  - Se emite el log estructurado `EMPLOYEE_OFFBOARDED_CASCADED` con trazabilidad completa.
+  - La liquidación laboral permanece en estado preliminar hasta su aprobación formal.
+- **Estado:** [ ] Pendiente
+
+---
+
+## TAREAS DE ALTA PRIORIDAD (P1 - INCORPORACIÓN, PROYECCIÓN DE VACACIONES, JERARQUÍAS Y COLISIONES DE HORARIO)
+
+---
+
+### [ ] [F16-Task04] Implementar el checklist configurable de incorporación de empleados (Onboarding)
+- **Origen del Hallazgo:** `AUDITORIA_FASE_16_RECURSOS_HUMANOS.md` / Sección F (Brecha F.4) y Sección H (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Calidad en la contratación, control de requisitos legales y onboarding estructurado)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `dashboard-recursos-humanos.html`
+  - `ExpedientesLaborales`
+  - `ContratosLaborales`
+  - `uploadEmployeeDocument`
+  - Nueva entidad lógica `ChecklistIncorporacion`
+- **Dependencias Expuestas:** `ExpedientesLaborales`, `ContratosLaborales`, `CandidatosVacantes`, Google Drive
+- **Descripción del Alcance:**
+  La creación de un expediente permite registrar a un empleado, pero no existe un proceso estructurado que controle las tareas y requisitos necesarios para completar su incorporación (onboarding). Actualmente no hay una lista formal que permita verificar si se firmó el contrato, se cotejaron títulos, se entregaron antecedentes, se realizó la inducción y se completaron las asignaciones de herramientas y cuentas.
+  Requerimientos Funcionales Detallados:
+  1. Plantillas de incorporación configurables:
+     - Diseñar plantillas diferenciadas según el cargo, departamento, tipo de contrato (docente vs administrativo) y políticas institucionales.
+     - Tareas parametrizables: firma de contrato laboral, recepción y validación de DNI/RTN, cotejo presencial de títulos académicos, antecedentes penales/policiales, carnet IHSS, examen médico de ingreso, asignación de cargo y departamento, asignación de área académica, horario laboral asignado, creación de correo institucional, entrega de equipo de cómputo, inducción institucional y aceptación firmada de políticas de privacidad y financieras.
+     - Clasificar cada tarea como obligatoria u opcional, estableciendo responsables y fechas límite de cumplimiento.
+  2. Seguimiento y ejecución del proceso:
+     - Generar automáticamente el checklist individual al crear un empleado o formalizar una contratación.
+     - Permitir registrar fecha de finalización, responsable que validó la tarea y adjuntar documentos probatorios a Google Drive.
+     - Estados de tarea: `Pendiente`, `EnRevision`, `Completada`, `Rechazada`, `Exenta` (exigiendo motivo obligatorio de al menos 10 caracteres si es exenta o rechazada).
+     - Mostrar porcentaje de avance del proceso en el dashboard de Recursos Humanos.
+     - Permitir que el empleado consulte y cargue documentos desde su portal de autoservicio (`getEmployeeSelfServicePortal`), mientras que RRHH valida y aprueba.
+  3. Estados del ciclo de incorporación:
+     - Transiciones: `ExpedienteCreado` -> `IncorporacionPendiente` -> `IncorporacionEnRevision` -> `IncorporacionCompletada` -> `Activo`.
+     - La activación plena del empleado debe depender del cumplimiento estricto de las tareas obligatorias configuradas.
+     - Reutilizar la información existente si el empleado proviene de la selección en `CandidatosVacantes` sin duplicar registros.
+- **Criterios de Aceptación:**
+  - Se pueden crear y editar plantillas de onboarding desde el dashboard de Recursos Humanos.
+  - El sistema crea la lista de tareas individualizada al iniciar la incorporación de un empleado.
+  - Cada tarea registra estado, responsable, fecha de validación y archivo adjunto en Drive.
+  - La falta de cumplimiento de tareas obligatorias impide el cambio a estado laboral `Activo`.
+  - Las tareas opcionales no bloquean la activación del empleado.
+  - Una tarea rechazada permite al colaborador corregir y volver a cargar la evidencia.
+  - La formalización de un candidato seleccionado reutiliza sus datos sin crear expedientes duplicados.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F16-Task05] Incorporar proyección de vacaciones futuras y mejorar la gestión de permisos por horas y fracciones de jornada
+- **Origen del Hallazgo:** `AUDITORIA_FASE_16_RECURSOS_HUMANOS.md` / Sección C (C.3), Sección F y Sección H (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Experiencia de usuario, planificación del descanso y cumplimiento del Código del Trabajo)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `calculateVacationBalances`
+  - `submitLeaveVacationRequest`
+  - `reviewVacationRequest`
+  - `SolicitudesVacaciones`
+  - `IncapacidadesMedicas`
+  - `HorariosLaborales`
+  - `dashboard-recursos-humanos.html`
+- **Dependencias Expuestas:** `SolicitudesVacaciones`, `calculateVacationBalances`, `HorariosLaborales`, Portal de Autoservicio
+- **Descripción del Alcance:**
+  El cálculo actual de vacaciones en `calculateVacationBalances` aplica la escala legal hondureña del Artículo 348 (10, 12, 15 y 20 días según antigüedad). Sin embargo, la auditoría identificó que no se proyecta adecuadamente el saldo disponible a una fecha futura, lo que dificulta solicitar vacaciones que se disfrutarán cuando el empleado ya haya alcanzado la antigüedad necesaria. Además, se requiere ampliar la gestión de permisos por fracciones de jornada y evitar solapamientos.
+  Requerimientos Funcionales Detallados:
+  1. Proyección de saldos futuros de vacaciones:
+     - Diferenciar con total claridad: días ya devengados y disponibles actualmente, días gozados, días en solicitudes aprobadas pendientes de disfrute, días que se proyecta generar hasta la fecha solicitada y saldo neto proyectado a la fecha de disfrute.
+     - Calcular la proyección según la fecha de aniversario laboral y antigüedad legal conforme al Artículo 348.
+     - Permitir seleccionar fechas futuras comprobando si el empleado tendrá saldo suficiente al momento del goce.
+     - Mostrar advertencias claras cuando la solicitud dependa de días aún no devengados.
+     - Parametrizar en la plataforma si la institución autoriza o no solicitudes basadas en saldo proyectado.
+     - La proyección es un cálculo estimativo y no debe acreditar anticipadamente días en el saldo devengado actual.
+  2. Gestión de permisos por horas y fracciones de jornada:
+     - Permitir solicitudes por jornada completa, media jornada o por cantidad de horas específicas.
+     - Calcular la equivalencia en días o deducir horas según el horario asignado al empleado en `HorariosLaborales`.
+     - Excluir días feriados, descansos semanales y días no laborables institucionales del cómputo.
+  3. Control de solapamientos y concurrencia:
+     - Detectar solapamientos entre solicitudes de vacaciones, permisos personales e incapacidades médicas en `IncapacidadesMedicas`.
+     - Evitar que dos solicitudes simultáneas consuman el mismo saldo disponible mediante candados de script.
+     - Reflejar inmediatamente las vacaciones y permisos aprobados en los reportes de asistencia laboral (`DeduccionesAsistencia`).
+- **Criterios de Aceptación:**
+  - El saldo actual coincide exactamente con la escala del Art. 348 del Código del Trabajo.
+  - La proyección a fechas futuras calcula los días que se devengarán sin inflar el saldo legal actual.
+  - Los días aprobados se descuentan una sola vez; las solicitudes rechazadas o canceladas no descuentan saldo.
+  - Se pueden gestionar permisos por fracciones de jornada calculando la duración según el horario asignado.
+  - Se detectan y bloquean solicitudes con fechas solapadas para el mismo empleado.
+  - Los resultados se presentan con idéntica consistencia matemática en RRHH y en el autoservicio del empleado.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F16-Task06] Implementar validación de jerarquías organizativas y prevención de ciclos
+- **Origen del Hallazgo:** `AUDITORIA_FASE_16_RECURSOS_HUMANOS.md` / Sección F (Brecha en F16-02) y Sección H (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Integridad de la estructura organizativa y prevención de recurrencia infinita)
+- **Archivos Involucrados:**
+  - `backend/user-service/Code.gs`
+  - `manageDepartmentPositions`
+  - `CatalogoDepartamentos`
+  - `CatalogoCargos`
+  - `HistorialAdscripciones`
+  - `dashboard-recursos-humanos.html`
+- **Dependencias Expuestas:** `manageDepartmentPositions`, `CatalogoDepartamentos`, `CatalogoCargos`
+- **Descripción del Alcance:**
+  La plataforma permite administrar departamentos y cargos, pero la auditoría identificó que no existe una validación algorítmica para impedir dependencias jerárquicas circulares (ej. Departamento A depende de B y B depende de A). Esto puede provocar bucles infinitos y errores al consultar organigramas, líneas de mando y aprobaciones.
+  Requerimientos Funcionales Detallados:
+  1. Algoritmo de detección de ciclos en grafos jerárquicos:
+     - Validar la jerarquía en backend antes de persistir cualquier creación o modificación de departamento o cargo.
+     - Impedir que una unidad dependa de sí misma (ciclo directo).
+     - Impedir que una unidad dependa de cualquiera de sus unidades subordinadas o descendientes (ciclos indirectos de N niveles).
+     - Permitir múltiples departamentos raíz de nivel superior (sin padre).
+     - Diferenciar claramente las jerarquías administrativas de las líneas de coordinación académica.
+  2. Integridad referencial y mensajes de error:
+     - Rechazar asignaciones de superiores que apunten a departamentos inexistentes o inactivos.
+     - Proporcionar mensajes explicativos claros identificando la cadena de dependencias conflictiva en caso de rechazo.
+     - Incorporar pruebas unitarias para grafos de árbol válidos y grafos con ciclos simulados.
+- **Criterios de Aceptación:**
+  - Se rechaza inmediatamente cualquier intento de asignar una unidad como dependiente de sí misma.
+  - Se detectan y rechazan ciclos indirectos de dos o más niveles de profundidad.
+  - Se permiten estructuras jerárquicas válidas de múltiples niveles sin restricciones indebidas.
+  - Las operaciones rechazadas no alteran los registros de departamentos ni causan estados huérfanos.
+  - La consulta de líneas de mando maneja estructuras extensas sin generar desbordamiento de pila o bucles infinitos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F16-Task07] Integrar alertas de vencimiento documental y contractual en el panel de Recursos Humanos
+- **Origen del Hallazgo:** `AUDITORIA_FASE_16_RECURSOS_HUMANOS.md` / Sección B (F16-08, F16-18) y Sección H (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Continuidad contractual, cumplimiento legal y experiencia del administrador)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `getEmployeeContractAlerts`
+  - `uploadEmployeeDocument`
+  - `getEmployeeDocuments`
+  - `ContratosLaborales`
+  - `ExpedientesLaborales`
+  - `dashboard-recursos-humanos.html`
+- **Dependencias Expuestas:** `getEmployeeContractAlerts`, `ContratosLaborales`, `DocumentosLaborales`, Notificaciones
+- **Descripción del Alcance:**
+  La plataforma dispone de endpoints backend para consultar alertas de contratos (`getEmployeeContractAlerts`), pero parte de esta información no está integrada en una vista de semáforo centralizada en la consola de Recursos Humanos, obligando a revisiones manuales aisladas.
+  Requerimientos Funcionales Detallados:
+  1. Vista centralizada de alertas laborales y documentales:
+     - Visualizar en `dashboard-recursos-humanos.html` un panel consolidado de vencimientos: contratos por vencer, contratos vencidos, documentos laborales expirados (certificaciones, constancias de antecedentes), credenciales por renovar y requisitos obligatorios faltantes.
+     - Filtros interactivos por departamento, cargo, empleado, tipo de documento y nivel de urgencia.
+     - Configuración de anticipación de alertas (30, 60, 90 días) configurable desde la plataforma.
+  2. Gestión de renovaciones y trazabilidad:
+     - Permitir registrar la renovación contractual o actualización de documentos directamente desde el panel de alerta.
+     - Conservar las versiones documentales anteriores asociadas al historial del empleado sin destruirlas.
+     - Despachar notificaciones automáticas preventivas al responsable de RRHH y al colaborador involucrado.
+- **Criterios de Aceptación:**
+  - El panel de RRHH muestra los contratos próximos a vencer con alertas diferenciadas por color según su urgencia.
+  - Los documentos laborales vencidos se identifican y listan automáticamente.
+  - La renovación de un contrato archiva la versión anterior y actualiza la vigencia activa.
+  - Las alertas resueltas se retiran de la bandeja de pendientes conservando su registro histórico.
+  - El módulo de alertas respeta los permisos RBAC impidiendo el acceso a personal no autorizado.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F16-Task08] Validar colisiones entre horarios laborales, asignaciones docentes y sustituciones
+- **Origen del Hallazgo:** `AUDITORIA_FASE_16_RECURSOS_HUMANOS.md` / Sección F (Brecha en F16-09) y Sección H (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Coherencia en la planificación, disponibilidad docente y prevención de solapamientos)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `HorariosLaborales`
+  - `AsignacionesTurnosLaborales`
+  - `AsignacionesDocentes`
+  - `createTeacherSubstitution`
+  - `manageWorkShiftAndSubstitution`
+- **Dependencias Expuestas:** `HorariosLaborales`, `AsignacionesDocentes`, `createTeacherSubstitution`, `HorariosClase`
+- **Descripción del Alcance:**
+  La planificación laboral y académica está implementada, pero algunas validaciones de horarios docentes se realizan en memoria. Se requiere garantizar la detección rigurosa de incompatibilidades en backend entre la jornada laboral del contrato, los turnos asignados, las clases impartidas y las sustituciones temporales.
+  Requerimientos Funcionales Detallados:
+  1. Motor de validación de disponibilidad y solapamiento:
+     - Contrastar asignaciones laborales y académicas activas al programar o modificar turnos, clases o sustituciones.
+     - Validar que un docente no reciba una clase o sustitución fuera de su jornada laboral contratada, ni durante turnos de almuerzo o descansos asignados.
+     - Detectar colisiones entre: jornada laboral, horario de clases en aula, turnos de apoyo, sustituciones activas y permisos/vacaciones aprobados en `SolicitudesVacaciones`.
+  2. Manejo de excepciones autorizadas:
+     - Permitir registrar excepciones justificadas (ej. horas extras autorizadas, eventos institucionales de fin de semana) exigiendo usuario autorizador y motivo formal.
+     - Mostrar advertencias visuales descriptivas antes de confirmar cualquier asignación con conflicto de horario.
+- **Criterios de Aceptación:**
+  - El sistema detecta y bloquea solapamientos entre clases y turnos laborales en backend.
+  - No se pueden asignar sustituciones docentes en fechas u horas con permisos de ausencia o vacaciones aprobadas.
+  - Se consideran estrictamente las fechas de inicio y fin de vigencia de cada compromiso.
+  - Las asignaciones históricas ya vencidas no generan falsos positivos de colisión.
+  - Las excepciones autorizadas quedan registradas con trazabilidad del responsable directivo.
+- **Estado:** [ ] Pendiente
+
+---
+
+## TAREAS DE PRIORIDAD MEDIA (P2 - VISUALIZACIÓN, EXPORTACIÓN, RECLUTAMIENTO Y SUITE DE REGRESIÓN)
+
+---
+
+### [ ] [F16-Task09] Desarrollar un organigrama institucional interactivo y directorio de personal
+- **Origen del Hallazgo:** `AUDITORIA_FASE_16_RECURSOS_HUMANOS.md` / Sección F (Brecha F.5) y Sección H (P2)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Supervisión directiva, claridad organizativa y experiencia de usuario)
+- **Archivos Involucrados:**
+  - `dashboard-recursos-humanos.html`
+  - `js/ui-common.js`
+  - `js/accounting.js`
+  - `backend/user-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `CatalogoDepartamentos`
+  - `CatalogoCargos`
+  - `HistorialAdscripciones`
+  - `AsignacionesAmbitosRoles`
+  - `CoordinacionesArea`
+  - `AreasCurricularesExtensiones`
+- **Dependencias Expuestas:** `CatalogoDepartamentos`, `CatalogoCargos`, `HistorialAdscripciones`, `CoordinacionesArea`, `F16-Task01`, `F16-Task06`
+- **Descripción del Alcance:**
+  El panel de Recursos Humanos presenta información organizativa mediante tablas, pero carece de una representación gráfica dinámica de la estructura institucional que permita a la Dirección y Coordinación visualizar la cadena de mando y las academias docentes.
+  Requerimientos Funcionales Detallados:
+  1. Componente visual interactivo:
+     - Renderizar un organigrama basado en nodos DOM / SVG que muestre departamentos, subdepartamentos, jefaturas, coordinaciones de área y colaboradores adscritos.
+     - Controles interactivos: expandir/contraer ramas, zoom, paneo, búsqueda rápida de empleados por nombre/cargo y filtros por departamento y área académica.
+     - Diferenciación visual clara entre líneas jerárquicas administrativas y coordinaciones académicas funcionales.
+  2. Directorio institucional y privacidad:
+     - Permitir alternar entre vista de organigrama jerárquico y vista de directorio telefónico/correo institucional.
+     - Si un empleado tiene múltiples responsabilidades (ej. docente y coordinador), mostrarlo como un único colaborador con sus diferentes atribuciones vinculadas.
+     - Carga progresiva y optimizada para no saturar memoria ni transferir datos confidenciales de nómina o expedientes médicos.
+- **Criterios de Aceptación:**
+  - El organigrama se genera dinámicamente desde los datos reales de departamentos y adscripciones.
+  - Los cambios en jefaturas o adscripciones se reflejan de inmediato en la visualización.
+  - No se producen bucles visuales en la representación de la estructura.
+  - Un colaborador con múltiples asignaciones mantiene su identidad única sin duplicar fichas.
+  - El visor opera de manera fluida y responsiva en dispositivos de escritorio y móviles.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F16-Task10] Implementar exportación avanzada de expedientes laborales, reportes y documentos de liquidación
+- **Origen del Hallazgo:** `AUDITORIA_FASE_16_RECURSOS_HUMANOS.md` / Sección B (F16-19) y Sección H (P2)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Gestión documental, archivo institucional y exportación para auditorías)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `dashboard-recursos-humanos.html`
+  - `js/accounting.js`
+  - `ExpedientesLaborales`
+  - `ContratosLaborales`
+  - `SolicitudesVacaciones`
+  - `EvaluacionesDesempenoRegistros`
+  - `CapacitacionesCursos`
+- **Dependencias Expuestas:** Generadores de documentos, Google Drive, `ExpedientesLaborales`, `ContratosLaborales`
+- **Descripción del Alcance:**
+  La plataforma cuenta con reportes en pantalla, pero necesita ampliar las opciones de exportación estructurada en PDF y Excel para trámites oficiales, auditorías laborales y archivo físico institucional.
+  Requerimientos Funcionales Detallados:
+  1. Expediente individual en PDF con membrete institucional:
+     - Generar PDF completo o modular permitiendo seleccionar secciones: datos personales, historial de puestos y departamentos, contratos y renovaciones, asistencias consolidadas, vacaciones, capacitaciones, evaluaciones de desempeño y medidas disciplinarias (solo para roles autorizados).
+  2. Reportes de personal en Excel:
+     - Exportaciones tabulares de personal activo/inactivo, docentes por área académica, contratos por vencer, ausencias e incapacidades con filtros aplicados.
+  3. Cierre y liquidación laboral:
+     - Generar hojas de cálculo y reportes de finiquito laboral desglosando bases de cálculo, deducciones de ley (IHSS, RAP, ISR) y saldos de vacaciones pendientes con campos para firmas de conformidad.
+  4. Seguridad y protección documental:
+     - Excluir diagnósticos médicos confidenciales de reportes generales; registrar en auditoría qué usuario generó y descargó cada expediente sensible.
+- **Criterios de Aceptación:**
+  - El PDF descargado refleja fielmente el historial del expediente seleccionado con formato formal institucional.
+  - Los archivos de Excel generados mantienen los formatos de fecha, números y fórmulas consistentes.
+  - Los datos médicos confidenciales y salariales están estrictamente aislados según el rol del solicitante.
+  - Se registra la bitácora de descarga de expedientes con usuario, fecha y motivo.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F16-Task11] Automatizar la conversión de candidatos seleccionados en expedientes de empleados
+- **Origen del Hallazgo:** `AUDITORIA_FASE_16_RECURSOS_HUMANOS.md` / Sección B (F16-05) y Sección H (P2)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Eficiencia administrativa en reclutamiento y continuidad del ciclo laboral)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `manageJobVacancy`
+  - `submitJobCandidate`
+  - `createEmployeeRecord`
+  - `VacantesLaborales`
+  - `CandidatosVacantes`
+  - `ExpedientesLaborales`
+  - `ContratosLaborales`
+  - `F16-Task04`
+- **Dependencias Expuestas:** `CandidatosVacantes`, `ExpedientesLaborales`, `ContratosLaborales`, `ChecklistIncorporacion`
+- **Descripción del Alcance:**
+  El sistema cuenta con gestión de vacantes y postulantes mediante `manageJobVacancy` y `submitJobCandidate`, pero la formalización de un candidato contratado requiere capturar nuevamente sus datos de forma manual, propiciando errores tipográficos o duplicidades.
+  Requerimientos Funcionales Detallados:
+  1. Conversión fluida de postulante a colaborador:
+     - Acción en interfaz para formalizar la contratación de un candidato con estado `Seleccionado`.
+     - Precargar automáticamente los datos personales, teléfono, correo electrónico y CV previamente registrados en `CandidatosVacantes`.
+     - Validar que la persona no tenga ya un expediente laboral activo previo (detección por DNI/identificación).
+     - Crear o vincular el expediente laboral en `ExpedientesLaborales` y registrar el primer contrato en `ContratosLaborales`.
+     - Disparar automáticamente la plantilla de checklist de incorporación (`F16-Task04`).
+     - Actualizar el estado de la vacante restando las plazas disponibles y marcando la candidatura como `Contratado`.
+- **Criterios de Aceptación:**
+  - Un candidato seleccionado se convierte en empleado con un solo flujo guiado reutilizando sus datos.
+  - Se detectan y alertan posibles expedientes duplicados antes de formalizar la contratación.
+  - Se crea el expediente y el contrato inicial quedando enlazados a la lista de onboarding correspondiente.
+  - El historial del proceso de selección y entrevistas permanece archivado y consultable.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F16-Task12] Desarrollar una suite automatizada de pruebas funcionales, integridad, seguridad y concurrencia de la Fase 16
+- **Origen del Hallazgo:** `AUDITORIA_FASE_16_RECURSOS_HUMANOS.md` / Sección H (P2) y Sección G
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media-alta (Aseguramiento de calidad, prevención de regresiones e integridad laboral)
+- **Archivos Involucrados:**
+  - `backend/developer-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `backend/user-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `tests/regression/academic-grading-suite.js`
+- **Dependencias Expuestas:** Suites de pruebas del sistema, endpoints de personal, contratos y permisos
+- **Descripción del Alcance:**
+  Incorporar una suite integral automatizada `runPhase16HumanResourcesRegressionSuite` que valide de manera continua los contratos, vacaciones del Art. 348, desvinculación en cascada, prevención de jerarquías circulares y seguridad ABAC de la Fase 16.
+  Requerimientos Funcionales Detallados:
+  1. Batería de pruebas por componentes:
+     - Expedientes y contratos: creación, deduplicación, renovaciones y cálculo de días para vencer.
+     - Estructura organizativa: departamentos, cargos y detección de grafos circulares en dependencias.
+     - Roles internos y áreas académicas: asignación múltiple de áreas sin oferta lectiva y delimitación de coordinadores.
+     - Onboarding y offboarding: checklist obligatorio y revocación en cascada de accesos/sesiones al desvincular.
+     - Vacaciones y asistencia: cálculo de antigüedad por escala legal hondureña, proyección futura y deducción exacta.
+     - Seguridad y ABAC: verificación de que roles no autorizados no puedan acceder a expedientes ajenos ni a diagnósticos médicos.
+     - Concurrencia e integridad: pruebas de aprobación simultánea de permisos y llamadas repetidas con idempotencia.
+  2. Reporte de resultados con desglose de pruebas ejecutadas, casos superados, fallos y tiempo de ejecución.
+- **Criterios de Aceptación:**
+  - La suite de regresión valida los contratos y reglas de la Fase 16 con el 100% de éxito en entorno controlado.
+  - Las pruebas operan sobre datos aislados sin alterar los registros reales de empleados.
+  - No se introduce ninguna regresión sobre las suites de pruebas de fases anteriores (Fases 9, 10, 11 y 15).
+- **Estado:** [ ] Pendiente
+
+---
