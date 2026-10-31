@@ -2340,3 +2340,696 @@
 - **Estado:** [ ] Pendiente
 
 ---
+
+# PENDIENTES - FASE 18: COMPRAS, PROVEEDORES Y CONTRATACIÓN DE SERVICIOS
+
+## TAREAS CRÍTICAS (P0 - SEVERIDAD MÁXIMA, RECEPCIONES PARCIALES, THREE-WAY MATCHING, INTERFAZ Y COMPROMISOS)
+
+---
+
+### [ ] [F18-Task01] Corregir el control de recepciones parciales y entregas escalonadas
+- **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección E (Brecha E.1) y Sección G (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Integridad en recepción física de compras, control de inventario y prevención de pérdidas)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`recordPurchaseReceipt`)
+  - `OrdenesCompra`
+  - `RecepcionesCompra`
+  - `InventariosKardex`
+- **Dependencias Expuestas:** `OrdenesCompra`, `RecepcionesCompra`, `InventariosKardex`, `recordInventoryMovement`
+- **Descripción del Alcance:**
+  Actualmente, `recordPurchaseReceipt` cambia incondicionalmente el estado de la orden a `RecibidaTotal` después de registrar la primera recepción, sin comprobar si se recibió la totalidad de las cantidades autorizadas (`ordSheet.getRange(oIdx + 1, 10).setValue("RecibidaTotal");`). Esto impide registrar entregas posteriores y provoca que desaparezcan del seguimiento las cantidades pendientes de recibir.
+  Requerimientos Funcionales Detallados:
+  1. Recepciones múltiples y cálculo acumulado:
+     - Permitir registrar varias recepciones asociadas a una misma orden de compra.
+     - Mantener el detalle de las cantidades solicitadas, recibidas, rechazadas, devueltas y pendientes por cada partida.
+     - Calcular las cantidades acumuladas recibidas considerando todas las recepciones válidas registradas para la orden.
+     - Determinar el estado de recepción de cada partida individual y de la orden completa.
+     - Admitir entregas parciales de diferentes artículos en fechas distintas.
+     - Registrar cada recepción como un documento independiente en `RecepcionesCompra`, con identificador único (`REC-CMP-...`), fecha, responsable, observaciones y documentos adjuntos.
+  2. Gestión de incidencias físicas y devoluciones:
+     - Permitir registrar productos faltantes, sobrantes, dañados, incorrectos o rechazados sin contabilizarlos como unidades conformes.
+     - Permitir registrar devoluciones posteriores a una recepción, conservando el historial y ajustando las existencias disponibles en `InventariosKardex`.
+     - Mantener las cantidades pendientes abiertas aunque la orden tenga varias recepciones previas.
+     - Evitar que una recepción repetida por doble clic, reintento o interrupción de conexión incremente dos veces las existencias físicas.
+     - Conservar la relación entre cada recepción, la orden de compra original y sus movimientos de inventario en Kardex.
+     - Permitir consultar todas las recepciones asociadas a una orden y el detalle de cada una.
+  3. Estados del ciclo de recepción de órdenes:
+     - `PendienteRecepcion`, `RecibidaParcial`, `RecibidaTotal`, `EnDisputa`, `Cancelada`.
+     - La orden solo debe pasar a `RecibidaTotal` cuando todas sus partidas estén completamente recibidas y conformes, o cuando las cantidades restantes hayan sido formalmente canceladas o resueltas mediante una operación autorizada.
+- **Criterios de Aceptación:**
+  - Registrar una recepción de 5 unidades para una orden de 10 y comprobar que la orden pasa a `RecibidaParcial` manteniendo 5 pendientes.
+  - Registrar una segunda recepción de 3 unidades y comprobar que quedan 2 pendientes.
+  - Registrar las 2 unidades restantes y comprobar que la orden pasa a `RecibidaTotal`.
+  - Recibir diferentes partidas en fechas distintas sin cerrar prematuramente la orden de compra.
+  - Registrar unidades dañadas y verificar que no se contabilizan como recepción conforme.
+  - Registrar una devolución y comprobar que se conserva el historial y se ajustan las cantidades en Kardex.
+  - Intentar recibir cantidades superiores a las autorizadas genera una restricción o exige una autorización excepcional documentada.
+  - Repetir una operación de recepción no duplica los movimientos de inventario.
+  - Cada recepción conserva su identificador único y su vínculo persistente con la orden original.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F18-Task02] Implementar conciliación documental de tres vías entre orden, recepción y factura
+- **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección E (Brecha E.2) y Sección G (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Prevención de fraudes, sobreprecios, control de egresos y conciliación de tres documentos)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`recordAccountsPayableExpense`, nueva función `verifyThreeWayMatch`)
+  - `OrdenesCompra`
+  - `RecepcionesCompra`
+  - `CuentasPorPagarGastos`
+- **Dependencias Expuestas:** `OrdenesCompra`, `RecepcionesCompra`, `CuentasPorPagarGastos`, `F18-Task01`
+- **Descripción del Alcance:**
+  Actualmente, las facturas pueden registrarse sin comparar los importes autorizados en la orden de compra con las cantidades realmente recibidas. Esto permite que se tramiten obligaciones por productos no entregados o por precios diferentes a los aprobados. También se genera una obligación identificada como `FCT-REC-...` al registrar la recepción física, confundiendo el albarán de entrega con la factura fiscal del proveedor.
+  Requerimientos Funcionales Detallados:
+  1. Motor de conciliación de tres vías (Three-Way Matching):
+     - Implementar la función `verifyThreeWayMatch` que compare:
+       * Orden de compra: cantidades, precios unitarios y condiciones autorizadas.
+       * Recepción: cantidades efectivamente recibidas y aceptadas en bodega.
+       * Factura del proveedor: cantidades, precios, impuestos y cargos facturados.
+     - Comparar cada partida mediante identificador de producto/servicio, descripción, unidad de medida y relación con la orden.
+     - Comparar cantidades pedidas, recibidas, aceptadas y facturadas.
+     - Comparar precios unitarios, descuentos, impuestos, transporte y otros cargos, calculando diferencias monetarias y porcentuales.
+     - Configurar tolerancias autorizadas parametrizables por concepto (ej. +/- 0.05 Lempiras por redondeo), sin permitir que una tolerancia oculte cantidades no recibidas.
+  2. Detección de discrepancias y bloqueos:
+     - Detectar facturación de artículos que no aparecen en la orden de compra.
+     - Detectar cantidades facturadas superiores a las recibidas y aceptadas en `RecepcionesCompra`.
+     - Detectar precios unitarios superiores a los formalmente aprobados en la orden.
+     - Detectar diferencias en impuestos, descuentos y cargos adicionales.
+     - Permitir facturación parcial cuando corresponda a cantidades realmente recibidas y conformes.
+     - Permitir facturas relacionadas con varias recepciones de una misma orden.
+     - Bloquear el avance automático al pago cuando existan diferencias no justificadas.
+     - Permitir que un responsable autorizado (Director / Administrador) revise y resuelva diferencias mediante aprobación documentada (`DiferenciaAutorizada`).
+  3. Desacoplamiento de recepción y factura fiscal:
+     - Separar completamente el registro de recepción física del registro de factura fiscal del proveedor.
+     - Eliminar la generación automática de facturas ficticias (`FCT-REC-...`) al registrar recepciones; la recepción debe producir su propio documento y movimiento de inventario, sin simular una factura fiscal.
+  4. Estados de conciliación:
+     - `PendienteConciliacion`, `Conciliada`, `ConDiferencias`, `EnDisputa`, `DiferenciaAutorizada`, `Rechazada`.
+- **Criterios de Aceptación:**
+  - Registrar una orden de 10 unidades, una recepción de 8 y una factura de 10; el sistema detecta la discrepancia de 2 unidades no recibidas.
+  - Registrar una factura por una cantidad superior a la recibida y comprobar que se bloquea su aprobación automática para pago.
+  - Registrar un precio unitario superior al autorizado y comprobar que se identifica la diferencia porcentual y absoluta.
+  - Registrar una factura parcial que coincide con las cantidades recibidas y verificar que se concilia satisfactoriamente.
+  - Registrar una factura con impuestos o cargos diferentes y comprobar que se presenta el desglose detallado de diferencias.
+  - La autorización de una discrepancia exige rol directivo autorizado registrando usuario, fecha y justificación.
+  - Una recepción de bodega física no crea automáticamente facturas fiscales en `CuentasPorPagarGastos`.
+  - Reprocesar la conciliación no duplica obligaciones contables ni asientos en el libro diario.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F18-Task03] Desarrollar la interfaz operativa completa del módulo de compras
+- **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección E (Brecha E.3) y Sección G (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Operatividad del usuario, eliminación de dependencia de Sheets y productividad administrativa)
+- **Archivos Involucrados:**
+  - `dashboard-contabilidad.html`
+  - `js/accounting.js` (`renderComprasModule`)
+  - `backend/accounting-service/Code.gs`
+- **Dependencias Expuestas:** `dashboard-contabilidad.html`, `js/accounting.js`, Servicios de compras del backend, `F18-Task01`, `F18-Task02`
+- **Descripción del Alcance:**
+  La pestaña `compras` en `dashboard-contabilidad.html` presenta únicamente un mensaje de texto estático y no permite operar las funciones de compras desde la plataforma. Las capacidades existentes en el backend no están disponibles mediante una interfaz funcional para los usuarios finales.
+  Requerimientos Funcionales Detallados:
+  1. Panel principal con indicadores en tiempo real:
+     - Solicitudes pendientes y en revisión, cotizaciones en espera, órdenes pendientes de aprobación, órdenes pendientes de entrega, recepciones parciales, facturas pendientes de conciliación, facturas pendientes de pago, cuentas por pagar por vencer, facturas vencidas y contratos por expirar.
+  2. Secciones operativas interactivas:
+     - Solicitudes de compra (creación, detalle, aprobaciones).
+     - Cotizaciones (carga de ofertas, visualización de adjuntos).
+     - Comparación y adjudicación de ofertas.
+     - Órdenes de compra (emisión, seguimiento de estados, descarga PDF).
+     - Recepciones de mercancía (registro de entregas totales y parciales).
+     - Directorio de proveedores y contratos.
+     - Facturas de proveedores y cuentas por pagar.
+     - Seguimiento presupuestario por centro de costo.
+  3. Búsqueda, filtros y usabilidad:
+     - Búsqueda por identificador, descripción, proveedor, departamento y período.
+     - Ordenamiento por fecha, monto y estado.
+     - Modales de formulario interactivos con validación de campos obligatorios, mensajes descriptivos de error y confirmación de acciones irreversibles.
+     - Deshabilitado preventivo de botones durante llamadas asíncronas para evitar dobles envíos.
+     - Adaptación responsiva para pantallas de escritorio, tabletas y móviles.
+- **Criterios de Aceptación:**
+  - La pestaña `compras` deja de ser estática y renderiza las secciones operativas completas con datos del backend.
+  - Un usuario autorizado puede crear, consultar y aprobar solicitudes de compra desde la interfaz.
+  - Se pueden registrar cotizaciones, comparar ofertas y adjudicar proveedores visualmente.
+  - El responsable de almacén o compras puede registrar recepciones totales y parciales desde la pantalla.
+  - Contabilidad puede revisar facturas de proveedores y el resultado de la conciliación de tres vías.
+  - Los usuarios sin permisos no pueden ejecutar operaciones mediante llamadas directas.
+  - Las operaciones repetidas no generan registros duplicados en el backend.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F18-Task04] Implementar documentos PDF oficiales para órdenes de compra y ampliar su ciclo de estados
+- **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección B (B.3), Sección E y Sección G (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Formalización contractual de adquisiciones y emisión documental oficial)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`createPurchaseOrder`, `approvePurchaseOrder`, nueva función `generatePurchaseOrderPDF`)
+  - `OrdenesCompra`
+  - Almacenamiento documental en Google Drive
+- **Dependencias Expuestas:** `OrdenesCompra`, Google Drive API, `createPurchaseOrder`, `approvePurchaseOrder`
+- **Descripción del Alcance:**
+  Las órdenes de compra se almacenan como registros planos en la hoja `OrdenesCompra`, pero no cuentan con un documento oficial descargable en PDF para formalizar y comunicar la adquisición al proveedor. Además, su ciclo de estados es rígido y no representa adecuadamente el envío, aceptación y recepción parcial.
+  Requerimientos Funcionales Detallados:
+  1. Generación de PDF oficial de Orden de Compra:
+     - Implementar la función `generatePurchaseOrderPDF` en `backend/accounting-service/Code.gs`.
+     - Estructura formal del documento: membrete y logotipo institucional de New Generation Christian Academy, número correlativo único (`ORD-CMP-...`), fecha de emisión, datos del proveedor (razón social, RTN, dirección, contacto), departamento y solicitante de origen, referencia a la solicitud y cotización aprobadas, tabla detallada de partidas (código, descripción, cantidad, unidad, precio unitario, subtotal), descuentos, desglose de impuestos (ISV 15% cuando aplique / exento), transporte, total general en Lempiras y letras, moneda, condiciones comerciales de pago, dirección y fecha estimada de entrega, y firmas de aprobación de Dirección/Contabilidad.
+     - Versionado documental: si se modifica una orden emitida, generar una nueva versión identificable sin sobrescribir el archivo histórico anterior.
+  2. Ampliación del ciclo de vida de estados de la orden:
+     - Transiciones permitidas: `Borrador` -> `PendienteAprobacion` -> `Aprobada` -> `Emitida` -> `EnviadaProveedor` -> `AceptadaProveedor` / `RechazadaProveedor` -> `PendienteRecepcion` -> `RecibidaParcial` -> `RecibidaTotal` -> `EnDisputa` -> `Cerrada` -> `Cancelada`.
+     - Validar que una orden no pueda enviarse al proveedor antes de contar con aprobación formal.
+     - Registrar fecha y responsable de cada transición de estado en la bitácora de la orden.
+- **Criterios de Aceptación:**
+  - Se genera un documento PDF oficial con diseño profesional para toda orden de compra aprobada.
+  - Los importes, impuestos y subtotales del PDF coinciden exactamente con los registros de la base de datos.
+  - Una modificación de una orden aprobada genera una nueva versión conservando el archivo previo.
+  - Se impide enviar al proveedor o emitir una orden que no haya sido formalmente aprobada.
+  - Se pueden registrar la aceptación o rechazo formal del proveedor con fecha y motivo.
+  - Una orden parcialmente recibida refleja con exactitud el estado `RecibidaParcial`.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F18-Task05] Crear una matriz comparativa de cotizaciones y adjudicación por partidas
+- **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección B (B.2) y Sección G (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Optimización de costos, transparencia en compras y adjudicaciones divididas)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`submitPurchaseQuotation`, `getPurchaseQuotations`, nueva función `adjudicatePurchaseQuotations`)
+  - `CotizacionesCompra`
+  - `SolicitudesCompra`
+  - `js/accounting.js`
+- **Dependencias Expuestas:** `CotizacionesCompra`, `SolicitudesCompra`, `OrdenesCompra`, `F18-Task03`
+- **Descripción del Alcance:**
+  El sistema permite registrar cotizaciones aisladas, pero no ofrece una comparación estructurada que facilite evaluar simultáneamente las ofertas de varios proveedores. Tampoco existe un mecanismo formal para adjudicar partidas a diferentes proveedores dentro de una misma solicitud.
+  Requerimientos Funcionales Detallados:
+  1. Matriz comparativa de cotizaciones:
+     - Crear una vista comparativa tabular que agrupe todas las cotizaciones vinculadas a una misma solicitud de compra.
+     - Comparar simultáneamente hasta 5 proveedores lado a lado (columnas: proveedores; filas: partidas solicitadas).
+     - Parámetros comparables: precio unitario, cantidad cotizada, subtotal, descuentos, impuestos, fletes/transporte, total general, tiempo de entrega, condiciones de pago, garantías y cumplimiento de especificaciones técnicas.
+     - Identificar visualmente partidas no cotizadas o cotizadas parcialmente por un proveedor.
+  2. Adjudicación por partidas y dictamen:
+     - Permitir adjudicar toda la compra a un solo proveedor o distribuir partidas entre diferentes proveedores según las mejores condiciones de precio, calidad o disponibilidad.
+     - Registrar la justificación de la decisión cuando no se seleccione la oferta de menor precio (criterios técnicos, plazos de entrega urgentes, garantías superiores).
+     - Registrar ofertas descartadas y motivos de rechazo.
+     - Generar el acta de adjudicación formal con responsables de la evaluación y montos adjudicados.
+     - Generar automáticamente las órdenes de compra individuales resultantes para cada proveedor seleccionado sin duplicar solicitudes.
+- **Criterios de Aceptación:**
+  - Se pueden comparar tres o más cotizaciones de una misma solicitud en una vista consolidada.
+  - El sistema detecta y resalta partidas cotizadas parcialmente o no ofertadas por un proveedor.
+  - Se pueden adjudicar diferentes partidas de una misma solicitud a proveedores distintos.
+  - Las órdenes de compra resultantes conservan los importes, partidas y condiciones adjudicadas.
+  - La decisión de adjudicación registra el responsable, fecha y justificación técnica.
+  - Una cotización modificada con posterioridad no altera silenciosamente una adjudicación ya aprobada.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F18-Task06] Ampliar la gestión de cuentas por pagar con abonos, vencimientos y notas de crédito
+- **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección B (B.5), Sección E y Sección G (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Control de tesorería, prevención de pagos duplicados y gestión de notas de crédito)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`recordAccountsPayableExpense`, nuevas funciones `recordSupplierPayment`, `applySupplierCreditNote`)
+  - `CuentasPorPagarGastos`
+  - `AsientosContables`
+  - `dashboard-contabilidad.html`
+- **Dependencias Expuestas:** `CuentasPorPagarGastos`, `AsientosContables`, `F18-Task02`, `recordAccountingJournalEntry`
+- **Descripción del Alcance:**
+  El sistema registra obligaciones en `CuentasPorPagarGastos`, pero no dispone de un control suficiente para administrar pagos parciales, saldos pendientes, notas de crédito comerciales de proveedores y programación de vencimientos. Esto dificulta el control de tesorería y aumenta el riesgo de sobrepagos o pagos duplicados.
+  Requerimientos Funcionales Detallados:
+  1. Registro estructurado de facturas y obligaciones:
+     - Almacenar proveedor, número de factura oficial, fecha de emisión, fecha de recepción, fecha de vencimiento, importe original, impuestos, descuentos, total, moneda, saldo pendiente, estado de aprobación, estado de pago, relación con orden y recepción, y documento PDF adjunto.
+  2. Pagos parciales y abonos a proveedores:
+     - Permitir múltiples pagos asociados a una misma factura en diferentes fechas.
+     - Registrar importe, fecha, medio de pago, cuenta bancaria de egreso, número de referencia bancaria y comprobante adjunto.
+     - Calcular automáticamente el total pagado y el saldo pendiente de la obligación.
+     - Bloquear cualquier intento de registrar un pago superior al saldo pendiente no liquidado.
+     - Evitar pagos duplicados por reintentos o referencias bancarias ya utilizadas.
+  3. Gestión de notas de crédito comerciales:
+     - Registrar notas de crédito emitidas por proveedores por devoluciones de productos, descuentos por pronto pago o correcciones.
+     - Asociar la nota de crédito a la factura correspondiente, reduciendo el saldo pendiente de pago.
+     - Generar el asiento contable inverso correspondiente por partida doble en `AsientosContables`.
+     - Impedir aplicar dos veces la misma nota de crédito.
+  4. Programación de vencimientos y estados:
+     - Consultar obligaciones por fecha de vencimiento, identificando facturas vencidas, próximas a vencer (7, 15, 30 días) y corrientes.
+     - Estados de la obligación: `PendienteRevision`, `PendienteAprobacion`, `AprobadaParaPago`, `PagoParcial`, `Pagada`, `Vencida`, `EnDisputa`, `Anulada`.
+     - Bloquear la emisión de pagos para facturas que no hayan superado la conciliación de tres vías (`F18-Task02`).
+- **Criterios de Aceptación:**
+  - Registrar una factura de proveedor y comprobar que su saldo inicial coincide con el monto total.
+  - Aplicar dos pagos parciales consecutivos y verificar que el saldo pendiente disminuye exactamente por los montos pagados.
+  - Al completar el 100% del saldo, la factura pasa automáticamente a estado `Pagada`.
+  - Aplicar una nota de crédito comercial reduce el saldo pendiente y asienta el ajuste contable.
+  - Se bloquea cualquier intento de pagar un monto superior al saldo pendiente de la factura.
+  - Las facturas con discrepancias o en disputa quedan bloqueadas para pagos automáticos.
+  - Anular un pago revierte el saldo pendiente y el asiento contable sin eliminar el historial.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F18-Task07] Implementar el compromiso presupuestario formal al aprobar órdenes de compra
+- **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección B (B.6), Sección E y Sección G (P0)
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Control preventivo del gasto, protección presupuestaria y concurrencia)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`approvePurchaseOrder`, `checkBudgetAvailability`)
+  - `PresupuestosInstitucionales`
+  - `OrdenesCompra`
+- **Dependencias Expuestas:** `PresupuestosInstitucionales`, `OrdenesCompra`, `checkBudgetAvailability`, `LockService`
+- **Descripción del Alcance:**
+  La disponibilidad presupuestaria se consulta mediante `checkBudgetAvailability`, pero la aprobación de una orden de compra no reserva formalmente el importe correspondiente en el presupuesto. Esto permite que múltiples órdenes concurrentes consuman la misma disponibilidad sin que el sistema detecte el sobregiro en tiempo real.
+  Requerimientos Funcionales Detallados:
+  1. Reserva atómica del compromiso presupuestario:
+     - Al formalizar la aprobación de una orden de compra en `approvePurchaseOrder`, adquirir un candado de script (`LockService.getScriptLock()`) y verificar la disponibilidad presupuestaria real.
+     - Si hay disponibilidad, incrementar automáticamente el campo `montoComprometido` en `PresupuestosInstitucionales` para la partida y centro de costo correspondientes.
+     - Saldo disponible recalculado: `saldoDisponible = montoAprobado - montoComprometido - montoEjecutado`.
+     - Impedir que dos órdenes concurrentes reserven fondos sobre el mismo saldo disponible simultáneamente.
+  2. Ciclo de vida y liberación de compromisos:
+     - Distinguir claramente: Presupuesto asignado, Importe comprometido (por órdenes aprobadas), Importe ejecutado (por facturas recibidas) e Importe disponible.
+     - Al facturar o liquidar la orden, transferir el monto desde `montoComprometido` hacia `montoEjecutado`.
+     - Si una orden de compra se cancela o reduce su importe mediante modificación autorizada, liberar inmediatamente el compromiso presupuestario no ejecutado.
+     - Permitir autorizaciones extraordinarias de sobregiro presupuestario exclusivamente al rol `Director` o `Administrador`, emitiendo el log estructurado `BUDGET_OVERRUN_ALERT` con justificación obligatoria.
+- **Criterios de Aceptación:**
+  - Aprobar una orden de compra incrementa de inmediato el `montoComprometido` de la partida presupuestaria.
+  - Una segunda orden procesada inmediatamente después consulta el saldo disponible ya descontado.
+  - Se bloquea la aprobación de órdenes concurrentes que conjuntamente superen el presupuesto disponible.
+  - La cancelación formal de una orden de compra libera el compromiso devolviendo los fondos a disponibilidad.
+  - Reducir el importe de una orden ajusta la diferencia en el compromiso de forma trazable.
+  - Las autorizaciones de sobregiro quedan auditadas con usuario directivo responsable y motivo.
+- **Estado:** [ ] Pendiente
+
+---
+
+## TAREAS DE ALTA PRIORIDAD (P1 - ACTIVOS FIJOS, CATÁLOGO DE PROVEEDORES Y EXPEDIENTE DIGITAL)
+
+---
+
+### [ ] [F18-Task08] Integrar la recepción de compras con el registro de activos fijos
+- **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección B (B.4), Sección D y Sección G (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Control patrimonial institucional, capitalización de bienes y prevención de extravíos)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`recordPurchaseReceipt`, `manageAssetItem`, `assignAssetCustody`)
+  - `ActivosPatrimoniales`
+  - `RecepcionesCompra`
+  - `OrdenesCompra`
+- **Dependencias Expuestas:** `ActivosPatrimoniales`, `RecepcionesCompra`, `OrdenesCompra`, `F18-Task01`
+- **Descripción del Alcance:**
+  Existe un registro de activos patrimoniales (`ActivosPatrimoniales`), pero la recepción de una compra de bienes duraderos (computadoras, proyectores, mobiliario, vehículos) no permite completar directamente el registro patrimonial del bien adquirido. Esto obliga a recapturar información manualmente y rompe la trazabilidad entre el activo y su factura/orden de origen.
+  Requerimientos Funcionales Detallados:
+  1. Identificación y capitalización desde la recepción:
+     - Identificar partidas clasificadas como "Bienes Capitalizables / Activos Fijos" en la orden de compra.
+     - Permitir iniciar el registro del activo directamente desde la recepción conforme en `RecepcionesCompra`.
+     - Precargar automáticamente los datos de la compra: descripción del bien, proveedor, fecha de recepción, costo de adquisición, número de factura y orden de compra.
+  2. Registro individualizado de bienes patrimoniales:
+     - Registrar categoría patrimonial, marca, modelo, número de serie, ubicación física inicial y custodio asignado (`CustodioUserId`).
+     - Si la partida comprende múltiples unidades (ej. 10 computadoras), permitir generar los 10 registros patrimoniales individuales con números de serie independientes.
+     - Validar que no existan números de serie duplicados en `ActivosPatrimoniales`.
+     - Diferenciar claramente entre bienes capitalizables (activos), consumibles de oficina y materiales inventariables.
+     - Prohibir la capitalización de bienes que hayan sido rechazados o devueltos en la recepción.
+- **Criterios de Aceptación:**
+  - Recibir una compra de bienes capitalizables permite crear los registros en `ActivosPatrimoniales` con un flujo guiado.
+  - Cada activo generado conserva su vínculo con la orden de compra, proveedor, recepción y factura.
+  - Se pueden ingresar números de serie individuales para compras de múltiples unidades.
+  - Se detecta y rechaza el registro de activos con números de serie previamente existentes.
+  - Las compras de materiales consumibles no generan activos patrimoniales automáticamente.
+  - La consulta del activo permite navegar directamente hacia su expediente de adquisición original.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F18-Task09] Ampliar el catálogo de proveedores con contactos múltiples y datos comerciales protegidos
+- **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección B (B.1) y Sección G (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Gestión de proveedores, seguridad de información bancaria y control de pagos ACH)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`registerSupplier`, `manageSupplierContract`)
+  - `ProveedoresActivos`
+  - `ContratosProveedores`
+  - `dashboard-contabilidad.html`
+- **Dependencias Expuestas:** `ProveedoresActivos`, `ContratosProveedores`, `ROLE_PERMISSIONS`
+- **Descripción del Alcance:**
+  El catálogo actual almacena únicamente información básica del proveedor (nombre, RTN, teléfono, email, rubro). No contempla múltiples contactos, direcciones diferenciadas ni información bancaria protegida requerida para la dispersión segura de pagos.
+  Requerimientos Funcionales Detallados:
+  1. Contactos múltiples y direcciones:
+     - Permitir registrar varios contactos por proveedor con nombre, cargo, teléfono, correo y área (ventas, cobranzas, soporte, entregas).
+     - Identificar un contacto principal y mantener el histórico de contactos reemplazados.
+     - Registrar direcciones diferenciadas para facturación fiscal, entrega de mercancía y correspondencia.
+  2. Condiciones comerciales:
+     - Registrar plazos de crédito (contado, 15, 30, 60 días), moneda comercial, descuentos por pronto pago y tiempos habituales de entrega.
+  3. Datos bancarios protegidos (Seguridad financiera):
+     - Permitir registrar banco receptor, tipo de cuenta, número de cuenta y beneficiario para pagos por transferencia/ACH.
+     - Enmascarar números de cuenta bancaria en listados generales (ej. `****-****-1234`).
+     - Restringir la consulta de cuentas completas y su modificación exclusivamente a roles autorizados (`Contador`, `Director`, `Administrador`).
+     - Todo cambio en las cuentas bancarias de un proveedor exige autorización documentada y emite un log de auditoría `SUPPLIER_BANK_ACCOUNT_MODIFIED`.
+  4. Estados de proveedor y documentos:
+     - Estados: `Activo`, `Inactivo`, `Suspendido`, `EnEvaluacion`.
+     - Impedir emitir órdenes de compra a proveedores en estado `Suspendido` o `Inactivo`.
+- **Criterios de Aceptación:**
+  - Se pueden registrar y editar múltiples contactos para un mismo proveedor.
+  - Se almacenan direcciones separadas de facturación y entrega física.
+  - Los datos bancarios del proveedor están enmascarados y restringidos bajo permisos RBAC estrictos.
+  - Modificar una cuenta bancaria genera una entrada de auditoría con usuario, fecha y valor anterior.
+  - Se detectan posibles proveedores duplicados al validar el número de RTN (14 dígitos).
+  - Un proveedor suspendido queda bloqueado para la emisión de nuevas órdenes de compra.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F18-Task10] Implementar el expediente digital unificado de adquisiciones
+- **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección B (B.5), Sección D y Sección G (P1)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Trazabilidad 360°, auditoría interna y archivo documental de compras)
+- **Archivos Involucrados:**
+  - `js/accounting.js`
+  - `dashboard-contabilidad.html`
+  - `SolicitudesCompra`
+  - `CotizacionesCompra`
+  - `OrdenesCompra`
+  - `RecepcionesCompra`
+  - `CuentasPorPagarGastos`
+  - `AsientosContables`
+- **Dependencias Expuestas:** Vistas de compras, Google Drive, AsientosContables, `F18-Task01`, `F18-Task02`, `F18-Task04`
+- **Descripción del Alcance:**
+  Los documentos de cada compra se encuentran dispersos en hojas independientes (`SolicitudesCompra`, `CotizacionesCompra`, `OrdenesCompra`, `RecepcionesCompra`, `CuentasPorPagarGastos`). No existe una vista centralizada que permita a los auditores y directores reconstruir la secuencia completa de una adquisición.
+  Requerimientos Funcionales Detallados:
+  1. Vista centralizada del expediente digital (Trazabilidad 360°):
+     - Visualizar en una sola pantalla interactiva la cadena documental completa: Solicitud de compra -> Cotizaciones recibidas -> Matriz comparativa y adjudicación -> Aprobaciones directivas -> Orden de compra PDF -> Confirmación del proveedor -> Recepciones de bodega -> Facturas fiscales -> Conciliación Three-Way -> Pagos aplicados -> Asientos contables automáticos.
+  2. Métricas y accesos directos del expediente:
+     - Mostrar línea de tiempo con fechas, usuarios responsables y estados de cada etapa.
+     - Contadores de control: cantidades pedidas, recibidas, facturadas y pendientes; importes autorizados, facturados y pagados.
+     - Enlaces directos para abrir o descargar cada documento probatorio adjunto en Drive.
+     - Búsqueda ágil de expedientes por número de solicitud, orden, número de factura o nombre del proveedor.
+     - Preservar permanentemente el expediente documental aun cuando la orden haya sido cerrada o cancelada.
+- **Criterios de Aceptación:**
+  - Al ingresar el número de orden o solicitud se despliega la secuencia completa de documentos relacionados.
+  - Se puede navegar fluidamente entre la factura, su recepción de bodega y la orden de compra original.
+  - Los totales de cantidades e importes del expediente coinciden exactamente con los documentos individuales.
+  - Las órdenes con entregas o facturaciones parciales reflejan con claridad los saldos pendientes.
+  - El expediente mantiene protegidos los documentos confidenciales conforme al rol del usuario que consulta.
+- **Estado:** [ ] Pendiente
+
+---
+
+## TAREAS DE PRIORIDAD MEDIA (P2 - ALERTAS DE ENTREGA, CONTRATOS MARCO, REPOSICIÓN Y REPORTES)
+
+---
+
+### [ ] [F18-Task11] Implementar seguimiento de entregas y alertas de retrasos
+- **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección B (B.3) y Sección G (P2)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Seguimiento operativo, cumplimiento de proveedores y gestión de alertas)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `OrdenesCompra`
+  - `RecepcionesCompra`
+  - `backend/user-service/Code.gs` (servicio de notificaciones)
+- **Dependencias Expuestas:** `OrdenesCompra`, `RecepcionesCompra`, `sendMultiChannelNotification`, `F18-Task01`
+- **Descripción del Alcance:**
+  El sistema no alerta automáticamente cuando la fecha estimada de entrega de una orden de compra ha vencido y todavía existen cantidades pendientes de recibir en bodega.
+  Requerimientos Funcionales Detallados:
+  1. Monitoreo de plazos y detección de demoras:
+     - Comparar diariamente `fechaEntregaEstimada` de las órdenes en estado `Emitida`, `EnviadaProveedor` o `RecibidaParcial` contra la fecha actual.
+     - Identificar órdenes con entrega vencida que mantengan cantidades pendientes de recibir.
+     - Calcular los días de retraso acumulados por orden y por partida.
+  2. Alertas y gestión de incidencias:
+     - Disparar alertas automáticas al encargado de compras y al solicitante departamental.
+     - Permitir registrar observaciones o compromisos de entrega reprogramados informados por el proveedor, conservando el historial de fechas anteriores.
+     - Evitar notificaciones duplicadas por la misma incidencia de retraso mediante clave de deduplicación.
+- **Criterios de Aceptación:**
+  - Una orden con fecha de entrega superada y saldo pendiente genera una alerta visible en el panel de compras.
+  - Las órdenes parcialmente recibidas mantienen la alerta de entrega demorada sobre los artículos faltantes.
+  - Al completarse la recepción total, la alerta se desactiva automáticamente.
+  - Las reprogramaciones de fecha de entrega conservan la fecha original para medir el índice de puntualidad.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F18-Task12] Implementar control de consumo y disponibilidad de contratos marco
+- **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección B (B.1) y Sección G (P2)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Gestión de suministros recurrentes y control de topes contractuales)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`manageSupplierContract`, `getSupplierContractAlerts`)
+  - `ContratosProveedores`
+  - `OrdenesCompra`
+- **Dependencias Expuestas:** `ContratosProveedores`, `OrdenesCompra`, `F18-Task07`
+- **Descripción del Alcance:**
+  Existe gestión básica de contratos de proveedores y alertas de vencimiento, pero no se controla cuánto se ha consumido de un contrato marco de suministro recurrente (ej. papelería, internet, mantenimiento de fotocopiadoras, combustible) ni cuánto saldo disponible permanece.
+  Requerimientos Funcionales Detallados:
+  1. Contratos marco con límite económico y cantidades:
+     - Permitir registrar contratos marco con proveedor, vigencia, importe máximo autorizado y condiciones comerciales pactadas.
+     - Vincular las órdenes de compra emitidas con el contrato marco correspondiente.
+     - Calcular en tiempo real: monto total contratado, monto consumido acumulado por órdenes emitidas y saldo disponible restante del contrato.
+  2. Control de topes y alertas:
+     - Bloquear o advertir la emisión de órdenes de compra que excedan el límite económico disponible del contrato.
+     - Alertas preventivas al alcanzar el 80% y 95% del consumo del contrato marco.
+     - La cancelación de órdenes de compra restituye el saldo disponible del contrato de forma automática.
+- **Criterios de Aceptación:**
+  - Asociar múltiples órdenes de compra a un contrato marco acumula correctamente el consumo económico.
+  - Se genera una advertencia o restricción si una orden supera el saldo disponible del contrato marco.
+  - Cancelar una orden de compra libera el monto comprometido en el contrato marco.
+  - El panel de contratos permite consultar el saldo disponible y el historial de compras de cada acuerdo.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F18-Task13] Implementar sugerencias de compra basadas en existencias y niveles mínimos
+- **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección B (B.4) y Sección G (P2)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Continuidad operativa, abastecimiento oportuno y prevención de quiebres de stock)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`createPurchaseRequest`)
+  - `InventariosKardex`
+  - `SolicitudesCompra`
+- **Dependencias Expuestas:** `InventariosKardex`, `SolicitudesCompra`, Módulo de Inventario
+- **Descripción del Alcance:**
+  El inventario registra movimientos en `InventariosKardex`, pero no genera sugerencias de compra automáticas cuando las existencias de materiales caen por debajo del stock mínimo institucional.
+  Requerimientos Funcionales Detallados:
+  1. Motor de sugerencias de reposición de inventario:
+     - Monitorear las existencias disponibles por artículo y almacén contrastándolas con el `stockMinimo` configurado.
+     - Considerar cantidades en tránsito (órdenes de compra emitidas pendientes de recibir) para no sobrecomprar.
+     - Calcular la cantidad sugerida de compra: `cantidadSugerida = stockMaximo - stockDisponible - stockEnTransito`.
+  2. Generación asistida de solicitudes:
+     - Presentar bandeja de sugerencias de reposición agrupadas por categoría o proveedor habitual.
+     - Permitir convertir una sugerencia en solicitud de compra interna (`createPurchaseRequest`) con un solo clic, sin generar órdenes de compra directas sin previa aprobación.
+     - Evitar generar sugerencias duplicadas para artículos que ya cuenten con una solicitud de compra en trámite.
+- **Criterios de Aceptación:**
+  - Una salida de inventario que reduzca el stock por debajo del mínimo genera la sugerencia de reposición.
+  - El cálculo considera los pedidos en tránsito pendientes de entrega evitando compras redundantes.
+  - La sugerencia puede convertirse en solicitud de compra interna conservando la justificación de stock crítico.
+  - El proceso respeta la aprobación de compras y no genera órdenes emitidas automáticamente.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F18-Task14] Implementar evaluación histórica del desempeño de proveedores
+- **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección B (B.1) y Sección G (P2)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Calidad en las adquisiciones, scoring de proveedores y evaluación de servicio)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `ProveedoresActivos`
+  - `RecepcionesCompra`
+  - `dashboard-contabilidad.html`
+- **Dependencias Expuestas:** `ProveedoresActivos`, `RecepcionesCompra`, `F18-Task09`
+- **Descripción del Alcance:**
+  El catálogo de proveedores no cuenta con un historial estructurado de calidad, puntualidad y cumplimiento. La selección de ofertas se realiza sin métricas históricas de desempeño del proveedor.
+  Requerimientos Funcionales Detallados:
+  1. Registro de evaluaciones de servicio y producto:
+     - Registrar evaluaciones vinculadas a compras y recepciones reales en una escala de 1 a 5 estrellas.
+     - Criterios evaluables: puntualidad en la entrega, calidad del producto entregado, cumplimiento de especificaciones técnicas, atención a reclamaciones y cumplimiento de condiciones comerciales.
+     - Registrar observaciones, incidencias, devoluciones y usuario evaluador.
+  2. Scoring e integración con cotizaciones:
+     - Calcular el índice promedio de desempeño del proveedor (Score de Proveedor).
+     - Mostrar el score histórico del proveedor en la matriz comparativa de cotizaciones (`F18-Task05`) como criterio de apoyo en la adjudicación.
+     - Identificar proveedores con calificaciones deficientes recurrentes para someterlos a revisión o suspensión.
+- **Criterios de Aceptación:**
+  - Se puede registrar la evaluación de desempeño al confirmar una recepción de compras.
+  - El perfil del proveedor muestra su calificación promedio histórica y el total de evaluaciones recibidas.
+  - El score del proveedor es visible al comparar cotizaciones para respaldar la decisión de adjudicación.
+  - Solo los roles autorizados de compras y almacén pueden registrar evaluaciones de proveedores.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F18-Task15] Incorporar un procedimiento formal para compras urgentes y excepcionales
+- **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección G y Sección H (P2)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Gestión de emergencias institucionales, trazabilidad de excepciones y control financiero)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`createPurchaseRequest`, `createPurchaseOrder`)
+  - `SolicitudesCompra`
+  - `OrdenesCompra`
+- **Dependencias Expuestas:** `SolicitudesCompra`, `OrdenesCompra`, Flujos de aprobación directiva
+- **Descripción del Alcance:**
+  Las solicitudes actuales no contemplan una clasificación para compras de emergencia o imprevistos graves (ej. reparación urgente de bomba de agua, falla de servidores centrales), obligando a eludir los controles del sistema o a realizar compras no documentadas.
+  Requerimientos Funcionales Detallados:
+  1. Clasificación formal de compra urgente:
+     - Incorporar bandera de tipo de compra: `Ordinaria` o `Urgente / Emergencia`.
+     - Exigir justificación detallada de la urgencia y el impacto institucional de no ejecutar la compra de inmediato.
+     - Flujo de aprobación expedito: enrutar directamente a la Dirección General para autorización de vía rápida.
+  2. Regularización y control:
+     - Permitir emitir la orden de compra con una sola cotización justificada cuando la urgencia lo amerite.
+     - Exigir regularización documental posterior (carga de facturas, actas y fotos) sin eludir la verificación Three-Way Matching ni los controles presupuestarios.
+     - Emitir registro de auditoría `EMERGENCY_PURCHASE_AUTHORIZED`.
+- **Criterios de Aceptación:**
+  - Una solicitud marcada como urgente exige obligatoriamente justificación y descripción de impacto.
+  - Se enruta de inmediato a aprobación directiva con notificación prioritaria.
+  - La excepción de cotización múltiple queda asentada formalmente con la firma del autorizador.
+  - La compra urgente mantiene intactos los controles de recepción física y conciliación contable.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F18-Task16] Desarrollar reportes consolidados de compras, compromisos y cuentas por pagar
+- **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección B (B.5), Sección D y Sección G (P2)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Reportería gerencial, control de compromisos y auditoría contable)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`getAccountsReceivablePayableSummary`, `getPurchaseOrders`)
+  - `CuentasPorPagarGastos`
+  - `OrdenesCompra`
+  - `PresupuestosInstitucionales`
+  - `dashboard-contabilidad.html`
+  - `js/accounting.js`
+- **Dependencias Expuestas:** `CuentasPorPagarGastos`, `OrdenesCompra`, `PresupuestosInstitucionales`
+- **Descripción del Alcance:**
+  Las consultas actuales no proporcionan una visión consolidada suficiente de la cartera de compras, compromisos presupuestarios abiertos, entregas demoradas y saldos vencidos de cuentas por pagar a proveedores.
+  Requerimientos Funcionales Detallados:
+  1. Reportes consolidados de adquisiciones:
+     - Compras por departamento, por centro de costo, por categoría de insumos y por proveedor.
+     - Reporte de compromisos presupuestarios abiertos vs facturas ejecutadas.
+     - Reporte de órdenes de compra con entregas parciales y saldos pendientes de recibir.
+  2. Reporte de antigüedad de cuentas por pagar a proveedores:
+     - Cartera vencida y corriente clasificada en franjas: Corriente (no vencida), 1-30 días, 31-60 días, 61-90 días y más de 90 días de mora con proveedores.
+     - Desglose de notas de crédito aplicadas y facturas en disputa o bloqueadas.
+     - Exportación de reportes a formatos Excel y PDF membretado con sumatorias matemáticas coincidentes.
+- **Criterios de Aceptación:**
+  - Los reportes de compras totalizan exactamente las sumas de las órdenes de compra emitidas.
+  - El reporte de cuentas por pagar coincide con el balance de pasivos registrado en la contabilidad.
+  - La clasificación de antigüedad de facturas se calcula exactamente según sus fechas de vencimiento.
+  - Las exportaciones a Excel conservan el formateo numérico y los filtros aplicados en pantalla.
+- **Estado:** [ ] Pendiente
+
+---
+
+## TAREAS COMPLEMENTARIAS (P3 - PORTAL DE PROVEEDORES, LICITACIONES Y OCR)
+
+---
+
+### [ ] [F18-Task17] Implementar portal de proveedores para operaciones externas
+- **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección B (F18-A01) y Sección G (P3)
+- **Prioridad:** P3
+- **Severidad/Clasificación:** Baja (Capacidad complementaria de autoservicio para proveedores externos)
+- **Archivos Involucrados:**
+  - `backend/user-service/Code.gs`
+  - `backend/accounting-service/Code.gs`
+  - `ProveedoresActivos`
+  - `OrdenesCompra`
+  - `CuentasPorPagarGastos`
+- **Dependencias Expuestas:** `ProveedoresActivos`, `OrdenesCompra`, Control de acceso externo
+- **Descripción del Alcance:**
+  Habilitar un espacio web restringido para proveedores formalmente registrados donde puedan consultar las órdenes de compra emitidas a su nombre, confirmar o rechazar pedidos, adjuntar facturas digitales y verificar el estado de sus pagos.
+  Requerimientos Funcionales Detallados:
+  1. Acceso seguro y aislamiento de datos:
+     - Crear credenciales de acceso restringido para proveedores validados.
+     - Garantizar aislamiento estricto ABAC: un proveedor solo puede ver sus propias órdenes y facturas.
+     - Permitir al proveedor cargar sus facturas en PDF y comprobantes de entrega, las cuales ingresan a la bandeja de revisión institucional sin contabilizarse automáticamente.
+     - Permitir revocar el acceso externo en cualquier momento sin alterar el historial comercial.
+- **Criterios de Aceptación:**
+  - Un proveedor autenticado solo visualiza las órdenes de compra emitidas a su empresa.
+  - Se bloquea cualquier intento de acceder a información de otros proveedores.
+  - Las facturas cargadas por el proveedor quedan en estado `PendienteRevision` para validación interna.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F18-Task18] Incorporar procesos competitivos y licitaciones para adquisiciones de mayor cuantía
+- **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección B (F18-A04) y Sección G (P3)
+- **Prioridad:** P3
+- **Severidad/Clasificación:** Baja (Capacidad complementaria para proyectos mayores de infraestructura o equipamiento)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `SolicitudesCompra`
+  - `CotizacionesCompra`
+  - Hoja `ProcesosLicitacion`
+- **Dependencias Expuestas:** `SolicitudesCompra`, `CotizacionesCompra`, `F18-Task05`
+- **Descripción del Alcance:**
+  Para proyectos de alta cuantía (ej. construcción de pabellón, renovación completa de laboratorios), implementar un módulo de licitaciones públicas o privadas con bases técnicas, cronograma de apertura de pliegos y evaluación formal por comité evaluador.
+  Requerimientos Funcionales Detallados:
+  1. Convocatoria y evaluación por comités:
+     - Publicar pliego de condiciones, requisitos técnicos y fechas límite de postulación.
+     - Registrar apertura de pliegos de ofertas con separación de evaluación técnica y económica.
+     - Emitir acta formal de adjudicación con ponderaciones y firmas del comité directivo.
+- **Criterios de Aceptación:**
+  - Se puede estructurar un proceso de licitación con fechas y requisitos obligatorios.
+  - Se ponderan ofertas técnicas y económicas de acuerdo con las bases registradas.
+  - La adjudicación genera automáticamente la orden de compra y el contrato correspondiente.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F18-Task19] Incorporar captura asistida de datos de facturas mediante OCR
+- **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección B (F18-A05) y Sección G (P3)
+- **Prioridad:** P3
+- **Severidad/Clasificación:** Baja (Capacidad complementaria de productividad en digitalización)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `CuentasPorPagarGastos`
+  - Servicios de procesamiento de imágenes / Drive
+- **Dependencias Expuestas:** `CuentasPorPagarGastos`, `F18-Task02`
+- **Descripción del Alcance:**
+  Evaluar la incorporación de un motor de reconocimiento óptico de caracteres (OCR) para precargar automáticamente datos de facturas físicas escaneadas o PDFs de proveedores (número de factura, RTN, subtotal, ISV, total), facilitando la captura manual y reduciendo errores tipográficos antes del Three-Way Matching.
+  Requerimientos Funcionales Detallados:
+  1. Extracción y revisión supervisada:
+     - Cargar PDF o foto de la factura y extraer datos fiscales clave.
+     - Presentar los datos extraídos en un formulario de revisión humana para su validación previa.
+     - Prohibir taxativamente que un documento procesado por OCR se apruebe o contabilice automáticamente sin la confirmación de un operador contable autorizado.
+- **Criterios de Aceptación:**
+  - Se extraen de forma asistida los datos de facturas nítidas en PDF.
+  - Los campos dudosos se resaltan para verificación manual obligatoria.
+  - Ninguna factura se asienta en contabilidad sin la aprobación explícita del usuario.
+- **Estado:** [ ] Pendiente
+
+---
+
+## TAREAS DE ASEGURAMIENTO Y CALIDAD (P0 - SUITE INTEGRAL DE REGRESIÓN DE COMPRAS)
+
+---
+
+### [ ] [F18-Task20] Implementar suite automatizada de pruebas y regresión integral de compras
+- **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección G (P0) y Sección F
+- **Prioridad:** P0
+- **Severidad/Clasificación:** Crítica (Aseguramiento de calidad, prevención de regresiones e integridad en adquisiciones)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs`
+  - `backend/developer-service/Code.gs`
+  - `tests/regression/academic-grading-suite.js`
+- **Dependencias Expuestas:** Suites de pruebas del ecosistema, contratos de API de compras, inventario y cuentas por pagar
+- **Descripción del Alcance:**
+  Implementar la suite integral automatizada `runPhase18PurchasingAndSuppliersRegressionSuite` que valide de manera continua el ciclo de compras completo, recepciones parciales, Three-Way Matching, compromisos presupuestarios y asientos contables por partida doble.
+  Requerimientos Funcionales Detallados:
+  1. Batería de pruebas automatizadas:
+     - Proveedores: registro, validación de RTN, contactos y bloqueo de inactivos.
+     - Solicitudes y cotizaciones: creación, aprobación multinivel y comparativa de ofertas.
+     - Órdenes de compra: prevención de autoaprobaciones (`AUTO_APPROVAL_BLOCKED`), umbral de L 50,000 (`HIGH_VALUE_APPROVAL_REQUIRED`) y generación de PDF.
+     - Recepciones e inventario: recepciones parciales escalonadas sin cierre prematuro de orden e incremento exacto en `InventariosKardex`.
+     - Facturas y Three-Way Matching: detección de diferencias de precio, bloqueo por cantidades no recibidas y conciliación exitosa de partidas conformes.
+     - Cuentas por pagar: pagos parciales, saldo pendiente exacto y aplicación de notas de crédito comerciales.
+     - Presupuesto y contabilidad: reserva y liberación de compromisos presupuestarios y verificación de balance por partida doble en `AsientosContables` (`totalDebe === totalHaber`).
+  2. Prueba de flujo integral E2E (End-to-End):
+     - Ejecutar en una sola prueba el ciclo: Solicitud -> Cotización -> Orden -> Recepción parcial 1 -> Recepción parcial 2 -> Inventario -> Factura con Three-Way Matching -> Aprobación -> Pago parcial -> Pago final -> Asiento contable.
+  3. Aislamiento y reporte de resultados:
+     - Operar sobre datos de prueba aislados sin alterar registros de producción ni las 53 pruebas de regresión previas.
+- **Criterios de Aceptación:**
+  - La suite de regresión valida el ciclo de adquisiciones con el 100% de éxito en entorno controlado.
+  - Se detecta y alerta automáticamente el cierre prematuro de órdenes de compra.
+  - Se bloquean facturas que intenten cobrar cantidades no recibidas físicamente.
+  - Los asientos contables generados se validan como perfectamente equilibrados.
+  - No se produce ninguna regresión en las pruebas de las fases anteriores (Fases 9, 10, 11, 15, 16 y 17).
+- **Estado:** [ ] Pendiente
+
+---
