@@ -407,3 +407,18 @@ RESULTADO DE EVALUACIÓN:
 - Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
 - Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 35: IMPORTADOR INTELIGENTE DE EXCEL, CSV Y HOJAS DE CÁLCULO
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, js/teacher.js, teacher-dashboard.html
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 35 correspondiente al Importador inteligente de Excel, CSV y hojas de cálculo.
+- Se inspeccionaron las 20 subcapacidades funcionales (F35-01 a F35-20) y se ejecutó la matriz de 12 pruebas integrales (PT-F35-01 a PT-F35-12).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md.
+- Se identificó la presencia de SheetJS (xlsx.full.min.js), el modal #modal-excel-importer en teacher-dashboard.html y los endpoints backend validateImportPreview, importDataWithColumnMapping y getMigrationLogs en accounting-service.
+- Se detectaron brechas críticas en correspondencia semántica (el frontend envía rígidamente la primera columna como ID sin selector visual ni sugerencias por significado), pérdida de ceros a la izquierda en identificadores (00125 convertido a 125), falta de validación de referencias relacionales contra la base de datos (estudiantes y cuentas inexistentes) y ausencia de un motor de reversión selectiva de lotes.
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 9 tareas técnicas ([F35-Task01] a [F35-Task09]) organizadas en 3 bloques por prioridad (P0: Task01 a Task05; P1: Task06 a Task08; P2: Task09) y orden secuencial de ejecución con parametrización configurable para opciones en disputa, preservando intactas todas las fases preexistentes (Fases 10 a 34).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================

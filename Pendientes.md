@@ -13669,3 +13669,288 @@
 - **Estado:** [ ] Pendiente
 
 ---
+
+## FASE 35: IMPORTADOR INTELIGENTE DE EXCEL, CSV Y HOJAS DE CÁLCULO
+
+---
+
+### [F35-Task01] [P0] Motor de reconocimiento semántico de encabezados y mapeo interactivo de columnas
+- **Prioridad:** P0 (Crítica)
+- **Orden de Ejecución:** 1 (Independencia posicional y correspondencia semántica)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`suggestColumnMappings`, `validateImportPreview`)
+  - `js/teacher.js`, `teacher-dashboard.html`
+  - Hoja de Cálculo: `CatalogoCamposImportacion`
+- **Subcapacidades Relacionadas:** F35-01, F35-02, F35-03, F35-04, F35-05.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md` / Sección C (F35-03, F35-04) y Matriz CAR-F35-01, CAR-F35-03.
+- **Problema Detectado y Riesgos:**
+  El importador actual asume rígidamente la primera fila como encabezados y toma la primera columna como identificador único sin permitir correspondencias semánticas ni interacción de usuario. Si las columnas de un archivo cambian de orden o utilizan sinónimos habituales (ej. `Alumno`, `No. Cuenta`, `Mes a cancelar`, `Cantidad`), el sistema desalinea los datos, provocando corrupción de expedientes y registros contables erróneos.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Diccionario de sinónimos y coincidencia difusa:*
+     - Implementar un analizador semántico en cliente/servidor que reconozca sinónimos frecuentes en español:
+       * `Alumno`, `Estudiante`, `Educando`, `Discente` -> `Estudiante Relacionado`.
+       * `No. Cuenta`, `Cta`, `Cuenta`, `Codigo Cliente` -> `Cuenta Relacionada`.
+       * `Cantidad`, `Valor`, `Monto`, `Total`, `Importe` -> `Importe de la Operación`.
+       * `Mes a cancelar`, `Periodo`, `Cuota`, `Mes` -> `Período Cobrado`.
+       * `ID registro`, `Ref`, `Referencia`, `Operacion` -> `Identificador de Operación`.
+     - Aplicar algoritmo de distancia de Levenshtein y normalización de texto (minúsculas, sin tildes ni caracteres especiales).
+     - La correspondencia debe basarse en el significado y no en la posición fija de la columna.
+  2. *Interfaz de mapeo interactivo:*
+     - Presentar una tabla clara donde cada columna del archivo muestre ejemplos de valores encontrados y un selector desplegable con los campos descriptivos de destino.
+     - Indicador visual del nivel de confianza: Confirmada (verde), Sugerida (azul), Ambigua (amarillo) y Sin Asignar (gris).
+     - Permitir excluir columnas innecesarias y seleccionar la fila real de encabezados (manejando encabezados desplazados en filas 2 a 10 por títulos o logotipos).
+  3. *Parametrización configurable en plataforma:*
+     - Parámetro en `ConfiguracionInstitucional`: `UMBRAL_CONFIANZA_MAPEADO_AUTOMATICO` (Porcentaje mínimo de coincidencia, por defecto 80%) y `EXIGIR_CONFIRMACION_MANUAL_MAPEO` (Valores: `SIEMPRE` vs. `SOLO_SI_HAY_AMBIGUEDADES`).
+- **Criterios de Aceptación:**
+  - [ ] Un archivo con columnas en orden alterado reconoce las correspondencias correctas por su significado.
+  - [ ] Un archivo con encabezados desplazados (fila 4) permite al usuario elegir la fila correcta sin desfasar los datos.
+  - [ ] Las columnas no mapeadas o excluidas no se importan ni alteran campos de destino.
+  - [ ] Las coincidencias ambiguas requieren confirmación explícita del usuario y no se asignan a ciegas.
+  - [ ] La interfaz permite modificar manualmente cualquier asignación sugerida antes de continuar.
+- **Dependencias:** F35-Task02 (normalización de tipos).
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-Task02] [P0] Normalizador de tipos de datos, formatos regionales y preservación de identificadores
+- **Prioridad:** P0 (Crítica)
+- **Orden de Ejecución:** 2 (Integridad de datos crudos antes de validaciones)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`normalizeImportValue`, `validateImportPreview`)
+  - `js/teacher.js`
+- **Subcapacidades Relacionadas:** F35-06, F35-07.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md` / Sección C (F35-06) y Matriz CAR-F35-06.
+- **Problema Detectado y Riesgos:**
+  SheetJS y las funciones de lectura convierten automáticamente identificadores alfanuméricos con ceros a la izquierda (`00125`) a números enteros (`125`), corrompen números largos (>15 dígitos) por redondeo de punto flotante de JavaScript o notación científica, y malinterpretan fechas ambiguas (`01/02/2026`) según la zona horaria del navegador, generando identificadores irreconocibles y desfases de calendario.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Lectura de texto estricta y preservación de ceros a la izquierda:*
+     - Forzar en SheetJS la opción `raw: false` y tratamiento de celdas como texto plano para identificadores, códigos de matrícula, números de cuenta y números de identidad/DNI.
+     - Preservar íntegros los ceros iniciales (`00125` debe conservarse como cadena `"00125"`).
+     - Impedir la notación científica en códigos largos (ej. tarjetas, referencias bancarias de 16-20 dígitos).
+  2. *Normalización regional de fechas y cantidades monetarias:*
+     - Manejar formatos de fecha con detección inteligente y configuración explícita: `DD/MM/AAAA` (estándar regional hondureño) vs. `MM/DD/AAAA` o `AAAA-MM-DD`.
+     - Si una fecha es ambigua (ambos dígitos <= 12), solicitar confirmación explícita al usuario en la vista previa.
+     - Normalizar importes monetarios admitiendo formatos europeos/latinoamericanos (`1.250,50`) y anglosajones (`1,250.50`), convirtiendo a decimal estándar flotante de 2 decimales sin pérdida de centavos.
+     - Preservar caracteres especiales, tildes y el signo `+` en números telefónicos (`+504`).
+  3. *Parametrización configurable en plataforma:*
+     - Configuración en `ConfiguracionInstitucional`: `FORMATO_FECHA_IMPORTACION_PREDETERMINADO` (`DD/MM/AAAA` vs `AAAA-MM-DD`) y `SEPARADOR_DECIMAL_IMPORTACION` (`PUNTO` vs `COMA` vs `AUTO_DETECTAR`).
+- **Criterios de Aceptación:**
+  - [ ] Identificadores con ceros iniciales conservan exactamente su longitud y caracteres en el modelo final.
+  - [ ] Códigos largos de más de 15 dígitos no sufren truncamiento ni conversión a notación científica.
+  - [ ] Las cantidades con separadores de miles y decimales se normalizan exactamente a su valor numérico real.
+  - [ ] Fechas ambiguas son detectadas y resueltas conforme a la política regional configurada.
+  - [ ] Caracteres con acentos y letras `ñ` se preservan sin corrupción de codificación UTF-8.
+- **Dependencias:** F35-Task01.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-Task03] [P0] Validación de referencias relacionales y detección inteligente de duplicados
+- **Prioridad:** P0 (Crítica)
+- **Orden de Ejecución:** 3 (Consistencia relacional y prevención de colisiones)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`validateImportReferencesAndDuplicates`)
+  - `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`
+  - Hojas de Cálculo: `Estudiantes`, `MatriculasEstudiantes`, `CatalogoCuentasContables`, `CargosEstudiante`
+- **Subcapacidades Relacionadas:** F35-08, F35-09.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md` / Sección C (F35-08, F35-09) y Matriz CAR-F35-08, CAR-F35-09.
+- **Problema Detectado y Riesgos:**
+  El importador actual valida únicamente que el campo identificador no esté vacío, pero no comprueba si las entidades relacionadas (alumno, cuenta, matrícula) existen en el sistema ni verifica si el registro ya fue importado con anterioridad. Esto permite insertar transacciones huérfanas o duplicar pagos masivamente ante reintentos.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Validación de referencias cruzadas:*
+     - Verificar contra las hojas de la base de datos la existencia real de las entidades foráneas:
+       * El `estudianteId` debe existir en `Estudiantes`.
+       * La `matriculaId` debe coincidir con el estudiante y el ciclo lectivo activo.
+       * El `noCuenta` debe pertenecer al responsable financiero vinculado al estudiante.
+     - Marcar como error bloqueante cualquier fila con referencias inexistentes o cruzadas incorrectamente.
+  2. *Detección de duplicados internos y externos:*
+     - *Duplicados internos:* Detectar filas duplicadas dentro del mismo archivo (mismo identificador de operación o combinación clave estudiante + concepto + mes).
+     - *Duplicados externos:* Comparar contra la base de datos existente para clasificar cada fila en:
+       * `Crear`: Registro nuevo que no existe en la plataforma.
+       * `Actualizar`: Registro existente que contiene valores modificados.
+       * `Sin Cambios`: Registro existente con exactamente la misma información (se omite por defecto).
+       * `Conflicto / Ambigüedad`: Mismo identificador con datos contradictorios o inconsistentes.
+  3. *Parametrización configurable en plataforma:*
+     - Parámetro en `ConfiguracionInstitucional`: `POLITICA_DUPLICADOS_IMPORTACION`: Valores `OMITIR_EXISTENTES` (por defecto) vs. `ACTUALIZAR_EXISTENTES` vs. `RECHAZAR_LOTE_COMPLETO`.
+- **Criterios de Aceptación:**
+  - [ ] Se detecta y rechaza cualquier fila que haga referencia a un estudiante o matrícula inexistente.
+  - [ ] Las filas con identificadores repetidos dentro del archivo son señaladas como duplicadas.
+  - [ ] Los registros existentes idénticos son clasificados como "Sin Cambios" y no se duplican en la base de datos.
+  - [ ] Las posibles colisiones o actualizaciones son presentadas al usuario con comparativa de valores actuales vs nuevos.
+- **Dependencias:** F35-Task01, F35-Task02.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-Task04] [P0] Simulación obligatoria en vista previa y ejecución atómica por lotes
+- **Prioridad:** P0 (Crítica)
+- **Orden de Ejecución:** 4 (Comprobación previa sin efectos y atomicidad de escritura)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`validateImportPreview`, `importDataWithColumnMapping`)
+  - `js/teacher.js`, `teacher-dashboard.html`
+  - Hojas de destino según módulo
+- **Subcapacidades Relacionadas:** F35-10, F35-11, F35-12, F35-18.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md` / Sección C (F35-10, F35-11, F35-12) y Matriz CAR-F35-10, CAR-F35-12.
+- **Problema Detectado y Riesgos:**
+  Actualmente, el botón de confirmación en la interfaz envía directamente los datos a procesar sin obligar a revisar una simulación de los efectos. Además, la función en backend solo registra un resumen en `AuditoriaMigraciones` sin ejecutar inserciones reales en las tablas de negocio, careciendo de ScriptLock y control transaccional por lotes.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Simulación y vista previa obligatoria sin guardar:*
+     - Exigir un paso intermedio no destructivo de simulación que analice todas las filas y devuelva:
+       * Total de filas analizadas.
+       * Conteo por categoría: `Crear`, `Actualizar`, `Sin Cambios`, `Omitir`, `Revisión` y `Error`.
+       * Lista de los primeros 10 errores y advertencias detallados.
+     - Bloquear el botón de "Confirmar Importación" si existen errores bloqueantes en el lote.
+  2. *Ejecución real atómica y concurrencia controlada:*
+     - Implementar la inserción real en las hojas de cálculo correspondientes según el módulo destino (`CargosEstudiante`, `Estudiantes`, etc.).
+     - Utilizar `LockService.getScriptLock()` con espera de 30 segundos para garantizar atomicidad contra importaciones concurrentes.
+     - Asignar una clave de idempotencia (`idempotencyKey` o `ejecucionId`) única por lote, impidiendo que reintentos de red dupliquen inserciones.
+     - Fragmentación en lotes (chunks) de máximo 200 filas para prevenir exceder los límites de tiempo de Apps Script (360 segundos).
+  3. *Parametrización configurable en plataforma:*
+     - Parámetro en `ConfiguracionInstitucional`: `MODO_TRANSACCIONAL_IMPORTACION`: Valores `TODO_O_NADA` (si falla una fila se rechaza el lote completo) vs. `IMPORTAR_VALIDOS_DESCARTAR_FALLIDOS`.
+- **Criterios de Aceptación:**
+  - [ ] La vista previa simula los efectos sin alterar ninguna celda en la base de datos de negocio.
+  - [ ] El botón de confirmación permanece deshabilitado mientras existan errores relacionales o estructurales sin resolver.
+  - [ ] Las inserciones reales se efectúan en las hojas correctas preservando todos los campos mapeados.
+  - [ ] Dos ejecuciones simultáneas se serializan mediante LockService sin colisión de registros.
+  - [ ] Repetir la solicitud con la misma clave de idempotencia devuelve el resultado previo sin reinsertar duplicados.
+- **Dependencias:** F35-Task03.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-Task05] [P0] Historial estructurado y motor de reversión selectiva de importaciones
+- **Prioridad:** P0 (Crítica)
+- **Orden de Ejecución:** 5 (Trazabilidad forense y desecho seguro de lotes)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`revertImportBatch`, `getMigrationLogs`, `getImportBatchDetail`)
+  - Hoja de Cálculo: `AuditoriaMigraciones`, `DetalleRegistrosImportados`
+- **Subcapacidades Relacionadas:** F35-13, F35-15, F35-16.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md` / Sección C (F35-15) y Matriz CAR-F35-15.
+- **Problema Detectado y Riesgos:**
+  No existe ninguna función para revertir una importación errónea. Si un funcionario carga un archivo con tarifas o asignaciones incorrectas, el personal se ve obligado a depurar manualmente miles de celdas en Google Sheets, con alto riesgo de borrar operaciones legítimas preexistentes.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Registro granular de entidades importadas:*
+     - Auto-crear la hoja `DetalleRegistrosImportados` (`EjecucionId`, `HojaDestino`, `FilaId`, `AccionRealizada`, `ValoresPreviosJSON`, `ValoresNuevosJSON`, `EstadoReversion`).
+     - Vincular cada fila insertada o actualizada con su `ejecucionId` de lote.
+  2. *Motor de reversión selectiva e inteligente:*
+     - Implementar `revertImportBatch(payload)` con validación de seguridad:
+       * Si el registro fue *Creado*: eliminar la fila o marcarla como eliminada lógicamente, **únicamente si no tiene transacciones secundarias dependientes** (ej. no se puede revertir un cargo si ya tiene un pago aplicado).
+       * Si el registro fue *Actualizado*: restaurar exactamente los valores previos almacenados en `ValoresPreviosJSON`.
+     - Si un registro sufrió modificaciones posteriores manuales, no revertirlo automáticamente: marcarlo como `Requiere Intervención` y explicar el motivo al usuario.
+     - Registrar en `AuditoriaMigraciones` el evento formal de reversión con fecha, usuario responsable e IP.
+- **Criterios de Aceptación:**
+  - [ ] Cada importación registra la lista exacta de identificadores creados y valores previos modificados.
+  - [ ] Ejecutar la reversión de un lote creado sin dependencias restaura la base de datos a su estado original.
+  - [ ] La reversión detecta registros que recibieron cambios posteriores y evita sobrescribirlos silenciosamente.
+  - [ ] Toda reversión queda auditada con responsable, fecha y resultado detallado.
+- **Dependencias:** F35-Task04.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-Task06] [P1] Perfiles de mapeo reutilizables por formato y origen
+- **Prioridad:** P1 (Alta)
+- **Orden de Ejecución:** 6 (Eficiencia en cargas recurrentes)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`saveImportMappingProfile`, `getImportMappingProfiles`, `deleteImportMappingProfile`)
+  - `js/teacher.js`, `teacher-dashboard.html`
+  - Hoja de Cálculo: `PerfilesMapeoImportacion`
+- **Subcapacidades Relacionadas:** F35-14.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md` / Sección C (F35-14) y Matriz CAR-F35-14.
+- **Problema Detectado y Riesgos:**
+  Instituciones que importan periódicamente extractos bancarios del mismo banco o reportes de sistemas externos deben configurar manualmente el mapeo de columnas cada vez, aumentando el tiempo operativo y arriesgando errores humanos por fatiga de configuración.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Persistencia de perfiles de mapeo:*
+     - Auto-crear la hoja `PerfilesMapeoImportacion` (`PerfilId`, `NombrePerfil`, `ModuloDestino`, `OrigenDatos`, `MapeoColumnasJSON`, `ConfiguracionRegionalJSON`, `CreadoPor`, `EsPublico`).
+     - Permitir al usuario guardar un mapeo exitoso con un nombre representativo (ej. `Extracto Banco Atlántida CSV`, `Reporte Matrícula SACE`).
+  2. *Reutilización automática y detección de cambios de estructura:*
+     - Al cargar un archivo, si coincide con los encabezados de un perfil guardado, sugerir aplicar el perfil automáticamente.
+     - Si el archivo del proveedor presenta ligeras variaciones (ej. una columna nueva), identificar las diferencias y solicitar confirmación únicamente para las columnas modificadas.
+- **Criterios de Aceptación:**
+  - [ ] El usuario puede guardar la configuración de correspondencias de un archivo validado.
+  - [ ] Al cargar un archivo posterior con la misma estructura, el perfil se aplica de inmediato.
+  - [ ] Si el proveedor altera columnas, el sistema resalta las diferencias sin invalidar todo el perfil.
+- **Dependencias:** F35-Task01.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-Task07] [P1] Descarga de informes de error y registros observados
+- **Prioridad:** P1 (Alta)
+- **Orden de Ejecución:** 7 (Autonomía de corrección de datos para el usuario)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`generateImportErrorReportCSV`, `validateImportPreview`)
+  - `js/teacher.js`
+- **Subcapacidades Relacionadas:** F35-13, F35-17.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md` / Sección C (F35-13) y Matriz CAR-F35-13.
+- **Problema Detectado y Riesgos:**
+  Cuando un archivo con cientos de filas contiene 15 filas con errores, el sistema muestra advertencias genéricas o trunca la lista a los primeros 10 errores en pantalla. El usuario no puede identificar con precisión qué filas fallaron ni corregirlas sin revisar el archivo completo manualmente.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Generación de reporte detallado de rechazos:*
+     - Generar un archivo descargable (CSV/XLSX) que contenga exclusivamente las filas rechazadas o en conflicto.
+     - Añadir dos columnas al inicio del archivo descargado: `NumeroFilaOriginal` y `MotivoExactoError` (ej. `Fila 42: Estudiante ID-502 no encontrado`).
+  2. *Facilidad de reingreso:*
+     - El archivo descargado debe conservar el formato y encabezados originales para que el usuario pueda corregir los valores erróneos y volverlo a subir directamente sin reformatear.
+- **Criterios de Aceptación:**
+  - [ ] El usuario puede descargar un CSV con todas las filas observadas y su motivo exacto.
+  - [ ] El reporte identifica la fila, la columna y la regla de negocio incumplida.
+  - [ ] El archivo de rechazos corregido puede cargarse de nuevo sin necesidad de pasos adicionales.
+- **Dependencias:** F35-Task03, F35-Task04.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-Task08] [P1] Procesamiento por bloques y respaldo del archivo de trabajo
+- **Prioridad:** P1 (Alta)
+- **Orden de Ejecución:** 8 (Resiliencia ante cuotas de infraestructura Google Apps Script)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`processImportChunk`, `backupImportSourceFile`)
+  - `js/teacher.js`
+- **Subcapacidades Relacionadas:** F35-18, F35-19.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md` / Sección C (F35-18, F35-19) y Matriz CAR-F35-18, CAR-F35-19.
+- **Problema Detectado y Riesgos:**
+  Google Apps Script impone un límite estricto de tiempo de ejecución de 6 minutos y límites de memoria en payloads JSON. Cargar un archivo con miles de filas en una sola llamada provoca timeouts (`Exceeded maximum execution time`), dejando la importación truncada a la mitad y en estado corrupto.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Procesamiento secuencial por bloques (Chunking):*
+     - En el frontend, segmentar archivos de más de 200 filas en lotes secuenciales de 150-200 registros.
+     - Enviar cada bloque con `ejecucionId`, `numeroLote` y `totalLotes`.
+     - Mostrar una barra de progreso porcentual fluida en la interfaz.
+  2. *Respaldo seguro en Google Drive:*
+     - Guardar una copia cifrada/privada del archivo original en una carpeta protegida de Google Drive (`Drive/Auditoria/Importaciones/`) antes de iniciar la ejecución, permitiendo auditorías forenses posteriores.
+- **Criterios de Aceptación:**
+  - [ ] Archivos de más de 1,000 filas se procesan por bloques sin exceder los límites de tiempo de GAS.
+  - [ ] La interfaz refleja el progreso en tiempo real de cada bloque procesado.
+  - [ ] Si un bloque intermedio falla, el sistema identifica el punto de interrupción y permite reanudar sin duplicar filas previas.
+  - [ ] El archivo original queda respaldado en Google Drive vinculado al identificador de importación.
+- **Dependencias:** F35-Task04.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F35-Task09] [P2] Asistente guiado responsivo en 4 pasos y optimización móvil
+- **Prioridad:** P2 (Media / Mejora)
+- **Orden de Ejecución:** 9 (Experiencia de usuario y accesibilidad multidispositivo)
+- **Componentes Afectados:**
+  - `js/teacher.js`, `teacher-dashboard.html`
+- **Subcapacidades Relacionadas:** F35-17, F35-20.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md` / Sección C (F35-17) y Sección G.
+- **Problema Detectado y Riesgos:**
+  El modal actual (`#modal-excel-importer`) es una ventana monolítica que no guía al usuario a través de un flujo claro, carece de indicadores de progreso por etapas y no está adaptada para teléfonos o tablets, provocando confusión en secretarios y administradores durante la importación.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Asistente por etapas (Wizard):*
+     - Reestructurar el modal en un asistente guiado de 4 pasos secuenciales:
+       * *Paso 1: Carga y Detección:* Selección de archivo, hoja y delimitadores.
+       * *Paso 2: Correspondencias:* Mapeo interactivo de columnas con sugerencias semánticas.
+       * *Paso 3: Validación y Simulación:* Matriz de efectos (Crear/Actualizar/Omitir) y visualización de errores.
+       * *Paso 4: Confirmación y Resultados:* Ejecución real, estadísticas finales y descarga de rechazos.
+     - Permitir regresar a pasos anteriores sin perder la configuración ni los mapeos ya definidos.
+  2. *Diseño responsivo móvil:*
+     - Adaptar tablas y controles para visualización fluida en pantallas menores a 768px, sustituyendo filas anchas por tarjetas de correspondencia apiladas.
+- **Criterios de Aceptación:**
+  - [ ] El usuario completa la importación mediante un asistente intuitivo paso a paso con indicador de avance.
+  - [ ] Regresar a un paso previo conserva los mapeos y opciones seleccionadas sin reiniciar el proceso.
+  - [ ] La interfaz es plenamente operable en dispositivos móviles sin desbordamiento horizontal.
+- **Dependencias:** F35-Task01, F35-Task04.
+- **Estado:** [ ] Pendiente
+
+---
