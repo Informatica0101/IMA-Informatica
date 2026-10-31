@@ -12814,3 +12814,296 @@
 - **Estado:** [ ] Pendiente
 
 ---
+
+
+---
+
+# FASE 33: FORMULARIOS INSTITUCIONALES Y TRÁMITES DIGITALES
+
+## RESUMEN DE SUB-CAPACIDADES Y TAREAS TÉCNICAS (FASE 33)
+
+| ID | Prioridad | Orden Secuencial | Tarea Técnica / Requisito | Componentes Principales | Subcapacidad | Estado |
+|---|---|---|---|---|---|---|
+| [F33-Task01] | P0 | 1 | Motor de Modalidades de Trámite (En Línea, Descarga Vacía e Impresión Física) | `backend/user-service/Code.gs`, `backend/accounting-service/Code.gs` | F33-01, F33-03 | [ ] Pendiente |
+| [F33-Task02] | P0 | 2 | Persistencia Multi-Dispositivo de Borradores de Trámites en Servidor | `backend/user-service/Code.gs`, `js/student.js`, `js/ui-common.js` | F33-04 | [ ] Pendiente |
+| [F33-Task03] | P0 | 3 | Subsanación Granular y Congelamiento de Campos Aprobados en Solicitudes | `backend/user-service/Code.gs`, `js/student.js` | F33-10, F33-11 | [ ] Pendiente |
+| [F33-Task04] | P1 | 4 | Consola Unificada de Gestión de Trámites y Bandejas Operativas por SLA | `dashboards/dashboard-secretaria.html`, `dashboards/dashboard-direccion.html` | F33-16 | [ ] Pendiente |
+| [F33-Task05] | P1 | 5 | Motor de Distribución Dinámica, Asignación y Delegación de Responsables | `backend/user-service/Code.gs` | F33-08, F33-09 | [ ] Pendiente |
+| [F33-Task06] | P1 | 6 | Validaciones Cruzadas Institucionales y Detección de Trámites Duplicados | `backend/user-service/Code.gs`, `backend/academic-service/Code.gs` | F33-05, F33-07 | [ ] Pendiente |
+| [F33-Task07] | P1 | 7 | Trazabilidad Completa del Legajo Documental y Firma de Conformidad | `backend/user-service/Code.gs`, `backend/accounting-service/Code.gs` | F33-12, F33-14 | [ ] Pendiente |
+| [F33-Task08] | P2 | 8 | Paquetes de Trámites Agrupados y Solicitudes Recurrentes Anuales | `backend/user-service/Code.gs` | F33-01, F33-03 | [ ] Pendiente |
+| [F33-Task09] | P2 | 9 | Generador Automático de Constancias de Recepción Física con Código QR | `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs` | F33-03, F33-13 | [ ] Pendiente |
+| [F33-Task10] | P2 | 10 | Suite Automatizada de Pruebas de Ciclo de Vida de Trámites y Regresión | `tests/regression/academic-grading-suite.js`, `backend/developer-service/Code.gs` | F33-14, F33-16 | [ ] Pendiente |
+
+---
+
+### BLOQUE 1. CAPTURA INTEGRAL, MODALIDADES Y BORRADORES (P0)
+
+### [F33-Task01] [P0] Motor de Modalidades de Trámite (En Línea, Descarga Vacía e Impresión Física)
+- **Orden de Ejecución:** 1
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`getFormBlankTemplatePdf`, `registerPhysicalFormReception`)
+  - `backend/accounting-service/Code.gs`
+  - Hoja: `FormulariosInstitucionales`, `SolicitudesTramites`, `DocumentosEstudiante`
+- **Subcapacidades Relacionadas:** F33-01, F33-03.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md` / Sección C (F33-01, F33-03) y Sección H.
+- **Problema Detectado y Riesgos:**
+  Actualmente los trámites solo pueden presentarse en línea mediante envío directo web. No existe un generador estandarizado que permita descargar el formulario vacío limpio (sin datos de otros usuarios) o generar una versión optimizada para impresión física con casillas y líneas suficientes para llenado manual a tinta, impidiendo atender a familias sin conectividad digital o trámites que exigen radicación en ventanilla.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Generación de las 3 modalidades de presentación:*
+     - En línea: formulario interactivo responsivo con validaciones en tiempo real y envío directo al backend.
+     - Descarga de formulario vacío: renderizar PDF oficial con el membrete institucional y campos en blanco sin precarga de datos personales ajenos.
+     - Imprimible para entrega física: versión maquetada con márgenes de seguridad para impresión, líneas de escritura manual dimensionadas, instrucciones claras al pie y recuadros para firmas físicas de puño y letra.
+  2. *Radicación y digitalización de trámites físicos:*
+     - Interfaz en el panel de Secretaría para registrar la recepción de trámites entregados físicamente en ventanilla escolar.
+     - Adjuntar la fotografía o PDF escaneado del formulario físico firmado, indexándolo en `SolicitudesTramites` con número de radicación oficial y fecha/hora de recepción física.
+     - En caso de duda sobre obligatoriedad digital o física, habilitar parámetro configurable por tipo de trámite (`MODALIDADES_PERMITIDAS`: `SOLO_ONLINE`, `SOLO_FISICA`, `HIBRIDA_ONLINE_Y_FISICA`).
+- **Criterios de Aceptación:**
+  - [ ] El usuario puede descargar un formulario vacío oficial sin que aparezcan datos residuales de sesiones previas.
+  - [ ] La versión imprimible cuenta con espaciado amplio para tinta y no corta textos ni casillas en papel Carta/Oficio.
+  - [ ] Secretaría puede radicar solicitudes físicas asociando el archivo escaneado al expediente del alumno.
+  - [ ] El expediente resultante sigue el mismo flujo de revisión institucional que un trámite enviado en línea.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F33-Task02] [P0] Persistencia Multi-Dispositivo de Borradores de Trámites en Servidor
+- **Orden de Ejecución:** 2
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`saveFormDraftSubmission`, `getFormDraftSubmission`, `discardFormDraft`)
+  - `js/student.js`, `js/ui-common.js`
+  - Hoja: `BorradoresTramites`
+- **Subcapacidades Relacionadas:** F33-04.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md` / Sección C (F33-04) y Sección G.
+- **Problema Detectado y Riesgos:**
+  El guardado de borradores depende actualmente de `LocalStorage` en el navegador del usuario. Si un padre de familia inicia una solicitud compleja en su computadora de trabajo y desea continuarla desde su teléfono móvil en su hogar, o si borra la caché del navegador, pierde la totalidad de los campos diligenciados y los archivos adjuntos pre-cargados.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Tabla relacional de borradores en backend (`BorradoresTramites`):*
+     - Estructura: `[draftId, userId, estudianteId, formId, respuestasJSON, adjuntosJSON, fechaUltimoGuardado, estadoBorrador]`.
+     - Sincronización transparente: autoguardado periódico cada 30 segundos y al cambiar de sección, actualizando el borrador en servidor.
+     - Conservación de archivos adjuntos temporales ya subidos a Drive sin eliminarlos durante la sesión de borrador.
+  2. *Recuperación multi-dispositivo y control de concurrencia:*
+     - Al autenticarse desde cualquier dispositivo (computadora, tableta, teléfono), detectar borradores activos asociados al `userId` y permitir reanudar el trámite en la etapa exacta donde se dejó.
+     - Detección de edición concurrente: advertir si el mismo borrador está abierto en dos pestañas simultáneas.
+     - Política de caducidad automática de borradores inactivos configurable (`DIAS_EXPIRACION_BORRADORES`: 30 días por defecto) para limpieza higiénica de almacenamiento.
+     - Garantizar que un borrador guardado no aparezca jamás como solicitud oficialmente enviada o recibida ante Secretaría.
+- **Criterios de Aceptación:**
+  - [ ] Un borrador iniciado en escritorio se recupera intacto con sus adjuntos al abrir sesión en un teléfono móvil.
+  - [ ] Las pérdidas temporales de conexión informan el estado "Cambios pendientes de sincronizar" sin perder datos.
+  - [ ] Un borrador no genera notificaciones a Secretaría ni se computa en las bandejas de trámites recibidos.
+  - [ ] El envío definitivo purga el borrador y crea formalmente el registro en `SolicitudesTramites`.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F33-Task03] [P0] Subsanación Granular y Congelamiento de Campos Aprobados en Solicitudes
+- **Orden de Ejecución:** 3
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`requestFormCorrectionStep`, `submitFormCorrectionRevision`)
+  - `js/student.js`
+  - Hoja: `SolicitudesTramites`, `RevisionesDecisionesTramite`
+- **Subcapacidades Relacionadas:** F33-10, F33-11.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md` / Sección C (F33-10) y Sección G.
+- **Problema Detectado y Riesgos:**
+  Cuando un revisor devuelve una solicitud con observaciones (ej. "adjuntar partida de nacimiento más legible"), el solicitante debe tener la capacidad de corregir exclusivamente el campo observado sin alterar datos ya validados (ej. nombre o grado), impidiendo que una subsanación modifique información previamente aprobada de forma inadvertida.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Subsanación dirigida con bloqueo granular:*
+     - El revisor marca específicamente los campos o adjuntos que requieren corrección (`camposObservadosJSON`), indicando la justificación pública obligatoria.
+     - Al reabrir el formulario, la interfaz habilita únicamente los controles observados para edición, congelando en modo solo lectura (`read-only`) todos los demás campos previamente aceptados.
+  2. *Conservación de versiones históricas e inmutabilidad:*
+     - El reenvío no crea un nuevo trámite duplicado; conserva el `solicitudId` original e incrementa el contador de versión de la solicitud (`v1`, `v2`, etc.).
+     - Asentar en `RevisionesDecisionesTramite` la nueva respuesta del usuario, guardando la copia histórica del valor anterior y del valor corregido para trazabilidad.
+     - Fecha límite de subsanación paramétrica: si vence el plazo sin respuesta del usuario, aplicar regla configurable (`EXPIRACION_AUTOMATICA` vs `RECORDATORIO_PREVENTIVO`).
+- **Criterios de Aceptación:**
+  - [ ] El solicitante solo puede modificar los campos señalados por el revisor; los demás permanecen bloqueados.
+  - [ ] El reenvío de la corrección actualiza el expediente sin generar registros duplicados en `SolicitudesTramites`.
+  - [ ] El revisor puede visualizar el diff exacto entre la versión observada y la versión corregida.
+  - [ ] No se reinician aprobaciones de etapas previas a menos que el dato corregido afecte directamente dichas competencias.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 2. BANDEJAS OPERATIVAS, ASIGNACIÓN Y SLA (P1)
+
+### [F33-Task04] [P1] Consola Unificada de Gestión de Trámites y Bandejas Operativas por SLA
+- **Orden de Ejecución:** 4
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `dashboards/dashboard-secretaria.html`, `dashboards/dashboard-direccion.html`
+  - `backend/user-service/Code.gs` (`getDepartmentalRequestsQueue`, `updateRequestOperationalPriority`)
+  - Hoja: `SolicitudesTramites`
+- **Subcapacidades Relacionadas:** F33-16.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md` / Sección C (F33-16) y Sección H.
+- **Problema Detectado y Riesgos:**
+  El personal administrativo de Secretaría y Dirección carece de una consola centralizada de trabajo para despachar trámites. Las solicitudes se encuentran dispersas en listados básicos sin filtros multicriterio, sin ordenación por tiempos de espera ni semáforos de cumplimiento de SLA.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Bandeja unificada de trabajo departamental:*
+     - Vistas segmentadas: `Recibidas`, `Asignadas_A_Mi`, `En_Revision`, `Observadas_Pendientes_Familia`, `Aprobadas` y `Vencidas`.
+     - Filtros multicriterio: por tipo de trámite, grado del estudiante, departamento, fecha de presentación y estado operativo.
+     - Búsqueda instantánea por identificador (`SOL-FRM-...`), DNI del estudiante o nombre del apoderado.
+  2. *Semáforos de cumplimiento de SLA y alertas visuales:*
+     - Cálculo de tiempo transcurrido desde la radicación vs tiempo máximo configurado (SLA de 24h, 48h o 72h).
+     - Indicador visual tipo semáforo: Verde (`En Plazo`), Amarillo (`Próximo a Vencer < 4h`), Rojo (`Vencido`).
+     - Alertas directas a revisores cuando una solicitud esté en riesgo de incumplimiento.
+- **Criterios de Aceptación:**
+  - [ ] Secretaría y Dirección disponen de una consola ágil para gestionar y resolver trámites en un solo panel.
+  - [ ] Los filtros y búsquedas responden en menos de 1 segundo sobre grandes volúmenes de solicitudes.
+  - [ ] Las solicitudes vencidas se destacan visualmente con semáforo rojo y permiten escalamiento prioritario.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F33-Task05] [P1] Motor de Distribución Dinámica, Asignación y Delegación de Responsables
+- **Orden de Ejecución:** 5
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`assignRequestToResponsible`, `reassignDepartmentalRequest`)
+  - Hoja: `FlujosAprobacion`, `SolicitudesTramites`
+- **Subcapacidades Relacionadas:** F33-08, F33-09.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md` / Sección C (F33-08, F33-09).
+- **Problema Detectado y Riesgos:**
+  La asignación de solicitudes a revisores depende frecuentemente de áreas estáticas en código. No existe un motor configurable que asigne el trámite según el nivel educativo del alumno (ej. trámites de Primaria asignados a Coordinación de Primaria) ni reglas de delegación por ausencias.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Reglas de distribución automática de expedientes:*
+     - Enrutamiento por reglas configurables: departamento destino, grado académico del alumno, sede o tipo de solicitud.
+     - Asignación balanceada por turno (round-robin) o asignación directa a la cola general del departamento.
+  2. *Reasignación justificada y delegación temporal:*
+     - Permitir a jefes de departamento reasignar solicitudes a otros revisores con registro obligatorio del motivo.
+     - Integración con delegaciones temporales por vacaciones o incapacidades médicas (`DelegacionesResponsabilidad`), transfiriendo temporalmente las bandejas activas al sustituto acreditado.
+- **Criterios de Aceptación:**
+  - [ ] Las solicitudes se enrutan automáticamente al revisor o coordinación competente según el grado del estudiante.
+  - [ ] Toda reasignación registra en auditoría el usuario emisor, el receptor y la justificación.
+  - [ ] Las ausencias programadas delegan las solicitudes al sustituto sin paralizar la atención de familias.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F33-Task06] [P1] Validaciones Cruzadas Institucionales y Detección de Trámites Duplicados
+- **Orden de Ejecución:** 6
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`validateCrossInstitutionalRequestRules`, `detectDuplicateActiveRequests`)
+  - `backend/academic-service/Code.gs`
+  - Hoja: `SolicitudesTramites`, `ExpedientesEstudiantes`
+- **Subcapacidades Relacionadas:** F33-05, F33-07.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md` / Sección C (F33-05, F33-07) y Sección G.
+- **Problema Detectado y Riesgos:**
+  Padres de familia pueden enviar dos o más veces la misma solicitud de constancia o justificación por impaciencia ante la falta de respuesta inmediata, saturando las bandejas con trámites duplicados idénticos en curso.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Detección preventiva de solicitudes duplicadas:*
+     - Comprobar en tiempo real si el estudiante ya tiene un trámite activo del mismo tipo en estado `Enviada`, `En_Revision` o `Requiere_Informacion`.
+     - Advertir en pantalla al solicitante: *"Ya existe una solicitud en curso para este trámite presentada el [Fecha]. ¿Desea consultarla en lugar de enviar una nueva?"*.
+     - Política configurable por tipo de trámite: `BLOQUEAR_DUPLICADOS_ACTIVOS` vs `ADVERTIR_Y_PERMITIR`.
+  2. *Validación cruzada contra registros académicos:*
+     - Validar que el estudiante no esté retirado o inactivo al solicitar justificaciones de inasistencia ordinarias.
+     - Contrastar la vigencia del período lectivo y la relación legal del apoderado con el expediente del alumno antes de admitir la solicitud.
+- **Criterios de Aceptación:**
+  - [ ] El sistema previene el envío accidental de trámites repetidos para el mismo estudiante y período.
+  - [ ] Se verifica la validez de la matrícula y la vinculación familiar antes de permitir el despacho del formulario.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F33-Task07] [P1] Trazabilidad Completa del Legajo Documental y Firma de Conformidad
+- **Orden de Ejecución:** 7
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`getCompleteRequestDossierAuditTrail`)
+  - `backend/accounting-service/Code.gs`
+  - Hoja: `SolicitudesTramites`, `RevisionesDecisionesTramite`, `FirmasConformidades`, `DocumentosEscolaresEmitidos`
+- **Subcapacidades Relacionadas:** F33-12, F33-14.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md` / Sección C (F33-12, F33-14).
+- **Problema Detectado y Riesgos:**
+  Al concluir un trámite, los componentes suelen residir en tablas distintas. Se requiere consolidar la visualización del legajo institucional integral que permita a las autoridades inspeccionar en un solo expediente digital la solicitud inicial, las evidencias, los comentarios, las firmas y el PDF emitido.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Legajo digital consolidado:*
+     - Ficha única del trámite que reúna:
+       - Datos del solicitante y estudiante representado.
+       - Respuestas originales del formulario y respuestas corregidas.
+       - Archivos adjuntos y evidencias con fecha de subida y validez.
+       - Línea de tiempo inmutable de decisiones tomadas por revisores y directores.
+       - Constancias de firma electrónica con sus hashes criptográficos y tokens de verificación.
+       - Documento final emitido con su CUV oficial y enlace de visualización.
+  2. *Exportación del expediente completo:*
+     - Capacidad de exportar un informe de auditoría del trámite en PDF o JSON estructurado para fines de fiscalización o archivo legal institucional.
+- **Criterios de Aceptación:**
+  - [ ] Dirección y auditoría pueden reconstruir el historial completo del trámite desde un único visor unificado.
+  - [ ] Cada elemento del legajo conserva su marca de tiempo ISO inmutable y usuario responsable.
+  - [ ] El legajo garantiza la no repudia de firmas y decisiones tomadas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### BLOQUE 3. AUTOMATIZACIÓN AVANZADA Y MEJORA CONTINUA (P2)
+
+### [F33-Task08] [P2] Paquetes de Trámites Agrupados y Solicitudes Recurrentes Anuales
+- **Orden de Ejecución:** 8
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`createBundleFormRequest`, `getBundleRequestProgress`)
+  - `js/student.js`
+  - Hoja: `PaquetesTramites`
+- **Subcapacidades Relacionadas:** F33-01, F33-03.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md` / Sección C (F33-01) y Sección H.
+- **Problema Detectado y Riesgos:**
+  En temporadas de matrícula o inicio de año lectivo, los padres deben llenar múltiples formularios separados (Ficha de Matrícula, Ficha Médica, Contrato de Transporte y Autorización de Salidas), generando fricción y fatiga de captura.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Paquetes de trámites encadenados (Bundles):*
+     - Permitir agrupar varios formularios bajo un solo proceso guiado con barra de progreso consolidada.
+     - Compartir datos comunes entre formularios del paquete para no solicitar dos veces la misma información (ej. nombres y teléfonos de contacto).
+  2. *Solicitudes recurrentes anuales:*
+     - Enviar automáticamente solicitudes de actualización anual de datos al iniciar el nuevo ciclo lectivo, precargando la información del año anterior para que el padre solo confirme o modifique variaciones.
+- **Criterios de Aceptación:**
+  - [ ] Las familias pueden completar un paquete de matrícula unificado completando los formularios de forma secuencial.
+  - [ ] Los datos coincidentes se propagan automáticamente entre los formularios del paquete.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F33-Task09] [P2] Generador Automático de Constancias de Recepción Física con Código QR
+- **Orden de Ejecución:** 9
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`generatePhysicalFilingReceiptPdf`)
+  - `backend/user-service/Code.gs`
+- **Subcapacidades Relacionadas:** F33-03, F33-13.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md` / Sección C (F33-03) y Sección H.
+- **Problema Detectado y Riesgos:**
+  Cuando un usuario radica una solicitud física en la ventanilla de Secretaría, no siempre recibe un comprobante formal con código de seguimiento que garantice la fecha de entrega y el número oficial asignado.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Comprobante de radicación oficial (Recibo de entrega):*
+     - Al asentar la recepción de un trámite físico, generar automáticamente un recibo en PDF tamaño ticket o media carta.
+     - Contenido: número de solicitud, fecha y hora de radicación, ventanilla receptora, nombre del solicitante, lista de documentos entregados y código QR de seguimiento en línea.
+  2. *Seguimiento ciudadano:*
+     - Al escanear el QR con su teléfono, el solicitante puede consultar el estado de avance de su trámite físico en tiempo real.
+- **Criterios de Aceptación:**
+  - [ ] Al radicar un trámite en Secretaría se imprime o envía por correo el comprobante oficial de recepción con QR.
+  - [ ] El código QR permite rastrear el avance del expediente sin requerir login para consultas básicas de estado.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F33-Task10] [P2] Suite Automatizada de Pruebas de Ciclo de Vida de Trámites y Regresión
+- **Orden de Ejecución:** 10
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `tests/regression/academic-grading-suite.js`
+  - `backend/developer-service/Code.gs` (`runInstitutionalFormsLifecycleRegressionSuite`)
+- **Subcapacidades Relacionadas:** F33-14, F33-16.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md` / Sección F (F24-01 a F24-24) y Sección H.
+- **Problema Detectado y Riesgos:**
+  Se requiere una suite automatizada continua que certifique la ausencia de regresiones en las transiciones de estado, permisos RBAC de expedientes, generación de documentos finales y preservación de historiales inmutables.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Cobertura automatizada de los 24 escenarios funcionales (F24-01 a F24-24):*
+     - Creación de formularios, inicio por estudiantes y apoderados, guardado de borradores, formulario vacío e imprimible, adjuntos, envío formal, asignación de revisores, observaciones públicas/internas, subsanación dirigida, aprobación/rechazo, firmas, generación de PDF con CUV, auditoría inmutable, archivo, accesos no autorizados, concurrencia y consultas móviles.
+  2. *Ejecución reproducible:*
+     - Aserciones automatizadas en Node.js integradas a la suite central de regresión del proyecto.
+- **Criterios de Aceptación:**
+  - [ ] La suite de pruebas de ciclo de vida de trámites se ejecuta de forma automatizada pasando al 100%.
+  - [ ] Certifica que ninguna modificación en servicios compartidos corrompe el historial de decisiones o los estados de los trámites.
+- **Estado:** [ ] Pendiente
+
+---
