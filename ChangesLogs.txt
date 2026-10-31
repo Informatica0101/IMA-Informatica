@@ -3577,7 +3577,7 @@ Archivos Modificados / Creados:
    - Creación del informe integral de auditoría de la Fase 30. Contiene secciones de alcance institucional (A), inventario de integraciones interdepartamentales (B), resultados por subcapacidad de F30-01 a F30-15 (C), matriz de pruebas integrales obligatorias INT-01 a INT-16 (D), matriz de certificación interna CERT-01 a CERT-13 (E), seguridad, integridad y rendimiento (F), plan de resolución técnico (G) y conclusiones con dictamen de certificación (H).
 
 2. Pendientes.md
-   - Incorporación del catálogo y desglose detallado de las 15 tareas técnicas de la Fase 30 ([F30-Task01] a [F30-Task15]) en 3 bloques de prioridad (P0, P1, P2) al final del archivo, conservando íntegras las tareas anteriores de las Fases 10 a 29.
+   - Incorporación, unificación y convergencia exhaustiva de las 20 tareas técnicas de la Fase 30 ([F30-Task01] a [F30-Task20]) organizadas estrictamente por prioridad (P0, P1, P2) y orden de ejecución técnica en 3 bloques de prioridad (P0, P1, P2) al final del archivo, conservando íntegras las tareas anteriores de las Fases 10 a 29.
 
 3. Auditoria.txt
    - Inserción de la entrada formal de auditoría diagnóstica de la Fase 30 detallando la inspección de los servicios backend, módulos de interfaz, suites de regresión y resultado de certificación interna.
