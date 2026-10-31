@@ -13170,3 +13170,200 @@
 - **Estado:** [ ] Pendiente
 
 ---
+
+## FASE 34: BANDEJAS DE ENTRADA Y SALIDA, REVISIÓN Y FIRMAS
+
+---
+
+### [F34-Task01] [P0] Unificación del ciclo de vida de justificaciones de asistencia y sincronización con listas de clase
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`submitStudentAbsenceJustification`, `reviewAbsenceJustification`, `updateRequestStatus`)
+  - `backend/academic-service/Code.gs` (`reviewAttendanceJustification`, `RegistrosAsistencia`, `SesionesAsistencia`)
+  - Hojas: `SolicitudesTramites`, `JustificacionesAsistencia`, `RegistrosAsistencia`
+- **Subcapacidades Relacionadas:** F34-01, F34-07, F34-12.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-12) y Matriz CAR-F34-03.
+- **Problema Detectado y Riesgos:**
+  Existe una dualidad arquitectónica en el procesamiento de excusas y justificaciones de inasistencia: mientras `user-service` escribe y procesa solicitudes en `SolicitudesTramites`, la actualización efectiva de las listas de asistencia del docente (`RegistrosAsistencia` con `Justificada = true`) solo se ejecuta en `reviewAttendanceJustification` de `academic-service`. Como resultado, las justificaciones aprobadas por Secretaría en la bandeja institucional no impactan las inasistencias en los registros de aula, generando inasistencias injustificadas erróneas y sanciones académicas indebidas.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Unificación de disparo o servicio compartido:*
+     - Al aprobar una justificación en `reviewAbsenceJustification` (o mediante `processWorkflowDecision`), invocar o ejecutar la reconciliación con `RegistrosAsistencia` vinculando la fecha afectada (`fechaAusencia`) y el estudiante (`estudianteId`).
+     - Marcar el registro de asistencia como `Justificada = true` y actualizar el estado de asistencia a `Justificada` en todas las sesiones y asignaturas correspondientes a la fecha aprobada.
+  2. *Idempotencia y prevención de desajustes:*
+     - Asegurar que la reversión o anulación de una justificación revierta el estado de la asistencia a su condición original previa (`Inasistencia Injustificada`).
+  3. *Parametrización configurable:*
+     - Configuración institucional en `ConfiguracionInstitucional`: `JUSTIFICACION_IMPACTO_AUTOMATICO_ASISTENCIA` (Valores: `INMEDIATO_AL_APROBAR`, `REQUIERE_CONFORMIDAD_DOCENTE`).
+- **Criterios de Aceptación:**
+  - [ ] La aprobación de una justificación de ausencia en la bandeja de Secretaría actualiza automáticamente los registros de asistencia del estudiante en la fecha indicada.
+  - [ ] El docente visualiza en su lista de clase que la inasistencia está justificada con referencia al número de trámite.
+  - [ ] La anulación de una justificación revierte coherentemente el estado de inasistencia sin corromper el historial.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F34-Task02] [P0] Bandeja de salida institucional y registro de acuses de entrega y lectura
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`getDepartmentalOutbox`, `recordDocumentDeliveryReceipt`, `recordDocumentOpenReceipt`)
+  - `backend/accounting-service/Code.gs`
+  - Hoja: `EntregasDocumentales`
+- **Subcapacidades Relacionadas:** F34-02, F34-09, F34-10.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-02) y Matriz CAR-F34-02.
+- **Problema Detectado y Riesgos:**
+  No existe una bandeja formal de salida donde los departamentos (Secretaría, Dirección, Contabilidad) puedan auditar las comunicaciones y documentos emitidos hacia familias o personal, ni se distingue entre un mensaje despachado, un documento efectivamente entregado y una consulta o lectura real por el destinatario, impidiendo sustentar notificaciones legales o citaciones formales.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Servicio de bandeja de salida:*
+     - Implementar `getDepartmentalOutbox(payload)` filtrando por departamento emisor, rango de fechas y tipo de comunicación.
+     - Mostrar destinatarios, documento adjunto, fecha de despacho, estado de entrega (`Preparado`, `Despachado`, `Entregado`, `Leído`, `Fallido`) y acuse de recibo.
+  2. *Registro de entrega y lectura (Acuses de Recibo):*
+     - Auto-crear la hoja `EntregasDocumentales` (`EntregaID`, `DocumentoId`, `TramiteId`, `EmisorUserId`, `DepartamentoEmisor`, `DestinatarioUserId`, `FechaDespacho`, `FechaEntrega`, `FechaLectura`, `IpLectura`, `HashAcuse`).
+     - Al abrir el destinatario el documento o trámite en su portal, registrar atómicamente `FechaLectura` e IP sin alterar estados de aprobación.
+  3. *Parametrización configurable:*
+     - Ajuste `EXIGIR_CONFIRMACION_EXPLICITA_RECEPCION` (Valores: `TRUE` para citaciones y resoluciones sancionatorias, `FALSE` para comunicados informativos ordinarios).
+- **Criterios de Aceptación:**
+  - [ ] El personal departamental puede consultar la bandeja de salida con todos los documentos emitidos y sus estados.
+  - [ ] El sistema distingue claramente entre despacho, entrega efectiva y lectura por el destinatario.
+  - [ ] Se genera un registro verificable con marca temporal e IP cuando el usuario accede formalmente al documento.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F34-Task03] [P0] Acceso contextual docente (ABAC) a justificaciones y resoluciones de sus estudiantes
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`getTeacherStudentJustifications`)
+  - `backend/user-service/Code.gs`
+  - `js/teacher.js`
+- **Subcapacidades Relacionadas:** F34-01, F34-04, F34-11.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-11) y Matriz CAR-F34-04.
+- **Problema Detectado y Riesgos:**
+  Los docentes no cuentan con una vía para consultar las justificaciones de inasistencia o solicitudes de los alumnos a los que imparten clase en el período lectivo activo. O bien quedan desinformados del motivo de la ausencia, o tendrían que recibir permisos administrativos globales que expondrían notas internas y expedientes de estudiantes ajenos a su carga horaria.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Filtro de control de acceso basado en atributos (ABAC):*
+     - Implementar `getTeacherStudentJustifications(payload)` validando que el docente solicitante (`_verifiedUserId`) posea asignación académica activa en `AsignacionesDocentes` con el grado, sección o asignatura del estudiante afectado.
+     - Rechazar con error 403 cualquier intento de consultar justificaciones de alumnos fuera de su ámbito docente.
+  2. *Segregación de información confidencial:*
+     - Exponer al docente únicamente la fecha, el motivo general justificado y las observaciones públicas de Secretaría.
+     - Ocultar estrictamente las observaciones administrativas privadas, diagnósticos clínicos confidenciales o disputas de custodia familiar.
+- **Criterios de Aceptación:**
+  - [ ] El docente consulta únicamente las justificaciones de los alumnos asignados a sus asignaturas o secciones.
+  - [ ] Las consultas de estudiantes ajenos son rechazadas en backend con error de autorización.
+  - [ ] Los comentarios administrativos internos y datos sensibles no se exponen al docente.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F34-Task04] [P0] Aseguramiento criptográfico de adjuntos y evidencias documentales
+- **Prioridad:** P0 (Crítica)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`submitInstitutionalFormRequest`, `submitStudentAbsenceJustification`)
+  - `backend/accounting-service/Code.gs`
+  - Hoja: `SolicitudesTramites`, `JustificacionesAsistencia`
+- **Subcapacidades Relacionadas:** F34-05, F34-09, F34-10.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-10) y Matriz CAR-F34-05.
+- **Problema Detectado y Riesgos:**
+  Los archivos adjuntos de las solicitudes (justificantes médicos, constancias) se almacenan como URLs o IDs de Google Drive sin calcular su resumen criptográfico. Si el archivo en Drive es sustituido o editado posteriormente, no existe forma de auditar si la resolución administrativa se basó en el documento original o en uno adulterado.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Cálculo y persistencia de hash SHA-256:*
+     - Al subir y registrar un adjunto en `submitStudentAbsenceJustification` o `submitInstitutionalFormRequest`, calcular y almacenar el hash `SHA-256` del binario recibido.
+     - Almacenar el hash en columna dedicada `AdjuntoHashSha256` en `SolicitudesTramites` y `JustificacionesAsistencia`.
+  2. *Verificación de integridad en revisión:*
+     - Al abrir el revisor o auditor el adjunto desde la bandeja, proporcionar una función de verificación que compare el hash actual del archivo con el registrado al momento del envío, alertando si el archivo sufrió alteraciones.
+- **Criterios de Aceptación:**
+  - [ ] Cada archivo adjunto registrado en un trámite cuenta con su hash SHA-256 almacenado en base de datos.
+  - [ ] La plataforma detecta y alerta si un archivo adjunto ha sido modificado con posterioridad a su recepción inicial.
+  - [ ] Se conserva la inmutabilidad de las evidencias que respaldan aprobaciones o resoluciones.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F34-Task05] [P1] Historial estructurado de asignaciones, reasignaciones y traspasos
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`reassignAdministrativeRequest`, `getWorkflowHistory`)
+  - Hoja: `HistorialAsignacionesTramites`
+- **Subcapacidades Relacionadas:** F34-04, F34-07, F34-09.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-04) y Matriz CAR-F34-07.
+- **Problema Detectado y Riesgos:**
+  Al reasignar una solicitud de un funcionario o departamento a otro, solo se sobreescribe el campo `asignadoA` en `SolicitudesTramites`. Se pierde la trazabilidad de quién ordenó la reasignación, en qué fecha ocurrió y cuál fue el motivo o fundamento del traslado.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Bitácora de reasignaciones:*
+     - Auto-crear la hoja `HistorialAsignacionesTramites` (`AsignacionId`, `SolicitudId`, `AsignadoPorUserId`, `ResponsableAnterior`, `NuevoResponsable`, `DepartamentoDestino`, `MotivoReasignacion`, `FechaHoraAsignacion`).
+     - Registrar un evento cada vez que un trámite sea transferido entre usuarios o departamentos.
+  2. *Validación de destinatarios válidos:*
+     - Validar que el nuevo responsable sea un usuario activo con permisos en el departamento destino antes de completar la reasignación.
+- **Criterios de Aceptación:**
+  - [ ] Toda reasignación de un trámite queda registrada con autor, motivo, responsable anterior y nuevo responsable.
+  - [ ] El historial del trámite muestra la cronología completa de asignaciones y traspasos.
+  - [ ] Se impide la reasignación a usuarios inactivos o sin permisos en el departamento.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F34-Task06] [P1] Notificaciones multicanal reactivas por cambio de estado de trámite
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`processWorkflowDecision`, `updateRequestStatus`, `sendMultiChannelNotification`)
+- **Subcapacidades Relacionadas:** F34-06, F34-08.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-08) y Matriz CAR-F34-08.
+- **Problema Detectado y Riesgos:**
+  Cuando Secretaría u Orientación emite una decisión (por ejemplo, `Requiere Corrección` o `Aprobada`), no se dispara una notificación externa (correo o WhatsApp) al padre o solicitante, lo que obliga al usuario a revisar manualmente la plataforma y ocasiona demoras en la subsanación de trámites urgentes.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Despacho automático de notificaciones:*
+     - Al procesar una decisión en `processWorkflowDecision` o `updateRequestStatus`, disparar una notificación dirigida al `userId` del solicitante a través de `sendMultiChannelNotification`.
+     - Plantillas personalizadas según la decisión: `TRAMITE_APROBADO`, `TRAMITE_RECHAZADO`, `TRAMITE_SUBSANACION_REQUERIDA`.
+  2. *Enlace seguro contextual:*
+     - Incluir en la notificación la referencia al trámite y el enlace al portal institucional, sin exponer información privada sensible en el cuerpo del mensaje.
+- **Criterios de Aceptación:**
+  - [ ] El solicitante recibe una notificación automática al cambiar el estado de su trámite.
+  - [ ] Los mensajes de subsanación informan claramente el motivo público y la fecha límite de corrección.
+  - [ ] No se transmiten datos privados confidenciales en el texto de correos o avisos externos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F34-Task07] [P1] Delimitación y advertencia legal sobre firmas electrónicas bajo normativa hondureña
+- **Prioridad:** P1 (Alta)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`registerDocumentSignature`, `getWorkflowHistory`)
+  - `docs/architecture/`
+  - Certificados emitidos y vistas de visualización de firmas
+- **Subcapacidades Relacionadas:** F34-06, F34-10.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-06) y Matriz CAR-F34-06.
+- **Problema Detectado y Riesgos:**
+  La plataforma registra conformidades digitales con tokens `VERIF-` pero puede inducir a confusión si se presenta ante autoridades externas como una "Firma Electrónica Avanzada", la cual bajo el Decreto 149-2013 de Honduras exige certificados digitales emitidos por prestadores acreditados.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Leyenda legal y tipificación de firma:*
+     - Catalogar explícitamente en el sistema y en los documentos generados el tipo de firma: `Conformidad Electrónica Institucional Autenticada` vs. `Firma Electrónica Avanzada Externa`.
+     - Incluir en el reporte y comprobante de firma la advertencia legal indicando el alcance interno institucional del mecanismo de autenticación y verificación.
+  2. *Parametrización de requerimiento de firma:*
+     - Parámetro configurable por tipo de trámite: `NIVEL_FIRMA_REQUERIDO` (Valores: `CONFORMIDAD_SIMPLE_SESION`, `FIRMA_DIGITAL_INSTITUCIONAL_TOKEN`, `FIRMA_ELECTRONICA_AVANZADA_CERTIFICADA`).
+- **Criterios de Aceptación:**
+  - [ ] Los comprobantes y vistas de firma identifican claramente el nivel legal del mecanismo empleado.
+  - [ ] La plataforma advierte cuando un trámite oficial externo requiera firma avanzada certificada conforme al Decreto 149-2013.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F34-Task08] [P2] Consola unificada de bandejas con filtros avanzados y diseño responsivo
+- **Prioridad:** P2 (Media)
+- **Componentes Afectados:**
+  - `js/student.js`, `js/teacher.js`, `js/accounting.js`
+  - `student-dashboard.html`, `teacher-dashboard.html`, `dashboard-recursos-humanos.html`
+- **Subcapacidades Relacionadas:** F34-01, F34-03, F34-05.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md` / Sección C (F34-03) y Sección E.
+- **Problema Detectado y Riesgos:**
+  Las tablas de visualización de trámites y solicitudes en frontend presentan sobrecarga de columnas y desbordamiento horizontal en pantallas móviles, dificultando la lectura de observaciones y la revisión ágil por parte de directivos y docentes en dispositivos móviles.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Consola responsiva de bandejas:*
+     - Implementar vista adaptable que colapse registros en tarjetas móviles optimizadas en pantallas menores a 768px.
+     - Barra de filtros reactivos con búsqueda en tiempo real por estudiante, estado, prioridad y rango de fechas.
+  2. *Insignias visuales de SLA:*
+     - Mostrar etiquetas de estado con código de color (`Enviada` en azul, `Requiere Corrección` en ámbar, `Aprobada` en verde, `Vencida` en rojo).
+- **Criterios de Aceptación:**
+  - [ ] Las bandejas de entrada y salida son plenamente operables desde teléfonos móviles sin desbordamiento horizontal.
+  - [ ] Los filtros reactivos permiten localizar solicitudes de inmediato sin recargas completas.
+  - [ ] Las prioridades y estados se identifican mediante código de color intuitivo.
+- **Estado:** [ ] Pendiente
+
+---
