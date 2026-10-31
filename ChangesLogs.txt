@@ -3497,3 +3497,15 @@ ARCHIVOS MODIFICADOS:
 - tests/regression/academic-grading-suite.js (línea ~90):
   Se agregó la aserción de comprobación para `savePedagogicalPlanning` y `getPedagogicalPlannings` con la etiqueta `[F11-Task09]`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+TAREA: F11-Task10 - Implementar el flujo de entrega, observaciones y aprobación de documentación docente
+ARCHIVOS MODIFICADOS:
+- backend/academic-service/Code.gs (líneas ~136, ~180, ~190, ~217, ~252, ~890-892, ~5410-5615):
+  Se incorporó la inicialización de la hoja `RevisionesPlanificacion` en `getOrCreateSheet` e implementaron las funciones `submitPlanningForReview`, `reviewPedagogicalPlanning` y `getPlanningReviewHistory` con la etiqueta identificativa `[F11-Task10]`.
+  Se gestionó el ciclo de vida de revisión de documentos docentes (`Pendiente`, `EnRevision`, `RequiereCorrecciones`, `Aprobado`), vinculando cada dictamen a la versión exacta evaluada, registrando observaciones cualitativas del revisor y auditando la identidad del coordinador o director aprobador.
+  Se registraron los permisos correspondientes en `ROLE_PERMISSIONS` (para `Profesor` en entrega y `Coordinador`, `Director`, `Subdirector`, `Administrador` en revisión) y en el despachador `doPost`.
+- tests/regression/academic-grading-suite.js (línea ~91):
+  Se agregó la aserción de comprobación para `submitPlanningForReview` y `reviewPedagogicalPlanning` con la etiqueta `[F11-Task10]`.
+===============================================================================

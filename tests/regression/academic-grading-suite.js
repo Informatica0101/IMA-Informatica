@@ -88,6 +88,7 @@ assert(updatedUserCode.includes("checkCalendarEventOverlap") && updatedUserCode.
 assert(academicCode.includes("scheduleGuidanceAppointment") && academicCode.includes("[F11-Task07]"), "backend/academic-service/Code.gs contiene scheduleGuidanceAppointment y getGuidanceAppointments [F11-Task07]");
 assert(academicCode.includes("evaluateAndDispatchEarlyWarningAlerts") && academicCode.includes("[F11-Task08]"), "backend/academic-service/Code.gs contiene evaluateAndDispatchEarlyWarningAlerts y getEarlyWarningAlerts [F11-Task08]");
 assert(academicCode.includes("savePedagogicalPlanning") && academicCode.includes("[F11-Task09]"), "backend/academic-service/Code.gs contiene savePedagogicalPlanning y getPedagogicalPlannings [F11-Task09]");
+assert(academicCode.includes("submitPlanningForReview") && academicCode.includes("[F11-Task10]"), "backend/academic-service/Code.gs contiene submitPlanningForReview y reviewPedagogicalPlanning [F11-Task10]");
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {

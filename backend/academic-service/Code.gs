@@ -133,6 +133,7 @@ function getOrCreateSheet(ss, name) {
     if (name === "CitasOrientacion") sheet.appendRow(["CitaOrientacionID", "CasoID", "UserId", "TutorUserId", "OrientadorUserId", "FechaHora", "Modalidad", "Estado", "TipoCita", "NotasPublicas", "NotasConfidenciales", "DerivacionRef", "FechaCreacion"]);
     if (name === "AlertasTempranas") sheet.appendRow(["AlertaID", "UserId", "Grado", "Seccion", "Periodo", "NivelRiesgo", "FactoresRiesgoJSON", "MetricasJSON", "Estado", "NotificadoA", "DeduplicationKey", "FechaGeneracion", "UltimaActualizacion"]);
     if (name === "PlanificacionesPedagogicas") sheet.appendRow(["PlanificacionID", "DocenteUserId", "Grado", "Seccion", "Asignatura", "Periodo", "TituloUnidad", "CompetenciasJSON", "ObjetivosAprendizaje", "ContenidosJSON", "RecursosActividadesJSON", "Version", "Estado", "FechaCreacion", "UltimaActualizacion"]);
+    if (name === "RevisionesPlanificacion") sheet.appendRow(["RevisionID", "PlanificacionID", "Version", "Estado", "Observaciones", "RevisorUserId", "RevisorRol", "FechaRevision"]);
 
     // Nuevas Tablas Fase 13 - Supervisión Docente y Calidad Educativa
     if (name === "SupervisionesDocentes") sheet.appendRow(["SupervisionID", "DocenteUserId", "SupervisorUserId", "FechaProgramada", "Grado", "Seccion", "Asignatura", "TipoSupervision", "RubricaID", "Estado", "ObservacionesAdmin", "FechaCreacion"]);
@@ -178,7 +179,7 @@ const ROLE_PERMISSIONS = {
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity", "reconcileInstitutionalModulesMatrix",
     "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "checkAndDispatchAttendanceAlerts", "getAttendanceConfig", "saveAttendanceConfig",
-    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches", "scheduleGuidanceAppointment", "getGuidanceAppointments", "updateGuidanceAppointmentStatus", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts", "savePedagogicalPlanning", "getPedagogicalPlannings"
+    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches", "scheduleGuidanceAppointment", "getGuidanceAppointments", "updateGuidanceAppointmentStatus", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts", "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "reviewPedagogicalPlanning", "getPlanningReviewHistory"
   ],
   "Subdirector": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "registerStudentEnrollment", "getStudentEnrollmentHistory",
@@ -188,7 +189,7 @@ const ROLE_PERMISSIONS = {
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "getStudentFile", "getStudentTimeline", "findDuplicateStudents",
     "getStudentGuardians", "getStudentDocuments", "getStudentEnrollments", "checkEnrollmentCapacity",
     "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
-    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "savePedagogicalPlanning", "getPedagogicalPlannings"
+    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "reviewPedagogicalPlanning", "getPlanningReviewHistory"
   ],
   "Secretaría": [
     "getAcademicConfig", "getAsignaturasActivas", "registerStudentEnrollment", "getStudentEnrollmentHistory",
@@ -215,7 +216,7 @@ const ROLE_PERMISSIONS = {
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite",
     "openAttendanceSession", "saveClassAttendance", "getBatchAttendanceRecords", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "generateConsolidatedAttendanceAndCoexistenceReport", "validateStudentWelfareAccess"
   ],
-  "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "getBatchAttendanceRecords", "generateConsolidatedAttendanceAndCoexistenceReport", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts", "savePedagogicalPlanning", "getPedagogicalPlannings"],
+  "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "getBatchAttendanceRecords", "generateConsolidatedAttendanceAndCoexistenceReport", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts", "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "reviewPedagogicalPlanning", "getPlanningReviewHistory"],
   "Desarrollador": ["getAcademicConfig", "getAcademicHistory", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "configureAcademicLevelsAndDynamicStorage"],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
   "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "scheduleCounselingAppointment", "recordCounselingSessionAct", "referCounselingCase", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary", "validateStudentWelfareAccess", "scheduleGuidanceAppointment", "getGuidanceAppointments", "updateGuidanceAppointmentStatus", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts"],
@@ -251,7 +252,7 @@ const ROLE_PERMISSIONS = {
     "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getBatchAttendanceRecords", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "generateConsolidatedAttendanceAndCoexistenceReport",
     "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans",
     "calculateUnifiedAcademicGrade", "previewAcademicGradeCalculation", "auditAcademicGradesIntegrity", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess", "exportAcademicGradesData",
-    "savePedagogicalPlanning", "getPedagogicalPlannings"
+    "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "getPlanningReviewHistory"
   ],
   "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentTimeline", "getClassAttendance", "getBatchAttendanceRecords", "getStudentAttendanceSummary", "auditAssistantDelegatedAction"],
   "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "calculateUnifiedAcademicGrade", "generateStudentReportCard", "validateAcademicResponsibilityAndScopeAccess"],
@@ -887,6 +888,9 @@ function doPost(e) {
       case "getTeacherImprovementPlans": result = getTeacherImprovementPlans(payload); break;
       case "savePedagogicalPlanning": result = savePedagogicalPlanning(payload); break;
       case "getPedagogicalPlannings": result = getPedagogicalPlannings(payload); break;
+      case "submitPlanningForReview": result = submitPlanningForReview(payload); break;
+      case "reviewPedagogicalPlanning": result = reviewPedagogicalPlanning(payload); break;
+      case "getPlanningReviewHistory": result = getPlanningReviewHistory(payload); break;
 
       case "ping": result = { status: "success", service: "ACADEMIC", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
@@ -5401,6 +5405,206 @@ function getPedagogicalPlannings(payload) {
     };
   } catch (error) {
     logStructuredEvent("ACADEMIC", "getPedagogicalPlannings", "ERROR", "GET_PEDAGOGICAL_PLANNINGS_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+// [F11-Task10] [P1] - Flujo de entrega, observaciones y aprobación de documentación docente
+function submitPlanningForReview(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const callerId = (payload && payload._verifiedUserId) || "";
+    const isAuthorized = ["Administrador", "Director", "Subdirector", "Coordinador", "Profesor"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "UNAUTHORIZED", message: "Acceso denegado: Rol no autorizado para entregar planificación." };
+    }
+
+    const { planificacionId } = payload || {};
+    if (!planificacionId) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "planificacionId es requerido." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const planSheet = getOrCreateSheet(ss, "PlanificacionesPedagogicas");
+    const data = planSheet.getDataRange().getValues();
+
+    let foundIdx = -1;
+    let targetRow = null;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(planificacionId).trim()) {
+        foundIdx = i;
+        targetRow = data[i];
+        break;
+      }
+    }
+
+    if (foundIdx === -1) {
+      return { status: "error", code: "NOT_FOUND", message: `Planificación ${planificacionId} no encontrada.` };
+    }
+
+    const docId = String(targetRow[1]).trim();
+    if (verifiedRole === "Profesor" && docId !== callerId && callerId !== "") {
+      return { status: "error", code: "FORBIDDEN", message: "No tiene permisos para entregar la planificación de otro docente." };
+    }
+
+    const currentVer = Number(targetRow[11] || 1);
+    const now = new Date();
+    const nowISO = now.toISOString();
+
+    // Actualizar estado de la planificación a 'Pendiente' de revisión
+    planSheet.getRange(foundIdx + 1, 13).setValue("Pendiente");
+    planSheet.getRange(foundIdx + 1, 15).setValue(nowISO);
+
+    // Registrar en RevisionesPlanificacion
+    const revSheet = getOrCreateSheet(ss, "RevisionesPlanificacion");
+    const revId = "REV-PLAN-" + now.getFullYear() + "-" + Math.floor(100000 + Math.random() * 900000);
+    revSheet.appendRow([
+      revId,
+      String(planificacionId).trim(),
+      currentVer,
+      "Pendiente",
+      "Planificación enviada para revisión pedagógica.",
+      callerId || docId,
+      verifiedRole,
+      nowISO
+    ]);
+
+    logStructuredEvent("ACADEMIC", "submitPlanningForReview", "INFO", "PLANNING_SUBMITTED_FOR_REVIEW", `Planificación ${planificacionId} versión ${currentVer} entregada para revisión`, { planificacionId, version: currentVer }, verifiedRole);
+
+    return {
+      status: "success",
+      planificacionId: planificacionId,
+      version: currentVer,
+      nuevoEstado: "Pendiente",
+      message: `Planificación pedagógica entregada exitosamente para revisión (Versión ${currentVer}).`
+    };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "submitPlanningForReview", "ERROR", "SUBMIT_PLANNING_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function reviewPedagogicalPlanning(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const callerId = (payload && payload._verifiedUserId) || "";
+    const isAuthorized = ["Administrador", "Director", "Subdirector", "Coordinador"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "UNAUTHORIZED", message: "Acceso denegado: Solo directores y coordinadores pueden revisar planificaciones docentes." };
+    }
+
+    const { planificacionId, decision, observaciones } = payload || {};
+    if (!planificacionId || !decision) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "planificacionId y decision son requeridos." };
+    }
+
+    const validDecisions = ["EnRevision", "RequiereCorrecciones", "Aprobado"];
+    if (validDecisions.indexOf(decision) === -1) {
+      return { status: "error", code: "VALIDATION_ERROR", message: `decision inválida. Debe ser una de: ${validDecisions.join(", ")}` };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const planSheet = getOrCreateSheet(ss, "PlanificacionesPedagogicas");
+    const data = planSheet.getDataRange().getValues();
+
+    let foundIdx = -1;
+    let targetRow = null;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(planificacionId).trim()) {
+        foundIdx = i;
+        targetRow = data[i];
+        break;
+      }
+    }
+
+    if (foundIdx === -1) {
+      return { status: "error", code: "NOT_FOUND", message: `Planificación ${planificacionId} no encontrada.` };
+    }
+
+    const currentVer = Number(targetRow[11] || 1);
+    const now = new Date();
+    const nowISO = now.toISOString();
+
+    // Actualizar estado en PlanificacionesPedagogicas
+    planSheet.getRange(foundIdx + 1, 13).setValue(decision);
+    planSheet.getRange(foundIdx + 1, 15).setValue(nowISO);
+
+    // Registrar dictamen inmutable en RevisionesPlanificacion ligado a la versión exacta
+    const revSheet = getOrCreateSheet(ss, "RevisionesPlanificacion");
+    const revId = "REV-PLAN-" + now.getFullYear() + "-" + Math.floor(100000 + Math.random() * 900000);
+    revSheet.appendRow([
+      revId,
+      String(planificacionId).trim(),
+      currentVer,
+      decision,
+      observaciones || (decision === "Aprobado" ? "Planificación pedagógica aprobada satisfactoriamente." : "Revisión realizada."),
+      callerId || "Coordinador",
+      verifiedRole,
+      nowISO
+    ]);
+
+    logStructuredEvent("ACADEMIC", "reviewPedagogicalPlanning", "INFO", "PLANNING_REVIEWED", `Planificación ${planificacionId} versión ${currentVer} dictaminada como '${decision}' por ${callerId}`, { planificacionId, version: currentVer, decision, revisorUserId: callerId }, verifiedRole);
+
+    return {
+      status: "success",
+      revisionId: revId,
+      planificacionId: planificacionId,
+      version: currentVer,
+      estadoResultante: decision,
+      revisorUserId: callerId,
+      message: `Planificación pedagógica dictaminada exitosamente como '${decision}' para la versión ${currentVer}.`
+    };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "reviewPedagogicalPlanning", "ERROR", "REVIEW_PLANNING_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function getPlanningReviewHistory(payload) {
+  try {
+    const verifiedRole = (payload && (payload._verifiedRole || payload.authRole)) || "NO_ACCESS";
+    const isAuthorized = ["Administrador", "Director", "Subdirector", "Coordinador", "Profesor"].indexOf(verifiedRole) !== -1;
+    if (!isAuthorized) {
+      return { status: "error", code: "UNAUTHORIZED", message: "Acceso denegado: Rol no autorizado para consultar historial de revisiones." };
+    }
+
+    const { planificacionId } = payload || {};
+    if (!planificacionId) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "planificacionId es requerido." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const revSheet = getOrCreateSheet(ss, "RevisionesPlanificacion");
+    const data = revSheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", totalRevisiones: 0, revisiones: [] };
+
+    const revisiones = [];
+    for (let i = 1; i < data.length; i++) {
+      const r = data[i];
+      const pId = String(r[1] || "").trim();
+      if (pId === String(planificacionId).trim()) {
+        revisiones.push({
+          revisionId: String(r[0] || "").trim(),
+          planificacionId: pId,
+          version: Number(r[2] || 1),
+          estado: String(r[3] || "").trim(),
+          observaciones: String(r[4] || "").trim(),
+          revisorUserId: String(r[5] || "").trim(),
+          revisorRol: String(r[6] || "").trim(),
+          fechaRevision: r[7]
+        });
+      }
+    }
+
+    return {
+      status: "success",
+      planificacionId: planificacionId,
+      totalRevisiones: revisiones.length,
+      revisiones: revisiones
+    };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "getPlanningReviewHistory", "ERROR", "GET_PLANNING_REVIEWS_FAILED", error.message, payload, payload && payload.authRole);
     return { status: "error", message: error.message };
   }
 }

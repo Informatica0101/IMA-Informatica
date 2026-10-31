@@ -268,3 +268,13 @@ HALLAZGOS:
 2. Se requiere la tabla `PlanificacionesPedagogicas` para soportar planes con identificador único (`PLAN-PED-...`), docente titular (`docenteUserId`), grado, sección, asignatura, período académico, título de la unidad/bloque, competencias JSON, objetivos de aprendizaje, contenidos programáticos, recursos/actividades, estado inicial (`Borrador`, `Enviado`) y número de versión (`version`).
 3. Se deben configurar los permisos en `ROLE_PERMISSIONS` para roles pedagógicos (`Profesor`, `Coordinador`, `Director`, `Subdirector`, `Administrador`) y agregar los casos correspondientes en el enrutador `doPost`.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task10: IMPLEMENTAR EL FLUJO DE ENTREGA, OBSERVACIONES Y APROBACIÓN DE DOCUMENTACIÓN DOCENTE
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS:
+1. El backend `academic-service` cuenta con la creación y versionamiento de planificaciones pedagógicas (`PlanificacionesPedagogicas`), pero carece del flujo formal de entrega (`submitPlanningForReview`), revisión/observaciones y aprobación (`reviewPedagogicalPlanning`) por parte de los coordinadores pedagógicos y directores.
+2. Se requiere la tabla `RevisionesPlanificacion` para registrar el historial de revisiones con identificador único (`REV-PLAN-...`), identificador de planificación (`planificacionId`), versión exacta evaluada (`version`), estado resultante (`EnRevision`, `RequiereCorrecciones`, `Aprobado`), observaciones detalladas del revisor, usuario revisor (`revisorUserId`) y timestamp inmutable.
+3. Se deben registrar los permisos de rol correspondientes en `ROLE_PERMISSIONS` (entrega para `Profesor` y revisión para `Coordinador`, `Director`, `Subdirector`, `Administrador`) y agregar los casos correspondientes en `doPost`.
+===============================================================================
