@@ -9438,140 +9438,436 @@
 ---
 ## FASE 28 — ACCESIBILIDAD, MOVILIDAD Y CONTINUIDAD DE TRABAJO
 
+### PLAN DE IMPLEMENTACIÓN Y BACKLOG ESTRUCTURADO DE TAREAS CONVERGENTES
+**Proyecto:** Plataforma Integral de Gestión Educativa · Fase 28
+**Área:** Accesibilidad Universal (WCAG 2.2 AA/AAA), Movilidad Responsive Multi-Dispositivo, Continuidad Operativa Offline, Sincronización Resiliente y Calidad Visual Institucional.
+**Estrategia de Ejecución:** Conservación y ampliación de capacidades funcionales existentes (`auditAndFixAccessibility`, `IndexedDB` stores `documents`/`sync_queue`, resolución tripartita de conflictos `keep_local`/`accept_server`/`save_both`, drawer de navegación responsive). Corrección de brechas críticas de aislamiento criptográfico/sesión, formalización PWA con Service Worker, Background Sync con resiliencia fallback, cuotas de almacenamiento, diseño visual sobrio (inspirado en PowerSchool SIS y Moodle) y optimización avanzada de tablas, medios y reportes.
+
+---
+
 ### P0 — PRIORIDAD CRÍTICA
 
-### [F28-Task01] [P0] [Seguridad en Borradores - Aislamiento Criptográfico por Usuario y Sesión]
+### [F28-T01] [P0] Aislamiento Multiusuario, Contexto Institucional y Protección Criptográfica de Borradores Locales
+- **Tipo:** Corrección de Seguridad e Integridad de Datos.
 - **Componentes Afectados:**
-  - `js/ui-common.js`
-  - `js/teacher.js`
-  - `js/student.js`
+  - `js/ui-common.js` (funciones de auto-guardado en `auditAndFixAccessibility` y gestión de borradores)
+  - `js/teacher.js`, `js/student.js`, `js/accounting.js`
   - Almacenamiento local del navegador (`localStorage` / `IndexedDB`)
-- **Subcapacidades Relacionadas:** B03, B04, S04.
-- **Estado de Partida:** Implementada parcialmente.
-- **Dependencias Expuestas:** `auditAndFixAccessibility`, `localStorage`, autenticación de usuario.
-- **Problema Detectado:**
-  El guardado automático de borradores actual en `auditAndFixAccessibility` utiliza la clave `draft_ + inp.id` en `localStorage`. Si dos usuarios (por ejemplo, dos docentes o un docente y un estudiante) comparten el mismo equipo físico o tablet institucional, un usuario podría visualizar y restaurar indebidamente el borrador del usuario anterior, provocando riesgos graves de fuga de información y contaminación de datos.
-- **Requisitos Funcionales:**
-  1. Aislamiento estricto de claves de almacenamiento local:
-     - Formatear obligatoriamente las claves de borrador incorporando el identificador del usuario autenticado: `draft_${authUserId}_${formId}_${inp.id}`.
-     - Si no existe una sesión autenticada válida, deshabilitar la persistencia de borradores en disco local.
-  2. Restauración selectiva contextual:
-     - Al cargar un formulario, buscar exclusivamente borradores que coincidan con el `authUserId` de la sesión activa.
-     - Ignorar y no restaurar datos pertenecientes a otros identificadores de usuario.
-  3. Purga segura al cerrar sesión (`logoutUser`):
-     - Al cerrar sesión formalmente o por expiración de token, escanear y eliminar del almacenamiento local todos los elementos que comiencen con `draft_${authUserId}_`.
-  4. Indicador visual de estado de borrador:
-     - Mostrar etiqueta o tooltip discreto indicando "Borrador guardado localmente para tu usuario" y la marca temporal ISO de la última modificación.
+  - Módulos de autenticación y cierre de sesión (`logoutUser`, refresco de sesión)
+- **Subcapacidades Relacionadas:** B01, B02, B03, B04, S04.
+- **Estado de Partida:** Implementada parcialmente (Vulnerabilidad B03 detectada: claves planas `draft_${inp.id}` sin identificar usuario ni contexto).
+- **Dependencias:** Mecanismo de autenticación, identificación de usuarios (`authUserId`), contexto institucional (`institucionId`), motor de almacenamiento local/IndexedDB.
+- **Problema Detectado y Riesgos:**
+  El sistema de guardado automático utiliza actualmente claves planas con la estructura `draft_${inp.id}` en `localStorage`. Esto no identifica al propietario del borrador. Cuando diferentes usuarios (docentes, secretaría, estudiantes o administradores) utilizan el mismo navegador o dispositivo físico institucional compartido (ej. tablets de aula, terminales de sala de profesores), un usuario subsiguiente podría visualizar, restaurar indebidamente o sobrescribir información confidencial ingresada por el usuario anterior (ej. calificaciones preliminares, actas disciplinarias o reportes de orientación estudiantil), provocando fuga grave de información y contaminación cruzada de datos.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Identificación inequívoca del propietario y contexto institucional:*
+     - Formatear obligatoriamente las claves de borrador con estructura modular y única:
+       `draft_${institucionId}_${authUserId}_${formId}_${recordId}_${inp.id}` (o esquema objeto indexado equivalente en IndexedDB store `local_drafts`).
+     - Parámetros obligatorios de aislamiento: ID del usuario autenticado (`authUserId`), ID de la institución/contexto institucional (`institucionId`), identificador del formulario (`formId`), identificador del registro en creación/edición (`recordId`), e identificador de sesión/pestaña si aplica.
+     - Prohibición estricta: No utilizar jamás nombres visibles, alias o correos electrónicos como sustitutos del identificador interno único del usuario.
+     - Si no existe una sesión autenticada válida, deshabilitar por completo la persistencia de borradores en disco local.
+  2. *Estructura de almacenamiento y metadatos completos del borrador:*
+     - Cada borrador debe almacenar una entidad con metadatos exhaustivos:
+       - `propietarioId`: Identificador del usuario propietario.
+       - `institucionId`: Contexto institucional activo.
+       - `formId`: Identificador del formulario origen.
+       - `recordId`: Registro relacionado (o `'new'` para altas).
+       - `timestampCreacion`: Marca temporal ISO de creación inicial.
+       - `timestampModificacion`: Marca temporal ISO de última modificación.
+       - `versionBorrador`: Número secuencial de versión del borrador local.
+       - `estadoGuardado`: `'guardando'`, `'guardado'`, `'error'`.
+       - `estadoSincronizacion`: `'local'`, `'sincronizado'`, `'conflicto'`.
+       - `campos`: Mapa asociativo de valores `{ [inputId]: valor }`.
+     - Evitar colisiones entre formularios diferentes o instancias múltiples.
+  3. *Recuperación selectiva y validación contextual:*
+     - Al cargar un formulario, buscar y restaurar exclusivamente borradores cuyos metadatos coincidan exactamente con el `authUserId` y el `institucionId` de la sesión activa.
+     - Ignorar e impedir la lectura de datos pertenecientes a otros usuarios o contextos.
+     - Validación de vigencia: Comprobar que el usuario conserve permisos activos para acceder al registro y evitar restaurar borradores correspondientes a registros que ya fueron confirmados en el servidor, consolidados o eliminados.
+     - Presentar diálogo de restauración controlada: Permitir al usuario identificar borradores recuperables (con fecha y hora legible) o descartarlos limpiamente.
+  4. *Gestión ante cambio de usuario y cierre de sesión:*
+     - Al cerrar sesión (`logoutUser`) o por expiración de token de sesión:
+       - **Opción Configurable en Plataforma:** Política de conservación de borradores locales configurable a nivel de sistema o perfil de usuario:
+         a) *Modo Estricto / Dispositivo Compartido:* Purga inmediata y segura de todos los borradores locales asociados al `authUserId` que cierra sesión.
+         b) *Modo Dispositivo Personal / Privado:* Conservación cifrada de borradores asociados al usuario, manteniéndolos estrictamente aislados y bloqueados para cualquier otra cuenta que inicie sesión en el navegador.
+       - Si existen operaciones pendientes no sincronizadas en cola (`sync_queue`), advertir explícitamente al usuario antes del cierre para evitar pérdida de trabajo y ofrecer opción de forzar sincronización.
+       - Evitar que una transición de cuenta durante eventos de escritura en segundo plano asigne datos al usuario entrante.
+  5. *Protección y cifrado de información sensible:*
+     - Prohibición absoluta de almacenar contraseñas, tokens de autenticación (JWT/Bearer), datos bancarios confidenciales o credenciales en borradores locales.
+     - Implementar ofuscación/cifrado ligero del lado del cliente (ej. Web Crypto API con clave derivada de sesión) para campos marcados como confidenciales (`data-sensitive="true"`).
+     - Entender que el cifrado en cliente no sustituye la autorización y validación del servidor.
+     - Suprimir volcado de valores de borradores en registros de consola de depuración (`console.log`).
+  6. *Indicador visual de estado de borrador:*
+     - Mostrar etiqueta o tooltip discreto en la barra de herramientas o pie de formulario indicando: "Borrador guardado localmente para tu usuario" junto a la marca temporal formateada y estado de persistencia.
 - **Criterios de Aceptación:**
-  - [ ] Los borradores se guardan con prefijo que incluye inequívocamente el `userId` activo.
-  - [ ] Al iniciar sesión con un usuario B en el mismo navegador, no se restaura ningún borrador guardado por el usuario A.
-  - [ ] Al cerrar sesión, los borradores del usuario que sale se purgan de forma segura del navegador.
-  - [ ] Recargar la página con la misma sesión activa restaura fielmente el contenido del borrador.
+  - [ ] Dos cuentas de usuario diferentes que utilicen el mismo equipo/navegador no comparten ni pueden visualizar los borradores del otro.
+  - [ ] Dos formularios diferentes del mismo usuario conservan borradores aislados e independientes sin colisiones.
+  - [ ] Dos registros diferentes dentro de una misma entidad no mezclan información de recuperación.
+  - [ ] Al cambiar de usuario, la interfaz no presenta datos ni campos pre-rellenados de la sesión previa.
+  - [ ] Los borradores pendientes legítimos no se eliminan silenciosamente sin confirmación o sin política de conservación documentada.
+  - [ ] La manipulación manual de identificadores en el almacenamiento local del navegador (`localStorage`/`IndexedDB`) no permite vulnerar la seguridad ni restaurar datos sin sesión activa coincidente.
+  - [ ] La restauración de un borrador no altera de forma automática los registros oficiales en la base de datos hasta que el usuario envíe formalmente el formulario.
+  - [ ] Se verifica el comportamiento correcto en escenarios de pestañas múltiples y sesiones concurrentes.
+  - [ ] Se mantiene total compatibilidad retroactiva con los formularios que ya invocan `auditAndFixAccessibility`.
 - **Estado:** [ ] Pendiente
 
 ---
 
 ### P1 — PRIORIDAD ALTA
 
-### [F28-Task02] [P1] [PWA y Offline - Implementación de Service Worker y Manifiesto de Instalación]
+### [F28-T02] [P1] Implementación Integral de PWA: Manifiesto, Instalación y Ciclo de Vida del Service Worker
+- **Tipo:** Ampliación de Infraestructura y Resiliencia Offline.
 - **Componentes Afectados:**
-  - `manifest.json`
-  - `sw.js` (Service Worker)
-  - `app/html/`
-  - `index.html`
-- **Subcapacidades Relacionadas:** M01, O01, O03.
-- **Estado de Partida:** Requiere mejoras.
-- **Dependencias Expuestas:** Caché del navegador (`CacheStorage`), activos estáticos (HTML, CSS, JS, iconos).
-- **Problema Detectado:**
-  La plataforma cuenta con almacenamiento IndexedDB para datos, pero carece de un manifiesto de aplicación web (`manifest.json`) y de un Service Worker registrado formalmente para almacenar en caché los activos estáticos del frontend. Sin esto, la aplicación no puede cargarse ni abrirse si el usuario no tiene conexión previa al momento de iniciar la página en el navegador móvil.
-- **Requisitos Funcionales:**
-  1. Creación y enlace de `manifest.json`:
-     - Declarar nombre de la plataforma, nombre corto, colores institucionales de tema (`theme_color`), color de fondo (`background_color`), modo de visualización `standalone` e iconos PWA adaptables (192x192, 512x512).
-  2. Implementación de Service Worker (`sw.js`):
-     - Estrategia de caché `Cache-First` para activos estáticos inmutables (CSS de Tailwind, fuentes, iconos FontAwesome).
-     - Estrategia `Network-First` con fallback a caché para vistas HTML principales de dashboard (`teacher-dashboard.html`, `student-dashboard.html`, etc.).
-     - Excluir explícitamente de la caché del Service Worker las peticiones dinámicas POST hacia Google Apps Script (que se gestionan mediante la cola de IndexedDB).
-  3. Ciclo de vida y actualización controlada:
-     - Escuchar eventos `install` y `activate` con limpieza automática de versiones antiguas de caché (`v1`, `v2`).
+  - `manifest.json` (nuevo archivo en raíz del proyecto)
+  - `sw.js` (Service Worker en raíz para control de ámbito `/`)
+  - Cabeceras HTML en vistas principales (`index.html`, `app/html/*.html`, dashboards)
+  - `js/ui-common.js` (registro del Service Worker y control de instalación)
+- **Subcapacidades Relacionadas:** M01, M02, O01, O03, R03.
+- **Estado de Partida:** Requiere mejoras (Existe IndexedDB para datos, pero falta PWA formal y Service Worker para recursos estáticos).
+- **Dependencias:** [F28-T01], arquitectura de recursos estáticos, IndexedDB, contexto HTTPS seguro.
+- **Problema Detectado y Riesgos:**
+  Actualmente, si un usuario pierde la conexión antes de cargar la plataforma en su navegador móvil, el navegador arroja la pantalla de error nativa ("Sin conexión a Internet") porque no existe un Service Worker que sirva los recursos estáticos (HTML, CSS, JS, fuentes e iconos). Asimismo, los usuarios móviles no disponen de una experiencia de instalación nativa (PWA instalable en pantalla de inicio con ventana propia e icono institucional).
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Manifiesto de Aplicación Web (`manifest.json`):*
+     - Definir configuración completa: `name: "Plataforma Integral de Gestión Educativa"`, `short_name: "Gestión Educativa"`, `description: "Sistema institucional de gestión académica, administrativa y financiera"`.
+     - `start_url: "./index.html"`, `scope: "./"`, `display: "standalone"`, `orientation: "any"`.
+     - `theme_color: "#1e3a8a"` (azul institucional PowerSchool / Moodle), `background_color: "#f8fafc"`.
+     - Iconografía institucional adaptable (*maskable* y estándar): proveer iconos en resoluciones 192x192, 512x512 y SVG vectorial, utilizando recursos institucionales reales, sin iconos temporales o genéricos.
+     - Vincular `<link rel="manifest" href="manifest.json">` y meta tags de Apple Touch (`apple-touch-icon`, `mobile-web-app-capable`) en todos los archivos HTML.
+  2. *Registro y ciclo de vida del Service Worker (`sw.js`):*
+     - Registrar el Service Worker desde `ui-common.js` al iniciar la aplicación en contextos seguros (HTTPS o localhost).
+     - Capturar y manejar errores de registro de forma silenciosa sin interrumpir la experiencia de usuario.
+     - Controlar eventos `install` (precarga de shell estático), `activate` (limpieza atómica de cachés obsoletas `v1`, `v2`) y `message` (`skipWaiting`).
+     - Prevención de desincronización: Evitar que versiones incompatibles de HTML, CSS y JS se ejecuten simultáneamente; ante una nueva versión disponible, emitir un banner discreto: "Nueva versión institucional disponible. [Actualizar]".
+  3. *Estrategia de Caché Segmentada y Segura:*
+     - *Caché Estática Inmutable (`Cache-First`):* Hojas de estilo Tailwind compiladas, fuentes tipográficas, iconos FontAwesome, logotipo institucional e imágenes del layout.
+     - *Caché Dinámica de Interfaz (`Network-First` con Fallback a Caché):* Archivos HTML principales y JavaScript de lógica (`ui-common.js`, `api.js`, dashboards). Si falla la red, servir la última versión funcional en caché.
+     - *Pantalla de contingencia offline:* Si se solicita una ruta HTML que no está en caché y no hay conexión, servir `app/html/offline-fallback.html` informando el estado sin conexión y permitiendo acceso a las funciones locales disponibles en IndexedDB.
+     - *Exclusión estricta de caché de red:* Excluir tajantemente del `CacheStorage` las peticiones POST hacia Google Apps Script o endpoints de backend dinámicos, las cuales se gestionan única y exclusivamente a través de la cola persistente `sync_queue` de IndexedDB.
+  4. *Experiencia de Instalación y Detección de Modo Standalone:*
+     - Escuchar el evento `beforeinstallprompt`, almacenar el evento diferido y mostrar botón/opción accesible en el menú: "Instalar aplicación en dispositivo".
+     - Detectar cuando la aplicación ya se ejecuta en modo standalone (`display-mode: standalone` o `window.navigator.standalone === true`) para optimizar la interfaz (eliminar prompts redundantes, ajustar espaciados de notch/safe-areas en iOS y Android).
 - **Criterios de Aceptación:**
-  - [ ] El navegador móvil reconoce la plataforma como una PWA instalable con prompt "Agregar a pantalla de inicio".
-  - [ ] Al abrir la aplicación en modo avión (sin internet), la interfaz básica y los paneles cargan desde la caché del Service Worker.
-  - [ ] Las actualizaciones de código en el servidor provocan la actualización del Service Worker y la renovación de la caché.
+  - [ ] El manifiesto web cumple las especificaciones W3C y pasa las validaciones de Lighthouse PWA.
+  - [ ] Los navegadores compatibles (Chrome, Edge, Safari iOS, Firefox Mobile) reconocen la plataforma como PWA instalable.
+  - [ ] Al abrir la aplicación en modo avión sin conexión previa de red, la interfaz principal y los dashboards cargan exitosamente desde la caché del Service Worker.
+  - [ ] Las actualizaciones de código en el servidor renuevan la caché sin dejar recursos huérfanos ni eliminar operaciones pendientes de IndexedDB.
+  - [ ] Se verifica el comportamiento en Android, iOS y navegadores de escritorio.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F28-Task03] [P1] [Sincronización en Segundo Plano - Integración con Background Sync API]
+### [F28-T03] [P1] Sincronización en Segundo Plano (Background Sync) y Recuperación Automática de Operaciones Pendientes
+- **Tipo:** Ampliación de Infraestructura y Resiliencia Offline.
 - **Componentes Afectados:**
-  - `sw.js`
-  - `js/ui-common.js`
-  - `js/api.js`
-- **Subcapacidades Relacionadas:** S01, S05, O02.
-- **Estado de Partida:** Implementada parcialmente.
-- **Dependencias Expuestas:** `syncOfflineQueue`, `sync_queue` de IndexedDB, `sw.js`.
-- **Problema Detectado:**
-  La sincronización actual de la cola offline (`syncOfflineQueue`) depende exclusivamente de que la pestaña del navegador permanezca abierta cuando se dispara el evento `online`. Si el usuario registra una asistencia o una calificación en el aula, cierra el navegador y sale a una zona con cobertura, la sincronización no ocurre hasta que vuelva a abrir la aplicación manualmente.
-- **Requisitos Funcionales:**
-  1. Registro de sincronización en segundo plano:
-     - Al encolar una acción en IndexedDB (`queueOfflineAction`), solicitar un tag de sincronización al Service Worker: `registration.sync.register('sync-institutional-queue')`.
-  2. Manejador en Service Worker:
-     - Escuchar el evento `sync` con tag `sync-institutional-queue` en `sw.js` para procesar los elementos pendientes de la cola de IndexedDB incluso si la ventana principal está cerrada.
-  3. Notificación de sincronización completada:
-     - Emitir notificación al usuario cuando las tareas pendientes encoladas fuera de línea se hayan sincronizado exitosamente en el servidor.
+  - `sw.js` (manejador de eventos `sync` y `periodicsync`)
+  - `js/ui-common.js` (`syncOfflineQueue`, `queueOfflineAction`, `processQueueItems`)
+  - `js/api.js` (cliente HTTP e inyección de encabezados de idempotencia)
+  - IndexedDB store `sync_queue`
+- **Subcapacidades Relacionadas:** S01, S02, S03, S04, S05, O02.
+- **Estado de Partida:** Implementada parcialmente (Sincronización dependiente de la pestaña abierta y evento `window.online`).
+- **Dependencias:** [F28-T01], [F28-T02], IndexedDB, motor de idempotencia en backend.
+- **Problema Detectado y Riesgos:**
+  Actualmente, si un docente toma asistencia o asigna notas en un aula sin señal, guarda los datos en IndexedDB y cierra el navegador, las operaciones encoladas quedan estancadas hasta que el docente vuelva a abrir intencionalmente la aplicación en una zona con internet. Si el usuario olvida reabrir la app, los registros institucionales no se actualizan en el servidor.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Integración formal con Background Sync API:*
+     - Al encolar cualquier acción en `sync_queue` de IndexedDB (`queueOfflineAction`), solicitar el registro de sincronización en segundo plano al Service Worker: `registration.sync.register('sync-institutional-queue')`.
+     - En `sw.js`, capturar el evento `sync` correspondiente al tag `'sync-institutional-queue'`.
+     - Abrir la base de datos IndexedDB desde el worker, consultar los elementos en estado `'PENDING'` o `'RETRY'` y despacharlos secuencialmente a través de `fetch`.
+  2. *Matriz de Compatibilidad y Estrategias Fallback:*
+     - Reconocer que la Background Sync API no está disponible en todos los navegadores (ej. Safari en iOS/macOS).
+     - Mantener operativas y coordinadas las estrategias redundantes de sincronización:
+       a) Evento nativo `window.addEventListener('online')`.
+       b) Evento de visibilidad/foco (`visibilitychange` o `window.onfocus`) al volver a interactuar con la app.
+       c) Verificación automática al inicio de cada sesión y navegación de ruta.
+       d) Disparador de sincronización manual accesible por el usuario: botón "Sincronizar ahora" con spinner de progreso.
+     - No asumir jamás que la sincronización en segundo plano está garantizada en entornos sin soporte.
+  3. *Estructura Inmutable de la Cola y Ciclo de Vida de Transacciones:*
+     - Cada elemento de la cola debe registrar en IndexedDB:
+       - `id`: Identificador único UUIDv4 local.
+       - `action`: Nombre del endpoint/acción (`saveDailyAttendance`, `saveClassGrade`, etc.).
+       - `payload`: Datos de la operación.
+       - `authUserId`: Usuario propietario que generó la acción.
+       - `institucionId`: Contexto institucional.
+       - `timestamp`: Marca temporal de creación en cliente.
+       - `intentos`: Contador numérico de reintentos.
+       - `maxIntentos`: Límite configurado (predeterminado: 5).
+       - `estado`: `'PENDING'`, `'IN_PROGRESS'`, `'COMPLETED'`, `'REQUIRES_INTERVENTION'`, `'FAILED_RECOVERABLE'`, `'FAILED_PERMANENT'`.
+       - `ultimoError`: Descripción del error devuelto por la red o backend.
+       - `ultimoIntento`: Marca temporal del último despacho.
+       - `idempotencyKey`: Clave única para evitar duplicados en el servidor ante caídas de conexión durante la respuesta HTTP.
+  4. *Algoritmo de Reintentos con Retroceso Exponencial (Exponential Backoff):*
+     - Calcular el intervalo de espera: $espera = base 	imes 2^{intentos} + jitter$ (evitando sobrecarga sincronizada de peticiones).
+     - Diferenciar errores transitorios (red caída, timeout 504, 503) de errores definitivos (401 no autorizado, 403 prohibido, 422 validación de negocio).
+     - En caso de error definitivo, pausar el reintento automático y transicionar a `'REQUIRES_INTERVENTION'`.
+  5. *Orden de Ejecución y Dependencias Causales:*
+     - Procesar las transacciones respetando estrictamente el orden causal de creación (FIFO) para operaciones vinculadas al mismo registro o entidad (ej. creación de registro de matrícula previa a la asignación de cuota o cargo).
+  6. *Interfaz y Feedback de Sincronización:*
+     - Indicador flotante en cabecera: Mostrar badge con el número de operaciones pendientes.
+     - Panel desplegable de estado de sincronización: Lista de operaciones en cola, hora de último intento, estado detallado y opción de resolución manual de conflictos o cancelación.
 - **Criterios de Aceptación:**
-  - [ ] Al registrar una acción offline y cerrar la pestaña, el Service Worker ejecuta la sincronización en segundo plano al recuperar red en navegadores compatibles.
-  - [ ] Las acciones sincronizadas en segundo plano actualizan su estado a `COMPLETED` en IndexedDB.
-  - [ ] Se mantiene compatibilidad de fallback hacia el disparador `window.addEventListener('online')` en navegadores que no soporten la Background Sync API.
+  - [ ] En navegadores compatibles, al encolar una acción offline y cerrar la pestaña, el Service Worker ejecuta la sincronización en segundo plano al recuperar la conexión.
+  - [ ] En navegadores sin Background Sync (iOS Safari), la cola se procesa automáticamente al recuperar red o reabrir la aplicación.
+  - [ ] Las operaciones sincronizadas actualizan su estado a `COMPLETED` y no se duplican en el backend gracias a la clave de idempotencia.
+  - [ ] Las operaciones con dependencias causales se procesan en el orden correcto.
+  - [ ] Los fallos de validación o permisos pasan al estado `REQUIRES_INTERVENTION` sin bucles infinitos de reintentos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F28-T04] [P1] Gestión Inteligente de Almacenamiento Local, Cuotas y Conservación de Datos Pendientes
+- **Tipo:** Ampliación de Infraestructura y Resiliencia Offline.
+- **Componentes Afectados:**
+  - `js/ui-common.js` (módulo de almacenamiento y monitoreo de cuotas)
+  - IndexedDB stores (`documents`, `sync_queue`, `offline_cache`)
+  - CacheStorage (`caches`)
+- **Subcapacidades Relacionadas:** O01, O02, O03, S01, S05.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias:** [F28-T01], [F28-T02], [F28-T03], StorageManager API (`navigator.storage`).
+- **Problema Detectado y Riesgos:**
+  Los navegadores móviles imponen límites estrictos de cuota para IndexedDB y CacheStorage (que varían según el espacio libre del dispositivo, desde decenas de MB hasta unos pocos GB). Si el almacenamiento local se llena, las escrituras fallan con excepciones de tipo `QuotaExceededError`. Sin una gestión proactiva, podrían perderse borradores recientes o transacciones críticas de asistencia y notas que no alcanzaron a sincronizarse.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Supervisión Proactiva de Cuota con StorageManager API:*
+     - Consultar periódicamente `navigator.storage.estimate()` para obtener el espacio utilizado (`usage`) y el límite disponible (`quota`).
+     - Solicitar almacenamiento persistente mediante `navigator.storage.persist()` para evitar que el navegador purgue los datos de la aplicación automáticamente ante escasez de espacio en el disco.
+  2. *Categorización y Segmentación de Datos Almacenados:*
+     - Clasificar el consumo de almacenamiento en 6 categorías bien diferenciadas:
+       a) *Cola de Sincronización (`sync_queue`):* Operaciones offline pendientes (Prioridad Máxima de Retención).
+       b) *Borradores Locales Aislados:* Datos en edición no confirmados (Prioridad Alta de Retención).
+       c) *Datos Institucionales Estructurados:* Catálogos maestros de estudiantes, cursos y asignaturas para consulta offline.
+       d) *Documentos y PDF Descargados:* Comprobantes, boletas y circulares cacheadas.
+       e) *Caché de Shell y Recursos Estáticos:* HTML, CSS, JS del Service Worker.
+       f) *Archivos Temporales y Miniaturas:* Vistas previas de imágenes y blobs procesados.
+  3. *Jerarquía y Políticas de Purga Segura ante Cuota Excedida:*
+     - **Regla Inquebrantable:** Prohibido purgar o eliminar automáticamente la cola de sincronización (`sync_queue`) ni los borradores pendientes no sincronizados.
+     - Ante alertas de cuota (> 80% o error de escritura):
+       - Fase 1: Limpiar archivos temporales, blobs en desuso y miniaturas cacheadas.
+       - Fase 2: Purgar documentos PDF antiguos descargados que puedan re-descargarse del servidor.
+       - Fase 3: Purgar cachés de versiones antiguas de recursos estáticos del Service Worker.
+       - Fase 4: Si la cuota continúa en nivel crítico (> 95%), emitir alerta modal al usuario: "Almacenamiento del dispositivo casi lleno. Por favor sincronice sus operaciones pendientes y libere espacio en su equipo".
+  4. *Políticas de Caducidad y Limpieza Selectiva:*
+     - Establecer expiración TTL (Time-To-Live) para datos institucionales cacheados (ej. refrescar catálogos si tienen más de 7 días).
+     - La limpieza durante el cierre de sesión no debe borrar operaciones pendientes en cola ni afectar los datos de otros perfiles de usuario.
+- **Criterios de Aceptación:**
+  - [ ] El sistema consulta el uso y cuota de almacenamiento en navegadores que soportan `navigator.storage`.
+  - [ ] Bajo ninguna circunstancia de limpieza automática se eliminan transacciones pendientes de `sync_queue` ni borradores activos.
+  - [ ] El sistema maneja de forma controlada las excepciones `QuotaExceededError` sin provocar pantallazos blancos ni caídas de script.
+  - [ ] Los usuarios reciben advertencias comprensibles antes de que el espacio del navegador se agote totalmente.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F28-T05] [P1] Sistema Integral de Accesibilidad Visual, Foco Universal y Navegación por Teclado (WCAG 2.2 AA/AAA)
+- **Tipo:** Optimización Funcional y Cumplimiento Normativo.
+- **Componentes Afectados:**
+  - `js/ui-common.js` (`auditAndFixAccessibility`, trampeo de foco en modales)
+  - Hojas de estilos y clases utilitarias de Tailwind
+  - Componentes de formularios, modales, tablas y barras de navegación
+- **Subcapacidades Relacionadas:** A01, A02, A03, A04, A05.
+- **Estado de Partida:** Implementada parcialmente (Reglas dinámicas operativas, pero faltan indicadores de foco reforzados, atajos globales y estándares estrictos WCAG 2.2).
+- **Dependencias:** [F28-T01], estructura del DOM, modales y diálogos interactivos.
+- **Problema Detectado y Riesgos:**
+  Aunque existen auditorías automáticas de atributos ARIA, los anillos de foco predeterminados del navegador resultan insuficientes en pantallas con luz solar intensa o para usuarios con debilidad visual. Asimismo, usuarios que navegan exclusivamente mediante teclado o tecnologías de asistencia sufren fatiga al carecer de atajos globales, o experimentan pérdidas de foco detrás de modales y encabezados pegajosos (*sticky headers*).
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Sistema Visual de Foco de Alto Contraste (Cumplimiento WCAG 2.2 Criterio 2.4.11 y 2.4.13):*
+     - Establecer indicador de foco visible de alto contraste universal: anillo de foco reforzado (`outline: 3px solid #2563eb; outline-offset: 2px; box-shadow: 0 0 0 4px rgba(37,99,235,0.25)` o clases Tailwind `focus-visible:ring-4 focus-visible:ring-blue-600 focus-visible:ring-offset-2`).
+     - *Foco no oculto:* Garantizar mediante CSS (`scroll-margin-top: 5rem`) que ningún control enfocado quede tapado u oculto detrás de la barra superior fija (*header*) o drawers flotantes.
+     - Diferenciación visual estricta entre el estado de foco (`focus`), estado activo (`active`) y estado seleccionado/marcado (`selected`/`checked`).
+     - El indicador de foco debe mantener un ratio de contraste mínimo de 3:1 respecto a los colores de fondo adyacentes tanto en tema claro como en tema oscuro.
+  2. *Navegación por Teclado y Atajos Globales No Invasivos:*
+     - Implementar atajos de teclado estandarizados documentados en la plataforma:
+       - `Alt + M`: Abrir / alternar menú lateral de navegación.
+       - `Alt + S`: Abrir buscador global / omnibox de la institución.
+       - `Alt + H`: Ir al inicio / dashboard principal del rol activo.
+       - `Alt + A`: Abrir panel de ayuda de accesibilidad y listado de atajos.
+       - `Escape`: Cerrar cualquier ventana modal, drawer o menú desplegable activo, retornando el foco exactamente al elemento interactivo que lo originó.
+     - *Protección contra colisiones:* Los atajos deben deshabilitarse automáticamente cuando el usuario esté escribiendo dentro de campos de entrada de texto (`<input>`, `<textarea>`, `<select>` o `contenteditable`).
+     - Evitar colisionar con atajos nativos del navegador o sistemas operativos (no usar combinaciones destructivas con `Ctrl`).
+  3. *Trampeo y Enfoque Seguro en Ventanas Modales:*
+     - Al abrir un modal, desplazar inmediatamente el foco al primer elemento interactivo o título con `tabindex="-1"`.
+     - Confinar el tabulador dentro del modal abierto evitando que el usuario navegue por elementos del fondo inactivo.
+  4. *Regiones ARIA Vivas y Anuncios Dinámicos:*
+     - Disponer de un contenedor persistente accesible en el DOM: `<div id="aria-live-announcer" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>`.
+     - Emitir mensajes textuales claros cuando ocurran cambios de estado dinámicos (ej. "Borrador guardado", "3 operaciones sincronizadas", "Buscando resultados...", "Error en el campo fecha").
+  5. *Modo de Alto Contraste y Respeto de Preferencias del Sistema:*
+     - Soportar consultas de medios `@media (prefers-contrast: more)` y `@media (prefers-reduced-motion: reduce)`.
+     - Si el usuario prefiere movimiento reducido, desactivar automáticamente animaciones de transición, desvanecimientos y desplazamientos suaves.
+- **Criterios de Aceptación:**
+  - [ ] Todos los controles interactivos (botones, enlaces, inputs, selects, pestañas) presentan un indicador de foco claramente visible al navegar con la tecla Tab.
+  - [ ] El elemento enfocado nunca queda oculto detrás de barras pegajosas fijas.
+  - [ ] Los atajos de teclado (`Alt+M`, `Alt+S`, `Escape`) funcionan predeciblemente sin interferir con la digitación regular de textos.
+  - [ ] Los modales confinan el foco correctamente y devuelven el foco al cerrarse.
+  - [ ] Las operaciones críticas pueden completarse íntegramente utilizando exclusivamente el teclado y lectores de pantalla (NVDA/JAWS/VoiceOver).
 - **Estado:** [ ] Pendiente
 
 ---
 
 ### P2 — PRIORIDAD MEDIA
 
-### [F28-Task04] [P2] [Accesibilidad Avanzada - Indicador de Foco de Alto Contraste y Atajos de Teclado]
+### [F28-T06] [P2] Sistema de Preferencias Individuales de Visualización y Personalización de Accesibilidad
+- **Tipo:** Optimización Funcional y Personalización.
 - **Componentes Afectados:**
-  - `js/ui-common.js`
-  - Estilos CSS / Tailwind
-- **Subcapacidades Relacionadas:** A01, A03, A05.
+  - `js/ui-common.js` (gestor de temas y preferencias de accesibilidad)
+  - `dashboard-*.html` (modal/panel de ajustes de accesibilidad)
+  - Backend `user-service` (persistencia de preferencias en perfil de usuario)
+- **Subcapacidades Relacionadas:** A01, A04, A05, P01.
 - **Estado de Partida:** Implementada parcialmente.
-- **Dependencias Expuestas:** `auditAndFixAccessibility`, navegación por teclado.
-- **Problema Detectado:**
-  Aunque los controles interactivos poseen indicadores de foco básicos, en pantallas con luz solar intensa o para usuarios con baja visión, el anillo de foco por defecto puede pasar desapercibido. Asimismo, faltan atajos de teclado globales para abrir el menú principal, cerrar diálogos y buscar en la aplicación.
-- **Requisitos Funcionales:**
-  1. Estilos de foco de alto contraste:
-     - Configurar anillo de foco visible reforzado (`focus-visible:ring-4 focus-visible:ring-blue-600 focus-visible:ring-offset-2`) en todos los botones, enlaces y campos de formulario.
-  2. Atajos de teclado accesibles:
-     - `Alt + M`: Abrir / cerrar menú de navegación principal.
-     - `Alt + S`: Abrir buscador global omnibox.
-     - `Escape`: Cerrar cualquier ventana modal activa y devolver el foco al elemento que la abrió.
-  3. Región de anuncios ARIA (`aria-live`):
-     - Mantener un contenedor `div[role="status"][aria-live="polite"]` para anunciar dinámicamente mensajes de éxito y errores a lectores de pantalla.
+- **Dependencias:** [F28-T05], perfil de usuario y almacenamiento local.
+- **Problema Detectado y Riesgos:**
+  Actualmente, las configuraciones visuales (como modo oscuro) se almacenan de manera local y básica. No existe un panel integral donde usuarios con diversas capacidades visuales o cognitivas puedan ajustar de forma persistente y personalizada la visualización del sistema a sus necesidades específicas.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Panel Integral de Accesibilidad y Preferencias Visuales:*
+     - Incorporar selector accesible en la barra superior o menú de usuario para configurar:
+       - *Tamaño de Fuente Relativo:* Normal (100%), Grande (115%), Muy Grande (130%) aplicado mediante clases dinámicas sobre la raíz `html` sin romper las cuadrículas ni truncar textos.
+       - *Contraste de Interfaz:* Estándar, Alto Contraste (bordes reforzados y fondos de máxima distinción), o Escala de Grises.
+       - *Reducción de Movimiento:* Forzar desactivación de animaciones.
+       - *Densidad de Información:* Compacta (para secretaría y contabilidad con tablas densas) o Cómoda/Espaciada (para lectura relajada o dispositivos táctiles).
+       - *Tema Visual:* Claro, Oscuro, o Sincronizado con el Sistema Operativo.
+       - *Tipografía de Fácil Lectura:* Opción para activar tipografía con mayor espaciado o apta para dislexia (ej. OpenDyslexic / Atkinson Hyperlegible).
+  2. *Persistencia y Sincronización Multi-Dispositivo:*
+     - Almacenar las preferencias en `localStorage` para aplicación instantánea durante el arranque del shell.
+     - Sincronizar automáticamente las preferencias con el backend (`user-service` en la hoja `UsuariosConfiguracion`) cuando haya conexión, permitiendo que un docente o alumno mantenga su configuración visual al cambiar de equipo.
+  3. *Restablecimiento y Aislamiento:*
+     - Disponer de botón "Restablecer valores predeterminados".
+     - Las preferencias de un usuario no deben afectar la sesión de otros usuarios en el mismo equipo.
 - **Criterios de Aceptación:**
-  - [ ] El indicador de foco es claramente visible en todos los elementos interactivos bajo navegación con Tab.
-  - [ ] Los atajos de teclado (`Alt+M`, `Escape`) funcionan de forma predecible sin colisionar con atajos nativos del navegador.
-  - [ ] Las alertas dinámicas son leídas por lectores de pantalla (NVDA/JAWS/VoiceOver) a través del contenedor `aria-live`.
+  - [ ] Las preferencias se aplican en tiempo real al modificarse en el panel sin requerir recarga completa de la página.
+  - [ ] El escalado de fuentes no trunca textos ni solapa botones en ningún dashboard.
+  - [ ] Las preferencias se conservan entre sesiones y se sincronizan en la nube para el usuario autenticado.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F28-Task05] [P2] [Optimización de Medios - Compresión Progresiva de Imágenes y Lazy Loading]
+### [F28-T07] [P2] Optimización de Paneles Departamentales, Flujos de Trabajo y Accesos Rápidos Personalizados
+- **Tipo:** Optimización Funcional y Productividad Operativa.
 - **Componentes Afectados:**
-  - `js/ui-common.js`
-  - `js/teacher.js`
-  - `js/accounting.js`
-- **Subcapacidades Relacionadas:** R01, R04.
+  - `dashboards/` (`dashboard-docente.html`, `dashboard-estudiante.html`, `dashboard-contabilidad.html`, etc.)
+  - `js/teacher.js`, `js/accounting.js`, `js/student.js`, `js/ui-common.js`
+- **Subcapacidades Relacionadas:** P01, P02, P03, P04, M04.
 - **Estado de Partida:** Implementada parcialmente.
-- **Dependencias Expuestas:** Carga de fotografías de expedientes y comprobantes de pago.
-- **Problema Detectado:**
-  La carga de imágenes y fotografías de alumnos o comprobantes bancarios desde dispositivos móviles puede saturar el ancho de banda y generar lentitud si las imágenes tomadas con cámaras modernas (4MB - 10MB) se envían sin procesar al backend o si se cargan simultáneamente en listados extensos.
-- **Requisitos Funcionales:**
-  1. Compresión en cliente antes del envío:
-     - Utilizar un canvas HTML5 en el navegador para redimensionar fotografías de perfil a un máximo de 800x800px y comprobantes a 1200x1200px con calidad JPEG 0.8, reduciendo el peso en más del 80% antes de subir.
-  2. Carga diferida (`loading="lazy"`):
-     - Asignar atributo `loading="lazy"` a todas las imágenes de avatares en tablas y nóminas de alumnos.
+- **Dependencias:** Sistema RBAC/ABAC de roles, paneles departamentales existentes.
+- **Problema Detectado y Riesgos:**
+  Aunque cada rol posee su panel respectivo, los usuarios deben navegar múltiples menús para realizar acciones repetitivas cotidianas (ej. pasar lista de la primera hora, registrar pagos de matrícula o consultar notas). No se trata de crear dashboards separados, sino de enriquecer los existentes con accesos rápidos personalizables y memoria de contexto de navegación.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Barra de Accesos Rápidos y Favoritos por Usuario:*
+     - Permitir a cada usuario marcar secciones o formularios frecuentes como "Favorito" (icono de estrella accesible).
+     - Presentar widget de accesos rápidos prioritarios en la cabecera del dashboard.
+  2. *Priorización Inteligente por Departamento y Rol:*
+     - *Docente:* Acceso rápido con un clic a "Pasar Asistencia del Día", "Ingreso Rápido de Calificaciones" y "Alertas de Rendimiento".
+     - *Secretaría / Administración:* Acceso rápido a "Nuevo Expediente", "Emisión de Certificados CUV" y "Búsqueda Rápida de Alumnos".
+     - *Dirección:* Acceso directo a "Indicadores de Asistencia Global", "Semáforo Financiero" y "Supervisión Docente".
+     - *Contabilidad:* Acceso prioritario a "Registro de Cobro Rápido", "Aprobación de Comprobantes" y "Cierre de Caja".
+     - *Estudiante / Familia:* Acceso inmediato a "Estado de Cuenta", "Boleta de Calificaciones" y "Tareas Pendientes".
+  3. *Conservación de Contexto de Navegación:*
+     - Recordar la última sección activa y filtros seleccionados (ej. grado, sección y período evaluativo) para que al recargar o regresar de un formulario, el usuario vuelva exactamente al contexto donde estaba trabajando.
+  4. *Seguridad Estricta en Accesos:*
+     - Los accesos rápidos o enlaces directos deben revalidar obligatoriamente los permisos y alcances del usuario en el servidor antes de renderizar la información, previniendo accesos indebidos por manipulación de parámetros.
 - **Criterios de Aceptación:**
-  - [ ] Una fotografía de 5MB tomada desde un teléfono se comprime en el cliente a menos de 300KB antes de enviarse al backend.
+  - [ ] Los usuarios pueden agregar y eliminar accesos favoritos fácilmente.
+  - [ ] Los accesos directos respetan en un 100% las restricciones de rol y departamento.
+  - [ ] El contexto de búsqueda y filtros seleccionados se preserva durante la sesión de trabajo.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F28-T08] [P2] Compresión Inteligente de Imágenes, Optimización Multimedia y Carga Diferida (Lazy Loading)
+- **Tipo:** Optimización Técnica y Reducción de Consumo de Datos.
+- **Componentes Afectados:**
+  - `js/ui-common.js` (procesador de medios en cliente)
+  - `js/teacher.js`, `js/accounting.js` (módulos de carga de fotografías de expedientes y comprobantes bancarios)
+  - Vistas con listados de alumnos y fotografías
+- **Subcapacidades Relacionadas:** R01, R04, M03.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias:** [F28-T04], HTML5 Canvas API, File API.
+- **Problema Detectado y Riesgos:**
+  Al subir fotografías tomadas con teléfonos modernos para el expediente del alumno o comprobantes de transferencia bancaria, los archivos pueden pesar entre 4MB y 12MB. En conexiones móviles 3G/4G o en zonas con ancho de banda limitado, subir estos archivos satura la red, provoca timeouts en Apps Script y agota rápidamente las cuotas de almacenamiento en Google Drive.
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Compresión en Cliente Antes de la Subida:*
+     - Implementar función reutilizable `compressImageBeforeUpload(file, options)` utilizando HTML5 Canvas:
+       - *Fotografías de Perfil / Carnet:* Redimensionar a máximo 800x800 píxeles, calidad JPEG/WebP 0.82 (reducción superior al 85% del peso original, < 250 KB).
+       - *Comprobantes Bancarios y Documentos Escaneados:* Redimensionar a máximo 1600x1600 píxeles, calidad 0.85, aplicando filtros de nitidez para garantizar la absoluta legibilidad de montos, sellos, fechas y números de referencia bancaria.
+       - *Protección de Integridad:* Prohibir la compresión destructiva en archivos PDF o documentos con firma digital o valor probatorio oficial.
+     - Preservar la orientación correcta de la fotografía mediante la lectura de metadatos EXIF.
+  2. *Generación Automática de Miniaturas (Thumbnails):*
+     - Generar miniaturas ligeras (120x120 píxeles, < 25 KB) para vistas previas instantáneas en tablas y nóminas de alumnos.
+  3. *Carga Diferida Estricta (`loading="lazy"`):*
+     - Añadir atributo nativo `loading="lazy"` y `decoding="async"` en todas las etiquetas `<img>` de listados masivos.
+     - Mostrar skeleton loader o placeholder neutro mientras la imagen se descarga.
+  4. *Gestión de Conexiones Lentas y Resiliencia:*
+     - Mostrar barra de progreso real durante la subida del archivo.
+     - Permitir cancelar la subida en cualquier momento y reintentar si se interrumpe la conexión.
+- **Criterios de Aceptación:**
+  - [ ] Una fotografía de 6MB tomada desde un teléfono móvil se comprime en el cliente a menos de 300KB antes de transmitirse por red.
+  - [ ] Los comprobantes bancarios comprimidos conservan nitidez y legibilidad total en referencias y cifras.
   - [ ] Las imágenes en tablas extensas no se descargan hasta que el usuario se desplaza cerca de ellas en pantalla.
+  - [ ] Se comprueba una reducción mínima del 75% en el uso de ancho de banda en la carga de imágenes respecto a la línea base.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F28-T09] [P2] Optimización Avanzada de Tablas, Listados Masivos y Generación Eficiente de Reportes
+- **Tipo:** Optimización Técnica y Escalabilidad.
+- **Componentes Afectados:**
+  - `js/ui-common.js` (componente reutilizable de tabla de datos y paginación)
+  - `dashboards/` y vistas de gestión con grandes volúmenes de datos
+  - Módulos de exportación (PDF, Excel, CSV)
+- **Subcapacidades Relacionadas:** R01, R02, M03, M04.
+- **Estado de Partida:** Implementada parcialmente.
+- **Dependencias:** Componentes de tablas existentes, modal de reportes (`displayReportModal`), backend services.
+- **Problema Detectado y Riesgos:**
+  Al consultar matrículas institucionales completas, nóminas de miles de alumnos o historiales contables anuales, renderizar cientos de filas en el DOM bloquea el hilo principal de JavaScript en computadoras modestas o teléfonos móviles, generando congelamiento de interfaz (*UI freeze*) y desplazamientos toscos (*jank*).
+- **Requisitos Funcionales y Técnicos Convergentes:**
+  1. *Paginación Dinámica y Tamaño de Página Configurable:*
+     - Paginación estandarizada con selector de registros por página: 10, 25, 50, 100 registros.
+     - Mostrar indicador de estado claro: "Mostrando 1-25 de 480 registros".
+     - Conservar la página activa y el estado de paginación al navegar a un detalle y regresar a la lista.
+  2. *Filtrado y Búsqueda en Memoria / Servidor:*
+     - Búsqueda en tiempo real con *debounce* (300ms) para evitar recalcular con cada pulsación de tecla.
+     - Filtros combinados por grado, sección, estado y fecha.
+     - Ordenamiento por columnas en orden ascendente y descendente con indicadores accesibles (`aria-sort`).
+  3. *Modo Tarjetas Adaptable en Dispositivos Móviles:*
+     - En pantallas con ancho menor a 768px, transformar automáticamente la visualización de tabla en un listado de tarjetas colapsables/expandibles con jerarquía clara de información, evitando el desplazamiento horizontal incómodo sin amputar datos relevantes.
+  4. *Generación No Bloqueante de Reportes Extensos y Exportaciones:*
+     - La exportación a CSV o PDF de listados extensos debe procesarse de manera asíncrona mediante Web Workers o fragmentación con `setTimeout`/`requestIdleCallback`, mostrando barra de progreso para no congelar la pantalla.
+     - Validar que las exportaciones contengan la totalidad de los datos filtrados y mantengan encabezados institucionales, totales y formatos numéricos exactos.
+- **Criterios de Aceptación:**
+  - [ ] Las tablas con más de 1,000 registros cambian de página y filtran en menos de 100ms sin congelar la interfaz.
+  - [ ] En pantallas móviles, las tablas se transforman en tarjetas legibles con acciones accesibles.
+  - [ ] La exportación de datos a hojas de cálculo respeta los filtros aplicados y no trunca filas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F28-T10] [P2] Profesionalización de la Identidad Visual y Unificación del Sistema de Diseño Institucional
+- **Tipo:** Profesionalización Visual y Calidad de Presentación.
+- **Componentes Afectados:**
+  - Sistema global de estilos (Tailwind CSS, variables CSS institucionales)
+  - Vistas y plantillas de todos los departamentos (`app/html/`, `dashboards/`)
+  - Componentes compartidos de cabecera, navegación lateral, modales, botones y tarjetas
+- **Subcapacidades Relacionadas:** M04, P01, P04, A01, A05.
+- **Estado de Partida:** Requiere mejoras.
+- **Dependencias:** [F28-T05], Tailwind CSS, sistema de componentes compartidos.
+- **Problema Detectado y Riesgos:**
+  Aunque los paneles son funcionales, la plataforma presenta disparidad de estilos entre departamentos (algunos módulos lucen con colores brillantes, bordes excesivamente redondeados o apariencias semejantes a plantillas genéricas o de juguete). Un sistema de gestión educativa de nivel empresarial requiere una identidad visual sobria, madura y profesional, orientada a la productividad académica y administrativa.
+- **Requisitos Funcionales y Visuales Convergentes:**
+  1. *Línea Gráfica de Referencia Institucional:*
+     - Adoptar la madurez, sobriedad y balance visual de plataformas consolidadas de gestión educativa como **PowerSchool SIS** y **Moodle Institucional**:
+       - Paleta cromática corporativa: Azul marino institucional (`#1e3a8a`, `#1e40af`), pizarra neutro (`#0f172a`, `#334155`), fondos en gris suave (`#f8fafc`, `#f1f5f9`) y acentos funcionales controlados (verde esmeralda para éxito, rojo carmesí para alertas críticas, ámbar para advertencias).
+       - Supresión de estridencias: Eliminar gradientes decorativos innecesarios, sombras excesivas y bordes redondeados infantiles. Usar radios sutiles (`rounded-md`, `rounded-lg`).
+  2. *Escala Tipográfica y Jerarquía Clara:*
+     - Tipografía institucional legible (Inter / Roboto / System UI).
+     - Escala tipográfica estricta: Encabezados H1 (1.5rem, semibold), H2 (1.25rem, semibold), H3 (1.125rem, medium), cuerpo de texto (0.875rem / 14px), etiquetas y pies (0.75rem / 12px).
+     - Espaciados y ritmos visuales consistentes (múltiplos de 4px / 8px).
+  3. *Consistencia Interdepartamental:*
+     - Unificar la estructura de cabecera (*topbar*), menú lateral (*sidebar*), barra de herramientas y pie de página en todos los dashboards (Docente, Estudiante, Contabilidad, Dirección, Secretaría).
+     - Ningún módulo debe parecer una aplicación desconectada o creada por otro equipo.
+  4. *Coherencia en Modos Claro y Oscuro:*
+     - Definir tokens de color semánticos (`--bg-surface`, `--text-primary`, `--border-subtle`).
+     - Garantizar que en modo oscuro las tablas, formularios y modales conserven contraste suficiente y descansen la vista sin perder legibilidad.
+- **Criterios de Aceptación:**
+  - [ ] Todos los módulos y dashboards comparten un lenguaje visual homogéneo, sobrio y profesional comparable a PowerSchool SIS.
+  - [ ] Se eliminan elementos visuales estridentes o de apariencia infantil en favor de una interfaz ejecutiva y académica.
+  - [ ] Los contrastes de color cumplen estrictamente las pautas WCAG 2.2 AA en temas claro y oscuro.
+  - [ ] La navegación móvil mantiene la misma seriedad y pulcritud institucional que la versión de escritorio.
 - **Estado:** [ ] Pendiente
 
 ---
