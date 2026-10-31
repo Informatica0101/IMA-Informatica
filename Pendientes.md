@@ -3036,349 +3036,789 @@
 
 # PENDIENTES - FASE 19: INVENTARIO, ACTIVOS FIJOS Y MANTENIMIENTO INSTITUCIONAL
 
-## TAREAS CRÍTICAS (P0 - SEVERIDAD MÁXIMA, INTEGRIDAD FÍSICA Y PATRIMONIAL)
+## TAREAS CRÍTICAS (P0 - INTEGRIDAD FÍSICA, CONTROL PATRIMONIAL Y TRANSFERENCIAS TRANSACCIONALES)
 
 ---
 
-### [ ] [F19-Task01] Aislamiento y control de existencias multialmacén en Kardex
-- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-02) y Sección G (Defecto 1)
+### [ ] [F19-Task01] Corrección integral del control de existencias multialmacén
+- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-02), Sección G (Defecto 1) y Plan de Trabajo F19-01
 - **Prioridad:** P0
-- **Severidad/Clasificación:** Crítica (Integridad física de inventarios, auditoría por bodega y prevención de desabastecimiento)
+- **Severidad/Clasificación:** Crítica (Integridad física de inventarios, auditoría por bodega, prevención de saldos inconsistentes y desabastecimiento)
 - **Archivos Involucrados:**
-  - `backend/accounting-service/Code.gs` (`recordInventoryMovement`, `getInventoryKardex`)
+  - `backend/accounting-service/Code.gs` (`recordInventoryMovement`, `getInventoryKardex`, `transferInventoryStock`)
   - `InventariosKardex`
   - `AlmacenesUbicaciones`
   - `js/accounting.js`
-- **Dependencias Expuestas:** `InventariosKardex`, `AlmacenesUbicaciones`, `recordPurchaseReceipt`
+- **Dependencias Expuestas:** `InventariosKardex`, `AlmacenesUbicaciones`, `recordPurchaseReceipt`. Es la base para las tareas posteriores de transferencias, lotes, valorización y consumo de materiales.
 - **Descripción del Alcance:**
-  Actualmente, `recordInventoryMovement` calcula el stock actual considerando únicamente el código del ítem sin discriminar por la ubicación física (`ubicacionResponsable`). Si un ítem se recibe en "Bodega Central" y luego se realiza un movimiento en "Laboratorio 1", el sistema actualiza un saldo global, imposibilitando auditar las existencias reales por almacén o área.
+  El Kardex calcula el saldo de un artículo considerando los movimientos de todas las ubicaciones indistintamente, sin separar las existencias correspondientes a cada almacén. Esto ocasiona que el saldo de una bodega se mezcle con el de otras, generando información incorrecta sobre las existencias reales en cada instalación.
   Requerimientos Funcionales Detallados:
-  1. Cálculo de saldo segregado por almacén/ubicación:
-     - Determinar el saldo anterior y nuevo calculando los movimientos históricos específicos del par `(itemCodigo, ubicacionResponsable)`.
-     - Permitir consultar el stock disponible global institucional y el stock específico por cada bodega registrada en `AlmacenesUbicaciones`.
-     - Evitar que una salida en una bodega específica afecte el saldo de otra ubicación donde el producto también exista.
-  2. Compatibilidad retrospectiva:
-     - Para movimientos históricos que no posean ubicación explícita, asumir como valor predeterminado "Bodega General".
-  3. Bloqueo estricto por falta de stock local:
-     - Impedir salidas, consumos o transferencias si en la ubicación específica indicada no hay suficiente existencia física, incluso si existe stock en otras bodegas.
+  1. Cálculo de existencias independiente y multidimensional:
+     - Implementar un mecanismo de cálculo de existencias independiente por combinación estricta de:
+       * Código del artículo (`itemCodigo`).
+       * Almacén (`almacenId` / `sedeCod`).
+       * Ubicación física (`ubicacionResponsable` / `ubicacionId`).
+       * Lote, cuando corresponda.
+       * Número de serie, cuando corresponda.
+     - Cada movimiento debe actualizar exclusivamente el saldo de la ubicación física afectada.
+  2. Saldos y estados simultáneos de inventario:
+     - El sistema debe calcular y mantener simultáneamente en tiempo real:
+       * Existencia por ubicación física.
+       * Existencia consolidada por almacén.
+       * Existencia total institucional.
+       * Cantidad reservada (por solicitudes aprobadas no entregadas).
+       * Cantidad disponible para consumo (`disponible = existenciaFisica - reservada`).
+       * Cantidad en tránsito entre almacenes.
+  3. Consultas y filtrado en Kardex:
+     - Permitir filtrar por almacén, ubicación, artículo, categoría y período de fechas.
+     - Cada fila de movimiento debe conservar: saldo anterior de la ubicación, cantidad del movimiento, saldo posterior de la ubicación, usuario responsable, fecha y hora exacta, documento de origen y referencia del movimiento relacionado (cuando exista).
+     - Las ubicaciones deben funcionar como entidades independientes; queda terminantemente prohibido utilizar el último saldo global del artículo como saldo de referencia local.
+  4. Bloqueo transaccional y prevención de concurrencia:
+     - Incorporar un mecanismo de bloqueo transaccional (`LockService.getScriptLock()`) para evitar que dos operaciones simultáneas consuman las mismas existencias o generen saldos negativos.
+  5. Migración y compatibilidad de registros históricos:
+     - Los movimientos históricos sin ubicación explícita deben conservarse y asignarse mediante una migración controlada a `Bodega General`, sin duplicar cantidades ni alterar los totales históricos.
+  6. Detección automática de inconsistencias:
+     - Detectar discrepancias entre el saldo calculado a partir de la suma acumulada de movimientos y el saldo registrado en la última fila del Kardex, permitiendo identificar y auditar los artículos y ubicaciones afectados.
+- **Comportamiento Esperado:**
+  Si existen 10 unidades de un artículo en Bodega A y 5 en Bodega B, el sistema debe mostrar:
+  * Bodega A: 10
+  * Bodega B: 5
+  * Total institucional: 15
+  Si se consumen 3 unidades de Bodega A, el resultado debe ser:
+  * Bodega A: 7
+  * Bodega B: 5
+  * Total institucional: 12 (el movimiento no altera el saldo de Bodega B).
 - **Criterios de Aceptación:**
-  - Registrar una entrada de 10 unidades en "Bodega Central" y una entrada de 5 unidades en "Laboratorio 1"; consultar el stock de cada ubicación y comprobar que reportan 10 y 5 respectivamente, totalizando 15 institucionalmente.
-  - Intentar retirar 8 unidades de "Laboratorio 1" cuando solo hay 5 y verificar que el sistema rechaza la operación por stock insuficiente en esa ubicación.
-  - Retirar 6 unidades de "Bodega Central" y verificar que el saldo de "Bodega Central" disminuye a 4 sin alterar las 5 unidades de "Laboratorio 1".
+  - Las existencias se calculan independientemente por ubicación física.
+  - El consolidado institucional coincide exactamente con la suma matemática de sus ubicaciones.
+  - Los consumos en una bodega no afectan los saldos de otras bodegas.
+  - Los movimientos simultáneos bajo concurrencia no producen saldos negativos ni duplicaciones.
+  - Las transferencias conservan la integridad estricta de las existencias.
+  - Los registros históricos mantienen su trazabilidad y cantidades intactas.
+  - Los conteos físicos y conciliaciones operan bajo el nuevo modelo por almacén.
+  - Los reportes muestran correctamente los saldos individuales por ubicación y el consolidado institucional.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [ ] [F19-Task02] Implementar flujo completo de devolución y reingreso de activos fijos
-- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-06) y Sección G (Defecto 2)
+### [ ] [F19-Task02] Implementación del flujo completo de devolución y recepción de activos bajo custodia
+- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-06), Sección G (Defecto 2) y Plan de Trabajo F19-02
 - **Prioridad:** P0
-- **Severidad/Clasificación:** Crítica (Control patrimonial, cierre de responsabilidades de custodios y reasignación de bienes)
+- **Severidad/Clasificación:** Crítica (Control patrimonial, cierre formal de responsabilidades de custodios, actas de devolución y reasignación de bienes)
 - **Archivos Involucrados:**
   - `backend/accounting-service/Code.gs` (`assignAssetCustody`, nueva función `returnAssetCustody`, `getAssetAssignments`)
   - `ActivosPatrimoniales`
   - `AsignacionesActivos`
+  - `MantenimientoOrdenes`
   - `js/accounting.js`
-- **Dependencias Expuestas:** `ActivosPatrimoniales`, `AsignacionesActivos`, `ROLE_PERMISSIONS`
+- **Dependencias Expuestas:** `ActivosPatrimoniales`, `AsignacionesActivos`, `ROLE_PERMISSIONS`. Requiere el registro de activos y asignaciones de custodia existentes.
 - **Descripción del Alcance:**
-  Existe la función `assignAssetCustody` para entregar un bien a un custodio, pero no se dispone de una función formal para recibir el activo de vuelta, evaluar su estado físico al reingreso y restituir su estado a disponible para nuevas asignaciones.
+  La plataforma permite asignar activos a custodios, pero no dispone de un procedimiento formal para registrar su devolución. No existe un historial completo de entrega, recepción, evaluación física, generación de actas de finiquito y liberación del activo para una nueva asignación.
   Requerimientos Funcionales Detallados:
-  1. Función `returnAssetCustody`:
-     - Recibir `asignacionId` o `activoId`, `fechaDevolucion`, `condicionFisica` (`Excelente`, `Bueno`, `Regular`, `Dañado/RequiereReparacion`), `recibidoPorUserId` y `observacionesDevolucion`.
-     - Actualizar en `AsignacionesActivos` la fila correspondiente con la fecha de devolución real, condición de entrega y estado de acta cerrado (`Devuelto`).
-     - Si la condición física es normal (`Excelente`, `Bueno`, `Regular`), actualizar en `ActivosPatrimoniales` el estado del bien a `available` y vaciar o marcar como libre el campo `CustodioUserId`.
-     - Si la condición física es `Dañado/RequiereReparacion`, cambiar el estado del activo a `maintenance` y generar opcionalmente una solicitud de mantenimiento correctivo en `MantenimientoOrdenes`.
-  2. Preservación histórica:
-     - Nunca eliminar las filas de asignaciones anteriores; mantener el historial completo de todos los custodios que han tenido el bien a su cargo.
+  1. Devolución formal e independiente:
+     - Implementar la función `returnAssetCustody` vinculada obligatoriamente a una asignación de custodia activa (`AsignacionesActivos`).
+     - Registrar obligatoriamente: activo devuelto, custodio que realiza la entrega, responsable que recibe el activo, fecha y hora de entrega/recepción, ubicación de recepción, estado físico al momento de la devolución, accesorios y componentes entregados, observaciones y evidencias fotográficas o actas adjuntas.
+  2. Estados de condición física al reingreso:
+     - Registrar estados normalizados: `Nuevo`, `Bueno`, `Regular`, `Dañado`, `Incompleto`, `RequiereReparacion`.
+     - Permitir comparar el estado físico registrado durante la asignación inicial con el estado observado durante la devolución.
+  3. Gestión de incidencias y mantenimiento automático:
+     - Si el activo presenta daños, faltantes o requiere reparación, registrar la incidencia y generar automáticamente la orden de mantenimiento en `MantenimientoOrdenes`.
+     - El activo no debe quedar disponible para reasignación mientras se encuentre pendiente de inspección o en mantenimiento.
+  4. Preservación histórica y generación de actas:
+     - Mantener el historial inmutable de todas las custodias anteriores sin sobrescribir los registros de asignación previos.
+     - Generar el acta formal de entrega-recepción que pueda consultarse, imprimirse y exportarse a PDF con identificadores únicos y firmas.
+     - Permitir que un activo sea reasignado únicamente cuando su devolución haya sido aceptada formalmente y su estado operativo sea `available`.
+- **Comportamiento Esperado:**
+  Al seleccionar un activo asignado, el administrador inicia su devolución, inspecciona sus condiciones y registra observaciones. Si el activo está en buen estado, cambia a `available` y queda libre de custodio; si está dañado, cambia a `maintenance` y queda relacionado con su orden de trabajo técnica.
 - **Criterios de Aceptación:**
-  - Asignar una computadora a un custodio y verificar que pasa a estado `assigned`.
-  - Procesar la devolución con condición `Bueno` mediante `returnAssetCustody` y comprobar que el activo vuelve a estado `available` y sin custodio asignado.
-  - Procesar una devolución con condición `Dañado/RequiereReparacion` y comprobar que pasa a `maintenance` sin quedar disponible para nueva custodia.
-  - La consulta histórica de asignaciones muestra las fechas de entrega y devolución de cada custodio.
+  - Es imposible devolver un activo que no posea una asignación activa previa.
+  - Cada devolución queda vinculada persistentemente a su asignación original.
+  - Se conserva el historial completo e inalterado de custodios anteriores.
+  - Se registra el estado físico de recepción y se documentan faltantes o averías.
+  - Los activos dañados no pueden reasignarse como disponibles.
+  - Se genera un acta verificable de entrega-recepción descargable en PDF.
+  - Se rechazan devoluciones duplicadas de una misma asignación.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [ ] [F19-Task03] Validaciones de disponibilidad previa en transferencias entre almacenes
-- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-05) y Sección F (PT-04)
+### [ ] [F19-Task03] Validación transaccional de transferencias entre almacenes
+- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-05), Sección F (PT-04) y Plan de Trabajo F19-03
 - **Prioridad:** P0
-- **Severidad/Clasificación:** Crítica (Consistencia de traslados, prevención de inventarios negativos y atocimidad)
+- **Severidad/Clasificación:** Crítica (Consistencia de traslados físicos, prevención de existencias negativas, atocimidad y control de tránsito)
 - **Archivos Involucrados:**
-  - `backend/accounting-service/Code.gs` (`transferInventoryStock`)
+  - `backend/accounting-service/Code.gs` (`transferInventoryStock`, `recordInventoryMovement`)
   - `InventariosKardex`
   - `AlmacenesUbicaciones`
+  - Hoja `TransferenciasInventario`
+  - `js/accounting.js`
 - **Dependencias Expuestas:** `InventariosKardex`, `AlmacenesUbicaciones`, `F19-Task01`
 - **Descripción del Alcance:**
-  La función `transferInventoryStock` genera directamente un movimiento de salida en el almacén origen y una entrada en el destino, pero no valida de forma previa y atómica si el almacén origen posee la cantidad requerida en sus existencias locales.
+  `transferInventoryStock` genera los movimientos de salida y entrada, pero no verifica previamente de forma atómica que el almacén de origen tenga suficientes unidades del artículo solicitado en su ubicación específica.
   Requerimientos Funcionales Detallados:
-  1. Validación de existencia local en origen:
-     - Antes de escribir cualquier fila en `InventariosKardex`, consultar el saldo físico disponible del ítem en la `ubicacionOrigen`.
-     - Si el saldo disponible en esa ubicación es menor a la cantidad a transferir, abortar inmediatamente con un error descriptivo indicando el stock disponible en el origen.
-  2. Restricción de transferencias reflexivas:
-     - Rechazar la transferencia si `ubicacionOrigen` y `ubicacionDestino` son idénticas.
-  3. Operación atómica:
-     - Garantizar que si la escritura del movimiento de entrada en destino falla, no quede registrada la salida huérfana en el origen.
+  1. Validaciones previas indispensables:
+     - Validar la existencia disponible en el almacén y ubicación de origen antes de autorizar cualquier movimiento.
+     - Comprobar que: el artículo exista en el catálogo, el almacén de origen esté activo, el almacén de destino esté activo, la ubicación de origen corresponda al almacén indicado, la cantidad solicitada sea estrictamente mayor a cero, exista suficiente stock disponible no reservado, el artículo y su unidad de medida sean compatibles con la operación, y que origen y destino no sean idénticos.
+  2. Identificador único y correlación documental:
+     - Generar un identificador único de transferencia (`TRF-...`) que relacione los movimientos de salida del origen y entrada al destino.
+  3. Ciclo de vida y estados de transferencia:
+     - `Borrador`, `PendienteAprobacion`, `EnTransito`, `RecibidaTotal`, `RecibidaParcial`, `Rechazada`, `Cancelada`.
+     - Para transferencias que requieran confirmación de recepción física, las existencias deben colocarse en estado `EnTransito` y no figurar como disponibles en el destino hasta la confirmación de recepción por el custodio receptor.
+  4. Discrepancias en recepción y atomicidad:
+     - Permitir registrar diferencias justificadas entre la cantidad despachada y la cantidad efectivamente recibida.
+     - Control transaccional y reversión lógica de operaciones fallidas para impedir movimientos huérfanos.
+     - Control de concurrencia para evitar transferencias simultáneas que superen las existencias locales disponibles.
+- **Comportamiento Esperado:**
+  Una transferencia de 10 unidades desde una bodega con 8 unidades disponibles debe ser rechazada inmediatamente antes de registrar cualquier movimiento. Una transferencia válida conserva la trazabilidad desde el despacho en origen hasta la recepción conforme en destino.
 - **Criterios de Aceptación:**
-  - Intentar transferir 15 unidades de una ubicación que solo tiene 10 y verificar el rechazo antes de registrar ningún movimiento.
-  - Intentar transferir con origen y destino iguales y comprobar que se bloquea la solicitud.
-  - Realizar una transferencia válida y comprobar que el origen disminuye exactamente y el destino incrementa por el mismo monto.
+  - Se valida el saldo específico de la ubicación de origen antes de operar.
+  - No se producen salidas parciales ni saldos negativos por errores de validación.
+  - Se registran correctamente las existencias en tránsito entre dependencias.
+  - Se confirma la recepción física y se documentan discrepancias.
+  - Salida y entrada comparten identificador de transferencia y trazabilidad.
+  - No existen movimientos huérfanos bajo fallos o interrupciones de red.
+  - Se garantiza integridad y bloqueo transaccional bajo solicitudes concurrentes.
 - **Estado:** [ ] Pendiente
 
 ---
 
-## TAREAS DE ALTA PRIORIDAD (P1 - DEPRECIACIÓN, CATÁLOGO MAESTRO Y CONTABILIZACIÓN)
+## TAREAS DE ALTA PRIORIDAD (P1 - CAPACIDADES CONTABLES, DEPRECIACIÓN, CATÁLOGO MAESTRO, MANTENIMIENTO PREVENTIVO Y VALORACIÓN)
 
 ---
 
-### [ ] [F19-Task04] Motor de depreciación de activos fijos y asientos contables
-- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-12) y Sección G (Defecto 3)
+### [ ] [F19-Task04] Motor integral de depreciación y gestión contable de activos fijos
+- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-12), Sección G (Defecto 3) y Plan de Trabajo F19-04
 - **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Cumplimiento contable institucional, cálculo de vida útil y balance patrimonial)
+- **Severidad/Clasificación:** Alta (Cumplimiento contable institucional, cálculo de vida útil, amortización acumulada y balance patrimonial)
 - **Archivos Involucrados:**
-  - `backend/accounting-service/Code.gs` (nuevas funciones `calculateAssetDepreciation`, `getAssetDepreciationSchedule`)
   - `ActivosPatrimoniales`
   - `AsientosContables`
+  - `backend/accounting-service/Code.gs` (`manageAssetItem`, `getAssetItems`, `registerAssetDisposal`, nuevas funciones `calculateAssetDepreciation`, `getAssetDepreciationSchedule`)
   - Hoja `DepreciacionesActivos`
-- **Dependencias Expuestas:** `ActivosPatrimoniales`, `AsientosContables`, `recordAccountingJournalEntry`
+  - `js/accounting.js`
+- **Dependencias Expuestas:** `ActivosPatrimoniales`, `AsientosContables`, `recordAccountingJournalEntry`, Plan de cuentas institucional
 - **Descripción del Alcance:**
-  La plataforma no dispone de un motor de depreciación para activos institucionales. Las cuentas contables de activos fijos no reflejan el desgaste patrimonial ni la depreciación acumulada exigida por principios contables y regulaciones fiscales.
+  Los activos patrimoniales están registrados, pero la plataforma no calcula su depreciación, vida útil restante, depreciación acumulada ni valor neto en libros, ni genera los asientos contables correspondientes en el libro diario.
   Requerimientos Funcionales Detallados:
-  1. Configuración de parámetros de depreciación:
-     - Incorporar en `ActivosPatrimoniales` o en catálogo por categoría: costo de adquisición, fecha de inicio de uso, vida útil (en meses/años), porcentaje de valor residual y método de depreciación (predeterminado: Línea Recta).
-  2. Motor de cálculo de depreciación periódica:
-     - Calcular la cuota mensual de depreciación: `depreciacionMensual = (costoAdquisicion - valorResidual) / vidaUtilMeses`.
-     - Calcular depreciación acumulada y valor neto en libros a una fecha de corte determinada.
-     - Detener la depreciación cuando el valor neto en libros alcance el valor residual.
-  3. Asientos contables automáticos por partida doble:
-     - Al procesar el cierre mensual de depreciaciones, generar el asiento correspondiente en `AsientosContables`:
+  1. Ficha financiera completa de activos:
+     - Código patrimonial, descripción, categoría contable, fecha de adquisición, fecha de puesta en funcionamiento, costo de adquisición, costos adicionales capitalizables, valor de adquisición total, valor residual estimado, vida útil en años/meses, método de depreciación, fecha de inicio, cuenta contable de activo, cuenta de depreciación acumulada, cuenta de gasto por depreciación, centro de costo o departamento responsable y moneda de registro.
+  2. Métodos de depreciación configurables por categoría:
+     - Línea Recta: distribución uniforme del importe depreciable durante la vida útil:
+       `Importe Depreciable = Costo Capitalizado - Valor Residual`
+       `Depreciación Mensual = Importe Depreciable / Vida Útil en Meses`
+     - Saldo Decreciente: depreciación calculada sobre el valor en libros pendiente.
+     - Unidades de Producción o Utilización: en función del desgaste o uso medible.
+     - Políticas configurables por categoría de activo sin forzar un método universal.
+  3. Calendario automático de depreciación:
+     - Consultar depreciación mensual, anual, acumulada, valor neto en libros, vida útil transcurrida/restante y fecha estimada de finalización.
+     - Registro de activos históricos de apertura con depreciación acumulada inicial y valor neto de apertura.
+     - Evitar que un activo se deprecie por debajo de su valor residual configurado.
+     - Suspender la depreciación en activos retirados, dados de baja o totalmente depreciados.
+  4. Generación de asientos contables automáticos por partida doble:
+     - Generar el asiento periódico:
        * Débito: Gasto por Depreciación (Centro de costo correspondiente).
        * Crédito: Depreciación Acumulada de Activo Fijo.
      - Validar estrictamente la partida doble (`Math.abs(totalDebe - totalHaber) <= 0.01`).
-     - Evitar duplicación de asientos si se reprocesa el mismo período.
+     - Protección contra contabilización duplicada del mismo período para el mismo activo.
+     - Procedimiento de ajuste/reversión que preserve el asiento original en la auditoría.
+     - Integración con bajas patrimoniales: al disponer de un activo, calcular su valor neto en libros a la fecha efectiva de baja y reconocer la ganancia o pérdida contable correspondiente.
+  5. Reportes patrimoniales y conciliación:
+     - Cuadro de depreciación por activo, acumulada por categoría, valor neto patrimonial, activos totalmente depreciados y conciliación entre el inventario patrimonial y el libro mayor.
 - **Criterios de Aceptación:**
-  - Configurar un activo con costo L 24,000.00, vida útil de 24 meses y valor residual L 0.00; comprobar que la depreciación mensual es exactamente L 1,000.00.
-  - Al procesar la depreciación del mes, se genera el asiento contable balanceado en `AsientosContables`.
-  - Reprocesar el mismo mes no genera asientos contables duplicados.
-  - Al alcanzar los 24 meses, el sistema no calcula depreciación adicional y conserva el valor residual en libros.
+  - Se calculan correctamente los métodos configurados (línea recta, saldo decreciente, unidades).
+  - Las políticas de depreciación son configurables por categoría de activo.
+  - Se respeta estrictamente el valor residual como tope mínimo de valor en libros.
+  - Se generan calendarios individuales y consolidados en pantalla.
+  - Todos los asientos contables generados cumplen estricta partida doble.
+  - Se bloquea la contabilización duplicada de un período ya procesado.
+  - Se admiten activos adquiridos con anterioridad con saldo inicial de depreciación.
+  - Las mejoras capitalizables actualizan la base de cálculo de forma trazable.
+  - Las bajas reconocen el valor neto en libros a la fecha de disposición.
+  - Los reportes patrimoniales coinciden exactamente con las cuentas contables de balance.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [ ] [F19-Task05] Catálogo maestro centralizado de artículos e insumos
-- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-01) y Sección G
+### [ ] [F19-Task05] Creación de un catálogo maestro institucional de artículos, materiales y suministros
+- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-01), Sección G y Plan de Trabajo F19-05
 - **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Estandarización de materiales, prevención de duplicados y control de compras)
+- **Severidad/Clasificación:** Alta (Estandarización de materiales, prevención de duplicados tipográficos, normalización de unidades de medida y control de adquisiciones)
 - **Archivos Involucrados:**
-  - `backend/accounting-service/Code.gs` (nuevas funciones `manageCatalogItem`, `getCatalogItems`)
   - Hoja `CatalogoArticulos`
   - `InventariosKardex`
+  - `AlmacenesUbicaciones`
+  - `MaterialesSolicitudes`
+  - `backend/accounting-service/Code.gs` (nuevas funciones `manageCatalogItem`, `getCatalogItems`)
   - `js/accounting.js`
-- **Dependencias Expuestas:** `InventariosKardex`, `MaterialesSolicitudes`, `OrdenesCompra`
+- **Dependencias Expuestas:** `InventariosKardex`, `MaterialesSolicitudes`, `OrdenesCompra`, `F19-Task01`
 - **Descripción del Alcance:**
-  Los artículos de inventario se crean actualmente al vuelo en `InventariosKardex`. Esto provoca que si se ingresa un nombre con pequeñas variaciones tipográficas bajo el mismo código (o códigos distintos para el mismo producto), se originen discrepancias en los reportes de inventario.
+  Los artículos se crean actualmente al vuelo en `InventariosKardex`. Esto provoca que si se ingresa un nombre con pequeñas variaciones tipográficas bajo el mismo código (o códigos distintos para el mismo producto), se originen discrepancias en los reportes de inventario y compras.
   Requerimientos Funcionales Detallados:
-  1. Hoja y maestro `CatalogoArticulos`:
-     - Campos obligatorios: `ItemCodigo` (único), `ItemNombre`, `CategoriaTipo`, `UnidadMedida` (Unidad, Caja, Resma, Galón, Pieza, etc.), `CostoReferencial`, `StockMinimo`, `StockMaximo`, `Estado` (`Activo`, `Inactivo`), `Observaciones`.
-     - Validar unicidad del `ItemCodigo` e impedir duplicados.
-  2. Integración con Kardex y Requisiciones:
-     - Al registrar movimientos en el Kardex o solicitudes internas, los nombres, categorías y unidades de medida deben seleccionarse del catálogo maestro.
-     - Impedir registrar movimientos de inventario sobre artículos en estado `Inactivo`.
+  1. Catálogo maestro independiente:
+     - Ficha individual de artículo con: `ItemCodigo` (único institucional), `ItemNombre` (normalizado), `Descripcion`, `Categoria`, `Subcategoria`, `UnidadMedida`, `Marca`, `Modelo/Referencia`, `ImagenUrl`, `CodigoBarras`, `CodigoQR`, `EspecificacionesTecnicas`, `ProveedorHabitualId`, `CostoReferencial`, `CostoUltimaAdquisicion`, `CostoPromedio`, `StockMinimo`, `StockMaximo`, `PuntoReposicion`, `Estado` (`Activo`, `Inactivo`), `Observaciones`.
+  2. Categorización dinámica y unidades de medida:
+     - Categorías configurables sin alterar código: Material didáctico, Útiles escolares, Papelería y oficina, Equipos tecnológicos, Mobiliario, Material de laboratorio, Insumos de enfermería, Productos de limpieza, Cafetería y tienda, Herramientas, Repuestos, entre otros.
+     - Unidades de medida configurables (unidad, paquete, caja, litro, galón, kilogramo, gramo, metro, rollo, resma).
+     - Conversiones entre unidades compatibles (ej. una caja de 12 unidades se recibe como caja y se distribuye como 12 unidades individuales).
+  3. Normalización y prevención de duplicados:
+     - Normalización de nombres y códigos, evitando duplicados por diferencias de mayúsculas, tildes o espacios.
+     - Búsqueda y sugerencias de artículos similares antes de registrar uno nuevo.
+     - Importación y exportación a Excel con validación previa de códigos y unidades.
+     - Desactivación lógica de artículos sin eliminar su historial de movimientos.
+     - Relación clara con activos fijos cuando proceda, sin confundir consumibles con bienes patrimoniales.
 - **Criterios de Aceptación:**
-  - Registrar un artículo en el catálogo maestro y verificar que queda disponible para selección en el Kardex.
-  - Intentar crear otro artículo con el mismo código y comprobar que se rechaza por duplicidad.
-  - Desactivar un artículo y verificar que no permite nuevos movimientos en Kardex, conservando su historial previo.
+  - Existe el catálogo maestro `CatalogoArticulos` independiente del Kardex.
+  - Cada artículo posee un código institucional único no repetible.
+  - Las unidades de medida y factores de conversión son configurables.
+  - Se detectan y alertan posibles duplicados antes de guardar.
+  - Todas las operaciones de Kardex y solicitudes exigen la selección de artículos del catálogo.
+  - Los artículos desactivados conservan su historial pero quedan bloqueados para nuevas operaciones.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [ ] [F19-Task06] Programación recurrente de mantenimiento preventivo institucional
-- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-15) y Sección C (2.15)
+### [ ] [F19-Task06] Programación automática y administración del mantenimiento preventivo recurrente
+- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-15), Sección C (2.15) y Plan de Trabajo F19-06
 - **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Preservación de infraestructura, continuidad operativa y prevención de fallas graves)
+- **Severidad/Clasificación:** Alta (Preservación de infraestructura, continuidad operativa, planificación de intervenciones y prevención de fallas mayores)
 - **Archivos Involucrados:**
-  - `backend/accounting-service/Code.gs` (nuevas funciones `schedulePreventiveMaintenancePlan`, `getPreventiveMaintenanceAlerts`)
+  - `backend/accounting-service/Code.gs` (`manageMaintenanceOrder`, `getMaintenanceOrders`, nuevas funciones `schedulePreventiveMaintenancePlan`, `getPreventiveMaintenanceAlerts`)
   - Hoja `MantenimientoPlanes`
   - `MantenimientoOrdenes`
-  - `dashboard-contabilidad.html`
-- **Dependencias Expuestas:** `MantenimientoOrdenes`, `ActivosPatrimoniales`, `AlmacenesUbicaciones`
+  - `ActivosPatrimoniales`
+  - `InventariosKardex`
+  - `js/accounting.js`
+- **Dependencias Expuestas:** `MantenimientoOrdenes`, `ActivosPatrimoniales`, `InventariosKardex`, `F19-Task01`, `F19-Task05`
 - **Descripción del Alcance:**
-  El sistema permite registrar órdenes de tipo preventivo, pero no cuenta con un motor de planes de mantenimiento recurrente que proyecte las fechas de intervención periódica (ej. mantenimiento de aires acondicionados cada 90 días, revisión de extintores anual) ni alerte automáticamente ante atrasos.
+  La plataforma permite crear órdenes preventivas aisladas, pero no administra automáticamente los calendarios de mantenimiento ni calcula cuándo debe ejecutarse la siguiente intervención periódica en base a frecuencias preestablecidas.
   Requerimientos Funcionales Detallados:
   1. Planes de mantenimiento preventivo:
-     - Registrar plan con: `PlanMaintID`, `ActivoIdUbicacion`, `TituloPlan`, `FrecuenciaDias` (ej. 30, 60, 90, 180, 365 días), `ListaTareasJSON`, `ResponsableUserId`, `FechaUltimaEjecucion`, `FechaProximaEjecucion`, `Estado` (`Activo`, `Pausado`).
-  2. Disparo de órdenes y alertas de vencimiento:
-     - Evaluar diariamente las fechas de próxima ejecución.
-     - Cuando la fecha actual alcance o supere `FechaProximaEjecucion`, generar automáticamente o sugerir la orden en `MantenimientoOrdenes` en estado `Programado`.
-     - Al completarse la orden de trabajo, actualizar automáticamente `FechaUltimaEjecucion` y calcular la nueva `FechaProximaEjecucion = FechaResolucion + FrecuenciaDias`.
+     - Asociar planes a: un activo específico, categoría de activos, instalación, ubicación física o conjunto de equipos.
+     - Frecuencias configurables: diaria, semanal, quincenal, mensual, trimestral, semestral, anual, intervalo en días o unidades de uso/horas.
+     - Registrar: fecha del último mantenimiento, fecha del próximo mantenimiento, frecuencia, responsable técnico, procedimiento, lista de actividades/checklist, repuestos necesarios, duración estimada, costo presupuestado y tiempo de inactividad previsto.
+  2. Generación automática y alertas de vencimiento:
+     - Generar automáticamente órdenes de trabajo en `MantenimientoOrdenes` al aproximarse la fecha programada.
+     - Alertas preventivas escalonadas (30, 15, 7 y 1 día antes).
+     - Al completar la intervención, actualizar la fecha del último mantenimiento y proyectar la nueva fecha según la frecuencia configurada.
+     - Posponer intervenciones con justificación obligatoria conservando el historial.
+     - Impedir órdenes duplicadas para un mismo ciclo de mantenimiento.
+  3. Plantillas de mantenimiento e indicadores:
+     - Plantillas estándar por tipo de activo (computadoras, aires acondicionados, vehículos, instalaciones eléctricas, laboratorios).
+     - Descuento de repuestos consumidos en Kardex al resolver la orden.
+     - Indicadores de cumplimiento: mantenimientos programados vs ejecutados, porcentaje de cumplimiento, costos acumulados y tiempo promedio de resolución.
 - **Criterios de Aceptación:**
-  - Crear un plan preventivo trimestral (90 días); al completar la orden correspondiente, la próxima fecha se proyecta automáticamente a 90 días.
-  - Las tareas con fecha vencida se muestran con alerta visual de mantenimiento atrasado.
-  - No se generan órdenes duplicadas si ya existe una orden activa programada para el mismo ciclo.
+  - Se pueden configurar planes de mantenimiento con diferentes periodicidades.
+  - Las órdenes se generan automáticamente según el cronograma.
+  - No se duplican órdenes para un mismo ciclo preventivo.
+  - Las fechas se recalculan automáticamente al completar la intervención.
+  - Se identifican mantenimientos atrasados con alertas destacadas.
+  - Los repuestos utilizados se descuentan de forma exacta en Kardex.
+  - Se consultan indicadores de cumplimiento y costos acumulados por activo.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [ ] [F19-Task07] Contabilización automática de consumo de materiales por departamento
-- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-17) y Sección C (2.17)
+### [ ] [F19-Task07] Integración contable de consumos, entregas y movimientos de inventario
+- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-17), Sección C (2.17) y Plan de Trabajo F19-07
 - **Prioridad:** P1
-- **Severidad/Clasificación:** Alta (Control de costos departamentales, exactitud contable y seguimiento presupuestario)
+- **Severidad/Clasificación:** Alta (Control de costos departamentales, exactitud contable en consumo de suministros y seguimiento presupuestario)
 - **Archivos Involucrados:**
-  - `backend/accounting-service/Code.gs` (`deliverMaterialRequisition`)
+  - `backend/accounting-service/Code.gs` (`recordInventoryMovement`, `deliverMaterialRequisition`, `createMaterialRequisition`)
+  - `AsientosContables`
   - `MaterialesSolicitudes`
   - `InventariosKardex`
-  - `AsientosContables`
-- **Dependencias Expuestas:** `MaterialesSolicitudes`, `AsientosContables`, `recordAccountingJournalEntry`
+  - `js/accounting.js`
+- **Dependencias Expuestas:** `MaterialesSolicitudes`, `AsientosContables`, `recordAccountingJournalEntry`, `F19-Task01`, `F19-Task05`
 - **Descripción del Alcance:**
-  Al entregar materiales de bodega mediante `deliverMaterialRequisition`, se genera la salida física en `InventariosKardex`, pero no se registra el asiento contable de gasto por departamento/centro de costo ni se disminuye el valor del activo realizable en contabilidad.
+  Las entradas de compras están integradas con el inventario, pero los consumos de materiales y las entregas por departamento no generan automáticamente el reconocimiento contable correspondiente en el libro diario.
   Requerimientos Funcionales Detallados:
-  1. Valorización y asiento de consumo:
-     - Al procesar la entrega de una requisición interna aprobada, calcular el costo total de los materiales entregados utilizando el costo de adquisición/referencial de cada ítem.
-     - Generar automáticamente el asiento en `AsientosContables`:
-       * Débito: Gasto Operativo / Materiales y Suministros (Centro de costo del departamento solicitante).
-       * Crédito: Inventario de Materiales y Suministros (Activo Circulante).
-     - Relacionar el identificador del asiento generado en la columna correspondiente de `MaterialesSolicitudes`.
-     - Validar que el asiento mantenga estricto equilibrio por partida doble.
+  1. Centros de costo y destino de consumo:
+     - Incorporar departamento responsable y centro de costo en las requisiciones: Dirección, Secretaría, Administración, Docencia, Laboratorio, Biblioteca, Enfermería, Cafetería, Mantenimiento, Deportes, entre otros.
+  2. Reglas de contabilización de consumo:
+     - Al entregar materiales de bodega mediante `deliverMaterialRequisition`, generar el asiento contable:
+       * Débito: Gasto Operativo / Materiales y Suministros (Centro de costo del departamento).
+       * Crédito: Inventario de Suministros (Activo Circulante).
+     - Diferenciar consumos reales de transferencias internas entre almacenes (las transferencias entre bodegas no generan gastos institucionales).
+     - Opción configurable: reconocimiento inmediato como gasto al entregar vs material en tránsito/asignado hasta su consumo efectivo.
+  3. Devoluciones, repuestos y prevención de duplicados:
+     - Contemplar devoluciones de materiales al almacén con reversión contable por partida doble.
+     - Imputar los repuestos de órdenes de mantenimiento al departamento solicitante.
+     - Evitar asientos duplicados bajo reintentos o reprocesos de solicitudes.
 - **Criterios de Aceptación:**
-  - Entregar una requisición de útiles valorizada en L 1,500.00 genera el asiento contable por L 1,500.00 cargado al centro de costo correspondiente.
-  - El asiento refleja `totalDebe === totalHaber` y estado `Confirmado`.
-  - Reintentar la entrega de una solicitud ya entregada es rechazado y no genera asientos duplicados.
+  - Toda entrega de materiales cuenta con departamento y centro de costo asignado.
+  - Se genera el asiento contable balanceado en `AsientosContables` al confirmar la entrega.
+  - Las transferencias entre almacenes no originan asientos de gasto.
+  - Las devoluciones de insumos revierten el gasto e incrementan el inventario contable.
+  - Los asientos cumplen estricta partida doble (`totalDebe === totalHaber`).
+  - No se generan contabilizaciones duplicadas por reintentos.
+  - Se concilia el consumo físico en Kardex con el saldo de las cuentas de mayor contable.
 - **Estado:** [ ] Pendiente
 
 ---
 
-## TAREAS DE PRIORIDAD MEDIA (P2 - IDENTIFICACIÓN QR, GARANTÍAS Y CONTROL DE LOTES)
+### [ ] [F19-Task08] Implementación de un sistema integral de valoración económica del inventario
+- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-19) y Plan de Trabajo F19-08
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Valuación de existencias, estados financieros precisos, métodos PEPS/Promedio y auditoría contable)
+- **Archivos Involucrados:**
+  - `InventariosKardex`
+  - `CatalogoArticulos`
+  - `AsientosContables`
+  - `backend/accounting-service/Code.gs` (`getInventoryKardex`, `recordInventoryMovement`, nueva función `getValuatedInventoryReport`)
+  - `js/accounting.js`
+- **Dependencias Expuestas:** `InventariosKardex`, `CatalogoArticulos`, `AsientosContables`, `F19-Task01`, `F19-Task05`
+- **Descripción del Alcance:**
+  La plataforma permite consultar existencias físicas en unidades, pero no dispone de un sistema completo para determinar el valor monetario del inventario ni generar informes de valoración financiera por almacén, artículo y categoría contable.
+  Requerimientos Funcionales Detallados:
+  1. Métodos de valoración configurables:
+     - PEPS (FIFO): identificar capas de adquisición y consumir primero las existencias de mayor antigüedad.
+     - Costo Promedio Ponderado: recalcular el costo medio unitario tras cada entrada de compra valorizada.
+     - Permitir asignar el método de valoración por categoría de artículo según las políticas institucionales.
+  2. Trazabilidad de costos y transferencias:
+     - Registrar el costo unitario de cada entrada vinculado a su orden de compra o factura.
+     - Los traslados entre bodegas deben conservar el costo contable del inventario transferido.
+     - Los ajustes por conteo físico deben reconocer el efecto económico monetario de sobrantes o faltantes.
+  3. Informes y conciliación económica:
+     - Consultar a cualquier fecha de corte: cantidad disponible, costo unitario, valor total por artículo, por almacén, por categoría y total institucional.
+     - Conciliación entre el auxiliar valorizado de inventario y las cuentas de activo realizable del libro mayor.
+     - Exportación a Excel y PDF con sumatorias matemáticas verificadas.
+     - Prohibir alteraciones retroactivas de costos históricos sin procedimiento de ajuste trazable.
+- **Criterios de Aceptación:**
+  - Se encuentran operativos los métodos PEPS y costo promedio ponderado.
+  - Las salidas de almacén reconocen el costo exacto según el método asignado.
+  - Las transferencias entre almacenes conservan el valor contable de los bienes.
+  - Los ajustes por conteo físico reflejan con precisión su impacto económico.
+  - Se generan reportes de inventario valorizado a fechas históricas de corte.
+  - Los totales valorizados coinciden con los balances contables de inventario.
+  - Se exportan informes estructurados a Excel y PDF sin discrepancias.
+- **Estado:** [ ] Pendiente
 
 ---
 
-### [ ] [F19-Task08] Identificación de activos y artículos mediante códigos QR y de barras
-- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-07) y Sección C (2.7)
-- **Prioridad:** P2
-- **Severidad/Clasificación:** Media (Productividad en campo, toma rápida de inventarios y reducción de errores de digitación)
+### [ ] [F19-Task09] Implementación de reservas, disponibilidad y reposición inteligente de materiales
+- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-04, F19-10) y Plan de Trabajo F19-09
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Continuidad operativa, abastecimiento oportuno, prevención de sobrecompras y gestión de compromisos)
 - **Archivos Involucrados:**
-  - `backend/accounting-service/Code.gs`
+  - `CatalogoArticulos`
+  - `MaterialesSolicitudes`
+  - `InventariosKardex`
+  - `backend/accounting-service/Code.gs` (`createMaterialRequisition`, `deliverMaterialRequisition`, `createPurchaseRequest`, nueva función `getInventoryReplenishmentSuggestions`)
+  - `js/accounting.js`
+- **Dependencias Expuestas:** `CatalogoArticulos`, `MaterialesSolicitudes`, `InventariosKardex`, `F19-Task01`, `F19-Task05`
+- **Descripción del Alcance:**
+  Aunque existen existencias mínimas y alertas de stock bajo, el sistema no diferencia las cantidades físicas de las comprometidas mediante solicitudes pendientes, ni dispone de un motor de planificación y reposición de compras.
+  Requerimientos Funcionales Detallados:
+  1. Segregación de estados de existencias:
+     - Mantener en tiempo real: Existencia física, Existencia reservada, Existencia disponible, Existencia pendiente de recepción (órdenes de compra emitidas) y Existencia en tránsito.
+     - Al aprobar una solicitud de material, reservar las unidades sin descontarlas físicamente del Kardex hasta su entrega real.
+     - Liberar automáticamente las reservas al cancelar, rechazar o modificar la requisición.
+     - Bloquear solicitudes que pretendan comprometer más unidades de las disponibles.
+  2. Motor inteligente de reposición:
+     - Puntos de reposición configurables por artículo y almacén (`StockMinimo`, `StockMaximo`, `StockObjetivo`).
+     - Cálculo de la cantidad sugerida considerando: disponible, reservada, consumo promedio histórico, tiempo de entrega de proveedores y pedidos en tránsito.
+     - Convertir sugerencias de reposición en solicitudes internas de compra (`createPurchaseRequest`) con un solo clic.
+     - Indicadores de rotación de existencias, consumo promedio y días de cobertura estimados.
+     - Evitar generar sugerencias duplicadas si ya existe una orden de compra en trámite que cubra la necesidad.
+- **Criterios de Aceptación:**
+  - Las reservas de material no alteran las existencias físicas hasta la entrega en almacén.
+  - El sistema impide comprometer más unidades de las existencias disponibles reales.
+  - La cancelación de solicitudes aprobadas restituye inmediatamente las existencias a disponibilidad.
+  - Las sugerencias de reposición descuentan las compras en tránsito evitando sobrecompras.
+  - Las sugerencias pueden convertirse en solicitudes de compra internas sin alterar órdenes aprobadas.
+  - Se identifican oportunamente artículos con exceso de existencias y artículos con riesgo de quiebre.
+- **Estado:** [ ] Pendiente
+
+---
+
+## TAREAS DE PRIORIDAD MEDIA (P2 - TRAZABILIDAD, CÓDIGOS QR, LOTES, GARANTÍAS, NOTIFICACIONES Y EXPEDIENTES)
+
+---
+
+### [ ] [F19-Task10] Identificación institucional de activos y materiales mediante códigos QR y códigos de barras
+- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-07), Sección C (2.7) y Plan de Trabajo F19-10
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Productividad en campo, toma ágil de inventarios, reducción de errores de digitación y escaneo móvil)
+- **Archivos Involucrados:**
+  - `CatalogoArticulos`
+  - `ActivosPatrimoniales`
+  - `AsignacionesActivos`
+  - `InventariosKardex`
+  - `backend/accounting-service/Code.gs` (nuevas funciones `generateItemQRCode`, `resolveItemByBarcode`)
   - `dashboard-contabilidad.html`
   - `js/accounting.js`
-  - `ActivosPatrimoniales`
+- **Dependencias Expuestas:** `CatalogoArticulos`, `ActivosPatrimoniales`, `F19-Task05`
+- **Descripción del Alcance:**
+  Los activos y materiales no disponen de mecanismos ópticos de identificación rápida. Las auditorías e inspecciones en bodegas o aulas dependen de búsquedas manuales o digitación propensa a errores.
+  Requerimientos Funcionales Detallados:
+  1. Generación de códigos QR y de barras:
+     - Generar automáticamente identificadores QR para activos patrimoniales, insumos de catálogo, lotes y equipos bajo custodia.
+     - Generar códigos de barras para artículos con identificación logística.
+     - El código debe contener un identificador institucional seguro sin exponer datos confidenciales ni credenciales.
+  2. Escaneo móvil y consulta rápida:
+     - Herramienta de escaneo con cámara móvil o lectores ópticos externos.
+     - Al escanear un activo, mostrar de inmediato: código patrimonial, descripción, categoría, marca, serie, estado operativo, ubicación, custodio actual, historial, garantías y mantenimientos.
+     - Al escanear un material, mostrar: código, nombre, categoría, unidad, existencias por almacén, lotes y vencimientos.
+     - Habilitar acciones según rol: consultar, registrar entrada/salida, transferir, inventario físico, asignar custodia, reportar daños.
+  3. Impresión y reposición de etiquetas:
+     - Generación de etiquetas imprimibles individuales o en lote con membrete institucional.
+     - Configuración de formato y tamaños de etiquetas.
+     - Reposición de etiquetas dañadas conservando el código original sin alterar identificadores.
+- **Criterios de Aceptación:**
+  - Cada activo y material puede disponer de su código QR institucional único.
+  - El escaneo desde dispositivos móviles o lectores ópticos abre directamente la ficha del bien.
+  - La consulta respeta estrictamente los permisos RBAC del usuario autenticado.
+  - Se generan plantillas de impresión de etiquetas individuales y masivas.
+  - Los códigos QR no exponen información privada ni datos sensibles en texto plano.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F19-Task11] Control de lotes, números de serie y fechas de vencimiento
+- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-08, F19-10) y Plan de Trabajo F19-11
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Control sanitario, trazabilidad de insumos perecederos de cafetería, reactivos de ciencias y medicamentos de enfermería)
+- **Archivos Involucrados:**
   - `CatalogoArticulos`
-- **Dependencias Expuestas:** `ActivosPatrimoniales`, `CatalogoArticulos`, Librería de generación QR
-- **Descripción del Alcance:**
-  Los activos fijos e insumos no cuentan con representación visual de código QR o de barras para identificación ágil mediante dispositivos móviles durante jornadas de inventario o asignaciones.
-  Requerimientos Funcionales Detallados:
-  1. Generación de códigos QR institucionales:
-     - Generar dinámicamente el código QR conteniendo el código patrimonial o código de ítem y URL de consulta rápida.
-     - Permitir la visualización e impresión de etiquetas patrimoniales estandarizadas con logotipo institucional, código patrimonial, descripción y código QR.
-  2. Consulta asistida por escaneo:
-     - Incorporar en la interfaz un campo de búsqueda rápida optimizado para lectores de código de barras o cámaras móviles que abra inmediatamente el expediente del activo o material escaneado.
-- **Criterios de Aceptación:**
-  - Se puede generar e imprimir la etiqueta con código QR para cualquier activo registrado.
-  - La lectura del código QR redirige o carga directamente los datos y el custodio actual del bien sin requerir digitación manual.
-- **Estado:** [ ] Pendiente
-
----
-
-### [ ] [F19-Task09] Registro de pólizas y control de vencimiento de garantías de activos
-- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-13) y Sección C (2.13)
-- **Prioridad:** P2
-- **Severidad/Clasificación:** Media (Ahorro en reparaciones, soporte de proveedores y protección de inversión)
-- **Archivos Involucrados:**
-  - `backend/accounting-service/Code.gs` (`manageAssetItem`, nueva función `getAssetWarrantyAlerts`)
-  - `ActivosPatrimoniales`
-  - `js/accounting.js`
-- **Dependencias Expuestas:** `ActivosPatrimoniales`, `MantenimientoOrdenes`, `ProveedoresActivos`
-- **Descripción del Alcance:**
-  No se almacenan las fechas de vencimiento de garantías ni los datos de póliza de los equipos adquiridos. Cuando un equipo falla, se corre el riesgo de pagar por reparaciones que podrían estar cubiertas por la garantía del fabricante o proveedor.
-  Requerimientos Funcionales Detallados:
-  1. Datos de garantía en activos:
-     - Almacenar: `ProveedorGarantiaId`, `NumeroPolizaGarantia`, `FechaInicioGarantia`, `FechaFinGarantia`, `CondicionesCobertura` y `ContactoSoporte`.
-  2. Alertas y vinculación con mantenimiento:
-     - Al reportar una falla en `MantenimientoOrdenes`, si el activo cuenta con garantía vigente, mostrar una advertencia destacada indicando que el equipo está cubierto por garantía comercial del proveedor.
-     - Reporte de garantías próximas a vencer en los siguientes 30 y 60 días.
-- **Criterios de Aceptación:**
-  - Registrar las fechas de garantía de un proyector y comprobar que se almacenan en su expediente.
-  - Reportar una falla sobre un equipo con garantía activa y verificar que el sistema alerta que la reparación puede tramitarse con el proveedor.
-  - Las garantías expiradas dejan de marcarse como cubiertas automáticamente.
-- **Estado:** [ ] Pendiente
-
----
-
-### [ ] [F19-Task10] Control opcional de lotes y fechas de expiración en insumos
-- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-08) y Sección C (2.8)
-- **Prioridad:** P2
-- **Severidad/Clasificación:** Media (Control de insumos perecederos de cafetería, reactivos de ciencias y medicamentos de enfermería)
-- **Archivos Involucrados:**
-  - `backend/accounting-service/Code.gs` (`recordInventoryMovement`, nueva función `getExpiringInventoryAlerts`)
   - `InventariosKardex`
-  - `CatalogoArticulos`
-- **Dependencias Expuestas:** `InventariosKardex`, `CatalogoArticulos`
+  - Hoja `InventariosLotes`
+  - Hoja `InventariosSeries`
+  - `backend/accounting-service/Code.gs` (`recordInventoryMovement`, `getInventoryKardex`, nueva función `getExpiringInventoryAlerts`)
+  - `js/accounting.js`
+- **Dependencias Expuestas:** `CatalogoArticulos`, `InventariosKardex`, `F19-Task01`, `F19-Task05`, `F19-Task10`
 - **Descripción del Alcance:**
-  Ciertos suministros institucionales (reactivos de laboratorio de química, botiquines de primeros auxilios de enfermería y perecederos de cafetería) requieren control de lote y caducidad para evitar el uso de materiales vencidos.
+  El inventario no discrimina lotes de adquisición, números de serie individuales ni fechas de vencimiento. Esto limita la trazabilidad y el control de calidad de insumos perecederos o reactivos de laboratorio.
   Requerimientos Funcionales Detallados:
-  1. Campos opcionales de lote y vencimiento:
-     - Permitir registrar `NumeroLote` y `FechaVencimiento` en `recordInventoryMovement` para artículos configurados como perecederos en el catálogo.
-     - Consultar existencias agrupadas por lote y fecha de vencimiento.
-  2. Alertas de caducidad:
-     - Identificar insumos vencidos o próximos a vencer (30 días) para gestionar su consumo prioritario (criterio FEFO/PVPS) o baja justificada.
+  1. Modalidades de seguimiento por artículo:
+     - Sin seguimiento individual, Seguimiento por lote o Seguimiento por número de serie.
+     - Lotes: número de lote, proveedor, fecha de recepción, fabricación, vencimiento, cantidad recibida/disponible, ubicación y costo.
+     - Números de serie: identidad individual única por unidad, impidiendo que el mismo número de serie exista simultáneamente en dos ubicaciones o custodias distintas.
+  2. Estrategias de rotación y consumo:
+     - Selección automática según PVPS/FEFO (First Expired, First Out) para insumos con caducidad.
+     - Sugerir prioritariamente el lote con fecha de expiración más próxima utilizable.
+     - Excepciones justificadas con autorización documentada para despachar lotes distintos.
+  3. Alertas de caducidad y bloqueo de lotes:
+     - Alertas preventivas configurables (30, 60 días antes del vencimiento).
+     - Bloqueo automático para consumo de lotes vencidos o retirados por el proveedor.
+     - Registro documentado de bajas por vencimiento o deterioro.
 - **Criterios de Aceptación:**
-  - Registrar un ingreso de insumos con número de lote y fecha de vencimiento.
-  - Consultar alertas de caducidad y verificar que el lote aparece en el listado de productos a vigilar.
-  - Artículos comunes de oficina (papel, bolígrafos) no exigen lote ni generan falsas alertas de vencimiento.
+  - Los artículos pueden configurarse con control por lote, serie o estándar.
+  - Los números de serie son estrictamente únicos en la base de datos.
+  - El motor de entrega selecciona automáticamente el lote más próximo a vencer (FEFO).
+  - Se bloquea la entrega o consumo de lotes cuya fecha de vencimiento haya expirado.
+  - Se reportan oportunamente los lotes en riesgo de caducidad.
+  - Se mantiene la trazabilidad del destino de cada lote consumido o transferido.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [ ] [F19-Task11] Integración de alertas multicanal de inventario y mantenimiento
-- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-18) y Sección C (2.18)
+### [ ] [F19-Task12] Gestión de garantías, pólizas y cobertura de activos patrimoniales
+- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-13), Sección C (2.13) y Plan de Trabajo F19-12
 - **Prioridad:** P2
-- **Severidad/Clasificación:** Media (Notificación oportuna, abastecimiento ágil y atención de fallas críticas)
+- **Severidad/Clasificación:** Media (Ahorro en reparaciones, soporte de proveedores, trazabilidad de siniestros y reclamos comerciales)
+- **Archivos Involucrados:**
+  - `ActivosPatrimoniales`
+  - Hoja `ActivosGarantias`
+  - `MantenimientoOrdenes`
+  - `backend/accounting-service/Code.gs` (`manageAssetItem`, `getAssetItems`, nueva función `getAssetWarrantyAlerts`)
+  - `js/accounting.js`
+- **Dependencias Expuestas:** `ActivosPatrimoniales`, `MantenimientoOrdenes`, `ProveedoresActivos`, `F19-Task06`
+- **Descripción del Alcance:**
+  La ficha de activos no almacena información de pólizas ni fechas de cobertura de garantías de proveedores. Cuando un equipo falla, se corre el riesgo de incurrir en gastos de reparación que podrían tramitarse sin costo ante el fabricante o aseguradora.
+  Requerimientos Funcionales Detallados:
+  1. Ficha de garantías y pólizas de activos:
+     - Proveedor o fabricante, número de garantía, póliza, fecha de adquisición, fecha de inicio y vencimiento de cobertura, tipo de cobertura, condiciones, exclusiones, costo de póliza, contacto de soporte y documentos adjuntos.
+     - Múltiples coberturas simultáneas por bien (ej. garantía de fábrica y seguro contra robo o accidentes).
+  2. Alertas e integración con órdenes de mantenimiento:
+     - Alertas de garantías próximas a vencer en los siguientes 30 y 60 días.
+     - Al reportar una falla en `MantenimientoOrdenes`, informar inmediatamente si el equipo cuenta con cobertura vigente y mostrar los contactos para tramitar el reclamo.
+     - Registro de reclamos: fecha, falla, número de caso, respuesta del proveedor, resultado y costos cubiertos vs no cubiertos.
+     - Evitar contabilizar como gasto de la institución los costos asumidos íntegramente por la garantía.
+- **Criterios de Aceptación:**
+  - Cada activo puede registrar múltiples pólizas o garantías con fechas y condiciones.
+  - Se generan alertas destacadas ante garantías próximas a expirar.
+  - Al abrir una orden de reparación se despliega la vigencia de garantía del equipo.
+  - Las reparaciones cubiertas por garantía diferencian el importe cubierto del costo asumido institucionalmente.
+  - Se conserva el expediente de reclamos de garantía y resultados obtenidos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F19-Task13] Sistema centralizado de alertas y notificaciones multicanal
+- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-18), Sección C (2.18) y Plan de Trabajo F19-13
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Comunicación oportuna, abastecimiento ágil, atención prioritaria de fallas y alertas preventivas)
 - **Archivos Involucrados:**
   - `backend/accounting-service/Code.gs`
-  - `backend/user-service/Code.gs` (`sendMultiChannelNotification`)
+  - `backend/user-service/Code.gs` (`sendMultiChannelNotification`, `retryFailedNotificationsQueue`)
   - `InventariosKardex`
+  - `MaterialesSolicitudes`
   - `MantenimientoOrdenes`
-- **Dependencias Expuestas:** `sendMultiChannelNotification`, `InventariosKardex`, `MantenimientoOrdenes`
+  - `ActivosPatrimoniales`
+  - `js/accounting.js`
+- **Dependencias Expuestas:** `sendMultiChannelNotification`, `InventariosKardex`, `MantenimientoOrdenes`, `F19-Task06`, `F19-Task11`
 - **Descripción del Alcance:**
-  Las alertas de inventario bajo mínimos y asignación de órdenes de mantenimiento solo son visibles al ingresar a la pantalla contable. No se despachan notificaciones directas a los encargados operativos.
+  Las alertas de inventario bajo mínimos y asignación de órdenes de mantenimiento solo son visibles al ingresar a la pantalla contable. No existe una comunicación automatizada multicanal hacia los responsables operativos.
   Requerimientos Funcionales Detallados:
-  1. Despacho multicanal de alertas críticas:
-     - Al registrarse un movimiento que sitúe el stock en o por debajo del mínimo, enviar notificación al Encargado de Bodega y Dirección.
-     - Al crearse una orden de mantenimiento de prioridad `Alta` o `Urgente`, notificar inmediatamente al técnico o empleado asignado.
-     - Evitar saturación de mensajes mediante claves de deduplicación diaria.
+  1. Catálogo de eventos de notificación:
+     - Inventario: stock mínimo alcanzado, stock agotado, existencias negativas detectadas, solicitud pendiente de aprobación, solicitud aprobada, material listo para entrega, transferencias pendientes de recibir, discrepancias en conteos físicos.
+     - Activos: nueva asignación de custodia, devolución vencida o pendiente, activo reportado dañado, garantía próxima a vencer.
+     - Mantenimiento: mantenimiento preventivo próximo o atrasado, orden urgente asignada a técnico, repuestos insuficientes, orden completada.
+  2. Despacho multicanal y preferencias:
+     - Canales: notificaciones internas de plataforma, correo electrónico institucional y WhatsApp (cuando esté habilitado).
+     - Configuración de destinatarios por rol, usuario, departamento y tipo de evento.
+     - Niveles de prioridad (informativo, advertencia, crítico) y prevención de notificaciones repetitivas mediante claves de deduplicación.
+     - Centro de notificaciones interno con estados de leído/pendiente y registro de reintentos fallidos.
 - **Criterios de Aceptación:**
-  - Provocar un quiebre de stock y verificar el disparo de la notificación multicanal.
-  - Asignar una orden de mantenimiento urgente a un técnico y verificar que recibe el aviso con el detalle de la falla.
+  - Un quiebre de stock mínimo dispara automáticamente el aviso a los encargados configurados.
+  - La asignación de órdenes de trabajo urgentes notifica de inmediato al personal técnico.
+  - Se controlan duplicados mediante deduplicación diaria.
+  - Los errores en el servicio de notificación no bloquean las transacciones contables o de inventario.
 - **Estado:** [ ] Pendiente
 
 ---
 
-## TAREAS DE ASEGURAMIENTO Y CALIDAD (P0 - SUITE INTEGRAL DE REGRESIÓN DE INVENTARIO)
+### [ ] [F19-Task14] Gestión documental, expedientes y actas de inventario y patrimonio
+- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-14), Sección C y Plan de Trabajo F19-14
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Media (Respaldo probatorio, expedientes patrimoniales 360°, actas digitales y archivo seguro en Drive)
+- **Archivos Involucrados:**
+  - `InventariosKardex`
+  - `ActivosPatrimoniales`
+  - `AsignacionesActivos`
+  - `BajasBienes`
+  - `MantenimientoOrdenes`
+  - Google Drive API
+  - `js/accounting.js`
+- **Dependencias Expuestas:** Google Drive API, `F19-Task02`, `F19-Task04`, `F19-Task06`, `F19-Task12`
+- **Descripción del Alcance:**
+  La plataforma registra movimientos y custodias, pero carece de un repositorio documental estructurado para archivar y vincular comprobantes de compra, pólizas, actas de custodia firmadas, fotografías de daños y actas de disposición patrimonial.
+  Requerimientos Funcionales Detallados:
+  1. Tipología documental y expedientes unificados:
+     - Facturas de compra, comprobantes, garantías, manuales, fotografías de estado físico, actas de asignación, actas de devolución, actas de baja, reportes de mantenimiento y certificados de calibración.
+     - Expediente patrimonial 360° por cada activo consultable desde su ficha técnica.
+  2. Generación automática de actas PDF institucionales:
+     - Acta de entrega de activos bajo custodia, acta de devolución y finiquito, acta de transferencia entre almacenes, acta de baja patrimonial y órdenes de mantenimiento.
+     - Incluir identificador único, fecha, datos del responsable, firmas institucionales y evidencias fotográficas de antes/después.
+     - Almacenamiento organizado en Google Drive bajo carpetas institucionales con referencias persistentes.
+     - Preservar permanentemente los expedientes documentales de bienes dados de baja.
+- **Criterios de Aceptación:**
+  - Cada activo e insumo cuenta con acceso directo a su expediente documental.
+  - Las asignaciones, devoluciones y bajas generan sus actas en PDF descargables.
+  - Los archivos adjuntos se organizan automáticamente en carpetas estructuradas de Drive.
+  - Los activos dados de baja conservan intacto su expediente probatorio histórico.
+  - Se controlan los permisos de visualización documental de acuerdo con el rol del usuario.
+- **Estado:** [ ] Pendiente
 
 ---
 
-### [ ] [F19-Task12] Implementar suite automatizada de pruebas y regresión integral de inventario y activos
-- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección G (P0) y Sección F
+## TAREAS COMPLEMENTARIAS Y DE OPTIMIZACIÓN (P3 - DASHBOARDS GERENCIALES, PRESUPUESTOS, REQUISICIONES, CONTEOS Y DISPOSICIÓN)
+
+---
+
+### [ ] [F19-Task15] Panel de control gerencial de inventarios, activos y mantenimiento
+- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E y Plan de Trabajo F19-15
+- **Prioridad:** P3
+- **Severidad/Clasificación:** Baja (Analítica gerencial, toma de decisiones estratégicas, indicadores en tiempo real y reportería ejecutiva)
+- **Archivos Involucrados:**
+  - `js/accounting.js`
+  - `dashboard-contabilidad.html`
+  - `backend/accounting-service/Code.gs` (nueva función `getInventoryAssetsExecutiveDashboard`)
+  - `InventariosKardex`
+  - `ActivosPatrimoniales`
+  - `MantenimientoOrdenes`
+- **Dependencias Expuestas:** `F19-Task04`, `F19-Task07`, `F19-Task08`, `F19-Task13`
+- **Descripción del Alcance:**
+  La interfaz ofrece listados tabulares operativos pero carece de un panel consolidado de control directivo con métricas gráficas e indicadores financieros del patrimonio y suministros institucionales.
+  Requerimientos Funcionales Detallados:
+  1. Indicadores ejecutivos consolidados:
+     - Inventario: valor total del inventario, artículos activos, existencias por almacén, artículos bajo mínimo, agotados, sin rotación, con sobrestock, próximos a vencer, consumo mensual y rotación.
+     - Activos: total de activos registrados, valor de adquisición, valor neto en libros, depreciación acumulada, asignados, disponibles, en mantenimiento, dados de baja y garantías por expirar.
+     - Mantenimiento: órdenes abiertas, pendientes, vencidas, completadas, ratio preventivo vs correctivo, costos reales vs estimados, gastos por departamento y equipos con mayor tasa de falla.
+  2. Filtros interactivos y exportación:
+     - Filtros cruzados por período, almacén, departamento, categoría, tipo de activo y custodio.
+     - Gráficos de evolución mensual y exportación a Excel y PDF con fecha de corte y actualización de datos visible.
+- **Criterios de Aceptación:**
+  - Los indicadores concuerdan exactamente con las cifras del Kardex y del registro de activos.
+  - Los filtros interactivos actualizan las tarjetas y gráficos simultáneamente.
+  - Se permite navegar desde cualquier indicador hasta los registros detallados de origen.
+  - Se exportan reportes ejecutivos en formatos PDF y Excel.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F19-Task16] Gestión presupuestaria y análisis de costos de suministros y mantenimiento por departamento
+- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E y Plan de Trabajo F19-16
+- **Prioridad:** P3
+- **Severidad/Clasificación:** Baja (Control del gasto departamental, comparativa planificado vs real y límites de consumo)
+- **Archivos Involucrados:**
+  - `MaterialesSolicitudes`
+  - `MantenimientoOrdenes`
+  - `AsientosContables`
+  - `PresupuestosInstitucionales`
+  - `backend/accounting-service/Code.gs` (`checkBudgetAvailability`, nueva función `getDepartmentalMaterialCostAnalysis`)
+  - `js/accounting.js`
+- **Dependencias Expuestas:** `PresupuestosInstitucionales`, `MaterialesSolicitudes`, `F19-Task07`, `F19-Task15`
+- **Descripción del Alcance:**
+  Los consumos y reparaciones se registran operativamente pero no se contrastan contra los techos presupuestarios aprobados para cada área departamental de la academia.
+  Requerimientos Funcionales Detallados:
+  1. Techos presupuestarios por departamento:
+     - Asignar presupuestos de suministros y mantenimiento por departamento y período (mensual, trimestral, anual).
+     - Calcular automáticamente: Presupuesto aprobado, Gasto comprometido, Gasto ejecutado, Saldo disponible y Porcentaje de ejecución.
+  2. Control previo y alertas de sobrecosto:
+     - Al aprobar requisiciones de materiales u órdenes de reparación, contrastar contra el presupuesto disponible del centro de costo.
+     - Alertas al alcanzar el 80% y 95% del presupuesto asignado.
+     - Exigir autorización especial de Dirección/Administración cuando una solicitud supere el saldo presupuestario disponible.
+     - Comparativas de variación presupuestaria y departamentos con sobrecostos recurrentes.
+- **Criterios de Aceptación:**
+  - Los gastos de materiales y reparaciones se imputan al presupuesto del departamento solicitante.
+  - Se calculan los montos comprometidos y ejecutados en tiempo real.
+  - Se alerta y exige autorización directiva ante solicitudes que excedan el presupuesto disponible.
+  - Los reportes presupuestarios concuerdan con los asientos del libro diario contable.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F19-Task17] Optimización del ciclo de requisiciones internas y distribución de materiales
+- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E y Plan de Trabajo F19-17
+- **Prioridad:** P3
+- **Severidad/Clasificación:** Baja (Productividad operativa, solicitudes multirrenglón, entregas parciales y confirmación de recepción)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`createMaterialRequisition`, `getMaterialRequisitions`, `deliverMaterialRequisition`)
+  - `MaterialesSolicitudes`
+  - `CatalogoArticulos`
+  - `InventariosKardex`
+  - `js/accounting.js`
+- **Dependencias Expuestas:** `MaterialesSolicitudes`, `CatalogoArticulos`, `F19-Task05`, `F19-Task09`
+- **Descripción del Alcance:**
+  La entrega de materiales actual es un proceso directo de un solo paso que no contempla aprobaciones parciales, entregas diferidas por renglón ni confirmación formal de recepción por parte del docente solicitante.
+  Requerimientos Funcionales Detallados:
+  1. Ciclo de estados ampliado de solicitudes:
+     - `Borrador`, `Enviada`, `PendienteAprobacion`, `AprobadaTotal`, `AprobadaParcial`, `EnPreparacion`, `EntregadaParcial`, `EntregadaTotal`, `Rechazada`, `Cancelada`.
+     - Solicitudes multirrenglón con cantidades solicitadas, aprobadas y entregadas por cada artículo.
+  2. Aprobaciones y entregas parciales:
+     - Justificación de cantidades reducidas o partidas rechazadas.
+     - Entregas escalonadas registrando entregas parciales y saldo pendiente de despacho.
+     - Comprobante de entrega con firma o confirmación digital del solicitante.
+     - Interfaz simplificada y amigable para docentes y personal escolar con historial de pedidos.
+- **Criterios de Aceptación:**
+  - Se admiten solicitudes con múltiples artículos en un solo envío.
+  - Se pueden aprobar o entregar cantidades parciales conservando el remanente en seguimiento.
+  - El solicitante puede confirmar la recepción física de sus materiales.
+  - Las reservas de inventario se ajustan exactamente a las cantidades pendientes de entrega.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F19-Task18] Optimización del inventario físico y conciliaciones periódicas por ubicación
+- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E, Sección F y Plan de Trabajo F19-18
+- **Prioridad:** P3
+- **Severidad/Clasificación:** Baja (Auditoría continua, conteos cíclicos sin detener operaciones, conteos ciegos y precisión de inventario)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`createPhysicalInventoryCount`, `getPhysicalInventoryCounts`, `reconcilePhysicalCount`)
+  - `InventariosConteosFisicos`
+  - `InventariosKardex`
+  - `js/accounting.js`
+- **Dependencias Expuestas:** `InventariosConteosFisicos`, `InventariosKardex`, `F19-Task01`, `F19-Task05`, `F19-Task08`, `F19-Task11`
+- **Descripción del Alcance:**
+  La conciliación de conteo físico está implementada pero opera de forma general, sin soportar conteos cíclicos por estantería/bodega, hojas de conteo ciego ni doble verificación en discrepancias significativas.
+  Requerimientos Funcionales Detallados:
+  1. Conteos cíclicos y programados:
+     - Programar conteos por almacén, ubicación física, categoría o muestra rotativa sin paralizar la operación institucional.
+     - Modalidad de "Conteo Ciego" (la hoja de captura no revela las cantidades teóricas al operador para evitar sesgos).
+     - Registro de doble conteo independiente ante discrepancias mayores al 5%.
+  2. Flujo de aprobación y registro de diferencias:
+     - Desglose de faltantes, sobrantes, artículos desubicados y lotes vencidos.
+     - Justificación obligatoria para la aplicación de ajustes y autorización según permisos RBAC.
+     - Generación automática de ajustes en Kardex y contabilidad valorizada únicamente tras la aprobación formal.
+     - Indicadores de precisión de inventario (Exactitud de Registro de Inventario - ERI) por almacén.
+- **Criterios de Aceptación:**
+  - Se pueden programar conteos cíclicos aislados por almacén o categoría.
+  - Las hojas de conteo ciego ocultan el saldo teórico al capturista.
+  - Las discrepancias requieren justificación y aprobación directiva antes de ajustar existencias.
+  - Se impide conciliar dos veces el mismo proceso de conteo físico.
+  - Se generan indicadores de exactitud de inventario en reportes periódicos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [F19-Task19] Gestión integral de bajas patrimoniales, disposición y recuperación de valor
+- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E, Sección G y Plan de Trabajo F19-19
+- **Prioridad:** P3
+- **Severidad/Clasificación:** Baja (Disposición final de bienes, cálculo de ganancia/pérdida contable, venta, donación o chatarrización)
+- **Archivos Involucrados:**
+  - `backend/accounting-service/Code.gs` (`registerAssetDisposal`, `getAssetDisposals`)
+  - `ActivosPatrimoniales`
+  - `BajasBienes`
+  - `AsientosContables`
+  - `js/accounting.js`
+- **Dependencias Expuestas:** `ActivosPatrimoniales`, `BajasBienes`, `AsientosContables`, `F19-Task04`, `F19-Task14`
+- **Descripción del Alcance:**
+  El registro actual de bajas asienta el acta en `BajasBienes` y marca `Disposed`, pero carece de un flujo estructurado de dictamen técnico previo, cálculo automático del valor en libros a la fecha de baja y reconocimiento contable de la ganancia o pérdida patrimonial resultante.
+  Requerimientos Funcionales Detallados:
+  1. Causas de baja y dictamen técnico:
+     - Causas estructuradas: Obsolescencia, Daño irreparable, Pérdida/Extravío, Robo/Siniestro, Donación institucional, Venta de desecho, Destrucción autorizada.
+     - Dictamen técnico previo con firmas de evaluación y reporte fotográfico obligatorio.
+  2. Modalidad de disposición y efecto económico:
+     - Registrar destino: donación, venta, reciclaje, destrucción o compensación de aseguradora.
+     - En venta: registrar comprador, valor de rescate/venta, factura y medio de pago.
+     - Integración con depreciación acumulada para determinar el valor neto en libros a la fecha efectiva de disposición.
+     - Generar el asiento contable de baja por partida doble eliminando el costo de adquisición, cancelando la depreciación acumulada y reconociendo el ingreso por venta o la pérdida extraordinaria.
+     - Bloquear definitivamente el activo dispuesto para impedir que vuelva a asignarse o a depreciarse.
+- **Criterios de Aceptación:**
+  - Toda baja patrimonial exige dictamen técnico y aprobación de Dirección.
+  - Se calcula automáticamente el valor neto contable a la fecha exacta de disposición.
+  - Se generan asientos contables por partida doble reconociendo pérdidas o recuperaciones.
+  - Los bienes dados de baja quedan blindados contra reasignaciones o depreciaciones futuras.
+  - El expediente histórico del bien permanece permanentemente accesible en los archivos de auditoría.
+- **Estado:** [ ] Pendiente
+
+---
+
+## TAREAS DE ASEGURAMIENTO Y CALIDAD (P0 - SUITE INTEGRAL DE REGRESIÓN DE INVENTARIO Y PATRIMONIO)
+
+---
+
+### [ ] [F19-Task20] Implementar suite automatizada de pruebas y regresión integral de inventario y activos
+- **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección G (P0), Sección F y Plan de Trabajo F19-20
 - **Prioridad:** P0
-- **Severidad/Clasificación:** Crítica (Aseguramiento continuo de integridad en recursos físicos, bodegas y contabilidad)
+- **Severidad/Clasificación:** Crítica (Aseguramiento continuo de integridad en recursos físicos, bodegas multialmacén y balances contables)
 - **Archivos Involucrados:**
   - `backend/accounting-service/Code.gs`
   - `backend/developer-service/Code.gs`
   - `tests/regression/academic-grading-suite.js`
-- **Dependencias Expuestas:** Suites de pruebas del sistema, contratos de API de inventario, activos y mantenimiento
+- **Dependencias Expuestas:** Todas las tareas de la Fase 19 (`F19-Task01` a `F19-Task19`), suites de pruebas del ecosistema institucional
 - **Descripción del Alcance:**
-  Implementar la suite integral automatizada `runPhase19InventoryAndAssetsRegressionSuite` que valide de manera continua el flujo de inventarios multialmacén, asignaciones y devoluciones de activos, conciliaciones de conteos físicos, órdenes de mantenimiento con descuento de repuestos, cálculo de depreciaciones y preservación de actas de baja.
+  Implementar la suite integral automatizada `runPhase19InventoryAndAssetsRegressionSuite` que valide de manera continua el ciclo completo de inventarios multialmacén, transferencias, catálogo maestro, asignaciones y devoluciones de activos, planes preventivos, repuestos de mantenimiento, cálculo de depreciaciones, valoración económica y asientos contables por partida doble.
   Requerimientos Funcionales Detallados:
-  1. Batería de pruebas automatizadas:
-     - Kardex: entradas, salidas bloqueadas por falta de existencia local, saldos multialmacén aislados.
-     - Transferencias: validación de saldo en origen e incremento exacto en destino.
-     - Activos: registro de bien, asignación de custodia, devolución formal con evaluación física y preservación histórica.
-     - Conteos físicos: detección de sobrantes/faltantes y generación automática de ajustes autorizados.
-     - Mantenimiento: creación de orden, asignación de técnico, resolución con consumo de repuestos y validación de costos.
-     - Bajas: emisión de acta, cambio a `Disposed` y conservación íntegra del expediente patrimonial.
-     - Contabilidad: verificación de balance por partida doble en asientos de consumo y depreciación (`totalDebe === totalHaber`).
-  2. Aislamiento y no regresión:
-     - No alterar los registros de producción existentes ni provocar fallos en las 53 pruebas de regresión previas.
+  1. Batería obligatoria de pruebas de aceptación (PT19-01 a PT19-20):
+     * PT19-01: Entrada en dos almacenes -> Existencias calculadas independientemente sin mezclar saldos.
+     * PT19-02: Salida superior al disponible en la bodega -> Operación bloqueada con excepción descriptiva.
+     * PT19-03: Transferencia sin stock suficiente en origen -> Rechazo inmediato sin movimientos huérfanos.
+     * PT19-04: Transferencia válida -> Salida en origen, entrada en destino y correlación documental idéntica.
+     * PT19-05: Devolución de activo en buen estado -> Custodia cerrada y activo en estado `available`.
+     * PT19-06: Devolución con daño físico -> Activo en estado `maintenance` y generación de orden técnica.
+     * PT19-07: Depreciación mensual lineal -> Cálculo exacto y asiento contable balanceado por partida doble.
+     * PT19-08: Intento de depreciación duplicada para el mismo período -> Bloqueo automático.
+     * PT19-09: Consumo departamental de materiales -> Gasto imputado al centro de costo correspondiente.
+     * PT19-10: Transferencia interna entre bodegas -> Movimiento de stock sin reconocimiento erróneo de gasto.
+     * PT19-11: Despacho de lote vencido -> Bloqueo automático del consumo.
+     * PT19-12: Despacho automático FEFO -> Selección prioritaria del lote con caducidad más cercana.
+     * PT19-13: Consulta por código QR de activo -> Retorno exacto del expediente patrimonial y custodio.
+     * PT19-14: Mantenimiento preventivo completado -> Proyección automática de la siguiente fecha del ciclo.
+     * PT19-15: Repuestos utilizados en mantenimiento -> Descuento atómico y exacto en el Kardex.
+     * PT19-16: Baja patrimonial de activo -> Expediente histórico preservado y asiento contable de baja asentado.
+     * PT19-17: Conteo físico con discrepancia -> Conciliación y generación de ajuste trazable.
+     * PT19-18: Solicitudes simultáneas concurrentes -> Control mediante `LockService` sin sobreasignación ni saldos negativos.
+     * PT19-19: Matriz de permisos RBAC -> Operaciones administrativas bloqueadas para roles sin privilegios.
+     * PT19-20: Reporte de inventario valorizado -> Conciliación monetaria matemática con el libro mayor.
+  2. No regresión del ecosistema:
+     - Garantizar que la ejecución de la suite no altere registros de producción ni las 53 pruebas de regresión previas de las Fases 9, 10, 11, 15, 16, 17 y 18.
 - **Criterios de Aceptación:**
-  - La suite de regresión ejecuta todas las pruebas transversales de la Fase 19 con el 100% de éxito.
-  - Valida que no existan existencias negativas ni desbalances contables.
-  - Las suites de regresión previas (Fases 9, 10, 11, 15, 16, 17 y 18) continúan ejecutándose con 100% de aprobación.
+  - El 100% de las 20 pruebas transversales (PT19-01 a PT19-20) se ejecutan con resultado satisfactorio (`PASS`).
+  - No existen desbalances contables (`totalDebe === totalHaber` en todos los asientos generados).
+  - No se generan saldos negativos de inventario bajo ninguna circunstancia.
+  - La suite de regresión previa (53/53 pruebas) se mantiene aprobada al 100%.
 - **Estado:** [ ] Pendiente
 
 ---
