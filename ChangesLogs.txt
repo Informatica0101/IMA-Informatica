@@ -665,3 +665,16 @@ Módulo: Identidad Visual e Interfaz de Usuario
 - Lógica de Cliente (`js/student.js`, `js/teacher.js`):
   * Actualizados datos de contacto por defecto institucional y rótulos en expedientes.
 - Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-007] como completada.
+
+REGISTRO DE CAMBIOS - SISTEMA DE ROLES Y PERMISOS GRANULARES SERVIDOR RBAC - Sun Nov 01 2026
+
+Módulo: Seguridad y Control de Acceso (RBAC)
+- Backend Usuarios (`backend/user-service/Code.gs`):
+  * Añadida matriz de autorización `RBAC_ACTION_PERMISSIONS` y función de validación `validatePermission`.
+  * Enlazada validación RBAC en `doPost` con retorno explícito del código de error `AUTH_PERMISSION_DENIED` ante accesos no autorizados.
+- Capa de Red y API (`js/api.js`):
+  * Enriquecido el payload con `requesterUserId` y `requesterRole` a partir de la sesión activa (`currentUser`).
+  * Añadido interceptor de respuesta para notificación visual ante error `AUTH_PERMISSION_DENIED`.
+- Configuración Global (`js/config.js`):
+  * Definida constante institucional `RBAC_ROLES`, matriz de capacidades `ROLE_PERMISSIONS` y función helper `hasPermission`.
+- Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-008] como completada.

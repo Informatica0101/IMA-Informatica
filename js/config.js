@@ -526,3 +526,54 @@ window.normalizeQuestion = function(q) {
 
     return result;
 };
+
+/**
+ * MATRIZ DE AUTORIZACIÓN Y ROLES RBAC INSTITUCIONAL (REQ-EXP-008)
+ * Roles soportados: Administrador, Director, Subdirector, Secretaría, Contador, Consejeros, Profesor, Asistente, Estudiante (Alumnos/Padres).
+ */
+window.RBAC_ROLES = {
+    ADMINISTRADOR: 'Administrador',
+    DIRECTOR: 'Director',
+    SUBDIRECTOR: 'Subdirector',
+    SECRETARIA: 'Secretaría',
+    CONTADOR: 'Contador',
+    CONSEJERO: 'Consejeros',
+    PROFESOR: 'Profesor',
+    ASISTENTE: 'Asistente',
+    ESTUDIANTE: 'Estudiante'
+};
+
+window.ROLE_PERMISSIONS = {
+    // Permisos generales
+    'read_academic_public': ['*'],
+    'read_own_profile': ['*'],
+    'update_own_profile': ['*'],
+    // Estudiante / Gamificación
+    'play_and_submit_score': ['Estudiante', 'Profesor', 'Administrador'],
+    // Docente
+    'grade_students': ['Profesor', 'Asistente', 'Director', 'Subdirector', 'Administrador'],
+    'manage_tasks': ['Profesor', 'Director', 'Subdirector', 'Administrador'],
+    'manage_exams': ['Profesor', 'Director', 'Subdirector', 'Administrador'],
+    'view_all_students': ['Profesor', 'Secretaría', 'Consejeros', 'Director', 'Subdirector', 'Administrador'],
+    // Comunicación y Noticias
+    'manage_news': ['Secretaría', 'Director', 'Administrador'],
+    // Gestión Académica Institucional
+    'manage_academic_config': ['Director', 'Subdirector', 'Secretaría', 'Administrador'],
+    'close_academic_year': ['Director', 'Administrador'],
+    // Control Financiero / Contable
+    'manage_finances': ['Contador', 'Administrador', 'Director'],
+    // Matrícula y Expediente
+    'manage_enrollment': ['Secretaría', 'Director', 'Administrador'],
+    // Consola Técnica
+    'manage_system': ['Administrador']
+};
+
+window.hasPermission = function(userRole, permission) {
+    if (!userRole) return false;
+    var normRole = userRole.toString().trim();
+    if (normRole === 'Administrador' || normRole === 'Admin') return true;
+    var allowed = window.ROLE_PERMISSIONS[permission];
+    if (!allowed) return false;
+    if (allowed.indexOf('*') !== -1) return true;
+    return allowed.some(function(r) { return r.toLowerCase() === normRole.toLowerCase(); });
+};

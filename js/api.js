@@ -36,12 +36,25 @@ function fetchApi(service, action, payload, retryCount, options) {
         timeoutId = setTimeout(function() { controller.abort(); }, 60000); // 60 segundos de límite
     }
 
+    // REQ-EXP-008: Inyección automática de contexto de autorización RBAC
+    var currentUser = null;
+    try {
+        var rawUser = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+        if (rawUser) currentUser = JSON.parse(rawUser);
+    } catch (_) {}
+
+    var enrichedPayload = payload || {};
+    if (currentUser && typeof enrichedPayload === 'object' && !Array.isArray(enrichedPayload)) {
+        if (!enrichedPayload.requesterUserId) enrichedPayload.requesterUserId = currentUser.userId;
+        if (!enrichedPayload.requesterRole) enrichedPayload.requesterRole = currentUser.rol;
+    }
+
     var fetchOptions = {
         method: 'POST',
         headers: {
             'Content-Type': 'text/plain'
         },
-        body: JSON.stringify({ action: action, payload: payload })
+        body: JSON.stringify({ action: action, payload: enrichedPayload })
     };
     if (signal) fetchOptions.signal = signal;
     if (options.priority) fetchOptions.priority = options.priority;
@@ -103,6 +116,20 @@ function fetchApi(service, action, payload, retryCount, options) {
                     // REQ: Silent Reconciliation (Modulo 1.1)
                     if (options.store && window.PersistenceManager) {
                         window.PersistenceManager.reconcile(options.store, parsed, options.onUpdate, options.key);
+                    }
+
+                    // REQ-EXP-008: Manejo explícito de rechazo por autorización RBAC
+                    if (parsed && parsed.status === 'error' && parsed.code === 'AUTH_PERMISSION_DENIED') {
+                        console.error('[RBAC] Acceso denegado:', parsed.message);
+                        if (document.body && !options.silentAuthError) {
+                            var authToast = document.createElement('div');
+                            authToast.className = 'fixed top-6 left-1/2 -translate-x-1/2 bg-red-800 text-white px-6 py-3 rounded-2xl shadow-2xl z-[10000] flex items-center gap-3 border border-red-500 animate-fade-in-down';
+                            authToast.innerHTML = '<i class="fas fa-shield-alt text-lg"></i><span class="text-xs font-bold uppercase tracking-wider">Acceso denegado: ' + (parsed.message || 'No autorizado') + '</span>';
+                            document.body.appendChild(authToast);
+                            setTimeout(function() {
+                                if (authToast.parentNode) authToast.parentNode.removeChild(authToast);
+                            }, 5000);
+                        }
                     }
 
                     return parsed;

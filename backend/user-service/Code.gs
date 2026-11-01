@@ -102,6 +102,69 @@ function normalizeSubjectInBackend(name) {
 }
 
 // ---------------------------------------------------------------------------
+// SEGURIDAD RBAC EN SERVIDOR (REQ-EXP-008)
+// ---------------------------------------------------------------------------
+
+const RBAC_ACTION_PERMISSIONS = {
+  // Públicos / Autenticación
+  "registerUser": ["*"],
+  "loginUser": ["*"],
+  "requestPasswordRecovery": ["*"],
+  "resetPassword": ["*"],
+  "getNews": ["*"],
+  "getGlobalTop": ["*"],
+  "mergeGuestData": ["*"],
+
+  // Perfil y Datos Propios
+  "getUserInfo": ["*"],
+  "updateUserProfile": ["*"],
+  "saveGameResult": ["*"],
+  "getGameStats": ["*"],
+  "recordAnalytics": ["*"],
+  "getLearningProfile": ["*"],
+
+  // Gestión de Alumnos (Docentes y Personal Administrativo)
+  "getStudents": ["Profesor", "Secretaría", "Consejeros", "Director", "Subdirector", "Administrador"],
+  "getStudentsByGradoSeccion": ["Profesor", "Secretaría", "Consejeros", "Director", "Subdirector", "Administrador"],
+
+  // Gestión de Comunicación y Noticias
+  "createNews": ["Secretaría", "Director", "Administrador"],
+  "uploadNewsImage": ["Secretaría", "Director", "Administrador"]
+};
+
+function validatePermission(action, payload) {
+  const allowedRoles = RBAC_ACTION_PERMISSIONS[action];
+  if (!allowedRoles) {
+    // Si la acción no está mapeada, por defecto restringida a Administrador
+    const role = (payload && payload.requesterRole) ? String(payload.requesterRole).trim() : "";
+    if (role !== "Administrador" && role !== "Admin") {
+      return { authorized: false, message: `Acción no autorizada para el rol '${role || "No autenticado"}'.` };
+    }
+    return { authorized: true };
+  }
+
+  if (allowedRoles.includes("*")) {
+    return { authorized: true };
+  }
+
+  const requesterRole = (payload && payload.requesterRole) ? String(payload.requesterRole).trim() : "";
+  if (!requesterRole) {
+    return { authorized: false, message: "Petición no autenticada. Se requiere rol autorizado." };
+  }
+
+  if (requesterRole === "Administrador" || requesterRole === "Admin") {
+    return { authorized: true };
+  }
+
+  const isAllowed = allowedRoles.some(r => r.toLowerCase() === requesterRole.toLowerCase());
+  if (!isAllowed) {
+    return { authorized: false, message: `El rol '${requesterRole}' no cuenta con permisos para '${action}'.` };
+  }
+
+  return { authorized: true };
+}
+
+// ---------------------------------------------------------------------------
 // ENDPOINTS
 // ---------------------------------------------------------------------------
 
@@ -111,6 +174,17 @@ function doPost(e) {
   try {
     if (!e || !e.postData || !e.postData.contents) return textResponse({ status: "error", message: "No se recibieron datos." });
     const { action, payload } = JSON.parse(e.postData.contents);
+
+    // REQ-EXP-008: Enforzar validación RBAC del lado del servidor
+    const authCheck = validatePermission(action, payload);
+    if (!authCheck.authorized) {
+      return textResponse({
+        status: "error",
+        code: "AUTH_PERMISSION_DENIED",
+        message: authCheck.message
+      });
+    }
+
     let result;
     switch (action) {
       case "registerUser": result = registerUser(payload); break;

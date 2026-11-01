@@ -1172,3 +1172,11 @@ Sector: Encabezados, títulos, manifiesto PWA y pies de página
 Hallazgo [Alto]: Presencia de menciones institucionales obsoletas ('ISEMED', 'InformaticApp') y falta del recurso oficial 'new-generation-logo.png' referenciado en el manifiesto PWA.
 Impacto: Inconsistencia en la identidad corporativa y visual de la plataforma ante los usuarios y en la instalación PWA.
 Recomendación: Sustituir referencias institucionales por 'New Generation Bilingual School and Institute', actualizar encabezados a 'New Generation', configurar iconos PWA con 'imagenes/new-generation-logo.png' y actualizar datos de contacto por defecto.
+
+REGISTRO DE AUDITORÍA - SISTEMA DE ROLES Y PERMISOS GRANULARES SERVIDOR RBAC - Sun Nov 1 2026
+
+Archivo: backend/user-service/Code.gs, js/config.js, js/api.js
+Sector: Control de acceso a endpoints y gestión de capacidades
+Hallazgo [Crítico]: Ausencia de validación de roles en servidor en endpoints protegidos (ej. getStudents, createNews). La seguridad dependía únicamente del ocultamiento de controles en la interfaz de usuario.
+Impacto: Riesgo de escalación de privilegios o acceso no autorizado a información sensible de alumnos y publicación no controlada.
+Recomendación: Implementar matriz RBAC estricta en backend que rechace peticiones no autorizadas con código 'AUTH_PERMISSION_DENIED', e inyectar automáticamente el contexto del usuario en las peticiones cliente vía js/api.js.

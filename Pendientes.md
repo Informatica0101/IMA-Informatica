@@ -198,7 +198,7 @@
 - **Dependencias Expuestas:** Matriz de autorización por rol (Administrador, Director, Subdirector, Secretaría, Contador, Consejeros, Profesor, Asistente, Alumnos/Padres).
 - **Descripción del Alcance:** Validar roles y permisos del lado del servidor en cada endpoint. Garantizar que ocultar botones en la interfaz no sea el único mecanismo de seguridad.
 - **Criterios de Aceptación:** Rechazo explícito en backend (`AUTH_PERMISSION_DENIED`) ante peticiones no autorizadas para la responsabilidad del usuario.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [REQ-EXP-009] Módulo de Matrícula y Control Financiero del Estudiante (Sección 8)
 - **Origen del Hallazgo:** Requerimientos de Desarrollo y Expansión (Sección 8).
