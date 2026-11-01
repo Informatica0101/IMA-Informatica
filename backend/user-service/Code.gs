@@ -108,6 +108,9 @@ function getOrCreateSheet(ss, name) {
     if (name === "PlanillasDetalle") sheet.appendRow(["detalleId", "planillaId", "empleadoId", "nombre", "salarioBase", "horasExtras", "bonos", "ihss", "rap", "isr", "otrasDeducciones", "totalDeducciones", "salarioNeto", "estadoPago"]);
     if (name === "AsistenciaPersonal") sheet.appendRow(["asistenciaId", "empleadoId", "fecha", "horaEntrada", "horaSalida", "estado", "tardanzaMinutos", "observaciones"]);
     if (name === "DeduccionesRecurrentes") sheet.appendRow(["deduccionId", "empleadoId", "nombreDeduccion", "montoCuota", "cuotasTotales", "cuotasAplicadas", "cuotasRestantes", "estado", "fechaCreacion"]);
+    if (name === "InventarioArticulos") sheet.appendRow(["articuloId", "codigo", "nombre", "categoria", "ubicacion", "stockActual", "stockMinimo", "costoUnitario", "estado", "fechaRegistro"]);
+    if (name === "InventarioMovimientos") sheet.appendRow(["movimientoId", "articuloId", "tipoMovimiento", "cantidad", "stockPrevio", "stockResultante", "responsable", "referencia", "observaciones", "fecha"]);
+    if (name === "Proveedores") sheet.appendRow(["proveedorId", "nombreComercial", "rtn", "contacto", "telefono", "correo", "categoria", "direccion", "estado", "fechaRegistro"]);
     if (name === "ParametrosConfiguracion") {
       sheet.appendRow(["clave", "categoria", "valor", "descripcion", "ultimaActualizacion", "actualizadoPor"]);
       sheet.appendRow(["IHSS_PORCENTAJE_LABORAL", "Laboral", 0.035, "Porcentaje de deducción de IHSS para el empleado", new Date().toISOString(), "Sistema"]);
@@ -197,6 +200,13 @@ const RBAC_ACTION_PERMISSIONS = {
   "configureRecurringDeduction": ["Contador", "Secretaría", "Director", "Administrador"],
   "getRecurringDeductions": ["*"],
   "calculatePaymentDate": ["*"],
+
+  // Gestión de Inventarios, Activos y Proveedores (REQ-EXP-015)
+  "registerInventoryItem": ["Secretaría", "Contador", "Director", "Administrador"],
+  "recordInventoryMovement": ["Secretaría", "Contador", "Director", "Administrador"],
+  "registerSupplier": ["Secretaría", "Contador", "Director", "Administrador"],
+  "getInventoryCatalogAndAlerts": ["*"],
+  "getInventoryMovementsKardex": ["Secretaría", "Contador", "Director", "Administrador"],
 
   // Gestión de Comunicación y Noticias
   "createNews": ["Secretaría", "Director", "Administrador"],
@@ -322,6 +332,11 @@ function doPost(e) {
       case "configureRecurringDeduction": result = configureRecurringDeduction(payload); break;
       case "getRecurringDeductions": result = getRecurringDeductions(payload); break;
       case "calculatePaymentDate": result = calculatePaymentDate(payload); break;
+      case "registerInventoryItem": result = registerInventoryItem(payload); break;
+      case "recordInventoryMovement": result = recordInventoryMovement(payload); break;
+      case "registerSupplier": result = registerSupplier(payload); break;
+      case "getInventoryCatalogAndAlerts": result = getInventoryCatalogAndAlerts(payload); break;
+      case "getInventoryMovementsKardex": result = getInventoryMovementsKardex(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -771,6 +786,268 @@ function getStudentFinancialStatus(payload) {
       }
     }
   };
+}
+
+// ---------------------------------------------------------------------------
+// GESTIÓN DE INVENTARIOS, ACTIVOS FIJOS Y PROVEEDORES (REQ-EXP-015)
+// ---------------------------------------------------------------------------
+
+function registerInventoryItem(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const { articuloId, codigo, nombre, categoria, ubicacion, stockInicial, stockMinimo, costoUnitario } = payload || {};
+    if (!nombre) throw new Error("Nombre del artículo o activo requerido.");
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "InventarioArticulos");
+    const data = sheet.getDataRange().getValues();
+
+    const now = new Date().toISOString();
+    const sId = articuloId || ("ART-" + new Date().getTime());
+    const sCodigo = codigo || ("COD-" + Math.floor(1000 + Math.random() * 9000));
+    const sCategoria = categoria || "Consumible"; // Consumible, Activo Fijo, Mobiliario, Tecnológico
+    const sUbicacion = ubicacion || "Almacén Central";
+    const nStockMin = parseInt(stockMinimo || 5);
+    const nCosto = parseFloat(costoUnitario || 0);
+
+    const existingIdx = data.findIndex(r => String(r[0]).trim() === String(sId).trim());
+    if (existingIdx > 0) {
+      sheet.getRange(existingIdx + 1, 2, 1, 7).setValues([[
+        sCodigo,
+        nombre,
+        sCategoria,
+        sUbicacion,
+        data[existingIdx][5], // Mantener stock actual
+        nStockMin,
+        nCosto
+      ]]);
+      return { status: "success", articuloId: sId, message: "Artículo de inventario actualizado exitosamente." };
+    } else {
+      const nStockInit = parseInt(stockInicial || 0);
+      sheet.appendRow([
+        sId,
+        sCodigo,
+        nombre,
+        sCategoria,
+        sUbicacion,
+        nStockInit,
+        nStockMin,
+        nCosto,
+        "Activo",
+        now
+      ]);
+
+      // Si hay stock inicial mayor a 0, registrar movimiento de entrada inicial
+      if (nStockInit > 0) {
+        const movSheet = getOrCreateSheet(ss, "InventarioMovimientos");
+        movSheet.appendRow([
+          "MOV-INV-" + new Date().getTime(),
+          sId,
+          "Entrada",
+          nStockInit,
+          0,
+          nStockInit,
+          payload.requesterUserId || "Admin",
+          "Saldo Inicial",
+          "Alta inicial en catálogo",
+          now
+        ]);
+      }
+
+      return { status: "success", articuloId: sId, stockActual: nStockInit, message: "Artículo registrado en inventario exitosamente." };
+    }
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function recordInventoryMovement(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const { articuloId, tipoMovimiento, cantidad, referencia, observaciones } = payload || {};
+    if (!articuloId || !tipoMovimiento || !cantidad) {
+      throw new Error("Parámetros incompletos para movimiento de inventario.");
+    }
+    const nCantidad = parseInt(cantidad);
+    if (isNaN(nCantidad) || nCantidad <= 0) throw new Error("La cantidad debe ser un entero positivo.");
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "InventarioArticulos");
+    const data = sheet.getDataRange().getValues();
+
+    const idx = data.findIndex(r => String(r[0]).trim() === String(articuloId).trim());
+    if (idx <= 0) throw new Error("Artículo no encontrado en catálogo de inventario.");
+
+    const stockActual = parseInt(data[idx][5] || 0);
+    const stockMinimo = parseInt(data[idx][6] || 0);
+    const tipo = String(tipoMovimiento).trim(); // Entrada, Salida, Prestamo, Devolucion, Baja, Ajuste
+
+    let stockResultante = stockActual;
+    if (tipo === "Entrada" || tipo === "Devolucion") {
+      stockResultante = stockActual + nCantidad;
+    } else if (tipo === "Salida" || tipo === "Prestamo" || tipo === "Baja") {
+      if (stockActual < nCantidad) {
+        return {
+          status: "error",
+          code: "INSUFFICIENT_STOCK",
+          stockActual,
+          message: `Stock insuficiente. Stock actual: ${stockActual}, solicitado: ${nCantidad}.`
+        };
+      }
+      stockResultante = stockActual - nCantidad;
+    } else if (tipo === "Ajuste") {
+      stockResultante = nCantidad;
+    } else {
+      throw new Error(`Tipo de movimiento no reconocido: ${tipo}`);
+    }
+
+    // Actualizar stock en la hoja de artículos
+    sheet.getRange(idx + 1, 6).setValue(stockResultante);
+
+    const movSheet = getOrCreateSheet(ss, "InventarioMovimientos");
+    const movId = "MOV-INV-" + new Date().getTime();
+    const now = new Date().toISOString();
+
+    movSheet.appendRow([
+      movId,
+      String(articuloId).trim(),
+      tipo,
+      nCantidad,
+      stockActual,
+      stockResultante,
+      payload.requesterUserId || "Admin",
+      referencia || "Movimiento Manual",
+      observaciones || "",
+      now
+    ]);
+
+    const alertaStock = stockResultante <= stockMinimo;
+
+    return {
+      status: "success",
+      movimientoId: movId,
+      articuloId,
+      tipoMovimiento: tipo,
+      stockPrevio: stockActual,
+      stockResultante,
+      alertaStockMinimo: alertaStock,
+      message: `Movimiento de ${tipo} registrado correctamente. Stock disponible: ${stockResultante}.${alertaStock ? ' ¡ALERTA: Stock en o bajo el mínimo permitido!' : ''}`
+    };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function registerSupplier(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const { proveedorId, nombreComercial, rtn, contacto, telefono, correo, categoria, direccion } = payload || {};
+    if (!nombreComercial) throw new Error("Nombre comercial del proveedor requerido.");
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "Proveedores");
+    const data = sheet.getDataRange().getValues();
+
+    const now = new Date().toISOString();
+    const provId = proveedorId || ("PROV-" + new Date().getTime());
+    const existingIdx = data.findIndex(r => String(r[0]).trim() === String(provId).trim());
+
+    const row = [
+      provId,
+      String(nombreComercial).trim(),
+      String(rtn || "").trim(),
+      String(contacto || "").trim(),
+      String(telefono || "").trim(),
+      String(correo || "").trim(),
+      String(categoria || "General").trim(),
+      String(direccion || "").trim(),
+      "Activo",
+      now
+    ];
+
+    if (existingIdx > 0) {
+      sheet.getRange(existingIdx + 1, 1, 1, 10).setValues([row]);
+      return { status: "success", proveedorId: provId, message: "Proveedor actualizado correctamente." };
+    } else {
+      sheet.appendRow(row);
+      return { status: "success", proveedorId: provId, message: "Proveedor registrado correctamente en el directorio." };
+    }
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function getInventoryCatalogAndAlerts(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "InventarioArticulos");
+  const data = sheet.getDataRange().getValues().slice(1);
+
+  const items = data.map(r => {
+    const stockActual = parseInt(r[5] || 0);
+    const stockMinimo = parseInt(r[6] || 0);
+    return {
+      articuloId: r[0],
+      codigo: r[1],
+      nombre: r[2],
+      categoria: r[3],
+      ubicacion: r[4],
+      stockActual,
+      stockMinimo,
+      costoUnitario: parseFloat(r[7] || 0),
+      estado: r[8],
+      alertaBajoStock: stockActual <= stockMinimo
+    };
+  });
+
+  const proveedoresData = getOrCreateSheet(ss, "Proveedores").getDataRange().getValues().slice(1);
+  const proveedores = proveedoresData.map(p => ({
+    proveedorId: p[0],
+    nombreComercial: p[1],
+    rtn: p[2],
+    contacto: p[3],
+    telefono: p[4],
+    correo: p[5],
+    categoria: p[6],
+    estado: p[8]
+  }));
+
+  const alertas = items.filter(i => i.alertaBajoStock && i.estado === "Activo");
+
+  return {
+    status: "success",
+    data: {
+      articulos: items,
+      alertasBajoStock: alertas,
+      totalArticulos: items.length,
+      articulosBajoStockCount: alertas.length,
+      proveedores
+    }
+  };
+}
+
+function getInventoryMovementsKardex(payload) {
+  const { articuloId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "InventarioMovimientos");
+  const data = sheet.getDataRange().getValues().slice(1);
+
+  const filtered = data.filter(r => (!articuloId || String(r[1]) === String(articuloId))).map(r => ({
+    movimientoId: r[0],
+    articuloId: r[1],
+    tipoMovimiento: r[2],
+    cantidad: parseInt(r[3] || 0),
+    stockPrevio: parseInt(r[4] || 0),
+    stockResultante: parseInt(r[5] || 0),
+    responsable: r[6],
+    referencia: r[7],
+    observaciones: r[8],
+    fecha: r[9]
+  }));
+
+  return { status: "success", data: filtered };
 }
 
 // ---------------------------------------------------------------------------

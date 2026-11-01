@@ -1244,3 +1244,11 @@ Sector: Nómina institucional, cuotas de préstamos/anticipos y calendario de de
 Hallazgo [Alto]: Carencia de deducciones adicionales recurrentes con saldo de cuotas decreciente, falta de control sobre el porcentaje máximo deducible de salario quincenal/mensual (ej. 40%) e imposibilidad de adelantar o posponer fechas de pago en días no laborables (domingos o feriados).
 Impacto: Deducciones manuales propensas a errores de sobrecobro, eventual desprotección del salario inembargable del colaborador y discrepancias de acreditación bancaria en feriados.
 Recomendación: Implementar la entidad 'DeduccionesRecurrentes', incorporar validación estricta de tope deducible en 'generatePayroll', y exponer 'calculatePaymentDate' junto a controles visuales en el dashboard.
+
+REGISTRO DE AUDITORÍA - MÓDULO DE INVENTARIOS, ACTIVOS FIJOS Y PROVEEDORES - Sun Nov 1 2026
+
+Archivo: backend/user-service/Code.gs, teacher-dashboard.html, js/teacher.js
+Sector: Control de inventario, consumibles, activos fijos y directorio de proveedores institucionales
+Hallazgo [Medio]: Ausencia de kardex de inventario estructurado para consumibles y activos tecnológicos/mobiliarios, carencia de registro de bajas y préstamos temporales, y falta de alertas tempranas de stock mínimo.
+Impacto: Pérdida o descontrol de bienes institucionales, compras imprevistas por desabastecimiento de consumibles escolares y carencia de directorio formal de proveedores homologados.
+Recomendación: Crear hojas 'InventarioArticulos', 'InventarioMovimientos' y 'Proveedores' con control atómico vía ScriptLock, validación de stock disponible antes de salidas, y notificación proactiva de stock mínimo en el dashboard.

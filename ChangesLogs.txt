@@ -770,3 +770,19 @@ Módulo: Nómina, Deducciones y Reglas de Pago
   * Agregados campos de frecuencia de pago, topes porcentuales máximos y regla de feriados al formulario de parámetros.
   * Añadido formulario interactivo `#recurring-deduction-form` para registro de deducciones con número de cuotas.
   * Añadido simulador `#btn-simulate-payment-date` para comprobación inmediata de fechas de pago ajustadas.
+
+REGISTRO DE CAMBIOS - MÓDULO DE INVENTARIOS, ACTIVOS FIJOS Y PROVEEDORES (REQ-EXP-015) - Sun Nov 01 2026
+
+Módulo: Control Patrimonial, Kardex de Inventario y Proveedores
+- Backend Usuarios (`backend/user-service/Code.gs`):
+  * Creadas hojas de cálculo automáticas `InventarioArticulos`, `InventarioMovimientos` y `Proveedores`.
+  * Implementada función `registerInventoryItem` para alta y actualización de consumibles, mobiliario y activos tecnológicos con registro automático de saldo inicial.
+  * Implementada función `recordInventoryMovement` con ScriptLock para entradas, salidas, préstamos, devoluciones, bajas y ajustes con validación estricta de saldo disponible (`INSUFFICIENT_STOCK`).
+  * Implementada función `registerSupplier` para directorio de proveedores con RTN y categorización de rubro.
+  * Implementadas funciones `getInventoryCatalogAndAlerts` y `getInventoryMovementsKardex` con cálculo de artículos bajo stock mínimo.
+  * Configurados permisos RBAC para las operaciones en `RBAC_ACTION_PERMISSIONS`.
+- Dashboard Administrativo (`teacher-dashboard.html` y `js/teacher.js`):
+  * Diseñado panel de control de inventario y activos fijos con formulario de alta `#inventory-item-form`.
+  * Diseñado formulario de kardex de movimientos `#inventory-movement-form` y directorio de proveedores `#supplier-form`.
+  * Implementada alerta visual interactiva `#inventory-low-stock-alert` que detecta y lista existencias críticas en tiempo real.
+- Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-015] como completada.

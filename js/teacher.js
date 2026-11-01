@@ -546,6 +546,133 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Gestión de Inventario, Activos y Proveedores (REQ-EXP-015) ---
+    async function checkInventoryAlerts() {
+        try {
+            const res = await fetchApi('USER', 'getInventoryCatalogAndAlerts', {});
+            if (res && res.status === 'success' && res.data) {
+                const alertBox = document.getElementById('inventory-low-stock-alert');
+                const alertList = document.getElementById('inventory-alert-list');
+                if (alertBox && alertList) {
+                    if (res.data.articulosBajoStockCount > 0) {
+                        alertBox.classList.remove('hidden');
+                        const names = res.data.alertasBajoStock.map(a => `${a.nombre} (Stock: ${a.stockActual} / Mín: ${a.stockMinimo})`).join(', ');
+                        alertList.textContent = `Artículos que requieren reposición urgente: ${names}`;
+                    } else {
+                        alertBox.classList.add('hidden');
+                    }
+                }
+            }
+        } catch (err) {
+            console.warn('[Inventory] Error al verificar alertas:', err);
+        }
+    }
+
+    const invItemForm = document.getElementById('inventory-item-form');
+    if (invItemForm) {
+        invItemForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById('inv-nombre').value.trim();
+            const categoria = document.getElementById('inv-categoria').value;
+            const ubicacion = document.getElementById('inv-ubicacion').value.trim();
+            const stockInicial = document.getElementById('inv-stock-inicial').value;
+            const stockMinimo = document.getElementById('inv-stock-minimo').value;
+            const costoUnitario = document.getElementById('inv-costo').value;
+            const btn = document.getElementById('btn-save-inv-item');
+
+            btn.disabled = true;
+            btn.textContent = 'Guardando...';
+
+            try {
+                const res = await fetchApi('USER', 'registerInventoryItem', {
+                    nombre, categoria, ubicacion, stockInicial, stockMinimo, costoUnitario,
+                    requesterUserId: currentUser.userId
+                });
+                if (res && res.status === 'success') {
+                    alert(res.message || 'Artículo registrado exitosamente.');
+                    invItemForm.reset();
+                    checkInventoryAlerts();
+                } else {
+                    alert((res && res.message) || 'Error al guardar artículo.');
+                }
+            } catch (err) {
+                alert('Error al registrar artículo.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Guardar Artículo';
+            }
+        });
+    }
+
+    const invMovForm = document.getElementById('inventory-movement-form');
+    if (invMovForm) {
+        invMovForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const articuloId = document.getElementById('inv-mov-artid').value.trim();
+            const tipoMovimiento = document.getElementById('inv-mov-tipo').value;
+            const cantidad = document.getElementById('inv-mov-cantidad').value;
+            const referencia = document.getElementById('inv-mov-ref').value.trim();
+            const btn = document.getElementById('btn-save-inv-mov');
+
+            btn.disabled = true;
+            btn.textContent = 'Registrando...';
+
+            try {
+                const res = await fetchApi('USER', 'recordInventoryMovement', {
+                    articuloId, tipoMovimiento, cantidad, referencia,
+                    requesterUserId: currentUser.userId
+                });
+                if (res && res.status === 'success') {
+                    alert(res.message || 'Movimiento registrado correctamente.');
+                    invMovForm.reset();
+                    checkInventoryAlerts();
+                } else {
+                    alert((res && res.message) || 'Error al registrar movimiento.');
+                }
+            } catch (err) {
+                alert('Error al registrar movimiento de inventario.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Registrar Movimiento';
+            }
+        });
+    }
+
+    const supplierForm = document.getElementById('supplier-form');
+    if (supplierForm) {
+        supplierForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nombreComercial = document.getElementById('prov-nombre').value.trim();
+            const rtn = document.getElementById('prov-rtn').value.trim();
+            const telefono = document.getElementById('prov-telefono').value.trim();
+            const categoria = document.getElementById('prov-rubro').value.trim();
+            const btn = document.getElementById('btn-save-supplier');
+
+            btn.disabled = true;
+            btn.textContent = 'Guardando...';
+
+            try {
+                const res = await fetchApi('USER', 'registerSupplier', {
+                    nombreComercial, rtn, telefono, categoria,
+                    requesterUserId: currentUser.userId
+                });
+                if (res && res.status === 'success') {
+                    alert(res.message || 'Proveedor registrado correctamente.');
+                    supplierForm.reset();
+                } else {
+                    alert((res && res.message) || 'Error al registrar proveedor.');
+                }
+            } catch (err) {
+                alert('Error al registrar proveedor.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Guardar Proveedor';
+            }
+        });
+    }
+
+    checkInventoryAlerts();
+
     // --- Lógica de Caja y Gestión Financiera Institucional (REQ-EXP-010) ---
     const cashierForm = document.getElementById('cashier-payment-form');
     if (cashierForm) {
