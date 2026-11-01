@@ -577,3 +577,23 @@ window.hasPermission = function(userRole, permission) {
     if (allowed.indexOf('*') !== -1) return true;
     return allowed.some(function(r) { return r.toLowerCase() === normRole.toLowerCase(); });
 };
+
+/**
+ * MÓDULO CONTABLE Y FINANCIERO (REQ-EXP-010)
+ * Métodos de pago y conceptos estándar institucionales
+ */
+window.PAYMENT_METHODS = [
+    { id: 'efectivo', label: 'Efectivo en Caja', icon: 'fa-money-bill-wave' },
+    { id: 'transferencia', label: 'Transferencia o Depósito Bancario', icon: 'fa-university' },
+    { id: 'tarjeta', label: 'Tarjeta de Débito / Crédito', icon: 'fa-credit-card' },
+    { id: 'cheque', label: 'Cheque Certificado', icon: 'fa-money-check-alt' }
+];
+
+window.DEFAULT_BILLING_CONCEPTS = [
+    { conceptoId: 'CON-001', nombre: 'Matrícula Anual', tipo: 'Único', montoSugerido: 1500, obligatorio: true },
+    { conceptoId: 'CON-002', nombre: 'Mensualidad Escolar', tipo: 'Recurrente', montoSugerido: 1200, obligatorio: true },
+    { conceptoId: 'CON-003', nombre: 'Materiales y Libros', tipo: 'Único', montoSugerido: 850, obligatorio: false },
+    { conceptoId: 'CON-004', nombre: 'Transporte Escolar', tipo: 'Recurrente', montoSugerido: 600, obligatorio: false },
+    { conceptoId: 'CON-005', nombre: 'Carnet Estudiantil', tipo: 'Único', montoSugerido: 100, obligatorio: false },
+    { conceptoId: 'CON-006', nombre: 'Derecho de Graduación', tipo: 'Único', montoSugerido: 2000, obligatorio: false }
+];

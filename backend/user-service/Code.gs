@@ -94,6 +94,8 @@ function getOrCreateSheet(ss, name) {
     if (name === "GameLeaderboards") sheet.appendRow(["leaderboardId", "gameId", "userId", "nombreAlumno", "grado", "asignatura", "mejorPuntuacion", "indiceDominioPromedio", "partidasJugadas", "ultimaActualizacion"]);
     if (name === "Matriculas") sheet.appendRow(["matriculaId", "fecha", "userId", "nombreAlumno", "cicloLectivo", "grado", "seccion", "modalidad", "estado", "tipoBeca", "porcentajeDescuento", "exonerado", "observaciones"]);
     if (name === "CargosFinancieros") sheet.appendRow(["cargoId", "matriculaId", "userId", "concepto", "montoOriginal", "descuentoAplicado", "montoNeto", "fechaVencimiento", "estado", "saldoPendiente"]);
+    if (name === "ConceptosCobro") sheet.appendRow(["conceptoId", "nombre", "tipo", "nivelGrado", "montoSugerido", "obligatorio", "activo"]);
+    if (name === "PagosAbonos") sheet.appendRow(["pagoId", "cargoId", "userId", "fecha", "montoAbonado", "metodoPago", "referenciaTransaccion", "saldoRestante", "estadoPago", "cajeroOContador"]);
   }
   return sheet;
 }
@@ -129,10 +131,14 @@ const RBAC_ACTION_PERMISSIONS = {
   "getStudents": ["Profesor", "Secretaría", "Consejeros", "Director", "Subdirector", "Administrador"],
   "getStudentsByGradoSeccion": ["Profesor", "Secretaría", "Consejeros", "Director", "Subdirector", "Administrador"],
 
-  // Gestión de Matrícula y Control Financiero (REQ-EXP-009)
+  // Gestión de Matrícula y Control Financiero (REQ-EXP-009 & REQ-EXP-010)
   "registerEnrollment": ["Secretaría", "Director", "Administrador"],
   "getStudentFinancialStatus": ["*"],
   "getEnrollmentHistory": ["*"],
+  "configureBillingConcepts": ["Contador", "Director", "Administrador"],
+  "getBillingConcepts": ["*"],
+  "recordPaymentOrInstallment": ["Contador", "Secretaría", "Administrador"],
+  "generateAccountStatement": ["*"],
 
   // Gestión de Comunicación y Noticias
   "createNews": ["Secretaría", "Director", "Administrador"],
@@ -214,6 +220,10 @@ function doPost(e) {
       case "registerEnrollment": result = registerEnrollment(payload); break;
       case "getStudentFinancialStatus": result = getStudentFinancialStatus(payload); break;
       case "getEnrollmentHistory": result = getEnrollmentHistory(payload); break;
+      case "configureBillingConcepts": result = configureBillingConcepts(payload); break;
+      case "getBillingConcepts": result = getBillingConcepts(payload); break;
+      case "recordPaymentOrInstallment": result = recordPaymentOrInstallment(payload); break;
+      case "generateAccountStatement": result = generateAccountStatement(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -686,4 +696,170 @@ function getEnrollmentHistory(payload) {
   }));
 
   return { status: "success", data: historial };
+}
+
+// ---------------------------------------------------------------------------
+// MÓDULO CONTABLE Y FINANCIERO - CONCEPTOS, COBROS Y PAGOS (REQ-EXP-010)
+// ---------------------------------------------------------------------------
+
+function configureBillingConcepts(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const { concepts } = payload || {};
+    if (!Array.isArray(concepts) || concepts.length === 0) throw new Error("Lista de conceptos inválida.");
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "ConceptosCobro");
+    const data = sheet.getDataRange().getValues();
+
+    concepts.forEach(c => {
+      const cId = c.conceptoId || "CON-" + new Date().getTime();
+      const existingIdx = data.findIndex(r => String(r[0]) === String(cId));
+      const row = [
+        cId,
+        c.nombre || "Concepto",
+        c.tipo || "Único",
+        c.nivelGrado || "Todos",
+        parseFloat(c.montoSugerido || 0),
+        c.obligatorio === true || c.obligatorio === "Sí" ? "Sí" : "No",
+        c.activo !== false ? "Activo" : "Inactivo"
+      ];
+      if (existingIdx > 0) {
+        sheet.getRange(existingIdx + 1, 1, 1, 7).setValues([row]);
+      } else {
+        sheet.appendRow(row);
+      }
+    });
+
+    return { status: "success", message: "Catálogo de conceptos de cobro actualizado." };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function getBillingConcepts(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const data = getOrCreateSheet(ss, "ConceptosCobro").getDataRange().getValues().slice(1);
+  const activeConcepts = data.filter(r => r[6] === "Activo" || r[6] === "").map(r => ({
+    conceptoId: r[0],
+    nombre: r[1],
+    tipo: r[2],
+    nivelGrado: r[3],
+    montoSugerido: parseFloat(r[4] || 0),
+    obligatorio: r[5] === "Sí",
+    activo: r[6] !== "Inactivo"
+  }));
+  return { status: "success", data: activeConcepts };
+}
+
+function recordPaymentOrInstallment(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const { cargoId, userId, monto, metodoPago, referencia, cajeroOContador } = payload || {};
+    if (!cargoId || !userId || !monto) throw new Error("Datos de pago incompletos.");
+
+    const abono = parseFloat(monto);
+    if (isNaN(abono) || abono <= 0) throw new Error("Monto de abono inválido.");
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const cargosSheet = getOrCreateSheet(ss, "CargosFinancieros");
+    const cargosData = cargosSheet.getDataRange().getValues();
+
+    const cargoIdx = cargosData.findIndex(r => String(r[0]) === String(cargoId) && String(r[2]) === String(userId));
+    if (cargoIdx === -1) throw new Error("Cargo financiero no encontrado para este estudiante.");
+
+    const cargoRow = cargosData[cargoIdx];
+    const saldoActual = parseFloat(cargoRow[9] || 0);
+
+    if (abono > saldoActual) {
+      return { status: "error", code: "PAYMENT_EXCEEDS_BALANCE", message: `El abono (L. ${abono}) excede el saldo pendiente (L. ${saldoActual}).` };
+    }
+
+    const nuevoSaldo = Math.max(0, saldoActual - abono);
+    const nuevoEstado = nuevoSaldo === 0 ? "Pagado" : "Parcial";
+
+    // Actualizar cargo
+    cargosSheet.getRange(cargoIdx + 1, 9, 1, 2).setValues([[nuevoEstado, nuevoSaldo]]);
+
+    // Registrar en histórico de pagos y abonos
+    const pagosSheet = getOrCreateSheet(ss, "PagosAbonos");
+    const now = new Date();
+    const pagoId = "PAY-" + now.getTime();
+    pagosSheet.appendRow([
+      pagoId,
+      cargoId,
+      String(userId),
+      now.toISOString(),
+      abono,
+      metodoPago || "Efectivo",
+      referencia || "Caja General",
+      nuevoSaldo,
+      nuevoEstado,
+      cajeroOContador || payload.requesterUserId || "Sistema"
+    ]);
+
+    return {
+      status: "success",
+      pagoId,
+      nuevoSaldo,
+      estado: nuevoEstado,
+      message: `Pago registrado exitosamente. Saldo restante: L. ${nuevoSaldo.toFixed(2)}.`
+    };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function generateAccountStatement(payload) {
+  const sUserId = String(payload.userId || "").trim();
+  if (!sUserId) throw new Error("userId requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const cargosSheet = getOrCreateSheet(ss, "CargosFinancieros");
+  const pagosSheet = getOrCreateSheet(ss, "PagosAbonos");
+
+  const cargosData = cargosSheet.getDataRange().getValues().slice(1).filter(r => String(r[2]) === sUserId);
+  const pagosData = pagosSheet.getDataRange().getValues().slice(1).filter(r => String(r[2]) === sUserId);
+
+  const cargos = cargosData.map(r => ({
+    cargoId: r[0],
+    concepto: r[3],
+    montoOriginal: parseFloat(r[4] || 0),
+    descuento: parseFloat(r[5] || 0),
+    montoNeto: parseFloat(r[6] || 0),
+    vencimiento: r[7],
+    estado: r[8],
+    saldo: parseFloat(r[9] || 0)
+  }));
+
+  const pagos = pagosData.map(r => ({
+    pagoId: r[0],
+    cargoId: r[1],
+    fecha: r[3],
+    montoAbonado: parseFloat(r[4] || 0),
+    metodoPago: r[5],
+    referencia: r[6],
+    saldoRestante: parseFloat(r[7] || 0)
+  }));
+
+  const totalFacturado = cargos.reduce((acc, c) => acc + c.montoNeto, 0);
+  const totalPagado = pagos.reduce((acc, p) => acc + p.montoAbonado, 0);
+  const saldoTotal = cargos.reduce((acc, c) => acc + c.saldo, 0);
+
+  return {
+    status: "success",
+    data: {
+      userId: sUserId,
+      cargos,
+      pagos,
+      balance: {
+        totalFacturado,
+        totalPagado,
+        saldoTotal,
+        solvente: saldoTotal <= 0
+      }
+    }
+  };
 }

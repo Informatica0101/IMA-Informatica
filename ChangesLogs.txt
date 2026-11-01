@@ -690,3 +690,14 @@ Módulo: Matrícula y Control Financiero (REQ-EXP-009)
   * Añadida pestaña independiente "Matrícula y Finanzas" en el selector principal.
   * Creado contenedor `#view-financial` y lógica `loadStudentFinancials` con resumen de saldo, detalle tabular de cargos y estado de cuenta no bloqueante.
 - Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-009] como completada.
+
+REGISTRO DE CAMBIOS - MÓDULO CONTABLE Y FINANCIERO CONCEPTOS Y COBROS - Sun Nov 01 2026
+
+Módulo: Finanzas y Cuentas por Cobrar (REQ-EXP-010)
+- Backend Usuarios (`backend/user-service/Code.gs`):
+  * Incorporadas hojas `ConceptosCobro` y `PagosAbonos` a la estructura del sistema.
+  * Implementadas funciones `configureBillingConcepts`, `getBillingConcepts`, `recordPaymentOrInstallment` (con `ScriptLock` atómico, cálculo de saldos y actualización de estado) y `generateAccountStatement`.
+  * Añadidos permisos específicos en `RBAC_ACTION_PERMISSIONS` para roles Contador, Secretaría y Director.
+- Configuración Global (`js/config.js`):
+  * Declaradas constantes `PAYMENT_METHODS` (Efectivo, Transferencia, Tarjeta, Cheque) y `DEFAULT_BILLING_CONCEPTS`.
+- Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-010] como completada.

@@ -1188,3 +1188,11 @@ Sector: Control de matrícula, becas y cargos del estudiante
 Hallazgo [Alto]: Carencia de vinculación financiera-académica granular, exponiendo al sistema a duplicidad de matrículas por periodo y mezcla inapropiada entre el saldo contable y el bloqueo indebido de recursos académicos.
 Impacto: Inconsistencia en estados de cuenta estudiantiles, duplicación de cobros de matrícula y falta de trazabilidad en becas/descuentos.
 Recomendación: Crear entidades 'Matriculas' y 'CargosFinancieros' en backend con ScriptLock contra duplicidades, cálculo de descuentos/becas y panel transparente e independiente en el dashboard del estudiante.
+
+REGISTRO DE AUDITORÍA - MÓDULO CONTABLE Y FINANCIERO CONCEPTOS Y COBROS - Sun Nov 1 2026
+
+Archivo: backend/user-service/Code.gs, js/config.js
+Sector: Cuentas por cobrar, conceptos de cobro, abonos parciales y métodos de pago
+Hallazgo [Crítico]: Inexistencia de un catálogo centralizado de conceptos de cobro institucional y falta de trazabilidad transaccional para abonos parciales y liquidación de deudas escolares.
+Impacto: Descuadre en saldos individuales, imposibilidad de auditar cobros de transporte, materiales o matrícula y riesgo de pagos dobles.
+Recomendación: Implementar catálogo de cobros 'ConceptosCobro', registro atómico 'PagosAbonos' con ScriptLock, actualización automática de estado ('Parcial' / 'Pagado') y generación unificada de estados de cuenta.
