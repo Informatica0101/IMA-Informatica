@@ -1220,3 +1220,27 @@ Sector: Turnos de caja chica, arqueos físicos, conciliaciones bancarias y egres
 Hallazgo [Alto]: Ausencia de trazabilidad para aperturas y cierres de turno de caja, carencia de registro formal de diferencias en arqueo (sobrantes/faltantes) y falta de conciliación bancaria mensual.
 Impacto: Descontrol de flujos de efectivo en ventanilla, riesgo de pérdidas no detectadas y discrepancias entre saldos de libros institucionales y estados de cuenta bancarios.
 Recomendación: Implementar entidades 'CajasTurnos', 'MovimientosCaja' y 'BancosConciliaciones' con control atómico de concurrencia mediante ScriptLock, registro estricto de arqueo de caja y conciliación formal bancaria.
+
+REGISTRO DE AUDITORÍA - MÓDULO DE PLANILLAS, DEDUCCIONES Y ASISTENCIA DE PERSONAL - Sun Nov 1 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: Recursos Humanos, planillas periódicas, deducciones de ley en Honduras y control de asistencia
+Hallazgo [Crítico]: Inexistencia de cálculo automático de planillas laborales, horas extras y retenciones legales hondureñas (IHSS, RAP, ISR), junto a la falta de registro de asistencia y tardanzas del personal.
+Impacto: Vulnerabilidad en el cumplimiento de obligaciones patronales y laborales en Honduras, cálculos salariales erróneos y ausencia de comprobantes de pago protegidos por rol.
+Recomendación: Implementar entidades 'PersonalLaboral', 'PlanillasGeneradas', 'PlanillasDetalle' y 'AsistenciaPersonal' con ScriptLock, cálculo matemático riguroso de deducciones y emisión de comprobantes individuales.
+
+REGISTRO DE AUDITORÍA - DESACOPLAMIENTO DE PARÁMETROS LABORALES Y TRIBUTARIOS - Sun Nov 1 2026
+
+Archivo: backend/user-service/Code.gs, teacher-dashboard.html, js/teacher.js
+Sector: Configuración institucional de salarios, techos de deducción y tasas impositivas
+Hallazgo [Alto]: Riesgo de rigidez operativa al mantener porcentajes y techos tributarios/laborales predeterminados dentro del código fuente sin interfaz gráfica de administración en el frontend.
+Impacto: Necesidad de intervención en el código ante variaciones en techos del IHSS, reformas fiscales o ajustes salariales institucionales.
+Recomendación: Centralizar todos los parámetros en la hoja 'ParametrosConfiguracion' del Spreadsheet, exponer endpoints 'getSystemParameters' / 'updateSystemParameters' y maquetar interfaz interactiva en el panel administrativo.
+
+REGISTRO DE AUDITORÍA - DEDUCCIONES RECURRENTES Y REGLAS DE PAGO - Sun Nov 1 2026
+
+Archivo: backend/user-service/Code.gs, teacher-dashboard.html, js/teacher.js
+Sector: Nómina institucional, cuotas de préstamos/anticipos y calendario de depósitos laborales
+Hallazgo [Alto]: Carencia de deducciones adicionales recurrentes con saldo de cuotas decreciente, falta de control sobre el porcentaje máximo deducible de salario quincenal/mensual (ej. 40%) e imposibilidad de adelantar o posponer fechas de pago en días no laborables (domingos o feriados).
+Impacto: Deducciones manuales propensas a errores de sobrecobro, eventual desprotección del salario inembargable del colaborador y discrepancias de acreditación bancaria en feriados.
+Recomendación: Implementar la entidad 'DeduccionesRecurrentes', incorporar validación estricta de tope deducible en 'generatePayroll', y exponer 'calculatePaymentDate' junto a controles visuales en el dashboard.

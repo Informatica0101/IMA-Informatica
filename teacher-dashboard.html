@@ -564,6 +564,145 @@
                         </form>
                     </div>
 
+                    <!-- Tarjeta de Configuración de Parámetros Institucionales (Laborales y Tributarios) -->
+                    <div class="card-ima border-purple-100 bg-purple-50/20 p-8 rounded-[2.5rem] md:col-span-2">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-12 h-12 bg-purple-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-purple-100">
+                                <i class="fas fa-sliders-h"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">Parámetros del Sistema (Laboral, Salarial e Impuestos)</h3>
+                                <p class="text-xs text-gray-500 font-medium">Configuración de techos IHSS, porcentajes de deducción, tasas de ISV y factores de horas extras</p>
+                            </div>
+                        </div>
+
+                        <form id="system-parameters-form" class="space-y-6 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Techo Cotización IHSS (L.)</label>
+                                    <input type="number" step="0.01" id="param-ihss-techo" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-semibold" required>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">% Deducción IHSS (ej. 0.035)</label>
+                                    <input type="number" step="0.001" id="param-ihss-pct" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-semibold" required>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">% Aporte RAP (ej. 0.015)</label>
+                                    <input type="number" step="0.001" id="param-rap-pct" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-semibold" required>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Factor Hora Extra Diurna</label>
+                                    <input type="number" step="0.01" id="param-he-diurna" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-semibold" required>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Horas Laborales Mes</label>
+                                    <input type="number" id="param-horas-mes" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-semibold" required>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Tasa ISV General (ej. 0.15)</label>
+                                    <input type="number" step="0.01" id="param-isv-general" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-semibold" required>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Tasa ISV Especial (ej. 0.18)</label>
+                                    <input type="number" step="0.01" id="param-isv-especial" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-semibold" required>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Límite Tramo 1 ISR (L.)</label>
+                                    <input type="number" step="1000" id="param-isr-limite1" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-semibold" required>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Frecuencia Pago Defecto</label>
+                                    <select id="param-frecuencia-pago" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-semibold">
+                                        <option value="Quincenal">Quincenal</option>
+                                        <option value="Semanal">Semanal</option>
+                                        <option value="Mensual">Mensual</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Tope Deducción Quincenal (%)</label>
+                                    <input type="number" step="1" id="param-max-deduc-quincenal" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-semibold" placeholder="40" required>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Tope Deducción Mensual (%)</label>
+                                    <input type="number" step="1" id="param-max-deduc-mensual" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-semibold" placeholder="40" required>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Regla Día No Laborable / Feriado</label>
+                                    <select id="param-regla-no-laborable" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-semibold">
+                                        <option value="Adelantar">Adelantar al día hábil previo</option>
+                                        <option value="Posponer">Posponer al día hábil posterior</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="flex justify-end">
+                                <button type="submit" id="btn-save-parameters" class="px-6 py-2.5 bg-purple-600 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-purple-700 shadow-md">
+                                    Guardar Parámetros en Spreadsheet
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Panel de Deducciones Recurrentes y Reglas de Pago -->
+                    <div class="card-ima border-teal-100 bg-white p-8 rounded-[2.5rem] shadow-sm">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-12 h-12 bg-teal-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-teal-100">
+                                <i class="fas fa-hand-holding-usd"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">Deducciones Recurrentes y Simulación de Pago</h3>
+                                <p class="text-xs text-gray-500 font-medium">Asignar deducciones adicionales en cuotas fijas y verificar fechas de pago frente a feriados o domingos</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Formulario de Deducción Recurrente -->
+                            <form id="recurring-deduction-form" class="space-y-4 bg-teal-50/40 p-6 rounded-2xl border border-teal-100">
+                                <h4 class="font-bold text-sm text-teal-800 flex items-center gap-2">
+                                    <i class="fas fa-plus-circle"></i> Registrar Deducción Recurrente
+                                </h4>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">ID Empleado</label>
+                                    <input type="text" id="rec-ded-empid" class="w-full p-2.5 bg-white border rounded-xl text-xs font-semibold" placeholder="EMP-..." required>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Nombre / Concepto de Deducción</label>
+                                    <input type="text" id="rec-ded-nombre" class="w-full p-2.5 bg-white border rounded-xl text-xs font-semibold" placeholder="Ej. Préstamo Institucional, Anticipo" required>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Monto por Cuota (L.)</label>
+                                        <input type="number" step="0.01" id="rec-ded-monto" class="w-full p-2.5 bg-white border rounded-xl text-xs font-semibold" placeholder="500.00" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Total de Cuotas</label>
+                                        <input type="number" id="rec-ded-cuotas" class="w-full p-2.5 bg-white border rounded-xl text-xs font-semibold" placeholder="6" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="w-full py-2.5 bg-teal-600 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-teal-700 shadow-md">
+                                    Guardar Deducción Recurrente
+                                </button>
+                            </form>
+
+                            <!-- Simulador de Fecha Efectiva de Pago -->
+                            <div class="space-y-4 bg-blue-50/40 p-6 rounded-2xl border border-blue-100">
+                                <h4 class="font-bold text-sm text-blue-800 flex items-center gap-2">
+                                    <i class="fas fa-calendar-check"></i> Comprobador de Regla de Días No Laborables
+                                </h4>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Fecha Programada de Pago</label>
+                                    <input type="date" id="sim-fecha-pago" class="w-full p-2.5 bg-white border rounded-xl text-xs font-semibold">
+                                </div>
+                                <div>
+                                    <button type="button" id="btn-simulate-payment-date" class="w-full py-2.5 bg-blue-600 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-blue-700 shadow-md">
+                                        Calcular Fecha Efectiva
+                                    </button>
+                                </div>
+                                <div id="sim-payment-result" class="p-3 bg-white rounded-xl border border-blue-100 text-xs text-gray-700 hidden">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Tarjeta de Banco de Preguntas -->
                     <div class="card-ima border-amber-100 bg-amber-50/30 p-8 rounded-[2.5rem]">
                         <div class="flex items-center gap-4 mb-6">

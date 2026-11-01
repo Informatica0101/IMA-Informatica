@@ -103,6 +103,30 @@ function getOrCreateSheet(ss, name) {
     if (name === "CajasTurnos") sheet.appendRow(["turnoId", "fechaApertura", "fechaCierre", "cajeroUserId", "saldoInicial", "totalIngresos", "totalEgresos", "saldoCalculado", "saldoRealArqueo", "diferencia", "estado", "observaciones"]);
     if (name === "MovimientosCaja") sheet.appendRow(["movimientoId", "turnoId", "fecha", "tipo", "categoria", "concepto", "monto", "metodoPago", "referencia", "comprobante", "registradoPor"]);
     if (name === "BancosConciliaciones") sheet.appendRow(["conciliacionId", "banco", "numeroCuenta", "mesAnio", "saldoLibros", "saldoBanco", "depositosTransito", "chequesPendientes", "saldoConciliado", "estado", "observaciones"]);
+    if (name === "PersonalLaboral") sheet.appendRow(["empleadoId", "userId", "nombre", "cargo", "departamento", "salarioBase", "fechaIngreso", "tipoContrato", "rtn", "estado"]);
+    if (name === "PlanillasGeneradas") sheet.appendRow(["planillaId", "periodo", "fechaEmision", "totalBruto", "totalDeducciones", "totalNeto", "estado", "procesadoPor"]);
+    if (name === "PlanillasDetalle") sheet.appendRow(["detalleId", "planillaId", "empleadoId", "nombre", "salarioBase", "horasExtras", "bonos", "ihss", "rap", "isr", "otrasDeducciones", "totalDeducciones", "salarioNeto", "estadoPago"]);
+    if (name === "AsistenciaPersonal") sheet.appendRow(["asistenciaId", "empleadoId", "fecha", "horaEntrada", "horaSalida", "estado", "tardanzaMinutos", "observaciones"]);
+    if (name === "DeduccionesRecurrentes") sheet.appendRow(["deduccionId", "empleadoId", "nombreDeduccion", "montoCuota", "cuotasTotales", "cuotasAplicadas", "cuotasRestantes", "estado", "fechaCreacion"]);
+    if (name === "ParametrosConfiguracion") {
+      sheet.appendRow(["clave", "categoria", "valor", "descripcion", "ultimaActualizacion", "actualizadoPor"]);
+      sheet.appendRow(["IHSS_PORCENTAJE_LABORAL", "Laboral", 0.035, "Porcentaje de deducción de IHSS para el empleado", new Date().toISOString(), "Sistema"]);
+      sheet.appendRow(["IHSS_TECHO_COTIZACION", "Laboral", 10796.49, "Techo salarial máximo aplicable para cotización de IHSS", new Date().toISOString(), "Sistema"]);
+      sheet.appendRow(["RAP_PORCENTAJE_LABORAL", "Laboral", 0.015, "Porcentaje de aporte al RAP sobre el excedente del techo", new Date().toISOString(), "Sistema"]);
+      sheet.appendRow(["HORA_EXTRA_FACTOR_DIURNO", "Laboral", 1.25, "Factor multiplicador de hora extra diurna", new Date().toISOString(), "Sistema"]);
+      sheet.appendRow(["HORAS_LABORALES_MES", "Laboral", 240, "Horas laborales mensuales promedio para cálculo de hora base", new Date().toISOString(), "Sistema"]);
+      sheet.appendRow(["FRECUENCIA_PAGO_DEFAULT", "Planilla", "Quincenal", "Forma de pago por defecto (Semanal, Quincenal, Mensual)", new Date().toISOString(), "Sistema"]);
+      sheet.appendRow(["MAX_PORCENTAJE_DEDUCIBLE_QUINCENAL", "Planilla", 40, "Porcentaje máximo deducible sobre salario quincenal (ej. 40%)", new Date().toISOString(), "Sistema"]);
+      sheet.appendRow(["MAX_PORCENTAJE_DEDUCIBLE_MENSUAL", "Planilla", 40, "Porcentaje máximo deducible sobre salario mensual (ej. 40%)", new Date().toISOString(), "Sistema"]);
+      sheet.appendRow(["REGLA_DIA_NO_LABORABLE", "Planilla", "Adelantar", "Regla de pago si cae en domingo o feriado (Adelantar / Posponer)", new Date().toISOString(), "Sistema"]);
+      sheet.appendRow(["FERIADOS_NACIONALES", "Planilla", "2026-01-01,2026-04-09,2026-04-10,2026-04-11,2026-05-01,2026-09-15,2026-10-03,2026-10-12,2026-10-21,2026-12-25", "Feriados nacionales no laborables", new Date().toISOString(), "Sistema"]);
+      sheet.appendRow(["ISR_TRAMO1_LIMITE", "Tributario", 200000, "Límite anual para aplicar el tramo 1 de retención ISR", new Date().toISOString(), "Sistema"]);
+      sheet.appendRow(["ISR_TRAMO1_TASA", "Tributario", 0.10, "Tasa porcentual para el tramo 1 de ISR", new Date().toISOString(), "Sistema"]);
+      sheet.appendRow(["ISR_TRAMO2_LIMITE", "Tributario", 500000, "Límite anual para aplicar el tramo 2 de retención ISR", new Date().toISOString(), "Sistema"]);
+      sheet.appendRow(["ISR_TRAMO2_TASA", "Tributario", 0.15, "Tasa porcentual para el tramo 2 de ISR", new Date().toISOString(), "Sistema"]);
+      sheet.appendRow(["ISV_TASA_GENERAL", "Tributario", 0.15, "Tasa general del Impuesto Sobre Ventas en Honduras", new Date().toISOString(), "Sistema"]);
+      sheet.appendRow(["ISV_TASA_ESPECIAL", "Tributario", 0.18, "Tasa especial de ISV para bienes gravados selectivos", new Date().toISOString(), "Sistema"]);
+    }
   }
   return sheet;
 }
@@ -161,6 +185,18 @@ const RBAC_ACTION_PERMISSIONS = {
   "recordCashTransaction": ["Contador", "Secretaría", "Administrador"],
   "recordBankReconciliation": ["Contador", "Administrador"],
   "getCashRegisterReport": ["Contador", "Director", "Administrador"],
+
+  // Módulo de Planillas y Asistencia Laboral (REQ-EXP-014)
+  "registerEmployee": ["Director", "Administrador"],
+  "recordStaffAttendance": ["Profesor", "Asistente", "Secretaría", "Contador", "Consejeros", "Director", "Administrador"],
+  "generatePayroll": ["Contador", "Administrador"],
+  "getPayrollVoucher": ["*"],
+  "getStaffLaborReport": ["Contador", "Director", "Administrador"],
+  "getSystemParameters": ["*"],
+  "updateSystemParameters": ["Contador", "Director", "Administrador"],
+  "configureRecurringDeduction": ["Contador", "Secretaría", "Director", "Administrador"],
+  "getRecurringDeductions": ["*"],
+  "calculatePaymentDate": ["*"],
 
   // Gestión de Comunicación y Noticias
   "createNews": ["Secretaría", "Director", "Administrador"],
@@ -276,6 +312,16 @@ function doPost(e) {
       case "recordCashTransaction": result = recordCashTransaction(payload); break;
       case "recordBankReconciliation": result = recordBankReconciliation(payload); break;
       case "getCashRegisterReport": result = getCashRegisterReport(payload); break;
+      case "registerEmployee": result = registerEmployee(payload); break;
+      case "recordStaffAttendance": result = recordStaffAttendance(payload); break;
+      case "generatePayroll": result = generatePayroll(payload); break;
+      case "getPayrollVoucher": result = getPayrollVoucher(payload); break;
+      case "getStaffLaborReport": result = getStaffLaborReport(payload); break;
+      case "getSystemParameters": result = getSystemParameters(payload); break;
+      case "updateSystemParameters": result = updateSystemParameters(payload); break;
+      case "configureRecurringDeduction": result = configureRecurringDeduction(payload); break;
+      case "getRecurringDeductions": result = getRecurringDeductions(payload); break;
+      case "calculatePaymentDate": result = calculatePaymentDate(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -728,6 +774,310 @@ function getStudentFinancialStatus(payload) {
 }
 
 // ---------------------------------------------------------------------------
+// MÓDULO DE PLANILLAS, DEDUCCIONES Y ASISTENCIA LABORAL (REQ-EXP-014)
+// ---------------------------------------------------------------------------
+
+function registerEmployee(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const { userId, nombre, cargo, departamento, salarioBase, fechaIngreso, tipoContrato, rtn } = payload || {};
+    if (!nombre || !salarioBase || !cargo) throw new Error("Datos obligatorios del empleado incompletos.");
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "PersonalLaboral");
+    const data = sheet.getDataRange().getValues();
+
+    const sUserId = userId ? String(userId).trim() : "EMP-USER-" + new Date().getTime();
+    const existingIdx = data.findIndex(r => String(r[1]).trim() === sUserId);
+
+    const now = new Date();
+    const empId = existingIdx > 0 ? data[existingIdx][0] : ("EMP-" + now.getTime());
+    const row = [
+      empId,
+      sUserId,
+      String(nombre).trim(),
+      cargo || "Docente",
+      departamento || "Académico",
+      parseFloat(salarioBase),
+      fechaIngreso || now.toISOString().split('T')[0],
+      tipoContrato || "Permanente",
+      rtn ? String(rtn).replace(/\D/g, '') : "",
+      "Activo"
+    ];
+
+    if (existingIdx > 0) {
+      sheet.getRange(existingIdx + 1, 1, 1, 10).setValues([row]);
+    } else {
+      sheet.appendRow(row);
+    }
+
+    return {
+      status: "success",
+      empleadoId: empId,
+      userId: sUserId,
+      message: "Expediente de empleado registrado correctamente."
+    };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function recordStaffAttendance(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const { empleadoId, horaEntrada, horaSalida, tardanzaMinutos, observaciones } = payload || {};
+    if (!empleadoId) throw new Error("empleadoId requerido.");
+
+    const now = new Date();
+    const asistenciaId = "ATT-" + now.getTime();
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "AsistenciaPersonal");
+
+    const tardanza = parseInt(tardanzaMinutos || 0);
+    const estado = tardanza > 0 ? "Tardanza" : "Presente";
+
+    sheet.appendRow([
+      asistenciaId,
+      String(empleadoId),
+      now.toISOString().split('T')[0],
+      horaEntrada || now.toTimeString().split(' ')[0],
+      horaSalida || "",
+      estado,
+      tardanza,
+      observaciones || ""
+    ]);
+
+    return {
+      status: "success",
+      asistenciaId,
+      estado,
+      message: "Marca de asistencia registrada exitosamente."
+    };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function generatePayroll(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(20000);
+    const { periodo, horasExtrasMap, bonosMap, deduccionesAdicionalesMap } = payload || {};
+    if (!periodo) throw new Error("Periodo de planilla requerido (ej. 'Febrero 2026').");
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const empSheet = getOrCreateSheet(ss, "PersonalLaboral");
+    const activeEmployees = empSheet.getDataRange().getValues().slice(1).filter(r => r[9] === "Activo");
+
+    if (activeEmployees.length === 0) {
+      throw new Error("No hay empleados activos en el registro laboral.");
+    }
+
+    const now = new Date();
+    const planillaId = "PAYROLL-" + String(periodo).replace(/\s+/g, '') + "-" + now.getTime();
+    const planillasSheet = getOrCreateSheet(ss, "PlanillasGeneradas");
+    const detalleSheet = getOrCreateSheet(ss, "PlanillasDetalle");
+
+    // Obtener parámetros configurados dinámicamente desde ParametrosConfiguracion
+    const sysParams = getSystemParameters().data;
+    const horasMes = parseFloat(sysParams["HORAS_LABORALES_MES"] || 240);
+    const factorExtraDiurno = parseFloat(sysParams["HORA_EXTRA_FACTOR_DIURNO"] || 1.25);
+    const techoIHSS = parseFloat(sysParams["IHSS_TECHO_COTIZACION"] || 10796.49);
+    const pctIHSS = parseFloat(sysParams["IHSS_PORCENTAJE_LABORAL"] || 0.035);
+    const pctRAP = parseFloat(sysParams["RAP_PORCENTAJE_LABORAL"] || 0.015);
+    const tramo1Lim = parseFloat(sysParams["ISR_TRAMO1_LIMITE"] || 200000);
+    const tramo1Tasa = parseFloat(sysParams["ISR_TRAMO1_TASA"] || 0.10);
+    const tramo2Lim = parseFloat(sysParams["ISR_TRAMO2_LIMITE"] || 500000);
+    const tramo2Tasa = parseFloat(sysParams["ISR_TRAMO2_TASA"] || 0.15);
+    const frecuenciaPago = String(payload.frecuenciaPago || sysParams["FRECUENCIA_PAGO_DEFAULT"] || "Quincenal");
+    const maxPctDeducible = frecuenciaPago.toLowerCase() === "quincenal"
+      ? parseFloat(sysParams["MAX_PORCENTAJE_DEDUCIBLE_QUINCENAL"] || 40)
+      : parseFloat(sysParams["MAX_PORCENTAJE_DEDUCIBLE_MENSUAL"] || 40);
+
+    // Obtener deducciones recurrentes activas
+    const dedRecSheet = getOrCreateSheet(ss, "DeduccionesRecurrentes");
+    const dedRecData = dedRecSheet.getDataRange().getValues();
+
+    let totalBrutoGeneral = 0;
+    let totalDeduccionesGeneral = 0;
+    let totalNetoGeneral = 0;
+
+    activeEmployees.forEach((emp, idx) => {
+      const empId = String(emp[0]);
+      const empNombre = emp[2];
+      const salarioBase = parseFloat(emp[5] || 0);
+
+      // Horas extras calculadas dinámicamente según configuración
+      const salarioHora = salarioBase / horasMes;
+      const numHorasExtras = parseFloat((horasExtrasMap && horasExtrasMap[empId]) || 0);
+      const montoHorasExtras = numHorasExtras * (salarioHora * factorExtraDiurno);
+      const bonos = parseFloat((bonosMap && bonosMap[empId]) || 0);
+
+      const totalDevengado = salarioBase + montoHorasExtras + bonos;
+
+      // Deducciones de Ley dinámicas desde la configuración
+      const baseIHSS = Math.min(salarioBase, techoIHSS);
+      const ihss = baseIHSS * pctIHSS;
+
+      const excedenteRAP = Math.max(0, salarioBase - techoIHSS);
+      const rap = excedenteRAP * pctRAP;
+
+      let isr = 0;
+      const salarioAnualProyectado = salarioBase * 12;
+      if (salarioAnualProyectado > tramo2Lim) {
+        isr = (totalDevengado * tramo2Tasa);
+      } else if (salarioAnualProyectado > tramo1Lim) {
+        isr = (totalDevengado * tramo1Tasa);
+      }
+
+      // Procesar deducciones recurrentes activas del empleado
+      let montoDeduccionesRecurrentes = 0;
+      for (let r = 1; r < dedRecData.length; r++) {
+        const rowEmpId = String(dedRecData[r][1]);
+        const estado = dedRecData[r][7];
+        const restantes = parseInt(dedRecData[r][6] || 0);
+        if (rowEmpId === empId && estado === "Activo" && restantes > 0) {
+          const cuota = parseFloat(dedRecData[r][3] || 0);
+          montoDeduccionesRecurrentes += cuota;
+          // Actualizar cuotas aplicadas y restantes
+          const aplicadas = parseInt(dedRecData[r][5] || 0) + 1;
+          const nuevasRestantes = restantes - 1;
+          const nuevoEstado = nuevasRestantes <= 0 ? "Completado" : "Activo";
+          dedRecSheet.getRange(r + 1, 6, 1, 3).setValues([[aplicadas, nuevasRestantes, nuevoEstado]]);
+        }
+      }
+
+      const deduccionPuntual = parseFloat((deduccionesAdicionalesMap && deduccionesAdicionalesMap[empId]) || 0);
+      let otrasDeduc = deduccionPuntual + montoDeduccionesRecurrentes;
+
+      // Validar y respetar el porcentaje máximo deducible configurado (ej. máx 40% del salario)
+      const topeDeduccionesPermitido = totalDevengado * (maxPctDeducible / 100);
+      const totalDeduccionesCalculado = ihss + rap + isr + otrasDeduc;
+
+      let totalDeducciones = totalDeduccionesCalculado;
+      if (totalDeducciones > topeDeduccionesPermitido) {
+        // Ajustar otras deducciones para no violar el techo legal/institucional del 40%
+        const margenOtras = Math.max(0, topeDeduccionesPermitido - (ihss + rap + isr));
+        otrasDeduc = margenOtras;
+        totalDeducciones = ihss + rap + isr + otrasDeduc;
+      }
+
+      const salarioNeto = Math.max(0, totalDevengado - totalDeducciones);
+
+      totalBrutoGeneral += totalDevengado;
+      totalDeduccionesGeneral += totalDeducciones;
+      totalNetoGeneral += salarioNeto;
+
+      const detalleId = `DET-${planillaId}-${idx + 1}`;
+      detalleSheet.appendRow([
+        detalleId,
+        planillaId,
+        empId,
+        empNombre,
+        salarioBase,
+        montoHorasExtras,
+        bonos,
+        ihss,
+        rap,
+        isr,
+        otrasDeduc,
+        totalDeducciones,
+        salarioNeto,
+        "Generado"
+      ]);
+    });
+
+    planillasSheet.appendRow([
+      planillaId,
+      periodo,
+      now.toISOString(),
+      totalBrutoGeneral,
+      totalDeduccionesGeneral,
+      totalNetoGeneral,
+      "Emitida",
+      payload.requesterUserId || "Contador"
+    ]);
+
+    return {
+      status: "success",
+      planillaId,
+      periodo,
+      empleadosProcesados: activeEmployees.length,
+      totalBruto: totalBrutoGeneral,
+      totalDeducciones: totalDeduccionesGeneral,
+      totalNeto: totalNetoGeneral,
+      message: `Planilla correspondiente a '${periodo}' generada exitosamente.`
+    };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function getPayrollVoucher(payload) {
+  const { empleadoId, planillaId, userId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const detalleSheet = getOrCreateSheet(ss, "PlanillasDetalle");
+  const data = detalleSheet.getDataRange().getValues().slice(1);
+
+  // Buscar por empleadoId o userId si coincide
+  let empSearchId = empleadoId;
+  if (!empSearchId && userId) {
+    const empData = getOrCreateSheet(ss, "PersonalLaboral").getDataRange().getValues().slice(1);
+    const emp = empData.find(r => String(r[1]) === String(userId));
+    if (emp) empSearchId = emp[0];
+  }
+
+  const vouchers = data.filter(r => (!empSearchId || String(r[2]) === String(empSearchId)) && (!planillaId || String(r[1]) === String(planillaId))).map(r => ({
+    detalleId: r[0],
+    planillaId: r[1],
+    empleadoId: r[2],
+    nombre: r[3],
+    salarioBase: parseFloat(r[4] || 0),
+    horasExtras: parseFloat(r[5] || 0),
+    bonos: parseFloat(r[6] || 0),
+    totalDevengado: parseFloat(r[4] || 0) + parseFloat(r[5] || 0) + parseFloat(r[6] || 0),
+    deducciones: {
+      ihss: parseFloat(r[7] || 0),
+      rap: parseFloat(r[8] || 0),
+      isr: parseFloat(r[9] || 0),
+      otras: parseFloat(r[10] || 0),
+      total: parseFloat(r[11] || 0)
+    },
+    salarioNeto: parseFloat(r[12] || 0),
+    estadoPago: r[13]
+  }));
+
+  return { status: "success", data: vouchers };
+}
+
+function getStaffLaborReport(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const planillas = getOrCreateSheet(ss, "PlanillasGeneradas").getDataRange().getValues().slice(1);
+  const empleados = getOrCreateSheet(ss, "PersonalLaboral").getDataRange().getValues().slice(1);
+  const asistencia = getOrCreateSheet(ss, "AsistenciaPersonal").getDataRange().getValues().slice(1);
+
+  return {
+    status: "success",
+    data: {
+      totalEmpleados: empleados.length,
+      empleadosActivos: empleados.filter(r => r[9] === "Activo").length,
+      historialPlanillas: planillas.map(r => ({
+        planillaId: r[0],
+        periodo: r[1],
+        fechaEmision: r[2],
+        totalBruto: parseFloat(r[3] || 0),
+        totalDeducciones: parseFloat(r[4] || 0),
+        totalNeto: parseFloat(r[5] || 0),
+        estado: r[6]
+      })),
+      totalTardanzasMes: asistencia.filter(r => r[5] === "Tardanza").length
+    }
+  };
+}
+
+// ---------------------------------------------------------------------------
 // GESTIÓN DE CAJA, BANCOS, INGRESOS Y EGRESOS (REQ-EXP-013)
 // ---------------------------------------------------------------------------
 
@@ -956,6 +1306,165 @@ function getCashRegisterReport(payload) {
 }
 
 // ---------------------------------------------------------------------------
+// MOTOR DE PARÁMETROS CONFIGURABLES EN SERVIDOR
+// ---------------------------------------------------------------------------
+
+function getSystemParameters(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ParametrosConfiguracion");
+  const data = sheet.getDataRange().getValues().slice(1);
+  const params = {};
+  data.forEach(r => {
+    if (r[0]) {
+      params[String(r[0]).trim()] = parseFloat(r[2]) || r[2];
+    }
+  });
+  return { status: "success", data: params, raw: data.map(r => ({ clave: r[0], categoria: r[1], valor: r[2], descripcion: r[3], fecha: r[4] })) };
+}
+
+function updateSystemParameters(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const { parameters } = payload || {};
+    if (!parameters || typeof parameters !== 'object') throw new Error("Parámetros inválidos.");
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "ParametrosConfiguracion");
+    const data = sheet.getDataRange().getValues();
+    const now = new Date().toISOString();
+    const user = payload.requesterUserId || "Admin";
+
+    Object.keys(parameters).forEach(key => {
+      const val = parseFloat(parameters[key]) !== undefined && !isNaN(parseFloat(parameters[key])) ? parseFloat(parameters[key]) : parameters[key];
+      const idx = data.findIndex(r => String(r[0]).trim() === String(key).trim());
+      if (idx > 0) {
+        sheet.getRange(idx + 1, 3, 1, 4).setValues([[val, data[idx][3] || "", now, user]]);
+      } else {
+        sheet.appendRow([key, "Personalizado", val, "Parámetro dinámico configurado", now, user]);
+      }
+    });
+
+    return { status: "success", message: "Parámetros del sistema actualizados correctamente." };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+// ---------------------------------------------------------------------------
+// DEDUCCIONES RECURRENTES Y REGLAS DE PAGO DE PLANILLA
+// ---------------------------------------------------------------------------
+
+function configureRecurringDeduction(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const { empleadoId, nombreDeduccion, montoCuota, cuotasTotales } = payload || {};
+    if (!empleadoId || !nombreDeduccion || !montoCuota || !cuotasTotales) {
+      throw new Error("Parámetros incompletos para deducción recurrente.");
+    }
+    const monto = parseFloat(montoCuota);
+    const cuotas = parseInt(cuotasTotales);
+    if (isNaN(monto) || monto <= 0) throw new Error("Monto de cuota inválido.");
+    if (isNaN(cuotas) || cuotas <= 0) throw new Error("Número de cuotas inválido.");
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "DeduccionesRecurrentes");
+    const deduccionId = "DED-REC-" + new Date().getTime();
+    const now = new Date().toISOString();
+
+    sheet.appendRow([
+      deduccionId,
+      String(empleadoId).trim(),
+      String(nombreDeduccion).trim(),
+      monto,
+      cuotas,
+      0, // cuotasAplicadas
+      cuotas, // cuotasRestantes
+      "Activo",
+      now
+    ]);
+
+    return {
+      status: "success",
+      deduccionId,
+      message: `Deducción recurrente '${nombreDeduccion}' (${cuotas} cuotas de L ${monto.toFixed(2)}) registrada correctamente.`
+    };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function getRecurringDeductions(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "DeduccionesRecurrentes");
+  const data = sheet.getDataRange().getValues().slice(1);
+  const empleadoId = payload && payload.empleadoId ? String(payload.empleadoId).trim() : null;
+
+  const filtered = data.filter(r => (!empleadoId || String(r[1]) === empleadoId)).map(r => ({
+    deduccionId: r[0],
+    empleadoId: r[1],
+    nombreDeduccion: r[2],
+    montoCuota: parseFloat(r[3] || 0),
+    cuotasTotales: parseInt(r[4] || 0),
+    cuotasAplicadas: parseInt(r[5] || 0),
+    cuotasRestantes: parseInt(r[6] || 0),
+    estado: r[7],
+    fechaCreacion: r[8]
+  }));
+
+  return { status: "success", data: filtered };
+}
+
+function calculatePaymentDate(payload) {
+  const { fechaProgramada, regla, feriadosList } = payload || {};
+  if (!fechaProgramada) throw new Error("Fecha programada requerida (YYYY-MM-DD).");
+
+  const sysParams = getSystemParameters().data;
+  const reglaAplicar = regla || sysParams["REGLA_DIA_NO_LABORABLE"] || "Adelantar";
+  const feriadosStr = feriadosList || sysParams["FERIADOS_NACIONALES"] || "";
+  const feriados = feriadosStr.split(",").map(f => f.trim());
+
+  let targetDate = new Date(fechaProgramada + "T00:00:00");
+  if (isNaN(targetDate.getTime())) throw new Error("Formato de fecha inválido.");
+
+  const isNonWorkingDay = (d) => {
+    const dayOfWeek = d.getDay(); // 0 = Domingo
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    const dateStr = `${yyyy}-${mm}-${dd}`;
+    return dayOfWeek === 0 || feriados.includes(dateStr);
+  };
+
+  let adjusted = false;
+  const originalDateStr = fechaProgramada;
+
+  while (isNonWorkingDay(targetDate)) {
+    adjusted = true;
+    if (reglaAplicar.toLowerCase() === "adelantar") {
+      targetDate.setDate(targetDate.getDate() - 1);
+    } else {
+      targetDate.setDate(targetDate.getDate() + 1);
+    }
+  }
+
+  const yyyy = targetDate.getFullYear();
+  const mm = String(targetDate.getMonth() + 1).padStart(2, '0');
+  const dd = String(targetDate.getDate()).padStart(2, '0');
+  const finalDateStr = `${yyyy}-${mm}-${dd}`;
+
+  return {
+    status: "success",
+    fechaOriginal: originalDateStr,
+    fechaEfectivaPago: finalDateStr,
+    ajustado: adjusted,
+    reglaAplicada: reglaAplicar,
+    esDomingoOFeriado: adjusted
+  };
+}
+
+// ---------------------------------------------------------------------------
 // FACTURACIÓN FISCAL HONDUREÑA (SAR) (REQ-EXP-012)
 // ---------------------------------------------------------------------------
 
@@ -1044,12 +1553,16 @@ function issueFiscalInvoice(payload) {
     const correlativoStr = String(nextNum).padStart(8, '0');
     const numeroFactura = `${establecimiento}-${punto}-${tipoDoc}-${correlativoStr}`;
 
-    // Desglose fiscal hondureño
+    // Desglose fiscal hondureño dinámico (leído de ParametrosConfiguracion)
+    const sysParams = getSystemParameters().data;
+    const tasaGeneral = parseFloat(sysParams["ISV_TASA_GENERAL"] || 0.15);
+    const tasaEspecial = parseFloat(sysParams["ISV_TASA_ESPECIAL"] || 0.18);
+
     const exento = parseFloat(subtotalExento || 0);
     const gravado15 = parseFloat(subtotalGravado15 || 0);
     const gravado18 = parseFloat(subtotalGravado18 || 0);
-    const isv15 = gravado15 * 0.15;
-    const isv18 = gravado18 * 0.18;
+    const isv15 = gravado15 * tasaGeneral;
+    const isv18 = gravado18 * tasaEspecial;
     const total = exento + gravado15 + gravado18 + isv15 + isv18;
 
     const now = new Date().toISOString();

@@ -252,7 +252,7 @@
 - **Dependencias Expuestas:** Expedientes laborales, salarios, deducciones de ley en Honduras (IHSS, RAP, ISR).
 - **Descripción del Alcance:** Generar planillas periódicas, calcular horas extras, bonificaciones, deducciones, control de asistencia (entradas/salidas/tardanzas) e informes de costos laborales.
 - **Criterios de Aceptación:** Comprobantes de pago de planilla generados y acceso restricted estrictamente por rol.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [REQ-EXP-015] Módulo de Inventarios, Activos y Control de Proveedores (Sección 12)
 - **Origen del Hallazgo:** Requerimientos de Desarrollo y Expansión (Sección 12).

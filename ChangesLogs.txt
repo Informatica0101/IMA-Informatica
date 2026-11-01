@@ -735,3 +735,38 @@ Módulo: Tesorería, Caja y Bancos (REQ-EXP-013)
   * Implementadas funciones `recordBankReconciliation` y `getCashRegisterReport`.
   * Configurados permisos RBAC para los roles Contador, Secretaría, Director y Administrador.
 - Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-013] como completada.
+
+REGISTRO DE CAMBIOS - MÓDULO DE PLANILLAS, DEDUCCIONES Y ASISTENCIA DE PERSONAL - Sun Nov 01 2026
+
+Módulo: Recursos Humanos y Planillas (REQ-EXP-014)
+- Backend Usuarios (`backend/user-service/Code.gs`):
+  * Creadas hojas de cálculo automáticas `PersonalLaboral`, `PlanillasGeneradas`, `PlanillasDetalle` y `AsistenciaPersonal`.
+  * Implementada función `registerEmployee` para expediente y contratos de personal.
+  * Implementada función `recordStaffAttendance` para marcas de entrada, salida y cálculo de tardanzas.
+  * Implementada función `generatePayroll` con cálculo automático de horas extras diurnas (25%), retenciones legales hondureñas de IHSS (techo 3.5%), RAP (1.5% sobre excedente) e ISR progresivo.
+  * Implementadas funciones `getPayrollVoucher` para emisión de comprobantes individuales y `getStaffLaborReport` para resumen de costos laborales restringido por rol.
+  * Configurados permisos RBAC específicos en `RBAC_ACTION_PERMISSIONS`.
+- Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-014] como completada.
+
+REGISTRO DE CAMBIOS - DESACOPLAMIENTO DE PARÁMETROS LABORALES Y TRIBUTARIOS - Sun Nov 01 2026
+
+Módulo: Parametrización Institucional Dinámica
+- Backend Usuarios (`backend/user-service/Code.gs`):
+  * Creada hoja de cálculo `ParametrosConfiguracion` para almacenar valores de deducción, techos y tasas impositivas en celdas dedicadas.
+  * Implementados endpoints `getSystemParameters` y `updateSystemParameters` con control de concurrencia y auditoría de cambios.
+  * Desacopladas las funciones `generatePayroll` e `issueFiscalInvoice` para consumir dinámicamente las variables desde el Spreadsheet.
+- Dashboard Administrativo (`teacher-dashboard.html` y `js/teacher.js`):
+  * Diseñado formulario interactivo `#system-parameters-form` para configurar techos de IHSS, porcentajes de RAP, tasas de ISV y factores de horas extras sin tocar código fuente.
+
+REGISTRO DE CAMBIOS - DEDUCCIONES RECURRENTES Y REGLAS DE PAGO - Sun Nov 01 2026
+
+Módulo: Nómina, Deducciones y Reglas de Pago
+- Backend Usuarios (`backend/user-service/Code.gs`):
+  * Creada hoja de cálculo `DeduccionesRecurrentes` con esquema: `deduccionId`, `empleadoId`, `nombreDeduccion`, `montoCuota`, `cuotasTotales`, `cuotasAplicadas`, `cuotasRestantes`, `estado`, `fechaCreacion`.
+  * Incorporados parámetros por defecto en `ParametrosConfiguracion`: `FRECUENCIA_PAGO_DEFAULT` (Quincenal), `MAX_PORCENTAJE_DEDUCIBLE_QUINCENAL` (40%), `MAX_PORCENTAJE_DEDUCIBLE_MENSUAL` (40%), `REGLA_DIA_NO_LABORABLE` (Adelantar) y `FERIADOS_NACIONALES`.
+  * Implementadas funciones `configureRecurringDeduction`, `getRecurringDeductions` y `calculatePaymentDate` con lógica de anticipo o posposición en días no hábiles (domingos y feriados).
+  * Actualizada función `generatePayroll` para aplicar deducciones recurrentes activas de manera decreciente y validar que las deducciones totales no excedan el porcentaje máximo deducible configurado (ej. 40% del salario).
+- Dashboard Administrativo (`teacher-dashboard.html` y `js/teacher.js`):
+  * Agregados campos de frecuencia de pago, topes porcentuales máximos y regla de feriados al formulario de parámetros.
+  * Añadido formulario interactivo `#recurring-deduction-form` para registro de deducciones con número de cuotas.
+  * Añadido simulador `#btn-simulate-payment-date` para comprobación inmediata de fechas de pago ajustadas.

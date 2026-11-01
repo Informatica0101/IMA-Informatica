@@ -424,6 +424,128 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- Carga y Actualización de Parámetros Dinámicos Institucionales ---
+    async function loadSystemParameters() {
+        try {
+            const res = await fetchApi('USER', 'getSystemParameters', {});
+            if (res && res.status === 'success' && res.data) {
+                const p = res.data;
+                if (document.getElementById('param-ihss-techo')) document.getElementById('param-ihss-techo').value = p["IHSS_TECHO_COTIZACION"] || 10796.49;
+                if (document.getElementById('param-ihss-pct')) document.getElementById('param-ihss-pct').value = p["IHSS_PORCENTAJE_LABORAL"] || 0.035;
+                if (document.getElementById('param-rap-pct')) document.getElementById('param-rap-pct').value = p["RAP_PORCENTAJE_LABORAL"] || 0.015;
+                if (document.getElementById('param-he-diurna')) document.getElementById('param-he-diurna').value = p["HORA_EXTRA_FACTOR_DIURNO"] || 1.25;
+                if (document.getElementById('param-horas-mes')) document.getElementById('param-horas-mes').value = p["HORAS_LABORALES_MES"] || 240;
+                if (document.getElementById('param-isv-general')) document.getElementById('param-isv-general').value = p["ISV_TASA_GENERAL"] || 0.15;
+                if (document.getElementById('param-isv-especial')) document.getElementById('param-isv-especial').value = p["ISV_TASA_ESPECIAL"] || 0.18;
+                if (document.getElementById('param-isr-limite1')) document.getElementById('param-isr-limite1').value = p["ISR_TRAMO1_LIMITE"] || 200000;
+                if (document.getElementById('param-frecuencia-pago')) document.getElementById('param-frecuencia-pago').value = p["FRECUENCIA_PAGO_DEFAULT"] || "Quincenal";
+                if (document.getElementById('param-max-deduc-quincenal')) document.getElementById('param-max-deduc-quincenal').value = p["MAX_PORCENTAJE_DEDUCIBLE_QUINCENAL"] || 40;
+                if (document.getElementById('param-max-deduc-mensual')) document.getElementById('param-max-deduc-mensual').value = p["MAX_PORCENTAJE_DEDUCIBLE_MENSUAL"] || 40;
+                if (document.getElementById('param-regla-no-laborable')) document.getElementById('param-regla-no-laborable').value = p["REGLA_DIA_NO_LABORABLE"] || "Adelantar";
+            }
+        } catch (err) {
+            console.warn('[Params] Error al cargar parámetros del sistema:', err);
+        }
+    }
+
+    const paramsForm = document.getElementById('system-parameters-form');
+    if (paramsForm) {
+        paramsForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save-parameters');
+            btn.disabled = true;
+            btn.textContent = 'Guardando en Spreadsheet...';
+
+            const parameters = {
+                "IHSS_TECHO_COTIZACION": parseFloat(document.getElementById('param-ihss-techo').value),
+                "IHSS_PORCENTAJE_LABORAL": parseFloat(document.getElementById('param-ihss-pct').value),
+                "RAP_PORCENTAJE_LABORAL": parseFloat(document.getElementById('param-rap-pct').value),
+                "HORA_EXTRA_FACTOR_DIURNO": parseFloat(document.getElementById('param-he-diurna').value),
+                "HORAS_LABORALES_MES": parseFloat(document.getElementById('param-horas-mes').value),
+                "ISV_TASA_GENERAL": parseFloat(document.getElementById('param-isv-general').value),
+                "ISV_TASA_ESPECIAL": parseFloat(document.getElementById('param-isv-especial').value),
+                "ISR_TRAMO1_LIMITE": parseFloat(document.getElementById('param-isr-limite1').value),
+                "FRECUENCIA_PAGO_DEFAULT": document.getElementById('param-frecuencia-pago').value,
+                "MAX_PORCENTAJE_DEDUCIBLE_QUINCENAL": parseFloat(document.getElementById('param-max-deduc-quincenal').value),
+                "MAX_PORCENTAJE_DEDUCIBLE_MENSUAL": parseFloat(document.getElementById('param-max-deduc-mensual').value),
+                "REGLA_DIA_NO_LABORABLE": document.getElementById('param-regla-no-laborable').value
+            };
+
+            try {
+                const res = await fetchApi('USER', 'updateSystemParameters', { parameters, requesterUserId: currentUser.userId });
+                if (res && res.status === 'success') {
+                    alert('Parámetros institucionales guardados correctamente en la hoja de cálculo.');
+                } else {
+                    alert((res && res.message) || 'Error al guardar parámetros.');
+                }
+            } catch (err) {
+                alert('Error de conexión al guardar parámetros.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Guardar Parámetros en Spreadsheet';
+            }
+        });
+
+        loadSystemParameters();
+    }
+
+    // --- Manejo de Deducciones Recurrentes y Simulador de Fecha de Pago ---
+    const recDeductionForm = document.getElementById('recurring-deduction-form');
+    if (recDeductionForm) {
+        recDeductionForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const empleadoId = document.getElementById('rec-ded-empid').value.trim();
+            const nombreDeduccion = document.getElementById('rec-ded-nombre').value.trim();
+            const montoCuota = parseFloat(document.getElementById('rec-ded-monto').value);
+            const cuotasTotales = parseInt(document.getElementById('rec-ded-cuotas').value);
+
+            try {
+                const res = await fetchApi('USER', 'configureRecurringDeduction', {
+                    empleadoId,
+                    nombreDeduccion,
+                    montoCuota,
+                    cuotasTotales,
+                    requesterUserId: currentUser.userId
+                });
+                if (res && res.status === 'success') {
+                    alert(res.message || 'Deducción recurrente registrada exitosamente.');
+                    recDeductionForm.reset();
+                } else {
+                    alert((res && res.message) || 'Error al registrar deducción recurrente.');
+                }
+            } catch (err) {
+                alert('Error de conexión al guardar deducción recurrente.');
+            }
+        });
+    }
+
+    const btnSimPayment = document.getElementById('btn-simulate-payment-date');
+    if (btnSimPayment) {
+        btnSimPayment.addEventListener('click', async () => {
+            const fechaProgramada = document.getElementById('sim-fecha-pago').value;
+            const resBox = document.getElementById('sim-payment-result');
+            if (!fechaProgramada) {
+                alert('Por favor selecciona una fecha programada de pago.');
+                return;
+            }
+
+            try {
+                const res = await fetchApi('USER', 'calculatePaymentDate', { fechaProgramada });
+                if (res && res.status === 'success') {
+                    resBox.classList.remove('hidden');
+                    const adjMsg = res.ajustado
+                        ? `<span class="text-amber-600 font-bold"><i class="fas fa-exclamation-triangle"></i> La fecha original caía en domingo o feriado no laborable.</span><br>Regla aplicada: <strong>${res.reglaAplicada}</strong>.<br>Fecha efectiva de depósito/pago: <strong class="text-blue-700">${res.fechaEfectivaPago}</strong>`
+                        : `<span class="text-green-600 font-bold"><i class="fas fa-check-circle"></i> Día laboral hábil estándar.</span><br>Fecha efectiva de pago: <strong class="text-green-700">${res.fechaEfectivaPago}</strong>`;
+                    resBox.innerHTML = adjMsg;
+                } else {
+                    alert((res && res.message) || 'Error al calcular fecha efectiva.');
+                }
+            } catch (err) {
+                alert('Error al simular fecha de pago.');
+            }
+        });
+    }
+
     // --- Lógica de Caja y Gestión Financiera Institucional (REQ-EXP-010) ---
     const cashierForm = document.getElementById('cashier-payment-form');
     if (cashierForm) {
