@@ -135,6 +135,9 @@
                     <button id="tab-financial" class="px-6 md:px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 text-gray-500 hover:bg-white hover:text-blue-600">
                         <i class="fas fa-file-invoice-dollar mr-2"></i> Matrícula y Finanzas
                     </button>
+                    <button id="tab-guias" class="px-6 md:px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 text-gray-500 hover:bg-white hover:text-blue-600">
+                        <i class="fas fa-book mr-2"></i> Guías de Estudio
+                    </button>
                 </div>
             </div>
 
@@ -199,6 +202,35 @@
             <div id="view-financial" class="hidden animate-fade-in">
                 <div id="student-financial-container" class="space-y-8">
                     <!-- Inyectado dinámicamente desde student.js -->
+                </div>
+            </div>
+
+            <!-- Vista de Guías de Estudio Formativas (REQ-DOC-001) -->
+            <div id="view-guias" class="hidden animate-fade-in">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 bg-white/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/60 shadow-sm">
+                    <div>
+                        <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Material Formativo</h2>
+                        <h3 class="text-xl font-bold text-gray-800">Guías de Estudio por Asignatura</h3>
+                        <p class="text-xs text-gray-500 mt-1">Recursos y material didáctico de apoyo para preparar tus exámenes y reforzar tus aprendizajes.</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <select id="student-guia-parcial" class="bg-white/80 border border-blue-100 rounded-xl px-4 py-2 text-xs font-bold text-blue-600 outline-none focus:ring-2 focus:ring-blue-500/20">
+                            <option value="">Todos los Parciales</option>
+                            <option value="I Parcial">I Parcial</option>
+                            <option value="II Parcial">II Parcial</option>
+                            <option value="III Parcial">III Parcial</option>
+                            <option value="IV Parcial">IV Parcial</option>
+                        </select>
+                        <button id="btn-student-reload-guias" class="bg-blue-600 text-white p-2.5 rounded-xl hover:bg-blue-700 transition-colors" title="Actualizar">
+                            <i class="fas fa-sync-alt text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="student-guias-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="col-span-full text-center py-12 text-gray-400">
+                        <i class="fas fa-spinner fa-spin mr-2"></i> Consultando guías de estudio disponibles...
+                    </div>
                 </div>
             </div>
         </div>

@@ -303,10 +303,10 @@
 
 ## REQUERIMIENTOS DE GESTIÓN DOCENTE, CONTENIDOS, GUÍAS Y TAREAS (New Generation Bilingual School and Institute)
 
-### [REQ-DOC-001] Gestión de Guías de Estudio por Asignatura y Parcial (Sección 3)
+### [X] [REQ-DOC-001] Gestión de Guías de Estudio por Asignatura y Parcial (Sección 3)
 - **Origen del Hallazgo:** Especificación de Gestión Docente y Tareas (Sección 3).
 - **Severidad/Clasificación:** Alto
-- **Archivos Involucrados:** `teacher-dashboard.html`, `js/teacher.js`, `js/student.js`, `backend/academic-service/Code.gs`
+- **Archivos Involucrados:** `teacher-dashboard.html`, `js/teacher.js`, `student-dashboard.html`, `js/student.js`, `js/api.js`, `backend/academic-service/Code.gs`
 - **Dependencias Expuestas:** `getAcademicConfig`, subida de archivos, tipos MIME documentales autorizados (PDF, DOCX, TXT, XLSX, PPTX).
 - **Descripción del Alcance:** Permitir a los docentes crear, publicar, sustituir, consultar y desactivar guías de estudio por asignatura, grado, sección y parcial, con sanitización de contenido y visualización en el dashboard estudiantil.
 - **Criterios de Aceptación:** Las guías creadas se vinculan correctamente a la asignatura/parcial y se despliegan para alumnos autorizados.

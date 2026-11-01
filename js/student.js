@@ -1550,9 +1550,11 @@ document.addEventListener('DOMContentLoaded', function() {
     var tabActivities = document.getElementById('tab-activities');
     var tabProgress = document.getElementById('tab-progress');
     var tabFinancial = document.getElementById('tab-financial');
+    var tabGuias = document.getElementById('tab-guias');
     var viewActivities = document.getElementById('view-activities');
     var viewProgress = document.getElementById('view-progress');
     var viewFinancial = document.getElementById('view-financial');
+    var viewGuias = document.getElementById('view-guias');
 
     var activeTabClass = "px-6 md:px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 bg-blue-600 text-white shadow-lg shadow-blue-100";
     var inactiveTabClass = "px-6 md:px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 text-gray-500 hover:bg-white hover:text-blue-600";
@@ -1562,10 +1564,12 @@ document.addEventListener('DOMContentLoaded', function() {
         tabActivities.className = inactiveTabClass;
         tabProgress.className = inactiveTabClass;
         if (tabFinancial) tabFinancial.className = inactiveTabClass;
+        if (tabGuias) tabGuias.className = inactiveTabClass;
 
         viewActivities.classList.add('hidden');
         viewProgress.classList.add('hidden');
         if (viewFinancial) viewFinancial.classList.add('hidden');
+        if (viewGuias) viewGuias.classList.add('hidden');
 
         if (activeTab === 'activities') {
             tabActivities.className = activeTabClass;
@@ -1578,12 +1582,91 @@ document.addEventListener('DOMContentLoaded', function() {
             if (tabFinancial) tabFinancial.className = activeTabClass;
             if (viewFinancial) viewFinancial.classList.remove('hidden');
             loadStudentFinancials();
+        } else if (activeTab === 'guias') {
+            if (tabGuias) tabGuias.className = activeTabClass;
+            if (viewGuias) viewGuias.classList.remove('hidden');
+            loadStudentStudyGuides();
         }
     }
 
     if (tabActivities) tabActivities.addEventListener('click', function() { switchStudentTab('activities'); });
     if (tabProgress) tabProgress.addEventListener('click', function() { switchStudentTab('progress'); });
     if (tabFinancial) tabFinancial.addEventListener('click', function() { switchStudentTab('financial'); });
+    if (tabGuias) tabGuias.addEventListener('click', function() { switchStudentTab('guias'); });
+
+    // REQ-DOC-001: Visualización y Descarga de Guías de Estudio en Dashboard Estudiantil
+    var studentStudyGuidesData = [];
+    var studentGuiaParcialSelect = document.getElementById('student-guia-parcial');
+    var btnStudentReloadGuias = document.getElementById('btn-student-reload-guias');
+
+    async function loadStudentStudyGuides() {
+        var container = document.getElementById('student-guias-list');
+        if (!container || !currentUser) return;
+        container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400"><i class="fas fa-spinner fa-spin mr-2"></i> Cargando guías de estudio...</div>';
+
+        try {
+            var res = await window.getStudyGuides({
+                grado: currentUser.grado,
+                seccion: currentUser.seccion,
+                rol: 'Estudiante',
+                estado: 'activo'
+            });
+
+            if (res && res.status === 'success') {
+                studentStudyGuidesData = res.guias || [];
+                renderStudentStudyGuides();
+            } else {
+                container.innerHTML = '<div class="col-span-full text-center py-12 text-red-500">' + (res.message || 'Error al obtener guías de estudio.') + '</div>';
+            }
+        } catch (err) {
+            container.innerHTML = '<div class="col-span-full text-center py-12 text-red-500">Error al consultar el servidor: ' + err.message + '</div>';
+        }
+    }
+
+    function renderStudentStudyGuides() {
+        var container = document.getElementById('student-guias-list');
+        if (!container) return;
+
+        var selectedParcial = studentGuiaParcialSelect ? studentGuiaParcialSelect.value : '';
+        var filtered = studentStudyGuidesData.filter(function(g) {
+            if (selectedParcial && g.parcial !== selectedParcial) return false;
+            return true;
+        });
+
+        if (filtered.length === 0) {
+            container.innerHTML = '<div class="col-span-full bg-white/60 backdrop-blur-md p-12 rounded-[2.5rem] border border-white/60 text-center text-gray-400 font-medium">' +
+                '<i class="fas fa-folder-open text-4xl mb-3 text-blue-200 block"></i> No hay guías de estudio disponibles para los filtros seleccionados.</div>';
+            return;
+        }
+
+        container.innerHTML = filtered.map(function(g) {
+            var downloadBtn = g.archivo_url
+                ? '<a href="' + g.archivo_url + '" target="_blank" rel="noopener noreferrer" class="btn-ima-primary w-full py-2.5 text-xs flex items-center justify-center gap-2">' +
+                  '<i class="fas fa-cloud-download-alt"></i> Descargar Guía (' + (g.archivo_nombre || 'PDF') + ')</a>'
+                : '<div class="text-center py-2 text-xs font-semibold text-gray-400 bg-gray-50 rounded-xl">Material sin archivo adjunto</div>';
+
+            return '<div class="bg-white/80 backdrop-blur-md p-6 rounded-[2.5rem] border border-blue-50 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">' +
+                '<div>' +
+                    '<div class="flex items-center justify-between gap-2 mb-3">' +
+                        '<span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-wider">' + g.asignatura + '</span>' +
+                        '<span class="text-[11px] font-bold text-gray-400">' + g.parcial + '</span>' +
+                    '</div>' +
+                    '<h4 class="text-base font-bold text-gray-800 mb-2">' + g.titulo + '</h4>' +
+                    '<p class="text-xs text-gray-500 line-clamp-3 mb-4 leading-relaxed">' + (g.descripcion || 'Sin instrucciones adicionales.') + '</p>' +
+                '</div>' +
+                '<div class="pt-4 border-t border-gray-100 flex flex-col gap-3">' +
+                    '<div class="text-[10px] text-gray-400 flex items-center justify-between">' +
+                        '<span><i class="fas fa-user-tie mr-1"></i> ' + (g.docente_nombre || 'Docente') + '</span>' +
+                        '<span>' + (g.fecha_creacion ? new Date(g.fecha_creacion).toLocaleDateString() : '') + '</span>' +
+                    '</div>' +
+                    downloadBtn +
+                '</div>' +
+            '</div>';
+        }).join('');
+    }
+
+    if (studentGuiaParcialSelect) studentGuiaParcialSelect.addEventListener('change', renderStudentStudyGuides);
+    if (btnStudentReloadGuias) btnStudentReloadGuias.addEventListener('click', loadStudentStudyGuides);
 
     // REQ-EXP-009: Carga y Renderizado del Estado de Matrícula y Control Financiero
     async function loadStudentFinancials() {

@@ -120,6 +120,7 @@
                 <button id="nav-tareas" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Actividades</button>
                 <button id="nav-proyectos" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Proyectos</button>
                 <button id="nav-logros" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Logros</button>
+                <button id="nav-guias" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Guías de Estudio</button>
                 <button id="nav-news" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Noticias</button>
                 <button id="nav-admin" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Administración</button>
             </nav>
@@ -388,6 +389,142 @@
                             </tr>
                         </thead>
                         <tbody id="logros-table-body" class="divide-y divide-gray-100 text-sm"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Sección de Guías de Estudio (REQ-DOC-001) -->
+            <section id="section-guias" class="hidden animate-fade-in-up">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">Guías de Estudio por Asignatura y Parcial</h2>
+                        <p class="text-xs text-gray-500 mt-1">Material formativo de repaso y estudio para los alumnos sin ponderación evaluable obligatoria.</p>
+                    </div>
+                    <button id="btn-show-create-guia" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-medium hover:bg-blue-700 transition-all shadow-sm flex items-center gap-2">
+                        <i class="fas fa-plus"></i> Nueva Guía de Estudio
+                    </button>
+                </div>
+
+                <!-- Formulario de Creación / Edición de Guía -->
+                <div id="guia-create-container" class="hidden bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-gray-100 mb-8 animate-fade-in">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 id="guia-form-title" class="text-lg font-bold text-gray-800">Publicar Guía de Estudio</h3>
+                        <button type="button" id="btn-cancel-guia" class="text-gray-400 hover:text-gray-600 text-sm font-semibold">Cancelar</button>
+                    </div>
+                    <form id="form-guia-estudio" class="space-y-4">
+                        <input type="hidden" id="guia-id">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Asignatura *</label>
+                                <select id="guia-materia" class="w-full p-3 bg-gray-50 border rounded-xl text-sm" required>
+                                    <option value="">Selecciona Asignatura</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Grado *</label>
+                                <select id="guia-grado" class="w-full p-3 bg-gray-50 border rounded-xl text-sm" required>
+                                    <option value="">Selecciona Grado</option>
+                                    <option value="7mo">7mo Grado</option>
+                                    <option value="8vo">8vo Grado</option>
+                                    <option value="9no">9no Grado</option>
+                                    <option value="10mo">10mo Grado</option>
+                                    <option value="11mo">11mo Grado</option>
+                                    <option value="12mo">12mo Grado</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Sección</label>
+                                <select id="guia-seccion" class="w-full p-3 bg-gray-50 border rounded-xl text-sm">
+                                    <option value="Todas">Todas las Secciones</option>
+                                    <option value="A">Sección A</option>
+                                    <option value="B">Sección B</option>
+                                    <option value="U">Sección Única</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Parcial *</label>
+                                <select id="guia-parcial" class="w-full p-3 bg-gray-50 border rounded-xl text-sm" required>
+                                    <option value="I Parcial">I Parcial</option>
+                                    <option value="II Parcial">II Parcial</option>
+                                    <option value="III Parcial">III Parcial</option>
+                                    <option value="IV Parcial">IV Parcial</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Título de la Guía *</label>
+                            <input type="text" id="guia-titulo" class="w-full p-3 bg-gray-50 border rounded-xl text-sm" placeholder="Ej. Guía de Repaso para Examen del II Parcial" required>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Descripción / Instrucciones</label>
+                            <textarea id="guia-descripcion" rows="3" class="w-full p-3 bg-gray-50 border rounded-xl text-sm" placeholder="Temas evaluados, ejercicios recomendados, fechas de asesoría..."></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Enlace o URL del Archivo / Documento</label>
+                                <input type="url" id="guia-archivo-url" class="w-full p-3 bg-gray-50 border rounded-xl text-sm" placeholder="https://drive.google.com/...">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Nombre o Formato del Archivo</label>
+                                <input type="text" id="guia-archivo-nombre" class="w-full p-3 bg-gray-50 border rounded-xl text-sm" placeholder="Ej. Guia_Estudio_Matematicas.pdf">
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end gap-3 pt-4 border-t">
+                            <button type="button" id="btn-cancel-guia-2" class="px-5 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-semibold hover:bg-gray-50">Cancelar</button>
+                            <button type="submit" id="btn-save-guia" class="bg-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 shadow-md">Publicar Guía</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Filtros y Lista de Guías de Estudio -->
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 mb-6">
+                    <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                        <div class="flex flex-wrap gap-3 w-full md:w-auto">
+                            <select id="filtro-guia-parcial" class="p-2.5 border rounded-xl text-xs bg-gray-50 font-medium">
+                                <option value="">Todos los Parciales</option>
+                                <option value="I Parcial">I Parcial</option>
+                                <option value="II Parcial">II Parcial</option>
+                                <option value="III Parcial">III Parcial</option>
+                                <option value="IV Parcial">IV Parcial</option>
+                            </select>
+                            <select id="filtro-guia-grado" class="p-2.5 border rounded-xl text-xs bg-gray-50 font-medium">
+                                <option value="">Todos los Grados</option>
+                                <option value="7mo">7mo Grado</option>
+                                <option value="8vo">8vo Grado</option>
+                                <option value="9no">9no Grado</option>
+                                <option value="10mo">10mo Grado</option>
+                                <option value="11mo">11mo Grado</option>
+                                <option value="12mo">12mo Grado</option>
+                            </select>
+                        </div>
+                        <button id="btn-reload-guias" class="text-xs text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1.5 self-end md:self-auto">
+                            <i class="fas fa-sync-alt"></i> Actualizar Guías
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container overflow-x-auto bg-white rounded-3xl shadow-sm border border-gray-100">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-50 border-b border-gray-100 text-gray-500 uppercase text-[10px] tracking-wider">
+                            <tr>
+                                <th class="p-4">Título & Guía</th>
+                                <th class="p-4">Asignatura</th>
+                                <th class="p-4">Grado / Secc</th>
+                                <th class="p-4">Parcial</th>
+                                <th class="p-4">Documento</th>
+                                <th class="p-4">Estado</th>
+                                <th class="p-4 text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="guias-table-body" class="divide-y divide-gray-100 text-sm">
+                            <tr>
+                                <td colspan="7" class="p-8 text-center text-gray-400">Cargando guías de estudio...</td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </section>

@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const navTareas = document.getElementById('nav-tareas');
     const navProyectos = document.getElementById('nav-proyectos');
     const navLogros = document.getElementById('nav-logros');
+    const navGuias = document.getElementById('nav-guias');
     const navNews = document.getElementById('nav-news');
     const navAdmin = document.getElementById('nav-admin');
     const navReportsOld = document.getElementById('nav-reportes');
@@ -28,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionTareas = document.getElementById('section-tareas');
     const sectionProyectos = document.getElementById('section-proyectos');
     const sectionLogros = document.getElementById('section-logros');
+    const sectionGuias = document.getElementById('section-guias');
     const sectionNews = document.getElementById('section-news');
     const sectionAdmin = document.getElementById('section-admin');
     const sectionReportes = document.getElementById('section-reportes');
@@ -54,8 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let isNavigating = false;
     let studentSort = { column: 'nombre', direction: 'asc' };
 
-    const allSections = [sectionAcademicReports, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionAdmin, sectionReportes];
-    const allNavLinks = [navDashboard, navTareas, navProyectos, navLogros, navNews, navAdmin, navReportsOld];
+    const allSections = [sectionAcademicReports, sectionTareas, sectionProyectos, sectionLogros, sectionGuias, sectionNews, sectionAdmin, sectionReportes];
+    const allNavLinks = [navDashboard, navTareas, navProyectos, navLogros, navGuias, navNews, navAdmin, navReportsOld];
 
     // Auxiliar para normalizar strings (trim, lowercase y sin acentos) para comparaciones robustas
     const norm = (s) => (s || "").toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -105,6 +107,12 @@ document.addEventListener('DOMContentLoaded', () => {
         window.navigateTo(sectionLogros, navLogros);
         fetchLogros();
     });
+    if (navGuias) {
+        navGuias.addEventListener('click', () => {
+            window.navigateTo(sectionGuias, navGuias);
+            fetchStudyGuides();
+        });
+    }
     navNews.addEventListener('click', () => {
         window.navigateTo(sectionNews, navNews);
         fetchNewsManagement();
@@ -2875,6 +2883,240 @@ function toBase64(file) {
         reader.onerror = error => reject(error);
     });
 }
+
+    // ---------------------------------------------------------------------------
+    // GESTIÓN DE GUÍAS DE ESTUDIO (REQ-DOC-001)
+    // ---------------------------------------------------------------------------
+    const btnShowCreateGuia = document.getElementById('btn-show-create-guia');
+    const guiaCreateContainer = document.getElementById('guia-create-container');
+    const btnCancelGuia = document.getElementById('btn-cancel-guia');
+    const btnCancelGuia2 = document.getElementById('btn-cancel-guia-2');
+    const formGuiaEstudio = document.getElementById('form-guia-estudio');
+    const guiasTableBody = document.getElementById('guias-table-body');
+    const filtroGuiaParcial = document.getElementById('filtro-guia-parcial');
+    const filtroGuiaGrado = document.getElementById('filtro-guia-grado');
+    const btnReloadGuias = document.getElementById('btn-reload-guias');
+    const guiaMateriaSelect = document.getElementById('guia-materia');
+
+    let allStudyGuides = [];
+
+    // Poblar materias en el selector de guías
+    function populateGuiaMaterias() {
+        if (!guiaMateriaSelect) return;
+        const materias = window.ASIGNATURAS_ACTIVAS || [
+            "Español", "Matemáticas", "Ciencias Naturales", "Estudios Sociales",
+            "Inglés", "Educación Cívica", "Educación Física", "Tecnología", "Informática",
+            "Física Elemental", "Química", "Biología", "Historia de Honduras"
+        ];
+        guiaMateriaSelect.innerHTML = '<option value="">Selecciona Asignatura</option>';
+        materias.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = m;
+            guiaMateriaSelect.appendChild(opt);
+        });
+    }
+
+    if (btnShowCreateGuia) {
+        btnShowCreateGuia.addEventListener('click', () => {
+            populateGuiaMaterias();
+            document.getElementById('guia-id').value = '';
+            document.getElementById('guia-form-title').textContent = 'Publicar Guía de Estudio';
+            formGuiaEstudio.reset();
+            guiaCreateContainer.classList.remove('hidden');
+            guiaCreateContainer.scrollIntoView({ behavior: 'smooth' });
+        });
+    }
+
+    const hideGuiaForm = () => {
+        if (guiaCreateContainer) guiaCreateContainer.classList.add('hidden');
+    };
+    if (btnCancelGuia) btnCancelGuia.addEventListener('click', hideGuiaForm);
+    if (btnCancelGuia2) btnCancelGuia2.addEventListener('click', hideGuiaForm);
+
+    async function fetchStudyGuides() {
+        if (!guiasTableBody) return;
+        guiasTableBody.innerHTML = `
+            <tr>
+                <td colspan="7" class="p-8 text-center text-gray-400">
+                    <i class="fas fa-spinner fa-spin mr-2"></i> Cargando guías de estudio...
+                </td>
+            </tr>
+        `;
+
+        try {
+            const res = await window.getStudyGuides({
+                docente_id: currentUser.userId,
+                rol: currentUser.rol || 'Docente'
+            });
+
+            if (res && res.status === 'success') {
+                allStudyGuides = res.guias || [];
+                renderStudyGuides();
+            } else {
+                guiasTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="p-8 text-center text-red-500">
+                            ${res.message || 'Error al obtener guías de estudio.'}
+                        </td>
+                    </tr>
+                `;
+            }
+        } catch (err) {
+            guiasTableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="p-8 text-center text-red-500">
+                        Error al conectar con el servidor: ${err.message}
+                    </td>
+                </tr>
+            `;
+        }
+    }
+
+    function renderStudyGuides() {
+        if (!guiasTableBody) return;
+        const pFilter = filtroGuiaParcial ? filtroGuiaParcial.value : '';
+        const gFilter = filtroGuiaGrado ? filtroGuiaGrado.value : '';
+
+        const filtered = allStudyGuides.filter(g => {
+            if (pFilter && g.parcial !== pFilter) return false;
+            if (gFilter && g.grado !== gFilter) return false;
+            return true;
+        });
+
+        if (filtered.length === 0) {
+            guiasTableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="p-8 text-center text-gray-400">
+                        No se encontraron guías de estudio publicadas con los criterios seleccionados.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        guiasTableBody.innerHTML = filtered.map(g => {
+            const isActivo = String(g.estado).toLowerCase() === 'activo';
+            const statusBadge = isActivo
+                ? `<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-green-100 text-green-700">Activa</span>`
+                : `<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-gray-100 text-gray-500">Inactiva</span>`;
+
+            const docLink = g.archivo_url
+                ? `<a href="${g.archivo_url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1">
+                     <i class="fas fa-file-download"></i> ${g.archivo_nombre || 'Descargar'}
+                   </a>`
+                : `<span class="text-gray-400 italic text-xs">Sin archivo</span>`;
+
+            return `
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="p-4">
+                        <div class="font-bold text-gray-800">${g.titulo}</div>
+                        <div class="text-xs text-gray-400 line-clamp-1">${g.descripcion || 'Sin descripción'}</div>
+                    </td>
+                    <td class="p-4 font-semibold text-gray-700">${g.asignatura}</td>
+                    <td class="p-4 text-gray-600">${g.grado} / ${g.seccion || 'Todas'}</td>
+                    <td class="p-4 font-medium text-blue-600">${g.parcial}</td>
+                    <td class="p-4">${docLink}</td>
+                    <td class="p-4">${statusBadge}</td>
+                    <td class="p-4 text-right space-x-2">
+                        <button onclick="window.editStudyGuide('${g.id_guia}')" class="text-blue-600 hover:text-blue-800 text-xs font-semibold">Editar</button>
+                        <button onclick="window.toggleStudyGuide('${g.id_guia}', '${isActivo ? 'inactivo' : 'activo'}')" class="text-xs font-semibold ${isActivo ? 'text-amber-600 hover:text-amber-800' : 'text-green-600 hover:text-green-800'}">
+                            ${isActivo ? 'Desactivar' : 'Activar'}
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    if (filtroGuiaParcial) filtroGuiaParcial.addEventListener('change', renderStudyGuides);
+    if (filtroGuiaGrado) filtroGuiaGrado.addEventListener('change', renderStudyGuides);
+    if (btnReloadGuias) btnReloadGuias.addEventListener('click', fetchStudyGuides);
+
+    window.editStudyGuide = function(id) {
+        const guia = allStudyGuides.find(g => g.id_guia === id);
+        if (!guia) return;
+        populateGuiaMaterias();
+        document.getElementById('guia-id').value = guia.id_guia;
+        document.getElementById('guia-form-title').textContent = 'Editar Guía de Estudio (' + guia.id_guia + ')';
+        document.getElementById('guia-materia').value = guia.asignatura || '';
+        document.getElementById('guia-grado').value = guia.grado || '';
+        document.getElementById('guia-seccion').value = guia.seccion || 'Todas';
+        document.getElementById('guia-parcial').value = guia.parcial || 'I Parcial';
+        document.getElementById('guia-titulo').value = guia.titulo || '';
+        document.getElementById('guia-descripcion').value = guia.descripcion || '';
+        document.getElementById('guia-archivo-url').value = guia.archivo_url || '';
+        document.getElementById('guia-archivo-nombre').value = guia.archivo_nombre || '';
+        guiaCreateContainer.classList.remove('hidden');
+        guiaCreateContainer.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    window.toggleStudyGuide = async function(id, nextStatus) {
+        if (!confirm(`¿Está seguro de cambiar el estado de la guía a ${nextStatus}?`)) return;
+        try {
+            const res = await window.toggleStudyGuideStatus(id, nextStatus);
+            if (res && res.status === 'success') {
+                alert(`Guía de estudio actualizada.`);
+                fetchStudyGuides();
+            } else {
+                alert(res.message || 'Error al actualizar el estado de la guía.');
+            }
+        } catch (err) {
+            alert('Error al comunicarse con el servidor: ' + err.message);
+        }
+    };
+
+    if (formGuiaEstudio) {
+        formGuiaEstudio.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id_guia = document.getElementById('guia-id').value;
+            const asignatura = document.getElementById('guia-materia').value;
+            const grado = document.getElementById('guia-grado').value;
+            const seccion = document.getElementById('guia-seccion').value;
+            const parcial = document.getElementById('guia-parcial').value;
+            const titulo = document.getElementById('guia-titulo').value;
+            const descripcion = document.getElementById('guia-descripcion').value;
+            const archivo_url = document.getElementById('guia-archivo-url').value;
+            const archivo_nombre = document.getElementById('guia-archivo-nombre').value;
+
+            const btnSave = document.getElementById('btn-save-guia');
+            btnSave.disabled = true;
+            btnSave.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Guardando...';
+
+            try {
+                const payload = {
+                    id_guia: id_guia || undefined,
+                    asignatura: asignatura,
+                    grado: grado,
+                    seccion: seccion,
+                    parcial: parcial,
+                    titulo: titulo,
+                    descripcion: descripcion,
+                    archivo_url: archivo_url,
+                    archivo_nombre: archivo_nombre,
+                    tipo_mime: "application/pdf",
+                    docente_id: currentUser.userId,
+                    docente_nombre: currentUser.nombre,
+                    requesterUserId: currentUser.userId
+                };
+
+                const res = await window.saveStudyGuide(payload);
+                if (res && res.status === 'success') {
+                    alert('Guía de estudio guardada exitosamente.');
+                    hideGuiaForm();
+                    formGuiaEstudio.reset();
+                    fetchStudyGuides();
+                } else {
+                    alert(res.message || 'Error al guardar la guía de estudio.');
+                }
+            } catch (err) {
+                alert('Error al comunicar con el servidor: ' + err.message);
+            } finally {
+                btnSave.disabled = false;
+                btnSave.innerHTML = 'Publicar Guía';
+            }
+        });
+    }
 
     // Inicialización automática de la sección de entregas (A-73)
     // Usar replaceState para el estado inicial incluyendo el stack jerárquico (v7.6.4)

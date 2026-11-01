@@ -75,6 +75,9 @@ function doPost(e) {
       case "generateMigrationReport": result = generateMigrationReport(payload); break;
       case "recordStructuredLog": result = recordAcademicStructuredLog(payload); break;
       case "createSpreadsheetBackup": result = createAcademicBackup(payload); break;
+      case "createOrUpdateStudyGuide": result = createOrUpdateStudyGuide(payload); break;
+      case "getStudyGuides": result = getStudyGuides(payload); break;
+      case "toggleStudyGuideStatus": result = toggleStudyGuideStatus(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -467,5 +470,287 @@ function createAcademicBackup(payload) {
       detalles: err.message
     });
     return { status: "error", message: "Error al generar respaldo académico: " + err.message };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// GESTIÓN DE GUÍAS DE ESTUDIO POR ASIGNATURA Y PARCIAL (REQ-DOC-001)
+// ---------------------------------------------------------------------------
+
+function getOrCreateGuiasEstudioSheet(ss) {
+  let sheet = ss.getSheetByName("GuiasEstudio");
+  if (!sheet) {
+    sheet = ss.insertSheet("GuiasEstudio");
+    sheet.appendRow([
+      "id_guia",
+      "asignatura",
+      "grado",
+      "seccion",
+      "parcial",
+      "titulo",
+      "descripcion",
+      "archivo_url",
+      "archivo_nombre",
+      "tipo_mime",
+      "docente_id",
+      "docente_nombre",
+      "fecha_creacion",
+      "estado"
+    ]);
+  }
+  return sheet;
+}
+
+/**
+ * Crea o actualiza una guía de estudio formativa.
+ * Valida campos obligatorios y extensiones/MIME documentales permitidas.
+ */
+function createOrUpdateStudyGuide(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(10000);
+  const ss = SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateGuiasEstudioSheet(ss);
+
+    const {
+      id_guia,
+      asignatura,
+      grado,
+      seccion,
+      parcial,
+      titulo,
+      descripcion,
+      archivo_url,
+      archivo_nombre,
+      tipo_mime,
+      docente_id,
+      docente_nombre,
+      requesterUserId
+    } = payload || {};
+
+    if (!asignatura || !grado || !parcial || !titulo) {
+      return { status: "error", message: "Campos obligatorios incompletos: asignatura, grado, parcial y título son requeridos." };
+    }
+
+    const ALLOWED_MIMES = [
+      "application/pdf",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application/msword",
+      "text/plain",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "application/vnd.ms-excel",
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "application/vnd.ms-powerpoint"
+    ];
+
+    if (tipo_mime && !ALLOWED_MIMES.includes(tipo_mime) && !tipo_mime.startsWith("image/")) {
+      return { status: "error", message: "Tipo de archivo no autorizado. Formatos permitidos: PDF, DOCX, TXT, XLSX, PPTX." };
+    }
+
+    const data = sheet.getDataRange().getValues();
+    const headers = data[0];
+    const idIdx = headers.indexOf("id_guia");
+    const now = new Date();
+
+    if (id_guia) {
+      // Modo Actualización
+      let rowIndex = -1;
+      for (let i = 1; i < data.length; i++) {
+        if (String(data[i][idIdx]) === String(id_guia)) {
+          rowIndex = i + 1;
+          break;
+        }
+      }
+
+      if (rowIndex !== -1) {
+        sheet.getRange(rowIndex, 2).setValue(asignatura);
+        sheet.getRange(rowIndex, 3).setValue(grado);
+        sheet.getRange(rowIndex, 4).setValue(seccion || "Todas");
+        sheet.getRange(rowIndex, 5).setValue(parcial);
+        sheet.getRange(rowIndex, 6).setValue(titulo);
+        sheet.getRange(rowIndex, 7).setValue(descripcion || "");
+        if (archivo_url) sheet.getRange(rowIndex, 8).setValue(archivo_url);
+        if (archivo_nombre) sheet.getRange(rowIndex, 9).setValue(archivo_nombre);
+        if (tipo_mime) sheet.getRange(rowIndex, 10).setValue(tipo_mime);
+        if (docente_nombre) sheet.getRange(rowIndex, 12).setValue(docente_nombre);
+
+        recordAcademicStructuredLog({
+          severidad: "INFO",
+          funcion: "createOrUpdateStudyGuide",
+          codigoError: "GUIDE_UPDATED",
+          requesterUserId: requesterUserId || docente_id,
+          detalles: `Guía de estudio actualizada: ${id_guia} - ${titulo}`
+        });
+
+        return { status: "success", message: "Guía de estudio actualizada exitosamente.", id_guia: id_guia };
+      }
+    }
+
+    // Modo Creación Nueva Guía
+    const newId = "GUIA-" + now.getFullYear() + "-" + ("0000" + Math.floor(Math.random() * 90000 + 10000)).slice(-5);
+    const row = [
+      newId,
+      asignatura,
+      grado,
+      seccion || "Todas",
+      parcial,
+      titulo,
+      descripcion || "",
+      archivo_url || "",
+      archivo_nombre || "",
+      tipo_mime || "application/pdf",
+      docente_id || requesterUserId || "DOCENTE",
+      docente_nombre || "Docente Asignado",
+      now.toISOString(),
+      "activo"
+    ];
+
+    sheet.appendRow(row);
+
+    recordAcademicStructuredLog({
+      severidad: "INFO",
+      funcion: "createOrUpdateStudyGuide",
+      codigoError: "GUIDE_CREATED",
+      requesterUserId: requesterUserId || docente_id,
+      detalles: `Nueva guía creada: ${newId} - ${titulo} (${asignatura})`
+    });
+
+    return {
+      status: "success",
+      message: "Guía de estudio publicada exitosamente.",
+      id_guia: newId,
+      guia: {
+        id_guia: newId,
+        asignatura: asignatura,
+        grado: grado,
+        seccion: seccion || "Todas",
+        parcial: parcial,
+        titulo: titulo,
+        descripcion: descripcion || "",
+        archivo_url: archivo_url || "",
+        archivo_nombre: archivo_nombre || "",
+        tipo_mime: tipo_mime || "application/pdf",
+        docente_id: docente_id || requesterUserId,
+        docente_nombre: docente_nombre || "Docente Asignado",
+        fecha_creacion: now.toISOString(),
+        estado: "activo"
+      }
+    };
+  } catch (err) {
+    return { status: "error", message: "Error al gestionar guía de estudio: " + err.message };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/**
+ * Consulta el listado de guías de estudio filtrando por grado, sección, materia, parcial y estado.
+ */
+function getStudyGuides(payload) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateGuiasEstudioSheet(ss);
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) {
+      return { status: "success", guias: [] };
+    }
+
+    const headers = data[0];
+    const { grado, seccion, asignatura, parcial, estado, docente_id, rol } = payload || {};
+
+    const guias = [];
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const item = {};
+      headers.forEach((h, idx) => {
+        item[h] = row[idx];
+      });
+
+      // Filtro por estado: si no se especifica y es alumno, solo activas
+      if (rol === "Estudiante" || !estado) {
+        if (item.estado && String(item.estado).toLowerCase() !== "activo") continue;
+      } else if (estado && String(item.estado).toLowerCase() !== String(estado).toLowerCase()) {
+        continue;
+      }
+
+      // Filtro por grado
+      if (grado && item.grado && String(item.grado).toLowerCase() !== String(grado).toLowerCase() && item.grado !== "Todos") {
+        continue;
+      }
+
+      // Filtro por sección
+      if (seccion && item.seccion && item.seccion !== "Todas" && String(item.seccion).toLowerCase() !== String(seccion).toLowerCase()) {
+        continue;
+      }
+
+      // Filtro por asignatura
+      if (asignatura && item.asignatura && String(item.asignatura).toLowerCase() !== String(asignatura).toLowerCase()) {
+        continue;
+      }
+
+      // Filtro por parcial
+      if (parcial && item.parcial && String(item.parcial).toLowerCase() !== String(parcial).toLowerCase()) {
+        continue;
+      }
+
+      // Filtro por docente si aplica
+      if (docente_id && rol === "Docente" && item.docente_id && String(item.docente_id) !== String(docente_id)) {
+        continue;
+      }
+
+      guias.push(item);
+    }
+
+    return { status: "success", guias: guias };
+  } catch (err) {
+    return { status: "error", message: "Error al consultar guías de estudio: " + err.message };
+  }
+}
+
+/**
+ * Activa o desactiva una guía de estudio formativa.
+ */
+function toggleStudyGuideStatus(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(10000);
+    const ss = SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateGuiasEstudioSheet(ss);
+
+    const { id_guia, status, requesterUserId } = payload || {};
+    if (!id_guia) {
+      return { status: "error", message: "ID de guía no especificado." };
+    }
+
+    const data = sheet.getDataRange().getValues();
+    const headers = data[0];
+    const idIdx = headers.indexOf("id_guia");
+    const estadoIdx = headers.indexOf("estado");
+
+    let found = false;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][idIdx]) === String(id_guia)) {
+        const nuevoEstado = status || (String(data[i][estadoIdx]).toLowerCase() === "activo" ? "inactivo" : "activo");
+        sheet.getRange(i + 1, estadoIdx + 1).setValue(nuevoEstado);
+        found = true;
+
+        recordAcademicStructuredLog({
+          severidad: "INFO",
+          funcion: "toggleStudyGuideStatus",
+          codigoError: "GUIDE_STATUS_CHANGED",
+          requesterUserId: requesterUserId,
+          detalles: `Guía ${id_guia} cambió estado a ${nuevoEstado}`
+        });
+
+        return { status: "success", message: `Guía ${id_guia} marcada como ${nuevoEstado}.`, id_guia: id_guia, estado: nuevoEstado };
+      }
+    }
+
+    return { status: "error", message: "Guía de estudio no encontrada." };
+  } catch (err) {
+    return { status: "error", message: "Error al cambiar estado de la guía: " + err.message };
+  } finally {
+    lock.releaseLock();
   }
 }

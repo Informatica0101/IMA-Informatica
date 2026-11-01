@@ -873,3 +873,24 @@ Módulo: Gestión de Copias de Seguridad, Integridad y Restauración Protegida (
   * Implementada tabla interactiva de copias de seguridad con renderizado de IDs unívocos, fecha/hora, enlaces de descarga directa en Drive, visualización de checksums SHA-256 formateados y badges de estado.
   * Diseñado e integrado modal seguro `#modal-confirm-restore` con campo de texto que exige escribir exactamente 'CONFIRMAR_RESTAURACION_INSTITUCIONAL' antes de permitir ejecutar la acción crítica de restauración.
 - Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-019] como completada.
+
+REGISTRO DE CAMBIOS - MÓDULO DE GESTIÓN DE GUÍAS DE ESTUDIO POR ASIGNATURA Y PARCIAL - Sun Nov 01 2026
+
+Módulo: Gestión de Guías de Estudio por Asignatura y Parcial ([REQ-DOC-001])
+- Backend (`backend/academic-service/Code.gs`):
+  * Creada función `getOrCreateGuiasEstudioSheet(ss)` con inicialización de hoja 'GuiasEstudio' y columnas formales: id_guia, asignatura, grado, seccion, parcial, titulo, descripcion, archivo_url, archivo_nombre, tipo_mime, docente_id, docente_nombre, fecha_creacion, estado.
+  * Implementada función `createOrUpdateStudyGuide(payload)` con validación de campos obligatorios, lista blanca estricta de tipos MIME permitidos (PDF, DOCX, TXT, XLSX, PPTX) y bloqueo atómico de concurrencia mediante `LockService.getScriptLock()`.
+  * Desarrollada función `getStudyGuides(payload)` con filtrado multicriterio por grado, sección, asignatura, parcial, rol del solicitante y estado activo/inactivo.
+  * Añadida función `toggleStudyGuideStatus(payload)` para habilitación y deshabilitación controlada de guías de estudio por parte de docentes autorizados.
+  * Expuestas y registradas las tres acciones (`createOrUpdateStudyGuide`, `getStudyGuides`, `toggleStudyGuideStatus`) en el despachador de solicitudes `doPost`.
+- Cliente API (`js/api.js`):
+  * Creadas funciones `window.saveStudyGuide(guideData)`, `window.getStudyGuides(filters)` y `window.toggleStudyGuideStatus(guideId, status)`.
+- Panel Docente (`teacher-dashboard.html` y `js/teacher.js`):
+  * Incorporada pestaña y botón de navegación `#nav-guias` con icono representativo en el menú lateral.
+  * Añadida sección completa `#section-guias` con panel de filtros por parcial y grado, y formulario reactivo `#form-guia-estudio` para registro y actualización de guías.
+  * Implementadas funciones de ciclo de vida docente: `fetchStudyGuides()`, `renderStudyGuides()`, `window.editStudyGuide(guiaId)` y `window.toggleStudyGuide(guiaId, currentStatus)`.
+- Panel Estudiantil (`student-dashboard.html` y `js/student.js`):
+  * Incorporada pestaña interactiva `#tab-guias` y contenedor `#view-guias` para visualización organizada de material didáctico.
+  * Añadido selector de filtrado por parcial (`#student-guia-parcial-filter`) y botón de recarga.
+  * Implementadas funciones `loadStudentStudyGuides()` y `renderStudentStudyGuides()` con renderizado responsivo en tarjetas modernas y botón de descarga directa de archivos.
+- Backlog (`Pendientes.md`): Marcada tarea [REQ-DOC-001] como completada.

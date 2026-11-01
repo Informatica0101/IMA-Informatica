@@ -309,3 +309,21 @@ window.restoreBackup = function(backupId, confirmationToken) {
 window.runMaintenance = function(options) {
     return window.fetchApi('USER', 'runSystemMaintenance', options || {});
 };
+
+/**
+ * GESTIÓN DE GUÍAS DE ESTUDIO FORMATIVAS (REQ-DOC-001)
+ */
+window.saveStudyGuide = function(guideData) {
+    return window.fetchApi('ACADEMIC', 'createOrUpdateStudyGuide', guideData || {});
+};
+
+window.getStudyGuides = function(filters) {
+    return window.fetchApi('ACADEMIC', 'getStudyGuides', filters || {});
+};
+
+window.toggleStudyGuideStatus = function(guideId, status) {
+    return window.fetchApi('ACADEMIC', 'toggleStudyGuideStatus', {
+        id_guia: guideId,
+        status: status
+    });
+};
