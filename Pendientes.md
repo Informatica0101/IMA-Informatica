@@ -15611,9 +15611,123 @@
 
 ---
 
-### [F40-Task01] [P0] Blindaje de almacenamiento seguro y erradicación de enlaces públicos
+### [F40-Task01] [P0] Completar el control granular de permisos por operación documental (F40-21)
 - **Prioridad:** P0 (Prioridad crítica / Bloqueante)
-- **Orden de Ejecución:** 1 (Aislamiento de almacenamiento físico en Google Drive)
+- **Orden de Ejecución:** 1 (Matriz base de autorización por operación)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`ROLE_PERMISSIONS`, `validateRolePermission`)
+  - `backend/accounting-service/Code.gs` (`ROLE_PERMISSIONS`, `validateRolePermission`)
+  - `backend/user-service/Code.gs` (`ROLE_PERMISSIONS`, `savePermissionMatrix`, `getPermissionMatrix`)
+  - `backend/developer-service/Code.gs` (`ROLE_PERMISSIONS`)
+  - Hojas de Cálculo: `MatrizPermisosDocumentales`, `ConfiguracionInstitucional`
+- **Subcapacidades Relacionadas:** F40-01, F40-02, F40-03, F40-21.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-01) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  La matriz actual de permisos no separa suficientemente la lectura de metadatos, la vista previa en pantalla, la descarga de archivos y otras operaciones sensibles. Esto permite que una autorización general de consulta pueda terminar concediendo acceso irrestricto al contenido binario del documento.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Definición de permisos independientes por operación:*
+     - Establecer permisos atómicos e independientes para: `Consultar metadatos`, `Ver el historial`, `Visualizar el contenido (vista previa)`, `Descargar el original`, `Descargar una copia derivada`, `Subir documentos`, `Sustituir versiones`, `Restaurar versiones`, `Editar metadatos`, `Cambiar clasificación`, `Aprobar o rechazar`, `Firmar o registrar conformidad`, `Compartir`, `Revocar acceso`, `Archivar`, `Solicitar disposición`, `Autorizar disposición`, `Ejecutar eliminación autorizada`.
+  2. *Configurabilidad y ámbito de aplicación:*
+     - Permitir configurar permisos por rol, categoría, sensibilidad, departamento y relación con el expediente.
+     - Permitir permisos excepcionales temporales con fecha de expiración y motivo justificado.
+     - Establecer que los permisos de operaciones críticas no se hereden automáticamente de permisos de consulta.
+     - Incorporar una vista de matriz que permita identificar qué roles pueden realizar cada operación.
+     - Aplicar las mismas reglas en la interfaz de usuario y en la validación estricta del backend.
+     - Permitir revisar los permisos efectivos de un usuario sobre un documento específico.
+     - Registrar los cambios de permisos y sus responsables en la bitácora institucional.
+     - Establecer reglas de denegación explícita cuando una restricción de sensibilidad o ámbito prevalezca sobre un permiso general.
+     - Permitir revocar autorizaciones sin eliminar el historial de accesos anteriores.
+  3. *Parametrización en caso de disputa de políticas:*
+     - Parámetro en `ConfiguracionInstitucional`: `POLITICA_HERENCIA_PERMISOS_DOCUMENTALES`: `ESTRICTA_SIN_HERENCIA` (por defecto) vs. `HERENCIA_JERARQUICA_EXPRESA`.
+- **Criterios de Aceptación:**
+  - [ ] Conceder consulta de metadatos sin descarga permite ver la ficha descriptiva pero deniega la obtención del binario.
+  - [ ] Conceder vista previa sin edición permite visualizar el documento pero bloquea la sustitución de archivos.
+  - [ ] Conceder descarga sin modificación permite obtener el archivo pero bloquea la alteración de su contenido.
+  - [ ] Conceder aprobación sin administración de permisos permite autorizar el trámite sin alterar la matriz de acceso.
+  - [ ] Al revocar un permiso, las nuevas operaciones quedan denegadas de inmediato.
+  - [ ] Intentos de ejecutar una operación no autorizada directamente contra el backend devuelven denegación de acceso.
+  - [ ] La consulta de permisos efectivos muestra con claridad las autorizaciones aplicables y su procedencia.
+- **Dependencias:** Matriz de roles y autorización existente.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F40-Task02] [P0] Incorporar clasificación de sensibilidad y protección por categoría documental (F40-11)
+- **Prioridad:** P0 (Prioridad crítica / Bloqueante)
+- **Orden de Ejecución:** 2 (Taxonomía formal y reglas de sensibilidad)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`uploadStudentDocument`, `getStudentDocuments`)
+  - `backend/accounting-service/Code.gs` (`uploadEmployeeDocument`, `getEmployeeDocuments`)
+  - Hojas de Cálculo: `DocumentosEstudiante`, `DocumentosLaborales`, `CategoriasDocumentalesConfig`
+- **Subcapacidades Relacionadas:** F40-02, F40-11.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-02) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  Los documentos no poseen una clasificación formal y uniforme de sensibilidad. En particular, los expedientes académicos no diferencian adecuadamente documentos médicos, disciplinarios, financieros, laborales y de identidad que demandan un tratamiento reservado.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Taxonomía y niveles de sensibilidad configurables:*
+     - Incorporar una clasificación documental independiente del tipo o nombre del archivo.
+     - Niveles de sensibilidad configurables: `Público institucional`, `Uso interno`, `Confidencial`, `Restringido`, `Especialmente protegido`.
+     - Categorías documentales específicas: `Académica`, `Médica`, `Disciplinaria`, `Financiera`, `Laboral`, `Identidad personal`, `Legal`, `Administrativa`.
+  2. *Reglas de protección y acceso condicional:*
+     - Asociar a cada documento una categoría y un nivel de sensibilidad.
+     - Establecer permisos predeterminados por combinación de categoría, sensibilidad, rol y ámbito.
+     - Aplicar restricciones especiales a documentos médicos, disciplinarios, financieros y laborales.
+     - Evitar que el acceso general a un expediente permita consultar automáticamente todos los documentos sensibles que contiene.
+     - Permitir excepciones justificadas y temporales con responsable, motivo, alcance y fecha de vencimiento.
+     - Mostrar advertencias de sensibilidad en las vistas documentales y antes de descargar o compartir.
+     - Mantener un historial completo de cambios de clasificación.
+     - Permitir revisión manual de clasificaciones dudosas y registrar quién confirmó la categoría oficial.
+- **Criterios de Aceptación:**
+  - [ ] Un documento médico clasificado como `Restringido` es inaccesible para usuarios sin autorización médica específica aunque tengan acceso general al expediente del alumno.
+  - [ ] Un contrato laboral clasificado como `Confidencial` no puede ser descargado por personal docente sin permisos de Recursos Humanos.
+  - [ ] Consultar un documento desde una cuenta autorizada funciona según las reglas de categoría y ámbito.
+  - [ ] Al cambiar la clasificación de un archivo se registra el responsable, fecha y valor anterior.
+  - [ ] Los intentos de modificar la clasificación sin autorización son rechazados.
+  - [ ] Las excepciones temporales funcionan durante el periodo autorizado y se revocan al expirar.
+  - [ ] Búsquedas, vistas previas y exportaciones respetan estrictamente la clasificación asignada.
+- **Dependencias:** F40-Task01.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F40-Task03] [P0] Reforzar la autorización por expediente, departamento y ámbito institucional (F40-12)
+- **Prioridad:** P0 (Prioridad crítica / Bloqueante)
+- **Orden de Ejecución:** 3 (Control de acceso basado en atributos y contexto - ABAC)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`assertRecordOwnership`, `validateAcademicResponsibilityAndScopeAccess`)
+  - `backend/accounting-service/Code.gs` (`validateRolePermission`)
+  - `backend/user-service/Code.gs` (`assignRoleScope`)
+- **Subcapacidades Relacionadas:** F40-03, F40-12.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-03) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  La validación de pertenencia existente no garantiza que todas las operaciones comprueben la relación entre el usuario, el expediente y el documento solicitado. Manipular un identificador en la petición puede exponer registros ajenos si el rol posee acceso genérico a la función.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Evaluación multidimensional de atributos en el backend:*
+     - Validar en cada operación: Identidad del usuario, Rol y permisos, Departamento o área, Expediente, Relación del usuario con el expediente, Categoría y sensibilidad documental, Operación solicitada, Estado de conservación y seguridad del documento.
+     - Aplicar comprobaciones en el backend de forma independiente a los filtros visuales de la interfaz.
+     - Verificar la autorización en consultas individuales, listados, búsquedas, descargas, vistas previas, restauraciones y exportaciones.
+  2. *Prevención de manipulación de identificadores (IDOR):*
+     - Impedir que un usuario altere identificadores de expediente, documento, solicitud o archivo para acceder a información ajena.
+     - Diferenciar los permisos de acceso al expediente de los permisos sobre cada documento individual que este contiene.
+     - Permitir autorizaciones excepcionales con justificación, responsable y periodo de vigencia.
+     - Respuestas de error controladas ante accesos denegados que no revelen la existencia de documentos que el usuario no está facultado a conocer.
+     - Registrar en auditoría los intentos de acceso fuera del ámbito autorizado.
+- **Criterios de Aceptación:**
+  - [ ] Consultar un documento dentro del ámbito asignado es permitido.
+  - [ ] Sustituir un identificador por el de otro expediente ajeno resulta en denegación de acceso.
+  - [ ] Consultar documentos médicos o disciplinarios sin permiso específico es denegado.
+  - [ ] Intentar descargar un archivo cuyo listado de metadatos se puede ver aplica la restricción de descarga.
+  - [ ] Invocar directamente el endpoint sin pasar por la interfaz aplica exactamente las mismas restricciones.
+  - [ ] Consultar listados con filtros manipulados no retorna registros de otros departamentos.
+  - [ ] Las respuestas denegadas no revelan contenido ni metadatos sensibles.
+- **Dependencias:** F40-Task01, F40-Task02.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F40-Task04] [P0] Streaming autenticado y eliminación total de enlaces públicos (F40-01)
+- **Prioridad:** P0 (Prioridad crítica / Bloqueante)
+- **Orden de Ejecución:** 4 (Aislamiento de almacenamiento físico en Google Drive)
 - **Componentes Afectados:**
   - `backend/accounting-service/Code.gs` (`uploadEmployeeDocument`, `uploadPaymentVoucher`)
   - `backend/academic-service/Code.gs` (`uploadStudentDocument`, `getSecureDocumentStream`)
@@ -15621,226 +15735,632 @@
 - **Subcapacidades Relacionadas:** F40-01, F40-13, F40-14.
 - **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-13), D (E2E-02, E2E-04) y G (Riesgo Crítico 1).
 - **Problema Detectado y Riesgos:**
-  Actualmente, las funciones `uploadEmployeeDocument` y `uploadPaymentVoucher` asignan a los archivos subidos el permiso de visualización pública mediante `file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW)`. Esto expone datos personales sensibles (salarios, identidades, números de cuenta y recibos bancarios) a cualquier usuario no autenticado que obtenga la URL directa o enlace en caché.
+  Las funciones de carga de documentos laborales y comprobantes habilitan acceso público con `DriveApp.Access.ANYONE_WITH_LINK`. Cualquier persona con la URL puede consultar el archivo sin iniciar sesión. La revocación en la aplicación no anula esos enlaces públicos.
 - **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Erradicación de enlaces públicos:*
-     - Eliminar toda invocación de `DriveApp.Access.ANYONE_WITH_LINK` en los servicios backend. Los archivos en Google Drive deben crearse con permisos restringidos exclusivamente a la cuenta de servicio o propietarios institucionales.
-  2. *Servicio de entrega autenticada por streaming:*
-     - Centralizar la consulta y descarga de archivos a través de `getSecureDocumentStream(payload)` en `backend/academic-service/Code.gs` y un endpoint análogo en `accounting-service`.
-     - Validar obligatoriamente la sesión activa del usuario y su pertenencia o autorización explícita sobre el expediente antes de generar la respuesta o URL temporal.
-  3. *Generación de tokens efímeros para visualización:*
-     - Implementar tokens de acceso temporal firmados con HMAC de expiración breve (ej. 15 a 60 minutos) para previsualizaciones en navegador, impidiendo su reutilización posterior.
+  1. *Eliminación de permisos públicos en Google Drive:*
+     - Eliminar toda invocación de `DriveApp.Access.ANYONE_WITH_LINK` en procesos que almacenen documentos privados o institucionales.
+     - Configurar los archivos para que permanezcan privados en Drive y solo accesibles mediante operaciones autenticadas.
+  2. *Mecanismo centralizado de streaming seguro:*
+     - Centralizar la entrega mediante streaming seguro validando: sesión activa, permisos sobre el documento específico, ámbito/expediente/departamento, ausencia de bloqueos o revocaciones, y registro previo de la operación.
+     - Diferenciar permisos de consulta, vista previa y descarga; la consulta de metadatos no debe conceder acceso al binario.
+     - Evitar que las respuestas devuelvan enlaces directos permanentes de Google Drive.
+  3. *Tokens temporales efímeros:*
+     - Generar tokens de corta duración vinculados a documento, versión, usuario y operación. Validación estricta en servidor.
+     - Invalidar tokens al expirar, revocar permiso, cerrar acceso o cambiar el estado de seguridad del archivo.
+     - Proteger contra rutas alternativas, miniaturas o enlaces en caché.
+     - Mantener acceso público exclusivamente para documentos declarados formalmente como tales; la emisión de CUV no convierte automáticamente el archivo original en público.
 - **Criterios de Aceptación:**
-  - [ ] Ningún archivo recién creado en Google Drive posee el permiso `ANYONE_WITH_LINK`.
-  - [ ] Intentar abrir una URL directa de Drive desde un navegador anónimo sin sesión activa devuelve denegación de acceso.
-  - [ ] Los usuarios autenticados únicamente pueden acceder a archivos vinculados a su expediente o departamento autorizado.
-- **Dependencias:** Autenticación de sesiones y roles de usuario.
+  - [ ] Subir un contrato laboral y un comprobante de pago: ambos quedan privados en Drive.
+  - [ ] Abrir sus URLs directas desde una sesión anónima: el acceso es denegado.
+  - [ ] Intentar consultar el documento con un usuario sin permisos: la solicitud es denegada.
+  - [ ] Intentar descargarlo con un usuario que solo tiene permiso de consulta de metadatos: la descarga es denegada.
+  - [ ] Revocar el permiso de un usuario y reutilizar su enlace: el acceso es denegado.
+  - [ ] Reutilizar un token vencido, revocado o asociado a otra versión: el servidor rechaza la solicitud.
+  - [ ] Ningún proceso de carga privado vuelve a establecer `ANYONE_WITH_LINK`.
+- **Dependencias:** F40-Task01, F40-Task03.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F40-Task02] [P0] Implementación del motor de integridad criptográfica SHA-256 en repositorio documental
+### [F40-Task05] [P0] Auditar y remediar los permisos públicos preexistentes en Google Drive (F40-22)
 - **Prioridad:** P0 (Prioridad crítica / Bloqueante)
-- **Orden de Ejecución:** 2 (Integridad criptográfica y detección de alteraciones)
+- **Orden de Ejecución:** 5 (Saneamiento de almacenamiento histórico)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`remediateLegacyPublicDrivePermissions`)
+  - Google Drive institucional (`DriveApp`)
+  - Hoja de Cálculo: `ReporteRemediacionPermisosDrive`
+- **Subcapacidades Relacionadas:** F40-13, F40-22.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-13), D (E2E-02) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  Eliminar la asignación de enlaces públicos en nuevas cargas no resuelve la exposición de los archivos que ya fueron compartidos históricamente con `ANYONE_WITH_LINK`, los cuales permanecen accesibles en internet si se conoce el identificador.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Inventario exhaustivo de permisos en Drive:*
+     - Barrer carpetas documentales institucionales e identificar permisos generales públicos y permisos heredados.
+     - Identificar archivos compartidos con usuarios o grupos desvinculados de la institución.
+     - Diferenciar documentos expresamente públicos de aquellos que deben ser privados.
+  2. *Reporte de auditoría y revocación automática:*
+     - Generar reporte en `ReporteRemediacionPermisosDrive`: Archivo, Categoría, Registro relacionado, Tipo de permiso, Origen del permiso, Fecha de detección, Nivel de riesgo.
+     - Ejecutar revocación masiva de permisos públicos no autorizados, verificando el resultado real consultando nuevamente los permisos efectivos del archivo.
+     - Detectar permisos heredados desde carpetas superiores y resolverlos en el nivel donde se originan.
+     - Permitir revisión manual de casos ambiguos antes de modificar permisos.
+- **Criterios de Aceptación:**
+  - [ ] Inventaría y clasifica con precisión archivos de prueba públicos vs restringidos.
+  - [ ] Identifica permisos públicos heredados desde carpetas padre señalando su origen.
+  - [ ] Revoca el permiso público no autorizado y confirma que el archivo deja de ser accesible anónimamente.
+  - [ ] Los archivos catalogados formalmente como públicos institucionales no se modifican.
+  - [ ] Se conserva la evidencia documental completa de la detección y remediación.
+- **Dependencias:** F40-Task04.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F40-Task06] [P0] Implementar integridad criptográfica SHA-256 para archivos y versiones (F40-02)
+- **Prioridad:** P0 (Prioridad crítica / Bloqueante)
+- **Orden de Ejecución:** 6 (Integridad criptográfica y detección de alteraciones)
 - **Componentes Afectados:**
   - `backend/academic-service/Code.gs` (`uploadStudentDocument`, `verifyDocumentIntegritySha256`)
   - `backend/accounting-service/Code.gs` (`uploadEmployeeDocument`, `generateSchoolDocument`)
   - Hojas de Cálculo: `DocumentosEstudiante`, `DocumentosLaborales`, `DocumentosEscolaresEmitidos`
 - **Subcapacidades Relacionadas:** F40-09, F40-10.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-09) y G (Riesgo Crítico 2).
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-09) y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  Al subir documentos a Google Drive no se computa su huella criptográfica SHA-256. En consecuencia, si un archivo es modificado, truncado o sustituido de forma directa en Drive o por un script de terceros, el sistema es incapaz de detectar la alteración, perdiendo el expediente su valor probatorio legal e institucional.
+  Los archivos subidos carecen de una huella SHA-256 persistida y verificable. El mecanismo `computeSimpleHash` usado en respaldos emplea DJB2, vulnerable a colisiones e inadecuado para probar inalterabilidad. Sustituciones directas en Drive pasan desapercibidas.
 - **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Cálculo y almacenamiento de huella SHA-256:*
-     - Al momento de recibir el binario en `uploadStudentDocument`, `uploadEmployeeDocument` y tras emitir el PDF en `generateSchoolDocument`, computar el hash SHA-256 utilizando `Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, rawBytes)`.
-     - Convertir los bytes del digest a cadena hexadecimal y registrarlo en una columna dedicada `HashSHA256` en las hojas de control respectivas.
-  2. *Rutina de verificación de inmutabilidad:*
-     - Implementar la función `verifyDocumentIntegritySha256(payload)` que descargue el blob actual de Drive, calcule su hash actual y lo compare contra el `HashSHA256` registrado al inicio.
-     - Si los hashes difieren, emitir una alerta crítica en `LogsSistema` y clasificar el documento en estado `INTEGRIDAD_COMPROMETIDA`.
+  1. *Cálculo y persistencia de hash SHA-256:*
+     - Calcular SHA-256 del contenido binario real al incorporar cualquier documento (`Utilities.computeDigest`).
+     - Registrar el hash junto con: ID de documento, ID de versión, ID de archivo físico en Drive, tamaño en bytes, tipo MIME validado, fecha de incorporación, usuario o proceso responsable.
+     - Calcular una huella independiente para cada versión; una versión nueva nunca debe sobrescribir la huella histórica.
+  2. *Verificación obligatoria en puntos de control:*
+     - Verificar hash: antes de entregar por streaming, al restaurar versiones, al verificar firmas/aprobaciones, al comprobar respaldos y en conciliaciones periódicas.
+     - Si el hash no coincide, bloquear la entrega y generar evento de integridad comprometida.
+     - Permitir consulta de integridad sin facultades para alterar el hash. La edición de metadatos ordinarios no debe reemplazar el hash.
+     - Para históricos sin hash, permitir migración controlada identificando el hash como calculado retrospectivamente.
 - **Criterios de Aceptación:**
-  - [ ] Todo documento nuevo almacena su huella SHA-256 exacta en la base de datos.
-  - [ ] La sustitución inadvertida del archivo en Google Drive es detectada de inmediato al ejecutar la verificación.
-  - [ ] La verificación de integridad devuelve confirmación positiva si el binario no ha sufrido modificaciones.
-- **Dependencias:** F40-Task01.
+  - [ ] Subir un archivo de prueba genera y almacena su huella SHA-256.
+  - [ ] Descargarlo mediante streaming verifica y confirma la coincidencia del hash.
+  - [ ] Modificar una copia en Drive sin actualizar el hash registrado hace fallar la verificación y bloquea la entrega.
+  - [ ] Subir una nueva versión genera una huella nueva preservando la huella histórica previa.
+  - [ ] Restaurar una versión comprueba su hash antes de declararla vigente.
+  - [ ] Se descarta totalmente DJB2 para fines de integridad criptográfica.
+- **Dependencias:** F40-Task04.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F40-Task03] [P0] Creación e integración del rol de Auditoría de Solo Lectura
+### [F40-Task07] [P0] Completar la procedencia documental y el registro de responsables (F40-13)
 - **Prioridad:** P0 (Prioridad crítica / Bloqueante)
-- **Orden de Ejecución:** 3 (Segregación de funciones y control interno)
+- **Orden de Ejecución:** 7 (Cadena de custodia y metadatos de origen)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`uploadStudentDocument`, `restoreDocumentVersion`)
+  - `backend/accounting-service/Code.gs` (`uploadEmployeeDocument`, `generateSchoolDocument`)
+  - Hojas de Cálculo: `DocumentosEstudiante`, `DocumentosLaborales`, `RegistroProcedenciaDocumental`
+- **Subcapacidades Relacionadas:** F40-04, F40-13.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-04) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  Los registros identifican al usuario y fecha de subida, pero no conservan de forma uniforme el canal de origen ni suficiente metadata técnica para reconstruir la cadena de custodia de cómo llegó el documento a la institución.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Registro estructurado de canales de procedencia:*
+     - Canales reconocidos: Carga manual, Formulario institucional, Portal del estudiante/tutor, Importación masiva, Generación automática, Integración externa, Migración de archivos históricos.
+     - Registrar usuario responsable o identidad de proceso automático, fecha/hora ISO, servicio de origen y referencia de operación.
+     - Asociar con expediente, solicitud o trámite institucional.
+  2. *Segregación de roles de intervención:*
+     - Diferenciar: Autor/emisor original, Persona que realizó la carga, Persona que revisó el documento, Persona que aprobó o rechazó, Responsable de su custodia física o digital.
+     - Mantener procedencia independiente por versión al reemplazar o restaurar.
+     - En documentos migrados, registrar la fuente original conocida sin presentar la fecha de migración como fecha de creación original.
+     - Permitir consultar la cadena de procedencia desde el detalle del documento y del expediente.
+- **Criterios de Aceptación:**
+  - [ ] Cargas manuales registran canal y usuario de carga específico.
+  - [ ] Documentos generados identifican el proceso automático y plantilla empleada.
+  - [ ] Documentos migrados se marcan como históricos conservando su procedencia original.
+  - [ ] Nuevas versiones registran origen y responsable propios sin alterar los anteriores.
+  - [ ] Consultar el documento expone la cadena completa diferenciando autor, cargador y aprobador.
+- **Dependencias:** F40-Task06.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F40-Task08] [P0] Implementar bitácora forense de consultas, accesos y descargas (F40-05)
+- **Prioridad:** P0 (Prioridad crítica / Bloqueante)
+- **Orden de Ejecución:** 8 (Auditoría forense y trazabilidad de eventos)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`getSecureDocumentStream`, `getStudentDocuments`)
+  - `backend/accounting-service/Code.gs` (`getEmployeeDocuments`, `getIssuedSchoolDocuments`)
+  - `backend/user-service/Code.gs` (`logStructuredEvent`)
+  - Hoja de Cálculo: `LogsSistema`
+- **Subcapacidades Relacionadas:** F40-05, F40-14.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-14), D (E2E-02) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  El historial registra sustituciones pero carece de trazabilidad de consultas, vistas previas, descargas e intentos de acceso denegados. Las descargas directas quedan fuera del radar de seguridad institucional.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Esquema estructurado de eventos forenses:*
+     - Campos obligatorios: ID de evento, Usuario y rol, Documento y versión, Tipo de operación, Fecha y hora ISO, Resultado (SUCCESS/FAILED), Motivo de denegación, Canal de acceso, IP del cliente, ID de sesión/correlación (sin almacenar credenciales ni tokens).
+  2. *Catálogo de eventos estandarizados:*
+     - Registrar: `DOCUMENT_VIEWED`, `DOCUMENT_DOWNLOADED`, `DOCUMENT_PREVIEWED`, `DOCUMENT_VERSION_RESTORED`, `DOCUMENT_ACCESS_DENIED`, `DOCUMENT_PERMISSION_CHANGED`, `DOCUMENT_SIGNATURE_REGISTERED`, `DOCUMENT_INTEGRITY_FAILED`.
+     - Registrar intentos denegados, incluidos aquellos realizados mediante manipulación de IDs.
+     - Permitir búsquedas por usuario, documento, categoría, operación, resultado y fecha.
+     - Proteger la bitácora contra modificaciones desde perfiles operativos ordinarios.
+     - Excluir contraseñas, secretos o contenido completo de archivos en los registros.
+- **Criterios de Aceptación:**
+  - [ ] Visualizar un documento genera el evento `DOCUMENT_VIEWED`.
+  - [ ] Descargar un documento genera el evento `DOCUMENT_DOWNLOADED`.
+  - [ ] Accesos denegados por falta de permisos o manipulación de IDs generan `DOCUMENT_ACCESS_DENIED` con severidad `WARN`.
+  - [ ] Restaurar versiones registra usuario, versión de origen y resultado.
+  - [ ] Los eventos son ordenados y filtrables sin exponer datos sensibles.
+  - [ ] Usuarios operativos no pueden alterar ni borrar eventos de la bitácora.
+- **Dependencias:** F40-Task04, F40-Task03, F40-Task07.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F40-Task09] [P0] Incorporar un rol independiente de auditoría de solo lectura (F40-03)
+- **Prioridad:** P0 (Prioridad crítica / Bloqueante)
+- **Orden de Ejecución:** 9 (Segregación de funciones y fiscalización institucional)
 - **Componentes Afectados:**
   - `backend/academic-service/Code.gs` (`ROLE_PERMISSIONS`)
   - `backend/accounting-service/Code.gs` (`ROLE_PERMISSIONS`)
   - `backend/user-service/Code.gs` (`ROLE_PERMISSIONS`, `getAuditReport`)
   - `backend/developer-service/Code.gs` (`ROLE_PERMISSIONS`)
 - **Subcapacidades Relacionadas:** F40-01, F40-17.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-17), D (E2E-06) y G (Riesgo de Gobernanza 3).
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-17), D (E2E-06) y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  No existe un rol `Auditor` en `ROLE_PERMISSIONS`. Para inspeccionar bitácoras, expedientes o contratos, el usuario debe tener rol `Administrador` o `Director`, otorgándole implícitamente facultades operativas de creación, edición, aprobación y eliminación. Esto viola el principio de segregación de funciones exigido por normas de auditoría.
+  No existe un rol de auditoría aislado. Consultar bitácoras exige roles con facultades administrativas, de edición o aprobación, violando la separación de funciones y permitiendo que quien audita pueda modificar los registros que examina.
 - **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Definición de rol formal:*
-     - Registrar el rol `Auditor` en `ROLE_PERMISSIONS` de todos los microservicios backend.
-     - Asignar permisos estrictamente delimitados a lectura de metadatos, consulta de bitácoras (`getAuditReport`, `getAcademicAuditLogs`, `getStudentDocuments`), visualización protegida y exportación de reportes de fiscalización.
-  2. *Restricción absoluta de operaciones mutables:*
-     - Bloquear cualquier invocación desde el rol `Auditor` a funciones de carga, edición, aprobación, firma, eliminación o reconfiguración de permisos.
+  1. *Definición de rol formal en microservicios:*
+     - Incorporar el rol `Auditor` en `ROLE_PERMISSIONS` de todos los microservicios.
+     - Facultades autorizadas: Metadatos documentales, Historial de versiones, Historial de operaciones, Registros de accesos y descargas, Estado de integridad, Relaciones entre documentos, Políticas de conservación, Firmas y aprobaciones, Reportes de auditoría.
+  2. *Separación estricta y prohibición de modificaciones:*
+     - Separar consulta de metadatos de la descarga de binarios.
+     - Denegar terminantemente: Subir o sustituir documentos, Editar metadatos, Aprobar o rechazar documentos, Firmar documentos, Eliminar o restaurar archivos, Cambiar permisos, Modificar políticas, Alterar registros de auditoría.
+     - Alcance configurable: Institucional, Por departamento, Por expediente, Por periodo, Por categoría documental.
+     - Registrar consultas y exportaciones de auditores. La revocación del rol no altera los registros históricos generados.
 - **Criterios de Aceptación:**
-  - [ ] El rol `Auditor` puede consultar bitácoras y metadatos de expedientes.
-  - [ ] Intentos de ejecución de `uploadStudentDocument`, `updateDocumentStatus` o `savePermissionMatrix` con rol `Auditor` son rechazados con código `AUTH_PERMISSION_DENIED`.
-  - [ ] Toda consulta efectuada por el rol `Auditor` queda registrada en la bitácora institucional.
-- **Dependencias:** Matriz de permisos de usuarios.
+  - [ ] El rol `Auditor` consulta registros y metadatos dentro de su departamento asignado.
+  - [ ] Consultas fuera de su departamento son denegadas.
+  - [ ] Intentar editar, aprobar, firmar, sustituir o eliminar documentos con rol `Auditor` devuelve denegación de acceso.
+  - [ ] Intentar cambiar permisos o invocar mutaciones backend resulta en rechazo inmediato.
+  - [ ] El rol `Auditor` no hereda facultades de Administrador o Director.
+  - [ ] Las exportaciones realizadas quedan registradas en la bitácora.
+- **Dependencias:** F40-Task01, F40-Task08.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F40-Task04] [P0] Vinculación criptográfica de firmas electrónicas y aprobaciones documentales
+### [F40-Task10] [P0] Vincular criptográficamente firmas, aprobaciones y documentos finales (F40-04)
 - **Prioridad:** P0 (Prioridad crítica / Bloqueante)
-- **Orden de Ejecución:** 4 (No repudio y validación de versiones aprobadas)
+- **Orden de Ejecución:** 10 (No repudio y validación de versiones aprobadas)
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs` (`registerDocumentSignature`)
   - `backend/accounting-service/Code.gs` (`generateSchoolDocument`)
   - Hoja de Cálculo: `FirmasConformidades`
 - **Subcapacidades Relacionadas:** F40-07, F40-08.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-08), D (E2E-03) y E (Comparación Externa).
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-08), D (E2E-03) y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  La función `registerDocumentSignature` genera un token pseudoaleatorio (`VERIF-` + `Math.random()`) desconectado del contenido binario del documento. Si el archivo es sustituido o editado con posterioridad a la firma, el token sigue apareciendo como válido, permitiendo alteraciones sin pérdida de la apariencia de aprobación.
+  El registro de firmas usa un token pseudoaleatorio `VERIF-` (`Math.random()`) desconectado del contenido binario del documento. Alterar el archivo con posterioridad a la aprobación no invalida la firma, vulnerando el no repudio.
 - **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Lógica de sellado criptográfico:*
-     - Exigir que al registrar la firma se reciba o compute el `HashSHA256` de la versión aprobada exacta del documento.
-     - Generar el token de verificación mediante HMAC-SHA256 combinando: `documentoId`, `HashSHA256`, `firmanteId`, `rolFirmante` y `timestamp` ISO utilizando la clave secreta institucional (`getAuthTokenSecret`).
-     - Almacenar el hash y el token en `FirmasConformidades`.
-  2. *Bloqueo de versión aprobada:*
-     - Si un documento en estado `Aprobado` o `Firmado` recibe una solicitud de sustitución, el sistema debe bloquear la sobreescritura directa y exigir la creación de una versión correctiva nueva conservando la original.
+  1. *Sellado criptográfico y HMAC:*
+     - Vincular la firma a: ID de documento, ID de versión, SHA-256 del binario exacto, Identidad del firmante, Fecha/hora ISO, Tipo de aceptación, Contexto de aprobación, Estado de validez.
+     - Sustituir el token aleatorio por un identificador seguro HMAC-SHA256 (`Utilities.computeHmacSha256Signature`).
+     - Separar conceptualmente: Aceptación interna del usuario, Firma electrónica institucional, Firma electrónica avanzada/certificada externa.
+  2. *Bloqueo de versión y versiones correctivas:*
+     - Si el documento se modifica tras ser firmado, conservar la versión firmada intacta y registrar la nueva como documento correctivo derivado.
+     - Permitir verificar la firma contra el hash del documento y el historial de eventos.
+     - Mantener el CUV ampliándolo para verificar la integridad del archivo emitido.
 - **Criterios de Aceptación:**
-  - [ ] El token de verificación de firma no depende de valores aleatorios sino de una firma HMAC vinculada al hash del archivo.
-  - [ ] Si el archivo cambia de contenido, la validación de la firma falla indicando discrepancia de integridad.
-  - [ ] Los documentos firmados quedan protegidos contra sobreescritura silenciosa.
-- **Dependencias:** F40-Task02.
+  - [ ] Registrar firma almacena el hash SHA-256 de la versión exacta firmada.
+  - [ ] Verificar documento original confirma la validez de la firma.
+  - [ ] Alterar el binario provoca que la verificación de firma falle de inmediato.
+  - [ ] Sustituir directamente el archivo firmado mediante operaciones ordinarias queda bloqueado.
+  - [ ] Crear versiones correctivas preserva la versión firmada original y registra la nueva relación.
+  - [ ] El sistema no atribuye validez de firma avanzada certificada si solo representa conformidad interna.
+- **Dependencias:** F40-Task06, F40-Task08.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F40-Task05] [P0] Auditoría forense obligatoria de consultas y descargas documentales
+### [F40-Task11] [P0] Implementar el motor de conservación, archivo y bloqueo legal (F40-06)
 - **Prioridad:** P0 (Prioridad crítica / Bloqueante)
-- **Orden de Ejecución:** 5 (Trazabilidad y detección de exfiltración de información)
+- **Orden de Ejecución:** 11 (Ciclo de vida documental y retención WORM / Legal Hold)
 - **Componentes Afectados:**
-  - `backend/academic-service/Code.gs` (`getSecureDocumentStream`, `getStudentDocuments`)
-  - `backend/accounting-service/Code.gs` (`getEmployeeDocuments`, `getIssuedSchoolDocuments`)
-  - Hoja de Cálculo: `LogsSistema`
-- **Subcapacidades Relacionadas:** F40-04, F40-05, F40-14.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-14), D (E2E-02) y G (Riesgo de Trazabilidad 4).
+  - `backend/academic-service/Code.gs` (`applyDocumentRetentionPolicies`, `setDocumentLegalHold`, `closeDocumentLifecycleStage`)
+  - Hojas de Cálculo: `PoliticasRetencionDocumental`, `BloqueosLegalesDocumentos`, `DocumentosEstudiante`
+- **Subcapacidades Relacionadas:** F40-11, F40-12, F40-20.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-11, F40-12) y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  Actualmente, las descargas y lecturas de archivos no generan registros en `LogsSistema`. Si un usuario descarga masivamente expedientes o visualiza documentos laborales de terceros, no queda evidencia alguna de la operación, impidiendo la detección de fugas de información.
+  No existen reglas que definan cuánto tiempo debe conservarse cada categoría documental, cuándo debe pasar a archivo pasivo y qué documentos deben permanecer bloqueados ante investigaciones, arriesgando destrucción prematura de expedientes.
 - **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Registro estructurado de acceso y descarga:*
-     - En toda ejecución de `getSecureDocumentStream` o descarga autorizada, emitir un evento structured logging con: `evento: "DOCUMENT_DOWNLOADED"` o `"DOCUMENT_VIEWED"`, `documentoId`, `version`, `usuarioId`, `rol`, `ip`, `fechaHora` y `resultado: "SUCCESS"`.
-  2. *Auditoría de accesos denegados:*
-     - Registrar intentos de consulta no autorizados con `evento: "DOCUMENT_ACCESS_DENIED"` y severidad `WARN`/`CRITICAL`.
+  1. *Políticas de retención configurables:*
+     - Crear el modelo en `PoliticasRetencionDocumental`: Categoría y tipos de documentos afectados, Periodo de conservación en años/meses, Evento iniciador del cómputo (creación, cierre de expediente, egreso, fin de contrato), Fecha de inicio y vencimiento estimado, Destino final (conservación permanente, transferencia a archivo, revisión, disposición), Responsable y vigencia de la política.
+  2. *Estados de ciclo de vida documental:*
+     - Estados diferenciados: `Activo`, `Cerrado`, `En_Conservacion`, `En_Revision_Disposicion`, `Bloqueado_Legal`, `Elegible_Disposicion`, `Archivado_Permanente`, `Dispuesto`.
+     - Cierre documental que impida modificaciones ordinarias cuando el documento pase a conservación.
+  3. *Mecanismo de Legal Hold (Retención Legal):*
+     - Asociar bloqueos a documentos o expedientes con motivo, responsable, fecha y autoridad ordenante.
+     - Admitir múltiples bloqueos simultáneos; levantar uno no elimina los demás.
+     - Impedir disposición mientras exista al menos un bloqueo activo.
+     - Suspender el cómputo de conservación ante litigios o investigaciones.
+     - Conservar metadatos de documentos dispuestos cuando la política lo exija.
+     - Línea de tiempo completa de hitos de conservación. Plazos configurables por institución sin imposiciones arbitrarias.
 - **Criterios de Aceptación:**
-  - [ ] Toda descarga autorizada de un archivo deja constancia en `LogsSistema`.
-  - [ ] Los accesos denegados quedan registrados con la identidad del usuario y documento solicitado.
-  - [ ] Es posible reconstruir la lista de usuarios que han consultado un expediente determinado en un rango de fechas.
+  - [ ] Políticas diferenciadas para documentos académicos, laborales, financieros e institucionales.
+  - [ ] Cerrar un expediente inicia el cómputo de conservación según la política asociada.
+  - [ ] Si se aplican dos bloqueos legales a un documento, retirar uno mantiene el bloqueo activo del otro.
+  - [ ] Intentar disponer de un documento con retención legal activa es denegado terminantemente.
+  - [ ] Vencer el plazo ordinario traslada el documento a estado de revisión sin destruirlo automáticamente.
+  - [ ] Modificar una política conserva la versión histórica asociada a los documentos ya emitidos.
+- **Dependencias:** F40-Task02, F40-Task07.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F40-Task12] [P0] Implementar doble autorización y disposición documental controlada (F40-07)
+- **Prioridad:** P0 (Prioridad crítica / Bloqueante)
+- **Orden de Ejecución:** 12 (Flujo de cuatro ojos para eliminación y baja documental)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`requestDocumentDisposal`, `approveDocumentDisposal`, `executeDocumentDisposal`)
+  - Hoja de Cálculo: `SolicitudesBajaDocumental`
+- **Subcapacidades Relacionadas:** F40-12, F40-21.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-21) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  Existe doble aprobación para compras, pero no para la eliminación definitiva de documentos. Cambiar un estado lógico no constituye un flujo formal de autorización, exponiendo a la institución a destrucción de antecedentes por negligencia o acción unilateral.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Flujo de cuatro ojos para disposición:*
+     - Separar etapas: Solicitud, Revisión, Doble Autorización y Ejecución.
+     - Exigir dos autorizaciones independientes de roles autorizados (ej. Secretaría + Dirección).
+     - Prohibir que el mismo usuario solicite y apruebe su propia petición.
+  2. *Validaciones previas a la aceptación:*
+     - Comprobar que el documento es elegible por política de retención, carece de bloqueos legales activos, no tiene investigaciones pendientes, no forma parte de expedientes obligatorios ni dependencias vigentes.
+     - Exponer a los autorizadores: categoría, motivo, fechas, política, historial y dependencias.
+     - Opciones: Aprobar, Rechazar o Devolver con observaciones.
+     - Ejecución solo tras reunir todas las firmas requeridas.
+     - Evidencia inmutable de disposición: ID, documento, versión, hash previo, fecha, responsables y resultado.
+     - Diferenciar baja lógica, archivo pasivo, transferencia y destrucción física/digital.
+     - Periodo de gracia configurable entre autorización final y ejecución física con opción de cancelación.
+- **Criterios de Aceptación:**
+  - [ ] Solicitar disposición crea una solicitud pendiente en la bandeja de trabajo.
+  - [ ] La cuenta solicitante no puede aprobar su propia solicitud.
+  - [ ] La primera aprobación mantiene la solicitud en estado de espera del segundo autorizador independiente.
+  - [ ] Intentar disponer documentos con Legal Hold o plazo no vencido es denegado.
+  - [ ] Rechazar una solicitud archiva el motivo sin ejecutar ninguna destrucción.
+  - [ ] La ejecución final registra la evidencia completa sin borrar metadatos requeridos por ley.
+- **Dependencias:** F40-Task11, F40-Task01.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F40-Task13] [P0] Ampliar los respaldos para incluir archivos binarios y relaciones documentales (F40-09)
+- **Prioridad:** P0 (Prioridad crítica / Bloqueante)
+- **Orden de Ejecución:** 13 (Respaldo integral con manifiesto de archivos binarios)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`createSystemBackup`, `computeSimpleHash`)
+  - Google Drive institucional (`DriveApp`)
+  - Archivos JSON de Respaldo Institucional
+- **Subcapacidades Relacionadas:** F40-15, F40-16.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-15) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  `createSystemBackup` respalda hojas de cálculo en JSON pero omite los archivos binarios de Drive. Restaurar una copia recupera los metadatos pero no los documentos a los que hacen referencia, dejando los expedientes vacíos ante pérdida de archivos en Drive.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Manifiesto de inventario binario y relaciones:*
+     - Incluir por cada archivo respaldado: ID documental, ID de versión, ID físico de origen en Drive, Nombre y tipo MIME, Tamaño en bytes, Hash SHA-256 del binario, Fechas de creación/modificación, Categoría y departamento, Relaciones con expedientes, plantillas, formularios, firmas y documentos emitidos.
+  2. *Copia independiente y consistencia integral:*
+     - Respaldar el contenido binario o una réplica independiente con controles equivalentes de acceso y retención.
+     - Garantizar consistencia entre datos tabulares, archivos físicos, versiones, firmas y conservación.
+     - Calcular SHA-256 para cada archivo y para el manifiesto completo del respaldo, reemplazando totalmente DJB2.
+     - Identificador único de respaldo, fecha, alcance, estado y resultado.
+     - Permitir respaldos completos e incrementales; las copias incrementales deben validar la disponibilidad del respaldo base.
+     - Protección contra modificaciones y reintentos ante fallos parciales sin duplicación de archivos.
+- **Criterios de Aceptación:**
+  - [ ] Respaldos completos incluyen inventario y copia recuperable de documentos de Drive.
+  - [ ] El manifiesto contiene todos los archivos dentro del alcance con sus huellas SHA-256 exactas.
+  - [ ] Eliminar un archivo en el entorno operativo permite verificar que existe copia íntegra en el respaldo.
+  - [ ] Interrupciones de respaldo se reanudan sin duplicar archivos.
+  - [ ] Alterar un archivo respaldado es detectado por la verificación de integridad del manifiesto.
+- **Dependencias:** F40-Task06, F40-Task07.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F40-Task14] [P0] Implementar restauración integral y validación posterior a la recuperación (F40-10)
+- **Prioridad:** P0 (Prioridad crítica / Bloqueante)
+- **Orden de Ejecución:** 14 (Recuperación integral y verificación de consistencia)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`restoreSystemBackup`, `previewBackupRestoreImpact`)
+  - Google Drive institucional (`DriveApp`)
+- **Subcapacidades Relacionadas:** F40-16.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-16) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  `restoreSystemBackup` recupera tablas pero no valida ni recupera los archivos binarios de Drive. Restaurar registros no garantiza que los documentos estén disponibles, íntegros o correctamente vinculados.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Restauración holística de datos y binarios:*
+     - Restaurar: Registros institucionales, Archivos binarios en Drive, Versiones anteriores, Relaciones documentales, Metadatos de integridad, Firmas y aprobaciones, Estados de conservación, Historial de operaciones respaldado.
+  2. *Vista previa de impacto y comprobación de conflictos:*
+     - Mostrar previo a restaurar: Registros a crear/reemplazar, Archivos a recuperar, Conflictos con archivos actuales, Versiones a recuperar y relaciones afectadas.
+     - Permitir restauración completa o selectiva (categoría, departamento, expediente).
+     - Verificar SHA-256 antes y después de restaurar cada binario.
+     - No sobreescribir silenciosamente archivos actuales más recientes que la fecha del respaldo.
+     - Reporte final de elementos recuperados, omitidos, fallidos y pendientes.
+     - Validación post-recuperación de disponibilidad, hash, vínculos, historial y permisos.
+     - Evitar restaurar permisos públicos o inseguros presentes en respaldos antiguos.
+- **Criterios de Aceptación:**
+  - [ ] Restaurar un respaldo completo recupera archivos binarios y tablas con éxito.
+  - [ ] Restaurar documentos individuales restablece sus relaciones correctas con el expediente.
+  - [ ] Se verifica el hash SHA-256 de los archivos restaurados.
+  - [ ] Archivos con hash discrepante respecto al manifiesto son bloqueados o marcados como fallidos.
+  - [ ] Respaldos antiguos frente a archivos actuales más recientes disparan advertencia de conflicto.
+  - [ ] Los permisos restaurados son privados y respetan las políticas actuales de seguridad.
+- **Dependencias:** F40-Task13.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F40-Task15] [P1] Crear conciliación documental entre Google Drive y los registros institucionales (F40-08)
+- **Prioridad:** P1 (Alta / Importante)
+- **Orden de Ejecución:** 15 (Auditoría periódica de salud documental Drive vs Sheets)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`reconcileDocumentStorageIntegrity`)
+  - Google Drive institucional (`DriveApp`)
+  - Hoja de Cálculo: `AuditoriaSaludDocumental`
+- **Subcapacidades Relacionadas:** F40-22, F40-23.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-22, F40-23) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  No se comparan sistemáticamente los archivos en Drive contra las hojas de cálculo. Existen archivos huérfanos sin registro, registros que apuntan a archivos eliminados y discrepancias de contenido silenciosas.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Cruce sistemático de almacenamiento:*
+     - Conciliar carpetas de Drive contra: Documentos académicos, Documentos laborales, Comprobantes de pago, Plantillas y emitidos, Historial de versiones.
+     - Detectar: Archivo en Drive sin registro, Registro sin archivo físico, Archivo compartido injustificadamente, IDs inválidos, Versión discrepante, Hash alterado, Documentos dispuestos que siguen accesibles, Registros duplicados.
+     - Diferenciar archivos huérfanos de archivos compartidos legítimamente por varios expedientes.
+  2. *Ejecución por lotes y resolución asistida:*
+     - Ejecución programada y manual autorizada. Paginación y control de tiempo de ejecución para evitar límites de GAS.
+     - Filtros por carpeta, categoría, departamento, discrepancia y fecha.
+     - Acciones controladas: Revisar, Vincular a registro existente, Marcar como duplicado, Solicitar recuperación, Solicitar disposición, Excluir del inventario con justificación.
+     - Prohibir vinculación o eliminación automática en casos ambiguos.
+- **Criterios de Aceptación:**
+  - [ ] Registros consistentes pasan la conciliación sin alertas.
+  - [ ] Archivos borrados en Drive generan alerta de registro huérfano.
+  - [ ] Archivos sueltos en Drive sin registro generan alerta de archivo huérfano.
+  - [ ] Alteraciones en Drive sin actualización de hash generan alerta de discrepancia de integridad.
+  - [ ] Las decisiones de saneamiento quedan registradas con usuario, fecha y motivo.
+- **Dependencias:** F40-Task06, F40-Task13, F40-Task07.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F40-Task16] [P1] Implementar revisión automática de permisos obsoletos y accesos residuales (F40-14)
+- **Prioridad:** P1 (Alta / Importante)
+- **Orden de Ejecución:** 16 (Gobernanza de identidades y depuración de accesos)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`auditObsoletePermissions`, `revokeResidualAccess`)
+  - `backend/academic-service/Code.gs`
+  - Hoja de Cálculo: `AuditoriaPermisosResiduales`
+- **Subcapacidades Relacionadas:** F40-18.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-18) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  No se detectan permisos que deberían revocarse cuando un usuario cambia de departamento, finaliza contrato laboral, egresa un alumno o concluye una delegación temporal, dejando accesos residuales activos indefinidamente.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Detección de eventos institucionales de desvinculación:*
+     - Relacionar permisos con eventos: Desvinculación laboral, Cambio de departamento, Cambio de rol, Fin de contrato, Egreso de estudiante, Cambio de tutor legal, Vencimiento de autorización temporal.
+     - Identificar permisos directos, heredados y excepcionales en Drive y en la aplicación.
+     - Generar alertas cuando cambie una relación institucional y persistan accesos incompatibles.
+  2. *Flujo de revocación controlada:*
+     - Revocación automática únicamente en permisos cuya política lo autorice expresamente.
+     - En casos ambiguos, generar tarea de revisión para la autoridad responsable.
+     - Preservar intactos los registros históricos de auditoría y autoría de documentos del usuario desvinculado.
+- **Criterios de Aceptación:**
+  - [ ] Desvincular un empleado identifica y lista todos sus permisos documentales asociados.
+  - [ ] Cambios de rol recalculan y restringen accesos que ya no correspondan a sus nuevas funciones.
+  - [ ] Permisos temporales finalizados dejan de dar acceso automáticamente.
+  - [ ] La revocación de accesos no altera la trazabilidad histórica ni elimina documentos creados por el usuario.
 - **Dependencias:** F40-Task01, F40-Task03.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F40-Task06] [P1] Motor de retención documental, archivo pasivo y Legal Hold
+### [F40-Task17] [P1] Incorporar detección de actividad documental anómala y alertas de seguridad (F40-15)
 - **Prioridad:** P1 (Alta / Importante)
-- **Orden de Ejecución:** 6 (Ciclo de vida documental y cumplimiento normativo)
+- **Orden de Ejecución:** 17 (Monitoreo de seguridad y detección de exfiltración)
 - **Componentes Afectados:**
-  - `backend/academic-service/Code.gs` (`applyDocumentRetentionPolicies`, `setDocumentLegalHold`)
-  - Hojas de Cálculo: `PoliticasRetencionDocumental`, `DocumentosEstudiante`
-- **Subcapacidades Relacionadas:** F40-11, F40-12, F40-20.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-11, F40-12) y E (Benchmark WORM / Legal Hold).
+  - `backend/user-service/Code.gs` (`detectAnomalousDocumentActivity`, `dispatchSecurityAlerts`)
+  - `backend/academic-service/Code.gs`
+  - Hoja de Cálculo: `AlertasSeguridadDocumental`
+- **Subcapacidades Relacionadas:** F40-19.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-19) y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  No existen reglas que definan cuándo un expediente escolar o laboral debe archivarse, cuánto tiempo debe conservarse y cuándo puede disponerse de él. Tampoco existe un mecanismo de retención legal (`Legal Hold`) para impedir la eliminación de documentos vinculados a disputas o litigios.
+  No se generan alertas ante ráfagas de descargas masivas, consultas reiteradas a expedientes no asignados o intentos continuos de acceso denegado, dificultando la detección oportuna de incidentes de seguridad.
 - **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Políticas de retención:*
-     - Auto-crear la hoja `PoliticasRetencionDocumental` con campos: `categoriaDoc`, `anosConservacion`, `accionVencimiento` (`Archivar`, `Revisar`, `Baja_Autorizada`), `requiereBloqueoWORM`.
-  2. *Mecanismo de Legal Hold:*
-     - Implementar la bandera `bloqueoLegal` (`true`/`false`) y `motivoBloqueo` en los metadatos documentales.
-     - Bloquear terminantemente cualquier intento de eliminación, purga o modificación sobre documentos marcados con `bloqueoLegal: true`.
+  1. *Evaluación heurística de patrones sobre la bitácora:*
+     - Analizar `LogsSistema` y evaluar umbrales configurables por rol y periodo.
+     - Detectar: Ráfagas de descargas masivas, Consultas repetitivas a expedientes de terceros, Intentos reiterados de acceso denegado, Descarga concentrada de categorías sensibles, Actividad fuera de horarios o ubicaciones habituales, Uso reiterado de enlaces vencidos/revocados.
+  2. *Gestión de alertas e incidentes:*
+     - Clasificar alertas por severidad (`INFO`, `WARN`, `CRITICAL`) con lista de eventos vinculados.
+     - Asignar alerta a un oficial de seguridad o directivo para su investigación.
+     - Opciones: Revisar, Cerrar, Escalar o Confirmar como actividad legítima justificada.
+     - Medidas preventivas configurables: exigir reautenticación o suspender token temporalmente ante riesgos extremos.
 - **Criterios de Aceptación:**
-  - [ ] El sistema identifica documentos con periodo de retención vencido.
-  - [ ] Ningún documento bajo `Legal Hold` puede ser eliminado, ni siquiera por administradores.
-  - [ ] La activación o desactivación de una retención legal queda registrada en auditoría.
-- **Dependencias:** F40-Task02, F40-Task05.
+  - [ ] Superar el umbral configurado de descargas por minuto genera alerta de seguridad.
+  - [ ] Intentos reiterados de acceso denegado disparan alerta con eventos relacionados.
+  - [ ] Operaciones normales dentro de los umbrales no producen falsos positivos.
+  - [ ] La investigación de la alerta conserva la resolución, responsable y fecha de cierre.
+- **Dependencias:** F40-Task08.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F40-Task07] [P1] Flujo de doble autorización para disposición y baja definitiva de documentos
+### [F40-Task18] [P1] Ampliar las alertas de vencimiento documental y conservación (F40-16)
 - **Prioridad:** P1 (Alta / Importante)
-- **Orden de Ejecución:** 7 (Control de destrucción y eliminación segura)
+- **Orden de Ejecución:** 18 (Alertas de vencimiento y revisión de retención)
 - **Componentes Afectados:**
-  - `backend/academic-service/Code.gs` (`requestDocumentDisposal`, `approveDocumentDisposal`)
-  - Hoja de Cálculo: `SolicitudesBajaDocumental`
-- **Subcapacidades Relacionadas:** F40-12, F40-21.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-21) y F (CAR-F40-07).
+  - `backend/academic-service/Code.gs` (`checkAndNotifyExpiringStudentDocuments`, `checkDocumentRetentionExpirations`)
+  - `backend/accounting-service/Code.gs` (`checkExpiringEmployeeDocuments`)
+  - Hoja de Cálculo: `AlertasVencimientoDocumental`
+- **Subcapacidades Relacionadas:** F40-20.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-20) y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  Si un usuario con privilegios elimina un registro o archivo, la operación se ejecuta unilateralmente. La destrucción de expedientes históricos requiere por norma institucional un control de cuatro ojos (doble autorización) para evitar pérdida irreversible de antecedentes por negligencia o sabotaje.
+  Las alertas de vencimiento actuales se limitan a carnés o identidades de alumnos. No cubren contratos laborales, poderes de representación, pólizas ni fechas derivadas del calendario de retención documental.
 - **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Solicitud y aprobación cruzada:*
-     - Crear la hoja `SolicitudesBajaDocumental` (`solicitudId`, `documentoId`, `solicitanteUserId`, `motivoDisposicion`, `primerAprobadorId`, `segundoAprobadorId`, `estado`).
-     - Exigir dos aprobaciones independientes de roles autorizados (ej. Secretaría + Dirección) antes de proceder con el cambio de estado a `ELIMINADO_DISPUESTO`.
-  2. *Preservación de bitácora:*
-     - Aunque el archivo físico sea removido de Drive o archivado permanentemente, el registro lógico y su historial en la bitácora deben permanecer inmutables.
+  1. *Ampliación de categorías y fechas objeto de monitoreo:*
+     - Monitorear: Vencimiento de documentos oficiales, Vencimiento de autorizaciones/poderes, Fecha de revisión periódica, Fin de vigencia de plantillas CUV, Fecha de cierre de expediente, Inicio o fin de plazos de retención legal.
+     - Configurar anticipación de alertas por tipo documental (ej. 30, 60 o 90 días antes).
+  2. *Enrutamiento inteligente de alertas:*
+     - Notificar a responsables según categoría y departamento.
+     - Evitar notificaciones repetitivas sin cambio de estado.
+     - Opciones: Marcar como atendida, Pospuesta o No aplicable con justificación.
+     - Integración con Legal Hold: documentos con retención legal nunca deben sugerirse para disposición por simple vencimiento.
 - **Criterios de Aceptación:**
-  - [ ] No es posible dar de baja un documento sensible con una sola aprobación.
-  - [ ] Las aprobaciones deben provenir de usuarios distintos con credenciales verificadas.
-  - [ ] Queda constancia completa de la justificación, fecha y responsables de la disposición final.
-- **Dependencias:** F40-Task06.
+  - [ ] Contratos laborales próximos a vencer notifican a Recursos Humanos con la anticipación configurada.
+  - [ ] Documentos de identidad estudiantil mantienen sus notificaciones vigentes.
+  - [ ] Revisiones de retención documental se programan y notifican oportunamente.
+  - [ ] Documentos con retención legal activa son excluidos de sugerencias de destrucción.
+- **Dependencias:** F40-Task11.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F40-Task08] [P1] Panel de conciliación de integridad y detección de documentos huérfanos
+### [F40-Task19] [P1] Crear un panel de integridad, seguridad y salud documental (F40-17)
 - **Prioridad:** P1 (Alta / Importante)
-- **Orden de Ejecución:** 8 (Saneamiento y reconciliación Drive vs Base de Datos)
+- **Orden de Ejecución:** 19 (Tablero directivo de monitoreo de seguridad documental)
 - **Componentes Afectados:**
-  - `backend/academic-service/Code.gs` (`reconcileDocumentStorageIntegrity`)
+  - `backend/academic-service/Code.gs` (`getDocumentSecurityDashboardData`)
   - `dashboard-direccion.html`, `js/config.js`
-- **Subcapacidades Relacionadas:** F40-22, F40-23.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-22, F40-23) y F (CAR-F40-08).
+- **Subcapacidades Relacionadas:** F40-22.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-22) y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  Con el tiempo se producen desincronizaciones: archivos en Drive eliminados manualmente que dejan registros huérfanos en las hojas de cálculo, o archivos subidos directamente a Drive sin registro en el sistema institucional, desperdiciando cuotas de almacenamiento y generando incertidumbre documental.
+  No existe un panel visual para que la Dirección identifique discrepancias de hash, archivos huérfanos, accesos inseguros o fallos de respaldo, forzando auditorías manuales complejas sobre múltiples hojas.
 - **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Rutina de conciliación:*
-     - Implementar `reconcileDocumentStorageIntegrity(payload)` que examine las carpetas institucionales de Drive y cruce sus identificadores con las tablas de documentos.
-     - Reportar: archivos en Drive sin registro, registros en hoja sin archivo en Drive, y discrepancias de hash SHA-256.
-  2. *Interfaz de saneamiento para Dirección:*
-     - Proveer vista en el panel directivo con el reporte de discrepancias y opciones de vinculación asistida o purga controlada.
+  1. *Métricas e indicadores consolidados de salud documental:*
+     - Indicadores en tiempo real: Total de documentos registrados, Archivos físicos localizados en Drive, Archivos huérfanos, Registros sin archivo físico, Discrepancias de hash SHA-256, Documentos sin clasificación de sensibilidad, Permisos/enlaces públicos inseguros, Documentos bajo Legal Hold, Documentos próximos a vencer, Documentos pendientes de disposición, Respaldos exitosos/fallidos, Restauraciones ejecutadas.
+  2. *Navegación y filtros operativos:*
+     - Filtros por departamento, categoría, periodo y estado.
+     - Mostrar fecha de última conciliación y respaldo.
+     - Navegación directa hacia el detalle de cada incidencia según el rol del usuario.
+     - Exportación de métricas e incidencias autorizadas.
+     - Prohibir la exposición de enlaces directos o URLs públicas en el panel.
 - **Criterios de Aceptación:**
-  - [ ] La rutina reporta con precisión archivos faltantes en Drive referenciados en la base de datos.
-  - [ ] Detecta archivos no inventariados almacenados en las carpetas institucionales.
-  - [ ] Permite emitir reportes de salud del almacenamiento documental.
-- **Dependencias:** F40-Task02, F40-Task05.
+  - [ ] El panel refleja inmediatamente los resultados de las conciliaciones de integridad.
+  - [ ] Documentos alterados aparecen clasificados como incidencias de integridad.
+  - [ ] Filtrar por departamento restringe la información a las atribuciones del usuario.
+  - [ ] El panel no expone URLs directas a archivos privados ni contenidos sensibles sin autorización.
+- **Dependencias:** F40-Task06, F40-Task08, F40-Task15, F40-Task13.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F40-Task09] [P1] Respaldo binario y verificación criptográfica de restauración
+### [F40-Task20] [P1] Generar reportes de auditoría exportables, verificables y protegidos (F40-18)
 - **Prioridad:** P1 (Alta / Importante)
-- **Orden de Ejecución:** 9 (Continuidad operativa y recuperación ante desastres)
+- **Orden de Ejecución:** 20 (Evidencias de fiscalización externa e interna)
 - **Componentes Afectados:**
-  - `backend/academic-service/Code.gs` (`createSystemBackup`, `restoreSystemBackup`, `computeSimpleHash`)
-  - DriveApp institucional
-- **Subcapacidades Relacionadas:** F40-15, F40-16.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-15, F40-16) y D (E2E-05).
+  - `backend/user-service/Code.gs` (`exportVerifiableAuditReport`)
+  - `backend/academic-service/Code.gs`
+  - Hoja de Cálculo: `ReportesAuditoriaEmitidos`
+- **Subcapacidades Relacionadas:** F40-24.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-24) y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  `createSystemBackup` respalda exclusivamente las hojas de cálculo en formato JSON y utiliza `computeSimpleHash` (un hash no criptográfico). Los archivos binarios (PDFs, certificados, contratos) en Google Drive no forman parte del manifiesto del respaldo, por lo que una restauración no garantiza la recuperabilidad de los documentos adjuntos.
+  `getAuditReport` entrega datos JSON crudos en pantalla, pero no genera reportes documentales firmados e inmutables que sirvan como evidencia formal para comités de fiscalización o revisiones externas.
 - **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Migración a SHA-256:*
-     - Sustituir `computeSimpleHash` en el respaldo por el cálculo de SHA-256 sobre el contenido del archivo JSON generado.
-  2. *Manifiesto de inventario de archivos:*
-     - Incluir en el JSON de respaldo un manifiesto completo de los archivos en Drive: `fileId`, `nombre`, `mimeType`, `hashSHA256` y `rutaRelativa`.
-     - En `restoreSystemBackup`, verificar que los archivos del manifiesto existan en Drive y que sus hashes coincidan, alertando sobre cualquier documento faltante o alterado.
+  1. *Generación de reportes multicriterio:*
+     - Filtros por: Usuario, Documento, Expediente, Departamento, Categoría, Periodo, Operación, Incidente de seguridad.
+     - Contenido: Eventos, resultados, responsables, versiones y referencias.
+     - Diferenciar hechos registrados de alertas u observaciones del auditor.
+     - Incluir fecha/hora de emisión, solicitante, filtros aplicados y alcance.
+  2. *Sellado e inmutabilidad del reporte:*
+     - Salidas en formatos legibles (PDF) y estructurados (CSV/JSON).
+     - Incorporar hash SHA-256 del reporte exportado y manifiesto autenticado con HMAC institucional.
+     - Respetar permisos del solicitante: no incluir datos que el auditor no esté autorizado a ver.
+     - Registrar la emisión y descarga del reporte en la bitácora.
+     - Permitir verificar retrospectivamente que el reporte exportado no ha sido adulterado.
 - **Criterios de Aceptación:**
-  - [ ] Los respaldos utilizan firma SHA-256 criptográfica.
-  - [ ] El respaldo incluye el inventario completo de archivos adjuntos con sus huellas digitales.
-  - [ ] La restauración valida la existencia e integridad de los binarios en Google Drive.
-- **Dependencias:** F40-Task02.
+  - [ ] Generar un reporte por documento o periodo produce un archivo sellado con hash SHA-256.
+  - [ ] Intentos de incluir documentos fuera del alcance del auditor son excluidos.
+  - [ ] Modificar el PDF o CSV exportado hace fallar la verificación de autenticidad del reporte.
+  - [ ] La emisión del reporte queda registrada en `ReportesAuditoriaEmitidos` con su firma.
+- **Dependencias:** F40-Task06, F40-Task09, F40-Task08.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F40-Task21] [P1] Fortalecer la verificación de documentos oficiales mediante CUV e integridad del archivo (F40-23)
+- **Prioridad:** P1 (Alta / Importante)
+- **Orden de Ejecución:** 21 (Autenticación documental integral con hash y correlativo)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`generateSchoolDocument`, `verifySchoolDocumentByCUV`)
+  - Hoja de Cálculo: `DocumentosEscolaresEmitidos`
+- **Subcapacidades Relacionadas:** F40-07, F40-09.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-07, F40-09), D (E2E-01) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  El CUV valida metadatos pero no comprueba que el PDF presentado sea exactamente el binario emitido. Si alguien sustituye el PDF en Drive con el mismo nombre y correlativo, la consulta CUV puede dar falso positivo de autenticidad.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Asociación de huella SHA-256 al registro CUV:*
+     - Conservar la relación probada: Plantilla, Versión, Entidad, Correlativo anual, CUV y Documento emitido.
+     - Asociar obligatoriamente el hash SHA-256 del PDF final generado en la columna correspondiente de `DocumentosEscolaresEmitidos`.
+  2. *Verificación binaria pública y estados ampliados:*
+     - Permitir que la verificación CUV acepte opcionalmente el archivo para cotejar su hash actual.
+     - Estados de respuesta: CUV válido y archivo íntegro, CUV válido pero archivo no disponible, CUV válido pero hash discrepante, CUV inexistente o inválido, Documento revocado o anulado formalmente.
+     - No exponer datos personales innecesarios en la consulta pública ni dar acceso a expedientes vinculados.
+     - Preservar intactos los registros históricos originales al emitir correcciones.
+- **Criterios de Aceptación:**
+  - [ ] Generar un documento oficial asocia el correlativo anual, CUV y el hash SHA-256 del PDF.
+  - [ ] Cotejar el CUV y el archivo original devuelve resultado válido e íntegro.
+  - [ ] Modificar el PDF manteniendo el CUV devuelve alerta de hash discrepante.
+  - [ ] Documentos anulados reflejan claramente su condición de no vigencia.
+- **Dependencias:** F40-Task06, F40-Task10.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F40-Task22] [P2] Implementar clasificación documental automática asistida (F40-19)
+- **Prioridad:** P2 (Media / Complementaria)
+- **Orden de Ejecución:** 22 (Clasificación inteligente con validación humana obligatoria)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`suggestDocumentClassification`)
+  - `js/teacher.js`, `js/secretary.js`
+- **Subcapacidades Relacionadas:** F40-25.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-25) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  La clasificación manual provoca omisiones o asignaciones erróneas de sensibilidad, dejando documentos delicados (médicos o disciplinarios) sin la protección correspondiente.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Análisis asistido de contenido:*
+     - Analizar metadatos, nombre de archivo, estructura y texto OCR para sugerir: Tipo documental, Categoría, Nivel de sensibilidad, Departamento responsable, Expediente relacionado.
+     - Detectar palabras clave e indicadores de contenido médico, financiero, laboral, disciplinario o de identidad.
+     - Mostrar sugerencia con nivel de confianza y fundamentos visuales.
+  2. *Revisión humana y principio conservador:*
+     - Diferenciar sugerencia de clasificación oficial confirmada.
+     - Opciones del usuario: Aceptar, Modificar, Rechazar o Solicitar revisión.
+     - Una sugerencia automática nunca puede rebajar el nivel de protección de un documento.
+     - Ante incertidumbre, asignar clasificación conservadora (`Restringido`) o remitir a revisión.
+     - Registrar en auditoría la sugerencia, confianza y decisión humana final.
+- **Criterios de Aceptación:**
+  - [ ] Contratos laborales sugieren automáticamente categoría laboral y sensibilidad confidencial.
+  - [ ] Comprobantes sugieren categoría financiera.
+  - [ ] Documentos ambiguos se envían a revisión humana sin rebajar su protección.
+  - [ ] Se registra la sugerencia y la decisión del usuario en la bitácora.
+- **Dependencias:** F40-Task02, extracción de texto/OCR.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F40-Task23] [P2] Incorporar marcas de agua dinámicas y control de copias visualizadas (F40-20)
+- **Prioridad:** P2 (Media / Complementaria)
+- **Orden de Ejecución:** 23 (Trazabilidad visual y prevención de fugas de pantalla)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`generateWatermarkedDocumentCopy`)
+  - `js/teacher.js`, `js/ui-common.js`
+- **Subcapacidades Relacionadas:** F40-26.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md` / Secciones C (F40-26) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  Los documentos descargados o visualizados no incorporan marcas identificatorias. Si un archivo es divulgado mediante captura o impresión, no es posible vincularlo a la sesión que lo obtuvo.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Marcas de agua dinámicas sobre copias derivadas:*
+     - Configurar marcas de agua para categorías sensibles con: Identificador/nombre del usuario, Fecha y hora de generación, Identificador de sesión no secreto, Leyenda institucional (ej. "Copia de consulta"), ID parcial del documento.
+     - Diferenciar: Visualización protegida, Descarga de copia marcada, y Descarga de original autorizada.
+  2. *Preservación del original:*
+     - La marca de agua se aplica exclusivamente sobre una copia derivada, sin alterar el binario original ni su hash SHA-256.
+     - Evitar cubrir información esencial del documento.
+     - Registrar qué usuario generó la copia, fecha y versión.
+     - Permitir desactivar la marca en documentos donde interfiera con su validez oficial.
+- **Criterios de Aceptación:**
+  - [ ] Consultar un documento restringido muestra la marca de agua con los datos del usuario activo.
+  - [ ] Descargar una copia marcada registra el evento en auditoría.
+  - [ ] El hash del archivo original permanece intacto e inalterado.
+  - [ ] La marca de agua no oculta información esencial ni impide la lectura.
+- **Dependencias:** F40-Task04, F40-Task06, F40-Task02.
 - **Estado:** [ ] Pendiente
 
 ---
