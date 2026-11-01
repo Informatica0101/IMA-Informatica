@@ -256,7 +256,76 @@
             </div>
         </section>
 
-        <!-- Section 4: Live Event & Diagnostic Log Viewer -->
+        <!-- Section 4: Structured Logs Viewer (REQ-EXP-018) -->
+        <section class="bg-slate-800/90 border border-slate-700 rounded-3xl p-6 sm:p-8 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fas fa-file-medical-alt text-amber-400"></i> Bitácora de Eventos y Logs Estructurados
+                    </h3>
+                    <p class="text-xs text-slate-400">Auditoría centralizada con filtros por severidad, microservicio y códigos de error unívocos.</p>
+                </div>
+                <button id="btn-refresh-structured-logs" class="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-semibold border border-amber-500/40 flex items-center gap-2">
+                    <i class="fas fa-sync" id="icon-refresh-logs"></i> Actualizar Bitácora
+                </button>
+            </div>
+
+            <!-- Filtros de búsqueda -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-900/60 p-4 rounded-2xl border border-slate-700">
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-400 mb-1">Filtrar por Severidad</label>
+                    <select id="filter-log-severity" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                        <option value="">Todas las Severidades</option>
+                        <option value="INFO">INFO</option>
+                        <option value="WARN">WARN</option>
+                        <option value="ERROR">ERROR</option>
+                        <option value="CRITICAL">CRITICAL</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-400 mb-1">Filtrar por Servicio</label>
+                    <select id="filter-log-service" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                        <option value="">Todos los Servicios</option>
+                        <option value="USER">USER</option>
+                        <option value="ACADEMIC">ACADEMIC</option>
+                        <option value="TASK">TASK</option>
+                        <option value="EXAM">EXAM</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-400 mb-1">Límite de Registros</label>
+                    <select id="filter-log-limit" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                        <option value="25">Últimos 25</option>
+                        <option value="50" selected>Últimos 50</option>
+                        <option value="100">Últimos 100</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tabla de logs -->
+            <div class="overflow-x-auto rounded-2xl border border-slate-700 max-h-80 overflow-y-auto">
+                <table class="w-full text-left text-xs font-mono">
+                    <thead class="bg-slate-900/90 text-slate-400 uppercase tracking-wider text-[10px] sticky top-0 border-b border-slate-700">
+                        <tr>
+                            <th class="p-3">Fecha / Hora</th>
+                            <th class="p-3">Severidad</th>
+                            <th class="p-3">Servicio</th>
+                            <th class="p-3">Función</th>
+                            <th class="p-3">Código Error</th>
+                            <th class="p-3">Usuario</th>
+                            <th class="p-3">Detalles</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dev-structured-logs-body" class="divide-y divide-slate-700/60 bg-slate-800/40">
+                        <tr>
+                            <td colspan="7" class="p-4 text-center text-slate-500 font-sans">Cargando registros estructurados...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 5: Live Event & Diagnostic Log Viewer -->
         <section class="bg-slate-950 border border-slate-800 rounded-3xl p-6 font-mono text-xs space-y-3">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <span class="text-slate-400 font-semibold flex items-center gap-2">

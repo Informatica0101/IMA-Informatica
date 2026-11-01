@@ -213,7 +213,11 @@ const RBAC_ACTION_PERMISSIONS = {
   "createNews": ["Secretaría", "Director", "Administrador"],
   "updateNews": ["Secretaría", "Director", "Administrador"],
   "retireNews": ["Secretaría", "Director", "Administrador"],
-  "uploadNewsImage": ["Secretaría", "Director", "Administrador"]
+  "uploadNewsImage": ["Secretaría", "Director", "Administrador"],
+
+  // Sistema de Logs Estructurados (REQ-EXP-018)
+  "recordStructuredLog": ["*"],
+  "getStructuredLogs": ["Director", "Administrador", "Desarrollador"]
 };
 
 function validatePermission(action, payload) {
@@ -356,6 +360,8 @@ function doPost(e) {
       case "registerSupplier": result = registerSupplier(payload); break;
       case "getInventoryCatalogAndAlerts": result = getInventoryCatalogAndAlerts(payload); break;
       case "getInventoryMovementsKardex": result = getInventoryMovementsKardex(payload); break;
+      case "recordStructuredLog": result = recordStructuredLog(payload); break;
+      case "getStructuredLogs": result = getStructuredLogs(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -960,6 +966,127 @@ function getStudentFinancialStatus(payload) {
         alDia: saldoTotalPendiente <= 0
       }
     }
+  };
+}
+
+// ---------------------------------------------------------------------------
+// SISTEMA DE LOGS ESTRUCTURADOS POR SERVICIO Y FUNCIÓN (REQ-EXP-018)
+// ---------------------------------------------------------------------------
+
+function getOrCreateBitacoraLogsSheet(ss) {
+  let sheet = ss.getSheetByName("BitacoraLogs");
+  if (!sheet) {
+    sheet = ss.insertSheet("BitacoraLogs");
+    sheet.appendRow([
+      "LogId",
+      "FechaHora",
+      "Severidad",
+      "Servicio",
+      "Funcion",
+      "CodigoError",
+      "UsuarioId",
+      "Detalles"
+    ]);
+  }
+  return sheet;
+}
+
+/**
+ * Sanitiza detalles para evitar persistir contraseñas, tokens o secretos
+ */
+function sanitizeLogDetails(details) {
+  if (!details) return "";
+  let str = typeof details === "object" ? JSON.stringify(details) : String(details);
+  return str
+    .replace(/"(?:password|contrasena|pin|token|secret)":\s*"[^"]*"/gi, '"$1":"[REDACTED]"')
+    .replace(/(?:password|contrasena|token)=([^\s&]+)/gi, '$1=[REDACTED]');
+}
+
+function recordStructuredLog(payload) {
+  const severidad = (payload.severidad || "INFO").toString().toUpperCase();
+  const servicio = (payload.servicio || "USER").toString().toUpperCase();
+  const funcion = (payload.funcion || "general").toString();
+  const codigoError = (payload.codigoError || "").toString();
+  const usuarioId = (payload.usuarioId || payload.requesterUserId || "ANON").toString();
+  const detalles = sanitizeLogDetails(payload.detalles || payload.message || "");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(10000);
+    const sheet = getOrCreateBitacoraLogsSheet(ss);
+    const logId = "LOG-" + new Date().getTime() + "-" + Math.floor(Math.random() * 1000);
+    const timestamp = new Date().toISOString();
+
+    sheet.appendRow([
+      logId,
+      timestamp,
+      severidad,
+      servicio,
+      funcion,
+      codigoError,
+      usuarioId,
+      detalles
+    ]);
+
+    return {
+      status: "success",
+      message: "Log estructurado registrado exitosamente.",
+      logId: logId
+    };
+  } catch (err) {
+    logDebug("Error al registrar structured log:", err.message);
+    return { status: "error", message: err.message };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function getStructuredLogs(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateBitacoraLogsSheet(ss);
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) {
+    return { status: "success", logs: [] };
+  }
+
+  const filterSeveridad = payload.severidad ? String(payload.severidad).toUpperCase() : "";
+  const filterServicio = payload.servicio ? String(payload.servicio).toUpperCase() : "";
+  const filterFechaInicio = payload.fechaInicio ? new Date(payload.fechaInicio) : null;
+  const filterFechaFin = payload.fechaFin ? new Date(payload.fechaFin) : null;
+  const limit = parseInt(payload.limit, 10) || 100;
+
+  let rows = data.slice(1).map(r => ({
+    logId: String(r[0]),
+    timestamp: r[1],
+    severidad: String(r[2]),
+    servicio: String(r[3]),
+    funcion: String(r[4]),
+    codigoError: String(r[5]),
+    usuarioId: String(r[6]),
+    detalles: String(r[7])
+  }));
+
+  // Ordenar de más reciente a más antiguo
+  rows.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+  if (filterSeveridad) {
+    rows = rows.filter(r => r.severidad === filterSeveridad);
+  }
+  if (filterServicio) {
+    rows = rows.filter(r => r.servicio === filterServicio);
+  }
+  if (filterFechaInicio) {
+    rows = rows.filter(r => new Date(r.timestamp) >= filterFechaInicio);
+  }
+  if (filterFechaFin) {
+    rows = rows.filter(r => new Date(r.timestamp) <= filterFechaFin);
+  }
+
+  return {
+    status: "success",
+    total: rows.length,
+    logs: rows.slice(0, limit)
   };
 }
 

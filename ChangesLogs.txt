@@ -837,3 +837,20 @@ Módulo: Consola Dedicada de Desarrollador y Acceso Integral a la Plataforma
   * Adaptados los enlaces del portal en la barra de navegación superior y la navegación inferior móvil para apuntar a la consola de desarrollador cuando el rol activo es 'Desarrollador'.
 - Control de Accesos y Permisos (`js/config.js` y `backend/user-service/Code.gs`):
   * Garantizado bypass universal para el rol 'Desarrollador' en `window.hasPermission` y en las funciones de validación RBAC de servidor.
+
+REGISTRO DE CAMBIOS - SISTEMA DE LOGS ESTRUCTURADOS POR SERVICIO Y FUNCIÓN - Sun Nov 01 2026
+
+Módulo: Sistema de Logs Estructurados y Auditoría de Microservicios ([REQ-EXP-018])
+- Backend (`backend/user-service/Code.gs` y `backend/academic-service/Code.gs`):
+  * Implementada función `getOrCreateBitacoraLogsSheet(ss)` para garantizar y estructurar la hoja 'BitacoraLogs' con encabezados: LogId, FechaHora, Severidad, Servicio, Funcion, CodigoError, UsuarioId, Detalles.
+  * Añadida función `sanitizeLogDetails(detalles)` con desinfección preventiva y enmascaramiento de contraseñas, tokens de autenticación, llaves secretas y números PIN.
+  * Implementadas funciones `recordStructuredLog` y `getStructuredLogs` con soporte de filtrado multinivel por severidad (INFO, WARN, ERROR, CRITICAL), microservicio, límite numérico y rango temporal.
+  * Registradas acciones `recordStructuredLog` y `getStructuredLogs` en `RBAC_ACTION_PERMISSIONS` y en el despachador de solicitudes `doPost`.
+  * Integrada función homóloga `recordAcademicStructuredLog` en el microservicio académico.
+- Cliente API (`js/api.js`):
+  * Creada función `window.logStructuredEvent(service, severidad, funcion, codigoError, detalles)` para registrar eventos operativos y anomalías técnicas con sanitización de contraseñas y fallback a almacenamiento local en caso de desconexión.
+- Consola de Desarrollador (`developer-dashboard.html` y `js/developer.js`):
+  * Integrada "Sección 4: Bitácora de Eventos y Logs Estructurados" con interfaz técnica avanzada.
+  * Añadidos filtros reactivos por severidad (`select#log-filter-severity`), microservicio (`select#log-filter-service`), límite (`select#log-filter-limit`) y botón de recarga interactiva.
+  * Diseñada renderización visual de logs estructurados con badges de severidad codificados por color e inspección de detalles formateados en bloques de código técnico.
+- Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-018] como completada.

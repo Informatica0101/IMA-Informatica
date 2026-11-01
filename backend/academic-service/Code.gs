@@ -73,6 +73,7 @@ function doPost(e) {
       case "getQuestionBank": result = getQuestionBank(payload); break;
       case "saveQuestion": result = saveQuestion(payload); break;
       case "generateMigrationReport": result = generateMigrationReport(payload); break;
+      case "recordStructuredLog": result = recordAcademicStructuredLog(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -361,4 +362,47 @@ function saveQuestion(payload) {
 function generateMigrationReport(payload) {
   getOrCreateSheet(SpreadsheetApp.openById(SPREADSHEET_ID), "MigrationLogs").appendRow([new Date(), payload.stats.totalDetectadas, payload.stats.totalMigradas, JSON.stringify(payload.stats.asignaturas), payload.stats.detalle]);
   return { status: "success" };
+}
+
+// ---------------------------------------------------------------------------
+// LOGS ESTRUCTURADOS EN SERVICIO ACADÉMICO (REQ-EXP-018)
+// ---------------------------------------------------------------------------
+
+function recordAcademicStructuredLog(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  let sheet = ss.getSheetByName("BitacoraLogs");
+  if (!sheet) {
+    sheet = ss.insertSheet("BitacoraLogs");
+    sheet.appendRow([
+      "LogId",
+      "FechaHora",
+      "Severidad",
+      "Servicio",
+      "Funcion",
+      "CodigoError",
+      "UsuarioId",
+      "Detalles"
+    ]);
+  }
+
+  const logId = "LOG-ACAD-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+  const severidad = (payload.severidad || "INFO").toString().toUpperCase();
+  const funcion = (payload.funcion || "general").toString();
+  const codigoError = (payload.codigoError || "").toString();
+  const usuarioId = (payload.usuarioId || payload.requesterUserId || "ANON").toString();
+  let detalles = payload.detalles || payload.message || "";
+  if (typeof detalles === "object") detalles = JSON.stringify(detalles);
+
+  sheet.appendRow([
+    logId,
+    new Date().toISOString(),
+    severidad,
+    "ACADEMIC",
+    funcion,
+    codigoError,
+    usuarioId,
+    String(detalles)
+  ]);
+
+  return { status: "success", logId: logId };
 }

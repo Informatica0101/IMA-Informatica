@@ -1276,3 +1276,11 @@ Sector: Arquitectura de perfiles, segregación funcional y consola técnica root
 Hallazgo [Crítico]: Las funciones de monitoreo y diagnóstico técnico residían indebidamente en el panel de profesores y el rol 'Desarrollador' era redirigido a la interfaz docente sin un entorno dedicado de administración técnica con visibilidad completa de la plataforma.
 Impacto: Exposición de utilidades técnicas avanzadas al cuerpo docente, falta de una consola centralizada de superadministrador/desarrollador y violación del principio de mínima sorpresa/segregación de interfaces por rol.
 Recomendación: Crear un dashboard independiente 'developer-dashboard.html' con controlador 'js/developer.js', migrar allí la consola de salud de microservicios, purga de cachés y visor de parámetros dinámicos, remover estos controles de 'teacher-dashboard.html' y asegurar redirección automática para usuarios con rol 'Desarrollador'.
+
+REGISTRO DE AUDITORÍA - SISTEMA DE LOGS ESTRUCTURADOS POR SERVICIO Y FUNCIÓN - Sun Nov 1 2026
+
+Archivo: backend/user-service/Code.gs, backend/academic-service/Code.gs, js/api.js, developer-dashboard.html, js/developer.js
+Sector: Trazabilidad técnica, auditoría de eventos y bitácora estructurada de microservicios
+Hallazgo [Alto]: Carencia de un esquema centralizado de logs estructurados con niveles de severidad normalizados (INFO, WARN, ERROR, CRITICAL), códigos de error sistemáticos y protección de datos confidenciales (redacción automática de contraseñas, tokens y pines).
+Impacto: Dificultad para rastrear errores distribuidos entre microservicios, ausencia de bitácora histórica persistente y riesgo de exposición de información sensible en registros de depuración ad-hoc.
+Recomendación: Implementar la hoja 'BitacoraLogs' gestionada por 'recordStructuredLog' y 'getStructuredLogs' en backend GAS con desinfección obligatoria de parámetros, añadir 'window.logStructuredEvent' en 'js/api.js', e integrar visor interactivo con filtros multinivel en 'developer-dashboard.html'.

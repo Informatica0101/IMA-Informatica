@@ -249,3 +249,36 @@ window.checkAllMicroservicesHealth = function() {
     });
     return Promise.all(checks);
 };
+
+/**
+ * SISTEMA DE LOGS ESTRUCTURADOS CLIENTE (REQ-EXP-018)
+ * Registra eventos técnicos estructurados con sanitización de credenciales.
+ */
+window.logStructuredEvent = function(service, severidad, funcion, codigoError, detalles) {
+    var sService = service || 'USER';
+    var sSev = severidad || 'INFO';
+    var sFunc = funcion || 'client_operation';
+    var sCode = codigoError || '';
+
+    // Sanitización local preventiva
+    var safeDetails = detalles;
+    if (typeof safeDetails === 'object') {
+        try {
+            var str = JSON.stringify(safeDetails);
+            safeDetails = str.replace(/"(?:password|contrasena|pin|token|secret)":\s*"[^"]*"/gi, '"$1":"[REDACTED]"');
+        } catch (_) {}
+    }
+
+    var payload = {
+        severidad: sSev,
+        servicio: sService,
+        funcion: sFunc,
+        codigoError: sCode,
+        detalles: safeDetails
+    };
+
+    return window.fetchApi(sService, 'recordStructuredLog', payload)
+        .catch(function(err) {
+            console.warn('[LogStructuredEvent] No se pudo persistir log:', err.message);
+        });
+};
