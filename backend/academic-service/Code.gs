@@ -74,6 +74,7 @@ function doPost(e) {
       case "saveQuestion": result = saveQuestion(payload); break;
       case "generateMigrationReport": result = generateMigrationReport(payload); break;
       case "recordStructuredLog": result = recordAcademicStructuredLog(payload); break;
+      case "createSpreadsheetBackup": result = createAcademicBackup(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -405,4 +406,66 @@ function recordAcademicStructuredLog(payload) {
   ]);
 
   return { status: "success", logId: logId };
+}
+
+function createAcademicBackup(payload) {
+  const requesterUserId = (payload && payload.requesterUserId) ? String(payload.requesterUserId) : "SYSTEM";
+  const tipo = (payload && payload.tipo) ? String(payload.tipo).toUpperCase() : "MANUAL";
+  const timestamp = new Date();
+  const dateFormatted = Utilities.formatDate(timestamp, "America/Tegucigalpa", "yyyy-MM-dd_HH-mm-ss");
+  const backupFileName = "Backup_ACADEMIC_" + dateFormatted;
+
+  try {
+    const file = DriveApp.getFileById(SPREADSHEET_ID);
+    const folders = DriveApp.getFoldersByName("New Generation - Respaldos del Sistema");
+    let targetFolder;
+    if (folders.hasNext()) {
+      targetFolder = folders.next();
+    } else {
+      targetFolder = DriveApp.createFolder("New Generation - Respaldos del Sistema");
+    }
+
+    const backupFile = file.makeCopy(backupFileName, targetFolder);
+    const backupId = "BKP-ACAD-" + timestamp.getTime();
+    const fileSize = backupFile.getSize();
+    const fileUrl = backupFile.getUrl();
+    const checksum = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, backupFile.getId() + "_" + fileSize)
+      .map(b => (b < 0 ? b + 256 : b).toString(16).padStart(2, "0"))
+      .join("");
+
+    recordAcademicStructuredLog({
+      severidad: "INFO",
+      funcion: "createAcademicBackup",
+      codigoError: "BACKUP_SUCCESS",
+      requesterUserId: requesterUserId,
+      detalles: JSON.stringify({ backupId: backupId, fileId: backupFile.getId(), checksum: checksum })
+    });
+
+    return {
+      status: "success",
+      message: "Respaldo del servicio académico generado exitosamente.",
+      backup: {
+        backupId: backupId,
+        fechaHora: timestamp.toISOString(),
+        servicio: "ACADEMIC",
+        tipo: tipo,
+        archivoId: backupFile.getId(),
+        nombreArchivo: backupFileName,
+        urlDescarga: fileUrl,
+        checksum: checksum,
+        tamanioBytes: fileSize,
+        estado: "EXITOSO",
+        usuarioId: requesterUserId
+      }
+    };
+  } catch (err) {
+    recordAcademicStructuredLog({
+      severidad: "ERROR",
+      funcion: "createAcademicBackup",
+      codigoError: "BACKUP_FAILED",
+      requesterUserId: requesterUserId,
+      detalles: err.message
+    });
+    return { status: "error", message: "Error al generar respaldo académico: " + err.message };
+  }
 }

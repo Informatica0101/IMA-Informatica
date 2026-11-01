@@ -1284,3 +1284,11 @@ Sector: Trazabilidad técnica, auditoría de eventos y bitácora estructurada de
 Hallazgo [Alto]: Carencia de un esquema centralizado de logs estructurados con niveles de severidad normalizados (INFO, WARN, ERROR, CRITICAL), códigos de error sistemáticos y protección de datos confidenciales (redacción automática de contraseñas, tokens y pines).
 Impacto: Dificultad para rastrear errores distribuidos entre microservicios, ausencia de bitácora histórica persistente y riesgo de exposición de información sensible en registros de depuración ad-hoc.
 Recomendación: Implementar la hoja 'BitacoraLogs' gestionada por 'recordStructuredLog' y 'getStructuredLogs' en backend GAS con desinfección obligatoria de parámetros, añadir 'window.logStructuredEvent' en 'js/api.js', e integrar visor interactivo con filtros multinivel en 'developer-dashboard.html'.
+
+REGISTRO DE AUDITORÍA - MÓDULO DE COPIAS DE SEGURIDAD, RESTAURACIÓN SEGURA Y MANTENIMIENTO - Sun Nov 1 2026
+
+Archivo: backend/user-service/Code.gs, backend/academic-service/Code.gs, developer-dashboard.html, js/developer.js, js/api.js
+Sector: Respaldo de datos, continuidad institucional, recuperación ante desastres y mantenimiento preventivo
+Hallazgo [Crítico]: Carencia de mecanismos automáticos o manuales para respaldar los spreadsheets de microservicios en carpetas seguras de Drive, ausencia de cálculo de checksums o verificación de integridad de archivos generados, y falta de control de restauración protegida con confirmación doble para prevenir sobreescrituras catastróficas accidentales.
+Impacto: Riesgo inminente de pérdida irrevocable de datos institucionales ante fallas operativas o corrupciones de datos, y vulnerabilidad de sobreescritura sin protocolo de confirmación.
+Recomendación: Implementar la hoja 'CopiasSeguridad' con registro de backups y sumas de verificación, métodos 'createSpreadsheetBackup', 'getBackupsList', 'restoreSpreadsheetBackup' con validación de palabra clave de doble confirmación ('CONFIRMAR_RESTAURACION_INSTITUCIONAL'), herramientas de purga y optimización en 'runSystemMaintenance', e integración en la consola de desarrollador.

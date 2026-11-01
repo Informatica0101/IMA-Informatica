@@ -282,3 +282,30 @@ window.logStructuredEvent = function(service, severidad, funcion, codigoError, d
             console.warn('[LogStructuredEvent] No se pudo persistir log:', err.message);
         });
 };
+
+/**
+ * GESTIÓN DE COPIAS DE SEGURIDAD, RESTAURACIÓN Y MANTENIMIENTO (REQ-EXP-019)
+ */
+window.createBackup = function(service, tipo) {
+    var targetService = (service || 'USER').toUpperCase();
+    var payload = {
+        servicio: targetService,
+        tipo: tipo || 'MANUAL'
+    };
+    return window.fetchApi(targetService === 'ACADEMIC' ? 'ACADEMIC' : 'USER', 'createSpreadsheetBackup', payload);
+};
+
+window.getBackupsList = function(filters) {
+    return window.fetchApi('USER', 'getBackupsList', filters || {});
+};
+
+window.restoreBackup = function(backupId, confirmationToken) {
+    return window.fetchApi('USER', 'restoreSpreadsheetBackup', {
+        backupId: backupId,
+        confirmationToken: confirmationToken
+    });
+};
+
+window.runMaintenance = function(options) {
+    return window.fetchApi('USER', 'runSystemMaintenance', options || {});
+};

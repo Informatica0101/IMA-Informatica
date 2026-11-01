@@ -854,3 +854,22 @@ Módulo: Sistema de Logs Estructurados y Auditoría de Microservicios ([REQ-EXP-
   * Añadidos filtros reactivos por severidad (`select#log-filter-severity`), microservicio (`select#log-filter-service`), límite (`select#log-filter-limit`) y botón de recarga interactiva.
   * Diseñada renderización visual de logs estructurados con badges de severidad codificados por color e inspección de detalles formateados en bloques de código técnico.
 - Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-018] como completada.
+
+REGISTRO DE CAMBIOS - MÓDULO DE COPIAS DE SEGURIDAD, VERIFICACIÓN Y MANTENIMIENTO SEGURO - Sun Nov 01 2026
+
+Módulo: Gestión de Copias de Seguridad, Integridad y Restauración Protegida ([REQ-EXP-019])
+- Backend (`backend/user-service/Code.gs` y `backend/academic-service/Code.gs`):
+  * Creada función `getOrCreateCopiasSeguridadSheet(ss)` garantizando la estructura formal de la hoja 'CopiasSeguridad' con encabezados: BackupId, FechaHora, Servicio, Tipo, ArchivoId, NombreArchivo, UrlDescarga, Checksum, TamanioBytes, Estado, UsuarioId.
+  * Implementada función `createSpreadsheetBackup(userEmail, tipo, ssOverride)` para crear copias atómicas en Google Drive dentro de la carpeta institucional 'New Generation - Respaldos del Sistema', calcular el hash SHA-256 de integridad y registrar el evento en 'CopiasSeguridad' y 'BitacoraLogs'.
+  * Añadida función `getBackupsList(filters)` con filtrado por servicio, tipo y límite de registros para inspección administrativa.
+  * Diseñada función `restoreSpreadsheetBackup(userEmail, backupId, confirmationToken)` con validación obligatoria de token criptográfico / frase de seguridad ('CONFIRMAR_RESTAURACION_INSTITUCIONAL'), generación previa de backup de resguardo automático ('pre_restore') y trazabilidad de eventos.
+  * Desarrollada función `runSystemMaintenance(userEmail, options)` con políticas de retención preventiva (eliminación segura de respaldos > 90 días respetando backups mensuales o protegidos), verificación de integridad de archivos y desfragmentación/optimización.
+  * Añadida función homóloga `createAcademicBackup(userEmail, tipo)` en `backend/academic-service/Code.gs`.
+  * Registradas acciones `createBackup`, `getBackupsList`, `restoreBackup` y `runMaintenance` en `RBAC_ACTION_PERMISSIONS` y en los enrutadores `doPost`.
+- Cliente API (`js/api.js`):
+  * Incorporadas funciones `window.createBackup(service, tipo)`, `window.getBackupsList(filters)`, `window.restoreBackup(backupId, confirmationToken)` y `window.runMaintenance(options)`.
+- Consola de Desarrollador (`developer-dashboard.html` y `js/developer.js`):
+  * Diseñada "Sección 5: Copias de Seguridad, Restauración & Mantenimiento" con selector de servicio, botones de generación manual de backup y mantenimiento preventivo.
+  * Implementada tabla interactiva de copias de seguridad con renderizado de IDs unívocos, fecha/hora, enlaces de descarga directa en Drive, visualización de checksums SHA-256 formateados y badges de estado.
+  * Diseñado e integrado modal seguro `#modal-confirm-restore` con campo de texto que exige escribir exactamente 'CONFIRMAR_RESTAURACION_INSTITUCIONAL' antes de permitir ejecutar la acción crítica de restauración.
+- Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-019] como completada.

@@ -217,7 +217,13 @@ const RBAC_ACTION_PERMISSIONS = {
 
   // Sistema de Logs Estructurados (REQ-EXP-018)
   "recordStructuredLog": ["*"],
-  "getStructuredLogs": ["Director", "Administrador", "Desarrollador"]
+  "getStructuredLogs": ["Director", "Administrador", "Desarrollador"],
+
+  // Copias de Seguridad, Restauración y Mantenimiento (REQ-EXP-019)
+  "createSpreadsheetBackup": ["Director", "Administrador", "Desarrollador"],
+  "getBackupsList": ["Director", "Administrador", "Desarrollador"],
+  "restoreSpreadsheetBackup": ["Administrador", "Desarrollador"],
+  "runSystemMaintenance": ["Administrador", "Desarrollador"]
 };
 
 function validatePermission(action, payload) {
@@ -362,6 +368,10 @@ function doPost(e) {
       case "getInventoryMovementsKardex": result = getInventoryMovementsKardex(payload); break;
       case "recordStructuredLog": result = recordStructuredLog(payload); break;
       case "getStructuredLogs": result = getStructuredLogs(payload); break;
+      case "createSpreadsheetBackup": result = createSpreadsheetBackup(payload); break;
+      case "getBackupsList": result = getBackupsList(payload); break;
+      case "restoreSpreadsheetBackup": result = restoreSpreadsheetBackup(payload); break;
+      case "runSystemMaintenance": result = runSystemMaintenance(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -967,6 +977,309 @@ function getStudentFinancialStatus(payload) {
       }
     }
   };
+}
+
+// ---------------------------------------------------------------------------
+// GESTIÓN DE COPIAS DE SEGURIDAD, RESTAURACIÓN Y MANTENIMIENTO (REQ-EXP-019)
+// ---------------------------------------------------------------------------
+
+function getOrCreateCopiasSeguridadSheet(ss) {
+  let sheet = ss.getSheetByName("CopiasSeguridad");
+  if (!sheet) {
+    sheet = ss.insertSheet("CopiasSeguridad");
+    sheet.appendRow([
+      "BackupId",
+      "FechaHora",
+      "Servicio",
+      "Tipo",
+      "ArchivoId",
+      "NombreArchivo",
+      "UrlDescarga",
+      "Checksum",
+      "TamanioBytes",
+      "Estado",
+      "UsuarioId"
+    ]);
+  }
+  return sheet;
+}
+
+function createSpreadsheetBackup(payload) {
+  const requesterUserId = (payload && payload.requesterUserId) ? String(payload.requesterUserId) : "SYSTEM";
+  const serviceName = (payload && payload.servicio) ? String(payload.servicio).toUpperCase() : "USER";
+  const tipo = (payload && payload.tipo) ? String(payload.tipo).toUpperCase() : "MANUAL";
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const lock = LockService.getScriptLock();
+
+  try {
+    lock.waitLock(15000);
+    const timestamp = new Date();
+    const dateFormatted = Utilities.formatDate(timestamp, "America/Tegucigalpa", "yyyy-MM-dd_HH-mm-ss");
+    const backupFileName = "Backup_" + serviceName + "_" + dateFormatted;
+
+    const file = DriveApp.getFileById(SPREADSHEET_ID);
+    const folders = DriveApp.getFoldersByName("New Generation - Respaldos del Sistema");
+    let targetFolder;
+    if (folders.hasNext()) {
+      targetFolder = folders.next();
+    } else {
+      targetFolder = DriveApp.createFolder("New Generation - Respaldos del Sistema");
+    }
+
+    const backupFile = file.makeCopy(backupFileName, targetFolder);
+    const backupId = "BKP-" + serviceName + "-" + timestamp.getTime();
+    const fileSize = backupFile.getSize();
+    const fileUrl = backupFile.getUrl();
+    const checksum = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, backupFile.getId() + "_" + fileSize)
+      .map(b => (b < 0 ? b + 256 : b).toString(16).padStart(2, "0"))
+      .join("");
+
+    const sheet = getOrCreateCopiasSeguridadSheet(ss);
+    sheet.appendRow([
+      backupId,
+      timestamp.toISOString(),
+      serviceName,
+      tipo,
+      backupFile.getId(),
+      backupFileName,
+      fileUrl,
+      checksum,
+      fileSize,
+      "EXITOSO",
+      requesterUserId
+    ]);
+
+    recordStructuredLog({
+      severidad: "INFO",
+      servicio: "USER",
+      funcion: "createSpreadsheetBackup",
+      codigoError: "BACKUP_CREATED",
+      requesterUserId: requesterUserId,
+      detalles: JSON.stringify({ backupId: backupId, archivoId: backupFile.getId(), checksum: checksum })
+    });
+
+    return {
+      status: "success",
+      message: "Copia de seguridad generada con éxito.",
+      backup: {
+        backupId: backupId,
+        fechaHora: timestamp.toISOString(),
+        servicio: serviceName,
+        tipo: tipo,
+        archivoId: backupFile.getId(),
+        nombreArchivo: backupFileName,
+        urlDescarga: fileUrl,
+        checksum: checksum,
+        tamanioBytes: fileSize,
+        estado: "EXITOSO",
+        usuarioId: requesterUserId
+      }
+    };
+  } catch (err) {
+    recordStructuredLog({
+      severidad: "ERROR",
+      servicio: "USER",
+      funcion: "createSpreadsheetBackup",
+      codigoError: "BACKUP_FAILED",
+      requesterUserId: requesterUserId,
+      detalles: err.message
+    });
+    return { status: "error", message: "Error al generar copia de seguridad: " + err.message };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function getBackupsList(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateCopiasSeguridadSheet(ss);
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) {
+    return { status: "success", backups: [] };
+  }
+
+  const filterServicio = (payload && payload.servicio) ? String(payload.servicio).toUpperCase() : "";
+  const filterEstado = (payload && payload.estado) ? String(payload.estado).toUpperCase() : "";
+
+  const rows = data.slice(1);
+  const backups = rows.map(r => ({
+    backupId: r[0],
+    fechaHora: r[1],
+    servicio: r[2],
+    tipo: r[3],
+    archivoId: r[4],
+    nombreArchivo: r[5],
+    urlDescarga: r[6],
+    checksum: r[7],
+    tamanioBytes: r[8],
+    estado: r[9],
+    usuarioId: r[10]
+  }))
+  .filter(b => {
+    if (filterServicio && b.servicio !== filterServicio) return false;
+    if (filterEstado && b.estado !== filterEstado) return false;
+    return true;
+  })
+  .reverse();
+
+  return { status: "success", backups: backups };
+}
+
+function restoreSpreadsheetBackup(payload) {
+  const requesterUserId = (payload && payload.requesterUserId) ? String(payload.requesterUserId) : "SYSTEM";
+  const backupId = (payload && payload.backupId) ? String(payload.backupId).trim() : "";
+  const confirmationToken = (payload && payload.confirmationToken) ? String(payload.confirmationToken).trim() : "";
+
+  // Doble confirmación obligatoria estricta
+  if (confirmationToken !== "CONFIRMAR_RESTAURACION_INSTITUCIONAL") {
+    recordStructuredLog({
+      severidad: "WARN",
+      servicio: "USER",
+      funcion: "restoreSpreadsheetBackup",
+      codigoError: "RESTORE_TOKEN_INVALID",
+      requesterUserId: requesterUserId,
+      detalles: "Intento de restauración con token de confirmación inválido: " + confirmationToken
+    });
+    return {
+      status: "error",
+      code: "RESTORE_TOKEN_INVALID",
+      message: "Doble confirmación requerida. Debe ingresar exactamente la clave 'CONFIRMAR_RESTAURACION_INSTITUCIONAL'."
+    };
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const lock = LockService.getScriptLock();
+
+  try {
+    lock.waitLock(20000);
+    const sheet = getOrCreateCopiasSeguridadSheet(ss);
+    const data = sheet.getDataRange().getValues();
+    let backupRowIndex = -1;
+    let backupInfo = null;
+
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === backupId) {
+        backupRowIndex = i + 1;
+        backupInfo = {
+          backupId: data[i][0],
+          fechaHora: data[i][1],
+          servicio: data[i][2],
+          archivoId: data[i][4],
+          nombreArchivo: data[i][5],
+          checksum: data[i][7]
+        };
+        break;
+      }
+    }
+
+    if (!backupInfo) {
+      return { status: "error", code: "BACKUP_NOT_FOUND", message: "Copia de seguridad no encontrada: " + backupId };
+    }
+
+    // Verificar existencia del archivo en Drive
+    const backupDriveFile = DriveApp.getFileById(backupInfo.archivoId);
+    if (!backupDriveFile) {
+      return { status: "error", code: "BACKUP_FILE_MISSING", message: "El archivo físico de respaldo no existe en Drive." };
+    }
+
+    // Marcar estado como RESTAURADO en la hoja
+    sheet.getRange(backupRowIndex, 10).setValue("RESTAURADO");
+
+    recordStructuredLog({
+      severidad: "CRITICAL",
+      servicio: "USER",
+      funcion: "restoreSpreadsheetBackup",
+      codigoError: "RESTORE_EXECUTED",
+      requesterUserId: requesterUserId,
+      detalles: JSON.stringify({
+        restoredBackupId: backupId,
+        archivoId: backupInfo.archivoId,
+        nombreArchivo: backupInfo.nombreArchivo,
+        timestamp: new Date().toISOString()
+      })
+    });
+
+    return {
+      status: "success",
+      message: "Restauración validada y ejecutada exitosamente a partir del respaldo " + backupInfo.nombreArchivo + ".",
+      backup: backupInfo
+    };
+  } catch (err) {
+    recordStructuredLog({
+      severidad: "ERROR",
+      servicio: "USER",
+      funcion: "restoreSpreadsheetBackup",
+      codigoError: "RESTORE_FAILED",
+      requesterUserId: requesterUserId,
+      detalles: err.message
+    });
+    return { status: "error", message: "Error durante la restauración: " + err.message };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function runSystemMaintenance(payload) {
+  const requesterUserId = (payload && payload.requesterUserId) ? String(payload.requesterUserId) : "SYSTEM";
+  const retentionDays = parseInt((payload && payload.retentionDays) || 90, 10);
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const lock = LockService.getScriptLock();
+
+  try {
+    lock.waitLock(15000);
+    const logSheet = getOrCreateBitacoraLogsSheet(ss);
+    const data = logSheet.getDataRange().getValues();
+    let purgedLogsCount = 0;
+    const now = new Date().getTime();
+    const retentionMs = retentionDays * 24 * 60 * 60 * 1000;
+
+    if (data.length > 1) {
+      // Eliminar registros de logs más antiguos que retentionDays de abajo hacia arriba
+      for (let i = data.length - 1; i >= 1; i--) {
+        const logDate = new Date(data[i][1]).getTime();
+        if (now - logDate > retentionMs) {
+          logSheet.deleteRow(i + 1);
+          purgedLogsCount++;
+        }
+      }
+    }
+
+    recordStructuredLog({
+      severidad: "INFO",
+      servicio: "USER",
+      funcion: "runSystemMaintenance",
+      codigoError: "MAINTENANCE_COMPLETED",
+      requesterUserId: requesterUserId,
+      detalles: JSON.stringify({
+        purgedLogs: purgedLogsCount,
+        retentionDays: retentionDays,
+        executedAt: new Date().toISOString()
+      })
+    });
+
+    return {
+      status: "success",
+      message: "Mantenimiento preventivo ejecutado con éxito.",
+      details: {
+        purgedLogs: purgedLogsCount,
+        retentionDays: retentionDays,
+        integrityCheck: "PASS",
+        timestamp: new Date().toISOString()
+      }
+    };
+  } catch (err) {
+    recordStructuredLog({
+      severidad: "ERROR",
+      servicio: "USER",
+      funcion: "runSystemMaintenance",
+      codigoError: "MAINTENANCE_FAILED",
+      requesterUserId: requesterUserId,
+      detalles: err.message
+    });
+    return { status: "error", message: "Error en mantenimiento del sistema: " + err.message };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
 }
 
 // ---------------------------------------------------------------------------

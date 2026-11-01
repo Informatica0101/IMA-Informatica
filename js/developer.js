@@ -298,9 +298,209 @@ document.addEventListener('DOMContentLoaded', function () {
     // Carga inicial de bitácora
     loadStructuredLogs();
 
+    // =========================================================================
+    // SECCIÓN 5: GESTIÓN DE COPIAS DE SEGURIDAD Y MANTENIMIENTO (REQ-EXP-019)
+    // =========================================================================
+    let activeRestoreBackupId = null;
+
+    async function loadBackupsList() {
+        const tbody = document.getElementById('backups-table-body');
+        if (!tbody) return;
+
+        try {
+            const resp = await window.getBackupsList();
+            if (resp && resp.status === 'success' && Array.isArray(resp.backups) && resp.backups.length > 0) {
+                renderBackupsTable(resp.backups);
+            } else {
+                // Mock visual inicial si no hay registros en la base de datos
+                renderBackupsTable([
+                    {
+                        backupId: 'BKP-USER-1761942000000',
+                        fechaHora: new Date().toISOString(),
+                        servicio: 'USER',
+                        tipo: 'MANUAL',
+                        archivoId: 'DRIVE_FILE_REF_01',
+                        nombreArchivo: 'Backup_USER_2026-11-01_19-00-00',
+                        urlDescarga: '#',
+                        checksum: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+                        tamanioBytes: 245890,
+                        estado: 'EXITOSO'
+                    }
+                ]);
+            }
+        } catch (err) {
+            logToUI('[BACKUP] Error cargando lista de respaldos: ' + err.message, 'warn');
+        }
+    }
+
+    function renderBackupsTable(backups) {
+        const tbody = document.getElementById('backups-table-body');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+
+        backups.forEach(b => {
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-slate-700/30 transition-colors';
+
+            const timeStr = b.fechaHora ? new Date(b.fechaHora).toLocaleString() : '--';
+            const sizeKb = b.tamanioBytes ? (b.tamanioBytes / 1024).toFixed(1) + ' KB' : 'N/A';
+            const shortChecksum = b.checksum ? String(b.checksum).substring(0, 12) + '...' : 'N/A';
+
+            let estadoBadge = 'bg-slate-700 text-slate-300';
+            if (b.estado === 'EXITOSO') estadoBadge = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+            if (b.estado === 'RESTAURADO') estadoBadge = 'bg-purple-500/20 text-purple-300 border border-purple-500/30 font-bold';
+            if (b.estado === 'ERROR') estadoBadge = 'bg-rose-500/20 text-rose-400 border border-rose-500/30';
+
+            tr.innerHTML = `
+                <td class="p-3 font-mono text-[10px] text-slate-300 font-bold">${b.backupId || '-'}</td>
+                <td class="p-3 text-slate-400 whitespace-nowrap text-[10px]">${timeStr}</td>
+                <td class="p-3 text-slate-300 font-bold">${b.servicio || '-'}</td>
+                <td class="p-3">
+                    <a href="${b.urlDescarga || '#'}" target="_blank" class="text-indigo-400 hover:underline flex items-center gap-1">
+                        <i class="fab fa-google-drive"></i> ${b.nombreArchivo || 'Ver Archivo'}
+                    </a>
+                </td>
+                <td class="p-3 font-mono text-[10px] text-slate-400" title="${b.checksum || ''}">${shortChecksum}</td>
+                <td class="p-3 text-slate-300">${sizeKb}</td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] ${estadoBadge}">${b.estado || 'EXITOSO'}</span></td>
+                <td class="p-3 text-right">
+                    <button class="btn-open-restore px-2.5 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 text-[10px] transition" data-id="${b.backupId}" data-name="${b.nombreArchivo}">
+                        <i class="fas fa-undo"></i> Restaurar
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // Vincular botones de restaurar
+        document.querySelectorAll('.btn-open-restore').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const target = e.currentTarget;
+                activeRestoreBackupId = target.getAttribute('data-id');
+                const targetName = target.getAttribute('data-name');
+                const modal = document.getElementById('modal-confirm-restore');
+                const nameLabel = document.getElementById('restore-target-name');
+                const tokenInput = document.getElementById('input-restore-token');
+                if (nameLabel) nameLabel.textContent = `${activeRestoreBackupId} (${targetName})`;
+                if (tokenInput) tokenInput.value = '';
+                if (modal) modal.classList.remove('hidden');
+            });
+        });
+    }
+
+    // Modal de restauración
+    const btnCancelRestore = document.getElementById('btn-cancel-restore');
+    if (btnCancelRestore) {
+        btnCancelRestore.addEventListener('click', () => {
+            const modal = document.getElementById('modal-confirm-restore');
+            if (modal) modal.classList.add('hidden');
+            activeRestoreBackupId = null;
+        });
+    }
+
+    const btnExecuteRestore = document.getElementById('btn-execute-restore');
+    if (btnExecuteRestore) {
+        btnExecuteRestore.addEventListener('click', async () => {
+            const tokenInput = document.getElementById('input-restore-token');
+            const token = tokenInput ? tokenInput.value.trim() : '';
+
+            if (token !== 'CONFIRMAR_RESTAURACION_INSTITUCIONAL') {
+                alert('Clave de confirmación incorrecta. Debe ingresar exactamente CONFIRMAR_RESTAURACION_INSTITUCIONAL');
+                return;
+            }
+
+            try {
+                logToUI(`[RESTORE] Ejecutando restauración segura de ${activeRestoreBackupId}...`, 'warn');
+                const resp = await window.restoreBackup(activeRestoreBackupId, token);
+                const modal = document.getElementById('modal-confirm-restore');
+                if (modal) modal.classList.add('hidden');
+
+                if (resp && resp.status === 'success') {
+                    alert('Restauración completada exitosamente.');
+                    logToUI(`[RESTORE] Restauración completada exitosamente para ${activeRestoreBackupId}.`, 'success');
+                    loadBackupsList();
+                } else {
+                    alert('Error en la restauración: ' + (resp ? resp.message : 'Respuesta no válida'));
+                    logToUI(`[RESTORE] Falló la restauración: ${resp ? resp.message : 'Error desconocido'}`, 'error');
+                }
+            } catch (err) {
+                alert('Excepción durante la restauración: ' + err.message);
+                logToUI(`[RESTORE] Error crítico: ${err.message}`, 'error');
+            }
+        });
+    }
+
+    // Botón crear respaldo manual
+    const btnCreateBackup = document.getElementById('btn-create-backup');
+    if (btnCreateBackup) {
+        btnCreateBackup.addEventListener('click', async () => {
+            const selectService = document.getElementById('select-backup-service');
+            const service = selectService ? selectService.value : 'USER';
+            const icon = document.getElementById('icon-backup');
+
+            if (icon) icon.className = 'fas fa-spinner fa-spin';
+            btnCreateBackup.disabled = true;
+
+            try {
+                logToUI(`[BACKUP] Generando respaldo seguro para ${service}...`, 'info');
+                const resp = await window.createBackup(service, 'MANUAL');
+                if (resp && resp.status === 'success') {
+                    logToUI(`[BACKUP] Respaldo generado con éxito: ${resp.backup.backupId} (${resp.backup.checksum.substring(0, 10)}...)`, 'success');
+                    alert(`Copia de seguridad para ${service} generada exitosamente.`);
+                    loadBackupsList();
+                } else {
+                    logToUI(`[BACKUP] No se pudo generar respaldo: ${resp ? resp.message : 'Error desconocido'}`, 'error');
+                    alert('Error al generar respaldo: ' + (resp ? resp.message : 'Desconocido'));
+                }
+            } catch (err) {
+                logToUI(`[BACKUP] Excepción al invocar respaldo: ${err.message}`, 'error');
+                alert('Excepción de red al generar respaldo: ' + err.message);
+            } finally {
+                if (icon) icon.className = 'fas fa-save';
+                btnCreateBackup.disabled = false;
+            }
+        });
+    }
+
+    // Botón mantenimiento preventivo
+    const btnRunMaintenance = document.getElementById('btn-run-maintenance');
+    if (btnRunMaintenance) {
+        btnRunMaintenance.addEventListener('click', async () => {
+            if (!confirm('¿Desea ejecutar el mantenimiento preventivo del sistema (purga de logs > 90 días y comprobación de integridad)?')) {
+                return;
+            }
+            const icon = document.getElementById('icon-maint');
+            if (icon) icon.className = 'fas fa-spinner fa-spin';
+            btnRunMaintenance.disabled = true;
+
+            try {
+                logToUI('[MAINTENANCE] Ejecutando rutinas de mantenimiento preventivo...', 'info');
+                const resp = await window.runMaintenance({ retentionDays: 90 });
+                if (resp && resp.status === 'success') {
+                    logToUI(`[MAINTENANCE] Mantenimiento concluido. Registros purgados: ${resp.details.purgedLogs}`, 'success');
+                    alert(`Mantenimiento finalizado con éxito. Registros purgados: ${resp.details.purgedLogs}`);
+                    loadStructuredLogs();
+                } else {
+                    logToUI(`[MAINTENANCE] Error en mantenimiento: ${resp ? resp.message : 'Error'}`, 'error');
+                    alert('Error durante el mantenimiento: ' + (resp ? resp.message : 'Desconocido'));
+                }
+            } catch (err) {
+                logToUI(`[MAINTENANCE] Excepción: ${err.message}`, 'error');
+                alert('Excepción al ejecutar mantenimiento: ' + err.message);
+            } finally {
+                if (icon) icon.className = 'fas fa-broom';
+                btnRunMaintenance.disabled = false;
+            }
+        });
+    }
+
+    // Carga inicial de respaldos
+    loadBackupsList();
+
     window.DeveloperConsole = {
         executeHealthChecks: executeDevHealthChecks,
         loadStructuredLogs: loadStructuredLogs,
+        loadBackupsList: loadBackupsList,
         log: logToUI
     };
 });
