@@ -2630,7 +2630,7 @@ if (cancelNewsBtn) cancelNewsBtn.onclick = () => newsModal.classList.add('hidden
 async function fetchNewsManagement() {
     newsManagementContainer.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500">Cargando noticias...</div>';
     try {
-        const res = await fetchApi('USER', 'getNews', {});
+        const res = await fetchApi('USER', 'getNews', { incluirInactivas: true });
         if (res.status === 'success') {
             const data = res.data || [];
             if (data.length === 0) {
@@ -2638,18 +2638,34 @@ async function fetchNewsManagement() {
                 return;
             }
             newsManagementContainer.innerHTML = data.map(n => `
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-all">
-                    ${n.imagenUrl ? `
-                        <div class="h-40 overflow-hidden bg-gray-50">
-                            <img src="${window.convertDriveLink(n.imagenUrl)}" class="w-full h-full object-cover">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-all flex flex-col justify-between">
+                    <div>
+                        ${n.imagenUrl ? `
+                            <div class="h-40 overflow-hidden bg-gray-50">
+                                <img src="${window.convertDriveLink(n.imagenUrl)}" class="w-full h-full object-cover">
+                            </div>
+                        ` : ''}
+                        <div class="p-5">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-[9px] font-medium uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded">${n.categoria}</span>
+                                <span class="text-[10px] text-gray-400">${n.fecha}</span>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2 line-clamp-2 text-sm">${n.titulo}</h3>
+                            <div class="space-y-1 mb-3 text-[10px] text-gray-500">
+                                <div><i class="fas fa-bullseye text-blue-500 mr-1"></i> Audiencia: <strong>${n.audienciaNivel || 'Todos'} / ${n.audienciaGrado || 'Todos'}</strong></div>
+                                ${n.fechaExpiracion ? `<div><i class="fas fa-calendar-times text-amber-500 mr-1"></i> Vigencia hasta: <strong>${n.fechaExpiracion}</strong></div>` : ''}
+                                <div><i class="fas fa-info-circle text-gray-400 mr-1"></i> Estado: <span class="font-bold ${n.estado === 'Activo' ? 'text-green-600' : 'text-red-500'}">${n.estado || 'Activo'}</span></div>
+                            </div>
                         </div>
-                    ` : ''}
-                    <div class="p-5">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-[9px] font-medium uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded">${n.categoria}</span>
-                            <span class="text-[10px] text-gray-400">${n.fecha}</span>
-                        </div>
-                        <h3 class="font-medium text-gray-800 mb-2 line-clamp-2">${n.titulo}</h3>
+                    </div>
+                    <div class="p-4 bg-gray-50 border-t flex justify-end gap-2">
+                        ${n.estado === 'Activo' ? `
+                            <button onclick="window.retireNewsItem('${n.noticiaId}')" class="px-3 py-1 bg-red-100 text-red-700 rounded-lg text-xs font-bold hover:bg-red-200 transition-all">
+                                <i class="fas fa-archive mr-1"></i> Retirar
+                            </button>
+                        ` : `
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest self-center">Retirada</span>
+                        `}
                     </div>
                 </div>
             `).join('');
@@ -2658,6 +2674,25 @@ async function fetchNewsManagement() {
         newsManagementContainer.innerHTML = '<div class="col-span-full text-center py-12 text-red-500">Error al cargar noticias.</div>';
     }
 }
+
+window.retireNewsItem = async function(noticiaId) {
+    if (!confirm('¿Deseas retirar esta noticia institucional? Dejará de mostrarse en los portales.')) return;
+    try {
+        const res = await fetchApi('USER', 'retireNews', {
+            noticiaId,
+            estado: 'Inactivo',
+            requesterUserId: (JSON.parse(localStorage.getItem('currentUser') || '{}')).userId
+        });
+        if (res && res.status === 'success') {
+            alert('Noticia retirada exitosamente.');
+            fetchNewsManagement();
+        } else {
+            alert((res && res.message) || 'Error al retirar noticia.');
+        }
+    } catch (err) {
+        alert('Error al comunicar con el servidor.');
+    }
+};
 
 if (newsForm) {
     newsForm.onsubmit = async (e) => {
@@ -2678,22 +2713,29 @@ if (newsForm) {
                     fileData: base64
                 });
                 if (uploadRes.status === 'success') {
-                    // Usar la URL directa retornada por el backend si está disponible (Req 1)
                     imageUrl = uploadRes.data.directUrl || uploadRes.data.fileId;
                 }
             }
 
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
             const payload = {
-                titulo: document.getElementById('news-title').value,
+                titulo: document.getElementById('news-title').value.trim(),
                 categoria: document.getElementById('news-category').value,
+                fechaExpiracion: document.getElementById('news-expiration') ? document.getElementById('news-expiration').value : '',
+                audienciaNivel: document.getElementById('news-audience-level') ? document.getElementById('news-audience-level').value : 'Todos',
+                audienciaGrado: document.getElementById('news-audience-grade') ? (document.getElementById('news-audience-grade').value.trim() || 'Todos') : 'Todos',
+                audienciaSeccion: document.getElementById('news-audience-section') ? (document.getElementById('news-audience-section').value.trim() || 'Todos') : 'Todos',
                 imagenUrl: imageUrl,
-                contenido: quillNews.root.innerHTML
+                contenido: quillNews.root.innerHTML,
+                requesterUserId: currentUser.userId
             };
 
             const res = await fetchApi('USER', 'createNews', payload);
             if (res.status === 'success') {
-                alert('Noticia publicada exitosamente.');
+                alert('Noticia institucional publicada exitosamente con segmentación.');
                 newsModal.classList.add('hidden');
+                newsForm.reset();
+                if (quillNews) quillNews.setContents([]);
                 fetchNewsManagement();
             } else {
                 alert(res.message);

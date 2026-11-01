@@ -786,3 +786,18 @@ Módulo: Control Patrimonial, Kardex de Inventario y Proveedores
   * Diseñado formulario de kardex de movimientos `#inventory-movement-form` y directorio de proveedores `#supplier-form`.
   * Implementada alerta visual interactiva `#inventory-low-stock-alert` que detecta y lista existencias críticas en tiempo real.
 - Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-015] como completada.
+
+REGISTRO DE CAMBIOS - MÓDULO DE NOTICIAS Y COMUNICACIÓN INSTITUCIONAL (REQ-EXP-016) - Sun Nov 01 2026
+
+Módulo: Comunicación y Avisos Institucionales por Secretaría
+- Backend Usuarios (`backend/user-service/Code.gs`):
+  * Normalizada la hoja `NoticiasPortal` para admitir `noticiaId`, `fechaExpiracion`, `audienciaNivel`, `audienciaGrado`, `audienciaSeccion`, `estado` y `autor`.
+  * Actualizada función `getNews` para soportar compatibilidad con registros legacy, filtrar por audiencia destinataria y descartar automáticamente noticias vencidas o inactivas.
+  * Implementadas funciones `updateNews` y `retireNews` con control de concurrencia ScriptLock.
+  * Actualizados permisos RBAC en `RBAC_ACTION_PERMISSIONS` y enrutador `doPost` para conceder gestión a Secretaría, Dirección y Administración.
+- Dashboard Administrativo (`teacher-dashboard.html` y `js/teacher.js`):
+  * Ampliado modal de publicación `#news-modal` con fecha de expiración/vigencia y selectores de audiencia (nivel, grado, sección).
+  * Enriquecida la lista de gestión de noticias con metadatos de audiencia y acción interactiva `window.retireNewsItem` para retirar comunicados obsoletos.
+- Portal Principal (`js/index-ui.js`):
+  * Modificada función `renderNewsHTML` para filtrar publicaciones inactivas y noticias con fecha de vigencia expirada.
+- Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-016] como completada.

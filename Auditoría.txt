@@ -1252,3 +1252,11 @@ Sector: Control de inventario, consumibles, activos fijos y directorio de provee
 Hallazgo [Medio]: Ausencia de kardex de inventario estructurado para consumibles y activos tecnológicos/mobiliarios, carencia de registro de bajas y préstamos temporales, y falta de alertas tempranas de stock mínimo.
 Impacto: Pérdida o descontrol de bienes institucionales, compras imprevistas por desabastecimiento de consumibles escolares y carencia de directorio formal de proveedores homologados.
 Recomendación: Crear hojas 'InventarioArticulos', 'InventarioMovimientos' y 'Proveedores' con control atómico vía ScriptLock, validación de stock disponible antes de salidas, y notificación proactiva de stock mínimo en el dashboard.
+
+REGISTRO DE AUDITORÍA - MÓDULO DE NOTICIAS Y COMUNICACIÓN INSTITUCIONAL - Sun Nov 1 2026
+
+Archivo: backend/user-service/Code.gs, teacher-dashboard.html, js/teacher.js, js/index-ui.js
+Sector: Comunicación institucional, publicaciones de Secretaría y avisos dirigidos
+Hallazgo [Medio]: Esquema de noticias sin soporte de fechas de caducidad/vigencia, carencia de segmentación de audiencia destinataria por nivel escolar, grado y sección, e imposibilidad de retirar avisos obsoletos sin borrar registros históricos.
+Impacto: Saturación de comunicados caducados en la pantalla de inicio, falta de privacidad/pertinencia en avisos exclusivos para ciertos grados y ausencia de ciclo de vida documental para noticias.
+Recomendación: Normalizar 'NoticiasPortal' incorporando 'fechaExpiracion', 'audienciaNivel', 'audienciaGrado', 'audienciaSeccion' y 'estado', permitiendo el retiro administrativo y filtrando avisos vencidos de forma automática.

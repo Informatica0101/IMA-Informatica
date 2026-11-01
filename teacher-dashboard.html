@@ -992,7 +992,7 @@
                     <input type="text" id="news-title" required class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" placeholder="Título de la noticia">
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label for="news-category" class="block font-medium text-gray-700 mb-1">Categoría</label>
                         <select id="news-category" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400">
@@ -1003,9 +1003,33 @@
                         </select>
                     </div>
                     <div>
+                        <label for="news-expiration" class="block font-medium text-gray-700 mb-1">Fecha de Expiración (Vigencia)</label>
+                        <input type="date" id="news-expiration" class="w-full p-2.5 border rounded-xl text-sm">
+                    </div>
+                    <div>
                         <label for="news-image-input" class="block font-medium text-gray-700 mb-1">Imagen de Portada</label>
                         <input type="file" id="news-image-input" accept="image/*,.heic" class="w-full p-2.5 border rounded-xl text-sm">
                         <input type="hidden" id="news-image-url">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <div>
+                        <label for="news-audience-level" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Audiencia: Nivel</label>
+                        <select id="news-audience-level" class="w-full p-2 bg-white border rounded-lg text-xs font-semibold">
+                            <option value="Todos">Todos los niveles</option>
+                            <option value="Prebásica">Prebásica</option>
+                            <option value="Básica">Básica</option>
+                            <option value="Media">Media</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="news-audience-grade" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Audiencia: Grado</label>
+                        <input type="text" id="news-audience-grade" class="w-full p-2 bg-white border rounded-lg text-xs font-semibold" placeholder="Todos o ej. 7mo Grado">
+                    </div>
+                    <div>
+                        <label for="news-audience-section" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Audiencia: Sección</label>
+                        <input type="text" id="news-audience-section" class="w-full p-2 bg-white border rounded-lg text-xs font-semibold" placeholder="Todos o ej. A">
                     </div>
                 </div>
 

@@ -266,11 +266,11 @@
 ### [REQ-EXP-016] Módulo de Noticias y Comunicación Institucional por Secretaría (Sección 13)
 - **Origen del Hallazgo:** Requerimientos de Desarrollo y Expansión (Sección 13).
 - **Severidad/Clasificación:** Medio
-- **Archivos Involucrados:** `backend/user-service/Code.gs`, `js/index-ui.js`
+- **Archivos Involucrados:** `backend/user-service/Code.gs`, `teacher-dashboard.html`, `js/teacher.js`, `js/index-ui.js`
 - **Dependencias Expuestas:** Banners de noticias, audiencia por nivel/grado/sección.
 - **Descripción del Alcance:** Permitir al rol Secretaría publicar, editar y retirar noticias institucionales con vigencia de fechas y filtros de audiencia destinataria.
 - **Criterios de Aceptación:** Publicación de avisos segmentada por público objetivo.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [REQ-EXP-017] Consola de Administración Técnica, Panel de Estado y Health Checks Ping-Pong (Sección 14.1 - 14.3)
 - **Origen del Hallazgo:** Requerimientos de Desarrollo y Expansión (Sección 14.1 - 14.3).

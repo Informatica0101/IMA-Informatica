@@ -88,7 +88,7 @@ function getOrCreateSheet(ss, name) {
   if (!sheet) {
     sheet = ss.insertSheet(name);
     if (name === "Logros") sheet.appendRow(["Fecha", "UserId", "Alumno", "Juego", "Asignatura", "Puntaje", "Nivel", "Grado", "XP"]);
-    if (name === "NoticiasPortal") sheet.appendRow(["Fecha", "Hora", "Título", "Contenido", "ImagenUrl", "Categoría"]);
+    if (name === "NoticiasPortal") sheet.appendRow(["noticiaId", "Fecha", "Hora", "Título", "Contenido", "ImagenUrl", "Categoría", "fechaExpiracion", "audienciaNivel", "audienciaGrado", "audienciaSeccion", "estado", "autor"]);
     if (name === "QuizProAnalytics") sheet.appendRow(["analyticsId", "fecha", "userId", "quizId", "gameId", "gameName", "asignatura", "grado", "nivel", "preguntaId", "respuestaSeleccionada", "respuestaCorrecta", "esCorrecta", "tiempoRespuesta", "tiempoBase", "ratio", "cambiosRespuesta", "indiceConfianza", "indiceAdivinacion", "indiceDominio", "totalXP"]);
     if (name === "LearningProfile") sheet.appendRow(["profileId", "userId", "asignatura", "tema", "nivel", "intentos", "aciertos", "porcentajeAciertos", "indiceDominio", "ultimaActualizacion"]);
     if (name === "GameLeaderboards") sheet.appendRow(["leaderboardId", "gameId", "userId", "nombreAlumno", "grado", "asignatura", "mejorPuntuacion", "indiceDominioPromedio", "partidasJugadas", "ultimaActualizacion"]);
@@ -210,6 +210,8 @@ const RBAC_ACTION_PERMISSIONS = {
 
   // Gestión de Comunicación y Noticias
   "createNews": ["Secretaría", "Director", "Administrador"],
+  "updateNews": ["Secretaría", "Director", "Administrador"],
+  "retireNews": ["Secretaría", "Director", "Administrador"],
   "uploadNewsImage": ["Secretaría", "Director", "Administrador"]
 };
 
@@ -303,6 +305,8 @@ function doPost(e) {
       case "mergeGuestData": result = mergeGuestData(payload); break;
       case "getNews": result = getNews(payload); break;
       case "createNews": result = createNews(payload); break;
+      case "updateNews": result = updateNews(payload); break;
+      case "retireNews": result = retireNews(payload); break;
       case "uploadNewsImage": result = uploadNewsImage(payload); break;
       case "registerEnrollment": result = registerEnrollment(payload); break;
       case "getStudentFinancialStatus": result = getStudentFinancialStatus(payload); break;
@@ -632,15 +636,171 @@ function mergeGuestData(payload) {
 }
 
 function getNews(payload) {
-  const data = getOrCreateSheet(SpreadsheetApp.openById(SPREADSHEET_ID), "NoticiasPortal").getDataRange().getValues().slice(1);
-  return { status: "success", data: data.filter(r => r[2] && r[3]).map(r => ({ fecha: r[0], hora: r[1], titulo: r[2], contenido: r[3], imagenUrl: r[4], categoria: r[5] || "General" })).sort((a,b) => new Date(b.fecha) - new Date(a.fecha) || b.hora.localeCompare(a.hora)) };
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const data = getOrCreateSheet(ss, "NoticiasPortal").getDataRange().getValues().slice(1);
+  const nowStr = new Date().toISOString().split('T')[0];
+
+  const audienciaNivel = payload && payload.audienciaNivel ? String(payload.audienciaNivel).trim() : null;
+  const audienciaGrado = payload && payload.audienciaGrado ? String(payload.audienciaGrado).trim() : null;
+  const audienciaSeccion = payload && payload.audienciaSeccion ? String(payload.audienciaSeccion).trim() : null;
+  const incluirInactivas = payload && payload.incluirInactivas === true;
+
+  // Soportar esquema nuevo y esquema legacy de columnas
+  const newsList = data.map((r, idx) => {
+    // Si la primera columna parece fecha (YYYY-MM-DD), es el esquema legacy
+    const isLegacy = String(r[0]).includes("-") && r[0].length <= 10;
+    const noticiaId = isLegacy ? ("NEWS-LEGACY-" + (idx + 1)) : r[0];
+    const fecha = isLegacy ? r[0] : r[1];
+    const hora = isLegacy ? r[1] : r[2];
+    const titulo = isLegacy ? r[2] : r[3];
+    const contenido = isLegacy ? r[3] : r[4];
+    const imagenUrl = isLegacy ? r[4] : r[5];
+    const categoria = (isLegacy ? r[5] : r[6]) || "General";
+    const fechaExpiracion = isLegacy ? "" : (r[7] || "");
+    const audNivel = isLegacy ? "Todos" : (r[8] || "Todos");
+    const audGrado = isLegacy ? "Todos" : (r[9] || "Todos");
+    const audSeccion = isLegacy ? "Todos" : (r[10] || "Todos");
+    const estado = isLegacy ? "Activo" : (r[11] || "Activo");
+    const autor = isLegacy ? "Secretaría" : (r[12] || "Secretaría");
+
+    return {
+      noticiaId,
+      fecha,
+      hora,
+      titulo,
+      contenido,
+      imagenUrl,
+      categoria,
+      fechaExpiracion,
+      audienciaNivel: audNivel,
+      audienciaGrado: audGrado,
+      audienciaSeccion: audSeccion,
+      estado,
+      autor
+    };
+  }).filter(n => {
+    if (!n.titulo || !n.contenido) return false;
+    if (!incluirInactivas && n.estado !== "Activo") return false;
+
+    // Validar vigencia temporal si tiene fecha de expiración configurada
+    if (!incluirInactivas && n.fechaExpiracion && n.fechaExpiracion < nowStr) {
+      return false;
+    }
+
+    // Filtrar por audiencia destinataria
+    if (audienciaNivel && n.audienciaNivel !== "Todos" && n.audienciaNivel !== audienciaNivel) {
+      return false;
+    }
+    if (audienciaGrado && n.audienciaGrado !== "Todos" && n.audienciaGrado !== audienciaGrado) {
+      return false;
+    }
+    if (audienciaSeccion && n.audienciaSeccion !== "Todos" && n.audienciaSeccion !== audienciaSeccion) {
+      return false;
+    }
+
+    return true;
+  });
+
+  newsList.sort((a, b) => new Date(b.fecha) - new Date(a.fecha) || String(b.hora).localeCompare(String(a.hora)));
+  return { status: "success", data: newsList };
 }
 
 function createNews(payload) {
-  const now = new Date();
-  let img = payload.imagenUrl || ""; if (img && !img.includes("http")) img = `https://lh3.googleusercontent.com/d/${img}`;
-  getOrCreateSheet(SpreadsheetApp.openById(SPREADSHEET_ID), "NoticiasPortal").appendRow([now.toISOString().split('T')[0], now.toTimeString().split(' ')[0], payload.titulo, payload.contenido, img, payload.categoria || "General"]);
-  return { status: "success" };
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const now = new Date();
+    let img = payload.imagenUrl || "";
+    if (img && !img.includes("http")) img = `https://lh3.googleusercontent.com/d/${img}`;
+
+    const noticiaId = "NEWS-" + now.getTime();
+    const fechaPub = now.toISOString().split('T')[0];
+    const horaPub = now.toTimeString().split(' ')[0];
+    const fechaExp = payload.fechaExpiracion || "";
+    const audNivel = payload.audienciaNivel || "Todos";
+    const audGrado = payload.audienciaGrado || "Todos";
+    const audSeccion = payload.audienciaSeccion || "Todos";
+    const autor = payload.requesterUserId || "Secretaría";
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "NoticiasPortal");
+
+    sheet.appendRow([
+      noticiaId,
+      fechaPub,
+      horaPub,
+      payload.titulo,
+      payload.contenido,
+      img,
+      payload.categoria || "General",
+      fechaExp,
+      audNivel,
+      audGrado,
+      audSeccion,
+      "Activo",
+      autor
+    ]);
+
+    return {
+      status: "success",
+      noticiaId,
+      message: "Noticia institucional publicada exitosamente con segmentación de audiencia."
+    };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function updateNews(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const { noticiaId, titulo, contenido, categoria, imagenUrl, fechaExpiracion, audienciaNivel, audienciaGrado, audienciaSeccion } = payload || {};
+    if (!noticiaId) throw new Error("ID de noticia requerido para actualización.");
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "NoticiasPortal");
+    const data = sheet.getDataRange().getValues();
+
+    const idx = data.findIndex(r => String(r[0]).trim() === String(noticiaId).trim());
+    if (idx <= 0) throw new Error("Noticia no encontrada.");
+
+    if (titulo) sheet.getRange(idx + 1, 4).setValue(titulo);
+    if (contenido) sheet.getRange(idx + 1, 5).setValue(contenido);
+    if (imagenUrl) sheet.getRange(idx + 1, 6).setValue(imagenUrl);
+    if (categoria) sheet.getRange(idx + 1, 7).setValue(categoria);
+    if (fechaExpiracion !== undefined) sheet.getRange(idx + 1, 8).setValue(fechaExpiracion);
+    if (audienciaNivel) sheet.getRange(idx + 1, 9).setValue(audienciaNivel);
+    if (audienciaGrado) sheet.getRange(idx + 1, 10).setValue(audienciaGrado);
+    if (audienciaSeccion) sheet.getRange(idx + 1, 11).setValue(audienciaSeccion);
+
+    return { status: "success", noticiaId, message: "Noticia institucional actualizada exitosamente." };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function retireNews(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const { noticiaId, estado } = payload || {};
+    if (!noticiaId) throw new Error("ID de noticia requerido para modificar vigencia.");
+
+    const nuevoEstado = estado || "Inactivo"; // Inactivo, Archivado
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "NoticiasPortal");
+    const data = sheet.getDataRange().getValues();
+
+    const idx = data.findIndex(r => String(r[0]).trim() === String(noticiaId).trim());
+    if (idx <= 0) throw new Error("Noticia no encontrada.");
+
+    sheet.getRange(idx + 1, 12).setValue(nuevoEstado);
+
+    return { status: "success", noticiaId, estado: nuevoEstado, message: `Noticia ${noticiaId} marcada como ${nuevoEstado}.` };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
 }
 
 function uploadNewsImage(payload) {
