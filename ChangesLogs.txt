@@ -801,3 +801,39 @@ Módulo: Comunicación y Avisos Institucionales por Secretaría
 - Portal Principal (`js/index-ui.js`):
   * Modificada función `renderNewsHTML` para filtrar publicaciones inactivas y noticias con fecha de vigencia expirada.
 - Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-016] como completada.
+
+REGISTRO DE CAMBIOS - CONSOLA DE ADMINISTRACIÓN TÉCNICA Y HEALTH CHECKS (REQ-EXP-017) - Sun Nov 01 2026
+
+Módulo: Consola Técnica, Monitoreo y Health Checks Ping-Pong
+- Microservicios Backend (`user-service`, `academic-service`, `task-service`, `exam-service`):
+  * Implementada función `pingHealthCheck` retornando status "success", nombre del servicio, timestamp UTC e indicación de disponibilidad.
+  * Habilitada acción `ping` en `doGet` y `doPost` en todos los microservicios sin requerir privilegios elevados para pruebas universales de conectividad.
+  * Reconocido rol 'Desarrollador' en la validación RBAC de `validatePermission`.
+- Cliente API (`js/api.js` y `js/config.js`):
+  * Implementadas funciones `window.checkMicroserviceHealth(service)` y `window.checkAllMicroservicesHealth()`.
+  * Cálculo estricto de latencia de red de ida y vuelta (round-trip en ms) y clasificación del estado (En línea, Degradado, Fuera de línea).
+  * Habilitado rol 'Desarrollador' en `window.hasPermission` con bypass administrativo.
+- Dashboard Administrativo (`teacher-dashboard.html` y `js/teacher.js`):
+  * Diseñado panel de Consola Técnica con tarjetas individuales de monitoreo para USER, ACADEMIC, TASK y EXAM.
+  * Botón interactivo `#btn-run-healthcheck` para disparar verificaciones en tiempo real con spinners e indicadores de badge (verde, ámbar, rojo).
+  * Ampliada autorización en `RoleCapabilities` para admitir roles Administrador, Director y Desarrollador.
+- Redirección de Acceso (`js/auth.js`):
+  * Ajustada redirección post-login para encaminar usuarios con rol 'Desarrollador', 'Administrador' o 'Director' al panel administrativo.
+- Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-017] como completada.
+
+REGISTRO DE CAMBIOS - CONSOLA DEDICADA DE DESARROLLADOR Y SEGREGACIÓN DE ROLES - Sun Nov 01 2026
+
+Módulo: Consola Dedicada de Desarrollador y Acceso Integral a la Plataforma
+- Interfaz de Desarrollador (`developer-dashboard.html` y `js/developer.js`):
+  * Creado panel exclusivo para Desarrolladores (`developer-dashboard.html`) con tema técnico oscuro de alto rendimiento.
+  * Centralizado el monitor de microservicios con cálculo de RTT y health checks interactivos (USER, ACADEMIC, TASK, EXAM).
+  * Incorporada consola de salida de registro en vivo (live console output) y herramienta para purga de cachés locales.
+  * Integrada tabla interactiva de inspección de Parámetros Institucionales Dinámicos (`ParametrosConfiguracion`).
+  * Incorporados enlaces de acceso directo a todos los módulos y subsistemas institucionales (Contabilidad SAR, Planillas, Inventarios, Académico).
+- Limpieza en Dashboard de Profesores (`teacher-dashboard.html` y `js/teacher.js`):
+  * Retirada la consola técnica de monitoreo y health checks del panel de profesores para garantizar la debida segregación funcional por rol.
+- Enrutamiento y Redirecciones (`js/auth.js`, `js/ui-common.js`, `js/index-ui.js`):
+  * Actualizado enrutamiento post-login (`handlePostLoginRedirection`) para dirigir usuarios con rol 'Desarrollador' a `developer-dashboard.html`.
+  * Adaptados los enlaces del portal en la barra de navegación superior y la navegación inferior móvil para apuntar a la consola de desarrollador cuando el rol activo es 'Desarrollador'.
+- Control de Accesos y Permisos (`js/config.js` y `backend/user-service/Code.gs`):
+  * Garantizado bypass universal para el rol 'Desarrollador' en `window.hasPermission` y en las funciones de validación RBAC de servidor.

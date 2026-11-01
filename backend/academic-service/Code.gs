@@ -41,7 +41,20 @@ function getOrCreateSheet(ss, name) {
 // ENDPOINTS
 // ---------------------------------------------------------------------------
 
-function doGet() { return textResponse({ status: "success", message: "Microservicio Académico operativo" }); }
+function doGet() {
+  return textResponse(pingHealthCheck("ACADEMIC"));
+}
+
+function pingHealthCheck(serviceName) {
+  const now = new Date();
+  return {
+    status: "success",
+    service: serviceName || "ACADEMIC",
+    timestamp: now.toISOString(),
+    epoch: now.getTime(),
+    message: `Microservicio ${serviceName || "ACADEMIC"} en línea y respondiendo ping.`
+  };
+}
 
 function doPost(e) {
   try {
@@ -49,6 +62,7 @@ function doPost(e) {
     const { action, payload } = JSON.parse(e.postData.contents);
     let result;
     switch (action) {
+      case "ping": result = pingHealthCheck("ACADEMIC"); break;
       case "getAcademicConfig": result = getAcademicConfig(payload); break;
       case "updateAcademicConfig": result = updateAcademicConfig(payload); break;
       case "getAcademicHistory": result = getAcademicHistory(payload); break;

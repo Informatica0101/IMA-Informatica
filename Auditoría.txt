@@ -1260,3 +1260,19 @@ Sector: Comunicación institucional, publicaciones de Secretaría y avisos dirig
 Hallazgo [Medio]: Esquema de noticias sin soporte de fechas de caducidad/vigencia, carencia de segmentación de audiencia destinataria por nivel escolar, grado y sección, e imposibilidad de retirar avisos obsoletos sin borrar registros históricos.
 Impacto: Saturación de comunicados caducados en la pantalla de inicio, falta de privacidad/pertinencia en avisos exclusivos para ciertos grados y ausencia de ciclo de vida documental para noticias.
 Recomendación: Normalizar 'NoticiasPortal' incorporando 'fechaExpiracion', 'audienciaNivel', 'audienciaGrado', 'audienciaSeccion' y 'estado', permitiendo el retiro administrativo y filtrando avisos vencidos de forma automática.
+
+REGISTRO DE AUDITORÍA - CONSOLA DE ADMINISTRACIÓN TÉCNICA Y HEALTH CHECKS - Sun Nov 1 2026
+
+Archivo: backend/user-service/Code.gs, backend/academic-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs, teacher-dashboard.html, js/teacher.js, js/api.js
+Sector: Consola de monitoreo técnico, microservicios y health checks de conectividad
+Hallazgo [Crítico]: Inexistencia de endpoint 'ping' unificado en todos los microservicios, falta de medición objetiva de latencia de red de ida y vuelta y carencia de panel visual para auditoría del estado de salud del sistema.
+Impacto: Dificultad para diagnosticar caídas o degradación de servicios en tiempo real, falta de visibilidad operativa para el Administrador/Desarrollador.
+Recomendación: Implementar endpoint 'ping' universal en 'doGet' y 'doPost' para USER, ACADEMIC, TASK y EXAM, crear monitor 'checkAllMicroservicesHealth' en 'js/api.js' e incorporar tarjeta interactiva de Consola Técnica en el dashboard administrativo.
+
+REGISTRO DE AUDITORÍA - CONSOLA DEDICADA DE DESARROLLADOR Y SEGREGACIÓN DE ROLES - Sun Nov 1 2026
+
+Archivo: developer-dashboard.html, js/developer.js, teacher-dashboard.html, js/teacher.js, js/auth.js, js/ui-common.js, js/index-ui.js
+Sector: Arquitectura de perfiles, segregación funcional y consola técnica root
+Hallazgo [Crítico]: Las funciones de monitoreo y diagnóstico técnico residían indebidamente en el panel de profesores y el rol 'Desarrollador' era redirigido a la interfaz docente sin un entorno dedicado de administración técnica con visibilidad completa de la plataforma.
+Impacto: Exposición de utilidades técnicas avanzadas al cuerpo docente, falta de una consola centralizada de superadministrador/desarrollador y violación del principio de mínima sorpresa/segregación de interfaces por rol.
+Recomendación: Crear un dashboard independiente 'developer-dashboard.html' con controlador 'js/developer.js', migrar allí la consola de salud de microservicios, purga de cachés y visor de parámetros dinámicos, remover estos controles de 'teacher-dashboard.html' y asegurar redirección automática para usuarios con rol 'Desarrollador'.

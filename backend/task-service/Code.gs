@@ -27,12 +27,22 @@ function getSheetOrThrow(ss, name) {
 
 // --- PUNTOS DE ENTRADA ---
 function doGet(e) {
-  return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Microservicio de Tareas funcionando." }))
+  return ContentService.createTextOutput(JSON.stringify(pingHealthCheck("TASK")))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
+function pingHealthCheck(serviceName) {
+  const now = new Date();
+  return {
+    status: "success",
+    service: serviceName || "TASK",
+    timestamp: now.toISOString(),
+    epoch: now.getTime(),
+    message: `Microservicio ${serviceName || "TASK"} en línea y respondiendo ping.`
+  };
+}
+
 function doOptions(e) {
-  // Apps Script no permite setHeaders directamente, se ignora para CORS básico
   return ContentService.createTextOutput("");
 }
 
@@ -41,6 +51,7 @@ function doPost(e) {
   try {
     const { action, payload } = JSON.parse(e.postData.contents);
     switch (action) {
+      case "ping": response = pingHealthCheck("TASK"); break;
       case "createTask": response = createTask(payload); break;
       case "getStudentTasks": response = getStudentTasks(payload); break;
       case "uploadFile": response = uploadFile(payload); break;

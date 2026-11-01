@@ -197,3 +197,55 @@ function fetchApi(service, action, payload, retryCount, options) {
             };
         });
 }
+
+/**
+ * REQ-EXP-017: Health Check Ping-Pong para Monitoreo de Microservicios
+ * Realiza una solicitud real midiendo latencia de ida y vuelta (round-trip).
+ * @param {string} service - Nombre del servicio ('USER', 'ACADEMIC', 'TASK', 'EXAM')
+ * @returns {Promise<object>} Estado de salud { service, status, latencyMs, state, message }
+ */
+window.checkMicroserviceHealth = function(service) {
+    var startTime = Date.now();
+    return fetchApi(service, 'ping', {}, 0, { timeout: 6000 })
+        .then(function(res) {
+            var latency = Date.now() - startTime;
+            var isOnline = res && res.status === 'success' && !res.isFallback;
+            var state = 'Fuera de línea';
+            if (isOnline) {
+                state = latency < 2000 ? 'En línea' : 'Degradado';
+            }
+            return {
+                service: service,
+                status: res.status || 'error',
+                latencyMs: latency,
+                state: state,
+                isFallback: !!res.isFallback,
+                timestamp: new Date().toISOString(),
+                message: res.message || (isOnline ? 'Operativo' : 'Sin respuesta válida')
+            };
+        })
+        .catch(function(err) {
+            var latency = Date.now() - startTime;
+            return {
+                service: service,
+                status: 'error',
+                latencyMs: latency,
+                state: 'Fuera de línea',
+                isFallback: true,
+                timestamp: new Date().toISOString(),
+                message: err.message || 'Error de red'
+            };
+        });
+};
+
+/**
+ * Ejecuta health checks simultáneos en todos los microservicios configurados
+ * @returns {Promise<Array<object>>}
+ */
+window.checkAllMicroservicesHealth = function() {
+    var services = ['USER', 'ACADEMIC', 'TASK', 'EXAM'];
+    var checks = services.map(function(s) {
+        return window.checkMicroserviceHealth(s);
+    });
+    return Promise.all(checks);
+};

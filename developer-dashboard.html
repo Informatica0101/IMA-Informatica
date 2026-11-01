@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consola de Desarrollador | New Generation Bilingual School and Institute</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/custom.css">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+    <!-- Navbar Desarrollador -->
+    <header class="bg-slate-950 border-b border-slate-800 sticky top-0 z-50 px-6 py-4 flex items-center justify-between shadow-lg">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md">
+                <i class="fas fa-terminal text-lg"></i>
+            </div>
+            <div>
+                <h1 class="font-black text-lg text-white tracking-tight flex items-center gap-2">
+                    Developer Console <span class="text-[10px] bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded-full font-mono uppercase tracking-widest">Root Access</span>
+                </h1>
+                <p class="text-xs text-slate-400">New Generation Bilingual School and Institute</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <div class="hidden sm:flex items-center gap-2 text-xs font-mono bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span id="dev-user-display" class="text-slate-200">Dev Mode</span>
+            </div>
+            <a href="teacher-dashboard.html" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-all flex items-center gap-2 border border-slate-700" title="Ver Dashboard Académico">
+                <i class="fas fa-chalkboard-teacher"></i> <span class="hidden md:inline">Dashboard Académico</span>
+            </a>
+            <button id="dev-logout-btn" class="px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-xs font-semibold border border-rose-500/30 transition-all flex items-center gap-2">
+                <i class="fas fa-sign-out-alt"></i> Salir
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
+
+        <!-- Welcome Hero & System Diagnostic Banner -->
+        <div class="bg-gradient-to-r from-slate-800 via-indigo-950 to-slate-900 border border-slate-700 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl pointer-events-none text-indigo-400">
+                <i class="fas fa-network-wired"></i>
+            </div>
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 mb-3">
+                        <i class="fas fa-shield-alt"></i> Control Maestro de Desarrollador & SuperAdmin
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Centro de Diagnóstico & Gestión Central</h2>
+                    <p class="text-sm text-slate-300 mt-2 max-w-2xl leading-relaxed">
+                        Acceso integral a todos los microservicios, auditoría en tiempo real, latencias operativas, configuración global de parámetros institucionales y utilidades técnicas de plataforma.
+                    </p>
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <button id="btn-dev-run-healthcheck" class="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-indigo-600/30 transition-all flex items-center gap-2.5">
+                        <i class="fas fa-sync-alt" id="icon-dev-healthcheck-spin"></i> Ejecutar Health Check Global
+                    </button>
+                    <button id="btn-clear-local-caches" class="px-4 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase tracking-wider border border-slate-700 transition-all flex items-center gap-2">
+                        <i class="fas fa-broom"></i> Limpiar Caché Local
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 1: Microservices Health Check Monitor -->
+        <section class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fas fa-heartbeat text-emerald-400"></i> Estado de Red & Microservicios (Ping-Pong)
+                    </h3>
+                    <p class="text-xs text-slate-400">Monitoreo activo de endpoints GAS en tiempo real con cálculo de Round-Trip Time (RTT).</p>
+                </div>
+                <span id="health-overall-status" class="text-xs font-mono px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                    Sistema Operativo
+                </span>
+            </div>
+
+            <div id="dev-healthcheck-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- USER Service -->
+                <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 flex flex-col justify-between hover:border-indigo-500/50 transition-all shadow-md" id="health-card-USER">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <span class="font-mono text-[10px] text-indigo-400 uppercase tracking-wider font-semibold">Microservicio</span>
+                                <h4 class="font-bold text-sm text-white">USER Service</h4>
+                            </div>
+                            <span class="text-[9px] px-2.5 py-0.5 rounded-full font-mono font-bold bg-slate-700 text-slate-300 status-badge">Pendiente</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mb-2">Autenticación, RBAC, usuarios y sesiones.</p>
+                    </div>
+                    <div class="pt-3 border-t border-slate-700/50 flex items-center justify-between font-mono text-[11px]">
+                        <span class="text-slate-400 latency-text"><i class="fas fa-stopwatch text-slate-500 mr-1"></i> -- ms</span>
+                        <span class="text-slate-500 timestamp-text">--:--:--</span>
+                    </div>
+                </div>
+
+                <!-- ACADEMIC Service -->
+                <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 flex flex-col justify-between hover:border-indigo-500/50 transition-all shadow-md" id="health-card-ACADEMIC">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <span class="font-mono text-[10px] text-indigo-400 uppercase tracking-wider font-semibold">Microservicio</span>
+                                <h4 class="font-bold text-sm text-white">ACADEMIC Service</h4>
+                            </div>
+                            <span class="text-[9px] px-2.5 py-0.5 rounded-full font-mono font-bold bg-slate-700 text-slate-300 status-badge">Pendiente</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mb-2">Notas, matrículas, secciones y asistencia.</p>
+                    </div>
+                    <div class="pt-3 border-t border-slate-700/50 flex items-center justify-between font-mono text-[11px]">
+                        <span class="text-slate-400 latency-text"><i class="fas fa-stopwatch text-slate-500 mr-1"></i> -- ms</span>
+                        <span class="text-slate-500 timestamp-text">--:--:--</span>
+                    </div>
+                </div>
+
+                <!-- TASK Service -->
+                <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 flex flex-col justify-between hover:border-indigo-500/50 transition-all shadow-md" id="health-card-TASK">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <span class="font-mono text-[10px] text-indigo-400 uppercase tracking-wider font-semibold">Microservicio</span>
+                                <h4 class="font-bold text-sm text-white">TASK Service</h4>
+                            </div>
+                            <span class="text-[9px] px-2.5 py-0.5 rounded-full font-mono font-bold bg-slate-700 text-slate-300 status-badge">Pendiente</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mb-2">Asignaciones, entregas y retroalimentación.</p>
+                    </div>
+                    <div class="pt-3 border-t border-slate-700/50 flex items-center justify-between font-mono text-[11px]">
+                        <span class="text-slate-400 latency-text"><i class="fas fa-stopwatch text-slate-500 mr-1"></i> -- ms</span>
+                        <span class="text-slate-500 timestamp-text">--:--:--</span>
+                    </div>
+                </div>
+
+                <!-- EXAM Service -->
+                <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 flex flex-col justify-between hover:border-indigo-500/50 transition-all shadow-md" id="health-card-EXAM">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <span class="font-mono text-[10px] text-indigo-400 uppercase tracking-wider font-semibold">Microservicio</span>
+                                <h4 class="font-bold text-sm text-white">EXAM Service</h4>
+                            </div>
+                            <span class="text-[9px] px-2.5 py-0.5 rounded-full font-mono font-bold bg-slate-700 text-slate-300 status-badge">Pendiente</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mb-2">Evaluaciones interactivas, reactivos y resultados.</p>
+                    </div>
+                    <div class="pt-3 border-t border-slate-700/50 flex items-center justify-between font-mono text-[11px]">
+                        <span class="text-slate-400 latency-text"><i class="fas fa-stopwatch text-slate-500 mr-1"></i> -- ms</span>
+                        <span class="text-slate-500 timestamp-text">--:--:--</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Quick Jump to Platform Subsystems -->
+        <section class="space-y-4">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <i class="fas fa-th-large text-indigo-400"></i> Acceso Directo a Módulos y Capacidades del Sistema
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-slate-800/60 border border-slate-700/70 rounded-2xl p-5 hover:bg-slate-800 transition-all flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-xl flex-shrink-0">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <h4 class="font-bold text-sm text-white">Módulo Contable & Facturación SAR</h4>
+                        <p class="text-xs text-slate-400 leading-snug">Gestión de CAI, talonarios, estado de cuenta, cobros e ISV hondureño.</p>
+                        <a href="teacher-dashboard.html#section-accounting" class="inline-flex items-center text-xs font-semibold text-blue-400 hover:text-blue-300 pt-2 gap-1">
+                            Abrir Módulo Contable <i class="fas fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/60 border border-slate-700/70 rounded-2xl p-5 hover:bg-slate-800 transition-all flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-xl flex-shrink-0">
+                        <i class="fas fa-money-check-alt"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <h4 class="font-bold text-sm text-white">Módulo de Planillas & Nómina</h4>
+                        <p class="text-xs text-slate-400 leading-snug">Cálculo de deducciones, tope del 40%, días no laborables y comprobantes.</p>
+                        <a href="teacher-dashboard.html#section-payroll" class="inline-flex items-center text-xs font-semibold text-purple-400 hover:text-purple-300 pt-2 gap-1">
+                            Abrir Planillas <i class="fas fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/60 border border-slate-700/70 rounded-2xl p-5 hover:bg-slate-800 transition-all flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl flex-shrink-0">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <h4 class="font-bold text-sm text-white">Inventario, Activos & Proveedores</h4>
+                        <p class="text-xs text-slate-400 leading-snug">Kardex de movimientos, control de stock, alertas de mínimo y catálogo de proveedores.</p>
+                        <a href="teacher-dashboard.html#section-inventory" class="inline-flex items-center text-xs font-semibold text-amber-400 hover:text-amber-300 pt-2 gap-1">
+                            Abrir Inventarios <i class="fas fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Live Config Parameters Inspection (ParametrosConfiguracion) -->
+        <section class="bg-slate-800/90 border border-slate-700 rounded-3xl p-6 sm:p-8 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fas fa-cogs text-indigo-400"></i> Parámetros Institucionales Dinámicos
+                    </h3>
+                    <p class="text-xs text-slate-400">Inspección de variables operativas de base de datos cargadas en memoria.</p>
+                </div>
+                <button id="btn-refresh-params" class="px-3.5 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold flex items-center gap-2">
+                    <i class="fas fa-sync"></i> Recargar Parámetros
+                </button>
+            </div>
+
+            <div class="overflow-x-auto rounded-2xl border border-slate-700">
+                <table class="w-full text-left text-xs font-mono">
+                    <thead class="bg-slate-900/80 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-700">
+                        <tr>
+                            <th class="p-3">Clave de Parámetro</th>
+                            <th class="p-3">Valor Actual</th>
+                            <th class="p-3">Descripción</th>
+                            <th class="p-3">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dev-params-table-body" class="divide-y divide-slate-700/60 bg-slate-800/50">
+                        <tr>
+                            <td class="p-3 text-slate-200 font-bold">INSTITUTION_NAME</td>
+                            <td class="p-3 text-emerald-400">New Generation Bilingual School and Institute</td>
+                            <td class="p-3 text-slate-400 font-sans">Nombre oficial registrado de la institución</td>
+                            <td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400">Activo</span></td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 text-slate-200 font-bold">DEFAULT_CURRENCY</td>
+                            <td class="p-3 text-emerald-400">HNL (L.)</td>
+                            <td class="p-3 text-slate-400 font-sans">Moneda oficial del sistema</td>
+                            <td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400">Activo</span></td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 text-slate-200 font-bold">TAX_ISV_STANDARD</td>
+                            <td class="p-3 text-emerald-400">0.15 (15%)</td>
+                            <td class="p-3 text-slate-400 font-sans">Tasa de Impuesto Sobre Ventas Honduras</td>
+                            <td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400">Activo</span></td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 text-slate-200 font-bold">PAYROLL_MAX_DEDUCTION_CAP</td>
+                            <td class="p-3 text-emerald-400">0.40 (40%)</td>
+                            <td class="p-3 text-slate-400 font-sans">Tope máximo de deducciones legales sobre sueldo base</td>
+                            <td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400">Activo</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 4: Live Event & Diagnostic Log Viewer -->
+        <section class="bg-slate-950 border border-slate-800 rounded-3xl p-6 font-mono text-xs space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <span class="text-slate-400 font-semibold flex items-center gap-2">
+                    <i class="fas fa-terminal text-indigo-400"></i> Registro de Consola en Vivo (Live Console Output)
+                </span>
+                <button id="btn-clear-console-logs" class="text-[10px] text-slate-400 hover:text-slate-200">
+                    Limpiar Salida
+                </button>
+            </div>
+            <div id="dev-console-logs" class="bg-black/60 rounded-xl p-4 h-48 overflow-y-auto space-y-1 text-slate-300 font-mono text-[11px]">
+                <div class="text-indigo-400">[SYSTEM] Inicializando Consola de Desarrollador v8.5...</div>
+                <div class="text-slate-400">[AUTH] Sesión root activa para desarrollador.</div>
+                <div class="text-emerald-400">[INFO] Endpoints de microservicios listos para inspección.</div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-950 border-t border-slate-800 p-4 text-center text-xs text-slate-500">
+        New Generation Bilingual School and Institute &copy; 2025. Todos los derechos reservados. Consola Técnica de Desarrollador.
+    </footer>
+
+    <!-- Core App Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/developer.js"></script>
+</body>
+</html>

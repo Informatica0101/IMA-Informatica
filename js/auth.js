@@ -24,7 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem('quizpro_interrupted_intent');
         }
 
-        if (user.rol === 'Profesor') {
+        if (user.rol === 'Desarrollador') {
+            window.location.href = 'developer-dashboard.html';
+        } else if (user.rol === 'Profesor' || user.rol === 'Administrador' || user.rol === 'Director') {
             window.location.href = 'teacher-dashboard.html';
         } else {
             window.location.href = 'student-dashboard.html';

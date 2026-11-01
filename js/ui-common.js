@@ -124,7 +124,12 @@ window.setupCommonUI = function() {
     var currentUser = currentUserRaw ? JSON.parse(currentUserRaw) : null;
 
     if (currentUser) {
-        var dest = currentUser.rol === 'Profesor' ? 'teacher-dashboard.html' : 'student-dashboard.html';
+        var dest = 'student-dashboard.html';
+        if (currentUser.rol === 'Desarrollador') {
+            dest = 'developer-dashboard.html';
+        } else if (currentUser.rol === 'Profesor' || currentUser.rol === 'Administrador' || currentUser.rol === 'Director') {
+            dest = 'teacher-dashboard.html';
+        }
         if (portalLink) portalLink.href = dest;
         if (mobilePortalLink) mobilePortalLink.href = dest;
     }
@@ -958,7 +963,13 @@ window.renderCommonNav = function() {
 
     var mobilePortalBottom = document.getElementById('mobile-portal-bottom-nav');
     if (mobilePortalBottom && currentUser) {
-        mobilePortalBottom.href = currentUser.rol === 'Profesor' ? 'teacher-dashboard.html' : 'student-dashboard.html';
+        var mobDest = 'student-dashboard.html';
+        if (currentUser.rol === 'Desarrollador') {
+            mobDest = 'developer-dashboard.html';
+        } else if (currentUser.rol === 'Profesor' || currentUser.rol === 'Administrador' || currentUser.rol === 'Director') {
+            mobDest = 'teacher-dashboard.html';
+        }
+        mobilePortalBottom.href = mobDest;
     }
 };
 

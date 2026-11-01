@@ -44,10 +44,18 @@ function normalizeString(str) {
 // ---------------------------------------------------------------------------
 
 function doGet() {
-  return textResponse({
+  return textResponse(pingHealthCheck("EXAM"));
+}
+
+function pingHealthCheck(serviceName) {
+  const now = new Date();
+  return {
     status: "success",
-    message: "Microservicio de Exámenes operativo"
-  });
+    service: serviceName || "EXAM",
+    timestamp: now.toISOString(),
+    epoch: now.getTime(),
+    message: `Microservicio ${serviceName || "EXAM"} en línea y respondiendo ping.`
+  };
 }
 
 function doOptions() {
@@ -60,6 +68,7 @@ function doPost(e) {
     let result;
 
     switch (action) {
+      case "ping": result = pingHealthCheck("EXAM"); break;
       case "createExam": result = createExam(payload); break;
       case "getExamQuestions": result = getExamQuestions(payload); break;
       case "submitExam": result = submitExam(payload); break;

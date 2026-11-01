@@ -147,6 +147,7 @@ const RBAC_ACTION_PERMISSIONS = {
   // Públicos / Autenticación
   "registerUser": ["*"],
   "loginUser": ["*"],
+  "ping": ["*"],
   "requestPasswordRecovery": ["*"],
   "resetPassword": ["*"],
   "getNews": ["*"],
@@ -250,7 +251,7 @@ function validatePermission(action, payload) {
     return { authorized: false, message: "Usuario no registrado o sin rol institucional válido." };
   }
 
-  if (validatedRole === "Administrador" || validatedRole === "Admin") {
+  if (validatedRole === "Administrador" || validatedRole === "Admin" || validatedRole === "Desarrollador") {
     return { authorized: true };
   }
 
@@ -270,7 +271,20 @@ function validatePermission(action, payload) {
 // ENDPOINTS
 // ---------------------------------------------------------------------------
 
-function doGet() { return textResponse({ status: "success", message: "Microservicio Usuarios operativo" }); }
+function doGet() {
+  return textResponse(pingHealthCheck("USER"));
+}
+
+function pingHealthCheck(serviceName) {
+  const now = new Date();
+  return {
+    status: "success",
+    service: serviceName || "USER",
+    timestamp: now.toISOString(),
+    epoch: now.getTime(),
+    message: `Microservicio ${serviceName || "USER"} en línea y respondiendo ping.`
+  };
+}
 
 function doPost(e) {
   try {
@@ -289,6 +303,7 @@ function doPost(e) {
 
     let result;
     switch (action) {
+      case "ping": result = pingHealthCheck("USER"); break;
       case "registerUser": result = registerUser(payload); break;
       case "loginUser": result = loginUser(payload); break;
       case "getStudents": result = getStudents(payload); break;

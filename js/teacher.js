@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     // (A-29) Centralizar capacidades por rol
     const RoleCapabilities = {
-        canGrade: (user) => user && user.rol === 'Profesor',
-        canManageExams: (user) => user && user.rol === 'Profesor'
+        canGrade: (user) => user && (user.rol === 'Profesor' || user.rol === 'Administrador' || user.rol === 'Director' || user.rol === 'Desarrollador'),
+        canManageExams: (user) => user && (user.rol === 'Profesor' || user.rol === 'Administrador' || user.rol === 'Director' || user.rol === 'Desarrollador')
     };
 
     let submissionsTableBody = document.getElementById('submissions-table-body');
@@ -423,6 +423,9 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = '<i class="fas fa-sync-alt"></i> Sincronizar / Migrar Banco';
         }
     });
+
+    // Las funciones de monitoreo técnico y health checks de microservicios han sido
+    // trasladadas exclusivamente a la Consola de Desarrollador (developer-dashboard.html & js/developer.js).
 
     // --- Carga y Actualización de Parámetros Dinámicos Institucionales ---
     async function loadSystemParameters() {

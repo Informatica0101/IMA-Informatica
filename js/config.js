@@ -571,7 +571,7 @@ window.ROLE_PERMISSIONS = {
 window.hasPermission = function(userRole, permission) {
     if (!userRole) return false;
     var normRole = userRole.toString().trim();
-    if (normRole === 'Administrador' || normRole === 'Admin') return true;
+    if (normRole === 'Administrador' || normRole === 'Admin' || normRole === 'Desarrollador') return true;
     var allowed = window.ROLE_PERMISSIONS[permission];
     if (!allowed) return false;
     if (allowed.indexOf('*') !== -1) return true;
