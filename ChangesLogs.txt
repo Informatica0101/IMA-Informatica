@@ -3739,10 +3739,10 @@ TAREA: Auditoría Funcional, Técnica y Documental — Fase 41: Pruebas Integral
 
 Archivos Modificados / Creados:
 1. AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md
-   - Creación del informe exhaustivo de auditoría independiente de la Fase 41. Incluye identificación y alcance (A), estado actual e inventario técnico (B), comparación funcional externa con PowerSchool, Adobe y DocuSign (C), lista maestra de características CAR-F41-01 a CAR-F41-08 (D), resultados de la matriz de pruebas integrales E2E-41-01 a E2E-41-12 (E), plan de resolución priorizado en 2 bloques (F), métricas cuantitativas independientes de cobertura (inspección, ejecución, verificación) y dictamen de certificación (G), y registro consolidado de avance estructurado (H).
+   - Creación del informe exhaustivo de auditoría independiente de la Fase 41. Incluye identificación y alcance (A), estado actual e inventario técnico (B), comparación funcional externa con PowerSchool, Adobe y DocuSign (C), lista maestra de características CAR-F41-01 a CAR-F41-08 (D), resultados de la matriz de pruebas integrales E2E-41-01 a E2E-41-12 (E), plan de resolución priorizado en 3 bloques (F), métricas cuantitativas independientes de cobertura (inspección, ejecución, verificación) y dictamen de certificación (G), y registro consolidado de avance estructurado (H).
 
 2. Pendientes.md
-   - Incorporación, unificación y convergencia exhaustiva de las 8 tareas técnicas de la Fase 41 ([F41-Task01] a [F41-Task08]) organizadas estrictamente por prioridad (P0: Task01 a Task04; P1: Task05 a Task08) y orden secuencial de ejecución (1 a 8) al final del archivo, manteniendo íntegras todas las tareas anteriores de las Fases 10 a 40.
+   - Incorporación, unificación y convergencia exhaustiva de las 11 tareas técnicas de la Fase 41 ([F41-Task01] a [F41-Task11]) organizadas estrictamente por prioridad (P0: Task03, Task02, Task01, Task04; P1: Task07, Task05, Task06, Task08; P2: Task10, Task09, Task11) y orden secuencial de ejecución (1 a 11) al final del archivo, manteniendo íntegras todas las tareas anteriores de las Fases 10 a 40.
 
 3. Auditoria.txt
-   - Inserción de la entrada formal de auditoría diagnóstica de la Fase 41 detallando la evaluación de concurrencia de IDs con LockService, necesidad de rollback seguro de importaciones, reanudación idempotente de lotes interrumpidos, tracking multifirmante y servicio OCR.
+   - Inserción y actualización de la entrada formal de auditoría diagnóstica de la Fase 41 detallando la evaluación de concurrencia de IDs con LockService, necesidad de rollback seguro de importaciones, reanudación idempotente de lotes interrumpidos, tracking multifirmante, servicio OCR y centro de control de diagnóstico.

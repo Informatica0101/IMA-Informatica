@@ -16369,208 +16369,421 @@
 
 ---
 
-### [F41-Task01] [P0] Implementación del motor de reversión segura de importaciones masivas
+### [F41-Task03] [P0] Aislamiento departamental estricto y autorización por ámbito institucional
 - **Prioridad:** P0 (Prioridad crítica / Bloqueante)
-- **Orden de Ejecución:** 1 (Integridad transaccional y rollback de lotes)
+- **Orden de Ejecución:** 1 (Aislamiento perimetral y autorización basada en atributos - ABAC)
 - **Componentes Afectados:**
-  - `backend/accounting-service/Code.gs` (`revertDataImportBatch`, `validateImportRollbackFeasibility`)
+  - `backend/academic-service/Code.gs` (`validateAcademicResponsibilityAndScopeAccess`)
+  - `backend/accounting-service/Code.gs` (`validateRolePermission`)
+  - `backend/user-service/Code.gs` (`assignRoleScope`, `getUserContextScope`)
+  - `ROLE_PERMISSIONS` en todos los servicios backend
+  - Estructuras: `ExpedientesInstitucionales`, `DocumentosEstudiante`, `DocumentosLaborales`, `SolicitudesFirmas`
+- **Subcapacidades Relacionadas:** F41-08.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md` / Secciones B (F41-08), E (E2E-41-09) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  Los servicios aplican permisos generales mediante `ROLE_PERMISSIONS`, pero no siempre comprueban que el documento o expediente solicitado pertenezca al departamento autorizado para el usuario. Modificar el identificador enviado en una petición directa puede permitir obtener datos generales de otro ámbito o expediente ajeno.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Validación perimetral del ámbito del usuario:*
+     - Obtener el departamento y los ámbitos autorizados a partir de la identidad autenticada (`payload._verifiedUserId` / `claims`).
+     - No confiar en el departamento ni en el identificador de expediente enviado por el cliente.
+     - Comprobar que el usuario mantiene una relación activa con el departamento asignado.
+     - Considerar los permisos especiales de Dirección, Administración y otros roles con alcance institucional transversal formalmente autorizados.
+  2. *Validación de propiedad del recurso:*
+     - Determinar el departamento propietario del documento, expediente o registro antes de devolver datos o aplicar mutaciones.
+     - Verificar que el recurso pertenece al ámbito autorizado del solicitante.
+     - Repetir la comprobación en operaciones de consulta, modificación, eliminación, descarga, firma y restauración.
+  3. *Control granular por operación:*
+     - Separar estrictamente permisos para: Consultar metadatos, Consultar contenido, Descargar, Crear, Editar, Eliminar, Aprobar, Firmar, Compartir, Revocar acceso, Exportar y Consultar historial.
+  4. *Referencias compartidas autorizadas:*
+     - Permitir compartir referencias específicas entre departamentos bajo autorización explícita sin exponer el expediente completo.
+     - Definir qué campos y documentos quedan disponibles, registrar quién autorizó el acceso, establecer alcance/vigencia y permitir revocarlo.
+     - Verificar nuevamente la vigencia de los permisos al utilizar una referencia compartida.
+  5. *Aislamiento en consultas, búsquedas e importaciones:*
+     - Aplicar filtros departamentales en el backend; evitar que la búsqueda global o autocompletados revelen registros de otros departamentos.
+     - Validar el departamento de destino antes de importar registros; rechazar asignaciones a departamentos no autorizados o archivos que mezclen registros de ámbitos diferentes sin rol institucional global.
+  6. *Parametrización configurable en plataforma:*
+     - Parámetro en `ConfiguracionInstitucional`: `POLITICA_ESTRICTA_AISLAMIENTO_DEPARTAMENTAL`: `BLOQUEO_TOTAL_CROSS_DEPARTAMENTO` (por defecto) vs. `PERMITIR_REFERENCIA_SOLO_LECTURA_INTERDEPARTAMENTAL`.
+- **Criterios de Aceptación:**
+  - [ ] Un usuario de un departamento no puede consultar registros de otro mediante manipulación de IDs en peticiones backend.
+  - [ ] Las consultas directas a los endpoints aplican las mismas restricciones que la interfaz de usuario.
+  - [ ] Las búsquedas y listados no revelan información de departamentos no autorizados ni mediante mensajes de error.
+  - [ ] Las referencias compartidas permiten acceder exclusivamente al contenido autorizado y su revocación es inmediata.
+  - [ ] Las operaciones de descarga, firma y exportación respetan el ámbito departamental asignado.
+  - [ ] Los roles institucionales con acceso global funcionan conforme a sus permisos explícitos sin falsos bloqueos.
+- **Dependencias:** Sistema de usuarios, departamentos, roles y estructura de propiedad documental.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F41-Task02] [P0] Reanudación idempotente y procesamiento por lotes de importaciones masivas
+- **Prioridad:** P0 (Prioridad crítica / Bloqueante)
+- **Orden de Ejecución:** 2 (Resiliencia operativa, checkpoints y prevención de duplicados)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`importDataWithColumnMapping`, `resumeFailedImportBatch`)
+  - `backend/academic-service/Code.gs` (`generateInstitutionalId`, `SecuenciasIDs`)
+  - Hojas de Cálculo: `AuditoriaMigraciones`, `DetalleRegistrosImportados`
+- **Subcapacidades Relacionadas:** F41-09.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md` / Secciones B (F41-09), E (E2E-41-10) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  Las importaciones interrumpidas no pueden reanudarse de forma segura. Si un archivo de 500 filas falla después de procesar 249 por timeout de Apps Script o desconexión, volver a importarlo procesa todo el archivo desde el inicio, duplicando los registros que ya se guardaron o corrompiendo correlativos.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Identificación única de lote y clave idempotente por fila:*
+     - Cada importación debe poseer un `ejecucionId` único y permanente (`MIG-timestamp-hash`).
+     - El identificador debe mantenerse a lo largo de todos los reintentos.
+     - Asignar a cada fila una clave de idempotencia (`idempotencyKey` = hash de datos de la fila + `ejecucionId`).
+     - Cuando exista un identificador institucional, utilizarlo para reconocer el registro; la misma fila no debe crear dos registros aunque se reintente múltiples veces.
+  2. *Puntos de control (Checkpoints) y procesamiento por bloques:*
+     - Registrar el estado individual de cada fila en `DetalleRegistrosImportados`: `pendiente`, `procesando`, `completada`, `omitida`, `rechazada`, `error_recuperable`.
+     - Guardar el último punto de control confirmado en `AuditoriaMigraciones` (`ultimoBloqueIndice`).
+     - Procesar archivos en bloques controlados (ej. 50-100 filas) confirmando el resultado de cada bloque.
+     - Interrupciones en un bloque no invalidan los bloques previos ya confirmados.
+  3. *Reintentos progresivos y reanudación selectiva:*
+     - Reconocer errores transitorios aplicando reintentos progresivos limitados; no reintentar indefinidamente errores de validación definitivos.
+     - Implementar `resumeFailedImportBatch(payload)` para continuar desde las filas pendientes sin reprocesar las completadas.
+     - Permitir descargar los registros fallidos con indicación precisa de fila y error para corregirlos y reintentarlos.
+  4. *Protección y consistencia de identificadores institucionales:*
+     - Coordinar la asignación de identificadores con el bloqueo atómico existente de `LockService` en `generateInstitutionalId`.
+     - Una fila reintentada no debe recibir un nuevo ID cada vez que se ejecute.
+     - Una reserva de ID no se considera completada hasta que el registro correspondiente sea confirmado en la hoja de destino.
+- **Criterios de Aceptación:**
+  - [ ] Una importación de 500 filas interrumpida tras procesar 249 puede reanudarse procesando únicamente las filas pendientes.
+  - [ ] Las primeras 249 filas no se duplican bajo ninguna circunstancia.
+  - [ ] Los identificadores institucionales asignados a registros ya creados permanecen inalterados.
+  - [ ] Peticiones repetidas con el mismo identificador de lote o clave de idempotencia devuelven el resultado existente sin duplicar inserciones.
+  - [ ] Errores de validación en filas aisladas no bloquean el procesamiento de las filas válidas del lote.
+  - [ ] El estado mostrado en pantalla coincide exactamente con los registros confirmados en la base de datos.
+- **Dependencias:** F41-Task03, `LockService` y `SecuenciasIDs`.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F41-Task01] [P0] Motor de reversión selectiva de importaciones masivas (Rollback Seguro)
+- **Prioridad:** P0 (Prioridad crítica / Bloqueante)
+- **Orden de Ejecución:** 3 (Integridad transaccional y reversión con detección de conflictos)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`revertDataImportBatch`, `validateImportRollbackFeasibility`, `previewImportRollbackImpact`)
   - Hojas de Cálculo: `AuditoriaMigraciones`, `DetalleRegistrosImportados`
 - **Subcapacidades Relacionadas:** F41-10.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md` / Secciones B (F41-10), E (E2E-41-11) y F (Task01).
+- **Origen del Hallazgo:** `AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md` / Secciones B (F41-10), E (E2E-41-11) y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  Actualmente, las importaciones se asientan en las hojas de datos sin guardar un snapshot de los valores preexistentes por fila ni una función que permita revertir una carga fallida o errónea. Deshacer una importación defectuosa exige editar manualmente las hojas de cálculo, con alto riesgo de corromper registros históricos legítimos.
+  Existe un registro de importaciones en `AuditoriaMigraciones`, pero no hay un mecanismo para revertir los cambios realizados por un lote. Una importación defectuosa puede corromper datos sin forma segura de recuperar el estado anterior. Eliminar a ciegas todas las filas es inaceptable si los registros adquirieron transacciones hijas o modificaciones legítimas posteriores.
 - **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Registro de instantáneas previas (Snapshots):*
-     - En cada ejecución de `importDataWithColumnMapping`, registrar en `DetalleRegistrosImportados`: `ejecucionId`, `filaNum`, `identificador`, `moduloDestino`, `valoresAnterioresJSON`, `valoresNuevosJSON`, `accion` (`INSERT`/`UPDATE`), `fecha`.
-  2. *Validación de viabilidad y transacciones dependientes:*
-     - Antes de revertir, `validateImportRollbackFeasibility` debe comprobar que los registros creados no tengan transacciones hijas posteriores (ej. notas asignadas sobre matrículas importadas, o pagos registrados sobre cargos importados).
-     - Si existen dependencias, bloquear la reversión automática y requerir resolución manual asistida.
-  3. *Ejecución atómica del Rollback:*
-     - Eliminar registros insertados y restaurar valores anteriores en registros actualizados.
-     - Registrar el evento en `AuditoriaMigraciones` con usuario, fecha, motivo y estado `reverted`.
-     - Prohibir terminantemente que una reversión repetida vuelva a aplicar cambios sobre registros ya deshechos.
+  1. *Captura previa de instantáneas (Snapshots) por fila:*
+     - Antes de modificar cualquier registro en `importDataWithColumnMapping`, registrar en `DetalleRegistrosImportados`: `ejecucionId`, `registroId`, `tipoOperacion` (`INSERT`/`UPDATE`), `valoresAnterioresJSON`, `valoresNuevosJSON`, `camposModificadosJSON`, `fechaHora`, `usuarioResponsable`.
+     - Guardar la identidad del registro mediante su identificador institucional estable, no por número de fila.
+     - Conservar detalle suficiente para reconstruir el estado anterior sin depender del archivo Excel/CSV original.
+  2. *Motor de reversión selectiva:*
+     - Desarrollar `revertDataImportBatch(payload)`: Identificar todos los registros afectados por el lote.
+     - Distinguir registros creados (INSERT) de registros preexistentes actualizados (UPDATE).
+     - Eliminar registros creados por la importación únicamente cuando sea seguro y carezcan de dependencias posteriores.
+     - Restaurar los valores anteriores de registros actualizados sin sobreescribir campos no tocados por la importación.
+  3. *Detección de dependencias y modificaciones posteriores:*
+     - Comparar el estado actual de cada registro con el estado que dejó la importación.
+     - Detectar cambios posteriores realizados por usuarios, procesos automáticos o importaciones subsecuentes.
+     - Detectar registros vinculados a matrículas, calificaciones, pagos, comprobantes o firmas.
+     - Si existe modificación posterior en un campo que se pretende restaurar, generar un conflicto para resolución asistida.
+     - Si las modificaciones posteriores afectan campos diferentes, permitir reversión selectiva de los campos sin conflicto.
+  4. *Previsualización obligatoria y control de autorización:*
+     - Desarrollar `previewImportRollbackImpact(payload)` mostrando: Total de registros a revertir, Registros a restaurar, Registros creados a eliminar, Registros con dependencias bloqueantes, Campos en conflicto y resultado previsto.
+     - Restringir la reversión a roles autorizados (`Administrador`, `Director`), exigiendo motivo formal y confirmación explícita auditada.
+     - No eliminar el registro original de `AuditoriaMigraciones`; registrar la reversión como un nuevo evento vinculado conservando la trazabilidad completa.
 - **Criterios de Aceptación:**
-  - [ ] Revertir una importación que solo insertó filas elimina exactamente esas filas sin afectar datos preexistentes.
+  - [ ] Revertir una importación que solo creó registros los elimina exactamente, siempre que no tengan relaciones hijas posteriores.
   - [ ] Revertir una actualización restaura los valores anteriores exactos preservados en el snapshot.
-  - [ ] Si un registro importado fue modificado posteriormente por un usuario, el sistema detecta el conflicto y no sobreescribe silenciosamente el cambio legítimo.
-  - [ ] La operación de reversión queda registrada con usuario, fecha y resultado.
+  - [ ] Modificaciones posteriores sobre los registros son detectadas impidiendo la sobreescritura silenciosa de cambios legítimos.
+  - [ ] Si un registro creado tiene una matrícula, nota o pago posterior, se bloquea su eliminación automática y se reporta el conflicto.
+  - [ ] Revertir una importación previa no deshace los cambios de una importación posterior sobre el mismo registro.
+  - [ ] Repetir una reversión completada no altera nuevamente los datos de la base de datos.
+  - [ ] Una importación sin snapshot suficiente no puede revertirse mediante operaciones destructivas improvisadas.
 - **Dependencias:** F41-Task02, `AuditoriaMigraciones`.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F41-Task02] [P0] Reanudación idempotente de importaciones interrumpidas y control de checkpoints
+### [F41-Task04] [P0] Gestión integral del ciclo de vida de solicitudes de firma multifirmante
 - **Prioridad:** P0 (Prioridad crítica / Bloqueante)
-- **Orden de Ejecución:** 2 (Resiliencia operativa y prevención de duplicados por reintentos)
+- **Orden de Ejecución:** 4 (Orquestación de firmas, trazabilidad de entrega y no repudio)
 - **Componentes Afectados:**
-  - `backend/accounting-service/Code.gs` (`importDataWithColumnMapping`, `resumeFailedImportBatch`)
-  - Hoja de Cálculo: `AuditoriaMigraciones`
-- **Subcapacidades Relacionadas:** F41-09.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md` / Secciones B (F41-09), E (E2E-41-10) y F (Task02).
-- **Problema Detectado y Riesgos:**
-  Si una importación se interrumpe a mitad de camino por timeout de Google Apps Script (límite de 6 minutos) o caída de conexión, reintentar la operación procesa todo el archivo desde el inicio, duplicando las filas que ya habían sido consolidadas exitosamente.
-- **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Puntos de control (Checkpoints) e Idempotencia:*
-     - Asignar una clave de idempotencia única por fila (`idempotencyKey` = hash de datos de la fila + ID del lote).
-     - Guardar el progreso por bloques de filas en `AuditoriaMigraciones` (`ultimoIndiceProcesado`).
-  2. *Reanudación selectiva:*
-     - Implementar `resumeFailedImportBatch(payload)` que identifique las filas pendientes y reanude el procesamiento exactamente desde el último checkpoint exitoso.
-     - Saltar filas ya insertadas verificando la clave de idempotencia para garantizar que ninguna fila se duplique en la base de datos.
-- **Criterios de Aceptación:**
-  - [ ] Una importación interrumpida a la mitad puede reanudarse sin procesar de nuevo las filas previas.
-  - [ ] Reintentar la misma petición con igual clave de idempotencia devuelve el resultado existente sin duplicar registros.
-  - [ ] Se genera un reporte final consolidando las filas procesadas en el primer intento y en los reintentos.
-- **Dependencias:** F41-Task01.
-- **Estado:** [ ] Pendiente
-
----
-
-### [F41-Task03] [P0] Blindaje de aislamiento departamental en endpoints de consulta y mutación
-- **Prioridad:** P0 (Prioridad crítica / Bloqueante)
-- **Orden de Ejecución:** 3 (Control de acceso basado en atributos - ABAC)
-- **Componentes Afectados:**
-  - `backend/academic-service/Code.gs` (`validateAcademicResponsibilityAndScopeAccess`)
-  - `backend/accounting-service/Code.gs` (`validateRolePermission`)
-  - `backend/user-service/Code.gs` (`assignRoleScope`)
-- **Subcapacidades Relacionadas:** F41-08.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md` / Secciones B (F41-08), E (E2E-41-09) y F (Task03).
-- **Problema Detectado y Riesgos:**
-  Varios endpoints backend validan únicamente si el rol tiene permiso funcional sobre la acción (RBAC), pero no verifican que el expediente o documento solicitado pertenezca al departamento del usuario autenticado (ABAC). Manipular identificadores en peticiones directas puede exponer información de otras áreas.
-- **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Filtro perimetral departamental estricto:*
-     - En toda consulta de expedientes, contratos o documentos, verificar que `usuario.departamento === documento.departamento` salvo roles transversales institucionales (`Administrador`, `Director`).
-     - Bloquear terminantemente consultas directas por ID que pertenezcan a departamentos ajenos.
-  2. *Auditoría de accesos denegados:*
-     - Registrar en `LogsSistema` todo intento de consulta entre departamentos no autorizados con severidad `WARN`.
-- **Criterios de Aceptación:**
-  - [ ] Un usuario de Contabilidad no puede consultar expedientes disciplinarios de Orientación o Secretaría.
-  - [ ] La manipulación de parámetros de departamento en peticiones HTTP es neutralizada en el servidor.
-  - [ ] Las consultas y listados solo retornan registros pertenecientes al ámbito asignado al usuario.
-- **Dependencias:** Autenticación de sesiones y matriz de roles.
-- **Estado:** [ ] Pendiente
-
----
-
-### [F41-Task04] [P0] Ciclo de vida y tracking de estados de solicitudes de firma multifirmante
-- **Prioridad:** P0 (Prioridad crítica / Bloqueante)
-- **Orden de Ejecución:** 4 (Orquestación de firmas y trazabilidad de entrega)
-- **Componentes Afectados:**
-  - `backend/user-service/Code.gs` (`registerDocumentSignature`, `createSignatureWorkflow`, `getSignatureWorkflowStatus`)
-  - Hojas de Cálculo: `SolicitudesFirmas`, `FirmasConformidades`
+  - `backend/user-service/Code.gs` (`createSignatureWorkflow`, `getSignatureWorkflowStatus`, `registerDocumentSignature`, `cancelSignatureWorkflow`)
+  - Hojas de Cálculo: `SolicitudesFirmas`, `FirmasConformidades`, `EventosTrazabilidadFirmas`
 - **Subcapacidades Relacionadas:** F41-07.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md` / Secciones B (F41-07), E (E2E-41-08) y F (Task04).
+- **Origen del Hallazgo:** `AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md` / Secciones B (F41-07), E (E2E-41-08) y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  Actualmente, la plataforma solo registra la firma consumada unitaria en `FirmasConformidades`. No existe un flujo que soporte múltiples firmantes en orden secuencial (ej. primero Docente, luego Director) ni seguimiento de si la solicitud fue entregada, vista o rechazada.
+  `registerDocumentSignature` solo registra la firma consumada unitaria. No existe seguimiento completo de estados intermedios ni soporte para solicitudes con múltiples firmantes en orden secuencial. El sistema confunde el envío de la solicitud con la entrega real y la visualización por parte del destinatario.
 - **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Máquina de estados de solicitud de firma:*
-     - Crear la hoja `SolicitudesFirmas` con estados: `Borrador`, `Enviado`, `Entregado`, `Visto`, `Firmado_Parcial`, `Completado`, `Rechazado`, `Cancelado`, `Vencido`.
-     - Registrar fecha y hora de cada transición, IP del firmante y token seguro efímero.
-  2. *Firmas secuenciales multifirmante:*
-     - Permitir definir orden de firma (paso 1, paso 2). El firmante del paso 2 solo recibe la notificación y habilitación una vez que el firmante del paso 1 ha completado su firma.
-     - Si un firmante rechaza la solicitud, el flujo se detiene notificando al emisor con las observaciones registradas.
+  1. *Máquina de estados formal de solicitudes:*
+     - Crear la hoja `SolicitudesFirmas` con estados controlados: `Borrador`, `Enviado`, `Entregado`, `Visto`, `Firmado_Parcial`, `Completado`, `Rechazado`, `Cancelado`, `Vencido`, `Error_Entrega`.
+     - No confundir `Entregado` con `Visto`: una notificación aceptada por el servidor no prueba que la persona haya abierto el documento.
+  2. *Soporte multifirmante con orden secuencial o paralelo:*
+     - Configurar múltiples participantes definiendo el orden de firma (paso 1, paso 2) o firma paralela.
+     - Determinar qué participantes firman y cuáles solo reciben copia informativa.
+     - Impedir terminantemente que un firmante posterior firme antes que el firmante previo en flujos secuenciales.
+     - Identificar en todo momento quién tiene pendiente la siguiente acción.
+  3. *Seguridad criptográfica y tokens efímeros:*
+     - Vincular cada solicitud al documento exacto, versión y hash SHA-256 del binario.
+     - Generar tokens seguros con entropía criptográfica (HMAC-SHA256 con expiración y revocación), descartando `Math.random()`.
+     - Validar la identidad y facultades del firmante antes de aceptar su acción.
+  4. *Registro de eventos bilaterales y notificaciones:*
+     - Registrar en `EventosTrazabilidadFirmas`: Creación, Envío, Entrega, Apertura, Inicio de firma, Firma completada, Rechazo, Cancelación, Vencimiento, Recordatorios y Errores.
+     - Notificar bilateralmente al emisor y destinatarios ante avances, rechazos o finalización.
+     - Evitar notificaciones duplicadas por reintentos.
+  5. *Generación de documento final inmutable:*
+     - Generar el PDF final con sellado de tiempo y firmas sólo tras completar todas las firmas requeridas.
+     - Relacionar el documento final con las evidencias de cada firmante bloqueando modificaciones posteriores.
 - **Criterios de Aceptación:**
-  - [ ] Permite crear trámites con múltiples firmantes en orden secuencial obligatorio.
-  - [ ] El segundo firmante no puede firmar hasta que el primero haya completado su acción.
-  - [ ] El emisor puede consultar en tiempo real en qué estado y con qué responsable se encuentra la solicitud.
-- **Dependencias:** F40-Task04 (Firmas vinculadas criptográficamente).
+  - [ ] Permite enviar una solicitud a dos o más firmantes respetando el orden secuencial configurado.
+  - [ ] El firmante posterior no puede completar su acción hasta que el firmante previo haya firmado.
+  - [ ] Los estados reflejan eventos reales distinguiendo entre enviado, entregado y visto.
+  - [ ] El rechazo o cancelación detiene el flujo y notifica de inmediato al emisor con las observaciones registradas.
+  - [ ] La firma queda vinculada al hash SHA-256 de la versión exacta del documento.
+  - [ ] El historial permite reconstruir cronológicamente todo el proceso con fechas, IPs y participantes.
+- **Dependencias:** F40-Task04, F40-Task02, sistema de notificaciones y usuarios.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F41-Task05] [P1] Servicio OCR para documentos escaneados con corrección humana asistida
+### [F41-Task07] [P1] Normalización inteligente de encabezados y correspondencia de columnas
 - **Prioridad:** P1 (Alta / Importante)
-- **Orden de Ejecución:** 5 (Extracción de texto en documentos rasterizados)
+- **Orden de Ejecución:** 5 (Flexibilidad en la ingesta tabular y soporte multihoja)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`validateImportPreview`, `importDataWithColumnMapping`)
+  - `js/teacher.js`, `teacher-dashboard.html`
+  - Hoja de Cálculo: `CatalogoSinonimosEncabezados`
+- **Subcapacidades Relacionadas:** F41-01.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md` / Secciones B (F41-01), E (E2E-41-01) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  El importador depende de un diccionario simple y es sensible a posiciones o nombres fijos. Variaciones menores de acentos, mayúsculas, espacios o sinónimos comunes exigen mapeo manual repetitivo. Además, no se gestionan archivos con múltiples hojas ni encabezados desplazados tras filas introductorias.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Normalización ortográfica y sintáctica:*
+     - Normalizar encabezados convirtiendo a minúsculas, eliminando tildes, espacios redundantes, guiones y signos de puntuación.
+  2. *Diccionario institucional de equivalencias y similitud textual:*
+     - Mantener catálogo de equivalencias (`CatalogoSinonimosEncabezados`) para vocabulario de Secretaría, Contabilidad y RRHH (`identidad` = `dni`, `identificacion`, `cedula`, `codigo_estudiante`).
+     - Utilizar similitud difusa (Fuzzy Matching) para sugerir mapeos con grado de confianza visible.
+     - Diferenciar coincidencias exactas, normalizadas y sugeridas; no asignar automáticamente columnas ambiguas ni asignar dos columnas al mismo campo destino.
+  3. *Soporte multihoja y detección de filas de encabezado:*
+     - Detectar todas las hojas del libro Excel y permitir seleccionar cuál importar con vista previa independiente.
+     - Detectar la fila real de encabezados aunque existan títulos o filas introductorias vacías.
+     - Permitir fijar manualmente la fila de encabezados si la detección automática es dudosa.
+     - Identificar hojas vacías sin interrumpir el procesamiento de hojas válidas.
+  4. *Plantillas de correspondencia reutilizables y previsualización:*
+     - Guardar mapeos aprobados como plantillas de importación versionadas para reutilización futura.
+     - Previsualización clara: columna original, campo destino, tipo de coincidencia, validación y muestra de datos.
+     - Permitir transformaciones controladas antes de importar (normalización de fechas, limpieza de espacios, conversión numérica) sin modificar el archivo fuente.
+- **Criterios de Aceptación:**
+  - [ ] Encabezados con diferencias de acentos, mayúsculas o espacios se reconocen automáticamente.
+  - [ ] Sinónimos institucionales aprobados se mapean sin intervención manual repetitiva.
+  - [ ] Columnas desconocidas o ambiguas requieren confirmación y no sobreescriben campos destino.
+  - [ ] Permite seleccionar e importar hojas específicas de libros Excel con múltiples hojas.
+  - [ ] Archivos con filas introductorias antes de los encabezados se procesan correctamente.
+  - [ ] La previsualización refleja exactamente los datos y transformaciones que se aplicarán.
+- **Dependencias:** F41-Task02, validación de esquemas de importación.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F41-Task05] [P1] Motor OCR para documentos escaneados con corrección asistida
+- **Prioridad:** P1 (Alta / Importante)
+- **Orden de Ejecución:** 6 (Reconocimiento óptico de caracteres y validación humana)
 - **Componentes Afectados:**
   - `backend/academic-service/Code.gs` (`processDocumentOCR`, `saveVerifiedOCRData`)
+  - `backend/accounting-service/Code.gs`
   - `js/teacher.js`, `teacher-dashboard.html`
+  - Almacenamiento: Google Drive institucional
 - **Subcapacidades Relacionadas:** F41-05.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md` / Secciones B (F41-05), E (E2E-41-06) y F (Task05).
+- **Origen del Hallazgo:** `AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md` / Secciones B (F41-05), E (E2E-41-06) y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  No existe un servicio de OCR operativo en el backend. Los documentos PDF escaneados o fotografías de actas antiguas no pueden indexarse ni procesarse para autocompletar expedientes sin transcripción manual completa.
+  No existen funciones operativas de OCR en el backend. Los documentos PDF escaneados o fotografías de actas y certificados antiguos requieren transcripción manual obligatoria, limitando la digitalización masiva y generando cuellos de botella operativos.
 - **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Procesamiento OCR en español:*
-     - Integrar motor de reconocimiento óptico de caracteres para extraer texto y tablas de imágenes y PDFs escaneados.
-     - Detectar niveles de confianza por campo (alta confianza en verde, dudosa en ámbar).
-  2. *Interfaz de corrección humana:*
-     - Presentar pantalla comparativa: documento original a la izquierda y datos reconocidos a la derecha.
-     - Permitir corregir valores dudosos manualmente antes de su persistencia oficial en la base de datos.
-     - Prohibir que datos de OCR se conviertan en registros oficiales sin validación explícita de un operador.
+  1. *Ingesta y reconocimiento óptico:*
+     - Admitir PDFs escaneados e imágenes compatibles (JPG, PNG, TIFF) de una o varias páginas.
+     - Validar tamaño, formato y legibilidad; detectar páginas en blanco, rotadas o con resolución deficiente.
+     - Reconocer texto impreso en español (tildes, eñes, números, fechas y caracteres especiales).
+     - Extraer bloques, líneas, palabras y coordenadas espaciales cuando el motor lo permita.
+  2. *Extracción estructurada de entidades:*
+     - Definir campos a extraer según el tipo documental (nombre, identidad, fecha, número de acta, notas).
+     - Diferenciar valores detectados de valores confirmados; señalar campos dudosos o no reconocidos.
+  3. *Interfaz comparativa de revisión humana:*
+     - Mostrar el documento original escaneado a la izquierda y los campos extraídos a la derecha.
+     - Resaltar en la imagen la ubicación del campo seleccionado para verificación inmediata.
+     - Permitir al usuario corregir el texto, confirmar valores, marcar campos ilegibles o descartar el resultado.
+     - Prohibir terminantemente que datos dudosos de OCR se asienten en la base de datos sin confirmación humana explícita.
+  4. *Trazabilidad y resiliencia:*
+     - Registrar usuario responsable, motor utilizado, fecha, texto bruto original y valores corregidos.
+     - Procesar documentos extensos por páginas o bloques permitiendo reanudar trabajos interrumpidos.
 - **Criterios de Aceptación:**
-  - [ ] Procesa documentos escaneados reconociendo texto en español.
-  - [ ] Muestra campos reconocidos junto con la imagen original permitiendo edición.
-  - [ ] No persiste ningún dato en producción sin la confirmación formal del usuario.
-- **Dependencias:** F39-Task08.
+  - [ ] Un PDF escaneado sin texto vectorial es procesado extrayendo su contenido textual visible.
+  - [ ] Documentos de varias páginas se procesan manteniendo la correspondencia página por página.
+  - [ ] La interfaz comparativa resalta campos dudosos y permite su corrección manual antes de guardar.
+  - [ ] La confirmación de datos queda formalmente asociada al usuario responsable en la bitácora.
+  - [ ] El archivo escaneado original permanece intacto en custodia protegida en Google Drive.
+  - [ ] Documentos ilegibles generan mensajes claros de error sin inventar datos ficticios.
+- **Dependencias:** F41-Task06, almacenamiento documental y controles de seguridad de Fase 40.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F41-Task06] [P1] Convertidor estructural de documentos Word (DOCX) a formularios digitales
+### [F41-Task06] [P1] Conversión de PDF y DOCX a formularios digitales
 - **Prioridad:** P1 (Alta / Importante)
-- **Orden de Ejecución:** 6 (Digitalización acelerada de formatos existentes)
+- **Orden de Ejecución:** 7 (Transformación de formatos tradicionales en formularios interactivos)
 - **Componentes Afectados:**
-  - `backend/user-service/Code.gs` (`convertWordToInstitutionalForm`, `saveInstitutionalForm`)
-  - `js/teacher.js`
+  - `backend/user-service/Code.gs` (`convertDocumentToInstitutionalForm`, `saveInstitutionalForm`)
+  - `js/teacher.js`, `teacher-dashboard.html`
+  - Hoja de Cálculo: `FormulariosInstitucionales`
 - **Subcapacidades Relacionadas:** F41-04.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md` / Secciones B (F41-04), E (E2E-41-05) y F (Task06).
+- **Origen del Hallazgo:** `AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md` / Secciones B (F41-04), E (E2E-41-05) y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  La creación de formularios exige estructurar manualmente JSONs o arrastrar campos desde cero. No se aprovecha la estructura de tablas y párrafos de formatos DOCX institucionales preexistentes.
+  La plataforma permite crear formularios dinámicos JSON manualmente mediante `saveInstitutionalForm`, pero carece de un conversor estructural para transformar documentos Word (DOCX) y PDF existentes en formularios web. Esto obliga a rediseñar desde cero trámites y solicitudes ya aprobados en papel.
 - **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Análisis estructural de DOCX:*
-     - Extraer tablas, encabezados y controles de formulario de archivos Word.
-     - Proponer automáticamente campos web (`texto`, `fecha`, `casilla`, `tabla`).
-  2. *Edición asistida:*
-     - Permitir al usuario afinar etiquetas y tipos de datos en el editor visual antes de publicar el formulario.
+  1. *Conversión estructural de DOCX:*
+     - Interpretar párrafos, tablas, celdas y controles de contenido de Word.
+     - Reconocer líneas de completar, casillas de verificación y tablas de datos.
+     - Preservar encabezados, márgenes y saltos de página transformándolos en secciones de formulario digital.
+  2. *Conversión de PDF (vectorial y escaneado):*
+     - Identificar campos de formulario AcroForms existentes y texto seleccionable.
+     - Permitir superponer campos editables sobre páginas PDF que sirvan como plantilla de fondo.
+     - Derivar a OCR cuando el PDF sea una imagen escaneada pura.
+  3. *Detección de campos y editor interactivo:*
+     - Proponer tipos de campo: texto corto, texto largo, número, fecha, correo, DNI, selección única/múltiple, casilla, firma y adjunto.
+     - La detección genera propuestas editables; el usuario puede agregar, mover, redimensionar o eliminar campos.
+     - Definir validaciones, campos obligatorios y permisos de visualización/edición por rol.
+  4. *Plantillas reutilizables y generación final:*
+     - Guardar el formulario convertido como plantilla institucional versionada.
+     - Permitir completar datos de prueba y exportar el documento final en PDF comprobando la fidelidad del diseño frente al original.
 - **Criterios de Aceptación:**
-  - [ ] Importa un archivo DOCX y genera un borrador de formulario digital interactivo.
-  - [ ] Las tablas y títulos del documento original se preservan lógicamente en secciones del formulario.
-- **Dependencias:** F39-Task09.
+  - [ ] Un archivo DOCX con tablas y controles de contenido se convierte en un formulario digital interactivo.
+  - [ ] Un PDF digital se convierte en formulario conservando sus elementos visuales de referencia.
+  - [ ] Los campos detectados automáticamente pueden editarse y reordenarse en el editor visual.
+  - [ ] El formulario publicado valida campos obligatorios y genera un PDF final fiel al diseño original.
+  - [ ] El documento original utilizado como base permanece inalterado en almacenamiento.
+- **Dependencias:** F41-Task05, F41-Task07, F41-Task08.
 - **Estado:** [ ] Pendiente
 
 ---
 
-### [F41-Task07] [P1] Normalizador inteligente de encabezados y correspondencia de columnas
+### [F41-Task08] [P1] Calibración del renderizado PDF e impresión multiformato
 - **Prioridad:** P1 (Alta / Importante)
-- **Orden de Ejecución:** 7 (Flexibilidad en la ingesta tabular)
-- **Componentes Afectados:**
-  - `backend/accounting-service/Code.gs` (`validateImportPreview`)
-  - `js/teacher.js`
-- **Subcapacidades Relacionadas:** F41-01.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md` / Secciones B (F41-01), E (E2E-41-01) y F (Task07).
-- **Problema Detectado y Riesgos:**
-  `validateImportPreview` es sensible a variaciones menores de encabezados. Si el usuario sube un archivo con "identificación" en lugar de "identidad" o con tildes/espacios extras, el sistema no reconoce la columna y exige mapeo manual repetitivo.
-- **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Algoritmo de coincidencia difusa (Fuzzy Matching):*
-     - Normalizar encabezados eliminando tildes, mayúsculas, espacios y caracteres especiales.
-     - Diccionario institucional de sinónimos comunes (`identidad` = `dni`, `identificacion`, `cedula`, `codigo_alumno`).
-     - Reconocer correspondencias con confianza >= 85% y sugerirlas preseleccionadas en la vista previa.
-- **Criterios de Aceptación:**
-  - [ ] Archivos con columnas en orden alterado o encabezados sinónimos se mapean automáticamente.
-  - [ ] La interfaz permite ajustar manualmente cualquier sugerencia antes de importar.
-- **Dependencias:** F35-Task01.
-- **Estado:** [ ] Pendiente
-
----
-
-### [F41-Task08] [P1] Calibración de fidelidad visual e impresión multiformato de PDF final
-- **Prioridad:** P1 (Alta / Importante)
-- **Orden de Ejecución:** 8 (Precisión gráfica y estética documental oficial)
+- **Orden de Ejecución:** 8 (Fidelidad visual, precisión de coordenadas y soporte multiformato)
 - **Componentes Afectados:**
   - `backend/accounting-service/Code.gs` (`previewSchoolDocument`, `generateSchoolDocument`)
   - `js/teacher.js`, `teacher-dashboard.html`
+  - Motor de generación PDF en Google Apps Script
 - **Subcapacidades Relacionadas:** F41-06.
-- **Origen del Hallazgo:** `AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md` / Secciones B (F41-06), E (E2E-41-07) y F (Task08).
+- **Origen del Hallazgo:** `AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md` / Secciones B (F41-06), E (E2E-41-07) y Especificación Técnica ChatGPT/Jules.
 - **Problema Detectado y Riesgos:**
-  Al superponer campos sobre plantillas oficiales, existen leves desalineaciones tipográficas cuando el documento se imprime en formatos de página distintos (ej. A4 vs Carta) o cuando se visualiza en navegadores con distintas escalas de zoom.
+  El editor visual utiliza coordenadas porcentuales (`xRatio`, `yRatio`), pero la impresión final y la descarga presentan desalineaciones tipográficas y desplazamientos al utilizar formatos de página distintos a Carta, especialmente en formato A4 u Oficio, o al variar la escala de zoom en el navegador.
 - **Requerimientos Funcionales y Técnicos Convergentes:**
-  1. *Estandarización de coordenadas proporcionales:*
-     - Utilizar coordenadas porcentuales (`xRatio`, `yRatio`) basadas en las dimensiones reales de página del PDF de fondo.
-     - Incrustar fuentes tipográficas web universales para evitar sustituciones no deseadas en el motor de renderizado de Google.
-  2. *Pruebas de fidelidad visual:*
-     - Validar que los campos no se desborden ni recorten en formatos Carta, Oficio y A4.
+  1. *Sistema de coordenadas normalizado e independiente de zoom:*
+     - Definir sistema de coordenadas absoluto basado en las dimensiones reales de página del PDF de fondo (puntos tipográficos estándar).
+     - Garantizar conversión biunívoca exacta entre el editor visual en navegador, la vista previa y el motor de generación PDF.
+     - Evitar que variaciones de resolución de pantalla o zoom del usuario alteren las coordenadas guardadas.
+  2. *Soporte integral multiformato de página:*
+     - Soportar con fidelidad: `Carta (Letter)`, `A4`, `Oficio (Legal)`, tanto en orientación vertical como horizontal.
+     - Márgenes configurables e identificación automática del tamaño de página del documento base.
+  3. *Control tipográfico y desbordamiento:*
+     - Conservar fuente, tamaño, peso, interlineado y alineación. Incrustar fuentes tipográficas seguras para evitar sustituciones arbitrarias.
+     - Detectar textos que excedan el área asignada; aplicar auto-ajuste de tamaño de letra o alertar antes de generar el documento.
+     - Evitar que campos queden divididos o cortados entre saltos de página.
+  4. *Verificación de paridad:*
+     - Garantizar que la previsualización en pantalla, el PDF descargado y la impresión física representen exactamente la misma disposición gráfica.
 - **Criterios de Aceptación:**
-  - [ ] Los campos superpuestos mantienen su posición relativa exacta tanto en pantalla como en el PDF descargado e impreso.
-  - [ ] No existen saltos de línea ni desbordamientos de texto en certificados oficiales CUV.
-- **Dependencias:** F32-Task01.
+  - [ ] Plantillas en formato Carta, A4 y Oficio conservan la posición exacta de los campos superpuestos.
+  - [ ] Cambios de zoom en el navegador no alteran las coordenadas guardadas en la base de datos.
+  - [ ] Textos largos no se cortan ni desbordan silenciosamente en los certificados oficiales emitidos.
+  - [ ] El PDF descargado coincide visualmente al 100% con la vista previa aprobada por el usuario.
+- **Dependencias:** F41-Task06, motor de generación PDF.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F41-Task10] [P2] Validación previa avanzada y simulación de impacto de importaciones
+- **Prioridad:** P2 (Media / Complementaria)
+- **Orden de Ejecución:** 9 (Simulación de consecuencias y control de celdas vacías)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`simulateImportImpactPreview`)
+  - `js/teacher.js`, `teacher-dashboard.html`
+- **Subcapacidades Relacionadas:** F41-01, F41-02.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md` / Secciones B (F41-01), E (E2E-41-02) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  La previsualización actual se limita a revisar encabezados y correspondencias básicas, pero no permite simular las consecuencias que la importación tendrá sobre la base de datos antes de escribir. Celdas vacías en el archivo importado pueden borrar silenciosamente información preexistente en registros actualizados.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Clasificación predictiva de filas antes de confirmar:*
+     - Comparar registros del archivo contra la base de datos clasificando cada fila en: `Nueva (INSERT)`, `Actualización (UPDATE)`, `Sin cambios`, `Duplicada en archivo`, `Incompatible`, `Conflicto de integridad`.
+     - Mostrar comparativa lado a lado: valor actual vs valor propuesto para campos modificados.
+  2. *Política de tratamiento de celdas vacías:*
+     - Identificar campos vacíos que sobreescribirían datos existentes.
+     - Permitir configurar la regla: `IGNORAR_VACIOS_CONSERVAR_ACTUAL` (predeterminada) vs `SOBREESCRIBIR_VACIAR_CAMPO` (solo con autorización expresa).
+  3. *Exclusión selectiva y resumen de impacto:*
+     - Permitir al usuario desmarcar o excluir filas específicas antes de ejecutar la importación.
+     - Advertir si la importación intenta alterar identificadores críticos o relaciones activas.
+     - Mostrar resumen consolidado del impacto antes de solicitar confirmación final.
+- **Criterios de Aceptación:**
+  - [ ] Ningún cambio se asienta en la base de datos hasta que el usuario confirme la simulación.
+  - [ ] Campos vacíos en el archivo no borran información existente a menos que se autorice explícitamente.
+  - [ ] Filas conflictivas pueden excluirse individualmente manteniendo el resto de la importación.
+  - [ ] El resumen de la simulación coincide con el resultado final de la operación.
+- **Dependencias:** F41-Task07, F41-Task01, F41-Task02.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F41-Task09] [P2] Centro de control y diagnóstico de importaciones masivas
+- **Prioridad:** P2 (Media / Complementaria)
+- **Orden de Ejecución:** 10 (Consola de monitoreo, estadísticas y gestión de errores)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`getImportDiagnosticsDashboardData`)
+  - `dashboard-direccion.html`, `js/config.js`
+  - Hoja de Cálculo: `AuditoriaMigraciones`
+- **Subcapacidades Relacionadas:** F41-10.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md` / Secciones B (F41-10), E (E2E-41-12) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  Las importaciones se registran en `AuditoriaMigraciones`, pero no existe una consola centralizada que permita a Secretaría y Dirección consultar el historial de lotes, tasas de error por departamento, descargar registros rechazados o supervisar reversiones sin inspeccionar manualmente las hojas de cálculo.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Consola unificada de historial y métricas:*
+     - Mostrar listado de importaciones con: archivo, usuario, fecha, departamento, total filas, exitosas, fallidas y estado (`completada`, `parcial`, `fallida`, `revertida`).
+     - Filtros por estado, tipo de importación, usuario y periodo.
+     - Métricas de duración, rendimiento y tasa de rechazos.
+  2. *Diagnóstico granular y descarga de errores:*
+     - Inspeccionar el detalle fila por fila de cualquier lote identificando causa exacta del error.
+     - Permitir descargar un archivo Excel con las filas rechazadas y el motivo de error para su rápida corrección.
+     - Mostrar botones de acción contextuales: `Reanudar lote`, `Revertir lote` o `Descargar errores`, habilitados únicamente cuando la operación sea aplicable y segura.
+- **Criterios de Aceptación:**
+  - [ ] Usuarios autorizados pueden consultar sus lotes de importación con filtros multicriterio.
+  - [ ] Los administradores visualizan el historial institucional consolidado respetando roles.
+  - [ ] Permite descargar las filas fallidas con el mensaje de error correspondiente.
+  - [ ] Las acciones de reanudación y reversión solo están disponibles cuando el lote cumple las condiciones técnicas.
+- **Dependencias:** F41-Task01, F41-Task02, F41-Task07.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F41-Task11] [P2] Catálogo institucional y administración de plantillas y formularios
+- **Prioridad:** P2 (Media / Complementaria)
+- **Orden de Ejecución:** 11 (Gobernanza del catálogo de plantillas y ciclo de vida de versiones)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`manageSchoolDocumentTemplateCatalog`)
+  - `backend/user-service/Code.gs` (`manageInstitutionalFormCatalog`)
+  - Hojas de Cálculo: `PlantillasEscolares`, `FormulariosInstitucionales`
+- **Subcapacidades Relacionadas:** F41-04.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md` / Secciones B (F41-04) y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  La creación de formularios dinámicos y plantillas CUV carece de una consola de gobernanza centralizada para catalogar formatos por trámite o departamento, controlar versiones activas y evitar que la actualización de una plantilla altere retroactivamente documentos emitidos en periodos anteriores.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Catálogo centralizado y taxonomía:*
+     - Organizar plantillas y formularios por trámite, departamento responsable y tipo documental.
+     - Asignar responsables, vigencias y niveles de confidencialidad.
+     - Permitir duplicar plantillas existentes para acelerar la creación de nuevas variantes.
+  2. *Control de versiones y preservación histórica:*
+     - Mantener versionado formal (`1.0`, `1.1`, `2.0`).
+     - Permitir activar, suspender o archivar plantillas.
+     - Una plantilla actualizada genera una nueva versión; los documentos emitidos previamente conservan su vínculo inmutable con la versión exacta de plantilla con la que fueron generados.
+     - Plantillas inactivas dejan de estar disponibles para nuevas emisiones pero sus documentos históricos permanecen consultables y verificables mediante CUV.
+     - Permitir compartir plantillas específicas entre departamentos bajo autorización formal.
+- **Criterios de Aceptación:**
+  - [ ] El catálogo permite organizar y filtrar plantillas por departamento y trámite.
+  - [ ] Actualizar una plantilla crea una nueva versión sin alterar los documentos generados con versiones previas.
+  - [ ] Todo documento oficial emitido identifica con precisión la versión de plantilla utilizada.
+  - [ ] Plantillas desactivadas son excluidas de nuevos trámites pero mantienen vigentes sus documentos emitidos.
+- **Dependencias:** F41-Task06, F41-Task08 y sistema de documentos institucionales.
 - **Estado:** [ ] Pendiente
 
 ---
