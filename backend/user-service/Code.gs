@@ -92,6 +92,8 @@ function getOrCreateSheet(ss, name) {
     if (name === "QuizProAnalytics") sheet.appendRow(["analyticsId", "fecha", "userId", "quizId", "gameId", "gameName", "asignatura", "grado", "nivel", "preguntaId", "respuestaSeleccionada", "respuestaCorrecta", "esCorrecta", "tiempoRespuesta", "tiempoBase", "ratio", "cambiosRespuesta", "indiceConfianza", "indiceAdivinacion", "indiceDominio", "totalXP"]);
     if (name === "LearningProfile") sheet.appendRow(["profileId", "userId", "asignatura", "tema", "nivel", "intentos", "aciertos", "porcentajeAciertos", "indiceDominio", "ultimaActualizacion"]);
     if (name === "GameLeaderboards") sheet.appendRow(["leaderboardId", "gameId", "userId", "nombreAlumno", "grado", "asignatura", "mejorPuntuacion", "indiceDominioPromedio", "partidasJugadas", "ultimaActualizacion"]);
+    if (name === "Matriculas") sheet.appendRow(["matriculaId", "fecha", "userId", "nombreAlumno", "cicloLectivo", "grado", "seccion", "modalidad", "estado", "tipoBeca", "porcentajeDescuento", "exonerado", "observaciones"]);
+    if (name === "CargosFinancieros") sheet.appendRow(["cargoId", "matriculaId", "userId", "concepto", "montoOriginal", "descuentoAplicado", "montoNeto", "fechaVencimiento", "estado", "saldoPendiente"]);
   }
   return sheet;
 }
@@ -126,6 +128,11 @@ const RBAC_ACTION_PERMISSIONS = {
   // Gestión de Alumnos (Docentes y Personal Administrativo)
   "getStudents": ["Profesor", "Secretaría", "Consejeros", "Director", "Subdirector", "Administrador"],
   "getStudentsByGradoSeccion": ["Profesor", "Secretaría", "Consejeros", "Director", "Subdirector", "Administrador"],
+
+  // Gestión de Matrícula y Control Financiero (REQ-EXP-009)
+  "registerEnrollment": ["Secretaría", "Director", "Administrador"],
+  "getStudentFinancialStatus": ["*"],
+  "getEnrollmentHistory": ["*"],
 
   // Gestión de Comunicación y Noticias
   "createNews": ["Secretaría", "Director", "Administrador"],
@@ -204,6 +211,9 @@ function doPost(e) {
       case "getNews": result = getNews(payload); break;
       case "createNews": result = createNews(payload); break;
       case "uploadNewsImage": result = uploadNewsImage(payload); break;
+      case "registerEnrollment": result = registerEnrollment(payload); break;
+      case "getStudentFinancialStatus": result = getStudentFinancialStatus(payload); break;
+      case "getEnrollmentHistory": result = getEnrollmentHistory(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -518,3 +528,162 @@ function uploadNewsImage(payload) {
 }
 
 function getOrCreateFolderNews(parent, name) { const f = parent.getFoldersByName(name); return f.hasNext() ? f.next() : parent.createFolder(name); }
+
+// ---------------------------------------------------------------------------
+// MÓDULO DE MATRÍCULA Y CONTROL FINANCIERO DEL ESTUDIANTE (REQ-EXP-009)
+// ---------------------------------------------------------------------------
+
+function registerEnrollment(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const { userId, nombreAlumno, cicloLectivo, grado, seccion, modalidad, tipoBeca, porcentajeDescuento, exonerado, observaciones, cargosIniciales } = payload || {};
+    if (!userId || !cicloLectivo || !grado) throw new Error("Datos obligatorios de matrícula incompletos.");
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const matSheet = getOrCreateSheet(ss, "Matriculas");
+    const matData = matSheet.getDataRange().getValues();
+
+    // Validar duplicidad de matrícula para el mismo ciclo lectivo
+    const sUserId = String(userId).trim();
+    const sCiclo = String(cicloLectivo).trim().toUpperCase();
+    for (let i = 1; i < matData.length; i++) {
+      if (String(matData[i][2]).trim() === sUserId && String(matData[i][4]).trim().toUpperCase() === sCiclo) {
+        return { status: "error", code: "ENROLLMENT_ALREADY_EXISTS", message: `El estudiante ya cuenta con matrícula activa para el ciclo ${sCiclo}.` };
+      }
+    }
+
+    const now = new Date();
+    const matriculaId = "MAT-" + sCiclo.replace(/\s+/g, '') + "-" + now.getTime();
+    const pctDesc = parseFloat(porcentajeDescuento || 0);
+    const isExonerado = exonerado === true || String(exonerado).toLowerCase() === 'true';
+
+    matSheet.appendRow([
+      matriculaId,
+      now.toISOString().split('T')[0],
+      sUserId,
+      nombreAlumno || "",
+      sCiclo,
+      grado || "",
+      seccion || "A",
+      modalidad || "Presencial",
+      "Activa",
+      tipoBeca || "Ninguna",
+      pctDesc,
+      isExonerado ? "Sí" : "No",
+      observaciones || ""
+    ]);
+
+    // Generar cargos iniciales asociados a la matrícula sin duplicación
+    const cargosSheet = getOrCreateSheet(ss, "CargosFinancieros");
+    const itemsCargos = Array.isArray(cargosIniciales) && cargosIniciales.length > 0 ? cargosIniciales : [
+      { concepto: "Matrícula Anual", monto: 1500, fechaVencimiento: now.toISOString().split('T')[0] },
+      { concepto: "Mensualidad Febrero", monto: 1200, fechaVencimiento: "2026-02-10" }
+    ];
+
+    itemsCargos.forEach((c, idx) => {
+      const orig = parseFloat(c.monto || 0);
+      const desc = isExonerado ? orig : (orig * (pctDesc / 100));
+      const neto = Math.max(0, orig - desc);
+      const cargoId = "CHG-" + matriculaId + "-" + (idx + 1);
+      cargosSheet.appendRow([
+        cargoId,
+        matriculaId,
+        sUserId,
+        c.concepto || "Servicio Educativo",
+        orig,
+        desc,
+        neto,
+        c.fechaVencimiento || "",
+        neto === 0 ? "Exonerado" : "Pendiente",
+        neto
+      ]);
+    });
+
+    return { status: "success", matriculaId, message: "Matrícula registrada exitosamente." };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function getStudentFinancialStatus(payload) {
+  const sUserId = String(payload.userId || "").trim();
+  if (!sUserId) throw new Error("userId requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const matSheet = getOrCreateSheet(ss, "Matriculas");
+  const cargosSheet = getOrCreateSheet(ss, "CargosFinancieros");
+
+  const matRows = matSheet.getDataRange().getValues().slice(1);
+  const cargosRows = cargosSheet.getDataRange().getValues().slice(1);
+
+  const matriculas = matRows.filter(r => String(r[2]).trim() === sUserId).map(r => ({
+    matriculaId: r[0],
+    fecha: r[1],
+    userId: r[2],
+    nombreAlumno: r[3],
+    cicloLectivo: r[4],
+    grado: r[5],
+    seccion: r[6],
+    modalidad: r[7],
+    estado: r[8],
+    tipoBeca: r[9],
+    porcentajeDescuento: parseFloat(r[10] || 0),
+    exonerado: r[11] === "Sí",
+    observaciones: r[12]
+  }));
+
+  const cargos = cargosRows.filter(r => String(r[2]).trim() === sUserId).map(r => ({
+    cargoId: r[0],
+    matriculaId: r[1],
+    userId: r[2],
+    concepto: r[3],
+    montoOriginal: parseFloat(r[4] || 0),
+    descuentoAplicado: parseFloat(r[5] || 0),
+    montoNeto: parseFloat(r[6] || 0),
+    fechaVencimiento: r[7],
+    estado: r[8],
+    saldoPendiente: parseFloat(r[9] || 0)
+  }));
+
+  const totalCargos = cargos.reduce((acc, c) => acc + c.montoNeto, 0);
+  const saldoTotalPendiente = cargos.reduce((acc, c) => acc + c.saldoPendiente, 0);
+  const matriculaActiva = matriculas.find(m => m.estado === "Activa") || matriculas[matriculas.length - 1] || null;
+
+  return {
+    status: "success",
+    data: {
+      matriculaActiva,
+      matriculas,
+      cargos,
+      resumen: {
+        totalCargos,
+        saldoTotalPendiente,
+        alDia: saldoTotalPendiente <= 0
+      }
+    }
+  };
+}
+
+function getEnrollmentHistory(payload) {
+  const sUserId = String(payload.userId || "").trim();
+  if (!sUserId) throw new Error("userId requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const matSheet = getOrCreateSheet(ss, "Matriculas");
+  const matRows = matSheet.getDataRange().getValues().slice(1);
+
+  const historial = matRows.filter(r => String(r[2]).trim() === sUserId).map(r => ({
+    matriculaId: r[0],
+    fecha: r[1],
+    cicloLectivo: r[4],
+    grado: r[5],
+    seccion: r[6],
+    modalidad: r[7],
+    estado: r[8],
+    tipoBeca: r[9],
+    porcentajeDescuento: parseFloat(r[10] || 0)
+  }));
+
+  return { status: "success", data: historial };
+}

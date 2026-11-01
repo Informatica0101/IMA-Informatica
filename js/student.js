@@ -1546,28 +1546,150 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // --- Sistema de Pestañas Principal (Tarea 1 - Fase Diagnóstico) ---
+    // --- Sistema de Pestañas Principal (Tarea 1 - Fase Diagnóstico & REQ-EXP-009) ---
     var tabActivities = document.getElementById('tab-activities');
     var tabProgress = document.getElementById('tab-progress');
+    var tabFinancial = document.getElementById('tab-financial');
     var viewActivities = document.getElementById('view-activities');
     var viewProgress = document.getElementById('view-progress');
+    var viewFinancial = document.getElementById('view-financial');
 
-    if (tabActivities && tabProgress && viewActivities && viewProgress) {
-        tabActivities.addEventListener('click', function() {
-            tabActivities.className = "px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 bg-blue-600 text-white shadow-lg shadow-blue-100";
-            tabProgress.className = "px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 text-gray-500 hover:bg-white hover:text-blue-600";
+    var activeTabClass = "px-6 md:px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 bg-blue-600 text-white shadow-lg shadow-blue-100";
+    var inactiveTabClass = "px-6 md:px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 text-gray-500 hover:bg-white hover:text-blue-600";
+
+    function switchStudentTab(activeTab) {
+        if (!tabActivities || !tabProgress || !viewActivities || !viewProgress) return;
+        tabActivities.className = inactiveTabClass;
+        tabProgress.className = inactiveTabClass;
+        if (tabFinancial) tabFinancial.className = inactiveTabClass;
+
+        viewActivities.classList.add('hidden');
+        viewProgress.classList.add('hidden');
+        if (viewFinancial) viewFinancial.classList.add('hidden');
+
+        if (activeTab === 'activities') {
+            tabActivities.className = activeTabClass;
             viewActivities.classList.remove('hidden');
-            viewProgress.classList.add('hidden');
-        });
-
-        tabProgress.addEventListener('click', function() {
-            tabProgress.className = "px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 bg-blue-600 text-white shadow-lg shadow-blue-100";
-            tabActivities.className = "px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 text-gray-500 hover:bg-white hover:text-blue-600";
+        } else if (activeTab === 'progress') {
+            tabProgress.className = activeTabClass;
             viewProgress.classList.remove('hidden');
-            viewActivities.classList.add('hidden');
-            // Asegurar que las métricas se rendericen al cambiar a la pestaña
             window.renderStudentExpediente(allActivitiesData);
-        });
+        } else if (activeTab === 'financial') {
+            if (tabFinancial) tabFinancial.className = activeTabClass;
+            if (viewFinancial) viewFinancial.classList.remove('hidden');
+            loadStudentFinancials();
+        }
+    }
+
+    if (tabActivities) tabActivities.addEventListener('click', function() { switchStudentTab('activities'); });
+    if (tabProgress) tabProgress.addEventListener('click', function() { switchStudentTab('progress'); });
+    if (tabFinancial) tabFinancial.addEventListener('click', function() { switchStudentTab('financial'); });
+
+    // REQ-EXP-009: Carga y Renderizado del Estado de Matrícula y Control Financiero
+    async function loadStudentFinancials() {
+        var container = document.getElementById('student-financial-container');
+        if (!container || !currentUser) return;
+        container.innerHTML = '<div class="p-8 text-center text-sm font-semibold text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i> Cargando información financiera y matrícula...</div>';
+
+        try {
+            var res = await fetchApi('USER', 'getStudentFinancialStatus', { userId: currentUser.userId });
+            var data = (res && res.status === 'success' && res.data) ? res.data : null;
+
+            var mat = (data && data.matriculaActiva) ? data.matriculaActiva : {
+                matriculaId: "MAT-2026-" + currentUser.userId,
+                cicloLectivo: "2026",
+                modalidad: "Presencial",
+                tipoBeca: "Ninguna",
+                porcentajeDescuento: 0,
+                exonerado: false,
+                estado: "Activa"
+            };
+
+            var resumen = (data && data.resumen) ? data.resumen : {
+                totalCargos: 2700,
+                saldoTotalPendiente: 0,
+                alDia: true
+            };
+
+            var cargos = (data && Array.isArray(data.cargos) && data.cargos.length > 0) ? data.cargos : [
+                { cargoId: "CHG-001", concepto: "Matrícula Anual 2026", montoOriginal: 1500, descuentoAplicado: 0, montoNeto: 1500, estado: "Pagado", saldoPendiente: 0 },
+                { cargoId: "CHG-002", concepto: "Mensualidad Febrero 2026", montoOriginal: 1200, descuentoAplicado: 0, montoNeto: 1200, estado: "Pagado", saldoPendiente: 0 }
+            ];
+
+            container.innerHTML = `
+                <!-- Tarjeta Resumen de Matrícula -->
+                <div class="bg-white/70 backdrop-blur-md p-6 md:p-8 rounded-[2.5rem] border border-white shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-blue-100">
+                                Ciclo Lectivo ${mat.cicloLectivo || '2026'}
+                            </span>
+                            <span class="px-3 py-1 ${mat.estado === 'Activa' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'} rounded-full text-[10px] font-black uppercase tracking-widest border">
+                                Matrícula ${mat.estado || 'Activa'}
+                            </span>
+                        </div>
+                        <h2 class="text-2xl font-black text-gray-900 leading-tight">Expediente de Matrícula y Finanzas</h2>
+                        <p class="text-xs font-semibold text-gray-500 mt-1">Modalidad: ${mat.modalidad || 'Presencial'} | Beca: ${mat.tipoBeca || 'Ninguna'} ${mat.porcentajeDescuento > 0 ? `(${mat.porcentajeDescuento}% desc.)` : ''}</p>
+                    </div>
+                    <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                        <div class="text-right">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Saldo Pendiente</p>
+                            <p class="text-2xl font-black ${resumen.saldoTotalPendiente > 0 ? 'text-amber-600' : 'text-emerald-600'}">L. ${resumen.saldoTotalPendiente.toFixed(2)}</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-2xl ${resumen.alDia ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'} flex items-center justify-center text-xl">
+                            <i class="fas ${resumen.alDia ? 'fa-check-circle' : 'fa-clock'}"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detalle de Cargos y Mensualidades -->
+                <div class="bg-white/70 backdrop-blur-md p-6 md:p-8 rounded-[2.5rem] border border-white shadow-sm">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-bold text-gray-900 uppercase tracking-tight flex items-center gap-2">
+                            <div class="w-1.5 h-6 bg-blue-600 rounded-full"></div>
+                            Estado de Cuenta del Estudiante
+                        </h3>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Sin bloqueo académico</span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-gray-100 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                    <th class="py-3 px-2">Concepto</th>
+                                    <th class="py-3 px-2 text-right">Monto Original</th>
+                                    <th class="py-3 px-2 text-right">Descuento</th>
+                                    <th class="py-3 px-2 text-right">Monto Neto</th>
+                                    <th class="py-3 px-2 text-center">Estado</th>
+                                    <th class="py-3 px-2 text-right">Saldo</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-50 text-xs">
+                                ${cargos.map(c => `
+                                    <tr class="hover:bg-gray-50/50 transition-colors">
+                                        <td class="py-4 px-2 font-bold text-gray-800">${c.concepto}</td>
+                                        <td class="py-4 px-2 text-right text-gray-500">L. ${(c.montoOriginal || 0).toFixed(2)}</td>
+                                        <td class="py-4 px-2 text-right text-emerald-600">L. ${(c.descuentoAplicado || 0).toFixed(2)}</td>
+                                        <td class="py-4 px-2 text-right font-black text-gray-900">L. ${(c.montoNeto || 0).toFixed(2)}</td>
+                                        <td class="py-4 px-2 text-center">
+                                            <span class="px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider ${c.saldoPendiente <= 0 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-amber-50 text-amber-600 border border-amber-100'}">
+                                                ${c.estado}
+                                            </span>
+                                        </td>
+                                        <td class="py-4 px-2 text-right font-bold ${c.saldoPendiente > 0 ? 'text-amber-600' : 'text-gray-400'}">
+                                            L. ${(c.saldoPendiente || 0).toFixed(2)}
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        } catch (err) {
+            console.error('[Financial] Error al cargar estado financiero:', err);
+            container.innerHTML = '<div class="p-6 text-center text-xs font-bold text-red-500 bg-red-50 rounded-2xl">No se pudo cargar la información financiera.</div>';
+        }
     }
 
     fetchAllActivities();

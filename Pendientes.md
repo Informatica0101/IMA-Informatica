@@ -207,7 +207,7 @@
 - **Dependencias Expuestas:** Expediente del alumno, vinculación financiera-académica.
 - **Descripción del Alcance:** Registrar matrículas/rematrículas por periodo, asociar cargos, becas, descuentos y exoneraciones sin duplicar cobros ni bloquear inapropiadamente la visualización académica autorizada.
 - **Criterios de Aceptación:** Historial de matrícula independiente, cargos generados correctamente sin duplicaciones.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [REQ-EXP-010] Módulo Contable y Financiero - Conceptos, Mensualidades y Cobros (Sección 9.1 - 9.3)
 - **Origen del Hallazgo:** Requerimientos de Desarrollo y Expansión (Sección 9.1 - 9.3).

@@ -678,3 +678,15 @@ Módulo: Seguridad y Control de Acceso (RBAC)
 - Configuración Global (`js/config.js`):
   * Definida constante institucional `RBAC_ROLES`, matriz de capacidades `ROLE_PERMISSIONS` y función helper `hasPermission`.
 - Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-008] como completada.
+
+REGISTRO DE CAMBIOS - MÓDULO DE MATRÍCULA Y CONTROL FINANCIERO DEL ESTUDIANTE - Sun Nov 01 2026
+
+Módulo: Matrícula y Control Financiero (REQ-EXP-009)
+- Backend Usuarios (`backend/user-service/Code.gs`):
+  * Creadas hojas de cálculo automáticas `Matriculas` y `CargosFinancieros` en `getOrCreateSheet`.
+  * Implementadas funciones `registerEnrollment` (con `ScriptLock` atómico, deducción de porcentajes de beca y control anti-duplicidad por ciclo), `getStudentFinancialStatus` y `getEnrollmentHistory`.
+  * Incorporadas las nuevas acciones a la matriz de permisos de autorización `RBAC_ACTION_PERMISSIONS`.
+- Dashboard de Estudiante (`student-dashboard.html` y `js/student.js`):
+  * Añadida pestaña independiente "Matrícula y Finanzas" en el selector principal.
+  * Creado contenedor `#view-financial` y lógica `loadStudentFinancials` con resumen de saldo, detalle tabular de cargos y estado de cuenta no bloqueante.
+- Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-009] como completada.
