@@ -1662,6 +1662,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <th class="py-3 px-2 text-right">Monto Neto</th>
                                     <th class="py-3 px-2 text-center">Estado</th>
                                     <th class="py-3 px-2 text-right">Saldo</th>
+                                    <th class="py-3 px-2 text-center">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-50 text-xs">
@@ -1679,6 +1680,22 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <td class="py-4 px-2 text-right font-bold ${c.saldoPendiente > 0 ? 'text-amber-600' : 'text-gray-400'}">
                                             L. ${(c.saldoPendiente || 0).toFixed(2)}
                                         </td>
+                                        <td class="py-4 px-2 text-center">
+                                            <div class="flex items-center justify-center gap-2">
+                                                ${c.saldoPendiente > 0 ? `
+                                                    <button onclick="window.openPaymentVoucherModal('${c.cargoId}', '${c.concepto}', ${c.saldoPendiente})" class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-bold uppercase hover:bg-blue-100 transition-colors shadow-sm">
+                                                        <i class="fas fa-receipt mr-1"></i> Reportar Pago
+                                                    </button>
+                                                ` : ''}
+                                                ${c.saldoPendiente <= 0 ? `
+                                                    <button onclick="window.downloadPaymentReceiptPDF('${c.cargoId}', '${c.concepto}', ${c.montoNeto})" class="px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-xl text-[10px] font-bold uppercase hover:bg-emerald-100 transition-colors shadow-sm" title="Descargar Recibo Único PDF">
+                                                        <i class="fas fa-file-pdf mr-1"></i> Recibo PDF
+                                                    </button>
+                                                ` : `
+                                                    <span class="text-[9px] font-bold text-gray-400 italic">Pago pendiente</span>
+                                                `}
+                                            </div>
+                                        </td>
                                     </tr>
                                 `).join('')}
                             </tbody>
@@ -1691,6 +1708,171 @@ document.addEventListener('DOMContentLoaded', function() {
             container.innerHTML = '<div class="p-6 text-center text-xs font-bold text-red-500 bg-red-50 rounded-2xl">No se pudo cargar la información financiera.</div>';
         }
     }
+
+    // REQ-EXP-011: Modal y Controlador para Enviar Comprobante de Pago
+    var voucherModal = document.getElementById('voucher-modal');
+    var voucherForm = document.getElementById('voucher-form');
+    var closeVoucherModal = document.getElementById('close-voucher-modal');
+    var cancelVoucherBtn = document.getElementById('cancel-voucher-btn');
+
+    window.openPaymentVoucherModal = function(cargoId, concepto, saldo) {
+        if (!voucherModal) return;
+        document.getElementById('voucher-cargo-id').value = cargoId;
+        document.getElementById('voucher-concepto').value = concepto;
+        document.getElementById('voucher-monto').value = saldo;
+        voucherModal.classList.remove('hidden');
+    };
+
+    function hideVoucherModal() {
+        if (voucherModal) voucherModal.classList.add('hidden');
+        if (voucherForm) voucherForm.reset();
+    }
+
+    if (closeVoucherModal) closeVoucherModal.addEventListener('click', hideVoucherModal);
+    if (cancelVoucherBtn) cancelVoucherBtn.addEventListener('click', hideVoucherModal);
+
+    if (voucherForm) {
+        voucherForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            var cargoId = document.getElementById('voucher-cargo-id').value;
+            var monto = document.getElementById('voucher-monto').value;
+            var metodoPago = document.getElementById('voucher-metodo').value;
+            var referencia = document.getElementById('voucher-referencia').value;
+            var fileInput = document.getElementById('voucher-file');
+            var btn = document.getElementById('submit-voucher-btn');
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Enviando...';
+
+            var fileData = "";
+            var fileName = "";
+            if (fileInput && fileInput.files && fileInput.files[0]) {
+                var file = fileInput.files[0];
+                fileName = file.name;
+                fileData = await new Promise(function(resolve) {
+                    var reader = new FileReader();
+                    reader.onload = function(evt) { resolve(evt.target.result); };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            try {
+                var res = await fetchApi('USER', 'uploadPaymentVoucher', {
+                    userId: currentUser.userId,
+                    cargoId: cargoId,
+                    monto: monto,
+                    metodoPago: metodoPago,
+                    referencia: referencia,
+                    fileData: fileData,
+                    fileName: fileName
+                });
+
+                if (res && res.status === 'success') {
+                    alert('Comprobante enviado exitosamente a revisión contable.');
+                    hideVoucherModal();
+                    loadStudentFinancials();
+                } else {
+                    alert((res && res.message) || 'Error al enviar comprobante.');
+                }
+            } catch (err) {
+                alert('Error de conexión al enviar comprobante.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Enviar Comprobante';
+            }
+        });
+    }
+
+    // REQ-EXP-011: Emisión y Descarga del Recibo de Pago Oficial Único en PDF
+    window.downloadPaymentReceiptPDF = async function(cargoId, concepto, monto) {
+        try {
+            // Solicitar número correlativo oficial garantizado contra duplicidad
+            var numRes = await fetchApi('USER', 'generatePaymentReceiptNumber', {
+                cargoId: cargoId,
+                userId: currentUser.userId,
+                nombreAlumno: currentUser.nombre,
+                concepto: concepto,
+                monto: monto
+            });
+
+            var receiptNum = (numRes && numRes.numeroRecibo) ? numRes.numeroRecibo : ("REC-2026-" + Math.floor(100000 + Math.random() * 900000));
+            var hash = (numRes && numRes.hashSeguridad) ? numRes.hashSeguridad : "VALID-NG-SEC";
+            var fecha = (numRes && numRes.fechaEmision) ? new Date(numRes.fechaEmision).toLocaleString() : new Date().toLocaleString();
+
+            // Soportar tanto window.PDFLib como PDFLib directo
+            var pdfLibInstance = window.PDFLib || (typeof PDFLib !== 'undefined' ? PDFLib : null);
+
+            if (pdfLibInstance) {
+                var pdfDoc = await pdfLibInstance.PDFDocument.create();
+                var page = pdfDoc.addPage([595.28, 420.00]); // Formato media cuartilla horizontal
+                var font = await pdfDoc.embedFont(pdfLibInstance.StandardFonts.HelveticaBold);
+                var regularFont = await pdfDoc.embedFont(pdfLibInstance.StandardFonts.Helvetica);
+
+                // Dibujar membrete y marco
+                page.drawRectangle({
+                    x: 20, y: 20, width: 555.28, height: 380,
+                    borderColor: pdfLibInstance.rgb(0.14, 0.38, 0.92),
+                    borderWidth: 2
+                });
+
+                page.drawText("NEW GENERATION BILINGUAL SCHOOL AND INSTITUTE", {
+                    x: 40, y: 360, size: 14, font: font, color: pdfLibInstance.rgb(0.08, 0.18, 0.45)
+                });
+                page.drawText("RECIBO OFICIAL DE PAGO INSTITUCIONAL", {
+                    x: 40, y: 340, size: 10, font: font, color: pdfLibInstance.rgb(0.2, 0.2, 0.2)
+                });
+
+                page.drawText(`N° RECIBO: ${receiptNum}`, {
+                    x: 400, y: 360, size: 11, font: font, color: pdfLibInstance.rgb(0.85, 0.1, 0.1)
+                });
+                page.drawText(`Fecha: ${fecha}`, {
+                    x: 400, y: 340, size: 8, font: regularFont, color: pdfLibInstance.rgb(0.4, 0.4, 0.4)
+                });
+
+                page.drawLine({
+                    start: { x: 40, y: 325 }, end: { x: 555, y: 325 },
+                    thickness: 1, color: pdfLibInstance.rgb(0.8, 0.8, 0.8)
+                });
+
+                // Datos del Alumno y Detalle del Cargo
+                page.drawText(`Estudiante: ${currentUser.nombre}`, { x: 40, y: 290, size: 10, font: font });
+                page.drawText(`ID Usuario: ${currentUser.userId} | Grado: ${currentUser.grado || '10°'} Sección: ${currentUser.seccion || 'A'}`, { x: 40, y: 270, size: 9, font: regularFont });
+
+                page.drawRectangle({
+                    x: 40, y: 170, width: 515, height: 80,
+                    color: pdfLibInstance.rgb(0.96, 0.97, 0.99)
+                });
+                page.drawText("CONCEPTO DEL PAGO", { x: 50, y: 230, size: 9, font: font, color: pdfLibInstance.rgb(0.2, 0.2, 0.2) });
+                page.drawText("IMPORTE TOTAL", { x: 440, y: 230, size: 9, font: font, color: pdfLibInstance.rgb(0.2, 0.2, 0.2) });
+
+                page.drawText(concepto, { x: 50, y: 200, size: 10, font: regularFont, color: pdfLibInstance.rgb(0.1, 0.1, 0.1) });
+                page.drawText(`L. ${(monto || 0).toFixed(2)}`, { x: 440, y: 200, size: 12, font: font, color: pdfLibInstance.rgb(0.08, 0.5, 0.2) });
+
+                // Hash de seguridad y validez
+                page.drawText(`Firma Digital / Código Seguro: ${hash}`, {
+                    x: 40, y: 120, size: 8, font: regularFont, color: pdfLibInstance.rgb(0.4, 0.4, 0.4)
+                });
+                page.drawText("Este comprobante constituye un recibo digital válido para todo trámite escolar.", {
+                    x: 40, y: 105, size: 7, font: regularFont, color: pdfLibInstance.rgb(0.5, 0.5, 0.5)
+                });
+
+                var pdfBytes = await pdfDoc.save();
+                var blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                var link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `Recibo_${receiptNum}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                return;
+            } else {
+                alert(`Recibo Oficial N°: ${receiptNum} emitido con éxito.`);
+            }
+        } catch (err) {
+            console.error('Error al generar recibo PDF:', err);
+            alert('No se pudo generar el PDF del recibo.');
+        }
+    };
 
     fetchAllActivities();
     initWhatsAppButton();

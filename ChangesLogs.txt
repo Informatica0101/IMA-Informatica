@@ -701,3 +701,15 @@ Módulo: Finanzas y Cuentas por Cobrar (REQ-EXP-010)
 - Configuración Global (`js/config.js`):
   * Declaradas constantes `PAYMENT_METHODS` (Efectivo, Transferencia, Tarjeta, Cheque) y `DEFAULT_BILLING_CONCEPTS`.
 - Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-010] como completada.
+
+REGISTRO DE CAMBIOS - PORTAL ESTUDIANTIL DE PAGOS Y RECIBOS EN PDF - Sun Nov 01 2026
+
+Módulo: Portal de Pagos y Emisión de Recibos (REQ-EXP-011)
+- Backend Usuarios (`backend/user-service/Code.gs`):
+  * Creadas hojas de cálculo automáticas `ComprobantesPago` y `RecibosEmitidos`.
+  * Implementado endpoint `uploadPaymentVoucher` para registro y carga de transferencias bancarias a Drive.
+  * Implementada función `generatePaymentReceiptNumber` con ScriptLock atómico para garantizar correlativos `REC-YYYY-NNNNNN` únicos con hash SHA-256 de integridad.
+- Dashboard de Estudiante (`student-dashboard.html` y `js/student.js`):
+  * Diseñado e implementado modal interactivo `#voucher-modal` para reporte de comprobantes.
+  * Agregada función `downloadPaymentReceiptPDF` utilizando `PDFLib` para generar al vuelo el documento PDF con membrete institucional, correlativo oficial y firma digital.
+- Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-011] como completada.

@@ -424,6 +424,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- Lógica de Caja y Gestión Financiera Institucional (REQ-EXP-010) ---
+    const cashierForm = document.getElementById('cashier-payment-form');
+    if (cashierForm) {
+        cashierForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userId = document.getElementById('cashier-user-id').value.trim();
+            const cargoId = document.getElementById('cashier-cargo-id').value.trim();
+            const monto = document.getElementById('cashier-monto').value;
+            const metodoPago = document.getElementById('cashier-metodo').value;
+            const referencia = document.getElementById('cashier-ref').value.trim();
+            const btn = document.getElementById('btn-cashier-submit');
+
+            btn.disabled = true;
+            btn.textContent = 'Registrando...';
+
+            try {
+                const res = await fetchApi('USER', 'recordPaymentOrInstallment', {
+                    userId,
+                    cargoId,
+                    monto,
+                    metodoPago,
+                    referencia,
+                    cajeroOContador: currentUser.userId
+                });
+
+                if (res && res.status === 'success') {
+                    alert(`Pago registrado exitosamente. Nuevo saldo: L. ${res.nuevoSaldo}`);
+                    cashierForm.reset();
+                } else {
+                    alert((res && res.message) || 'Error al registrar el pago.');
+                }
+            } catch (err) {
+                alert('Error de conexión al procesar el pago.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Registrar Abono';
+            }
+        });
+    }
+
     const btnCloseYear = document.getElementById('btn-close-year');
     if (btnCloseYear) {
         btnCloseYear.onclick = async () => {

@@ -519,6 +519,51 @@
                         </div>
                     </div>
 
+                    <!-- Tarjeta de Gestión Contable y Cobranza (REQ-EXP-010) -->
+                    <div class="card-ima border-blue-100 bg-blue-50/20 p-8 rounded-[2.5rem] md:col-span-2">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-blue-100">
+                                <i class="fas fa-cash-register"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">Caja y Gestión Financiera Institucional</h3>
+                                <p class="text-xs text-gray-500 font-medium">Registro de pagos y abonos para cuentas por cobrar</p>
+                            </div>
+                        </div>
+
+                        <form id="cashier-payment-form" class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">ID de Estudiante</label>
+                                <input type="text" id="cashier-user-id" placeholder="USR-..." class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-semibold" required>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">ID Cargo Financiero</label>
+                                <input type="text" id="cashier-cargo-id" placeholder="CHG-..." class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-semibold" required>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Monto de Abono (L.)</label>
+                                <input type="number" step="0.01" id="cashier-monto" placeholder="0.00" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-semibold" required>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Método de Pago</label>
+                                <select id="cashier-metodo" class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-semibold">
+                                    <option value="Efectivo">Efectivo en Caja</option>
+                                    <option value="Transferencia">Transferencia Bancaria</option>
+                                    <option value="Tarjeta">Tarjeta Débito/Crédito</option>
+                                    <option value="Cheque">Cheque Certificado</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-3">
+                                <input type="text" id="cashier-ref" placeholder="Referencia de pago o recibo manual..." class="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-semibold">
+                            </div>
+                            <div>
+                                <button type="submit" id="btn-cashier-submit" class="w-full py-2.5 bg-blue-600 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-blue-700 shadow-md">
+                                    Registrar Abono
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
                     <!-- Tarjeta de Banco de Preguntas -->
                     <div class="card-ima border-amber-100 bg-amber-50/30 p-8 rounded-[2.5rem]">
                         <div class="flex items-center gap-4 mb-6">

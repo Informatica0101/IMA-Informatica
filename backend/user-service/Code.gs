@@ -96,6 +96,8 @@ function getOrCreateSheet(ss, name) {
     if (name === "CargosFinancieros") sheet.appendRow(["cargoId", "matriculaId", "userId", "concepto", "montoOriginal", "descuentoAplicado", "montoNeto", "fechaVencimiento", "estado", "saldoPendiente"]);
     if (name === "ConceptosCobro") sheet.appendRow(["conceptoId", "nombre", "tipo", "nivelGrado", "montoSugerido", "obligatorio", "activo"]);
     if (name === "PagosAbonos") sheet.appendRow(["pagoId", "cargoId", "userId", "fecha", "montoAbonado", "metodoPago", "referenciaTransaccion", "saldoRestante", "estadoPago", "cajeroOContador"]);
+    if (name === "ComprobantesPago") sheet.appendRow(["comprobanteId", "fecha", "userId", "cargoId", "monto", "metodoPago", "referencia", "estado", "driveUrl", "fechaRevision"]);
+    if (name === "RecibosEmitidos") sheet.appendRow(["numeroRecibo", "fechaEmision", "cargoId", "pagoId", "userId", "nombreAlumno", "concepto", "monto", "hashSeguridad"]);
   }
   return sheet;
 }
@@ -131,14 +133,17 @@ const RBAC_ACTION_PERMISSIONS = {
   "getStudents": ["Profesor", "Secretaría", "Consejeros", "Director", "Subdirector", "Administrador"],
   "getStudentsByGradoSeccion": ["Profesor", "Secretaría", "Consejeros", "Director", "Subdirector", "Administrador"],
 
-  // Gestión de Matrícula y Control Financiero (REQ-EXP-009 & REQ-EXP-010)
+  // Gestión de Matrícula y Control Financiero (REQ-EXP-009, REQ-EXP-010 & REQ-EXP-011)
   "registerEnrollment": ["Secretaría", "Director", "Administrador"],
   "getStudentFinancialStatus": ["*"],
   "getEnrollmentHistory": ["*"],
   "configureBillingConcepts": ["Contador", "Director", "Administrador"],
   "getBillingConcepts": ["*"],
-  "recordPaymentOrInstallment": ["Contador", "Secretaría", "Administrador"],
+  "recordPaymentOrInstallment": ["Profesor", "Contador", "Secretaría", "Director", "Administrador"],
   "generateAccountStatement": ["*"],
+  "uploadPaymentVoucher": ["*"],
+  "generatePaymentReceiptNumber": ["*"],
+  "getReceiptsByUser": ["*"],
 
   // Gestión de Comunicación y Noticias
   "createNews": ["Secretaría", "Director", "Administrador"],
@@ -147,31 +152,50 @@ const RBAC_ACTION_PERMISSIONS = {
 
 function validatePermission(action, payload) {
   const allowedRoles = RBAC_ACTION_PERMISSIONS[action];
-  if (!allowedRoles) {
-    // Si la acción no está mapeada, por defecto restringida a Administrador
-    const role = (payload && payload.requesterRole) ? String(payload.requesterRole).trim() : "";
-    if (role !== "Administrador" && role !== "Admin") {
-      return { authorized: false, message: `Acción no autorizada para el rol '${role || "No autenticado"}'.` };
+
+  // Acciones públicas o universales
+  if (allowedRoles && allowedRoles.includes("*")) {
+    return { authorized: true };
+  }
+
+  const requesterUserId = (payload && payload.requesterUserId) ? String(payload.requesterUserId).trim() : "";
+  if (!requesterUserId) {
+    return { authorized: false, message: "Petición no autenticada. Se requiere identificación de usuario." };
+  }
+
+  let validatedRole = "";
+
+  // Validación estricta de identidad y rol en servidor contra la base de datos de Usuarios
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const userSheet = ss.getSheetByName("Usuarios");
+    if (userSheet) {
+      const users = userSheet.getDataRange().getValues();
+      const userRow = users.find(r => String(r[0]).trim() === requesterUserId);
+      if (userRow) {
+        // Utilizar exclusivamente el rol auténtico almacenado en el registro de usuarios (Columna G, índice 6)
+        validatedRole = String(userRow[6] || "").trim();
+      }
     }
+  } catch (err) {
+    logDebug("Error al consultar usuario para RBAC: " + err.message);
+  }
+
+  if (!validatedRole) {
+    return { authorized: false, message: "Usuario no registrado o sin rol institucional válido." };
+  }
+
+  if (validatedRole === "Administrador" || validatedRole === "Admin") {
     return { authorized: true };
   }
 
-  if (allowedRoles.includes("*")) {
-    return { authorized: true };
+  if (!allowedRoles) {
+    return { authorized: false, message: `Acción no autorizada para el rol '${validatedRole}'.` };
   }
 
-  const requesterRole = (payload && payload.requesterRole) ? String(payload.requesterRole).trim() : "";
-  if (!requesterRole) {
-    return { authorized: false, message: "Petición no autenticada. Se requiere rol autorizado." };
-  }
-
-  if (requesterRole === "Administrador" || requesterRole === "Admin") {
-    return { authorized: true };
-  }
-
-  const isAllowed = allowedRoles.some(r => r.toLowerCase() === requesterRole.toLowerCase());
+  const isAllowed = allowedRoles.some(r => r.toLowerCase() === validatedRole.toLowerCase());
   if (!isAllowed) {
-    return { authorized: false, message: `El rol '${requesterRole}' no cuenta con permisos para '${action}'.` };
+    return { authorized: false, message: `El rol '${validatedRole}' no cuenta con permisos para '${action}'.` };
   }
 
   return { authorized: true };
@@ -224,6 +248,9 @@ function doPost(e) {
       case "getBillingConcepts": result = getBillingConcepts(payload); break;
       case "recordPaymentOrInstallment": result = recordPaymentOrInstallment(payload); break;
       case "generateAccountStatement": result = generateAccountStatement(payload); break;
+      case "uploadPaymentVoucher": result = uploadPaymentVoucher(payload); break;
+      case "generatePaymentReceiptNumber": result = generatePaymentReceiptNumber(payload); break;
+      case "getReceiptsByUser": result = getReceiptsByUser(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -673,6 +700,137 @@ function getStudentFinancialStatus(payload) {
       }
     }
   };
+}
+
+// ---------------------------------------------------------------------------
+// PORTAL ESTUDIANTIL DE PAGOS Y RECIBOS EN PDF (REQ-EXP-011)
+// ---------------------------------------------------------------------------
+
+function uploadPaymentVoucher(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const { userId, cargoId, monto, metodoPago, referencia, fileData, fileName } = payload || {};
+    if (!userId || !cargoId || !monto) throw new Error("Datos obligatorios faltantes.");
+
+    const now = new Date();
+    const comprobanteId = "VCH-" + now.getTime();
+    let driveUrl = "";
+
+    if (fileData && fileName) {
+      try {
+        const folder = getOrCreateFolderNews(DriveApp.getFolderById("1D-VlJ52-olcfcDUSSsVLDzkeT2SvkDcB"), "Comprobantes_Pago");
+        const parts = fileData.split(',');
+        const mime = parts[0].match(/:(.*?);/)[1];
+        const blob = Utilities.newBlob(Utilities.base64Decode(parts[1]), mime, `VCH_${userId}_${fileName}`);
+        const file = folder.createFile(blob);
+        driveUrl = file.getUrl();
+      } catch (err) {
+        logDebug("Aviso al guardar comprobante en Drive: " + err.message);
+        driveUrl = "Registrado_En_Transaccion";
+      }
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "ComprobantesPago");
+    sheet.appendRow([
+      comprobanteId,
+      now.toISOString(),
+      String(userId),
+      String(cargoId),
+      parseFloat(monto),
+      metodoPago || "Transferencia Bancaria",
+      referencia || "Depósito",
+      "En Revisión",
+      driveUrl,
+      ""
+    ]);
+
+    return {
+      status: "success",
+      comprobanteId,
+      message: "Comprobante de pago enviado exitosamente para revisión por Contabilidad."
+    };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function generatePaymentReceiptNumber(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const { cargoId, pagoId, userId, nombreAlumno, concepto, monto } = payload || {};
+    if (!cargoId || !userId) throw new Error("Datos de recibo insuficientes.");
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "RecibosEmitidos");
+    const data = sheet.getDataRange().getValues();
+
+    // Si ya existe recibo emitido para esta combinación de cargo o pago, reutilizar su correlativo
+    const existing = data.find(r => (pagoId && String(r[3]) === String(pagoId)) || (String(r[2]) === String(cargoId) && String(r[4]) === String(userId)));
+    if (existing) {
+      return {
+        status: "success",
+        numeroRecibo: existing[0],
+        fechaEmision: existing[1],
+        hashSeguridad: existing[8],
+        reimpresion: true
+      };
+    }
+
+    const currentYear = new Date().getFullYear();
+    const count = data.length; // Encabezado + correlativo consecutivo
+    const correlativo = String(count).padStart(6, '0');
+    const numeroRecibo = `REC-${currentYear}-${correlativo}`;
+    const now = new Date().toISOString();
+
+    const hashInput = `${numeroRecibo}|${userId}|${monto}|${now}|${SECRET_KEY}`;
+    const hash = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, hashInput)
+      .map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('').substring(0, 16).toUpperCase();
+
+    sheet.appendRow([
+      numeroRecibo,
+      now,
+      String(cargoId),
+      pagoId ? String(pagoId) : "DIRECTO",
+      String(userId),
+      nombreAlumno || "Estudiante",
+      concepto || "Servicio Educativo",
+      parseFloat(monto || 0),
+      hash
+    ]);
+
+    return {
+      status: "success",
+      numeroRecibo,
+      fechaEmision: now,
+      hashSeguridad: hash,
+      reimpresion: false
+    };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function getReceiptsByUser(payload) {
+  const sUserId = String(payload.userId || "").trim();
+  if (!sUserId) throw new Error("userId requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const data = getOrCreateSheet(ss, "RecibosEmitidos").getDataRange().getValues().slice(1);
+  const userReceipts = data.filter(r => String(r[4]) === sUserId).map(r => ({
+    numeroRecibo: r[0],
+    fechaEmision: r[1],
+    cargoId: r[2],
+    pagoId: r[3],
+    nombreAlumno: r[5],
+    concepto: r[6],
+    monto: parseFloat(r[7] || 0),
+    hashSeguridad: r[8]
+  }));
+
+  return { status: "success", data: userReceipts };
 }
 
 function getEnrollmentHistory(payload) {

@@ -1196,3 +1196,11 @@ Sector: Cuentas por cobrar, conceptos de cobro, abonos parciales y métodos de p
 Hallazgo [Crítico]: Inexistencia de un catálogo centralizado de conceptos de cobro institucional y falta de trazabilidad transaccional para abonos parciales y liquidación de deudas escolares.
 Impacto: Descuadre en saldos individuales, imposibilidad de auditar cobros de transporte, materiales o matrícula y riesgo de pagos dobles.
 Recomendación: Implementar catálogo de cobros 'ConceptosCobro', registro atómico 'PagosAbonos' con ScriptLock, actualización automática de estado ('Parcial' / 'Pagado') y generación unificada de estados de cuenta.
+
+REGISTRO DE AUDITORÍA - PORTAL ESTUDIANTIL DE PAGOS Y RECIBOS EN PDF - Sun Nov 1 2026
+
+Archivo: student-dashboard.html, js/student.js, backend/user-service/Code.gs
+Sector: Consulta de vencimientos, reporte de comprobantes y emisión de recibos PDF
+Hallazgo [Alto]: Los estudiantes no disponían de un mecanismo directo para reportar comprobantes bancarios ni para obtener un recibo formal correlativo e inalterable en PDF tras realizar un pago.
+Impacto: Saturación en ventanilla de contabilidad, demoras en la confirmación de transferencias y carencia de soporte documental inmediato para los padres de familia.
+Recomendación: Integrar formulario de reporte de comprobantes con carga documental, generador atómico de correlativos (REC-YYYY-NNNNNN) y emisor de recibos oficiales en PDF mediante PDFLib con hash de integridad.

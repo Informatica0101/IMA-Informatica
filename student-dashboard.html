@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="css/style.css?v=22">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 </head>
 <body class="font-inter antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col">
 
@@ -202,6 +203,47 @@
             </div>
         </div>
     </main>
+
+    <!-- Modal de Carga de Comprobante de Pago (REQ-EXP-011) -->
+    <div id="voucher-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-[70] backdrop-blur-sm">
+        <div class="bg-white p-6 md:p-8 rounded-3xl shadow-2xl w-full max-w-md mx-4 animate-fade-in-up">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-gray-800">Reportar Comprobante de Pago</h2>
+                <button type="button" id="close-voucher-modal" class="text-gray-400 hover:text-gray-600 text-xl font-bold">&times;</button>
+            </div>
+            <form id="voucher-form" class="space-y-4">
+                <input type="hidden" id="voucher-cargo-id">
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Concepto:</label>
+                    <input type="text" id="voucher-concepto" class="w-full p-3 bg-gray-50 border rounded-xl text-xs font-bold" readonly>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Monto a Reportar (L.):</label>
+                    <input type="number" step="0.01" id="voucher-monto" class="w-full p-3 border rounded-xl text-xs font-bold" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Método de Pago:</label>
+                    <select id="voucher-metodo" class="w-full p-3 border rounded-xl text-xs font-bold bg-white">
+                        <option value="Transferencia Bancaria">Transferencia Bancaria</option>
+                        <option value="Depósito Bancario">Depósito en Ventanilla</option>
+                        <option value="Tarjeta">Tarjeta Débito/Crédito</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">N° Referencia / Transacción:</label>
+                    <input type="text" id="voucher-referencia" class="w-full p-3 border rounded-xl text-xs" placeholder="Ej. TRANS-987654" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Archivo de Comprobante (PDF o Imagen):</label>
+                    <input type="file" id="voucher-file" accept="image/*,.pdf" class="w-full text-xs">
+                </div>
+                <div class="flex gap-3 pt-3">
+                    <button type="button" id="cancel-voucher-btn" class="w-1/2 py-2.5 bg-gray-100 text-gray-700 rounded-xl font-bold text-xs">Cancelar</button>
+                    <button type="submit" id="submit-voucher-btn" class="w-1/2 py-2.5 bg-blue-600 text-white rounded-xl font-bold text-xs hover:bg-blue-700 shadow-md">Enviar Comprobante</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Modal de Entrega -->
     <div id="submission-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-[60] backdrop-blur-sm">
