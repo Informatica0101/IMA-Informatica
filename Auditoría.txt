@@ -1164,3 +1164,11 @@ Sector: Módulo de Tareas Pendientes y Requerimientos Docentes
 Hallazgo [Alto]: Indexación y catalogación formal de los 12 requerimientos de la especificación "GESTIÓN DOCENTE, CONTENIDO DE CLASES, GUÍAS DE ESTUDIO Y TAREAS" para New Generation Bilingual School and Institute.
 Impacto: Se catalogan las tareas completadas ([REQ-DOC-002], [REQ-DOC-003], [REQ-DOC-004]) y los requerimientos pendientes ([REQ-DOC-001], [REQ-DOC-005] al [REQ-DOC-012]) para coordinar las siguientes etapas de desarrollo.
 Recomendación: Cumplir estrictamente el flujo de 8 fases de METODOLOGIA_DESARROLLO.md para la ejecución de cada requerimiento pendiente.
+
+REGISTRO DE AUDITORÍA - RENOMBRADO INSTITUCIONAL E IDENTIDAD VISUAL PWA - Sun Nov 1 2026
+
+Archivo: index.html, login.html, register.html, student-dashboard.html, teacher-dashboard.html, forgot-password.html, reset-password.html, results.html, exam.html, interactivo.html, juegos/quizpro.html, manifest.json, js/student.js, js/teacher.js
+Sector: Encabezados, títulos, manifiesto PWA y pies de página
+Hallazgo [Alto]: Presencia de menciones institucionales obsoletas ('ISEMED', 'InformaticApp') y falta del recurso oficial 'new-generation-logo.png' referenciado en el manifiesto PWA.
+Impacto: Inconsistencia en la identidad corporativa y visual de la plataforma ante los usuarios y en la instalación PWA.
+Recomendación: Sustituir referencias institucionales por 'New Generation Bilingual School and Institute', actualizar encabezados a 'New Generation', configurar iconos PWA con 'imagenes/new-generation-logo.png' y actualizar datos de contacto por defecto.

@@ -514,10 +514,10 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             var profesorId = activity ? activity.profesorId : null;
 
-            // Info por defecto (Área de Informática)
+            // Info por defecto (New Generation Bilingual School and Institute)
             var profInfo = {
-                nombre: "ISEMED - Área de Informática",
-                email: "informatica@isemed.edu.hn",
+                nombre: "New Generation Bilingual School and Institute",
+                email: "info@newgeneration.edu.hn",
                 telefono: ""
             };
 

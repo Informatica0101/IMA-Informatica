@@ -651,3 +651,17 @@ Módulo: Gestión de Requerimientos y Pendientes (Pendientes.md)
 - Registrada e indexada formalmente la sección "REQUERIMIENTOS DE GESTIÓN DOCENTE, CONTENIDOS, GUÍAS Y TAREAS" para New Generation Bilingual School and Institute ([REQ-DOC-001] a [REQ-DOC-012]).
 - Marcadas como completadas las tareas consolidadas de mapeo de contenidos/temas, creación de tareas enriquecidas y desacoplamiento de guías informativas vs tareas evaluables.
 - Registradas como pendientes las tareas de programación diferida por hora de disponibilidad, estructura de carpetas Drive, exportador RAR/ZIP en panel de desarrollador y análisis de desempeño integrado.
+
+REGISTRO DE CAMBIOS - RENOMBRADO INSTITUCIONAL E IDENTIDAD VISUAL PWA - Sun Nov 01 2026
+
+Módulo: Identidad Visual e Interfaz de Usuario
+- Recursos: Creado `imagenes/new-generation-logo.png` para la identidad gráfica institucional.
+- PWA Manifest (`manifest.json`): Configurado nombre como "New Generation Bilingual School and Institute", nombre corto "New Generation", descripción y rutas de iconos a `imagenes/new-generation-logo.png`.
+- Vistas Públicas y Dashboards (`index.html`, `login.html`, `register.html`, `student-dashboard.html`, `teacher-dashboard.html`, `forgot-password.html`, `reset-password.html`, `results.html`, `exam.html`, `interactivo.html`, `juegos/quizpro.html`):
+  * Actualizados títulos HTML y meta-etiquetas.
+  * Actualizadas referencias de logotipos (`src` y `alt`) hacia `imagenes/new-generation-logo.png`.
+  * Actualizados encabezados institucionales a "New Generation" y "Bilingual School & Institute".
+  * Actualizados pies de página institucionales con mención oficial a "New Generation Bilingual School and Institute".
+- Lógica de Cliente (`js/student.js`, `js/teacher.js`):
+  * Actualizados datos de contacto por defecto institucional y rótulos en expedientes.
+- Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-007] como completada.
