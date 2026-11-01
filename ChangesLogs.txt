@@ -723,3 +723,15 @@ Módulo: Facturación Fiscal SAR (REQ-EXP-012)
   * Garantizada la separación arquitectónica completa respecto a los recibos de caja internos (`RecibosEmitidos`).
   * Asignados permisos en la matriz `RBAC_ACTION_PERMISSIONS` para roles Contador, Secretaría, Dirección y Administración.
 - Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-012] como completada.
+
+REGISTRO DE CAMBIOS - GESTIÓN DE CAJA, BANCOS, INGRESOS Y EGRESOS - Sun Nov 01 2026
+
+Módulo: Tesorería, Caja y Bancos (REQ-EXP-013)
+- Backend Usuarios (`backend/user-service/Code.gs`):
+  * Creadas hojas de cálculo automáticas `CajasTurnos`, `MovimientosCaja` y `BancosConciliaciones`.
+  * Implementada función `openCashRegisterSession` con `ScriptLock` y validación de turno único activo por cajero.
+  * Implementada función `recordCashTransaction` para registrar movimientos de ingresos y egresos con recálculo dinámico de saldo de caja.
+  * Implementada función `closeCashRegisterSession` con arqueo físico, cálculo automático de diferencias (faltante/sobrante) y cierre de turno.
+  * Implementadas funciones `recordBankReconciliation` y `getCashRegisterReport`.
+  * Configurados permisos RBAC para los roles Contador, Secretaría, Director y Administrador.
+- Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-013] como completada.

@@ -100,6 +100,9 @@ function getOrCreateSheet(ss, name) {
     if (name === "RecibosEmitidos") sheet.appendRow(["numeroRecibo", "fechaEmision", "cargoId", "pagoId", "userId", "nombreAlumno", "concepto", "monto", "hashSeguridad"]);
     if (name === "ConfiguracionFiscalSAR") sheet.appendRow(["cai", "establecimiento", "puntoEmision", "tipoDocumento", "rangoInicial", "rangoFinal", "siguienteCorrelativo", "fechaLimiteEmision", "rtnEmisor", "nombreEmisor", "activo"]);
     if (name === "FacturasFiscales") sheet.appendRow(["numeroFactura", "cai", "fechaEmision", "cargoId", "pagoId", "userId", "rtnCliente", "nombreCliente", "subtotalExento", "subtotalGravado15", "isv15", "total", "estado", "hashFiscal"]);
+    if (name === "CajasTurnos") sheet.appendRow(["turnoId", "fechaApertura", "fechaCierre", "cajeroUserId", "saldoInicial", "totalIngresos", "totalEgresos", "saldoCalculado", "saldoRealArqueo", "diferencia", "estado", "observaciones"]);
+    if (name === "MovimientosCaja") sheet.appendRow(["movimientoId", "turnoId", "fecha", "tipo", "categoria", "concepto", "monto", "metodoPago", "referencia", "comprobante", "registradoPor"]);
+    if (name === "BancosConciliaciones") sheet.appendRow(["conciliacionId", "banco", "numeroCuenta", "mesAnio", "saldoLibros", "saldoBanco", "depositosTransito", "chequesPendientes", "saldoConciliado", "estado", "observaciones"]);
   }
   return sheet;
 }
@@ -151,6 +154,13 @@ const RBAC_ACTION_PERMISSIONS = {
   "configureSARParameters": ["Contador", "Administrador"],
   "issueFiscalInvoice": ["Profesor", "Contador", "Secretaría", "Director", "Administrador"],
   "getFiscalInvoices": ["*"],
+
+  // Gestión de Caja, Bancos, Ingresos y Egresos (REQ-EXP-013)
+  "openCashRegisterSession": ["Contador", "Secretaría", "Administrador"],
+  "closeCashRegisterSession": ["Contador", "Secretaría", "Administrador"],
+  "recordCashTransaction": ["Contador", "Secretaría", "Administrador"],
+  "recordBankReconciliation": ["Contador", "Administrador"],
+  "getCashRegisterReport": ["Contador", "Director", "Administrador"],
 
   // Gestión de Comunicación y Noticias
   "createNews": ["Secretaría", "Director", "Administrador"],
@@ -261,6 +271,11 @@ function doPost(e) {
       case "configureSARParameters": result = configureSARParameters(payload); break;
       case "issueFiscalInvoice": result = issueFiscalInvoice(payload); break;
       case "getFiscalInvoices": result = getFiscalInvoices(payload); break;
+      case "openCashRegisterSession": result = openCashRegisterSession(payload); break;
+      case "closeCashRegisterSession": result = closeCashRegisterSession(payload); break;
+      case "recordCashTransaction": result = recordCashTransaction(payload); break;
+      case "recordBankReconciliation": result = recordBankReconciliation(payload); break;
+      case "getCashRegisterReport": result = getCashRegisterReport(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -708,6 +723,234 @@ function getStudentFinancialStatus(payload) {
         saldoTotalPendiente,
         alDia: saldoTotalPendiente <= 0
       }
+    }
+  };
+}
+
+// ---------------------------------------------------------------------------
+// GESTIÓN DE CAJA, BANCOS, INGRESOS Y EGRESOS (REQ-EXP-013)
+// ---------------------------------------------------------------------------
+
+function openCashRegisterSession(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const cajeroUserId = String(payload.cajeroUserId || payload.requesterUserId || "").trim();
+    const saldoInicial = parseFloat(payload.saldoInicial || 0);
+    if (!cajeroUserId) throw new Error("ID de cajero requerido para abrir turno.");
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const turnosSheet = getOrCreateSheet(ss, "CajasTurnos");
+    const turnosData = turnosSheet.getDataRange().getValues();
+
+    // Validar que el cajero no tenga ya un turno abierto
+    for (let i = 1; i < turnosData.length; i++) {
+      if (String(turnosData[i][3]).trim() === cajeroUserId && turnosData[i][10] === "Abierto") {
+        return {
+          status: "error",
+          code: "SESSION_ALREADY_OPEN",
+          turnoId: turnosData[i][0],
+          message: `El usuario ya cuenta con un turno de caja abierto (${turnosData[i][0]}).`
+        };
+      }
+    }
+
+    const now = new Date();
+    const turnoId = "BOX-" + now.getTime();
+    turnosSheet.appendRow([
+      turnoId,
+      now.toISOString(),
+      "", // fechaCierre
+      cajeroUserId,
+      saldoInicial,
+      0,  // totalIngresos
+      0,  // totalEgresos
+      saldoInicial, // saldoCalculado
+      0,  // saldoRealArqueo
+      0,  // diferencia
+      "Abierto",
+      payload.observaciones || "Apertura de turno estándar"
+    ]);
+
+    return {
+      status: "success",
+      turnoId,
+      saldoInicial,
+      message: `Turno de caja ${turnoId} abierto exitosamente.`
+    };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function recordCashTransaction(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const { turnoId, tipo, categoria, concepto, monto, metodoPago, referencia, comprobante } = payload || {};
+    if (!turnoId || !tipo || !monto) throw new Error("Parámetros de transacción de caja incompletos.");
+
+    const valor = parseFloat(monto);
+    if (isNaN(valor) || valor <= 0) throw new Error("Monto de transacción inválido.");
+    const sTipo = String(tipo).trim().toUpperCase(); // 'INGRESO' o 'EGRESO'
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const turnosSheet = getOrCreateSheet(ss, "CajasTurnos");
+    const turnosData = turnosSheet.getDataRange().getValues();
+
+    const turnoIdx = turnosData.findIndex(r => String(r[0]) === String(turnoId));
+    if (turnoIdx === -1) throw new Error("Turno de caja no encontrado.");
+    if (turnosData[turnoIdx][10] !== "Abierto") throw new Error("El turno de caja especificado ya está cerrado.");
+
+    const now = new Date();
+    const movimientoId = "MOV-" + now.getTime();
+    const movSheet = getOrCreateSheet(ss, "MovimientosCaja");
+
+    movSheet.appendRow([
+      movimientoId,
+      String(turnoId),
+      now.toISOString(),
+      sTipo,
+      categoria || "General",
+      concepto || "Movimiento operativo",
+      valor,
+      metodoPago || "Efectivo",
+      referencia || "Recibo",
+      comprobante || "",
+      payload.requesterUserId || "Cajero"
+    ]);
+
+    // Actualizar acumulados del turno
+    let totalIngresos = parseFloat(turnosData[turnoIdx][5] || 0);
+    let totalEgresos = parseFloat(turnosData[turnoIdx][6] || 0);
+    const saldoInicial = parseFloat(turnosData[turnoIdx][4] || 0);
+
+    if (sTipo === "INGRESO") totalIngresos += valor;
+    if (sTipo === "EGRESO") totalEgresos += valor;
+
+    const saldoCalculado = saldoInicial + totalIngresos - totalEgresos;
+    turnosSheet.getRange(turnoIdx + 1, 6, 1, 3).setValues([[totalIngresos, totalEgresos, saldoCalculado]]);
+
+    return {
+      status: "success",
+      movimientoId,
+      sTipo,
+      nuevoSaldoCalculado: saldoCalculado,
+      message: "Movimiento de caja registrado exitosamente."
+    };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function closeCashRegisterSession(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const { turnoId, saldoRealArqueo, observaciones } = payload || {};
+    if (!turnoId || saldoRealArqueo === undefined) throw new Error("Datos de cierre y arqueo incompletos.");
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const turnosSheet = getOrCreateSheet(ss, "CajasTurnos");
+    const turnosData = turnosSheet.getDataRange().getValues();
+
+    const idx = turnosData.findIndex(r => String(r[0]) === String(turnoId));
+    if (idx === -1) throw new Error("Turno de caja no encontrado.");
+    if (turnosData[idx][10] === "Cerrado") throw new Error("El turno de caja ya se encuentra cerrado.");
+
+    const saldoCalculado = parseFloat(turnosData[idx][7] || 0);
+    const arqueoFisico = parseFloat(saldoRealArqueo);
+    const diferencia = arqueoFisico - saldoCalculado; // Positivo = Sobrante, Negativo = Faltante
+
+    const now = new Date();
+    turnosSheet.getRange(idx + 1, 3).setValue(now.toISOString()); // fechaCierre
+    turnosSheet.getRange(idx + 1, 9, 1, 4).setValues([[arqueoFisico, diferencia, "Cerrado", observaciones || "Cierre de caja completado"]]);
+
+    return {
+      status: "success",
+      turnoId,
+      saldoCalculado,
+      saldoRealArqueo: arqueoFisico,
+      diferencia,
+      cuadrado: diferencia === 0,
+      resultado: diferencia === 0 ? "Cuadrado exacto" : (diferencia > 0 ? `Sobrante de L. ${diferencia.toFixed(2)}` : `Faltante de L. ${Math.abs(diferencia).toFixed(2)}`),
+      message: "Turno de caja cerrado exitosamente con arqueo validado."
+    };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function recordBankReconciliation(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const { banco, numeroCuenta, mesAnio, saldoLibros, saldoBanco, depositosTransito, chequesPendientes, observaciones } = payload || {};
+    if (!banco || !numeroCuenta || !mesAnio) throw new Error("Datos bancarios incompletos.");
+
+    const sLibros = parseFloat(saldoLibros || 0);
+    const sBanco = parseFloat(saldoBanco || 0);
+    const depTransito = parseFloat(depositosTransito || 0);
+    const chqPend = parseFloat(chequesPendientes || 0);
+
+    // Fórmula estándar de conciliación: Saldo según banco + depósitos en tránsito - cheques pendientes
+    const saldoConciliado = sBanco + depTransito - chqPend;
+    const diferencia = saldoConciliado - sLibros;
+    const estado = Math.abs(diferencia) < 0.01 ? "Conciliado" : "Diferencia Pendiente";
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "BancosConciliaciones");
+    const concId = "REC-BNK-" + new Date().getTime();
+
+    sheet.appendRow([
+      concId,
+      banco,
+      String(numeroCuenta),
+      mesAnio,
+      sLibros,
+      sBanco,
+      depTransito,
+      chqPend,
+      saldoConciliado,
+      estado,
+      observaciones || `Diferencia: L. ${diferencia.toFixed(2)}`
+    ]);
+
+    return {
+      status: "success",
+      conciliacionId: concId,
+      saldoConciliado,
+      diferencia,
+      estado,
+      message: "Conciliación bancaria procesada correctamente."
+    };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function getCashRegisterReport(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const turnos = getOrCreateSheet(ss, "CajasTurnos").getDataRange().getValues().slice(1);
+  const movimientos = getOrCreateSheet(ss, "MovimientosCaja").getDataRange().getValues().slice(1);
+
+  const turnoId = payload && payload.turnoId ? String(payload.turnoId).trim() : null;
+  const filteredTurnos = turnoId ? turnos.filter(r => String(r[0]) === turnoId) : turnos;
+  const filteredMovs = turnoId ? movimientos.filter(r => String(r[1]) === turnoId) : movimientos;
+
+  return {
+    status: "success",
+    data: {
+      turnos: filteredTurnos.map(r => ({
+        turnoId: r[0], fechaApertura: r[1], fechaCierre: r[2], cajero: r[3],
+        saldoInicial: parseFloat(r[4] || 0), totalIngresos: parseFloat(r[5] || 0),
+        totalEgresos: parseFloat(r[6] || 0), saldoCalculado: parseFloat(r[7] || 0),
+        saldoRealArqueo: parseFloat(r[8] || 0), diferencia: parseFloat(r[9] || 0), estado: r[10]
+      })),
+      movimientos: filteredMovs.map(m => ({
+        movimientoId: m[0], turnoId: m[1], fecha: m[2], tipo: m[3], categoria: m[4],
+        concepto: m[5], monto: parseFloat(m[6] || 0), metodoPago: m[7], referencia: m[8]
+      }))
     }
   };
 }

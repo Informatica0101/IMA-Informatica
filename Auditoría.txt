@@ -1212,3 +1212,11 @@ Sector: Facturación legal SAR, rangos de CAI, RTN y cálculo tributario de ISV
 Hallazgo [Alto]: Carencia de un módulo tributario hondureño que separe estrictamente la factura fiscal del recibo interno, con riesgo de emitir documentos fuera del rango autorizado por el SAR o con fechas vencidas.
 Impacto: Incumplimiento de las regulaciones tributarias del Servicio de Administración de Rentas (SAR) en Honduras y confusión contable entre comprobantes de caja internos y facturas fiscales.
 Recomendación: Implementar modelos de datos 'ConfiguracionFiscalSAR' y 'FacturasFiscales' con ScriptLock atómico, validación obligatoria de 14 dígitos en RTN, control de vencimiento de CAI y desglose exento vs gravado/ISV 15%.
+
+REGISTRO DE AUDITORÍA - GESTIÓN DE CAJA, BANCOS, INGRESOS Y EGRESOS - Sun Nov 1 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: Turnos de caja chica, arqueos físicos, conciliaciones bancarias y egresos
+Hallazgo [Alto]: Ausencia de trazabilidad para aperturas y cierres de turno de caja, carencia de registro formal de diferencias en arqueo (sobrantes/faltantes) y falta de conciliación bancaria mensual.
+Impacto: Descontrol de flujos de efectivo en ventanilla, riesgo de pérdidas no detectadas y discrepancias entre saldos de libros institucionales y estados de cuenta bancarios.
+Recomendación: Implementar entidades 'CajasTurnos', 'MovimientosCaja' y 'BancosConciliaciones' con control atómico de concurrencia mediante ScriptLock, registro estricto de arqueo de caja y conciliación formal bancaria.
