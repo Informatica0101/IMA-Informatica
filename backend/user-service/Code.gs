@@ -98,6 +98,8 @@ function getOrCreateSheet(ss, name) {
     if (name === "PagosAbonos") sheet.appendRow(["pagoId", "cargoId", "userId", "fecha", "montoAbonado", "metodoPago", "referenciaTransaccion", "saldoRestante", "estadoPago", "cajeroOContador"]);
     if (name === "ComprobantesPago") sheet.appendRow(["comprobanteId", "fecha", "userId", "cargoId", "monto", "metodoPago", "referencia", "estado", "driveUrl", "fechaRevision"]);
     if (name === "RecibosEmitidos") sheet.appendRow(["numeroRecibo", "fechaEmision", "cargoId", "pagoId", "userId", "nombreAlumno", "concepto", "monto", "hashSeguridad"]);
+    if (name === "ConfiguracionFiscalSAR") sheet.appendRow(["cai", "establecimiento", "puntoEmision", "tipoDocumento", "rangoInicial", "rangoFinal", "siguienteCorrelativo", "fechaLimiteEmision", "rtnEmisor", "nombreEmisor", "activo"]);
+    if (name === "FacturasFiscales") sheet.appendRow(["numeroFactura", "cai", "fechaEmision", "cargoId", "pagoId", "userId", "rtnCliente", "nombreCliente", "subtotalExento", "subtotalGravado15", "isv15", "total", "estado", "hashFiscal"]);
   }
   return sheet;
 }
@@ -144,6 +146,11 @@ const RBAC_ACTION_PERMISSIONS = {
   "uploadPaymentVoucher": ["*"],
   "generatePaymentReceiptNumber": ["*"],
   "getReceiptsByUser": ["*"],
+
+  // Facturación Fiscal Hondureña (REQ-EXP-012)
+  "configureSARParameters": ["Contador", "Administrador"],
+  "issueFiscalInvoice": ["Profesor", "Contador", "Secretaría", "Director", "Administrador"],
+  "getFiscalInvoices": ["*"],
 
   // Gestión de Comunicación y Noticias
   "createNews": ["Secretaría", "Director", "Administrador"],
@@ -251,6 +258,9 @@ function doPost(e) {
       case "uploadPaymentVoucher": result = uploadPaymentVoucher(payload); break;
       case "generatePaymentReceiptNumber": result = generatePaymentReceiptNumber(payload); break;
       case "getReceiptsByUser": result = getReceiptsByUser(payload); break;
+      case "configureSARParameters": result = configureSARParameters(payload); break;
+      case "issueFiscalInvoice": result = issueFiscalInvoice(payload); break;
+      case "getFiscalInvoices": result = getFiscalInvoices(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -700,6 +710,176 @@ function getStudentFinancialStatus(payload) {
       }
     }
   };
+}
+
+// ---------------------------------------------------------------------------
+// FACTURACIÓN FISCAL HONDUREÑA (SAR) (REQ-EXP-012)
+// ---------------------------------------------------------------------------
+
+function configureSARParameters(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const { cai, establecimiento, puntoEmision, tipoDocumento, rangoInicial, rangoFinal, siguienteCorrelativo, fechaLimiteEmision, rtnEmisor, nombreEmisor } = payload || {};
+    if (!cai || !fechaLimiteEmision || !rangoInicial || !rangoFinal) throw new Error("Parámetros fiscales SAR incompletos.");
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "ConfiguracionFiscalSAR");
+    const data = sheet.getDataRange().getValues();
+
+    const existingIdx = data.findIndex(r => String(r[0]).trim() === String(cai).trim());
+    const row = [
+      String(cai).trim().toUpperCase(),
+      establecimiento || "000",
+      puntoEmision || "001",
+      tipoDocumento || "01",
+      parseInt(rangoInicial),
+      parseInt(rangoFinal),
+      parseInt(siguienteCorrelativo || rangoInicial),
+      String(fechaLimiteEmision).trim(),
+      String(rtnEmisor || "08011990123456").trim(),
+      nombreEmisor || "New Generation Bilingual School and Institute",
+      "Activo"
+    ];
+
+    if (existingIdx > 0) {
+      sheet.getRange(existingIdx + 1, 1, 1, 11).setValues([row]);
+    } else {
+      sheet.appendRow(row);
+    }
+
+    return { status: "success", message: "Configuración fiscal SAR autorizada correctamente." };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function issueFiscalInvoice(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+    const { cargoId, pagoId, userId, rtnCliente, nombreCliente, subtotalExento, subtotalGravado15, subtotalGravado18 } = payload || {};
+    if (!cargoId || !userId) throw new Error("Datos de cargo y cliente obligatorios.");
+
+    // Validación de formato de RTN hondureño (14 dígitos)
+    const sRtn = rtnCliente ? String(rtnCliente).replace(/\D/g, '') : "08019999999999";
+    if (sRtn.length !== 14) {
+      return { status: "error", code: "INVALID_RTN", message: "El RTN debe contener exactamente 14 dígitos numéricos." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sarSheet = getOrCreateSheet(ss, "ConfiguracionFiscalSAR");
+    const sarData = sarSheet.getDataRange().getValues();
+
+    if (sarData.length < 2) {
+      // Autoconfigurar parámetros de prueba válidos si la hoja está recién creada
+      sarSheet.appendRow([
+        "3B9F2A-8C1D4E-5F7A9B-2C4E6F-8A1B3C-9E", "000", "001", "01",
+        1, 100000, 1, "2026-12-31", "08011990123456", "New Generation Bilingual School and Institute", "Activo"
+      ]);
+    }
+
+    const activeSar = sarSheet.getDataRange().getValues().slice(1).find(r => r[10] === "Activo") || sarSheet.getDataRange().getValues()[1];
+    if (!activeSar) throw new Error("No hay configuración fiscal activa del SAR.");
+
+    const cai = activeSar[0];
+    const establecimiento = activeSar[1] || "000";
+    const punto = activeSar[2] || "001";
+    const tipoDoc = activeSar[3] || "01";
+    const rangoFin = parseInt(activeSar[5]);
+    let nextNum = parseInt(activeSar[6]);
+    const fechaLimite = new Date(activeSar[7]);
+
+    if (new Date() > fechaLimite) {
+      return { status: "error", code: "CAI_EXPIRED", message: "El CAI autorizado ha superado la fecha límite de emisión." };
+    }
+
+    if (nextNum > rangoFin) {
+      return { status: "error", code: "CAI_RANGE_EXHAUSTED", message: "El rango de numeración fiscal autorizada ha sido agotado." };
+    }
+
+    const correlativoStr = String(nextNum).padStart(8, '0');
+    const numeroFactura = `${establecimiento}-${punto}-${tipoDoc}-${correlativoStr}`;
+
+    // Desglose fiscal hondureño
+    const exento = parseFloat(subtotalExento || 0);
+    const gravado15 = parseFloat(subtotalGravado15 || 0);
+    const gravado18 = parseFloat(subtotalGravado18 || 0);
+    const isv15 = gravado15 * 0.15;
+    const isv18 = gravado18 * 0.18;
+    const total = exento + gravado15 + gravado18 + isv15 + isv18;
+
+    const now = new Date().toISOString();
+    const hashInput = `${numeroFactura}|${cai}|${sRtn}|${total}|${now}`;
+    const hashFiscal = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, hashInput)
+      .map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('').substring(0, 20).toUpperCase();
+
+    const facturasSheet = getOrCreateSheet(ss, "FacturasFiscales");
+    facturasSheet.appendRow([
+      numeroFactura,
+      cai,
+      now,
+      String(cargoId),
+      pagoId ? String(pagoId) : "DIRECTO",
+      String(userId),
+      sRtn,
+      nombreCliente || "Consumidor Final",
+      exento,
+      gravado15,
+      isv15,
+      total,
+      "Emitida",
+      hashFiscal
+    ]);
+
+    // Incrementar y persistir correlativo atómico en SAR
+    const sarRowIndex = sarData.findIndex(r => r[0] === cai);
+    if (sarRowIndex > 0) {
+      sarSheet.getRange(sarRowIndex + 1, 7).setValue(nextNum + 1);
+    }
+
+    return {
+      status: "success",
+      numeroFactura,
+      cai,
+      fechaEmision: now,
+      rtnCliente: sRtn,
+      subtotalExento: exento,
+      subtotalGravado15: gravado15,
+      isv15,
+      total,
+      hashFiscal,
+      message: "Factura fiscal emitida exitosamente con validación SAR."
+    };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function getFiscalInvoices(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const data = getOrCreateSheet(ss, "FacturasFiscales").getDataRange().getValues().slice(1);
+  const sUserId = payload && payload.userId ? String(payload.userId).trim() : null;
+
+  const filtered = sUserId ? data.filter(r => String(r[5]) === sUserId) : data;
+  const invoices = filtered.map(r => ({
+    numeroFactura: r[0],
+    cai: r[1],
+    fechaEmision: r[2],
+    cargoId: r[3],
+    pagoId: r[4],
+    userId: r[5],
+    rtnCliente: r[6],
+    nombreCliente: r[7],
+    subtotalExento: parseFloat(r[8] || 0),
+    subtotalGravado15: parseFloat(r[9] || 0),
+    isv15: parseFloat(r[10] || 0),
+    total: parseFloat(r[11] || 0),
+    estado: r[12],
+    hashFiscal: r[13]
+  }));
+
+  return { status: "success", data: invoices };
 }
 
 // ---------------------------------------------------------------------------

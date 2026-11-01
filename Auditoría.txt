@@ -1204,3 +1204,11 @@ Sector: Consulta de vencimientos, reporte de comprobantes y emisión de recibos 
 Hallazgo [Alto]: Los estudiantes no disponían de un mecanismo directo para reportar comprobantes bancarios ni para obtener un recibo formal correlativo e inalterable en PDF tras realizar un pago.
 Impacto: Saturación en ventanilla de contabilidad, demoras en la confirmación de transferencias y carencia de soporte documental inmediato para los padres de familia.
 Recomendación: Integrar formulario de reporte de comprobantes con carga documental, generador atómico de correlativos (REC-YYYY-NNNNNN) y emisor de recibos oficiales en PDF mediante PDFLib con hash de integridad.
+
+REGISTRO DE AUDITORÍA - MÓDULO DE FACTURACIÓN FISCAL HONDUREÑA SAR - Sun Nov 1 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: Facturación legal SAR, rangos de CAI, RTN y cálculo tributario de ISV
+Hallazgo [Alto]: Carencia de un módulo tributario hondureño que separe estrictamente la factura fiscal del recibo interno, con riesgo de emitir documentos fuera del rango autorizado por el SAR o con fechas vencidas.
+Impacto: Incumplimiento de las regulaciones tributarias del Servicio de Administración de Rentas (SAR) en Honduras y confusión contable entre comprobantes de caja internos y facturas fiscales.
+Recomendación: Implementar modelos de datos 'ConfiguracionFiscalSAR' y 'FacturasFiscales' con ScriptLock atómico, validación obligatoria de 14 dígitos en RTN, control de vencimiento de CAI y desglose exento vs gravado/ISV 15%.

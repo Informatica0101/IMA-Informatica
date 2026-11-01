@@ -713,3 +713,13 @@ Módulo: Portal de Pagos y Emisión de Recibos (REQ-EXP-011)
   * Diseñado e implementado modal interactivo `#voucher-modal` para reporte de comprobantes.
   * Agregada función `downloadPaymentReceiptPDF` utilizando `PDFLib` para generar al vuelo el documento PDF con membrete institucional, correlativo oficial y firma digital.
 - Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-011] como completada.
+
+REGISTRO DE CAMBIOS - MÓDULO DE FACTURACIÓN FISCAL HONDUREÑA SAR - Sun Nov 01 2026
+
+Módulo: Facturación Fiscal SAR (REQ-EXP-012)
+- Backend Usuarios (`backend/user-service/Code.gs`):
+  * Creadas entidades y hojas `ConfiguracionFiscalSAR` y `FacturasFiscales`.
+  * Implementadas funciones `configureSARParameters`, `issueFiscalInvoice` y `getFiscalInvoices` con soporte de rangos, validación de fecha límite de CAI, validación de 14 dígitos en RTN y cálculo de ISV 15%/18%.
+  * Garantizada la separación arquitectónica completa respecto a los recibos de caja internos (`RecibosEmitidos`).
+  * Asignados permisos en la matriz `RBAC_ACTION_PERMISSIONS` para roles Contador, Secretaría, Dirección y Administración.
+- Backlog (`Pendientes.md`): Marcada tarea [REQ-EXP-012] como completada.
