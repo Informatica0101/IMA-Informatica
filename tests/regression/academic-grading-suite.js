@@ -95,6 +95,12 @@ assert(acctCode.includes("performBankReconciliation") && acctCode.includes("[F11
 assert(acctCode.includes("checkBudgetAvailability") && acctCode.includes("[F11-Task14]"), "backend/accounting-service/Code.gs contiene checkBudgetAvailability [F11-Task14]");
 assert(acctCode.includes("applyApprovedScholarshipsToCharges") && acctCode.includes("[F11-Task15]"), "backend/accounting-service/Code.gs contiene applyApprovedScholarshipsToCharges [F11-Task15]");
 
+// [TASK-001] [F15-Task01] - Verificación del motor de facturación fiscal SAR y clasificación tributaria
+assert(acctCode.includes("configureSARAuthorizedCAI") && acctCode.includes("[TASK-001]"), "backend/accounting-service/Code.gs contiene configureSARAuthorizedCAI y control de CAI [TASK-001]");
+assert(acctCode.includes("CAI_EXPIRED") && acctCode.includes("CAI_RANGE_EXHAUSTED"), "backend/accounting-service/Code.gs contiene validaciones de vencimiento y agotamiento de CAI [TASK-001]");
+assert(acctCode.includes("subtotalExento") && acctCode.includes("subtotalGravado"), "backend/accounting-service/Code.gs contiene desglose tributario exento y gravado [TASK-001]");
+assert(acctCode.includes("tipoTributario"), "backend/accounting-service/Code.gs contiene clasificación tributaria de conceptos [TASK-001]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

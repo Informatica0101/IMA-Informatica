@@ -569,7 +569,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 *Alcance del Bloque:* Aislamiento de datos perimetral, seguridad documental, prevención de enlaces públicos, integridad de identificadores atómicos, cumplimiento tributario SAR, retención legal WORM, rollback de importaciones, y flujo de doble autorización.
 
 ---
-### [TASK-001] [ ] [F15-Task01] Corrección del motor de facturación fiscal SAR, clasificación tributaria y control de CAI
+### [TASK-001] [X] [F15-Task01] Corrección del motor de facturación fiscal SAR, clasificación tributaria y control de CAI
 - **Origen del Hallazgo:** `AUDITORIA_FASE_15_PAGOS_COBROS_FACTURACION.md` / Sección E (Brecha E.2) y Sección J (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Cumplimiento fiscal tributario SAR, prevención de sanciones legales e integridad documental)
@@ -621,7 +621,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Dos usuarios que intenten emitir simultáneamente no pueden recibir el mismo correlativo.
   - Los recibos internos y las facturas fiscales mantienen numeraciones independientes garantizadas.
   - Una factura emitida conserva su desglose tributario original aunque posteriormente cambie la configuración del concepto en la base de datos.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 ---

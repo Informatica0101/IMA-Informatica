@@ -533,3 +533,20 @@ RESULTADO DE EVALUACIÓN:
 - Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
 - Dictamen: Reorganización integral completada conforme a los principios innegociables de no reducción y máxima fidelidad técnica.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-001] [F15-Task01]
+MOTOR DE FACTURACIÓN FISCAL SAR, CLASIFICACIÓN TRIBUTARIA Y CONTROL DE CAI
+ARCHIVOS MODIFICADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementó la gestión de autorizaciones fiscales SAR en configureSARAuthorizedCAI y getSARAuthorizedCAIs, administrando rangos autorizados (rangoInicial, rangoFinal), fecha límite de emisión y último correlativo en la hoja AutorizacionesCAI.
+- Se refactorizó configurePaymentConcept para incorporar clasificación tributaria por concepto: tipoTributario (Exento, Gravado, No Sujeto), tasaISV (0.15, 0.18, 0), codigoTributario, fechaVigenciaTributaria y requiereValidacionFiscal.
+- Se blindó createFiscalInvoice con candado atómico ScriptLock (LockService) para evitar colisiones concurrentes en el correlativo.
+- Se incorporaron validaciones bloqueantes: CAI_EXPIRED (vencimiento de fecha límite de emisión) y CAI_RANGE_EXHAUSTED (agotamiento de numeración autorizada).
+- Se implementó el cálculo y desglose atómico de subtotalExento, subtotalGravado, ISV y total general en FacturasFiscales.
+- Se validó el RTN con estándar de 14 dígitos numéricos en Honduras.
+- Se registraron los permisos en ROLE_PERMISSIONS y despachadores en doPost.
+- Se actualizaron las aserciones de regresión en tests/regression/academic-grading-suite.js con 57/57 pruebas pasadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================

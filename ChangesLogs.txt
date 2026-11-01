@@ -3759,3 +3759,20 @@ Archivos Modificados / Creados:
 
 2. Auditoria.txt
    - Inserción de la entrada formal de auditoría documentando la catalogación de 506 tareas, distribución por bloques de prioridad P0 a P3, verificación de no omisión de requerimientos y confirmación de trazabilidad al 100%.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-31
+TAREA: [TASK-001] [F15-Task01] Motor de Facturación Fiscal SAR, Clasificación Tributaria y Control de CAI
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Líneas 3317-3365: Ampliación de configurePaymentConcept para soportar tipoTributario, tasaISV, codigoTributario, fechaVigenciaTributaria y requiereValidacionFiscal en la hoja ConceptosCobro.
+   - Líneas 3720-3940: Implementación de configureSARAuthorizedCAI, getSARAuthorizedCAIs y refactorización integral de createFiscalInvoice incorporando LockService, validación de CAI_EXPIRED, CAI_RANGE_EXHAUSTED, desglose de subtotalExento y subtotalGravado, validación de RTN a 14 dígitos y persistencia inmutable en FacturasFiscales.
+   - Actualización de ROLE_PERMISSIONS para Director, Subdirector y Contador, e integración de rutas en doPost.
+
+2. tests/regression/academic-grading-suite.js
+   - Incorporación de aserciones automatizadas para configureSARAuthorizedCAI, validación de CAI_EXPIRED y CAI_RANGE_EXHAUSTED, y desglose tributario exento/gravado en FacturasFiscales. Cobertura: 57/57 pruebas aprobadas.
+
+3. Pendientes.md
+   - Actualización del estado de [TASK-001] de [ ] Pendiente a [X] Completado.

@@ -190,9 +190,12 @@ function doGet() { return textResponse({ status: "success", service: "ACCOUNTING
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Director": ["initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "getCashFlowSixMonthProjection", "recordCollectionManagementAction", "getCollectionManagementLogs", "getComparativeFinancialSummary", "reconcileFinancialReportCoherence", "verifyAccountingIntegrity", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "manageSupplierContract", "getSupplierContractAlerts", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createFamilyPaymentAgreement", "getFamilyPaymentAgreements", "saveMultiYearBudgetProjection", "getMultiYearBudgetProjections", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "purgeSecurityCaches"],
-  "Subdirector": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
-  "Contador": ["initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "calculateAppliedDiscount", "getStoreProducts", "getStoreOrders", "getCafeteriaMenu", "getCafeteriaOrders", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
+  "Director": [
+    "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "getCashFlowSixMonthProjection", "recordCollectionManagementAction", "getCollectionManagementLogs", "getComparativeFinancialSummary", "reconcileFinancialReportCoherence", "verifyAccountingIntegrity", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "manageSupplierContract", "getSupplierContractAlerts", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createFamilyPaymentAgreement", "getFamilyPaymentAgreements", "saveMultiYearBudgetProjection", "getMultiYearBudgetProjections", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "purgeSecurityCaches"],
+  "Subdirector": [
+    "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
+  "Contador": [
+    "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "calculateAppliedDiscount", "getStoreProducts", "getStoreOrders", "getCafeteriaMenu", "getCafeteriaOrders", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
@@ -536,6 +539,8 @@ function doPost(e) {
       case "getPaymentVouchers": result = getPaymentVouchers(payload); break;
       case "reviewPaymentVoucher": result = reviewPaymentVoucher(payload); break;
       case "generatePaymentReceiptPDF": result = generatePaymentReceiptPDF(payload); break;
+      case "configureSARAuthorizedCAI": result = configureSARAuthorizedCAI(payload); break;
+      case "getSARAuthorizedCAIs": result = getSARAuthorizedCAIs(payload); break;
       case "createFiscalInvoice": result = createFiscalInvoice(payload); break;
       case "getFiscalInvoices": result = getFiscalInvoices(payload); break;
       case "configureGatewayIntegration": result = configureGatewayIntegration(payload); break;
@@ -3314,13 +3319,33 @@ function processFamilyCreditPurchase(payload) {
 // ---------------------------------------------------------------------------
 
 // [REQ-EXP-010] [Requerimientos de Expansión y Desarrollo] - Configuración de conceptos de cobro, mensualidades, recargos y estado de cuenta.
+// [TASK-001] [F15-Task01] - Configuración de conceptos de cobro con clasificación tributaria SAR completa
 function configurePaymentConcept(payload) {
-  const { conceptoId, nombreConcepto, montoBase, aplicaAGrado, periodoVigencia, estado, observaciones } = payload || {};
+  const {
+    conceptoId,
+    nombreConcepto,
+    montoBase,
+    aplicaAGrado,
+    periodoVigencia,
+    estado,
+    observaciones,
+    tipoTributario = "Exento", // Exento, Gravado, No Sujeto
+    tasaISV = 0,               // 0.15, 0.18, 0
+    codigoTributario = "EDUC-01",
+    fechaVigenciaTributaria = "",
+    requiereValidacionFiscal = false
+  } = payload || {};
+
   if (!nombreConcepto || montoBase === undefined) throw new Error("Nombre y monto base son requeridos.");
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "ConceptosCobro");
   const data = sheet.getDataRange().getValues();
   const now = new Date();
+
+  // Asegurar cabeceras de columnas tributarias si la hoja tiene esquema antiguo
+  if (data.length > 0 && data[0].length < 13) {
+    sheet.getRange(1, 9, 1, 5).setValues([["TipoTributario", "TasaISV", "CodigoTributario", "FechaVigenciaTributaria", "RequiereValidacionFiscal"]]);
+  }
 
   let cId = conceptoId;
   let existingIndex = -1;
@@ -3330,33 +3355,39 @@ function configurePaymentConcept(payload) {
     existingIndex = data.findIndex(r => String(r[2]).toLowerCase().trim() === String(nombreConcepto).toLowerCase().trim() && String(r[4]).trim() === String(aplicaAGrado || "Todos").trim());
   }
 
+  const rowValues = [
+    cId || ("CPT-" + now.getTime()),
+    now,
+    nombreConcepto,
+    parseFloat(montoBase || 0),
+    aplicaAGrado || "Todos",
+    periodoVigencia || "Anual",
+    estado || "Activo",
+    observaciones || "",
+    tipoTributario,
+    parseFloat(tasaISV || 0),
+    codigoTributario,
+    fechaVigenciaTributaria || now.toISOString().split("T")[0],
+    requiereValidacionFiscal ? "TRUE" : "FALSE"
+  ];
+
   if (existingIndex !== -1) {
     cId = data[existingIndex][0];
-    sheet.getRange(existingIndex + 1, 1, 1, 8).setValues([[
-      cId,
-      now,
-      nombreConcepto,
-      parseFloat(montoBase || 0),
-      aplicaAGrado || "Todos",
-      periodoVigencia || "Anual",
-      estado || "Activo",
-      observaciones || ""
-    ]]);
+    rowValues[0] = cId;
+    sheet.getRange(existingIndex + 1, 1, 1, rowValues.length).setValues([rowValues]);
   } else {
-    cId = "CPT-" + now.getTime();
-    sheet.appendRow([
-      cId,
-      now,
-      nombreConcepto,
-      parseFloat(montoBase || 0),
-      aplicaAGrado || "Todos",
-      periodoVigencia || "Anual",
-      estado || "Activo",
-      observaciones || ""
-    ]);
+    cId = rowValues[0];
+    sheet.appendRow(rowValues);
   }
 
-  return { status: "success", conceptoId: cId, message: "Concepto de cobro configurado correctamente." };
+  return {
+    status: "success",
+    conceptoId: cId,
+    tipoTributario: tipoTributario,
+    tasaISV: parseFloat(tasaISV || 0),
+    codigoTributario: codigoTributario,
+    message: "Concepto de cobro configurado correctamente con clasificación tributaria SAR."
+  };
 }
 
 // [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de estado de cuenta por estudiante
@@ -3671,46 +3702,290 @@ function generatePaymentReceiptPDF(payload) {
 // ---------------------------------------------------------------------------
 
 // [REQ-EXP-012] [Requerimientos de Expansión y Desarrollo] - Facturación fiscal hondureña SAR CAI independiente con ISV 15%.
-function createFiscalInvoice(payload) {
-  const { cai, rangoInicial, rangoFinal, numeroFactura, userId, clienteNombre, clienteRTN, concepto, subtotal, isv15, total, fechaLimiteEmision, observaciones } = payload || {};
-  if (!cai || !numeroFactura || !clienteNombre) throw new Error("CAI, Número de factura y Nombre de cliente son requeridos.");
+// [TASK-001] [F15-Task01] - Gestión de Autorizaciones de CAI y Rangos Fiscales SAR
+function configureSARAuthorizedCAI(payload) {
+  const { cai, rangoInicial, rangoFinal, fechaLimiteEmision, tipoDocumento = "Factura", puntoEmision = "001", establecimiento = "001", tipo = "01", observaciones, estado = "Activo" } = payload || {};
+  if (!cai || !rangoInicial || !rangoFinal || !fechaLimiteEmision) {
+    throw new Error("CAI, rangoInicial, rangoFinal y fechaLimiteEmision son obligatorios.");
+  }
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getOrCreateSheet(ss, "FacturasFiscales");
+  const sheet = getOrCreateSheet(ss, "AutorizacionesCAI");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["CAI", "RangoInicial", "RangoFinal", "UltimoCorrelativo", "FechaLimiteEmision", "TipoDocumento", "PuntoEmision", "Establecimiento", "Tipo", "Estado", "FechaRegistro", "Observaciones"]);
+  }
+
+  const data = sheet.getDataRange().getValues();
   const now = new Date();
-  const facturaId = "FCT-" + now.getTime();
+  let existingIndex = -1;
 
-  const sub = parseFloat(subtotal || 0);
-  const isv = parseFloat(isv15 || 0);
-  const tot = parseFloat(total || (sub + isv));
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]).trim() === String(cai).trim()) {
+      existingIndex = i;
+      break;
+    }
+  }
 
-  sheet.appendRow([
-    facturaId,
+  // Extraer el número correlativo inicial del formato SAR 001-001-01-00000001
+  let initCorr = 0;
+  const matchInit = String(rangoInicial).match(/(\d+)$/);
+  if (matchInit) initCorr = parseInt(matchInit[1], 10) - 1;
+
+  const rowData = [
+    String(cai).trim().toUpperCase(),
+    String(rangoInicial).trim(),
+    String(rangoFinal).trim(),
+    existingIndex !== -1 ? data[existingIndex][3] : initCorr,
+    fechaLimiteEmision,
+    tipoDocumento,
+    puntoEmision,
+    establecimiento,
+    tipo,
+    estado,
     now,
-    cai,
-    rangoInicial || "",
-    rangoFinal || "",
-    numeroFactura,
-    userId || "CLIENTE-VARIO",
-    clienteNombre,
-    clienteRTN || "00000000000000",
-    concepto || "Servicios Educativos",
-    sub,
-    isv,
-    tot,
-    "Emitida",
-    fechaLimiteEmision || "",
     observaciones || ""
-  ]);
+  ];
+
+  if (existingIndex !== -1) {
+    sheet.getRange(existingIndex + 1, 1, 1, rowData.length).setValues([rowData]);
+  } else {
+    sheet.appendRow(rowData);
+  }
 
   return {
     status: "success",
-    facturaId: facturaId,
-    numeroFactura: numeroFactura,
     cai: cai,
-    total: tot,
-    message: "Factura fiscal emitida exitosamente con estándares SAR."
+    rangoInicial: rangoInicial,
+    rangoFinal: rangoFinal,
+    fechaLimiteEmision: fechaLimiteEmision,
+    message: "Rango y CAI SAR configurado y registrado exitosamente."
   };
+}
+
+function getSARAuthorizedCAIs(payload) {
+  const { cai, estado } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName("AutorizacionesCAI");
+  if (!sheet) return { status: "success", cais: [] };
+
+  const rows = sheet.getDataRange().getValues().slice(1);
+  let filtered = rows;
+  if (cai) filtered = filtered.filter(r => String(r[0]).trim().toUpperCase() === String(cai).trim().toUpperCase());
+  if (estado) filtered = filtered.filter(r => String(r[9]).trim().toLowerCase() === String(estado).trim().toLowerCase());
+
+  const mapped = filtered.map(r => ({
+    cai: r[0],
+    rangoInicial: r[1],
+    rangoFinal: r[2],
+    ultimoCorrelativo: parseInt(r[3] || 0, 10),
+    fechaLimiteEmision: r[4],
+    tipoDocumento: r[5],
+    puntoEmision: r[6],
+    establecimiento: r[7],
+    tipo: r[8],
+    estado: r[9],
+    fechaRegistro: r[10],
+    observaciones: r[11]
+  }));
+
+  return { status: "success", cais: mapped };
+}
+
+// [TASK-001] [F15-Task01] - Motor de Facturación Fiscal SAR con clasificación tributaria y control de CAI
+function createFiscalInvoice(payload) {
+  const {
+    cai,
+    rangoInicial,
+    rangoFinal,
+    numeroFactura,
+    userId,
+    clienteNombre,
+    clienteRTN,
+    concepto,
+    items, // Array de { descripcion, tipoTributario: "Exento"|"Gravado", monto, tasaISV }
+    subtotal,
+    subtotalExento: inputSubExento,
+    subtotalGravado: inputSubGravado,
+    isv15: inputISV,
+    total: inputTotal,
+    fechaLimiteEmision,
+    observaciones,
+    reciboCajaId
+  } = payload || {};
+
+  if (!clienteNombre) throw new Error("Nombre de cliente es requerido.");
+
+  // Validación estricta de RTN si se proporciona (14 dígitos numéricos en Honduras)
+  let cleanRTN = clienteRTN ? String(clienteRTN).replace(/[^0-9]/g, "") : "";
+  if (cleanRTN && cleanRTN !== "00000000000000" && cleanRTN.length !== 14) {
+    throw new Error("RTN inválido: En Honduras el RTN debe contener exactamente 14 dígitos numéricos.");
+  }
+  if (!cleanRTN) cleanRTN = "00000000000000"; // Consumidor final
+
+  // Candado atómico ScriptLock para asegurar que no existan colisiones de correlativo en concurrencia
+  const lock = LockService.getScriptLock();
+  let hasLock = false;
+
+  try {
+    hasLock = lock.tryLock(10000);
+    if (!hasLock) {
+      throw new Error("Servidor ocupado procesando secuencias fiscales. Por favor reintente en unos segundos.");
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const now = new Date();
+    const nowISO = now.toISOString().split("T")[0];
+
+    // Verificar CAI y fechas límite en AutorizacionesCAI si existe
+    const caiSheet = ss.getSheetByName("AutorizacionesCAI");
+    let targetCAI = cai;
+    let targetRangoInicial = rangoInicial;
+    let targetRangoFinal = rangoFinal;
+    let targetFechaLimite = fechaLimiteEmision;
+    let targetNumeroFactura = numeroFactura;
+    let caiRowIndex = -1;
+
+    if (caiSheet) {
+      const caiData = caiSheet.getDataRange().getValues();
+      for (let i = 1; i < caiData.length; i++) {
+        const rowCAI = String(caiData[i][0]).trim().toUpperCase();
+        if ((!targetCAI && caiData[i][9] === "Activo") || (targetCAI && rowCAI === String(targetCAI).trim().toUpperCase())) {
+          targetCAI = rowCAI;
+          targetRangoInicial = targetRangoInicial || caiData[i][1];
+          targetRangoFinal = targetRangoFinal || caiData[i][2];
+          targetFechaLimite = targetFechaLimite || caiData[i][4];
+          caiRowIndex = i;
+          break;
+        }
+      }
+    }
+
+    if (!targetCAI) {
+      throw new Error("CAI no especificado o no configurado en el sistema.");
+    }
+
+    // 1. Validar CAI vencido
+    if (targetFechaLimite) {
+      const limitDate = new Date(targetFechaLimite);
+      if (!isNaN(limitDate.getTime()) && now > limitDate) {
+        throw new Error("CAI_EXPIRED: La autorización del CAI (" + targetCAI + ") ha vencido en fecha " + targetFechaLimite + ". No es posible emitir facturas legales.");
+      }
+    }
+
+    // 2. Control de correlativo y rango autorizado
+    let numCorrelativo = 1;
+    if (targetRangoFinal) {
+      const matchEnd = String(targetRangoFinal).match(/(\d+)$/);
+      const maxLimit = matchEnd ? parseInt(matchEnd[1], 10) : 99999999;
+
+      let currentVal = 0;
+      if (caiRowIndex !== -1 && caiSheet) {
+        currentVal = parseInt(caiSheet.getRange(caiRowIndex + 1, 4).getValue() || 0, 10);
+      } else {
+        const factSheet = getOrCreateSheet(ss, "FacturasFiscales");
+        const factData = factSheet.getDataRange().getValues();
+        currentVal = factData.length;
+      }
+
+      numCorrelativo = currentVal + 1;
+      if (numCorrelativo > maxLimit) {
+        throw new Error("CAI_RANGE_EXHAUSTED: El rango autorizado del CAI (" + targetCAI + ") ha sido completado y agotado. Rango final: " + targetRangoFinal + ".");
+      }
+
+      // Si no viene numeroFactura explícito, construirlo con el formato SAR
+      if (!targetNumeroFactura && targetRangoInicial) {
+        const pfx = String(targetRangoInicial).substring(0, String(targetRangoInicial).lastIndexOf("-") + 1);
+        targetNumeroFactura = pfx + String(numCorrelativo).padStart(8, "0");
+      }
+    }
+
+    if (!targetNumeroFactura) {
+      targetNumeroFactura = "001-001-01-" + String(now.getTime()).substring(5).padStart(8, "0");
+    }
+
+    // 3. Cálculo tributario desglosado (Exento vs Gravado)
+    let calcSubExento = 0;
+    let calcSubGravado = 0;
+    let calcISV = 0;
+
+    if (Array.isArray(items) && items.length > 0) {
+      items.forEach(it => {
+        const m = parseFloat(it.monto || 0);
+        const tipoTrib = String(it.tipoTributario || "Exento").toLowerCase();
+        const tISV = parseFloat(it.tasaISV !== undefined ? it.tasaISV : 0.15);
+
+        if (tipoTrib === "gravado") {
+          calcSubGravado += m;
+          calcISV += (m * tISV);
+        } else {
+          calcSubExento += m;
+        }
+      });
+    } else {
+      // Si no vienen items estructurados, tomar valores directos
+      calcSubExento = parseFloat(inputSubExento || (inputISV ? 0 : (subtotal || inputTotal || 0)));
+      calcSubGravado = parseFloat(inputSubGravado || (inputISV ? (subtotal || 0) : 0));
+      calcISV = parseFloat(inputISV || 0);
+    }
+
+    const calcSubtotal = calcSubExento + calcSubGravado;
+    const calcTotal = Math.round((calcSubtotal + calcISV) * 100) / 100;
+
+    // Persistencia inmutable en FacturasFiscales
+    const factSheet = getOrCreateSheet(ss, "FacturasFiscales");
+    const facturaId = "FCT-" + now.getTime();
+
+    factSheet.appendRow([
+      facturaId,
+      now,
+      targetCAI,
+      targetRangoInicial || "",
+      targetRangoFinal || "",
+      targetNumeroFactura,
+      userId || "CLIENTE-VARIO",
+      clienteNombre,
+      cleanRTN,
+      concepto || (Array.isArray(items) ? items.map(i => i.descripcion).join(", ") : "Servicios Educativos"),
+      calcSubtotal,
+      calcISV,
+      calcTotal,
+      "Emitida",
+      targetFechaLimite || "",
+      observaciones || "",
+      calcSubExento,
+      calcSubGravado,
+      reciboCajaId || "",
+      JSON.stringify(items || [])
+    ]);
+
+    // Actualizar último correlativo en AutorizacionesCAI
+    if (caiRowIndex !== -1 && caiSheet) {
+      caiSheet.getRange(caiRowIndex + 1, 4).setValue(numCorrelativo);
+    }
+
+    logStructuredEvent("ACCOUNTING", "createFiscalInvoice", "INFO", "FISCAL_INVOICE_CREATED", "Factura fiscal " + targetNumeroFactura + " emitida para " + clienteNombre, { facturaId, targetNumeroFactura, targetCAI, calcTotal }, payload && payload.authRole);
+
+    return {
+      status: "success",
+      facturaId: facturaId,
+      numeroFactura: targetNumeroFactura,
+      cai: targetCAI,
+      clienteNombre: clienteNombre,
+      clienteRTN: cleanRTN,
+      subtotalExento: calcSubExento,
+      subtotalGravado: calcSubGravado,
+      subtotal: calcSubtotal,
+      isv15: calcISV,
+      total: calcTotal,
+      fechaLimiteEmision: targetFechaLimite || "",
+      reciboCajaId: reciboCajaId || null,
+      message: "Factura fiscal emitida exitosamente conforme a normativa SAR con desglose tributario."
+    };
+  } finally {
+    if (hasLock) {
+      lock.releaseLock();
+    }
+  }
 }
 
 function getFiscalInvoices(payload) {
