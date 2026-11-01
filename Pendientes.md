@@ -15056,3 +15056,237 @@
 - **Estado:** [ ] Pendiente
 
 ---
+
+## FASE 39: DIGITALIZACIÓN ASISTIDA Y TRANSICIÓN DESDE ARCHIVOS TRADICIONALES
+
+---
+
+### [F39-Task01] [P0] Catálogo central de inventario documental y clasificación de archivos legados
+- **Prioridad:** P0 (Bloqueante / Esencial)
+- **Orden de Ejecución:** 1 (Inventario inicial y clasificación documental institucional)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`registerLegacyDocumentInventory`, `getLegacyDocumentInventory`)
+  - `backend/user-service/Code.gs`
+  - Hoja de Cálculo: `InventarioDocumentalLegado`
+- **Subcapacidades Relacionadas:** 3.1, 3.9, 3.12.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_39_DIGITALIZACION_TRANSICION.md` / Sección C (3.1), Matriz CAR-F39-01 y Especificación Técnica ChatGPT/Jules.
+- **Problema Detectado y Riesgos:**
+  No existe una estructura central que identifique y catalogue los documentos tradicionales (físicos o digitales dispersos) utilizados por cada departamento antes de iniciar su digitalización. Sin un inventario institucional, la migración se realiza de forma ciega y desordenada, arriesgando la pérdida de actas históricas, omisión de expedientes antiguos y duplicaciones documentales.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Estructura persistente del inventario de legados:*
+     - Auto-crear la hoja `InventarioDocumentalLegado` (`DocumentoId`, `DepartamentoPropietario`, `AreaResponsable`, `NombreArchivoOriginal`, `UbicacionFisicaODigital`, `FormatoOriginal`, `CategoriaDocumental`, `Finalidad`, `TamanoBytes`, `FechaDocumento`, `EstadoDigitalizacion`, `ExpedienteRelacionadoId`, `ResponsableInventario`, `FechaRegistro`).
+     - Clasificación documental obligatoria en 3 categorías:
+       * *Registros de datos:* Archivos tabulares que contienen información a transformar en registros (listados, notas, matrículas, nóminas).
+       * *Plantillas:* Formatos físicos/digitales reutilizados para emitir nuevos documentos (solicitudes, constancias, actas).
+       * *Documentos históricos:* Documentación cerrada de periodos anteriores a conservar como evidencia (actas de examen antiguas, expedientes archivados).
+  2. *Gestión de estados y filtros:*
+     - Estados admitidos: `Inventariado`, `EnProceso`, `Validado`, `Convertido`, `Omitido`, `Archivado`.
+     - Permitir consultar el inventario por departamento, formato, categoría y estado de digitalización.
+- **Criterios de Aceptación:**
+  - [ ] El personal puede registrar y catalogar documentos legados asignando departamento, categoría y formato.
+  - [ ] El inventario distingue con exactitud registros de datos, plantillas y documentos históricos.
+  - [ ] Se detectan e impiden registros duplicados del mismo archivo o documento físico en el catálogo.
+  - [ ] Toda modificación en la clasificación queda registrada con fecha y usuario responsable.
+- **Dependencias:** Infraestructura base de persistencia en Sheets.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F39-Task02] [P0] Aseguramiento criptográfico SHA-256 y detección automática de duplicados
+- **Prioridad:** P0 (Bloqueante / Esencial)
+- **Orden de Ejecución:** 2 (Integridad de archivos y deduplicación en almacenamiento)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`uploadStudentDocument`, `verifyDocumentIntegritySha256`)
+  - `backend/accounting-service/Code.gs`
+  - Hoja de Cálculo: `DocumentosEstudiantes`, `InventarioDocumentalLegado`
+- **Subcapacidades Relacionadas:** 3.4, 3.10.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_39_DIGITALIZACION_TRANSICION.md` / Sección C (3.4, 3.10) y Matriz CAR-F39-02, CAR-F39-04.
+- **Problema Detectado y Riesgos:**
+  La carga de documentos y expedientes digitalizados no computa el hash criptográfico del contenido binario. Si se sube el mismo documento escaneado con nombres diferentes (ej. `Partida_Juan.pdf` y `Copia_Partida.pdf`), el sistema lo guarda como dos documentos distintos, saturando el almacenamiento de Google Drive y creando confusión en los expedientes oficiales.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Cálculo y persistencia de hash SHA-256:*
+     - Calcular obligatoriamente el hash SHA-256 del contenido binario de cada archivo cargado antes de almacenarlo en Google Drive.
+     - Almacenar el hash en columna dedicada `HashSHA256` en `DocumentosEstudiantes` y `InventarioDocumentalLegado`.
+  2. *Detección de duplicados y coincidencias:*
+     - *Duplicados exactos:* Si el hash SHA-256 ya existe en el repositorio institucional, alertar al usuario, mostrar el documento original registrado y evitar la duplicación física del archivo en Drive, vinculando la referencia existente.
+     - *Similitudes documentales:* Si dos documentos comparten metadatos clave (mismo estudiante y tipo documental) pero difieren en hash, clasificar como nueva versión (`v2`) o marcar como `Posible Coincidencia Pendiente de Revisión`.
+  3. *Parametrización configurable en plataforma:*
+     - Parámetro en `ConfiguracionInstitucional`: `POLITICA_DUPLICADOS_DOCUMENTALES`: Valores `RECHAZAR_DUPLICADO_EXACTO` (por defecto) vs. `CREAR_ENLACE_REFERENCIA_SIN_DUPLICAR_ARCHIVO`.
+- **Criterios de Aceptación:**
+  - [ ] Dos archivos con contenido idéntico y nombres distintos son detectados como duplicados exactos mediante su hash.
+  - [ ] Se impide la duplicación física de archivos idénticos en Google Drive.
+  - [ ] La modificación posterior de un archivo en Drive es detectada de inmediato al recalcular el hash.
+  - [ ] Toda decisión de conservar versiones similares queda registrada con trazabilidad de usuario y fecha.
+- **Dependencias:** F39-Task01.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F39-Task03] [P0] Custodia inmutable de archivos originales en Drive y trazabilidad relacional
+- **Prioridad:** P0 (Bloqueante / Esencial)
+- **Orden de Ejecución:** 3 (Custodia de evidencia original y trazabilidad forense)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`uploadStudentDocument`, `restoreDocumentVersion`)
+  - `backend/accounting-service/Code.gs`
+  - Google Drive institucional (`Drive/DocumentosOriginales/`)
+- **Subcapacidades Relacionadas:** 3.10, 3.12.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_39_DIGITALIZACION_TRANSICION.md` / Sección C (3.10) y Matriz CAR-F39-10.
+- **Problema Detectado y Riesgos:**
+  Al convertir documentos escaneados o tablas Excel en registros digitales, existe el riesgo de que el archivo original de origen sea sobrescrito, movido o eliminado accidentalmente. Sin la custodia inmutable del archivo fuente, la institución queda desprovista de evidencia física o digital comprobable ante auditorías educativas o disputas legales.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Estructura de custodia protegida en Google Drive:*
+     - Almacenar los archivos originales de digitalización en una carpeta protegida y restringida (`Drive/DocumentosOriginales/[Departamento]/[AnoLectivo]/`).
+     - Establecer permisos de solo lectura para los usuarios operativos, prohibiendo la eliminación directa o sustitución del archivo original.
+     - Asociar a cada registro generado en la plataforma la referencia al archivo original (`origenArchivoId` y `origenArchivoUrl`).
+  2. *Inmutabilidad y versionado:*
+     - Ninguna conversión, extracción de datos o aprobación digital puede modificar el contenido del archivo original.
+     - Si se requiere una corrección, se genera una nueva versión derivada sin alterar el archivo primario.
+- **Criterios de Aceptación:**
+  - [ ] Todo documento digitalizado conserva su binario original inalterado en Google Drive.
+  - [ ] Los registros estructurados generados mantienen un enlace verificable a su archivo fuente original.
+  - [ ] Los usuarios sin permisos de administración no pueden eliminar ni sobrescribir archivos originales custodiados.
+  - [ ] Eliminar una relación operativa no elimina el archivo original de la carpeta de custodia.
+- **Dependencias:** F39-Task02.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F39-Task04] [P0] Validación multinivel de integridad documental y detección de PDFs escaneados
+- **Prioridad:** P0 (Bloqueante / Esencial)
+- **Orden de Ejecución:** 4 (Validación de tipos de archivo y calidad estructural)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`validateEvidenceFileAndPermissions`)
+  - `js/teacher.js`, `teacher-dashboard.html`
+- **Subcapacidades Relacionadas:** 3.3.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_39_DIGITALIZACION_TRANSICION.md` / Sección C (3.3) y Matriz CAR-F39-03.
+- **Problema Detectado y Riesgos:**
+  El sistema valida únicamente la extensión declarada del archivo en el frontend. Si se sube un archivo corrupto, un ejecutable renombrado a `.pdf` o un PDF escaneado con imágenes borrosas sin texto seleccionable, el sistema falla durante el procesamiento posterior o almacena documentos completamente ilegibles.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Validación en 3 niveles:*
+     - *Nivel Archivo:* Comprobar cabecera binaria (Magic Bytes) para verificar correspondencia real con extensiones PDF, XLSX, DOCX o PNG/JPG. Rechazar archivos vacíos (0 bytes), dañados o protegidos con contraseña.
+     - *Nivel Estructural:* En archivos PDF, detectar automáticamente si contienen texto vectorial seleccionable o si corresponden a imágenes escaneadas puras (bitmap).
+     - *Nivel Semántico:* Validar que las fechas, nombres y claves extraídas cumplan con los catálogos y formatos institucionales permitidos.
+  2. *Etiquetado automático de documentos escaneados:*
+     - Si un PDF es detectado como escaneado puro, marcarlo en metadatos como `Requiere_OCR` o `Documento_Escaneado_Raster`, orientando al operador sobre la necesidad de transcripción o verificación asistida.
+- **Criterios de Aceptación:**
+  - [ ] Archivos con extensión manipulada (ej. ejecutable renombrado a .pdf) son rechazados por validación de firma binaria.
+  - [ ] Archivos dañados, vacíos o protegidos con contraseña son identificados y rechazados con mensaje descriptivo.
+  - [ ] El sistema distingue automáticamente entre PDFs de texto vectorial y PDFs escaneados puros.
+- **Dependencias:** F39-Task02.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F39-Task05] [P1] Bandeja de resolución y vinculación asistida de documentos históricos
+- **Prioridad:** P1 (Alta / Importante)
+- **Orden de Ejecución:** 5 (Reconciliación de expedientes históricos con identidades actuales)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`linkHistoricalDocumentToStudent`, `getUnassignedHistoricalDocuments`)
+  - `js/secretary.js`
+  - Hoja de Cálculo: `DocumentosHistoricosPendientes`
+- **Subcapacidades Relacionadas:** 3.5, 3.4.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_39_DIGITALIZACION_TRANSICION.md` / Sección C (3.5) y Matriz CAR-F39-05.
+- **Problema Detectado y Riesgos:**
+  Documentos históricos de periodos anteriores (actas viejas, constancias de egresados) suelen carecer de un identificador de estudiante actual o presentan variaciones en los apellidos. Al no existir una bandeja de resolución, estos documentos quedan huérfanos o son vinculados erróneamente a alumnos homónimos.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Bandeja de documentos históricos no asignados:*
+     - Auto-crear la hoja `DocumentosHistoricosPendientes` para almacenar documentos legados que no pudieron vincularse automáticamente con un estudiante o expediente vigente.
+     - Proveer interfaz en el módulo de Secretaría que muestre la vista previa del documento escaneado y sugiera posibles coincidencias de alumnos basadas en coincidencia aproximada de nombre y fecha de nacimiento.
+  2. *Confirmación humana auditada:*
+     - Prohibir terminantemente la asignación automática basada únicamente en similitud de nombres.
+     - Exigir que un funcionario de Secretaría o Archivo confirme la asociación manualmente, registrando en bitácora el usuario responsable, fecha y fundamento de la vinculación.
+- **Criterios de Aceptación:**
+  - [ ] Los documentos históricos sin identificación clara quedan en la bandeja de pendientes sin descartarse.
+  - [ ] La interfaz sugiere posibles estudiantes candidatos sin forzar asociaciones automáticas dudosas.
+  - [ ] La confirmación manual asocia el documento al expediente institucional y registra la auditoría.
+- **Dependencias:** F39-Task01, F39-Task03.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F39-Task06] [P1] Asistente de conversión de documentos tradicionales a formularios digitales
+- **Prioridad:** P1 (Alta / Importante)
+- **Orden de Ejecución:** 6 (Digitalización de trámites y formularios institucionales)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`proposeDigitalFormFromDocument`, `saveInstitutionalForm`)
+  - `teacher-dashboard.html`, `js/teacher.js`
+  - Hoja de Cálculo: `FormulariosInstitucionales`
+- **Subcapacidades Relacionadas:** 3.7, 3.8.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_39_DIGITALIZACION_TRANSICION.md` / Sección C (3.7, 3.8) y Matriz CAR-F39-06, CAR-F39-08.
+- **Problema Detectado y Riesgos:**
+  Actualmente, crear un formulario digital en `FormulariosInstitucionales` exige configurar manualmente estructuras complejas en JSON desde cero. No existe una herramienta que asista al personal en convertir una ficha física o formato impreso en un formulario web interactivo.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Asistente de propuesta de campos:*
+     - Permitir al usuario subir una plantilla base (PDF/imagen) y sugerir un conjunto de campos digitales (Texto, Número, Fecha, Casilla, Selección) a partir de etiquetas detectadas.
+     - Permitir al administrador editar, agregar, reordenar o eliminar campos propuestos, asignando tipos de datos, obligatoriedad y reglas de validación.
+  2. *Flujo de aprobación y publicación controlada:*
+     - Guardar la propuesta inicialmente en estado `Borrador`.
+     - Exigir previsualización interactiva y aprobación formal de Dirección antes de publicar el formulario digital como trámite activo.
+     - Conservar la relación entre el formulario digital publicado y la plantilla documental original que le dio origen.
+- **Criterios de Aceptación:**
+  - [ ] El asistente permite estructurar un formulario digital a partir de un documento tradicional de referencia.
+  - [ ] El usuario puede personalizar tipos de campo, etiquetas, validaciones y obligatoriedad.
+  - [ ] Un formulario en borrador no puede ser accedido por el público hasta ser aprobado oficialmente.
+  - [ ] Se conserva la trazabilidad entre el formulario publicado y su documento base de origen.
+- **Dependencias:** F39-Task04, motor de formularios de `user-service`.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F39-Task07] [P1] Tablero directivo de control de avance de la digitalización por departamento
+- **Prioridad:** P1 (Alta / Importante)
+- **Orden de Ejecución:** 7 (Supervisión institucional y gobernanza del proceso de transición)
+- **Componentes Afectados:**
+  - `backend/accounting-service/Code.gs` (`getDigitizationProgressReport`)
+  - `dashboard-direccion.html`, `js/config.js`
+  - Hoja de Cálculo: `InventarioDocumentalLegado`, `RegistroEventos`
+- **Subcapacidades Relacionadas:** 3.11, 3.12.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_39_DIGITALIZACION_TRANSICION.md` / Sección C (3.11) y Matriz CAR-F39-11.
+- **Problema Detectado y Riesgos:**
+  La Dirección institucional no dispone de indicadores visuales consolidados para medir el avance del plan de digitalización y transición. No es posible saber qué porcentaje de documentos históricos han sido migrados en Secretaría frente a Contabilidad, qué departamentos están rezagados ni cuántos errores permanecen sin resolver.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Indicadores consolidados en tiempo real:*
+     - Implementar `getDigitizationProgressReport(payload)` que compute sobre `InventarioDocumentalLegado`:
+       * Total de documentos inventariados vs. digitalizados por departamento.
+       * Porcentaje global de avance del plan de digitalización institucional.
+       * Documentos pendientes de clasificación o vinculación a expedientes.
+       * Duplicados detectados y resueltos.
+       * Inconsistencias o errores pendientes de resolución manual.
+  2. *Filtros y reportes ejecutivos:*
+     - Proveer filtros por departamento (`Secretaría`, `Contabilidad`, `Recursos Humanos`, `Dirección`), período y responsable.
+     - Permitir exportar el informe de avance en formato CSV para rendición de cuentas ante autoridades educativas.
+- **Criterios de Aceptación:**
+  - [ ] El panel directivo muestra en tiempo real las métricas de avance de digitalización por departamento.
+  - [ ] Los totales de documentos migrados y pendientes coinciden con los registros reales de la base de datos.
+  - [ ] La Dirección puede identificar cuellos de botella y departamentos con rezago en la transición.
+- **Dependencias:** F39-Task01, F39-Task05.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F39-Task08] [P1] Ingesta por lotes comprimidos (ZIP) con asignación automática por identificador
+- **Prioridad:** P1 (Alta / Importante)
+- **Orden de Ejecución:** 8 (Eficiencia operativa en digitalizaciones masivas)
+- **Componentes Afectados:**
+  - `backend/academic-service/Code.gs` (`processCompressedDocumentBatch`)
+  - `js/teacher.js`, `js/secretary.js`
+  - Google Drive institucional
+- **Subcapacidades Relacionadas:** 3.2, 4.2.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_39_DIGITALIZACION_TRANSICION.md` / Sección 4 (4.2) y Matriz CAR-F39-02.
+- **Problema Detectado y Riesgos:**
+  Digitalizar cientos de expedientes cargando archivos uno por uno mediante ventanas individuales consume días de trabajo manual. No existe un mecanismo para subir un archivo comprimido (.zip) con decenas de partidas de nacimiento o fotos escaneadas que el sistema pueda extraer y asignar automáticamente según el nombre del archivo.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Descompresión y asignación por convención de nombres:*
+     - Permitir al personal administrativo subir un paquete ZIP conteniendo múltiples documentos escaneados.
+     - Descomprimir y parsear los nombres de archivo según patrones estandarizados (ej. `[Identidad]_[TipoDocumento].pdf` o `[CodigoEstudiante]_[TipoDocumento].jpg`).
+     - Asociar automáticamente cada documento extraído al expediente correspondiente, calculando su hash SHA-256 e indexándolo en `DocumentosEstudiantes`.
+  2. *Resumen y manejo de archivos no asignados:*
+     - Generar un reporte del lote indicando: archivos procesados exitosamente, archivos con identificador no encontrado (derivados a la bandeja de pendientes) y archivos dañados o rechazados.
+- **Criterios de Aceptación:**
+  - [ ] Subir un archivo ZIP procesa y asocia automáticamente los documentos a los estudiantes correspondientes.
+  - [ ] Cada archivo extraído se almacena individualmente en Google Drive con su hash SHA-256 registrado.
+  - [ ] Los archivos cuyos identificadores no coincidan son derivados a la bandeja de revisión sin perderse.
+- **Dependencias:** F39-Task02, F39-Task03, F39-Task05.
+- **Estado:** [ ] Pendiente
+
+---
