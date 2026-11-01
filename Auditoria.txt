@@ -499,3 +499,19 @@ RESULTADO DE EVALUACIÓN:
 - Cobertura cuantitativa calculada: Cobertura de Inspección 100.0% (26/26), Cobertura de Verificación 84.62% (22/26).
 - Dictamen de certificación: Requiere Mejoras / No Aprobada para Producción Crítica hasta subsanar brechas P0.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 41: PRUEBAS INTEGRALES Y ACEPTACIÓN DE LA DIGITALIZACIÓN
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, backend/academic-service/Code.gs, backend/user-service/Code.gs, js/teacher.js, teacher-dashboard.html
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral, técnica y documental de la Fase 41 correspondiente a Pruebas integrales y aceptación de la digitalización.
+- Se inspeccionaron las 10 subcapacidades maestras (F41-01 a F41-10) y se evaluó la matriz completa de 12 pruebas integrales de extremo a extremo (E2E-41-01 a E2E-41-12).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md.
+- Se constató una excelente protección atómica contra colisiones de identificadores concurrentes mediante LockService (generateInstitutionalId en SecuenciasIDs), importación con mapeo de columnas (validateImportPreview) y emisión de documentos con CUV.
+- Se detectaron brechas críticas P0: ausencia de un motor de reversión (rollback) seguro para importaciones masivas defectuosas, falta de reanudación idempotente por filas (reintentar un lote duplica registros previos), omisión de tracking de estados intermedios de firma multifirmante (entregado, visto, rechazado) y ausencia de servicio OCR operativo para documentos escaneados.
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 8 tareas técnicas ([F41-Task01] a [F41-Task08]) organizadas en 2 bloques por prioridad (P0: Tasks 01 a 04; P1: Tasks 05 a 08) y orden secuencial de ejecución (1 a 8), preservando intactas todas las fases preexistentes (Fases 10 a 40).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Cobertura cuantitativa calculada: Cobertura de Inspección 100.0% (10/10), Cobertura de Ejecución 90.0% (9/10), Cobertura de Verificación 80.0% (8/10).
+- Dictamen de certificación: Requiere Mejoras / No Aprobada para Producción Crítica hasta implementar la reversión segura y reanudación idempotente.
+===============================================================================
