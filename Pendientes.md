@@ -14702,3 +14702,215 @@
 - **Estado:** [ ] Pendiente
 
 ---
+
+## FASE 38: AYUDA CONTEXTUAL, METADATOS Y APRENDIZAJE DE LA INTERFAZ
+
+---
+
+### [F38-Task01] [P0] Componente universal de tooltip flotante y adaptativo (WCAG 2.2 AA)
+- **Prioridad:** P0 (Bloqueante / Esencial)
+- **Orden de Ejecución:** 1 (Infraestructura de presentación contextual accesible)
+- **Componentes Afectados:**
+  - `js/ui-common.js` (`renderAccessibleTooltip`, `dismissTooltip`)
+  - Dashboards: `teacher-dashboard.html`, `student-dashboard.html`, `dashboard-direccion.html`, `dashboard-contabilidad.html`
+- **Subcapacidades Relacionadas:** F38-01, F38-02, F38-03.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_38_AYUDA_CONTEXTUAL_METADATOS_APRENDIZAJE.md` / Sección C (F38-01, F38-02, F38-03) y Matriz CAR-F38-01, CAR-F38-02, CAR-F38-03.
+- **Problema Detectado y Riesgos:**
+  La plataforma depende de atributos nativos HTML `title="..."` dispersos. Estos tooltips son inaccesibles mediante navegación con teclado (`Tab`), invisibles en dispositivos móviles y pantallas táctiles, carecen de enlace semántico para lectores de pantalla (`aria-describedby`) y se cortan fuera de los bordes del viewport en resoluciones reducidas.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Renderizador universal de ventanas flotantes:*
+     - Implementar en `js/ui-common.js` un gestor de tooltips adaptativo que calcule en tiempo real las coordenadas del elemento objetivo respecto al viewport, previniendo desbordamientos horizontales o solapamientos con modales.
+     - Posicionamiento inteligente: preferencia superior/inferior con giro automático a lateral si colisiona con los bordes de la pantalla.
+  2. *Accesibilidad universal WCAG 2.2 AA:*
+     - Apertura por foco de teclado (`focusin`) y hover de ratón (`mouseenter`).
+     - Cierre inmediato mediante la tecla `Escape` o pérdida de foco (`focusout`) sin desviar el foco del usuario.
+     - Vinculación semántica automática inyectando `aria-describedby="tooltip-[id]"` en el elemento activador y `role="tooltip"` en el contenedor flotante para lectores de pantalla.
+     - En dispositivos táctiles (móviles/tablets), proveer icono interactivo discreto (`fa-circle-info`) que abra y cierre el tooltip mediante pulsación explícita sin activar la acción principal del control.
+  3. *Parametrización configurable en plataforma:*
+     - Parámetro en `ConfiguracionInstitucional`: `TIEMPO_RETARDO_TOOLTIP_MS` (por defecto 300 ms) y `MODO_TOOLTIP_MOVIL` (Valores: `ICONO_INFO_TACTIL` vs. `PULSACION_LARGA`).
+- **Criterios de Aceptación:**
+  - [ ] Un usuario puede alcanzar un campo mediante `Tab` y leer su ayuda contextual sin tocar el ratón.
+  - [ ] Presionar `Escape` cierra la burbuja de ayuda conservando el foco en el control activo.
+  - [ ] El tooltip nunca se desborda fuera de los límites de la pantalla ni genera scrollbars accidentales.
+  - [ ] En pantallas táctiles, el usuario puede consultar la ayuda sin ejecutar acciones ni enviar formularios.
+  - [ ] Las tecnologías de asistencia anuncian la descripción vinculada mediante `aria-describedby`.
+- **Dependencias:** Sistema base de componentes UI en `js/ui-common.js`.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F38-Task02] [P0] Catálogo centralizado de metadatos de campos y descripciones de interfaz
+- **Prioridad:** P0 (Bloqueante / Esencial)
+- **Orden de Ejecución:** 2 (Estructura central de contenidos y claves estables)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`getUIMetadataCatalog`, `saveUIMetadataItem`)
+  - `js/ui-common.js`, `js/config.js`
+  - Hoja de Cálculo: `MetadatosInterfaz`
+- **Subcapacidades Relacionadas:** F38-04, F38-05, F38-06, F38-07.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_38_AYUDA_CONTEXTUAL_METADATOS_APRENDIZAJE.md` / Sección C (F38-04, F38-05, F38-06, F38-07) y Matriz CAR-F38-04, CAR-F38-05, CAR-F38-07.
+- **Problema Detectado y Riesgos:**
+  No existe un repositorio central de metadatos de interfaz. Los textos explicativos y placeholders están cableados directamente en el HTML y código JavaScript, provocando duplicación de descripciones, instrucciones obsoletas y contradicciones en formatos o límites entre distintos formularios de la plataforma.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Estructura persistente de metadatos:*
+     - Auto-crear la hoja `MetadatosInterfaz` (`ClaveMetadato`, `Modulo`, `FormularioId`, `CampoControlId`, `EtiquetaVisible`, `DescripcionBreve`, `ExplicacionAmpliada`, `EjemploValido`, `FormatoEsperado`, `EsObligatorio`, `LimitesReglas`, `ConsecuenciasAccion`, `VersionContenido`, `EstadoActivo`).
+     - Definir claves estables independientes del texto traducido o de la posición en pantalla (ej. `MATRICULA.ESTUDIANTE_ID`, `PAGOS.MONTO_OPERACION`, `CALIFICACIONES.NOTA_RECUPERACION`).
+  2. *Caché en cliente y resolución desacoplada:*
+     - En `js/ui-common.js`, cargar los metadatos de forma agrupada por módulo o formulario y almacenarlos en caché de sesión para evitar consultas RPC por cada celda o input.
+     - Si una clave no existe, proveer un comportamiento seguro sin romper la pantalla ni mostrar identificadores técnicos crudos.
+     - Permitir reutilizar la misma clave en múltiples formularios institucionales (ej. campo DNI/Identidad).
+  3. *Parametrización configurable en plataforma:*
+     - Parámetro en `ConfiguracionInstitucional`: `IDIOMA_PREDETERMINADO_AYUDA` (`ES_HN`) y `MODO_CACHE_METADATOS` (`SESSION_STORAGE` vs. `MEMORIA_VOLATIL`).
+- **Criterios de Aceptación:**
+  - [ ] Los campos y controles resuelven sus descripciones mediante claves estables centralizadas.
+  - [ ] Modificar una descripción en `MetadatosInterfaz` se refleja en todos los formularios vinculados.
+  - [ ] Renombrar una etiqueta visible en HTML no rompe la asociación de ayuda del campo.
+  - [ ] Claves inexistentes se manejan silenciosamente con registro en log sin interrumpir la interfaz.
+  - [ ] Las instrucciones de formato y obligatoriedad coinciden con las validaciones reales del backend.
+- **Dependencias:** F38-Task01.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F38-Task03] [P0] Persistencia en servidor de preferencias y estado de aprendizaje por usuario
+- **Prioridad:** P0 (Bloqueante / Esencial)
+- **Orden de Ejecución:** 3 (Sincronización multi-dispositivo y aislamiento de usuario)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`getUserHelpPreferences`, `saveUserHelpPreference`, `resetUserHelpPreferences`)
+  - `js/ui-common.js`
+  - Hoja de Cálculo: `PreferenciasAyudaUsuario`
+- **Subcapacidades Relacionadas:** F38-08, F38-09, F38-10.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_38_AYUDA_CONTEXTUAL_METADATOS_APRENDIZAJE.md` / Sección C (F38-09) y Matriz CAR-F38-09.
+- **Problema Detectado y Riesgos:**
+  El progreso de las guías interactivas se almacena exclusivamente en el `localStorage` del navegador cliente (`guide_progress_`). Si el usuario cambia de computadora, ingresa desde un teléfono o limpia la caché, los tours se reinician indiscriminadamente, mientras que dos usuarios que compartan un mismo equipo heredan o sobreescriben indebidamente sus estados de aprendizaje.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Persistencia server-side por cuenta de usuario:*
+     - Auto-crear la hoja `PreferenciasAyudaUsuario` (`UserId`, `TourOConsejoId`, `EstadoVisualizacion`, `PasoAlcanzado`, `FechaDescarte`, `FechaActualizacion`, `VersionGuiaVigente`).
+     - Estados admitidos: `Pendiente`, `EnProgreso`, `Descartado`, `Completado`.
+     - Vincular estrictamente cada registro al `_verifiedUserId` autenticado en la sesión activa.
+  2. *Sincronización resiliente con soporte offline:*
+     - Al cargar el dashboard, sincronizar el estado persistente del servidor y mantener una copia local en `localStorage` para navegación offline o caídas temporales de red.
+     - Al descartar o completar una guía, actualizar el servidor de forma asíncrona; si la red falla, encolar la sincronización para el siguiente evento sin bloquear al usuario.
+     - Garantizar aislamiento estricto: cerrar sesión y abrir otra cuenta en el mismo navegador restablece el contexto de ayuda al usuario activo.
+- **Criterios de Aceptación:**
+  - [ ] Descartar un consejo o tour en un dispositivo se refleja de inmediato en otro dispositivo al iniciar sesión con la misma cuenta.
+  - [ ] Limpiar los datos locales o caché del navegador no reinicia los tours ya completados en el servidor.
+  - [ ] Dos cuentas distintas que inicien sesión en el mismo equipo mantienen estados de ayuda totalmente independientes.
+  - [ ] Fallos temporales de conexión no provocan errores visibles ni bloquean el flujo de trabajo.
+- **Dependencias:** Sistema de autenticación de `user-service`.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F38-Task04] [P0] Instrucciones permanentes y advertencias de riesgo en formularios críticos
+- **Prioridad:** P0 (Bloqueante / Esencial)
+- **Orden de Ejecución:** 4 (Instrucciones visibles y confirmaciones independientes)
+- **Componentes Afectados:**
+  - Formularios de matrícula, cobros, calificaciones y trámites en dashboards
+  - `js/ui-common.js`
+- **Subcapacidades Relacionadas:** F38-04, F38-11, F38-13.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_38_AYUDA_CONTEXTUAL_METADATOS_APRENDIZAJE.md` / Sección C (F38-04, F38-13) y Matriz CAR-F38-04, CAR-F38-13.
+- **Problema Detectado y Riesgos:**
+  Requisitos indispensables de formato (ej. DNI hondureño de 13 dígitos sin guiones, importes monetarios o tipos de archivo) se ocultan dentro de modales de soporte o atributos title, provocando que los usuarios envíen datos defectuosos y sufran frustración al recibir errores de validación tardíos.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Instrucciones visibles permanentes junto al campo:*
+     - Incorporar micro-instrucciones permanentes (`help-text` visible bajo el control) para campos complejos o con restricciones legales/institucionales.
+     - Mostrar ejemplos reales aceptados por el backend (ej. `Formato: 0801-1990-12345 o 13 dígitos continuos`).
+     - Diferenciar visualmente campos obligatorios (asterisco rojo y atributo `required`) de opcionales.
+  2. *Independencia absoluta de advertencias críticas:*
+     - Las confirmaciones de operaciones sensibles (eliminar horarios, anular pagos, cerrar actas de calificaciones) deben presentarse mediante diálogos modales obligatorios que jamás puedan ser suprimidos por haber descartado tutoriales o guías previas.
+     - Explicar las consecuencias exactas de la acción antes de ejecutarla (ej. si la acción es irreversible o afecta reportes oficiales).
+- **Criterios de Aceptación:**
+  - [ ] Las restricciones y formatos críticos son visibles permanentemente sin depender de abrir burbujas flotantes.
+  - [ ] Descartar guías interactivas no suprime las advertencias o confirmaciones obligatorias de seguridad.
+  - [ ] Los ejemplos de formato mostrados son validados exitosamente por el backend sin contradicciones.
+  - [ ] Una operación crítica cancelada por el usuario no altera ningún dato en la plataforma.
+- **Dependencias:** F38-Task02.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F38-Task05] [P1] Motor de orientación de primera visita y disparador automático no invasivo
+- **Prioridad:** P1 (Alta / Importante)
+- **Orden de Ejecución:** 5 (Onboarding contextual y adopción de usuarios)
+- **Componentes Afectados:**
+  - `js/ui-common.js` (`checkAndTriggerOnboardingGuide`)
+  - Dashboards: `teacher-dashboard.html`, `student-dashboard.html`, `dashboard-direccion.html`
+- **Subcapacidades Relacionadas:** F38-08, F38-11.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_38_AYUDA_CONTEXTUAL_METADATOS_APRENDIZAJE.md` / Sección C (F38-08, F38-11) y Matriz CAR-F38-08, CAR-F38-11.
+- **Problema Detectado y Riesgos:**
+  Las guías interactivas actuales solo se inician si el usuario abre manualmente el modal de soporte y presiona "Iniciar Guía Paso a Paso". Nuevos docentes o estudiantes que ingresan por primera vez no son orientados de forma proactiva, derivando en consultas repetitivas al personal de soporte técnico.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Disparador automático no invasivo de primera visita:*
+     - Al cargar un módulo por primera vez, consultar el estado de la guía en `PreferenciasAyudaUsuario`; si está en estado `Pendiente`, desplegar el tour paso a paso de forma discreta y no modal en la esquina inferior.
+     - Permitir omitir o cerrar el tour con un solo clic en cualquier momento sin bloquear la pantalla ni impedir la navegación del usuario.
+     - Al cerrar o finalizar, actualizar de inmediato el estado en el servidor para evitar que reaparezca en visitas rutinarias posteriores.
+  2. *Segmentación de contenidos por rol:*
+     - El contenido del tour debe adaptarse al rol verificado del usuario (`Estudiante`, `Profesor`, `Secretaría`, `Contador`), mostrando únicamente las funciones autorizadas para su perfil.
+- **Criterios de Aceptación:**
+  - [ ] Un usuario nuevo recibe automáticamente la orientación al abrir el módulo correspondiente por primera vez.
+  - [ ] El tour no bloquea la interacción con los campos ni botones del panel.
+  - [ ] Tras cerrar u omitir el tour, este no vuelve a mostrarse en los siguientes inicios de sesión.
+  - [ ] Las instrucciones presentadas corresponden estrictamente a las herramientas autorizadas para el rol activo.
+- **Dependencias:** F38-Task01, F38-Task03.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F38-Task06] [P1] Consola de restablecimiento y reconsulta de guías desde el perfil de usuario
+- **Prioridad:** P1 (Alta / Importante)
+- **Orden de Ejecución:** 6 (Control de preferencias y recuperación de consejos)
+- **Componentes Afectados:**
+  - `js/ui-common.js`, `js/config.js`
+  - Modal de opciones de usuario (`#modal-user-settings`)
+- **Subcapacidades Relacionadas:** F38-10.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_38_AYUDA_CONTEXTUAL_METADATOS_APRENDIZAJE.md` / Sección C (F38-10) y Matriz CAR-F38-10.
+- **Problema Detectado y Riesgos:**
+  Si un usuario omitió un tour de primera visita por prisa y posteriormente desea volver a consultarlo o reactivar las orientaciones para aprender una función compleja, no dispone de un botón para reiniciar las guías en su panel de configuración personal.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Panel de gestión de ayudas en perfil de usuario:*
+     - Incorporar en el modal de configuración de usuario una pestaña o sección "Ayuda y Aprendizaje".
+     - Listar las guías interactivas disponibles para su rol con su estado actual (`Pendiente`, `Completada`).
+     - Permitir iniciar cualquier guía bajo demanda con el botón "Volver a Consultar".
+  2. *Opciones de restablecimiento:*
+     - Proveer botón de "Restablecer consejos de esta sección" y "Restablecer todos los tutoriales".
+     - Exigir confirmación clara advirtiendo que solo se reactivarán las guías de ayuda sin alterar datos personales ni notas académicas.
+     - Actualizar atómicamente el estado en `PreferenciasAyudaUsuario` en el servidor.
+- **Criterios de Aceptación:**
+  - [ ] El usuario puede consultar la lista de tutoriales disponibles desde su menú de configuración.
+  - [ ] Reabrir un tutorial completado permite repasar los pasos sin errores de interfaz.
+  - [ ] Restablecer los tutoriales actualiza el servidor y vuelve a habilitar los disparadores de primera visita.
+  - [ ] El restablecimiento no altera ninguna configuración funcional ajena al sistema de ayuda.
+- **Dependencias:** F38-Task03, F38-Task05.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [F38-Task07] [P1] Ampliación de guías especializadas para módulos administrativos y financieros
+- **Prioridad:** P1 (Alta / Importante)
+- **Orden de Ejecución:** 7 (Cobertura de orientación en procesos complejos)
+- **Componentes Afectados:**
+  - `backend/user-service/Code.gs` (`getHelpGuidesCatalog`)
+  - `js/ui-common.js`
+  - Dashboards: `dashboard-contabilidad.html`, `dashboard-direccion.html`, `teacher-dashboard.html`
+- **Subcapacidades Relacionadas:** F38-12, F38-14.
+- **Origen del Hallazgo:** `AUDITORIA_FASE_38_AYUDA_CONTEXTUAL_METADATOS_APRENDIZAJE.md` / Sección C (F38-12) y Matriz CAR-F38-12.
+- **Problema Detectado y Riesgos:**
+  Las guías interactivas existentes se limitan a tareas de aula y diseñador de plantillas. Operaciones críticas y complejas como la conciliación bancaria asistida, el importador masivo de Excel/CSV o el cierre de período en el cuaderno de notas carecen de guías paso a paso, aumentando la probabilidad de errores contables y bloqueos operativos.
+- **Requerimientos Funcionales y Técnicos Convergentes:**
+  1. *Nuevas guías paso a paso interactivas:*
+     - Desarrollar guías guiadas para:
+       * `GUIDE-ACCOUNTING-RECONCILIATION`: Pasos para importar extracto bancario, coincidencia de referencias y resolución de diferencias.
+       * `GUIDE-EXCEL-IMPORTER`: Pasos para seleccionar archivo, correspondencia semántica de columnas, simulación previa y confirmación.
+       * `GUIDE-DOCUMENT-CUV`: Pasos para emisión oficial, estampado de código CUV y verificación pública.
+     - Explicar en cada paso: propósito, qué datos se modifican, si la acción es reversible y advertencias de seguridad antes de confirmar.
+  2. *Integración con el catálogo backend:*
+     - Registrar los nuevos tours en `getHelpGuidesCatalog` asociándolos a sus respectivos paneles y roles autorizados (`Contador`, `Secretaría`, `Director`).
+- **Criterios de Aceptación:**
+  - [ ] El personal financiero dispone de un tutorial guiado paso a paso para la conciliación bancaria.
+  - [ ] El importador de archivos cuenta con una guía explicativa para el mapeo semántico y la simulación.
+  - [ ] Cada guía avanzada explica el alcance de los cambios y si las operaciones son reversibles.
+  - [ ] Las guías solo son visibles para los roles que tengan permisos sobre dichos módulos.
+- **Dependencias:** F38-Task01, F38-Task02, F38-Task05.
+- **Estado:** [ ] Pendiente
+
+---

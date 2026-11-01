@@ -3686,3 +3686,18 @@ Archivos Modificados / Creados:
 
 3. Auditoria.txt
    - Inserción de la entrada formal de auditoría diagnóstica de la Fase 37 detallando la evaluación de enrutamiento central, CatalogoSpreadsheets, validación de permisos en servidor, exposición de campos en consultas cruzadas y prevención de escrituras cruzadas.
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-31
+TAREA: Auditoría Funcional, Técnica y Documental — Fase 38: Ayuda Contextual, Metadatos y Aprendizaje de la Interfaz
+-------------------------------------------------------------------------------
+
+Archivos Modificados / Creados:
+1. AUDITORIA_FASE_38_AYUDA_CONTEXTUAL_METADATOS_APRENDIZAJE.md
+   - Creación del informe exhaustivo de auditoría independiente de la Fase 38. Incluye identificación y alcance (A), estado actual e inventario técnico (B), evaluación detallada por subcapacidad F38-01 a F38-14 (C), matriz maestra de características CAR-F38-01 a CAR-F38-14 (D), resultados de la matriz de pruebas funcionales PT-F38-01 a PT-F38-25 (E), plan de resolución priorizado en 2 bloques (F), cobertura cuantitativa con fórmulas independientes (inspección, ejecución, verificación) y dictamen de certificación (G).
+
+2. Pendientes.md
+   - Incorporación, unificación y convergencia exhaustiva de las 7 tareas técnicas de la Fase 38 ([F38-Task01] a [F38-Task07]) organizadas estrictamente por prioridad (P0: Task01 a Task04; P1: Task05 a Task07) y orden secuencial de ejecución (1 a 7) al final del archivo, manteniendo íntegras las tareas anteriores de las Fases 10 a 37.
+
+3. Auditoria.txt
+   - Inserción de la entrada formal de auditoría diagnóstica de la Fase 38 detallando la inspección de guías interactivas, accesibilidad WCAG 2.2 AA en tooltips, persistencia en servidor de preferencias de usuario y catálogo central de metadatos de interfaz.
