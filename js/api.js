@@ -1,9 +1,9 @@
 /**
- * Helper unificado para realizar llamadas a los microservicios.
+ * [REQ-DOC-012] Helper unificado para realizar llamadas a los microservicios.
  * Utiliza la constante SERVICE_URLS definida en js/config.js.
  * Maneja correctamente los headers y la respuesta para evitar errores de CORS
- * con Google Apps Script.
- * @param {string} service - El nombre del servicio (ej. 'USER', 'TASK', 'EXAM').
+ * con Google Apps Script, propagando contexto de usuario para RBAC del servidor.
+ * @param {string} service - El nombre del servicio (ej. 'USER', 'TASK', 'ACADEMIC', 'EXAM').
  * @param {string} action - La acción a ejecutar en el servicio.
  * @param {object} payload - Los datos para la acción.
  * @returns {Promise<object>} La respuesta del servicio parseada como JSON.

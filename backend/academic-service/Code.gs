@@ -39,6 +39,135 @@ function getOrCreateSheet(ss, name) {
 }
 
 // ---------------------------------------------------------------------------
+// SEGURIDAD RBAC Y ASIGNACIÓN DOCENTE (REQ-EXP-008 & REQ-DOC-012)
+// ---------------------------------------------------------------------------
+
+const ACADEMIC_RBAC_PERMISSIONS = {
+  "ping": ["*"],
+  "getAcademicConfig": ["*"],
+  "getAcademicHistory": ["*"],
+  "getAsignaturasActivas": ["*"],
+  "getWhatsAppLink": ["*"],
+  "getQuestionBank": ["*"],
+  "getStudyGuides": ["*"],
+  "getStudentAttendanceSummary": ["*"],
+  "updateAcademicConfig": ["Administrador", "Director", "Subdirector", "Profesor", "Docente", "Desarrollador"],
+  "updateAsignaturasActivas": ["Administrador", "Director", "Secretaría", "Desarrollador"],
+  "saveWhatsAppLink": ["Administrador", "Director", "Secretaría", "Profesor", "Docente", "Desarrollador"],
+  "saveQuestion": ["Administrador", "Director", "Profesor", "Docente", "Desarrollador"],
+  "generateMigrationReport": ["Administrador", "Director", "Desarrollador"],
+  "recordStructuredLog": ["*"],
+  "createSpreadsheetBackup": ["Administrador", "Desarrollador"],
+  "createOrUpdateStudyGuide": ["Administrador", "Director", "Profesor", "Docente", "Desarrollador"],
+  "toggleStudyGuideStatus": ["Administrador", "Director", "Profesor", "Docente", "Desarrollador"],
+  "exportSchoolYearArchive": ["Administrador", "Director", "Secretaría", "Desarrollador"],
+  "recordStudentAttendance": ["Administrador", "Director", "Profesor", "Docente", "Secretaría", "Desarrollador"]
+};
+
+function getAuthenticatedUserFromDatabase(requesterUserId) {
+  if (!requesterUserId) return null;
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(SPREADSHEET_ID);
+    const userSheet = ss.getSheetByName("Usuarios");
+    if (!userSheet) return null;
+    const users = userSheet.getDataRange().getValues();
+    const userRow = users.find(r => String(r[0]).trim() === String(requesterUserId).trim());
+    if (userRow) {
+      return {
+        userId: String(userRow[0]).trim(),
+        nombre: String(userRow[1] || "").trim(),
+        grado: String(userRow[2] || "").trim(),
+        seccion: String(userRow[3] || "").trim(),
+        email: String(userRow[4] || "").trim(),
+        rol: String(userRow[6] || "").trim()
+      };
+    }
+  } catch (err) {
+    logDebug("Error al consultar usuario para RBAC académico: " + err.message);
+  }
+  return null;
+}
+
+function validateAcademicPermission(action, payload) {
+  const allowedRoles = ACADEMIC_RBAC_PERMISSIONS[action];
+  if (allowedRoles && allowedRoles.includes("*")) {
+    return { authorized: true };
+  }
+
+  const requesterUserId = (payload && (payload.requesterUserId || payload.profesorId || payload.docente_id)) ? String(payload.requesterUserId || payload.profesorId || payload.docente_id).trim() : "";
+  if (!requesterUserId) {
+    return { authorized: false, message: "Petición no autenticada en el microservicio académico." };
+  }
+
+  const authenticatedUser = getAuthenticatedUserFromDatabase(requesterUserId);
+  if (!authenticatedUser || !authenticatedUser.rol) {
+    return { authorized: false, message: "Usuario no registrado o sin credenciales válidas en la base de datos institucional." };
+  }
+
+  const validatedRole = authenticatedUser.rol;
+  if (validatedRole.toLowerCase() === "administrador" || validatedRole.toLowerCase() === "admin" || validatedRole.toLowerCase() === "desarrollador") {
+    return { authorized: true, user: authenticatedUser };
+  }
+
+  if (!allowedRoles) {
+    return { authorized: false, message: `Acción académica no autorizada para el rol '${validatedRole}'.` };
+  }
+
+  const isAllowed = allowedRoles.some(r => r.toLowerCase() === validatedRole.toLowerCase());
+  if (!isAllowed) {
+    return { authorized: false, message: `El rol '${validatedRole}' no cuenta con permisos para '${action}'.` };
+  }
+
+  return { authorized: true, user: authenticatedUser };
+}
+
+/**
+ * REQ-DOC-012: Valida en servidor que un docente tenga asignada la asignatura, grado y sección.
+ * Los administradores y directores poseen permiso irrestricto.
+ */
+function validateTeacherSubjectAssignment(userId, grado, seccion, asignatura) {
+  try {
+    const user = getAuthenticatedUserFromDatabase(userId);
+    if (!user) return false;
+    const role = (user.rol || "").toLowerCase();
+    if (role === "administrador" || role === "admin" || role === "director" || role === "subdirector" || role === "desarrollador") {
+      return true;
+    }
+
+    const ss = SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(SPREADSHEET_ID);
+    const configSheet = ss.getSheetByName("ConfiguracionAcademica");
+    if (!configSheet) return true; // Si aún no existe la hoja, permitir inicialización
+
+    const data = configSheet.getDataRange().getValues();
+    if (data.length < 2) return true;
+
+    const normTargetGrado = normalizeString(grado);
+    const normTargetSeccion = normalizeString(seccion);
+    const normTargetAsignatura = normalizeString(asignatura);
+
+    // Buscar si existe coincidencia de carga académica para este docente
+    const rows = data.slice(1);
+    const hasAssignment = rows.some(r => {
+      const rowProfId = String(r[8] || "").trim();
+      if (rowProfId !== String(userId).trim()) return false;
+      const rGrado = normalizeString(r[3]);
+      const rSeccion = normalizeString(r[4]);
+      const rAsig = normalizeString(r[5]);
+
+      const matchGrado = !normTargetGrado || rGrado === normTargetGrado || rGrado === "todos";
+      const matchSeccion = !normTargetSeccion || rSeccion === normTargetSeccion || rSeccion === "todas";
+      const matchAsig = !normTargetAsignatura || rAsig === normTargetAsignatura || rAsig === "todas";
+      return matchGrado && matchSeccion && matchAsig;
+    });
+
+    return hasAssignment;
+  } catch (err) {
+    logDebug("Error verificando asignación docente: " + err.message);
+    return false;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // ENDPOINTS
 // ---------------------------------------------------------------------------
 
@@ -61,6 +190,17 @@ function doPost(e) {
   try {
     if (!e || !e.postData || !e.postData.contents) return textResponse({ status: "error", message: "No se recibieron datos." });
     const { action, payload } = JSON.parse(e.postData.contents);
+
+    // REQ-EXP-008 & REQ-DOC-012: Enforzar validación RBAC del lado del servidor
+    const authCheck = validateAcademicPermission(action, payload);
+    if (!authCheck.authorized) {
+      return textResponse({
+        status: "error",
+        code: "AUTH_PERMISSION_DENIED",
+        message: authCheck.message
+      });
+    }
+
     let result;
     switch (action) {
       case "ping": result = pingHealthCheck("ACADEMIC"); break;
@@ -531,6 +671,23 @@ function createOrUpdateStudyGuide(payload) {
       docente_nombre,
       requesterUserId
     } = payload || {};
+
+    // REQ-DOC-012: Enforzar que docentes solo puedan publicar guías en sus asignaturas y cursos asignados
+    const activeUserId = requesterUserId || docente_id;
+    if (!activeUserId) {
+      return {
+        status: "error",
+        code: "AUTH_PERMISSION_DENIED",
+        message: "Identificación de usuario o docente requerida para publicar guías de estudio."
+      };
+    }
+    if (!validateTeacherSubjectAssignment(activeUserId, grado, seccion, asignatura)) {
+      return {
+        status: "error",
+        code: "AUTH_PERMISSION_DENIED",
+        message: `El docente no tiene asignada la asignatura '${asignatura}' en ${grado} ${seccion || ''}. Publicación no autorizada.`
+      };
+    }
 
     if (!asignatura || !grado || !parcial || !titulo) {
       return { status: "error", message: "Campos obligatorios incompletos: asignatura, grado, parcial y título son requeridos." };

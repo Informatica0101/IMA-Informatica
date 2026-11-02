@@ -974,3 +974,19 @@ Módulo: Desempeño Estudiantil y Control de Asistencia ([REQ-DOC-011])
   * Diseñado bloque de tarjetas analíticas en 'Métricas de Desempeño' con separación gráfica y semántica de: Rendimiento Académico, Cumplimiento (ICR), Participación (GP) y Control de Asistencia.
   * Implementada función asíncrona 'loadStudentAttendanceMetric' para consultar y mostrar el estado de asistencia de manera segregada sin afectar el promedio académico.
 - Backlog (Pendientes.md): Marcada tarea [REQ-DOC-011] como completada.
+
+REGISTRO DE CAMBIOS - SEGURIDAD EN SERVIDOR, PERMISOS Y TRAZABILIDAD DE CONTENIDOS - Sun Nov 01 2026
+
+Módulo: Seguridad Backend, Permisos y Trazabilidad (REQ-DOC-012)
+- Backend Académico (`backend/academic-service/Code.gs`):
+  * Definida matriz de permisos RBAC `ACADEMIC_RBAC_PERMISSIONS` y función `validateAcademicPermission` autenticando usuarios contra la hoja `Usuarios`.
+  * Integrada función `validateTeacherSubjectAssignment` en `createOrUpdateStudyGuide` para restringir la publicación de guías docentes estrictamente a las asignaturas, grados y secciones configuradas.
+  * Añadida intercepción en `doPost` devolviendo código `AUTH_PERMISSION_DENIED` para accesos no autorizados.
+- Backend Tareas (`backend/task-service/Code.gs`):
+  * Incorporada matriz `TASK_RBAC_PERMISSIONS` y función `validateTaskPermission`.
+  * Enlazada validación de asignación académica docente en `createTask` y `updateTask` contra `ConfiguracionAcademica`.
+  * Creada estructura y hoja automática `TrazabilidadEntregas` junto con la función `recordSubmissionDeliveryTrace` para auditoría inmutable de entregas con sello de tiempo, minutos de diferencia, cálculo de entrega tardía y hash SHA-256.
+  * Protegidos los accesos a Google Drive en `uploadFile` y `finishChunkedUpload` evitando visibilidad pública indiscriminada (`ANYONE_WITH_LINK`) y asegurando la privacidad institucional.
+- Capa de Red y API (`js/api.js`):
+  * Actualizada documentación y verificado el enriquecimiento del payload con `requesterUserId` y `requesterRole` para todas las peticiones hacia microservicios backend.
+- Backlog (`Pendientes.md`): Marcada tarea [REQ-DOC-012] como completada.
