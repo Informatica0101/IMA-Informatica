@@ -1626,3 +1626,42 @@ RESULTADO DE EVALUACIÓN:
 - Suite de pruebas de regresión en tests/regression/academic-grading-suite.js alcanzando 106/106 pruebas aprobadas (100.0%).
 - Estado: Completado y Verificado funcionalmente.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+AUDITORIA INICIAL — [TASK-012] [F18-Task01]
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (recordPurchaseReceipt, l. 6325-6385)
+- Estructuras: OrdenesCompra, RecepcionesCompra, InventariosKardex
+HALLAZGOS:
+1. En backend/accounting-service/Code.gs (recordPurchaseReceipt, l. 6366): Se detecta cambio de estado incondicional e injustificado de la orden de compra a 'RecibidaTotal':
+   'ordSheet.getRange(oIdx + 1, 10).setValue("RecibidaTotal");'
+   Esto se ejecuta sin contrastar las cantidades recibidas contra las cantidades autorizadas en 'detalleItems' de la orden de compra.
+2. Imposibilidad de recepciones parciales y entregas escalonadas: Si un proveedor despacha una fracción de los ítems o un pedido escalonado en varias fechas, la orden se cierra prematuramente impidiendo registrar recepciones subsecuentes y desapareciendo las cantidades pendientes de recibir.
+3. Tratamiento de incidencias físicas y rechazos: Si el cargamento contiene unidades dañadas o no conformes ('estadoConformidad !== Conforme'), el código no segrega las cantidades conformes de las defectuosas e ingresa todo al inventario disponible si 'registrarEnInventario' está activo.
+4. Ausencia de endpoint de consulta de recepciones: No existe la función getPurchaseReceipts para que adquisiciones y auditoría consulten las recepciones acumuladas por orden de compra.
+ESTADO: Auditoría finalizada. Procediendo con el control acumulativo de recepciones parciales, validación de conformidades y consulta de entregas.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-012] [F18-Task01]
+CONTROL RIGUROSO DE RECEPCIONES PARCIALES Y ENTREGAS ESCALONADAS
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (recordPurchaseReceipt, getPurchaseReceipts, doPost, ROLE_PERMISSIONS)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt / Auditoría.txt / ChangesLogs.txt
+RESULTADO DE EVALUACIÓN:
+- Se corrigió el cierre prematuro incondicional de órdenes de compra a 'RecibidaTotal'.
+- Implementación de balance acumulado por partida en recordPurchaseReceipt:
+  * Suma acumulada de cantidades recibidas conformes previas + entrega actual.
+  * Comparación partida por partida contra las cantidades autorizadas en detalleItems de la Orden de Compra.
+  * Transición a 'RecibidaParcial' mientras existan cantidades pendientes de recibir.
+  * Transición a 'RecibidaTotal' única y exclusivamente cuando todas las partidas han sido recibidas y conformes al 100%.
+- Gestión de incidencias físicas y devoluciones: las unidades dañadas, defectuosas o en disputa se segregan y no se registran como existencias disponibles en InventariosKardex.
+- Creación del endpoint getPurchaseReceipts para consultar el historial de recepciones asociado a una orden o identificador de recepción.
+- Protección transaccional con LockService.getScriptLock().
+- Pruebas automatizadas actualizadas en tests/regression/academic-grading-suite.js con 111/111 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================

@@ -1113,7 +1113,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-012] [ ] [F18-Task01] Corregir el control de recepciones parciales y entregas escalonadas
+### [TASK-012] [X] [F18-Task01] Corregir el control de recepciones parciales y entregas escalonadas
 - **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección E (Brecha E.1) y Sección G (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Integridad en recepción física de compras, control de inventario y prevención de pérdidas)
@@ -1153,7 +1153,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Intentar recibir cantidades superiores a las autorizadas genera una restricción o exige una autorización excepcional documentada.
   - Repetir una operación de recepción no duplica los movimientos de inventario.
   - Cada recepción conserva su identificador único y su vínculo persistente con la orden original.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 ---

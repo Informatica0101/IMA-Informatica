@@ -170,6 +170,13 @@ assert(acctCode.includes("daysWorkedInPeriod") && acctCode.includes("totalPeriod
 assert(acctCode.includes("AnticiposPrestamosEmpleado") && acctCode.includes("LIQUIDADO_EXTRAORDINARIO_"), "backend/accounting-service/Code.gs descuenta anticipos otorgados previamente previniendo duplicados [TASK-011]");
 assert(acctCode.includes("PLN-EXTRA-"), "backend/accounting-service/Code.gs genera planillas extraordinarias independientes [TASK-011]");
 
+// [TASK-012] [F18-Task01] - Control de recepciones parciales acumuladas, entregas escalonadas y gestión de incidencias físicas
+assert(acctCode.includes("recordPurchaseReceipt") && acctCode.includes("[TASK-012]"), "backend/accounting-service/Code.gs contiene recordPurchaseReceipt ampliado [TASK-012]");
+assert(acctCode.includes("cumulativeReceived") && acctCode.includes("pendingSummary"), "backend/accounting-service/Code.gs realiza balance acumulado y cálculo de pendientes por partida [TASK-012]");
+assert(acctCode.includes("RecibidaParcial") && acctCode.includes("RecibidaTotal"), "backend/accounting-service/Code.gs maneja estados escalonados RecibidaParcial y RecibidaTotal [TASK-012]");
+assert(acctCode.includes("hasDamagedOrDispute") && acctCode.includes("itemsToInventory"), "backend/accounting-service/Code.gs segrega productos dañados o rechazados impidiendo entrada conforme a Kardex [TASK-012]");
+assert(acctCode.includes("getPurchaseReceipts"), "backend/accounting-service/Code.gs implementa consulta de historial de recepciones getPurchaseReceipts [TASK-012]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

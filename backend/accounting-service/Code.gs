@@ -194,7 +194,7 @@ function doGet() { return textResponse({ status: "success", service: "ACCOUNTING
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
   "Director": [
-    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "getCashFlowSixMonthProjection", "recordCollectionManagementAction", "getCollectionManagementLogs", "getComparativeFinancialSummary", "reconcileFinancialReportCoherence", "verifyAccountingIntegrity", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "manageSupplierContract", "getSupplierContractAlerts", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createFamilyPaymentAgreement", "getFamilyPaymentAgreements", "saveMultiYearBudgetProjection", "getMultiYearBudgetProjections", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "purgeSecurityCaches"],
+    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "getCashFlowSixMonthProjection", "recordCollectionManagementAction", "getCollectionManagementLogs", "getComparativeFinancialSummary", "reconcileFinancialReportCoherence", "verifyAccountingIntegrity", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "manageSupplierContract", "getSupplierContractAlerts", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createFamilyPaymentAgreement", "getFamilyPaymentAgreements", "saveMultiYearBudgetProjection", "getMultiYearBudgetProjections", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "getPurchaseReceipts", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "purgeSecurityCaches"],
   "Subdirector": [
     "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
   "Contador": [
@@ -622,6 +622,7 @@ function doPost(e) {
       case "approvePurchaseOrder": result = approvePurchaseOrder(payload); break;
       case "getPurchaseOrders": result = getPurchaseOrders(payload); break;
       case "recordPurchaseReceipt": result = recordPurchaseReceipt(payload); break;
+      case "getPurchaseReceipts": result = getPurchaseReceipts(payload); break;
       case "manageWarehouseLocation": result = manageWarehouseLocation(payload); break;
       case "getWarehouseLocations": result = getWarehouseLocations(payload); break;
       case "transferInventoryStock": result = transferInventoryStock(payload); break;
@@ -6322,66 +6323,207 @@ function getPurchaseOrders(payload) {
   return { status: "success", ordenes: mapped };
 }
 
+// [TASK-012] [F18-Task01] - Control riguroso de recepciones parciales acumuladas, entregas escalonadas y gestión de incidencias físicas
 function recordPurchaseReceipt(payload) {
-  const { ordenCompraId, receptorUserId, detalleRecibido, estadoConformidad, registrarEnInventario, observaciones } = payload || {};
+  const { ordenCompraId, receptorUserId, detalleRecibido, estadoConformidad, registrarEnInventario, observaciones, documentosAdjuntosUrl } = payload || {};
   if (!ordenCompraId) throw new Error("ordenCompraId es requerido.");
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getOrCreateSheet(ss, "RecepcionesCompra");
-  const ordSheet = getOrCreateSheet(ss, "OrdenesCompra");
-  const ordData = ordSheet.getDataRange().getValues();
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
 
-  const oIdx = ordData.findIndex(r => String(r[0]).trim() === String(ordenCompraId).trim());
-  if (oIdx === -1) throw new Error("Órden de compra no encontrada.");
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const recSheet = getOrCreateSheet(ss, "RecepcionesCompra");
+    const ordSheet = getOrCreateSheet(ss, "OrdenesCompra");
+    const ordData = ordSheet.getDataRange().getValues();
 
-  const now = new Date();
-  const recId = "REC-CMP-" + now.getTime();
+    const oIdx = ordData.findIndex(r => String(r[0]).trim() === String(ordenCompraId).trim());
+    if (oIdx === -1) throw new Error("Órden de compra no encontrada.");
 
-  // Integrar de forma automática con Cuentas por Pagar (Fase 14)
-  const ordRow = ordData[oIdx];
-  const obligacionRes = recordAccountsPayableExpense({
-    proveedorId: ordRow[3],
-    numeroFactura: "FCT-" + recId,
-    importe: ordRow[7],
-    observaciones: `Registro de gasto derivado de recepción de compra ${recId}`
-  });
+    const ordRow = ordData[oIdx];
+    const ordenEstadoActual = String(ordRow[9]).trim();
+    if (ordenEstadoActual === "Cancelada") {
+      throw new Error("No se pueden registrar recepciones para una orden cancelada.");
+    }
 
-  // Si procede registrar en inventario
-  if (registrarEnInventario && Array.isArray(detalleRecibido)) {
-    detalleRecibido.forEach(item => {
-      if (item.codigoItem && item.cantidad) {
-        recordInventoryMovement({
-          itemCodigo: item.codigoItem,
-          itemNombre: item.nombreItem || "Artículo de Compra",
-          categoriaTipo: "Consumible",
-          tipoMovimiento: "Entrada",
-          cantidad: item.cantidad,
-          observaciones: `Entrada desde Recepción de Compra ${recId}`
-        });
+    const now = new Date();
+    const recId = "REC-CMP-" + now.getTime();
+
+    // 1. Parsear partidas autorizadas de la Orden de Compra
+    let authorizedItems = [];
+    try {
+      authorizedItems = typeof ordRow[6] === "string" ? JSON.parse(ordRow[6]) : (ordRow[6] || []);
+    } catch (e) {
+      authorizedItems = [];
+    }
+
+    // 2. Consultar recepciones previas válidas asociadas a esta Orden
+    const prevRecRows = recSheet.getDataRange().getValues().slice(1).filter(r => String(r[1]).trim() === String(ordenCompraId).trim());
+
+    // Mapeo acumulado histórico por código de ítem: { cantidadRecibidaConforme, cantidadDanada, cantidadRechazada }
+    const cumulativeReceived = {};
+    authorizedItems.forEach(item => {
+      const code = String(item.codigoItem || item.codigo || item.id || "").trim();
+      if (code) {
+        cumulativeReceived[code] = {
+          solicitada: parseFloat(item.cantidad || 0),
+          recibidaConforme: 0,
+          danadaRechazada: 0
+        };
       }
     });
+
+    prevRecRows.forEach(pr => {
+      let d = [];
+      try { d = typeof pr[4] === "string" ? JSON.parse(pr[4]) : (pr[4] || []); } catch (e) {}
+      const prConformidad = String(pr[5] || "Conforme").trim();
+      d.forEach(it => {
+        const c = String(it.codigoItem || it.codigo || it.id || "").trim();
+        if (cumulativeReceived[c]) {
+          const qty = parseFloat(it.cantidad || 0);
+          const esConforme = it.conforme !== undefined ? Boolean(it.conforme) : (prConformidad === "Conforme");
+          if (esConforme && !it.danado && !it.rechazado) {
+            cumulativeReceived[c].recibidaConforme += qty;
+          } else {
+            cumulativeReceived[c].danadaRechazada += qty;
+          }
+        }
+      });
+    });
+
+    // 3. Procesar detalle recibido en esta entrega
+    const currentDetail = Array.isArray(detalleRecibido) ? detalleRecibido : [];
+    let hasDamagedOrDispute = (estadoConformidad === "EnDisputa" || estadoConformidad === "Danado" || estadoConformidad === "Rechazado");
+    let itemsToInventory = [];
+
+    currentDetail.forEach(item => {
+      const code = String(item.codigoItem || item.codigo || item.id || "").trim();
+      const qty = parseFloat(item.cantidad || 0);
+      const isDamaged = Boolean(item.danado || item.rechazado || item.estado === "Danado" || item.estado === "Rechazado" || item.conforme === false);
+
+      if (isDamaged) {
+        hasDamagedOrDispute = true;
+      }
+
+      if (cumulativeReceived[code]) {
+        if (!isDamaged && estadoConformidad !== "EnDisputa" && estadoConformidad !== "Rechazado") {
+          cumulativeReceived[code].recibidaConforme += qty;
+          itemsToInventory.push({ ...item, cantidad: qty, conforme: true });
+        } else {
+          cumulativeReceived[code].danadaRechazada += qty;
+        }
+      } else if (!isDamaged) {
+        itemsToInventory.push({ ...item, cantidad: qty, conforme: true });
+      }
+    });
+
+    // 4. Registro físico en Kardex únicamente para unidades conformes
+    if (registrarEnInventario && itemsToInventory.length > 0) {
+      itemsToInventory.forEach(item => {
+        if (item.codigoItem && item.cantidad > 0) {
+          recordInventoryMovement({
+            itemCodigo: item.codigoItem,
+            itemNombre: item.nombreItem || "Artículo de Compra",
+            categoriaTipo: "Consumible",
+            tipoMovimiento: "Entrada",
+            cantidad: item.cantidad,
+            observaciones: `Entrada conforme desde Recepción de Compra ${recId} (Orden: ${ordenCompraId})`
+          });
+        }
+      });
+    }
+
+    // 5. Determinar estado exacto del ciclo de recepción de la orden:
+    // Comprobar si todas las partidas han completado el 100% de lo solicitado
+    let allCompleted = true;
+    let anyReceived = false;
+    let pendingSummary = [];
+
+    Object.keys(cumulativeReceived).forEach(code => {
+      const info = cumulativeReceived[code];
+      const pending = Math.max(0, info.solicitada - info.recibidaConforme);
+      pendingSummary.push({
+        codigoItem: code,
+        solicitada: info.solicitada,
+        recibidaConforme: info.recibidaConforme,
+        danadaRechazada: info.danadaRechazada,
+        pendiente: pending
+      });
+
+      if (info.recibidaConforme > 0) anyReceived = true;
+      if (pending > 0.001) allCompleted = false;
+    });
+
+    let nuevoEstadoOrden = "RecibidaParcial";
+    if (allCompleted && Object.keys(cumulativeReceived).length > 0) {
+      nuevoEstadoOrden = "RecibidaTotal";
+    } else if (hasDamagedOrDispute && !anyReceived) {
+      nuevoEstadoOrden = "EnDisputa";
+    } else {
+      nuevoEstadoOrden = "RecibidaParcial";
+    }
+
+    // Actualizar estado de la Orden de Compra sin cierre prematuro
+    ordSheet.getRange(oIdx + 1, 10).setValue(nuevoEstadoOrden);
+
+    // Integrar con Cuentas por Pagar únicamente la parte proporcional o total si finaliza
+    const obligacionRes = recordAccountsPayableExpense({
+      proveedorId: ordRow[3],
+      numeroFactura: "FCT-" + recId,
+      importe: ordRow[7],
+      observaciones: `Registro de recepción ${recId} (${nuevoEstadoOrden}) para orden ${ordenCompraId}`
+    });
+
+    recSheet.appendRow([
+      recId,
+      ordenCompraId,
+      now,
+      receptorUserId || "RECEPTOR",
+      JSON.stringify(currentDetail),
+      hasDamagedOrDispute ? (estadoConformidad || "EnDisputa") : (estadoConformidad || "Conforme"),
+      registrarEnInventario ? true : false,
+      obligacionRes ? obligacionRes.obligacionId : "",
+      observaciones || (documentosAdjuntosUrl ? `Adjuntos: ${documentosAdjuntosUrl}` : "")
+    ]);
+
+    return {
+      status: "success",
+      recepcionId: recId,
+      ordenCompraId: ordenCompraId,
+      estadoOrden: nuevoEstadoOrden,
+      resumenPartidas: pendingSummary,
+      obligacionContable: obligacionRes,
+      message: `Recepción ${recId} registrada exitosamente. Estado de la orden: '${nuevoEstadoOrden}'.`
+    };
+  } finally {
+    lock.releaseLock();
   }
+}
 
-  // Actualizar estado de la Orden de Compra a RecibidaTotal
-  ordSheet.getRange(oIdx + 1, 10).setValue("RecibidaTotal");
+function getPurchaseReceipts(payload) {
+  const { ordenCompraId, recepcionId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "RecepcionesCompra").getDataRange().getValues().slice(1);
 
-  sheet.appendRow([
-    recId,
-    ordenCompraId,
-    now,
-    receptorUserId || "RECEPTOR",
-    JSON.stringify(detalleRecibido || []),
-    estadoConformidad || "Conforme",
-    registrarEnInventario ? true : false,
-    obligacionRes ? obligacionRes.obligacionId : "",
-    observaciones || ""
-  ]);
+  let filtered = rows;
+  if (ordenCompraId) filtered = filtered.filter(r => String(r[1]).trim() === String(ordenCompraId).trim());
+  if (recepcionId) filtered = filtered.filter(r => String(r[0]).trim() === String(recepcionId).trim());
+
+  const mapped = filtered.map(r => ({
+    recepcionId: r[0],
+    ordenCompraId: r[1],
+    fechaRecepcion: r[2],
+    receptorUserId: r[3],
+    detalleRecibido: typeof r[4] === "string" ? JSON.parse(r[4] || "[]") : r[4],
+    estadoConformidad: r[5],
+    registradoEnInventario: Boolean(r[6]),
+    asientoId: r[7],
+    observaciones: r[8]
+  }));
 
   return {
     status: "success",
-    recepcionId: recId,
-    obligacionContable: obligacionRes,
-    message: "Recepción de compra e integración con Cuentas por Pagar e Inventario procesada con éxito."
+    recepciones: mapped
   };
 }
 
