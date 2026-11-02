@@ -327,3 +327,15 @@ window.toggleStudyGuideStatus = function(guideId, status) {
         status: status
     });
 };
+
+/**
+ * EXPORTACIÓN DOCUMENTAL COMPRIMIDA POR AÑO LECTIVO (REQ-DOC-010)
+ */
+window.exportSchoolYearArchive = function(anio, options) {
+    options = options || {};
+    return window.fetchApi('ACADEMIC', 'exportSchoolYearArchive', {
+        anio: anio,
+        parcial: options.parcial,
+        tipoRecurso: options.tipoRecurso
+    });
+};

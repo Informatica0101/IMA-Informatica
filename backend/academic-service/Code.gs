@@ -78,6 +78,7 @@ function doPost(e) {
       case "createOrUpdateStudyGuide": result = createOrUpdateStudyGuide(payload); break;
       case "getStudyGuides": result = getStudyGuides(payload); break;
       case "toggleStudyGuideStatus": result = toggleStudyGuideStatus(payload); break;
+      case "exportSchoolYearArchive": result = exportSchoolYearArchive(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -657,6 +658,114 @@ function createOrUpdateStudyGuide(payload) {
     return { status: "error", message: "Error al gestionar guía de estudio: " + err.message };
   } finally {
     lock.releaseLock();
+  }
+}
+
+/**
+ * [REQ-DOC-010]: Exporta en un paquete comprimido (ZIP) los archivos de un año escolar lectivo.
+ * Lee la hoja MetadatosDocumentales filtrando por anio, recopila los blobs desde Drive y genera el archivo ZIP.
+ */
+function exportSchoolYearArchive(payload) {
+  const { anio, parcial, tipoRecurso, requesterUserId } = payload || {};
+  const targetYear = parseInt(anio, 10) || new Date().getFullYear();
+
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateAcademicMetadatosSheet(ss);
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) {
+      return { status: "error", message: "No existen registros en MetadatosDocumentales." };
+    }
+
+    const headers = data[0];
+    const anioIdx = headers.indexOf("anio");
+    const driveFileIdIdx = headers.indexOf("drive_file_id");
+    const nombreFisicoIdx = headers.indexOf("nombre_fisico");
+    const asignaturaIdx = headers.indexOf("asignatura");
+    const parcialIdx = headers.indexOf("parcial");
+    const tipoRecursoIdx = headers.indexOf("tipo_recurso");
+
+    const matchingFiles = [];
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const rowAnio = parseInt(row[anioIdx], 10);
+      if (rowAnio === targetYear) {
+        if (parcial && String(row[parcialIdx]).toLowerCase() !== String(parcial).toLowerCase()) continue;
+        if (tipoRecurso && String(row[tipoRecursoIdx]).toLowerCase() !== String(tipoRecurso).toLowerCase()) continue;
+
+        const fileId = String(row[driveFileIdIdx] || "").trim();
+        const fileName = String(row[nombreFisicoIdx] || "archivo").trim();
+        const asig = sanitizePathSegment(row[asignaturaIdx] || "General");
+        const parc = sanitizePathSegment(row[parcialIdx] || "Parcial");
+
+        if (fileId) {
+          matchingFiles.push({ fileId, fileName, relativePath: `${asig}/${parc}/${fileName}` });
+        }
+      }
+    }
+
+    if (matchingFiles.length === 0) {
+      return {
+        status: "success",
+        message: `No se encontraron archivos registrados para el año escolar ${targetYear}.`,
+        totalFiles: 0,
+        downloadUrl: null
+      };
+    }
+
+    // Recopilar blobs para el archivo ZIP
+    const blobs = [];
+    let processedCount = 0;
+    for (const item of matchingFiles) {
+      try {
+        const driveFile = DriveApp.getFileById(item.fileId);
+        const blob = driveFile.getBlob().setName(item.fileName);
+        blobs.push(blob);
+        processedCount++;
+      } catch (fErr) {
+        console.warn(`No se pudo leer archivo Drive ${item.fileId}: ${fErr.message}`);
+      }
+    }
+
+    if (blobs.length === 0) {
+      return {
+        status: "error",
+        message: "No fue posible acceder a los archivos físicos de Drive para generar el archivo comprimido."
+      };
+    }
+
+    const zipBlob = Utilities.zip(blobs, `Archivos_Escolares_${targetYear}.zip`);
+
+    // Guardar el ZIP temporal en Drive dentro de la carpeta institucional de respaldos
+    const rootFolder = DriveApp.getRootFolder();
+    const backupFolder = getOrCreateFolder(rootFolder, "New Generation - Exportaciones");
+    const zipFile = backupFolder.createFile(zipBlob);
+    try {
+      zipFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    } catch (e) {}
+
+    const downloadUrl = `https://drive.google.com/uc?id=${zipFile.getId()}&export=download`;
+
+    recordAcademicStructuredLog({
+      severidad: "INFO",
+      funcion: "exportSchoolYearArchive",
+      codigoError: "ARCHIVE_EXPORTED",
+      requesterUserId: requesterUserId || "DEV",
+      detalles: `Exportado archivo ZIP del año ${targetYear} con ${processedCount} archivos adjuntos.`
+    });
+
+    return {
+      status: "success",
+      message: `Archivo comprimido generado exitosamente con ${processedCount} documentos.`,
+      anio: targetYear,
+      totalFiles: processedCount,
+      archiveName: `Archivos_Escolares_${targetYear}.zip`,
+      fileId: zipFile.getId(),
+      downloadUrl: downloadUrl
+    };
+  } catch (err) {
+    return { status: "error", message: "Error al generar archivo comprimido: " + err.message };
   }
 }
 

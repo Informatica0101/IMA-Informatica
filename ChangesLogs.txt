@@ -939,3 +939,20 @@ Módulo: Organización Documental y Metadatos en Drive ([REQ-DOC-008] y [REQ-DOC
   * Implementadas funciones 'sanitizePathSegment', 'resolveTeacherMaterialFolder' ('Area/New Generation/Docentes/Asignaturas/[Asignatura]/[Año]/[Parcial]/[TipoRecurso]') y 'getOrCreateAcademicMetadatosSheet'.
   * Añadida función 'recordAcademicDocumentMetadata' e integrada dentro del flujo de creación de guías de estudio 'createOrUpdateStudyGuide'.
 - Backlog (Pendientes.md): Marcadas tareas [REQ-DOC-008] y [REQ-DOC-009] como completadas.
+
+
+REGISTRO DE CAMBIOS - CONSOLA DE DESARROLLADOR Y EXPORTACIÓN COMPRIMIDA ZIP POR AÑO LECTIVO - Sun Nov 01 2026
+
+Módulo: Consola Técnica de Administración y Exportación Documental ([REQ-DOC-010])
+- Backend Académico (backend/academic-service/Code.gs):
+  * Implementada función 'exportSchoolYearArchive(anio, partialFilter, actorUser)' que consulta la hoja 'MetadatosDocumentales', agrupa los identificadores de archivo de Google Drive por año escolar y parcial opcional, extrae los blobs y compila un paquete comprimido unificado mediante 'Utilities.zip'.
+  * Integrada creación estructurada de la carpeta 'Backups/Exportaciones' en la raíz de Google Drive para alojar el archivo ZIP generado y asignación de permisos de lectura para descarga institucional.
+  * Mapeada acción 'exportSchoolYearArchive' dentro del despachador central 'doPost' con validación de parámetros de entrada.
+- Capa de API Cliente (js/api.js):
+  * Creada función cliente 'window.exportSchoolYearArchive(anio, options)' que delega al microservicio académico la solicitud de empaquetado y normaliza la respuesta.
+- Interfaz de Desarrollador (developer-dashboard.html):
+  * Diseñada Sección 6 ('Exportación Documental y Paquetes ZIP por Año Lectivo') con selectores interactivos de año escolar y filtro de parcial, botón de acción 'Generar Archivo ZIP', indicador visual de carga 'spinner' y contenedor interactivo para descarga directa del paquete.
+- Controlador de Desarrollador (js/developer.js):
+  * Registrada función 'setupSchoolYearExportHandlers' para vincular de forma reactiva los eventos de generación de exportación ZIP sin bloquear la interfaz.
+  * Añadida gestión de estados de progreso, notificaciones visuales y trazabilidad en la consola de salida en vivo ('Live Console Output').
+- Backlog (Pendientes.md): Marcada tarea [REQ-DOC-010] como completada.

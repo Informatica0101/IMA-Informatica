@@ -497,6 +497,51 @@ document.addEventListener('DOMContentLoaded', function () {
     // Carga inicial de respaldos
     loadBackupsList();
 
+    // -------------------------------------------------------------
+    // Sección 6: Exportación de Archivos ZIP por Año Lectivo (REQ-DOC-010)
+    // -------------------------------------------------------------
+    const btnExportZip = document.getElementById('btn-export-zip');
+    const selectExportYear = document.getElementById('select-export-year');
+    const selectExportPartial = document.getElementById('select-export-partial');
+    const exportResultContainer = document.getElementById('export-zip-result-container');
+    const exportFilenameEl = document.getElementById('export-zip-filename');
+    const exportDetailsEl = document.getElementById('export-zip-details');
+    const linkDownloadZip = document.getElementById('link-download-export-zip');
+
+    if (btnExportZip) {
+        btnExportZip.addEventListener('click', async () => {
+            const anio = selectExportYear ? selectExportYear.value : new Date().getFullYear();
+            const parcial = selectExportPartial ? selectExportPartial.value : '';
+            const icon = document.getElementById('icon-export-zip');
+
+            if (icon) icon.className = 'fas fa-spinner fa-spin';
+            btnExportZip.disabled = true;
+
+            logToUI(`[EXPORT] Generando archivo comprimido ZIP para el año escolar ${anio}...`, 'info');
+
+            try {
+                const resp = await window.exportSchoolYearArchive(anio, { parcial: parcial });
+                if (resp && resp.status === 'success') {
+                    logToUI(`[EXPORT] Paquete ZIP generado con éxito: ${resp.archiveName} (${resp.totalFiles} archivos)`, 'success');
+                    if (exportResultContainer) exportResultContainer.classList.remove('hidden');
+                    if (exportFilenameEl) exportFilenameEl.textContent = resp.archiveName || `Archivos_Escolares_${anio}.zip`;
+                    if (exportDetailsEl) exportDetailsEl.textContent = `${resp.totalFiles} archivos empaquetados desde Google Drive.`;
+                    if (linkDownloadZip) linkDownloadZip.href = resp.downloadUrl || '#';
+                    alert(`Paquete comprimido generado con éxito (${resp.totalFiles} archivos). Haz clic en "Descargar ZIP" para obtenerlo.`);
+                } else {
+                    logToUI(`[EXPORT] Error al generar ZIP: ${resp ? resp.message : 'Error desconocido'}`, 'error');
+                    alert('Error al generar archivo comprimido: ' + (resp ? resp.message : 'Error desconocido'));
+                }
+            } catch (err) {
+                logToUI(`[EXPORT] Excepción en exportación: ${err.message}`, 'error');
+                alert('Excepción durante la exportación: ' + err.message);
+            } finally {
+                if (icon) icon.className = 'fas fa-download';
+                btnExportZip.disabled = false;
+            }
+        });
+    }
+
     window.DeveloperConsole = {
         executeHealthChecks: executeDevHealthChecks,
         loadStructuredLogs: loadStructuredLogs,

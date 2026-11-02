@@ -387,11 +387,11 @@
 ### [REQ-DOC-010] Panel Administrativo del Desarrollador, Consola Técnica y Exportación RAR/ZIP (Sección 10 / 11)
 - **Origen del Hallazgo:** Especificación de Gestión Docente y Tareas (Sección 10 / 11).
 - **Severidad/Clasificación:** Crítico
-- **Archivos Involucrados:** `teacher-dashboard.html`, `js/teacher.js`, `backend/academic-service/Code.gs`
+- **Archivos Involucrados:** `developer-dashboard.html`, `js/developer.js`, `js/api.js`, `backend/academic-service/Code.gs`
 - **Dependencias Expuestas:** Consola técnica de administración, exportación documental por año lectivo.
 - **Descripción del Alcance:** Configurar horas de publicación e intervalo post-clase, monitoreo de salud de microservicios, visor de logs y exportación comprimida (ZIP/RAR) de archivos del año escolar seleccionado.
 - **Criterios de Aceptación:** Descarga de paquete comprimido respetando la estructura de carpetas sin bloquear la interfaz.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [REQ-DOC-011] Optimización del Análisis de Desempeño Estudiantil e Índice de Asistencia (Sección 12)
 - **Origen del Hallazgo:** Especificación de Gestión Docente/Tareas (Sección 12).
