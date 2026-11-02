@@ -178,7 +178,7 @@ const ROLE_PERMISSIONS = {
     "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles", "getMergePreviewComparison", "unmergeStudentFiles", "getStudentFileAdministrativeReports", "initializeDirectionSecretaryDriveStructure",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion", "checkAndNotifyExpiringStudentDocuments",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
-    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity", "reconcileInstitutionalModulesMatrix",
+    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "assignTeacherToAcademicArea", "getTeachersByAcademicArea", "getAcademicAreasByTeacher", "removeTeacherFromAcademicArea", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity", "reconcileInstitutionalModulesMatrix",
     "openAttendanceSession", "saveClassAttendance", "bulkApplyAttendanceStatus", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "checkAndDispatchAttendanceAlerts", "getAttendanceConfig", "saveAttendanceConfig",
     "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches", "scheduleGuidanceAppointment", "getGuidanceAppointments", "updateGuidanceAppointmentStatus", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts", "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "reviewPedagogicalPlanning", "getPlanningReviewHistory", "saveSupervisionRubric", "getSupervisionRubrics"
   ],
@@ -217,8 +217,8 @@ const ROLE_PERMISSIONS = {
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite",
     "openAttendanceSession", "saveClassAttendance", "getBatchAttendanceRecords", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary", "generateConsolidatedAttendanceAndCoexistenceReport", "validateStudentWelfareAccess"
   ],
-  "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "getBatchAttendanceRecords", "generateConsolidatedAttendanceAndCoexistenceReport", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts", "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "reviewPedagogicalPlanning", "getPlanningReviewHistory", "saveSupervisionRubric", "getSupervisionRubrics"],
-  "Desarrollador": ["getAcademicConfig", "getAcademicHistory", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "configureAcademicLevelsAndDynamicStorage"],
+  "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "assignTeacherToAcademicArea", "getTeachersByAcademicArea", "getAcademicAreasByTeacher", "removeTeacherFromAcademicArea", "getAcademicAreaCoordinationScope", "getBatchAttendanceRecords", "generateConsolidatedAttendanceAndCoexistenceReport", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts", "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "reviewPedagogicalPlanning", "getPlanningReviewHistory", "saveSupervisionRubric", "getSupervisionRubrics"],
+  "Desarrollador": ["getAcademicConfig", "getAcademicHistory", "getAcademicAreaTemplateCatalog", "assignTeacherToAcademicArea", "getTeachersByAcademicArea", "getAcademicAreasByTeacher", "removeTeacherFromAcademicArea", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "configureAcademicLevelsAndDynamicStorage"],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
   "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "scheduleCounselingAppointment", "recordCounselingSessionAct", "referCounselingCase", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary", "validateStudentWelfareAccess", "scheduleGuidanceAppointment", "getGuidanceAppointments", "updateGuidanceAppointmentStatus", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts"],
   "Orientacion": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "updateAttendanceIncidentStatus", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "addCaseCommitment", "updateCaseCommitmentStatus", "saveGuidanceFollowupPlan", "saveVocationalRecommendation", "validateEvidenceFileAndPermissions", "getStudentAttendanceSummary", "validateStudentWelfareAccess", "scheduleGuidanceAppointment", "getGuidanceAppointments", "updateGuidanceAppointmentStatus", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts"],
@@ -829,6 +829,10 @@ function doPost(e) {
       case "reconcileStudentLifecycleState": result = reconcileStudentLifecycleState(payload); break;
       case "runStudentLifecycleRegressionSuite": result = runStudentLifecycleRegressionSuite(payload); break;
       case "getAcademicAreaTemplateCatalog": result = getAcademicAreaTemplateCatalog(payload); break;
+      case "assignTeacherToAcademicArea": result = assignTeacherToAcademicArea(payload); break;
+      case "getTeachersByAcademicArea": result = getTeachersByAcademicArea(payload); break;
+      case "getAcademicAreasByTeacher": result = getAcademicAreasByTeacher(payload); break;
+      case "removeTeacherFromAcademicArea": result = removeTeacherFromAcademicArea(payload); break;
       case "getAcademicAreaCoordinationScope": result = getAcademicAreaCoordinationScope(payload); break;
       case "deployAcademicMicroserviceInstance": result = deployAcademicMicroserviceInstance(payload); break;
       case "getAcademicMicroserviceDeployments": result = getAcademicMicroserviceDeployments(payload); break;
@@ -13761,5 +13765,280 @@ function runAcademicPlanningRegressionSuite(payload) {
       status: "error",
       message: "Error durante la ejecución de la suite de regresión de planificación: " + err.message
     };
+  }
+}
+
+
+// ===========================================================================
+// [TASK-005] [F16-Task02] - ASIGNACIÓN INSTITUCIONAL DE DOCENTES A ÁREAS ACADÉMICAS
+// ===========================================================================
+
+function assignTeacherToAcademicArea(payload) {
+  const {
+    docenteId,
+    nombreDocente,
+    areaId,
+    nombreArea,
+    tipoVinculacion = "Docente integrante", // 'Docente integrante', 'Docente titular/especialista', 'Coordinador de área', 'Responsable auxiliar', 'Colaborador temporal'
+    esCoordinadorTitular = false,
+    esCoordinadorSuplente = false,
+    fechaInicio,
+    fechaFin = "",
+    motivoAsignacion = "",
+    authorizedBy
+  } = payload || {};
+
+  if (!docenteId || !areaId) {
+    throw new Error("docenteId y areaId son obligatorios para asignar a un área académica.");
+  }
+
+  const lock = LockService.getScriptLock();
+  const hasLock = lock.tryLock(20000);
+  if (!hasLock) {
+    return { status: "error", code: "LOCK_TIMEOUT", message: "Operación bloqueada por concurrencia. Intente nuevamente." };
+  }
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+    // Validar que el docente no esté desvinculado o inactivo
+    const uSheet = ss.getSheetByName("Usuarios");
+    let cleanDocenteNombre = nombreDocente || "";
+    if (uSheet) {
+      const uRows = uSheet.getDataRange().getValues().slice(1);
+      const userMatch = uRows.find(r => String(r[0]).trim() === String(docenteId).trim());
+      if (userMatch) {
+        cleanDocenteNombre = cleanDocenteNombre || userMatch[1] || "";
+        const estadoCuenta = String(userMatch[10] || "Activa").trim().toLowerCase();
+        if (estadoCuenta === "desactivada" || estadoCuenta === "inactiva" || estadoCuenta === "retirado") {
+          throw new Error("El docente con ID '" + docenteId + "' se encuentra inactivo o desvinculado de la institución.");
+        }
+      }
+    }
+
+    const sheet = getOrCreateSheet(ss, "DocentesAreasAcademicas");
+    const data = sheet.getDataRange().getValues();
+    const now = new Date().toISOString();
+    const fIni = fechaInicio || now.split("T")[0];
+
+    const cleanDocId = String(docenteId).trim();
+    const cleanAreaId = String(areaId).trim().toUpperCase();
+
+    // Buscar si ya existe la asignación exacta activa para este docente y área
+    const existingIdx = data.findIndex((r, idx) =>
+      idx > 0 &&
+      String(r[1]).trim() === cleanDocId &&
+      String(r[3]).trim().toUpperCase() === cleanAreaId &&
+      String(r[10]).trim() === "Activo"
+    );
+
+    let asignacionId = "ASG-AREA-" + cleanDocId + "-" + cleanAreaId;
+
+    if (existingIdx !== -1) {
+      asignacionId = data[existingIdx][0];
+      sheet.getRange(existingIdx + 1, 3).setValue(cleanDocenteNombre || data[existingIdx][2]);
+      sheet.getRange(existingIdx + 1, 5).setValue(nombreArea || data[existingIdx][4]);
+      sheet.getRange(existingIdx + 1, 6).setValue(tipoVinculacion);
+      sheet.getRange(existingIdx + 1, 7).setValue(esCoordinadorTitular ? "Sí" : "No");
+      sheet.getRange(existingIdx + 1, 8).setValue(esCoordinadorSuplente ? "Sí" : "No");
+      sheet.getRange(existingIdx + 1, 9).setValue(fIni);
+      sheet.getRange(existingIdx + 1, 10).setValue(fechaFin);
+      sheet.getRange(existingIdx + 1, 11).setValue("Activo");
+      sheet.getRange(existingIdx + 1, 12).setValue(motivoAsignacion || data[existingIdx][11]);
+      sheet.getRange(existingIdx + 1, 15).setValue(now);
+    } else {
+      sheet.appendRow([
+        asignacionId,
+        cleanDocId,
+        cleanDocenteNombre,
+        cleanAreaId,
+        nombreArea || cleanAreaId,
+        tipoVinculacion,
+        esCoordinadorTitular ? "Sí" : "No",
+        esCoordinadorSuplente ? "Sí" : "No",
+        fIni,
+        fechaFin,
+        "Activo",
+        motivoAsignacion || "Asignación institucional a academia/área docente",
+        authorizedBy || "Dirección",
+        now,
+        now
+      ]);
+    }
+
+    // Si se designó como Coordinador Titular o Suplente, actualizar/sincronizar CoordinacionesArea
+    if (esCoordinadorTitular || esCoordinadorSuplente || tipoVinculacion === "Coordinador de área") {
+      const coordSheet = getOrCreateSheet(ss, "CoordinacionesArea");
+      const coordRows = coordSheet.getDataRange().getValues();
+      const coordIdx = coordRows.findIndex(r => String(r[1]).trim().toUpperCase() === cleanAreaId && String(r[2]).trim() === cleanDocId);
+
+      const coordAmbitoJSON = JSON.stringify({
+        areaId: cleanAreaId,
+        tipoCoordinacion: esCoordinadorSuplente ? "Suplente" : "Titular",
+        fechaInicio: fIni,
+        fechaFin: fechaFin
+      });
+
+      if (coordIdx !== -1) {
+        coordSheet.getRange(coordIdx + 1, 4).setValue(cleanDocenteNombre);
+        coordSheet.getRange(coordIdx + 1, 5).setValue(coordAmbitoJSON);
+        coordSheet.getRange(coordIdx + 1, 6).setValue("Activo");
+      } else {
+        const coordId = "CRD-" + cleanAreaId + "-" + cleanDocId;
+        coordSheet.appendRow([
+          coordId,
+          cleanAreaId,
+          cleanDocId,
+          cleanDocenteNombre,
+          coordAmbitoJSON,
+          "Activo",
+          fIni
+        ]);
+      }
+    }
+
+    logStructuredEvent(
+      "ACADEMIC",
+      "assignTeacherToAcademicArea",
+      "INFO",
+      "TEACHER_AREA_ASSIGNED",
+      "Docente " + cleanDocId + " asignado al área académica " + cleanAreaId + " (" + tipoVinculacion + ").",
+      { asignacionId, docenteId: cleanDocId, areaId: cleanAreaId, tipoVinculacion },
+      authorizedBy || "Sistema"
+    );
+
+    return {
+      status: "success",
+      asignacionId: asignacionId,
+      docenteId: cleanDocId,
+      areaId: cleanAreaId,
+      tipoVinculacion: tipoVinculacion,
+      message: "Docente asignado correctamente al área académica de forma independiente de su carga horaria."
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function getTeachersByAcademicArea(payload) {
+  try {
+    const { areaId, soloActivos = true } = payload || {};
+    if (!areaId) throw new Error("areaId es requerido para consultar los docentes del área.");
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "DocentesAreasAcademicas");
+    const rows = sheet.getDataRange().getValues().slice(1);
+    const cleanAreaId = String(areaId).trim().toUpperCase();
+
+    const filtered = rows.filter(r => {
+      if (String(r[3]).trim().toUpperCase() !== cleanAreaId) return false;
+      if (soloActivos && String(r[10]).trim() !== "Activo") return false;
+      return true;
+    }).map(r => ({
+      asignacionId: r[0],
+      docenteId: r[1],
+      nombreDocente: r[2],
+      areaId: r[3],
+      nombreArea: r[4],
+      tipoVinculacion: r[5],
+      esCoordinadorTitular: String(r[6]).toLowerCase() === "sí" || String(r[6]).toLowerCase() === "true",
+      esCoordinadorSuplente: String(r[7]).toLowerCase() === "sí" || String(r[7]).toLowerCase() === "true",
+      fechaInicio: r[8],
+      fechaFin: r[9],
+      estado: r[10],
+      motivoAsignacion: r[11],
+      asignadoPor: r[12]
+    }));
+
+    return { status: "success", areaId: cleanAreaId, totalIntegrantes: filtered.length, data: filtered };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function getAcademicAreasByTeacher(payload) {
+  try {
+    const { docenteId, soloActivas = true } = payload || {};
+    if (!docenteId) throw new Error("docenteId es requerido para consultar sus áreas académicas.");
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "DocentesAreasAcademicas");
+    const rows = sheet.getDataRange().getValues().slice(1);
+    const cleanDocId = String(docenteId).trim();
+
+    const filtered = rows.filter(r => {
+      if (String(r[1]).trim() !== cleanDocId) return false;
+      if (soloActivas && String(r[10]).trim() !== "Activo") return false;
+      return true;
+    }).map(r => ({
+      asignacionId: r[0],
+      docenteId: r[1],
+      nombreDocente: r[2],
+      areaId: r[3],
+      nombreArea: r[4],
+      tipoVinculacion: r[5],
+      esCoordinadorTitular: String(r[6]).toLowerCase() === "sí" || String(r[6]).toLowerCase() === "true",
+      esCoordinadorSuplente: String(r[7]).toLowerCase() === "sí" || String(r[7]).toLowerCase() === "true",
+      fechaInicio: r[8],
+      fechaFin: r[9],
+      estado: r[10]
+    }));
+
+    return { status: "success", docenteId: cleanDocId, totalAreas: filtered.length, data: filtered };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function removeTeacherFromAcademicArea(payload) {
+  const { asignacionId, docenteId, areaId, motivoBaja, authorizedBy } = payload || {};
+  if (!asignacionId && (!docenteId || !areaId)) {
+    throw new Error("asignacionId o el par (docenteId, areaId) son requeridos para dar de baja la asignación.");
+  }
+
+  const lock = LockService.getScriptLock();
+  const hasLock = lock.tryLock(20000);
+  if (!hasLock) {
+    return { status: "error", code: "LOCK_TIMEOUT", message: "Operación bloqueada por concurrencia." };
+  }
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "DocentesAreasAcademicas");
+    const data = sheet.getDataRange().getValues();
+
+    const cleanAsgId = asignacionId ? String(asignacionId).trim().toUpperCase() : "";
+    const cleanDocId = docenteId ? String(docenteId).trim() : "";
+    const cleanAreaId = areaId ? String(areaId).trim().toUpperCase() : "";
+
+    const idx = data.findIndex((r, index) => {
+      if (index === 0) return false;
+      if (cleanAsgId && String(r[0]).trim().toUpperCase() === cleanAsgId) return true;
+      if (cleanDocId && cleanAreaId && String(r[1]).trim() === cleanDocId && String(r[3]).trim().toUpperCase() === cleanAreaId) return true;
+      return false;
+    });
+
+    if (idx === -1) {
+      throw new Error("Asignación de docente a área académica no encontrada.");
+    }
+
+    const nowStr = new Date().toISOString();
+    const obsPrev = String(data[idx][11] || "");
+    const nuevaObs = obsPrev + " | [BAJA ÁREA: " + nowStr + " por " + (authorizedBy || "Admin") + " - Motivo: " + (motivoBaja || "Baja de área") + "]";
+
+    // Borrado lógico inmutable
+    sheet.getRange(idx + 1, 10).setValue(nowStr.split("T")[0]); // FechaFin
+    sheet.getRange(idx + 1, 11).setValue("Inactivo");
+    sheet.getRange(idx + 1, 12).setValue(nuevaObs);
+    sheet.getRange(idx + 1, 15).setValue(nowStr);
+
+    return {
+      status: "success",
+      asignacionId: data[idx][0],
+      estado: "Inactivo",
+      message: "El docente ha sido desvinculado del área académica exitosamente conservando el historial inmutable."
+    };
+  } finally {
+    lock.releaseLock();
   }
 }

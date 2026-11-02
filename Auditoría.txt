@@ -1427,3 +1427,19 @@ RESULTADO DE EVALUACIÓN:
 - Se actualizaron las pruebas en tests/regression/academic-grading-suite.js alcanzando 72/72 pruebas aprobadas (100.0%).
 - Estado: Completado y Verificado funcionalmente.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-005] [F16-Task02]
+ASIGNACIÓN INSTITUCIONAL DE DOCENTES A ÁREAS ACADÉMICAS INDEPENDIENTE DE LA CARGA LECTIVA
+ARCHIVOS MODIFICADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementó la estructura formal DocentesAreasAcademicas en getOrCreateSheet con encabezados: AsignacionAreaID, DocenteID, NombreDocente, AreaID, NombreArea, TipoVinculacion, EsCoordinadorTitular, EsCoordinadorSuplente, FechaInicio, FechaFin, Estado, MotivoAsignacion, AsignadoPor, FechaCreacion, FechaActualizacion.
+- Se implementó assignTeacherToAcademicArea permitiendo adscribir docentes a áreas curriculares de forma totalmente desacoplada de la asignación de asignaturas en el período activo. Soportado multi-área por docente y multi-docente por área.
+- Se validó que docentes desvinculados o inactivos no puedan ser asignados como activos.
+- Se integró la designación de coordinadores titular y suplente sincronizándolos automáticamente con CoordinacionesArea.
+- Se implementaron getTeachersByAcademicArea y getAcademicAreasByTeacher para consultas en tiempo real de integrantes de academia docente.
+- Se implementó removeTeacherFromAcademicArea con baja lógica inmutable (Estado = 'Inactivo') preservando la trazabilidad histórica.
+- Se actualizaron las aserciones en tests/regression/academic-grading-suite.js alcanzando 78/78 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================

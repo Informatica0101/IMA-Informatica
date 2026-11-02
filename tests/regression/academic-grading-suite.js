@@ -122,6 +122,15 @@ assert(userCode.includes("getInternalRoleAssignments") && userCode.includes("[TA
 assert(userCode.includes("CatalogoRolesInternos"), "backend/user-service/Code.gs inicializa y normaliza la hoja CatalogoRolesInternos [TASK-004]");
 assert(userCode.includes("esSuplente") && userCode.includes("suplenteDeUserId"), "backend/user-service/Code.gs soporta suplencias temporales y delimitación temporal [TASK-004]");
 
+// [TASK-005] [F16-Task02] - Verificación de asignación de docentes a áreas académicas independiente de carga lectiva
+assert(academicCode.includes("assignTeacherToAcademicArea") && academicCode.includes("[TASK-005]"), "backend/academic-service/Code.gs contiene assignTeacherToAcademicArea [TASK-005]");
+assert(academicCode.includes("getTeachersByAcademicArea") && academicCode.includes("[TASK-005]"), "backend/academic-service/Code.gs contiene getTeachersByAcademicArea [TASK-005]");
+assert(academicCode.includes("getAcademicAreasByTeacher") && academicCode.includes("[TASK-005]"), "backend/academic-service/Code.gs contiene getAcademicAreasByTeacher [TASK-005]");
+assert(academicCode.includes("removeTeacherFromAcademicArea") && academicCode.includes("[TASK-005]"), "backend/academic-service/Code.gs contiene removeTeacherFromAcademicArea [TASK-005]");
+assert(academicCode.includes("DocentesAreasAcademicas"), "backend/academic-service/Code.gs normaliza la hoja DocentesAreasAcademicas [TASK-005]");
+assert(academicCode.includes("esCoordinadorTitular") && academicCode.includes("esCoordinadorSuplente"), "backend/academic-service/Code.gs soporta designación de coordinadores titular y suplente [TASK-005]");
+
+
 
 
 

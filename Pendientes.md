@@ -805,7 +805,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-005] [ ] [F16-Task02] Implementar la asignación institucional de docentes a áreas académicas, independiente de la carga lectiva
+### [TASK-005] [X] [F16-Task02] Implementar la asignación institucional de docentes a áreas académicas, independiente de la carga lectiva
 - **Origen del Hallazgo:** `AUDITORIA_FASE_16_RECURSOS_HUMANOS.md` / Sección F (Brecha F.2) y Sección H (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Estructura académica institucional, comités pedagógicos y desacoplamiento de asignaturas)
@@ -850,7 +850,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - La desactivación de un área no elimina el historial académico ni las asignaciones anteriores.
   - Las asignaciones de clases en `AsignacionesDocentes` no se alteran ni duplican.
   - Los permisos de supervisión del coordinador se mantienen limitados a las asignaturas y docentes de su área.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 ---
