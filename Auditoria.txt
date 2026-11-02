@@ -852,3 +852,41 @@ RESULTADO DE EVALUACIÓN:
 - Pruebas automatizadas actualizadas en tests/regression/academic-grading-suite.js con 111/111 pruebas aprobadas (100.0%).
 - Estado: Completado y Verificado funcionalmente.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+AUDITORIA INICIAL — [TASK-013] [F18-Task02]
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (recordAccountsPayableExpense, recordPurchaseReceipt, l. 6470-6490 y 6730-6770)
+- Estructuras: CuentasPorPagarGastos, OrdenesCompra, RecepcionesCompra
+HALLAZGOS:
+1. En recordPurchaseReceipt (l. 6470): Al momento de registrar una recepción física de bodega, se llama de forma acoplada y automática a recordAccountsPayableExpense creando una factura ficticia 'FCT-REC-...', confundiendo el albarán/nota de entrega física con la factura fiscal emitida por el proveedor.
+2. Inexistencia de motor de conciliación de tres vías (Three-Way Match): En recordAccountsPayableExpense no existe ninguna verificación cruzada que contraste la factura fiscal recibida del proveedor contra lo ordenado en OrdenesCompra y lo recibido conforme en RecepcionesCompra.
+3. Vulnerabilidad a sobreprecios y cobros indebidos: Las facturas pueden tramitarse y aprobarse para pago con cantidades facturadas que exceden lo entregado físicamente en bodega, o con precios unitarios mayores a los pactados en la cotización y orden aprobada.
+4. Falta de estados de conciliación documental: CuentasPorPagarGastos no maneja estados de conciliación ('PendienteConciliacion', 'Conciliada', 'ConDiferencias', 'DiferenciaAutorizada') ni audita discrepancias por ítem.
+ESTADO: Auditoría finalizada. Procediendo con la implementación de verifyThreeWayMatch y el desacoplamiento de la recepción física.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-013] [F18-Task02]
+CONCILIACIÓN DOCUMENTAL DE TRES VÍAS (THREE-WAY MATCH) ENTRE ORDEN, RECEPCIÓN Y FACTURA
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (verifyThreeWayMatch, recordAccountsPayableExpense, recordPurchaseReceipt, doPost, ROLE_PERMISSIONS)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt / Auditoría.txt / ChangesLogs.txt
+RESULTADO DE EVALUACIÓN:
+- Se implementó verifyThreeWayMatch en backend/accounting-service/Code.gs para contrastar de manera rigurosa:
+  1. Orden de Compra: partidas pedidas, precios unitarios autorizados y subtotales.
+  2. Recepciones de Compra: acumulado de cantidades recibidas conformes aceptadas en almacén.
+  3. Factura del Proveedor: cantidades facturadas, precios unitarios, impuestos y montos totales.
+- Detección de discrepancias:
+  * CANTIDAD_EXCEDE_RECEPCION: cantidades facturadas que superan lo efectivamente recibido en bodega.
+  * SOBREPRECIO_UNITARIO: precios unitarios que superan lo autorizado en la orden (diferencia absoluta y porcentual).
+  * ARTICULO_NO_ORDENADO: ítems en factura ajenos a la orden autorizada.
+- Desacoplamiento de recepción física y factura fiscal: se eliminó la simulación de facturas 'FCT-REC-...' dentro de recordPurchaseReceipt; el albarán físico no crea cuentas por pagar ficticias.
+- Control de pagos en CuentasPorPagarGastos: si se detectan discrepancias, la obligación pasa a estado 'BloqueadoPorDiscrepancia' y 'Bloqueado Conciliacion', a menos que medie autorización expresa ('DiferenciaAutorizada') por Director o Administrador.
+- Pruebas automatizadas en tests/regression/academic-grading-suite.js pasando al 100% (116/116 pruebas aprobadas).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================

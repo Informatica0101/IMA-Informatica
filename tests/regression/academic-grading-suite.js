@@ -177,6 +177,13 @@ assert(acctCode.includes("RecibidaParcial") && acctCode.includes("RecibidaTotal"
 assert(acctCode.includes("hasDamagedOrDispute") && acctCode.includes("itemsToInventory"), "backend/accounting-service/Code.gs segrega productos dañados o rechazados impidiendo entrada conforme a Kardex [TASK-012]");
 assert(acctCode.includes("getPurchaseReceipts"), "backend/accounting-service/Code.gs implementa consulta de historial de recepciones getPurchaseReceipts [TASK-012]");
 
+// [TASK-013] [F18-Task02] - Conciliación documental de tres vías (Three-Way Match) entre Orden, Recepción y Factura
+assert(acctCode.includes("verifyThreeWayMatch") && acctCode.includes("[TASK-013]"), "backend/accounting-service/Code.gs contiene función verifyThreeWayMatch [TASK-013]");
+assert(acctCode.includes("SOBREPRECIO_UNITARIO") && acctCode.includes("CANTIDAD_EXCEDE_RECEPCION"), "backend/accounting-service/Code.gs detecta sobreprecios y cantidades que superan recepción [TASK-013]");
+assert(acctCode.includes("ARTICULO_NO_ORDENADO"), "backend/accounting-service/Code.gs detecta artículos facturados no autorizados en la orden [TASK-013]");
+assert(acctCode.includes("BloqueadoPorDiscrepancia") && acctCode.includes("Bloqueado Conciliacion"), "backend/accounting-service/Code.gs bloquea pagos automáticos ante discrepancias no autorizadas [TASK-013]");
+assert(!acctCode.includes("numeroFactura: \"FCT-\" + recId"), "backend/accounting-service/Code.gs desacopla la recepción física de la generación de facturas fiscales [TASK-013]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

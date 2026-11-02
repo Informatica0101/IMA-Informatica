@@ -3953,3 +3953,17 @@ ARCHIVOS MODIFICADOS:
 3. Pendientes.md:
    - Líneas 1116-1152: Marcada tarea [TASK-012] como [X] Completado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+TAREA: [TASK-013] [F18-Task02]
+ARCHIVOS MODIFICADOS:
+1. backend/accounting-service/Code.gs:
+   - Líneas 197, 201, 562: Habilitación de 'verifyThreeWayMatch' en permisos RBAC y ruteo en switch doPost.
+   - Líneas 6465-6485: Desacoplamiento de facturas ficticias en recordPurchaseReceipt, removiendo llamada automática a recordAccountsPayableExpense.
+   - Líneas 6725-6970: Implementación de la función verifyThreeWayMatch (análisis partida por partida, detección de sobreprecios, sobrefacturaciones, artículos no ordenados y estados de conciliación) e integración en recordAccountsPayableExpense con bloqueo automático de obligaciones con discrepancias.
+2. tests/regression/academic-grading-suite.js:
+   - Líneas 189-198: Aserciones automatizadas para Three-Way Matching, detección de sobreprecios, cantidades que exceden recepción física, bloqueo por discrepancia y desacoplamiento de factura ficticia.
+3. Pendientes.md:
+   - Líneas 1160-1200: Marcada tarea [TASK-013] como [X] Completado.
+===============================================================================
