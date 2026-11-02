@@ -728,24 +728,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>`;
         }
 
-        // Tarea 2: Expansión Full-Viewport
-        window.expandSubject = function(subj) {
+        // [REQ-DOC-007]: Expansión Full-Viewport con Separación Clara de Tareas Evaluables y Guías de Estudio
+        window.expandSubject = async function(subj) {
             var expandedOverlay = document.createElement('div');
             expandedOverlay.id = 'expanded-subject-overlay';
-            expandedOverlay.className = 'fixed inset-0 z-[2200] bg-white overflow-y-auto animate-expansion';
+            expandedOverlay.className = 'fixed inset-0 z-[2200] bg-slate-50 overflow-y-auto animate-expansion';
 
             var subjActivities = currentActivities.filter(function(a) { return a.asignatura === subj; });
 
-            // Ordenar por fecha de vencimiento (más recientes primero)
+            // Separar actividades evaluables
             subjActivities.sort(function(a, b) {
                 return new Date(b.fechaLimite || 0) - new Date(a.fechaLimite || 0);
             });
 
             expandedOverlay.innerHTML = `
                 <div class="container mx-auto px-4 md:px-8 py-8 max-w-5xl">
-                    <div class="flex items-center justify-between mb-8 sticky top-0 bg-white/90 backdrop-blur-md py-4 z-10 border-b border-gray-100">
+                    <div class="flex items-center justify-between mb-8 sticky top-0 bg-white/95 backdrop-blur-md p-4 rounded-3xl shadow-sm z-10 border border-gray-100">
                         <div class="flex items-center gap-4">
-                            <button onclick="window.closeExpandedSubject()" class="w-10 h-10 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all">
+                            <button onclick="window.closeExpandedSubject()" class="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all shadow-sm">
                                 <i class="fas fa-arrow-left"></i>
                             </button>
                             <div>
@@ -753,22 +753,129 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">${selectedPartial}</p>
                             </div>
                         </div>
-                        <div class="px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-xs font-bold uppercase tracking-widest border border-blue-100">
-                            ${subjActivities.length} Actividades Totales
+                        <div class="flex items-center gap-2">
+                            <span id="tab-subject-tasks" onclick="window.switchSubjectTab('tasks')" class="cursor-pointer px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all bg-blue-600 text-white shadow-sm">
+                                <i class="fas fa-tasks mr-1.5"></i> Tareas (${subjActivities.length})
+                            </span>
+                            <span id="tab-subject-guides" onclick="window.switchSubjectTab('guides')" class="cursor-pointer px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all bg-white text-gray-600 hover:bg-gray-100 border border-gray-200">
+                                <i class="fas fa-book-open mr-1.5"></i> Guías de Estudio
+                            </span>
                         </div>
                     </div>
 
-                    <div id="expanded-tasks-list" class="grid grid-cols-1 gap-6 pb-20">
-                        <!-- Se poblará dinámicamente -->
+                    <!-- Panel de Tareas Evaluables -->
+                    <div id="subject-tasks-panel" class="space-y-6">
+                        <div class="flex items-center justify-between pb-2 border-b border-gray-200">
+                            <div>
+                                <h3 class="text-sm font-black text-gray-800 uppercase tracking-wider">Actividades Evaluables</h3>
+                                <p class="text-[11px] text-gray-400 font-medium">Tareas y evaluaciones asignadas sujetas a calificación.</p>
+                            </div>
+                            <span class="text-xs font-bold text-gray-500">${subjActivities.length} asignadas</span>
+                        </div>
+                        <div id="expanded-tasks-list" class="grid grid-cols-1 gap-6 pb-12"></div>
+                    </div>
+
+                    <!-- Panel de Guías de Estudio (Separado Visualmente) -->
+                    <div id="subject-guides-panel" class="hidden space-y-6">
+                        <div class="flex items-center justify-between pb-2 border-b border-gray-200">
+                            <div>
+                                <h3 class="text-sm font-black text-gray-800 uppercase tracking-wider">Guías de Estudio & Material Didáctico</h3>
+                                <p class="text-[11px] text-gray-400 font-medium">Recursos formativos y material de repaso para consulta y descarga (sin entrega obligatoria).</p>
+                            </div>
+                            <span id="subject-guides-count" class="text-xs font-bold text-purple-600">0 recursos</span>
+                        </div>
+                        <div id="expanded-guides-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-12">
+                            <div class="col-span-full py-8 text-center text-gray-400 text-xs font-bold">
+                                <i class="fas fa-spinner fa-spin mr-2"></i> Cargando recursos didácticos...
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
             document.body.appendChild(expandedOverlay);
             document.body.style.overflow = 'hidden';
 
+            window.switchSubjectTab = function(active) {
+                var tabTasks = document.getElementById('tab-subject-tasks');
+                var tabGuides = document.getElementById('tab-subject-guides');
+                var panelTasks = document.getElementById('subject-tasks-panel');
+                var panelGuides = document.getElementById('subject-guides-panel');
+
+                if (active === 'tasks') {
+                    if (tabTasks) tabTasks.className = 'cursor-pointer px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all bg-blue-600 text-white shadow-sm';
+                    if (tabGuides) tabGuides.className = 'cursor-pointer px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all bg-white text-gray-600 hover:bg-gray-100 border border-gray-200';
+                    if (panelTasks) panelTasks.classList.remove('hidden');
+                    if (panelGuides) panelGuides.classList.add('hidden');
+                } else {
+                    if (tabTasks) tabTasks.className = 'cursor-pointer px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all bg-white text-gray-600 hover:bg-gray-100 border border-gray-200';
+                    if (tabGuides) tabGuides.className = 'cursor-pointer px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all bg-purple-600 text-white shadow-sm';
+                    if (panelTasks) panelTasks.classList.add('hidden');
+                    if (panelGuides) panelGuides.classList.remove('hidden');
+                }
+            };
+
             var expandedList = document.getElementById('expanded-tasks-list');
-            // Reutilizar lógica de renderizado de tareas (con todas las tareas)
-            renderActivitiesIntoContainer(subjActivities, expandedList);
+            if (subjActivities.length === 0) {
+                expandedList.innerHTML = `
+                    <div class="p-8 text-center bg-white rounded-2xl border border-gray-100 text-gray-400 text-xs font-bold uppercase tracking-wider">
+                        No hay actividades pendientes ni registradas para esta materia en el parcial seleccionado.
+                    </div>`;
+            } else {
+                renderActivitiesIntoContainer(subjActivities, expandedList);
+            }
+
+            // Carga de Guías de Estudio para esta Asignatura
+            try {
+                var guidesList = document.getElementById('expanded-guides-list');
+                var countLabel = document.getElementById('subject-guides-count');
+                var guidesRes = await window.getStudyGuides({
+                    grado: currentUser.grado,
+                    seccion: currentUser.seccion,
+                    parcial: selectedPartial,
+                    asignatura: subj,
+                    rol: 'Estudiante',
+                    estado: 'activo'
+                });
+                var guidesData = (guidesRes && guidesRes.status === 'success') ? (Array.isArray(guidesRes.guias) ? guidesRes.guias : (Array.isArray(guidesRes.data) ? guidesRes.data : [])) : [];
+                if (countLabel) countLabel.textContent = guidesData.length + ' recurso' + (guidesData.length === 1 ? '' : 's');
+
+                if (guidesData.length === 0) {
+                    guidesList.innerHTML = `
+                        <div class="col-span-full p-8 text-center bg-white rounded-2xl border border-gray-100 text-gray-400 text-xs font-medium">
+                            <i class="fas fa-folder-open text-2xl text-gray-300 mb-2 block"></i>
+                            No hay guías de estudio ni material complementario registrado para esta materia en este parcial.
+                        </div>`;
+                } else {
+                    guidesList.innerHTML = guidesData.map(function(g) {
+                        return `
+                            <div class="p-5 bg-white rounded-2xl border border-purple-100 hover:border-purple-300 transition-all shadow-sm flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-purple-50 text-purple-700">
+                                            ${g.tipo_recurso || 'Guía de Estudio'}
+                                        </span>
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${g.archivo_nombre ? g.archivo_nombre.split('.').pop().toUpperCase() : 'DOC'}</span>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-gray-800 uppercase tracking-tight mb-1">${g.titulo}</h4>
+                                    <p class="text-xs text-gray-500 font-normal line-clamp-2 mb-4">${g.descripcion || 'Material de apoyo y estudio para repaso de contenidos.'}</p>
+                                </div>
+                                <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                                    <span class="text-[10px] text-gray-400 font-semibold uppercase"><i class="fas fa-user-tie mr-1"></i> ${g.docente_nombre || 'Docente'}</span>
+                                    <a href="${g.archivo_url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold transition-all">
+                                        <i class="fas fa-file-download"></i> Descargar
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            } catch (guideErr) {
+                console.error("[IMA-STUDENT] Error cargando guías de la asignatura:", guideErr);
+                var errGuidesList = document.getElementById('expanded-guides-list');
+                if (errGuidesList) {
+                    errGuidesList.innerHTML = `<div class="col-span-full p-4 text-center text-xs text-red-500">Error al sincronizar guías de estudio.</div>`;
+                }
+            }
         };
 
         window.closeExpandedSubject = function() {
@@ -922,9 +1029,11 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="card-ima assignment-card cursor-pointer group ${isExpandedView ? 'is-expanded' : ''}" data-task-id="${activity.tareaId || activity.examenId}">
                 <div class="flex justify-between items-start">
                     <div class="flex-grow">
-                        <div class="flex items-center gap-2 mb-1">
+                        <div class="flex items-center gap-2 mb-1 flex-wrap">
                             <span class="text-[9px] font-semibold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded">${activity.type}</span>
                             <span class="text-[10px] text-gray-400 font-medium uppercase tracking-tighter">${activity.asignatura || 'General'}</span>
+                            ${activity.tema ? `<span class="text-[9px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded"><i class="fas fa-bookmark text-[8px] mr-1"></i>${activity.tema}</span>` : ''}
+                            ${activity.parcial ? `<span class="text-[9px] font-medium text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded">${activity.parcial}</span>` : ''}
                             ${alertBadgeHtml}
                         </div>
                         <h3 class="text-base font-semibold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight uppercase tracking-tighter flex items-center flex-wrap">

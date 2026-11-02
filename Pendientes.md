@@ -364,7 +364,7 @@
 - **Dependencias Expuestas:** `renderSubjectNavigation`, tarjetas expandibles de asignatura.
 - **Descripción del Alcance:** Mostrar tareas con título, asignatura, tema, parcial, fechas y estado (pendiente, entregada, vencida). Separar visualmente las guías de estudio de las tareas evaluables.
 - **Criterios de Aceptación:** Tarjetas desplegables por materia mostrando claramente guías y tareas sin confusión de estados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [REQ-DOC-008] Estructura de Carpetas Jerárquica en Google Drive y Nomenclatura (Sección 8)
 - **Origen del Hallazgo:** Especificación de Gestión Docente y Tareas (Sección 8).

@@ -914,3 +914,14 @@ Módulo: Programación de Tareas y Control de Disponibilidad ([REQ-DOC-005] y [R
   * En getActivityHtml, implementada evaluación de activity.esDisponible === false, ocultando el botón interactivo de 'Entregar Tarea' y mostrando en su lugar una insignia visual ámbar estilizada: Programada (Disponible fecha/hora) con tooltip descriptivo.
   * Bloqueo de invocaciones accidentales a openSubmissionModal para tareas aún no disponibles.
 - Backlog (Pendientes.md): Marcadas tareas [REQ-DOC-005] y [REQ-DOC-006] como completadas.
+
+
+REGISTRO DE CAMBIOS - VISUALIZACIÓN EXPANDIDA DE ASIGNATURA Y SEPARACIÓN DE GUÍAS DE ESTUDIO - Sun Nov 01 2026
+
+Módulo: Visualización de Actividades y Recursos Estudiantiles ([REQ-DOC-007])
+- Interfaz Estudiantil (js/student.js):
+  * En 'window.expandSubject', implementado selector de navegación de dos pestañas: '#tab-subject-tasks' (Actividades Evaluables) y '#tab-subject-guides' (Guías de Estudio & Material Didáctico).
+  * Diseñado panel dedicado '#subject-guides-panel' con contador dinámico de recursos, advertencia explicativa sobre recursos sin entrega obligatoria y diseño de tarjetas con enlace de descarga directa.
+  * Añadida carga asíncrona de recursos mediante 'window.getStudyGuides' filtrando por grado, sección, parcial y asignatura del estudiante.
+  * En 'getActivityHtml', incorporada visualización de metadatos estructurados de 'tema' (con icono temático) y 'parcial' en las tarjetas de actividades evaluables.
+- Backlog (Pendientes.md): Marcada tarea [REQ-DOC-007] como completada.

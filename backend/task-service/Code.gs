@@ -314,8 +314,8 @@ function getStudentTasks(payload) {
     // REQ-DOC-006: Cálculo de disponibilidad temporal de la tarea
     let disponibleDesde = null;
     let esDisponible = true;
-    if (task[14]) {
-      const parts = String(task[14]).split('T')[0].split('-');
+    if (fechaClase) {
+      const parts = fechaClase.split('T')[0].split('-');
       const year = parseInt(parts[0], 10);
       const month = parseInt(parts[1], 10) - 1;
       const day = parseInt(parts[2], 10);
@@ -541,10 +541,11 @@ function submitAssignment(payload) {
   const tareasData = tareasSheet.getDataRange().getValues();
   const taskRow = tareasData.find(r => r[0] === tareaId);
   if (taskRow) {
-    const fechaClase = taskRow[14];
+    const rawFechaClase = taskRow[14];
     const horaDisponible = taskRow[15] || '';
-    if (fechaClase) {
-      const parts = String(fechaClase).split('T')[0].split('-');
+    if (rawFechaClase) {
+      const fechaClaseIso = new Date(rawFechaClase).toISOString();
+      const parts = fechaClaseIso.split('T')[0].split('-');
       const y = parseInt(parts[0], 10);
       const m = parseInt(parts[1], 10) - 1;
       const d = parseInt(parts[2], 10);
