@@ -1304,3 +1304,41 @@ window.generateBatchMonthlyCharges = async function(payload) {
     throw error;
   }
 };
+
+
+// [TASK-003] [F15-Task03] - Métodos clientes para anulaciones, reversión de pagos, notas de crédito y reembolsos
+window.voidCharge = async function(payload) {
+  try {
+    return await window.callApi('ACCOUNTING', 'voidCharge', payload || {});
+  } catch (error) {
+    console.error('[ACCOUNTING] Error en anulación de cargo:', error);
+    throw error;
+  }
+};
+
+window.reversePayment = async function(payload) {
+  try {
+    return await window.callApi('ACCOUNTING', 'reversePayment', payload || {});
+  } catch (error) {
+    console.error('[ACCOUNTING] Error en reversión de pago:', error);
+    throw error;
+  }
+};
+
+window.issueFiscalCreditNote = async function(payload) {
+  try {
+    return await window.callApi('ACCOUNTING', 'issueFiscalCreditNote', payload || {});
+  } catch (error) {
+    console.error('[ACCOUNTING] Error en emisión de nota de crédito:', error);
+    throw error;
+  }
+};
+
+window.processPaymentRefund = async function(payload) {
+  try {
+    return await window.callApi('ACCOUNTING', 'processPaymentRefund', payload || {});
+  } catch (error) {
+    console.error('[ACCOUNTING] Error en procesamiento de reembolso:', error);
+    throw error;
+  }
+};

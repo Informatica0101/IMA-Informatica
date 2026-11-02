@@ -1396,3 +1396,18 @@ RESULTADO DE EVALUACIÓN:
 - Se añadieron aserciones automatizadas a tests/regression/academic-grading-suite.js, alcanzando 61/61 pruebas aprobadas (100.0%).
 - Estado: Completado y Verificado funcionalmente.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-003] [F15-Task03]
+SISTEMA INTEGRAL DE ANULACIONES, REVERSIÓN DE PAGOS, NOTAS DE CRÉDITO Y REEMBOLSOS
+ARCHIVOS MODIFICADOS: backend/accounting-service/Code.gs, js/accounting.js, tests/regression/academic-grading-suite.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementó voidCharge en backend/accounting-service/Code.gs para anulación lógica de cargos con motivo obligatorio (>= 10 caracteres), protegiendo la inmutabilidad de la fila en CargosEstudiante e impidiendo anular cargos con abonos activos en PagosAbonos.
+- Se implementó reversePayment con ScriptLock atómico (LockService) para revertir aplicaciones de pago sin eliminar el historial, restituyendo exactamente el saldo y recalculando el estado del cargo en CargosEstudiante ('Pendiente'/'Parcial'), generando el contra-asiento en AsientosContables y bloqueando doble reversión con PAYMENT_ALREADY_REVERSED.
+- Se implementó issueFiscalCreditNote gestionando la estructura tabular NotasCreditoFiscales, vinculada obligatoriamente a la FacturaOriginalID de FacturasFiscales, validando que el importe no exceda el saldo acreditable de la factura y soportando acreditaciones totales y parciales.
+- Se implementó processPaymentRefund para devoluciones monetarias y reembolsos en caja/bancos, validando que el monto a reembolsar no exceda el saldo pagado disponible y registrando el egreso formal en MovimientosCajaBancos.
+- Se expusieron los métodos clientes correspondientes en js/accounting.js.
+- Se actualizaron las aserciones en tests/regression/academic-grading-suite.js alcanzando 67/67 pruebas pasadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================

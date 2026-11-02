@@ -107,6 +107,15 @@ assert(acctCode.includes("generateBatchMonthlyCharges") && acctCode.includes("[T
 assert(acctCode.includes("BATCH-CRG-") && acctCode.includes("LockService.getScriptLock()"), "backend/accounting-service/Code.gs genera lotes atómicos BATCH-CRG con LockService [TASK-002]");
 assert(acctCode.includes("ClaveUnicaDedupe") || acctCode.includes("dedupeKey"), "backend/accounting-service/Code.gs protege contra duplicados mediante clave lógica de deduplicación [TASK-002]");
 
+// [TASK-003] [F15-Task03] - Verificación del sistema integral de anulaciones, reversión, notas de crédito y reembolsos
+assert(acctCode.includes("voidCharge") && acctCode.includes("[TASK-003]"), "backend/accounting-service/Code.gs contiene voidCharge [TASK-003]");
+assert(acctCode.includes("reversePayment") && acctCode.includes("[TASK-003]"), "backend/accounting-service/Code.gs contiene reversePayment [TASK-003]");
+assert(acctCode.includes("issueFiscalCreditNote") && acctCode.includes("[TASK-003]"), "backend/accounting-service/Code.gs contiene issueFiscalCreditNote [TASK-003]");
+assert(acctCode.includes("processPaymentRefund") && acctCode.includes("[TASK-003]"), "backend/accounting-service/Code.gs contiene processPaymentRefund [TASK-003]");
+assert(acctCode.includes("NotasCreditoFiscales") && acctCode.includes("FacturasFiscales"), "backend/accounting-service/Code.gs gestiona la hoja NotasCreditoFiscales vinculada [TASK-003]");
+assert(acctCode.includes("ALREADY_VOIDED") && acctCode.includes("PAYMENT_ALREADY_REVERSED"), "backend/accounting-service/Code.gs implementa control de idempotencia para anulaciones y reversiones [TASK-003]");
+
+
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
