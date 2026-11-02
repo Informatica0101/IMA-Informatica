@@ -380,13 +380,16 @@ function uploadFile(payload) {
   const sParcial = String(parcial || "General");
   const sAsignatura = String(asignatura || "General");
 
-  const gradoFolder = getOrCreateFolder(rootFolder, sGrado);
-  const seccionFolder = getOrCreateFolder(gradoFolder, sSeccion);
-  const alumnoFolder = getOrCreateFolder(seccionFolder, sNombre);
-  const parcialFolder = getOrCreateFolder(alumnoFolder, sParcial);
-  const asignaturaFolder = getOrCreateFolder(parcialFolder, sAsignatura);
-
-  const taskDeliveryFolder = getOrCreateFolder(asignaturaFolder, `${String(tituloTarea)}_${String(userId)}`);
+  // [REQ-DOC-008]: Almacenamiento jerárquico estandarizado en Drive
+  const taskDeliveryFolder = resolveStudentTaskDeliveryFolder(rootFolder, {
+    grado: sGrado,
+    seccion: sSeccion,
+    nombre: sNombre,
+    parcial: sParcial,
+    asignatura: sAsignatura,
+    tituloTarea: tituloTarea,
+    userId: userId
+  });
 
   const fileInfo = fileData.split(',');
   let mimeType = "application/octet-stream";
@@ -420,13 +423,33 @@ function uploadFile(payload) {
     logDebug("No se pudo establecer el permiso de compartir carpeta:", e.message);
   }
 
+  // [REQ-DOC-009]: Registrar metadatos documentales de la entrega
+  const docId = recordDocumentMetadata({
+    titulo: `${tituloTarea} - ${sNombre}`,
+    fileName: fileName,
+    tipo_recurso: "Entrega de Tarea",
+    asignatura: sAsignatura,
+    grado: sGrado,
+    seccion: sSeccion,
+    parcial: sParcial,
+    tareaId: tareaId,
+    userId: userId,
+    nombre: sNombre,
+    fileId: file.getId(),
+    folderId: taskDeliveryFolder.getId(),
+    folderUrl: taskDeliveryFolder.getUrl(),
+    mimeType: mimeType,
+    tamanio_bytes: blob.getBytes() ? blob.getBytes().length : 0
+  });
+
   return {
     status: "success",
     data: {
       fileId: file.getId(),
       folderId: taskDeliveryFolder.getId(),
       folderUrl: taskDeliveryFolder.getUrl(),
-      mimeType: mimeType
+      mimeType: mimeType,
+      docId: docId
     }
   };
 }
@@ -498,15 +521,25 @@ function finishChunkedUpload(payload) {
 
     const finalBlob = Utilities.newBlob(combinedBytes, mimeType, fileName);
 
-    const alumnoFolder = getStudentFolder(userId);
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const usuariosSheet = getSheetOrThrow(ss, "Usuarios");
     const tareasSheet = getSheetOrThrow(ss, "Tareas");
+
+    const userData = usuariosSheet.getDataRange().getValues().find(row => row[0] === userId);
+    const [, nombre, grado, seccion] = userData || [];
     const taskData = tareasSheet.getDataRange().getValues().find(row => row[0] === tareaId);
     const tituloTarea = taskData ? taskData[2] : "Tarea Sin Titulo";
 
-    const parcialFolder = getOrCreateFolder(alumnoFolder, String(parcial || "General"));
-    const asignaturaFolder = getOrCreateFolder(parcialFolder, String(asignatura || "General"));
-    const taskDeliveryFolder = getOrCreateFolder(asignaturaFolder, `${String(tituloTarea)}_${String(userId)}`);
+    const rootFolder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
+    const taskDeliveryFolder = resolveStudentTaskDeliveryFolder(rootFolder, {
+      grado: grado,
+      seccion: seccion,
+      nombre: nombre,
+      parcial: parcial,
+      asignatura: asignatura,
+      tituloTarea: tituloTarea,
+      userId: userId
+    });
 
     const file = taskDeliveryFolder.createFile(finalBlob);
 
@@ -517,12 +550,32 @@ function finishChunkedUpload(payload) {
       taskDeliveryFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
     } catch (e) {}
 
+    // [REQ-DOC-009]: Registrar metadatos
+    const docId = recordDocumentMetadata({
+      titulo: `${tituloTarea} - ${nombre}`,
+      fileName: fileName,
+      tipo_recurso: "Entrega de Tarea",
+      asignatura: asignatura,
+      grado: grado,
+      seccion: seccion,
+      parcial: parcial,
+      tareaId: tareaId,
+      userId: userId,
+      nombre: nombre,
+      fileId: file.getId(),
+      folderId: taskDeliveryFolder.getId(),
+      folderUrl: taskDeliveryFolder.getUrl(),
+      mimeType: mimeType,
+      tamanio_bytes: totalSize
+    });
+
     return {
       status: "success",
       data: {
         fileId: file.getId(),
         folderId: taskDeliveryFolder.getId(),
-        mimeType: mimeType
+        mimeType: mimeType,
+        docId: docId
       }
     };
   } catch (e) {
@@ -992,10 +1045,23 @@ function getAllStudentProjects(payload) {
   return { status: "success", data: projects };
 }
 
-// --- HELPERS DE DRIVE ---
+// --- HELPERS DE DRIVE Y GESTIÓN JERÁRQUICA DOCUMENTAL ([REQ-DOC-008] y [REQ-DOC-009]) ---
+
+/**
+ * Sanitiza nombres de carpetas y archivos para prevenir duplicados por diferencias tipográficas,
+ * tildes o caracteres inválidos en Google Drive y sistemas operativos.
+ */
+function sanitizePathSegment(segment) {
+  if (!segment) return "General";
+  let s = String(segment).trim();
+  s = s.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Remover acentos/diacríticos
+  s = s.replace(/[/\\?%*:|"<>]/g, "-"); // Caracteres no permitidos
+  s = s.replace(/\s+/g, " "); // Colapsar múltiples espacios
+  return s.trim() || "General";
+}
+
 function getOrCreateFolder(parentFolder, folderName) {
-  // Convertimos a string por si viene de una celda con formato número (ej. 10, 11)
-  const name = String(folderName || "").trim() || "Sin Nombre";
+  const name = sanitizePathSegment(folderName);
   try {
     const folders = parentFolder.getFoldersByName(name);
     return folders.hasNext() ? folders.next() : parentFolder.createFolder(name);
@@ -1003,5 +1069,94 @@ function getOrCreateFolder(parentFolder, folderName) {
     const errorMsg = `Error de DriveApp en carpeta "${name}": ${e.message}`;
     logDebug(errorMsg);
     throw new Error(errorMsg);
+  }
+}
+
+/**
+ * [REQ-DOC-008]: Resuelve la estructura jerárquica estandarizada en Drive:
+ * Para estudiantes: Área / New Generation / Estudiantes / [Grado] / [Seccion] / [Nombre] / [Parcial] / [Asignatura] / [Tarea]
+ */
+function resolveStudentTaskDeliveryFolder(rootFolder, params) {
+  const { grado, seccion, nombre, parcial, asignatura, tituloTarea, userId } = params;
+  const areaFolder = getOrCreateFolder(rootFolder, "Area");
+  const ngFolder = getOrCreateFolder(areaFolder, "New Generation");
+  const estRoot = getOrCreateFolder(ngFolder, "Estudiantes");
+  const gradoFolder = getOrCreateFolder(estRoot, grado || "General");
+  const seccionFolder = getOrCreateFolder(gradoFolder, seccion || "General");
+  const alumnoFolder = getOrCreateFolder(seccionFolder, nombre || `Estudiante_${userId}`);
+  const parcialFolder = getOrCreateFolder(alumnoFolder, parcial || "General");
+  const asigFolder = getOrCreateFolder(parcialFolder, asignatura || "General");
+  const taskFolder = getOrCreateFolder(asigFolder, `${sanitizePathSegment(tituloTarea)}_${userId}`);
+  return taskFolder;
+}
+
+/**
+ * [REQ-DOC-009]: Hoja y gestión centralizada de Metadatos Documentales
+ */
+function getOrCreateMetadatosDocumentalesSheet(ss) {
+  let sheet = ss.getSheetByName("MetadatosDocumentales");
+  if (!sheet) {
+    sheet = ss.insertSheet("MetadatosDocumentales");
+    sheet.appendRow([
+      "id_documento",
+      "titulo",
+      "nombre_original",
+      "nombre_fisico",
+      "tipo_recurso",
+      "asignatura",
+      "grado",
+      "seccion",
+      "parcial",
+      "anio",
+      "tema",
+      "id_referencia",
+      "usuario_id",
+      "usuario_nombre",
+      "fecha_registro",
+      "estado",
+      "drive_file_id",
+      "drive_folder_id",
+      "drive_url",
+      "tipo_mime",
+      "tamanio_bytes"
+    ]);
+  }
+  return sheet;
+}
+
+function recordDocumentMetadata(params) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateMetadatosDocumentalesSheet(ss);
+    const now = new Date();
+    const docId = params.id_documento || ("DOC-" + now.getFullYear() + "-" + Utilities.getUuid().substring(0, 8).toUpperCase());
+
+    sheet.appendRow([
+      docId,
+      params.titulo || "Sin título",
+      params.nombre_original || params.fileName || "archivo",
+      params.nombre_fisico || params.fileName || "archivo",
+      params.tipo_recurso || "Entrega de Tarea",
+      params.asignatura || "General",
+      params.grado || "General",
+      params.seccion || "General",
+      params.parcial || "General",
+      params.anio || now.getFullYear(),
+      params.tema || "",
+      params.id_referencia || params.tareaId || "",
+      params.usuario_id || params.userId || "",
+      params.usuario_nombre || params.nombre || "",
+      now.toISOString(),
+      params.estado || "Activo",
+      params.drive_file_id || params.fileId || "",
+      params.drive_folder_id || params.folderId || "",
+      params.drive_url || params.folderUrl || "",
+      params.tipo_mime || params.mimeType || "application/octet-stream",
+      params.tamanio_bytes || 0
+    ]);
+    return docId;
+  } catch (err) {
+    logDebug("Error registrando metadatos documentales: " + err.message);
+    return null;
   }
 }

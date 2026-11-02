@@ -925,3 +925,17 @@ Módulo: Visualización de Actividades y Recursos Estudiantiles ([REQ-DOC-007])
   * Añadida carga asíncrona de recursos mediante 'window.getStudyGuides' filtrando por grado, sección, parcial y asignatura del estudiante.
   * En 'getActivityHtml', incorporada visualización de metadatos estructurados de 'tema' (con icono temático) y 'parcial' en las tarjetas de actividades evaluables.
 - Backlog (Pendientes.md): Marcada tarea [REQ-DOC-007] como completada.
+
+
+REGISTRO DE CAMBIOS - JERARQUÍA DRIVE Y METADATOS DOCUMENTALES - Sun Nov 01 2026
+
+Módulo: Organización Documental y Metadatos en Drive ([REQ-DOC-008] y [REQ-DOC-009])
+- Backend de Tareas (backend/task-service/Code.gs):
+  * Creada función de saneamiento tipográfico 'sanitizePathSegment' para eliminar acentos, caracteres prohibidos en sistemas de archivos y normalizar espacios en blanco.
+  * Implementada función 'resolveStudentTaskDeliveryFolder' estructurando las carpetas en Drive según la ruta: 'Area/New Generation/Estudiantes/[Grado]/[Seccion]/[Nombre]/[Parcial]/[Asignatura]/[Tarea]_[UserId]'.
+  * Integrada hoja 'MetadatosDocumentales' gestionada por 'getOrCreateMetadatosDocumentalesSheet' y 'recordDocumentMetadata' con captura completa de metadatos (ID unívoco, título, nombre original/físico, tipo recurso, materia, grado, sección, parcial, año, usuario, Drive ID, Drive URL, MIME y tamaño en bytes).
+  * Conectadas funciones 'uploadFile' y 'finishChunkedUpload' con el resolvedor jerárquico y el registro automático de metadatos.
+- Backend Académico (backend/academic-service/Code.gs):
+  * Implementadas funciones 'sanitizePathSegment', 'resolveTeacherMaterialFolder' ('Area/New Generation/Docentes/Asignaturas/[Asignatura]/[Año]/[Parcial]/[TipoRecurso]') y 'getOrCreateAcademicMetadatosSheet'.
+  * Añadida función 'recordAcademicDocumentMetadata' e integrada dentro del flujo de creación de guías de estudio 'createOrUpdateStudyGuide'.
+- Backlog (Pendientes.md): Marcadas tareas [REQ-DOC-008] y [REQ-DOC-009] como completadas.

@@ -1318,3 +1318,12 @@ Sector: Experiencia de usuario estudiantil, visualización de actividades por as
 Hallazgo [Alto]: La vista expandida de la materia agrupaba exclusivamente actividades evaluables sin proporcionar acceso directo al material didáctico y guías de estudio de dicha asignatura en el parcial seleccionado, obligando a los alumnos a alternar entre pestañas y arriesgando confusión entre tareas calificables y material de estudio.
 Impacto: Dificultad para localizar guías de estudio vinculadas a una materia específica y posible percepción errónea de que las guías requieren entrega formal de tareas.
 Recomendación: Enriquecer 'window.expandSubject' en 'js/student.js' incorporando una barra de navegación interna con pestañas separadas ('Tareas Evaluables' y 'Guías de Estudio & Material Didáctico'), cargar de forma reactiva las guías de la asignatura mediante 'window.getStudyGuides' y desplegar badges de tema y parcial en cada actividad evaluable.
+
+
+REGISTRO DE AUDITORÍA - ESTRUCTURA JERÁRQUICA EN GOOGLE DRIVE Y METADATOS DOCUMENTALES - Sun Nov 1 2026
+
+Archivo: backend/task-service/Code.gs, backend/academic-service/Code.gs
+Sector: Gestión documental, organización en almacenamiento cloud de Google Drive y persistencia tabular de metadatos
+Hallazgo [Crítico]: Carencia de un esquema jerárquico unificado e institucional en Google Drive para la segregación de recursos docentes y entregas de estudiantes, riesgo de duplicación de carpetas por variaciones tipográficas (acentos, espacios extras, caracteres especiales), y falta de una hoja centralizada 'MetadatosDocumentales' para el inventario de archivos adjuntos.
+Impacto: Desorganización de archivos en Drive, dispersión de recursos didácticos y entregas, e imposibilidad de realizar auditorías, exportaciones masivas o seguimiento granular de adjuntos sin rastrear manualmente filas de hojas operativas.
+Recomendación: Implementar 'sanitizePathSegment', 'resolveStudentTaskDeliveryFolder' y 'resolveTeacherMaterialFolder' estandarizando las rutas jerárquicas 'Área/New Generation/Docentes/Asignaturas/...' y 'Área/New Generation/Estudiantes/...'. Diseñar la hoja 'MetadatosDocumentales' e integrar 'recordDocumentMetadata' en 'backend/task-service/Code.gs' y 'recordAcademicDocumentMetadata' en 'backend/academic-service/Code.gs'.

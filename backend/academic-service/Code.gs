@@ -607,12 +607,29 @@ function createOrUpdateStudyGuide(payload) {
 
     sheet.appendRow(row);
 
+    // [REQ-DOC-009]: Registrar metadatos documentales de la guía de estudio
+    const docMetaId = recordAcademicDocumentMetadata({
+      titulo: titulo,
+      fileName: archivo_nombre || `${titulo}.pdf`,
+      tipo_recurso: "Guía de Estudio",
+      asignatura: asignatura,
+      grado: grado,
+      seccion: seccion || "Todas",
+      parcial: parcial,
+      anio: now.getFullYear(),
+      id_guia: newId,
+      docente_id: docente_id || requesterUserId,
+      docente_nombre: docente_nombre || "Docente Asignado",
+      archivo_url: archivo_url,
+      tipo_mime: tipo_mime || "application/pdf"
+    });
+
     recordAcademicStructuredLog({
       severidad: "INFO",
       funcion: "createOrUpdateStudyGuide",
       codigoError: "GUIDE_CREATED",
       requesterUserId: requesterUserId || docente_id,
-      detalles: `Nueva guía creada: ${newId} - ${titulo} (${asignatura})`
+      detalles: `Nueva guía creada: ${newId} - ${titulo} (${asignatura}) - DocMeta: ${docMetaId}`
     });
 
     return {
@@ -640,6 +657,121 @@ function createOrUpdateStudyGuide(payload) {
     return { status: "error", message: "Error al gestionar guía de estudio: " + err.message };
   } finally {
     lock.releaseLock();
+  }
+}
+
+// ---------------------------------------------------------------------------
+// GESTIÓN JERÁRQUICA EN DRIVE Y METADATOS DOCUMENTALES ([REQ-DOC-008] y [REQ-DOC-009])
+// ---------------------------------------------------------------------------
+
+/**
+ * Sanitiza nombres de carpetas y archivos para prevenir colisiones o anomalías de caracteres.
+ */
+function sanitizePathSegment(segment) {
+  if (!segment) return "General";
+  let s = String(segment).trim();
+  s = s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  s = s.replace(/[/\\?%*:|"<>]/g, "-");
+  s = s.replace(/\s+/g, " ");
+  return s.trim() || "General";
+}
+
+function getOrCreateFolder(parentFolder, folderName) {
+  const name = sanitizePathSegment(folderName);
+  try {
+    const folders = parentFolder.getFoldersByName(name);
+    return folders.hasNext() ? folders.next() : parentFolder.createFolder(name);
+  } catch (e) {
+    throw new Error(`Error de DriveApp en carpeta "${name}": ${e.message}`);
+  }
+}
+
+/**
+ * [REQ-DOC-008]: Resuelve la estructura jerárquica para docentes en Google Drive:
+ * Área / New Generation / Docentes / Asignaturas / [Nombre] / [Año] / [Parcial] / [Tipo]
+ */
+function resolveTeacherMaterialFolder(rootFolder, params) {
+  const { asignatura, anio, parcial, tipoRecurso } = params;
+  const now = new Date();
+  const areaFolder = getOrCreateFolder(rootFolder, "Area");
+  const ngFolder = getOrCreateFolder(areaFolder, "New Generation");
+  const docRoot = getOrCreateFolder(ngFolder, "Docentes");
+  const asigsFolder = getOrCreateFolder(docRoot, "Asignaturas");
+  const asigFolder = getOrCreateFolder(asigsFolder, asignatura || "General");
+  const anioFolder = getOrCreateFolder(asigFolder, String(anio || now.getFullYear()));
+  const parcialFolder = getOrCreateFolder(anioFolder, parcial || "Parcial I");
+  const tipoFolder = getOrCreateFolder(parcialFolder, tipoRecurso || "Guias");
+  return tipoFolder;
+}
+
+/**
+ * [REQ-DOC-009]: Hoja y registro centralizado de Metadatos Documentales
+ */
+function getOrCreateAcademicMetadatosSheet(ss) {
+  let sheet = ss.getSheetByName("MetadatosDocumentales");
+  if (!sheet) {
+    sheet = ss.insertSheet("MetadatosDocumentales");
+    sheet.appendRow([
+      "id_documento",
+      "titulo",
+      "nombre_original",
+      "nombre_fisico",
+      "tipo_recurso",
+      "asignatura",
+      "grado",
+      "seccion",
+      "parcial",
+      "anio",
+      "tema",
+      "id_referencia",
+      "usuario_id",
+      "usuario_nombre",
+      "fecha_registro",
+      "estado",
+      "drive_file_id",
+      "drive_folder_id",
+      "drive_url",
+      "tipo_mime",
+      "tamanio_bytes"
+    ]);
+  }
+  return sheet;
+}
+
+function recordAcademicDocumentMetadata(params) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateAcademicMetadatosSheet(ss);
+    const now = new Date();
+    const docId = params.id_documento || ("DOC-" + now.getFullYear() + "-" + Utilities.getUuid().substring(0, 8).toUpperCase());
+
+    sheet.appendRow([
+      docId,
+      params.titulo || "Sin título",
+      params.nombre_original || params.fileName || "archivo",
+      params.nombre_fisico || params.fileName || "archivo",
+      params.tipo_recurso || "Guía de Estudio",
+      params.asignatura || "General",
+      params.grado || "General",
+      params.seccion || "Todas",
+      params.parcial || "General",
+      params.anio || now.getFullYear(),
+      params.tema || "",
+      params.id_referencia || params.id_guia || "",
+      params.usuario_id || params.docente_id || "",
+      params.usuario_nombre || params.docente_nombre || "",
+      now.toISOString(),
+      params.estado || "activo",
+      params.drive_file_id || params.fileId || "",
+      params.drive_folder_id || params.folderId || "",
+      params.drive_url || params.archivo_url || "",
+      params.tipo_mime || params.tipo_mime || "application/pdf",
+      params.tamanio_bytes || 0
+    ]);
+    return docId;
+  } catch (err) {
+    console.error("Error registrando metadatos documentales académicos: " + err.message);
+    return null;
   }
 }
 
