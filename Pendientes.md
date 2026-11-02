@@ -396,11 +396,11 @@
 ### [REQ-DOC-011] Optimización del Análisis de Desempeño Estudiantil e Índice de Asistencia (Sección 12)
 - **Origen del Hallazgo:** Especificación de Gestión Docente/Tareas (Sección 12).
 - **Severidad/Clasificación:** Alto
-- **Archivos Involucrados:** `js/student.js`, `backend/user-service/Code.gs`
+- **Archivos Involucrados:** `js/student.js`, `js/api.js`, `backend/academic-service/Code.gs`
 - **Dependencias Expuestas:** Algoritmos de promedios, ponderaciones y métricas psicométricas (ICR, GP, Mastery).
 - **Descripción del Alcance:** Calcular rendimiento integral considerando notas por asignatura, tareas, proyectos, exámenes, entregas tardías (penalización 50%) e índice de asistencia por separado sin falsear datos ausentes como ceros.
 - **Criterios de Aceptación:** Reporte analítico claro que diferencia desempeño académico de control de asistencia.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [REQ-DOC-012] Seguridad en Servidor, Permisos y Trazabilidad de Contenidos (Sección 14)
 - **Origen del Hallazgo:** Especificación de Gestión Docente y Tareas (Sección 14).

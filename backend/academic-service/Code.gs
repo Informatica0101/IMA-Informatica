@@ -33,6 +33,7 @@ function getOrCreateSheet(ss, name) {
     if (name === "HistorialAcademico") sheet.appendRow(["ID", "Fecha", "Parcial", "Grado", "Sección", "Asignatura", "Unidad", "profesorId"]);
     if (name === "Clases") sheet.appendRow(["Grado", "Seccion", "WhatsAppLink"]);
     if (name === "BancoPreguntas") sheet.appendRow(["PreguntaID", "Asignatura", "Nivel", "Tema", "TipoActividad", "Pregunta", "OpcionA", "OpcionB", "OpcionC", "OpcionD", "RespuestaCorrecta", "Explicacion", "Imagen", "VecesRespondida", "VecesCorrecta", "PorcentajeAcierto", "UltimaActualizacion", "Activa", "DificultadCalculada"]);
+    if (name === "AsistenciaEstudiantes") sheet.appendRow(["asistenciaId", "estudianteId", "fecha", "asignatura", "parcial", "estadoAsistencia", "observaciones"]);
   }
   return sheet;
 }
@@ -79,6 +80,8 @@ function doPost(e) {
       case "getStudyGuides": result = getStudyGuides(payload); break;
       case "toggleStudyGuideStatus": result = toggleStudyGuideStatus(payload); break;
       case "exportSchoolYearArchive": result = exportSchoolYearArchive(payload); break;
+      case "recordStudentAttendance": result = recordStudentAttendance(payload); break;
+      case "getStudentAttendanceSummary": result = getStudentAttendanceSummary(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -658,6 +661,187 @@ function createOrUpdateStudyGuide(payload) {
     return { status: "error", message: "Error al gestionar guía de estudio: " + err.message };
   } finally {
     lock.releaseLock();
+  }
+}
+
+// ---------------------------------------------------------------------------
+// GESTIÓN DE ASISTENCIA ESTUDIANTIL Y RENDIMIENTO INTEGRAL ([REQ-DOC-011])
+// ---------------------------------------------------------------------------
+
+/**
+ * Registra o actualiza la asistencia de un estudiante con protección de concurrencia.
+ */
+function recordStudentAttendance(payload) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(10000);
+    const ss = SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "AsistenciaEstudiantes");
+
+    const { estudianteId, fecha, asignatura, parcial, estadoAsistencia, observaciones, requesterUserId } = payload || {};
+    if (!estudianteId || !fecha || !estadoAsistencia) {
+      return { status: "error", message: "Datos incompletos para registrar asistencia (estudianteId, fecha y estado requeridos)." };
+    }
+
+    const estadosValidos = ["Presente", "Ausente", "Justificada", "Tardanza"];
+    const estadoNormalizado = estadosValidos.find(e => e.toLowerCase() === String(estadoAsistencia).trim().toLowerCase());
+    if (!estadoNormalizado) {
+      return { status: "error", message: `Estado de asistencia no válido: ${estadoAsistencia}. Válidos: ${estadosValidos.join(", ")}` };
+    }
+
+    const isoDate = new Date(fecha).toISOString().split("T")[0];
+    const data = sheet.getDataRange().getValues();
+    let rowIndex = -1;
+
+    for (let i = 1; i < data.length; i++) {
+      const rowEst = String(data[i][1]).trim();
+      const rowFecha = data[i][2] ? new Date(data[i][2]).toISOString().split("T")[0] : "";
+      const rowAsig = String(data[i][3] || "").trim().toLowerCase();
+      const targetAsig = String(asignatura || "").trim().toLowerCase();
+
+      if (rowEst === String(estudianteId).trim() && rowFecha === isoDate && (!targetAsig || rowAsig === targetAsig)) {
+        rowIndex = i + 1;
+        break;
+      }
+    }
+
+    if (rowIndex !== -1) {
+      sheet.getRange(rowIndex, 5).setValue(parcial || data[rowIndex - 1][4] || "");
+      sheet.getRange(rowIndex, 6).setValue(estadoNormalizado);
+      sheet.getRange(rowIndex, 7).setValue(observaciones || "");
+    } else {
+      const asistenciaId = "ATT-EST-" + Date.now();
+      sheet.appendRow([
+        asistenciaId,
+        String(estudianteId).trim(),
+        isoDate,
+        asignatura || "General",
+        parcial || "",
+        estadoNormalizado,
+        observaciones || ""
+      ]);
+    }
+
+    recordAcademicStructuredLog({
+      severidad: "INFO",
+      funcion: "recordStudentAttendance",
+      codigoError: "ATTENDANCE_RECORDED",
+      requesterUserId: requesterUserId || estudianteId,
+      detalles: `Asistencia registrada para ${estudianteId}: ${estadoNormalizado} en ${isoDate}`
+    });
+
+    return { status: "success", message: "Asistencia registrada correctamente.", estado: estadoNormalizado, fecha: isoDate };
+  } catch (err) {
+    return { status: "error", message: "Error al registrar asistencia: " + err.message };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/**
+ * Consulta y resume el índice de asistencia estudiantil sin distorsionar el cálculo académico.
+ */
+function getStudentAttendanceSummary(payload) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "AsistenciaEstudiantes");
+
+    const { estudianteId, parcial, asignatura } = payload || {};
+    if (!estudianteId) {
+      return { status: "error", message: "ID de estudiante requerido." };
+    }
+
+    const data = sheet.getDataRange().getValues();
+    if (data.length < 2) {
+      return {
+        status: "success",
+        data: {
+          estudianteId: estudianteId,
+          totalSesiones: 0,
+          presentes: 0,
+          justificadas: 0,
+          ausencias: 0,
+          tardanzas: 0,
+          indiceAsistencia: null,
+          estado: "Sin Registros",
+          registros: []
+        }
+      };
+    }
+
+    const rows = data.slice(1);
+    const studentRows = rows.filter(r => {
+      const matchEst = String(r[1]).trim() === String(estudianteId).trim();
+      if (!matchEst) return false;
+      if (parcial && String(r[4] || "").trim().toLowerCase() !== String(parcial).trim().toLowerCase()) return false;
+      if (asignatura && String(r[3] || "").trim().toLowerCase() !== String(asignatura).trim().toLowerCase()) return false;
+      return true;
+    });
+
+    const totalSesiones = studentRows.length;
+    if (totalSesiones === 0) {
+      return {
+        status: "success",
+        data: {
+          estudianteId: estudianteId,
+          totalSesiones: 0,
+          presentes: 0,
+          justificadas: 0,
+          ausencias: 0,
+          tardanzas: 0,
+          indiceAsistencia: null,
+          estado: "Sin Registros",
+          registros: []
+        }
+      };
+    }
+
+    let presentes = 0;
+    let justificadas = 0;
+    let ausencias = 0;
+    let tardanzas = 0;
+
+    studentRows.forEach(r => {
+      const estado = String(r[5] || "").trim().toLowerCase();
+      if (estado === "presente") presentes++;
+      else if (estado === "justificada") justificadas++;
+      else if (estado === "tardanza") tardanzas++;
+      else if (estado === "ausente") ausencias++;
+    });
+
+    // Ponderación de asistencia: Presentes (100%), Tardanzas (50%), Justificadas (80%)
+    const valorEfectivo = presentes + (tardanzas * 0.5) + (justificadas * 0.8);
+    const indiceAsistencia = Math.round((valorEfectivo / totalSesiones) * 100);
+
+    let clasificacion = "Excelente";
+    if (indiceAsistencia < 70) clasificacion = "Crítico";
+    else if (indiceAsistencia < 85) clasificacion = "Regular";
+
+    const registros = studentRows.map(r => ({
+      asistenciaId: r[0],
+      fecha: r[2],
+      asignatura: r[3],
+      parcial: r[4],
+      estado: r[5],
+      observaciones: r[6]
+    }));
+
+    return {
+      status: "success",
+      data: {
+        estudianteId: estudianteId,
+        totalSesiones: totalSesiones,
+        presentes: presentes,
+        justificadas: justificadas,
+        ausencias: ausencias,
+        tardanzas: tardanzas,
+        indiceAsistencia: indiceAsistencia,
+        estado: clasificacion,
+        registros: registros
+      }
+    };
+  } catch (err) {
+    return { status: "error", message: "Error al obtener resumen de asistencia: " + err.message };
   }
 }
 

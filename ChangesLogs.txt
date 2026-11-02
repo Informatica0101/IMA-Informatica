@@ -956,3 +956,21 @@ Módulo: Consola Técnica de Administración y Exportación Documental ([REQ-DOC
   * Registrada función 'setupSchoolYearExportHandlers' para vincular de forma reactiva los eventos de generación de exportación ZIP sin bloquear la interfaz.
   * Añadida gestión de estados de progreso, notificaciones visuales y trazabilidad en la consola de salida en vivo ('Live Console Output').
 - Backlog (Pendientes.md): Marcada tarea [REQ-DOC-010] como completada.
+
+
+REGISTRO DE CAMBIOS - RENDIMIENTO INTEGRAL Y CONTROL SEGREGADO DE ASISTENCIA - Sun Nov 01 2026
+
+Módulo: Desempeño Estudiantil y Control de Asistencia ([REQ-DOC-011])
+- Backend Académico (backend/academic-service/Code.gs):
+  * Creada hoja 'AsistenciaEstudiantes' con encabezados: asistenciaId, estudianteId, fecha, asignatura, parcial, estadoAsistencia, observaciones.
+  * Implementada función 'recordStudentAttendance' con bloqueo concurrente ScriptLock, normalización de estados (Presente, Ausente, Justificada, Tardanza) y actualización de filas existentes para la misma fecha y asignatura.
+  * Implementada función 'getStudentAttendanceSummary' que calcula el índice porcentual ponderado neto (Presente 100%, Tardanza 50%, Justificada 80%) y preserva el valor 'null' / 'Sin Registros' si el alumno no cuenta con sesiones registradas, impidiendo falsear ceros absolutos.
+  * Mapeadas acciones 'recordStudentAttendance' y 'getStudentAttendanceSummary' dentro de 'doPost'.
+- Capa de API Cliente (js/api.js):
+  * Expuestas funciones 'window.recordStudentAttendance' y 'window.getStudentAttendanceSummary' conectadas al microservicio académico.
+- Interfaz Estudiantil y Métricas (js/student.js):
+  * En 'renderEnhancedProgress', incorporada penalización del 50% para entregas de tareas realizadas posterior a la fecha límite ('fechaLimite').
+  * Calculadas métricas analíticas: ICR (Índice de Cumplimiento de Responsabilidades a tiempo), GP (Grado de Participación activa) y Mastery (Rendimiento Académico ponderado sobre puntaje máximo evaluado).
+  * Diseñado bloque de tarjetas analíticas en 'Métricas de Desempeño' con separación gráfica y semántica de: Rendimiento Académico, Cumplimiento (ICR), Participación (GP) y Control de Asistencia.
+  * Implementada función asíncrona 'loadStudentAttendanceMetric' para consultar y mostrar el estado de asistencia de manera segregada sin afectar el promedio académico.
+- Backlog (Pendientes.md): Marcada tarea [REQ-DOC-011] como completada.

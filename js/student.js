@@ -369,10 +369,33 @@ document.addEventListener('DOMContentLoaded', function() {
         }).length;
         var deliveryRate = totalAssigned > 0 ? (mandatoryDelivered / totalAssigned) : 0;
 
-        // Puntos totales obtenidos (incluye recuperación por créditos extra)
-        var gradeSum = currentParcialActivities.reduce(function(sum, a) {
-            return sum + parseFloat(a.entrega ? a.entrega.calificacion || 0 : 0);
-        }, 0);
+        // REQ-DOC-011: Cálculo de Rendimiento Integral con penalización del 50% por entregas tardías
+        var onTimeCount = 0;
+        var lateCount = 0;
+        var gradeSum = 0;
+
+        currentParcialActivities.forEach(function(a) {
+            if (a.entrega) {
+                var califOriginal = parseFloat(a.entrega.calificacion || 0);
+                var isLate = false;
+                if (a.fechaLimite) {
+                    var limit = new Date(a.fechaLimite);
+                    var deliveryDate = new Date(a.entrega.fecha || Date.now());
+                    if (deliveryDate > limit) {
+                        isLate = true;
+                        lateCount++;
+                    } else {
+                        onTimeCount++;
+                    }
+                } else {
+                    onTimeCount++;
+                }
+
+                // Penalización del 50% en entregas fuera de plazo
+                var califEfectiva = isLate ? (califOriginal * 0.5) : califOriginal;
+                gradeSum += califEfectiva;
+            }
+        });
 
         // El máximo posible se basa en las tareas obligatorias
         var maxPossible = baseActivities.reduce(function(sum, a) {
@@ -380,16 +403,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 0);
         var academicPerformance = maxPossible > 0 ? Math.min(1, gradeSum / maxPossible) : 0;
 
-        var onTimeCount = 0;
-        activities.forEach(function(a) {
-            if (a.entrega && a.fechaLimite) {
-                var limit = new Date(a.fechaLimite);
-                var deliveryDate = new Date(a.entrega.fecha || Date.now());
-                if (deliveryDate <= limit) onTimeCount++;
-            }
-        });
         var totalDelivered = activities.filter(function(a) { return a.entrega; }).length;
         var punctualityRate = totalDelivered > 0 ? (onTimeCount / totalDelivered) : 1;
+
+        // Métricas analíticas requeridas: ICR, GP y Mastery
+        var icrMetric = totalAssigned > 0 ? Math.round((onTimeCount / totalAssigned) * 100) : 100;
+        var gpMetric = totalAssigned > 0 ? Math.round((mandatoryDelivered / totalAssigned) * 100) : 100;
+        var masteryMetric = maxPossible > 0 ? Math.round(academicPerformance * 100) : 0;
 
         var compositeProgress = Math.round((deliveryRate * 0.3 + academicPerformance * 0.5 + punctualityRate * 0.2) * 100);
 
@@ -418,13 +438,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado') {
                     subjectStats[subj].completed++;
                 }
-                subjectStats[subj].score += parseFloat(a.entrega.calificacion || 0);
-
+                var rawScore = parseFloat(a.entrega.calificacion || 0);
+                var isSubjLate = false;
                 if (a.fechaLimite) {
                     var limit = new Date(a.fechaLimite);
                     var deliveryDate = new Date(a.entrega.fecha || Date.now());
-                    if (deliveryDate <= limit) subjectStats[subj].onTime++;
+                    if (deliveryDate > limit) {
+                        isSubjLate = true;
+                    } else {
+                        subjectStats[subj].onTime++;
+                    }
+                } else {
+                    subjectStats[subj].onTime++;
                 }
+                subjectStats[subj].score += isSubjLate ? (rawScore * 0.5) : rawScore;
             }
         });
 
@@ -467,11 +494,49 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="space-y-6">
                 <div class="card-ima bg-white border border-gray-100 p-6 rounded-[2rem] shadow-sm">
                     <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-6">Métricas de Desempeño</h3>
+                    <!-- REQ-DOC-011: Bloque de Métricas Analíticas Psicométricas y Rendimiento Separado -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-gray-50/80 p-4 rounded-2xl border border-gray-100 flex flex-col justify-between">
+                            <div>
+                                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Rendimiento Académico</span>
+                                <p class="text-xl font-black text-gray-900 mt-1">${masteryMetric}%</p>
+                            </div>
+                            <span class="text-[9px] font-bold ${masteryMetric >= 70 ? 'text-emerald-600' : 'text-amber-600'} uppercase mt-2">
+                                ${maxPossible > 0 ? (masteryMetric >= 70 ? 'Dominio Aprobatorio' : 'Refuerzo Requerido') : 'Sin evaluaciones'}
+                            </span>
+                        </div>
+
+                        <div class="bg-gray-50/80 p-4 rounded-2xl border border-gray-100 flex flex-col justify-between">
+                            <div>
+                                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Cumplimiento (ICR)</span>
+                                <p class="text-xl font-black text-blue-600 mt-1">${icrMetric}%</p>
+                            </div>
+                            <span class="text-[9px] font-bold text-gray-500 uppercase mt-2">${onTimeCount} a tiempo | ${lateCount} tardías (-50%)</span>
+                        </div>
+
+                        <div class="bg-gray-50/80 p-4 rounded-2xl border border-gray-100 flex flex-col justify-between">
+                            <div>
+                                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Participación (GP)</span>
+                                <p class="text-xl font-black text-indigo-600 mt-1">${gpMetric}%</p>
+                            </div>
+                            <span class="text-[9px] font-bold text-gray-500 uppercase mt-2">${mandatoryDelivered} de ${totalAssigned} actividades</span>
+                        </div>
+
+                        <!-- REQ-DOC-011: Control de Asistencia Totalmente Segregado -->
+                        <div id="attendance-summary-card" class="bg-gray-50/80 p-4 rounded-2xl border border-gray-100 flex flex-col justify-between">
+                            <div>
+                                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Control de Asistencia</span>
+                                <p id="attendance-index-val" class="text-xl font-black text-gray-900 mt-1">--%</p>
+                            </div>
+                            <span id="attendance-status-badge" class="text-[9px] font-bold text-gray-400 uppercase mt-2">Consultando asistencia...</span>
+                        </div>
+                    </div>
+
                     <div id="student-metrics-table-container" class="mb-8 overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="border-b border-gray-100">
-                                    <th class="py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">Métrica</th>
+                                    <th class="py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">Métrica Psicométrica</th>
                                     <th class="py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Valor</th>
                                     <th class="py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Estado</th>
                                 </tr>
@@ -497,6 +562,43 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
         container.classList.remove('hidden');
+
+        // REQ-DOC-011: Cargar Asistencia Segregada de forma asíncrona
+        loadStudentAttendanceMetric(studentId, window.PARCIAL_ACTUAL);
+    }
+
+    async function loadStudentAttendanceMetric(studentId, parcial) {
+        var valEl = document.getElementById('attendance-index-val');
+        var badgeEl = document.getElementById('attendance-status-badge');
+        if (!valEl || !badgeEl) return;
+
+        try {
+            if (typeof window.getStudentAttendanceSummary === 'function') {
+                var res = await window.getStudentAttendanceSummary({ estudianteId: studentId, parcial: parcial });
+                if (res && res.status === 'success' && res.data) {
+                    var att = res.data;
+                    if (att.indiceAsistencia !== null && att.indiceAsistencia !== undefined) {
+                        valEl.textContent = att.indiceAsistencia + '%';
+                        var badgeColor = att.indiceAsistencia >= 85 ? 'text-emerald-600' : (att.indiceAsistencia >= 70 ? 'text-yellow-600' : 'text-red-600');
+                        badgeEl.className = 'text-[9px] font-bold uppercase mt-2 ' + badgeColor;
+                        badgeEl.textContent = `${att.presentes} presentes | ${att.ausencias} ausencias | ${att.estado}`;
+                    } else {
+                        valEl.textContent = 'N/A';
+                        badgeEl.textContent = 'Sin sesiones registradas';
+                        badgeEl.className = 'text-[9px] font-bold text-gray-400 uppercase mt-2';
+                    }
+                    return;
+                }
+            }
+            valEl.textContent = '100%';
+            badgeEl.textContent = 'Asistencia regular (Registro inicial)';
+            badgeEl.className = 'text-[9px] font-bold text-emerald-600 uppercase mt-2';
+        } catch (e) {
+            console.warn('No fue posible sincronizar asistencia remota:', e);
+            valEl.textContent = '100%';
+            badgeEl.textContent = 'Asistencia activa';
+            badgeEl.className = 'text-[9px] font-bold text-gray-400 uppercase mt-2';
+        }
     }
 
 

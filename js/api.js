@@ -339,3 +339,14 @@ window.exportSchoolYearArchive = function(anio, options) {
         tipoRecurso: options.tipoRecurso
     });
 };
+
+/**
+ * ASISTENCIA ESTUDIANTIL Y RENDIMIENTO INTEGRAL (REQ-DOC-011)
+ */
+window.recordStudentAttendance = function(payload) {
+    return window.fetchApi('ACADEMIC', 'recordStudentAttendance', payload || {});
+};
+
+window.getStudentAttendanceSummary = function(payload) {
+    return window.fetchApi('ACADEMIC', 'getStudentAttendanceSummary', payload || {});
+};
