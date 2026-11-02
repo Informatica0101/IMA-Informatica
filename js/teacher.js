@@ -1232,7 +1232,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('edit-parcial').value = item.parcial || 'Primer Parcial';
         document.getElementById('edit-grado').value = item.grado;
         document.getElementById('edit-seccion').value = item.seccion || '';
+        if (document.getElementById('edit-fecha-clase')) {
+            document.getElementById('edit-fecha-clase').value = item.fechaClase ? item.fechaClase.split('T')[0] : '';
+        }
         document.getElementById('edit-fecha').value = item.fechaLimite ? item.fechaLimite.split('T')[0] : '';
+        if (document.getElementById('edit-hora-disponible')) {
+            document.getElementById('edit-hora-disponible').value = item.horaDisponible || '';
+        }
         document.getElementById('edit-puntaje').value = item.puntaje || 100;
         document.getElementById('edit-archivo').value = item.archivoUrl || '';
 
@@ -1256,6 +1262,15 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const tipo = document.getElementById('edit-tipo-orig').value;
+        const fechaClaseVal = document.getElementById('edit-fecha-clase')?.value || '';
+        const fechaLimiteVal = document.getElementById('edit-fecha').value;
+        const horaDisponibleVal = document.getElementById('edit-hora-disponible')?.value || '';
+
+        if (fechaClaseVal && fechaLimiteVal && fechaLimiteVal < fechaClaseVal) {
+            alert('La fecha límite no puede ser anterior a la fecha de la clase.');
+            return;
+        }
+
         const payload = {
             titulo: document.getElementById('edit-titulo').value,
             descripcion: quillEdit ? quillEdit.root.innerHTML : document.getElementById('edit-descripcion').value,
@@ -1263,7 +1278,9 @@ document.addEventListener('DOMContentLoaded', () => {
             parcial: document.getElementById('edit-parcial').value,
             gradoAsignado: document.getElementById('edit-grado').value,
             seccionAsignada: document.getElementById('edit-seccion').value,
-            fechaLimite: document.getElementById('edit-fecha').value,
+            fechaClase: fechaClaseVal,
+            fechaLimite: fechaLimiteVal,
+            horaDisponible: horaDisponibleVal,
             puntaje: document.getElementById('edit-puntaje').value,
             archivoUrl: document.getElementById('edit-archivo').value,
             tipo: document.getElementById('edit-task-type').value,
@@ -2388,11 +2405,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // --- REQ-DOC-005: Autocálculo de Fecha Límite recomendada (+1 día hábil tras la clase) ---
+    const classDateInput = document.getElementById('create-task-class-date');
+    const dueDateInput = document.getElementById('create-task-due-date');
+    if (classDateInput && dueDateInput) {
+        classDateInput.addEventListener('change', () => {
+            if (!classDateInput.value) return;
+            const parts = classDateInput.value.split('-');
+            const d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+            // Añadir 1 día
+            d.setDate(d.getDate() + 1);
+            // Si cae domingo (0), pasar al lunes (+1 día)
+            if (d.getDay() === 0) {
+                d.setDate(d.getDate() + 1);
+            }
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            dueDateInput.value = `${yyyy}-${mm}-${dd}`;
+            dueDateInput.min = classDateInput.value;
+        });
+    }
+
     // --- CRUD Forms ---
     if (createAssignmentForm) createAssignmentForm.onsubmit = async (e) => {
         e.preventDefault();
         const btn = e.target.querySelector('button[type="submit"]');
         const formData = Object.fromEntries(new FormData(e.target).entries());
+
+        // Validación REQ-DOC-005: Fecha límite no puede ser anterior a la clase
+        if (formData.fechaClase && formData.fechaLimite && formData.fechaLimite < formData.fechaClase) {
+            alert('La fecha límite de entrega no puede ser anterior a la fecha de la clase impartida.');
+            return;
+        }
 
         // Obtener contenido de Quill
         if (quillTask) formData.descripcion = quillTask.root.innerHTML;

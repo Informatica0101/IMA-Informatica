@@ -85,17 +85,40 @@ function doPost(e) {
 
 // --- LÓGICA DEL SERVICIO ---
 function createTask(payload) {
-  const { tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId, profesorId, puntaje, archivoUrl } = payload;
+  const { tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, fechaClase, horaDisponible, tareaOriginalId, profesorId, puntaje, archivoUrl } = payload;
   const tareaId = "TSK-" + new Date().getTime();
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const tareasSheet = getSheetOrThrow(ss, "Tareas");
-  // Columnas: 0:tareaId, 1:tipo, 2:titulo, 3:descripcion, 4:parcial, 5:asignatura, 6:grado, 7:seccion, 8:fecha, 9:originalId, 10:profesorId, 11:estado, 12:puntaje, 13:archivoUrl
-  tareasSheet.appendRow([tareaId, tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId || '', profesorId || '', 'Activa', puntaje || 100, archivoUrl || '']);
+
+  // Validación REQ-DOC-005: Fecha límite no puede ser anterior a la clase
+  if (fechaClase && fechaLimite && String(fechaLimite) < String(fechaClase)) {
+    throw new Error("La fecha límite de entrega no puede ser anterior a la fecha de la clase impartida.");
+  }
+
+  // Columnas: 0:tareaId, 1:tipo, 2:titulo, 3:descripcion, 4:parcial, 5:asignatura, 6:grado, 7:seccion, 8:fecha, 9:originalId, 10:profesorId, 11:estado, 12:puntaje, 13:archivoUrl, 14:fechaClase, 15:horaDisponible
+  tareasSheet.appendRow([
+    tareaId,
+    tipo,
+    titulo,
+    descripcion,
+    parcial,
+    asignatura,
+    gradoAsignado,
+    seccionAsignada,
+    fechaLimite,
+    tareaOriginalId || '',
+    profesorId || '',
+    'Activa',
+    puntaje || 100,
+    archivoUrl || '',
+    fechaClase || '',
+    horaDisponible || ''
+  ]);
   return { status: "success", message: "Tarea creada." };
 }
 
 function updateTask(payload) {
-  const { tareaId, titulo, descripcion, fechaLimite, parcial, asignatura, gradoAsignado, seccionAsignada, puntaje, archivoUrl } = payload;
+  const { tareaId, titulo, descripcion, fechaLimite, fechaClase, horaDisponible, parcial, asignatura, gradoAsignado, seccionAsignada, puntaje, archivoUrl } = payload;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getSheetOrThrow(ss, "Tareas");
   const data = sheet.getDataRange().getValues();
@@ -113,6 +136,8 @@ function updateTask(payload) {
   if (fechaLimite !== undefined) taskRow[8] = fechaLimite;
   if (puntaje !== undefined) taskRow[12] = puntaje;
   if (archivoUrl !== undefined) taskRow[13] = archivoUrl;
+  if (fechaClase !== undefined) taskRow[14] = fechaClase;
+  if (horaDisponible !== undefined) taskRow[15] = horaDisponible;
 
   sheet.getRange(rowIndex + 1, 1, 1, taskRow.length).setValues([taskRow]);
 
@@ -283,9 +308,38 @@ function getStudentTasks(payload) {
       }
     }
 
+    const fechaClase = task[14] ? new Date(task[14]).toISOString() : null;
+    const horaDisponible = task[15] || '';
+
+    // REQ-DOC-006: Cálculo de disponibilidad temporal de la tarea
+    let disponibleDesde = null;
+    let esDisponible = true;
+    if (task[14]) {
+      const parts = String(task[14]).split('T')[0].split('-');
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+
+      let hours = 0;
+      let minutes = 0;
+      if (horaDisponible && horaDisponible.includes(':')) {
+        const hParts = horaDisponible.split(':');
+        hours = parseInt(hParts[0], 10) || 0;
+        minutes = parseInt(hParts[1], 10) || 0;
+      }
+      disponibleDesde = new Date(year, month, day, hours, minutes, 0).toISOString();
+      if (new Date().getTime() < new Date(disponibleDesde).getTime()) {
+        esDisponible = false;
+      }
+    }
+
     return {
       tareaId: task[0], tipo: task[1], titulo: task[2], descripcion: task[3], parcial: task[4], grado: task[6], seccion: task[7],
       asignatura: task[5], fechaLimite: fechaLimite,
+      fechaClase: fechaClase,
+      horaDisponible: horaDisponible,
+      disponibleDesde: disponibleDesde,
+      esDisponible: esDisponible,
       profesorId: task[10],
       entrega: entrega ? {
         entregaId: entrega[0],
@@ -480,7 +534,32 @@ function finishChunkedUpload(payload) {
 function submitAssignment(payload) {
   const { userId, tareaId, fileId, mimeType } = payload;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const tareasSheet = getSheetOrThrow(ss, "Tareas");
   const entregasSheet = getSheetOrThrow(ss, "Entregas");
+
+  // REQ-DOC-006: Validar si la tarea ya está disponible para entregas
+  const tareasData = tareasSheet.getDataRange().getValues();
+  const taskRow = tareasData.find(r => r[0] === tareaId);
+  if (taskRow) {
+    const fechaClase = taskRow[14];
+    const horaDisponible = taskRow[15] || '';
+    if (fechaClase) {
+      const parts = String(fechaClase).split('T')[0].split('-');
+      const y = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10) - 1;
+      const d = parseInt(parts[2], 10);
+      let h = 0, min = 0;
+      if (horaDisponible && horaDisponible.includes(':')) {
+        const hp = horaDisponible.split(':');
+        h = parseInt(hp[0], 10) || 0;
+        min = parseInt(hp[1], 10) || 0;
+      }
+      const dispTime = new Date(y, m, d, h, min, 0).getTime();
+      if (new Date().getTime() < dispTime) {
+        throw new Error("Esta tarea se encuentra programada y aún no está disponible para entregas.");
+      }
+    }
+  }
 
   // Validación de duplicados (Req 3)
   const data = entregasSheet.getDataRange().getValues();

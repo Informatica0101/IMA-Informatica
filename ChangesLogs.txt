@@ -894,3 +894,23 @@ Módulo: Gestión de Guías de Estudio por Asignatura y Parcial ([REQ-DOC-001])
   * Añadido selector de filtrado por parcial (`#student-guia-parcial-filter`) y botón de recarga.
   * Implementadas funciones `loadStudentStudyGuides()` y `renderStudentStudyGuides()` con renderizado responsivo en tarjetas modernas y botón de descarga directa de archivos.
 - Backlog (`Pendientes.md`): Marcada tarea [REQ-DOC-001] como completada.
+
+
+REGISTRO DE CAMBIOS - PROGRAMACIÓN POST-CLASE Y CONTROL DE DISPONIBILIDAD TEMPORAL DE TAREAS - Sun Nov 01 2026
+
+Módulo: Programación de Tareas y Control de Disponibilidad ([REQ-DOC-005] y [REQ-DOC-006])
+- Interfaz Docente (teacher-dashboard.html y js/teacher.js):
+  * Añadidos campos #create-task-class-date (Fecha de Clase impartida), #create-task-due-date (Fecha Límite) y #create-task-available-time (Hora de Disponibilidad) en el modal de creación de asignaciones #create-assignment-form.
+  * Incorporados campos #edit-fecha-clase, #edit-fecha y #edit-hora-disponible en el modal de edición de asignaciones #edit-assignment-form.
+  * Implementado cálculo reactivo en js/teacher.js que sugiere automáticamente como fecha límite el día siguiente (+1 día hábil, ajustando domingos a lunes) al seleccionar la fecha de clase, restringiendo la selección de fechas anteriores a la clase (min = fechaClase).
+  * Añadida validación de coherencia temporal en el envío de formularios de creación y edición, impidiendo programar entregas antes de la clase.
+  * Mapeados campos fechaClase y horaDisponible en el payload de creación y actualización, así como en la función de precarga para edición window.editAssignment.
+- Backend de Tareas (backend/task-service/Code.gs):
+  * En createTask y updateTask, incorporada validación estricta de coherencia temporal: rechazo con mensaje explicativo si fechaLimite < fechaClase.
+  * Almacenamiento persistente de fechaClase (columna 15) y horaDisponible (columna 16) en la hoja 'Tareas'.
+  * En getStudentTasks, cálculo en tiempo de ejecución de disponibleDesde y esDisponible comparando la fecha/hora actual con la fecha de clase y hora estipulada de disponibilidad.
+  * En submitAssignment, añadida guardia de seguridad de servidor que rechaza entregas de tareas programadas que aún no han alcanzado su fecha/hora de disponibilidad con código de error explicativo.
+- Interfaz Estudiantil (student-dashboard.html y js/student.js):
+  * En getActivityHtml, implementada evaluación de activity.esDisponible === false, ocultando el botón interactivo de 'Entregar Tarea' y mostrando en su lugar una insignia visual ámbar estilizada: Programada (Disponible fecha/hora) con tooltip descriptivo.
+  * Bloqueo de invocaciones accidentales a openSubmissionModal para tareas aún no disponibles.
+- Backlog (Pendientes.md): Marcadas tareas [REQ-DOC-005] y [REQ-DOC-006] como completadas.

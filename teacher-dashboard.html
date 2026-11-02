@@ -266,8 +266,16 @@
                                         <input type="text" name="seccionAsignada" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400">
                                     </div>
                                     <div>
-                                        <label class="block font-medium text-gray-700 mb-2">Fecha Límite</label>
-                                        <input type="date" name="fechaLimite" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" required>
+                                        <label class="block font-medium text-gray-700 mb-2">Fecha de la Clase (Impartida)</label>
+                                        <input type="date" name="fechaClase" id="create-task-class-date" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" title="Fecha en que se imparte el contenido">
+                                    </div>
+                                    <div>
+                                        <label class="block font-medium text-gray-700 mb-2">Fecha Límite de Entrega</label>
+                                        <input type="date" name="fechaLimite" id="create-task-due-date" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" required>
+                                    </div>
+                                    <div>
+                                        <label class="block font-medium text-gray-700 mb-2">Hora de Disponibilidad (Opcional)</label>
+                                        <input type="time" name="horaDisponible" id="create-task-available-time" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" title="Hora a partir de la cual el alumno puede entregar">
                                     </div>
                                 </div>
                                 <button type="submit" class="mt-8 bg-blue-600 text-white font-medium py-4 px-10 rounded-2xl shadow-lg hover:shadow-xl transition-all">Crear Tarea</button>
@@ -1417,8 +1425,16 @@
                         <input type="text" id="edit-seccion" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400">
                     </div>
                     <div>
+                        <label class="block font-medium text-gray-700 mb-1">Fecha de Clase</label>
+                        <input type="date" id="edit-fecha-clase" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400">
+                    </div>
+                    <div>
                         <label class="block font-medium text-gray-700 mb-1">Fecha Límite</label>
                         <input type="date" id="edit-fecha" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" required>
+                    </div>
+                    <div>
+                        <label class="block font-medium text-gray-700 mb-1">Hora de Disponibilidad</label>
+                        <input type="time" id="edit-hora-disponible" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400">
                     </div>
                     <div>
                         <label class="block font-medium text-gray-700 mb-1">Puntaje Máximo</label>

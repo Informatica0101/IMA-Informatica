@@ -840,12 +840,20 @@ document.addEventListener('DOMContentLoaded', function() {
                         ${resubmitBtnHtml}
                     </div>`;
             } else {
-                actionButtonHtml = `<button class="btn-ima-primary px-5 py-2 text-xs open-submission-modal"
-                    data-task-id="${activity.tareaId}"
-                    data-task-title="${activity.titulo}"
-                    data-parcial="${activity.parcial || ''}"
-                    data-asignatura="${activity.asignatura || ''}"
-                    data-fecha-limite="${activity.fechaLimite || ''}">Entregar Tarea</button>`;
+                // REQ-DOC-006: Control de Disponibilidad Programada
+                if (activity.esDisponible === false) {
+                    var dispFechaText = activity.disponibleDesde ? new Date(activity.disponibleDesde).toLocaleDateString() : '';
+                    actionButtonHtml = `<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-600 border border-amber-200">
+                        <i class="fas fa-clock"></i> Programada (Disponible ${dispFechaText || 'próximamente'})
+                    </span>`;
+                } else {
+                    actionButtonHtml = `<button class="btn-ima-primary px-5 py-2 text-xs open-submission-modal"
+                        data-task-id="${activity.tareaId}"
+                        data-task-title="${activity.titulo}"
+                        data-parcial="${activity.parcial || ''}"
+                        data-asignatura="${activity.asignatura || ''}"
+                        data-fecha-limite="${activity.fechaLimite || ''}">Entregar Tarea</button>`;
+                }
             }
         } else if (activity.type === 'Examen') {
             if (activity.entrega) {
