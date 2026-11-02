@@ -115,6 +115,14 @@ assert(acctCode.includes("processPaymentRefund") && acctCode.includes("[TASK-003
 assert(acctCode.includes("NotasCreditoFiscales") && acctCode.includes("FacturasFiscales"), "backend/accounting-service/Code.gs gestiona la hoja NotasCreditoFiscales vinculada [TASK-003]");
 assert(acctCode.includes("ALREADY_VOIDED") && acctCode.includes("PAYMENT_ALREADY_REVERSED"), "backend/accounting-service/Code.gs implementa control de idempotencia para anulaciones y reversiones [TASK-003]");
 
+// [TASK-004] [F16-Task01] - Verificación del catálogo dinámico de roles internos y asignación con vigencias
+assert(userCode.includes("manageInternalRoleCatalog") && userCode.includes("[TASK-004]"), "backend/user-service/Code.gs contiene manageInternalRoleCatalog [TASK-004]");
+assert(userCode.includes("getInternalRoleCatalog") && userCode.includes("[TASK-004]"), "backend/user-service/Code.gs contiene getInternalRoleCatalog [TASK-004]");
+assert(userCode.includes("getInternalRoleAssignments") && userCode.includes("[TASK-004]"), "backend/user-service/Code.gs contiene getInternalRoleAssignments [TASK-004]");
+assert(userCode.includes("CatalogoRolesInternos"), "backend/user-service/Code.gs inicializa y normaliza la hoja CatalogoRolesInternos [TASK-004]");
+assert(userCode.includes("esSuplente") && userCode.includes("suplenteDeUserId"), "backend/user-service/Code.gs soporta suplencias temporales y delimitación temporal [TASK-004]");
+
+
 
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);

@@ -755,7 +755,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-004] [ ] [F16-Task01] Crear un catálogo dinámico de roles internos organizativos y administrar sus asignaciones
+### [TASK-004] [X] [F16-Task01] Crear un catálogo dinámico de roles internos organizativos y administrar sus asignaciones
 - **Origen del Hallazgo:** `AUDITORIA_FASE_16_RECURSOS_HUMANOS.md` / Sección F (Brecha F.1) y Sección H (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Gobernanza institucional, responsabilidades organizativas y separación estricta de permisos vs funciones)
@@ -801,7 +801,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Crear o asignar una responsabilidad no concede permisos administrativos automáticamente en `ROLE_PERMISSIONS`.
   - Todas las operaciones quedan registradas con autor, fecha y justificación.
   - Las asignaciones existentes continúan funcionando tras la incorporación del catálogo.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 ---

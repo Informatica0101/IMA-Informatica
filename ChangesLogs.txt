@@ -3831,3 +3831,21 @@ Módulo: Cobros, Pagos y Facturación SAR ([TASK-003] [F15-Task03])
   * Pendientes.md:
     - Marcada tarea [TASK-003] [F15-Task03] como [X] Completado.
 ===============================================================================
+
+===============================================================================
+REGISTRO DE CAMBIOS - IMPLEMENTACIÓN [TASK-004] [F16-Task01] - Mon Nov 2 2026
+
+Módulo: Recursos Humanos y Roles Internos ([TASK-004] [F16-Task01])
+- Archivos modificados:
+  * backend/user-service/Code.gs:
+    - Inicialización de la hoja CatalogoRolesInternos en getOrCreateSheet.
+    - Implementación de manageInternalRoleCatalog (creación y administración de roles internos normalizados).
+    - Implementación de getInternalRoleCatalog (consulta y filtrado de catálogo de responsabilidades).
+    - Adaptación de assignRoleScope para incorporar fechas de vigencia y soporte de suplencias temporales.
+    - Implementación de getInternalRoleAssignments (consulta de asignaciones activas e históricas).
+    - Mapeo de rutas en doPost y permisos en ROLE_PERMISSIONS.
+  * tests/regression/academic-grading-suite.js:
+    - Incorporación de 5 nuevas aserciones automatizadas de regresión para [TASK-004] (72/72 PASS, 100%).
+  * Pendientes.md:
+    - Marcada tarea [TASK-004] [F16-Task01] como [X] Completado.
+===============================================================================

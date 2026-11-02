@@ -864,6 +864,7 @@ function getOrCreateSheet(ss, name) {
   let sheet = ss.getSheetByName(name);
   if (!sheet) {
     sheet = ss.insertSheet(name);
+    if (name === "CatalogoRolesInternos") sheet.appendRow(["RolInternoID", "CodigoInterno", "NombreResponsabilidad", "Descripcion", "Departamento", "AreaAcademica", "TipoResponsabilidad", "VigenciaMeses", "PermiteSuplencia", "Estado", "CreadoPor", "FechaCreacion", "FechaActualizacion"]);
     if (name === "PropuestasPaletasVisuales") sheet.appendRow(["PropuestaID", "PaletaNombre", "ColoresJSON", "CreadoPor", "Estado", "AprobadoPor", "FechaAprobacion", "Observaciones", "FechaCreacion"]);
     if (name === "ConfiguracionVisualGlobal") sheet.appendRow(["ConfigVisualID", "PaletaNombre", "ColoresJSON", "Version", "AprobadoPor", "FechaPublicacion"]);
     if (name === "TicketsReporteProblemas") sheet.appendRow(["TicketID", "UserId", "NombreUsuario", "RolActivo", "AreaFuncion", "SeccionPagina", "VersionGlobal", "TipoApp", "Descripcion", "ResultadoEsperado", "Estado", "CreadoEn", "ActualizadoEn"]);
@@ -942,12 +943,12 @@ const ROLE_PERMISSIONS = {
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
     "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "dispatchScheduleChangeNotifications", "getScheduleChangeNotificationLogs", "getAdmissionNotificationLogs", "getStudentProcedureNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
-    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData", "generatePrivilegeAndAccountAuditReport", "getPaginatedAuditLogReport", "auditAndReconcileIdentityInconsistencies"
+    "manageInternalRoleCatalog", "getInternalRoleCatalog", "getInternalRoleAssignments", "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData", "generatePrivilegeAndAccountAuditReport", "getPaginatedAuditLogReport", "auditAndReconcileIdentityInconsistencies"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders"
+    "manageInternalRoleCatalog", "getInternalRoleCatalog", "getInternalRoleAssignments", "createLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders"
   ],
   "Secretaría": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
@@ -955,7 +956,7 @@ const ROLE_PERMISSIONS = {
     "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders"
   ],
   "Contador": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest"],
-  "RecursosHumanos": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "createNews", "getInternalMessages", "sendInternalMessage"],
+  "RecursosHumanos": ["manageInternalRoleCatalog", "getInternalRoleCatalog", "getInternalRoleAssignments", "getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "createNews", "getInternalMessages", "sendInternalMessage"],
   "Empleado": ["getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "getInternalMessages", "sendInternalMessage"],
   "Coordinador": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getLearningProfile", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "markNotificationAsRead", "getAppointmentBookings", "updateAppointmentStatus", "getCoordinatorOverview", "assignTeacherToSection", "designateGuideTeacher", "saveClassSchedules", "generateAutoSchedules"],
   "Consejeros": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getLearningProfile", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "markNotificationAsRead", "getAppointmentBookings", "updateAppointmentStatus"],
@@ -1245,6 +1246,9 @@ function doPost(e) {
     }
     let result;
     switch (action) {
+      case "manageInternalRoleCatalog": result = manageInternalRoleCatalog(payload); break;
+      case "getInternalRoleCatalog": result = getInternalRoleCatalog(payload); break;
+      case "getInternalRoleAssignments": result = getInternalRoleAssignments(payload); break;
       case "registerUser": result = registerUser(payload); break;
       case "loginUser": result = loginUser(payload); break;
       case "logoutUser": result = logoutUser(payload); break;
@@ -8092,6 +8096,10 @@ function assignRoleScope(payload) {
     var assignmentId = "AMB-" + Utilities.getUuid().substring(0, 8).toUpperCase();
     var valuesJSON = JSON.stringify(scopeValues);
     var now = new Date().toISOString();
+    var fechaInicio = payload.fechaInicio || now;
+    var fechaFin = payload.fechaFin || "";
+    var esSuplente = payload.esSuplente ? "Sí" : "No";
+    var suplenteDeUserId = payload.suplenteDeUserId || "";
 
     var data = sheet.getDataRange().getValues();
     var foundIdx = -1;
@@ -8107,7 +8115,7 @@ function assignRoleScope(payload) {
       sheet.getRange(foundIdx + 1, 5).setValue(valuesJSON);
       sheet.getRange(foundIdx + 1, 6).setValue(estado);
     } else {
-      sheet.appendRow([assignmentId, userId, roleId || "", scopeType, valuesJSON, estado, actor, now]);
+      sheet.appendRow([assignmentId, userId, roleId || "", scopeType, valuesJSON, estado, actor, now, fechaInicio, fechaFin, esSuplente, suplenteDeUserId]);
     }
 
     recordEntityChangeLog("AsignacionAmbitoRol", assignmentId, foundIdx !== -1 ? { scopeValues: data[foundIdx][4] } : {}, { userId: userId, scopeType: scopeType, scopeValues: scopeValues, estado: estado }, "SCOPE_ASSIGNED", actor);
@@ -8567,5 +8575,188 @@ function getInstitutionalFunctionalSpaceCatalog(payload) {
       status: "error",
       message: "Error al consultar el catálogo de espacios funcionales: " + err.message
     };
+  }
+}
+
+
+// ===========================================================================
+// [TASK-004] [F16-Task01] - CATÁLOGO DINÁMICO DE ROLES INTERNOS Y GESTIÓN DE ASIGNACIONES
+// ===========================================================================
+
+function manageInternalRoleCatalog(payload) {
+  try {
+    var verifiedRole = (payload && payload.authRole) || (payload && payload._verifiedRole) || (payload && payload.role) || "NO_ACCESS";
+    if (["Administrador", "Director", "Desarrollador", "RecursosHumanos"].indexOf(verifiedRole) === -1) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "Solo personal administrativo o de Recursos Humanos puede gestionar el catálogo de roles internos." };
+    }
+
+    var {
+      rolInternoId,
+      codigoInterno,
+      nombreResponsabilidad,
+      descripcion = "",
+      departamento = "",
+      areaAcademica = "",
+      tipoResponsabilidad = "Administrativa", // Administrativa, Academica, Operativa, Supervision
+      vigenciaMeses = 12,
+      permiteSuplencia = true,
+      estado = "Activo",
+      accion = "guardar" // 'guardar', 'desactivar', 'activar'
+    } = payload || {};
+
+    if (!nombreResponsabilidad && accion === "guardar") {
+      return { status: "error", code: "VALIDATION_ERROR", message: "El nombre de la responsabilidad organizativa es obligatorio." };
+    }
+
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheet = getOrCreateSheet(ss, "CatalogoRolesInternos");
+    var data = sheet.getDataRange().getValues();
+    var now = new Date().toISOString();
+    var actor = (payload && payload.actor) || verifiedRole;
+
+    var normNombre = normalizeString(nombreResponsabilidad);
+    var targetIdx = -1;
+
+    if (rolInternoId) {
+      targetIdx = data.findIndex((r, idx) => idx > 0 && String(r[0]).trim() === String(rolInternoId).trim());
+    } else if (nombreResponsabilidad) {
+      // Detección de duplicados normalizados por nombre insensible a mayúsculas, espacios y acentos
+      targetIdx = data.findIndex((r, idx) => idx > 0 && normalizeString(r[2]) === normNombre && String(r[9]).trim() !== "Eliminado");
+    }
+
+    if (accion === "desactivar" || accion === "activar") {
+      if (targetIdx === -1) throw new Error("Rol interno no encontrado para cambiar estado.");
+      var nuevoEstado = accion === "activar" ? "Activo" : "Inactivo";
+      sheet.getRange(targetIdx + 1, 10).setValue(nuevoEstado);
+      sheet.getRange(targetIdx + 1, 13).setValue(now);
+      return { status: "success", rolInternoId: data[targetIdx][0], estado: nuevoEstado, message:  };
+    }
+
+    var rId = rolInternoId;
+    var codInt = codigoInterno || ("ROL-" + normNombre.substring(0, 4).toUpperCase() + "-" + Math.floor(100 + Math.random() * 900));
+
+    if (targetIdx !== -1) {
+      rId = data[targetIdx][0];
+      sheet.getRange(targetIdx + 1, 2).setValue(codigoInterno || data[targetIdx][1]);
+      sheet.getRange(targetIdx + 1, 3).setValue(nombreResponsabilidad);
+      sheet.getRange(targetIdx + 1, 4).setValue(descripcion);
+      sheet.getRange(targetIdx + 1, 5).setValue(departamento);
+      sheet.getRange(targetIdx + 1, 6).setValue(areaAcademica);
+      sheet.getRange(targetIdx + 1, 7).setValue(tipoResponsabilidad);
+      sheet.getRange(targetIdx + 1, 8).setValue(parseInt(vigenciaMeses) || 12);
+      sheet.getRange(targetIdx + 1, 9).setValue(permiteSuplencia ? "Sí" : "No");
+      sheet.getRange(targetIdx + 1, 10).setValue(estado);
+      sheet.getRange(targetIdx + 1, 13).setValue(now);
+    } else {
+      rId = "ROL-INT-" + Date.now();
+      sheet.appendRow([
+        rId,
+        codInt,
+        nombreResponsabilidad,
+        descripcion,
+        departamento,
+        areaAcademica,
+        tipoResponsabilidad,
+        parseInt(vigenciaMeses) || 12,
+        permiteSuplencia ? "Sí" : "No",
+        estado,
+        actor,
+        now,
+        now
+      ]);
+    }
+
+    logStructuredEvent("USER", "manageInternalRoleCatalog", "INFO", "INTERNAL_ROLE_SAVED", , { rolInternoId: rId, nombre: nombreResponsabilidad, tipo: tipoResponsabilidad, estado }, verifiedRole);
+
+    return {
+      status: "success",
+      rolInternoId: rId,
+      codigoInterno: codInt,
+      nombreResponsabilidad: nombreResponsabilidad,
+      estado: estado,
+      message:
+    };
+  } catch (error) {
+    logStructuredEvent("USER", "manageInternalRoleCatalog", "ERROR", "INTERNAL_ROLE_SAVE_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function getInternalRoleCatalog(payload) {
+  try {
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheet = getOrCreateSheet(ss, "CatalogoRolesInternos");
+    var rows = sheet.getDataRange().getValues().slice(1);
+    var { departamento, areaAcademica, tipoResponsabilidad, estado = "Activo", soloActivos = true } = payload || {};
+
+    var list = rows.filter(r => {
+      var rEstado = String(r[9] || "Activo").trim();
+      if (soloActivos && rEstado !== "Activo") return false;
+      if (estado && estado !== "Todos" && rEstado !== estado) return false;
+      if (departamento && normalizeString(r[4]) !== normalizeString(departamento)) return false;
+      if (areaAcademica && normalizeString(r[5]) !== normalizeString(areaAcademica)) return false;
+      if (tipoResponsabilidad && normalizeString(r[6]) !== normalizeString(tipoResponsabilidad)) return false;
+      return true;
+    }).map(r => ({
+      rolInternoId: r[0],
+      codigoInterno: r[1],
+      nombreResponsabilidad: r[2],
+      descripcion: r[3],
+      departamento: r[4],
+      areaAcademica: r[5],
+      tipoResponsabilidad: r[6],
+      vigenciaMeses: parseInt(r[7] || 12),
+      permiteSuplencia: String(r[8]).toLowerCase() === "sí" || String(r[8]).toLowerCase() === "true",
+      estado: r[9],
+      creadoPor: r[10],
+      fechaCreacion: r[11],
+      fechaActualizacion: r[12]
+    }));
+
+    return { status: "success", data: list };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function getInternalRoleAssignments(payload) {
+  try {
+    var { userId, rolInternoId, departamento, soloVigentes = true } = payload || {};
+    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheet = getOrCreateSheet(ss, "AsignacionesAmbitosRoles");
+    var rows = sheet.getDataRange().getValues().slice(1);
+    var now = new Date();
+
+    var filtered = rows.filter(r => {
+      if (userId && String(r[1]).trim() !== String(userId).trim()) return false;
+      if (rolInternoId && String(r[2]).trim() !== String(rolInternoId).trim()) return false;
+
+      var estado = String(r[5] || "Activo").trim();
+      if (estado !== "Activo") return false;
+
+      // Validación estricta de vigencia temporal si existen fechas
+      var fInicio = r[8] ? new Date(r[8]) : null;
+      var fFin = r[9] ? new Date(r[9]) : null;
+      if (soloVigentes && fFin && fFin < now) return false;
+
+      return true;
+    }).map(r => ({
+      asignacionId: r[0],
+      userId: r[1],
+      rolInternoId: r[2],
+      scopeType: r[3],
+      scopeValues: r[4],
+      estado: r[5],
+      creadoPor: r[6],
+      fechaCreacion: r[7],
+      fechaInicio: r[8] || null,
+      fechaFin: r[9] || null,
+      esSuplente: String(r[10]).toLowerCase() === "sí" || String(r[10]).toLowerCase() === "true",
+      suplenteDeUserId: r[11] || null
+    }));
+
+    return { status: "success", data: filtered };
+  } catch (error) {
+    return { status: "error", message: error.message };
   }
 }

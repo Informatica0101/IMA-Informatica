@@ -1411,3 +1411,19 @@ RESULTADO DE EVALUACIÓN:
 - Se actualizaron las aserciones en tests/regression/academic-grading-suite.js alcanzando 67/67 pruebas pasadas (100.0%).
 - Estado: Completado y Verificado funcionalmente.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-004] [F16-Task01]
+CATÁLOGO DINÁMICO DE ROLES INTERNOS ORGANIZATIVOS Y ADMINISTRACIÓN DE ASIGNACIONES
+ARCHIVOS MODIFICADOS: backend/user-service/Code.gs, tests/regression/academic-grading-suite.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementó la estructura tabular formal CatalogoRolesInternos en getOrCreateSheet con atributos: RolInternoID, CodigoInterno, NombreResponsabilidad, Descripcion, Departamento, AreaAcademica, TipoResponsabilidad, VigenciaMeses, PermiteSuplencia, Estado, CreadoPor, FechaCreacion, FechaActualizacion.
+- Se implementó manageInternalRoleCatalog para altas, modificaciones y activaciones/desactivaciones de roles internos organizativos con detección y prevención de duplicados normalizados insensibles a mayúsculas, espacios y acentos.
+- Se implementó getInternalRoleCatalog con soporte de filtrado granular por departamento, área académica, tipo de responsabilidad y estado activo/inactivo.
+- Se adaptó la función assignRoleScope para vincular asignaciones a roles internos del catálogo, soportando vigencias temporales con fechaInicio y fechaFin, designación de suplencias temporales (esSuplente, suplenteDeUserId) y múltiples roles por empleado sin duplicar expedientes.
+- Se implementó getInternalRoleAssignments para consultar asignaciones vigentes e históricas con discriminación automática de vigencias expiradas.
+- Se preservó estrictamente la separación entre responsabilidades institucionales y privilegios globales en ROLE_PERMISSIONS.
+- Se actualizaron las pruebas en tests/regression/academic-grading-suite.js alcanzando 72/72 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
