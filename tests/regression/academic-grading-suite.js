@@ -149,6 +149,13 @@ assert(acctCode.includes("DeduccionesAsistencia") && acctCode.includes("deduccio
 assert(acctCode.includes("SolicitudesVacaciones") && acctCode.includes("deduccionPermisosSinSueldo"), "backend/accounting-service/Code.gs procesa permisos sin goce de sueldo proporcionales [TASK-008]");
 assert(acctCode.includes("PROCESADA_NOMINA_"), "backend/accounting-service/Code.gs vincula novedades procesadas al planillaId impidiendo doble deducción o pago [TASK-008]");
 
+// [TASK-009] [F17-Task03] - Aportaciones patronales independientes y separación de costos institucionales
+assert(acctCode.includes("patronalIHSS") && acctCode.includes("0.072"), "backend/accounting-service/Code.gs calcula IHSS patronal independiente al 7.2% [TASK-009]");
+assert(acctCode.includes("patronalRAP") && acctCode.includes("patronalINFOP"), "backend/accounting-service/Code.gs calcula aportaciones patronales de RAP e INFOP [TASK-009]");
+assert(acctCode.includes("costoLaboralTotal"), "backend/accounting-service/Code.gs determina el costo laboral institucional total sin afectar el salario neto [TASK-009]");
+assert(acctCode.includes("Gasto de Aportaciones Patronales") && acctCode.includes("Obligaciones Patronales por Pagar"), "backend/accounting-service/Code.gs genera asiento contable equilibrado con cuentas patronales por partida doble [TASK-009]");
+assert(acctCode.includes("totalCostoLaboralInstitucional"), "backend/accounting-service/Code.gs desglosa costo laboral institucional en el resumen de nómina [TASK-009]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

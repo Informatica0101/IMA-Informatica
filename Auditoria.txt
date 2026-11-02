@@ -688,3 +688,47 @@ RESULTADO DE EVALUACIÓN:
 - Se actualizaron las aserciones en tests/regression/academic-grading-suite.js alcanzando 91/91 pruebas pasadas (100.0%).
 - Estado: Completado y Verificado funcionalmente.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+AUDITORIA INICIAL — [TASK-009] [F17-Task03]
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (calculatePayrollPeriod, updatePayrollPeriodStatus, getPayrollPeriodSummary)
+- Estructuras: PlanillasNomenclatura, PoliticasFiscales, AsientosContables
+HALLAZGOS:
+1. En PlanillasNomenclatura y calculatePayrollPeriod (l. 4830-4860): El motor únicamente calcula retenciones y deducciones a cargo del empleado (dedIHSS 3.5%, dedRAP 1.5%, dedISR). Omite completamente las aportaciones patronales de ley en Honduras: IHSS patronal (~7.2% sobre techo de L 10,317.38), RAP patronal (1.5% sobre excedente) e INFOP patronal (1.0% sobre salario devengado).
+2. Ausencia de separación entre costo laboral patronal y deducciones del trabajador: Al no calcularse las obligaciones patronales, el costo institucional total de planilla está subestimado en los reportes (solo refleja totalBruto devengado por los empleados).
+3. Asiento contable de nómina incompleto en updatePayrollPeriodStatus (l. 4920-4935): El asiento automático solo registra:
+   - Debe: 5101 Gasto de Salarios y Planilla (totalBruto)
+   - Haber: 2101 Retenciones y Deducciones por Pagar (totalDeducciones obreras)
+   - Haber: 1101 Bancos / Sueldos por Pagar (totalSalarioNeto)
+   No contabiliza el Gasto de Aportaciones Patronales (Debe) ni las Obligaciones Patronales por Pagar al IHSS, RAP e INFOP (Haber), desalineando los pasivos institucionales con la contabilidad legal.
+ESTADO: Auditoría finalizada. Procediendo con la implementación de aportaciones patronales independientes, separación de costo institucional y asientos contables completos por partida doble.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-009] [F17-Task03]
+APORTACIONES PATRONALES INDEPENDIENTES Y SEPARACIÓN DE COSTOS INSTITUCIONALES
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (calculatePayrollPeriod, updatePayrollPeriodStatus, getPayrollPeriodSummary)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt / Auditoría.txt / ChangesLogs.txt
+RESULTADO DE EVALUACIÓN:
+- Se implementó el cálculo independiente de aportaciones patronales de ley en Honduras en calculatePayrollPeriod:
+  * IHSS Patronal: 7.2% sobre el techo vigente de L 10,317.38.
+  * RAP Patronal: 1.5% sobre el excedente del techo de L 10,317.38.
+  * INFOP Patronal: 1.0% sobre salario devengado.
+- Protección irrestricta del salario neto del empleado: las aportaciones patronales no disminuyen el devengo ni el neto a percibir por el trabajador.
+- Ampliación del esquema de la hoja PlanillasNomenclatura para registrar patronalIHSS, patronalRAP, patronalINFOP y costoLaboralTotal.
+- Se actualizó updatePayrollPeriodStatus para emitir un asiento contable automático equilibrado por partida doble exacta (|Debe - Haber| <= 0.01):
+  * Debe: 5101 Gasto de Salarios y Planilla (totalBruto)
+  * Debe: 5102 Gasto de Aportaciones Patronales (IHSS/RAP/INFOP)
+  * Haber: 2101 Retenciones y Deducciones de Empleados por Pagar
+  * Haber: 2102 Obligaciones Patronales por Pagar (IHSS/RAP/INFOP)
+  * Haber: 1101 Bancos / Sueldos Netos por Pagar
+- Se actualizó getPayrollPeriodSummary para desglosar el resumen con totalAportacionesPatronales y totalCostoLaboralInstitucional.
+- Pruebas automatizadas actualizadas en tests/regression/academic-grading-suite.js pasando al 100% (96/96 pruebas pasadas).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================

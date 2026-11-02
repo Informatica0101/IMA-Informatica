@@ -992,7 +992,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-009] [ ] [F17-Task03] Implementar las aportaciones patronales y separar los costos institucionales de las deducciones del empleado
+### [TASK-009] [X] [F17-Task03] Implementar las aportaciones patronales y separar los costos institucionales de las deducciones del empleado
 - **Origen del Hallazgo:** `AUDITORIA_FASE_17_PLANILLAS_COMPENSACIONES.md` / Sección C (C.1), Sección E (Brecha E.3) y Sección G (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Costos laborales institucionales, cumplimiento de seguridad social y exactitud contable)
@@ -1027,7 +1027,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Los asientos contables automáticos por partida doble incorporan el gasto patronal (Debe) y las cuentas de pasivo por pagar (Haber) manteniendo equilibrio exacto (`Math.abs(totalDebe - totalHaber) <= 0.01`).
   - Las aportaciones patronales no se duplican al recalcular o reintentar el procesamiento de la nómina.
   - Las modificaciones de parámetros normativos no alteran planillas de períodos cerrados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 ---

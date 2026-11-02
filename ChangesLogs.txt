@@ -3898,3 +3898,18 @@ ARCHIVOS MODIFICADOS:
 3. Pendientes.md:
    - Líneas 915-992: Marcadas tareas [TASK-007] y [TASK-008] como [X] Completado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+TAREA: [TASK-009] [F17-Task03]
+ARCHIVOS MODIFICADOS:
+1. backend/accounting-service/Code.gs:
+   - Línea 147: Ampliación de columnas en PlanillasNomenclatura (PatronalIHSS, PatronalRAP, PatronalINFOP, CostoLaboralTotal).
+   - Líneas 4811-4860: Cálculo independiente de aportaciones patronales (IHSS 7.2%, RAP 1.5%, INFOP 1.0%) y costo laboral institucional total en calculatePayrollPeriod sin afectar el salario neto del empleado.
+   - Líneas 4901-4965: Generación de asiento contable equilibrado en updatePayrollPeriodStatus incorporando Gasto de Aportaciones Patronales (Debe) y Obligaciones Patronales por Pagar (Haber) por partida doble.
+   - Líneas 4995-5065: Inclusión de métricas patronales y costo laboral total institucional en getPayrollPeriodSummary.
+2. tests/regression/academic-grading-suite.js:
+   - Líneas 152-160: Aserciones automatizadas para cálculo patronal independiente, costo laboral institucional total y equilibrio contable.
+3. Pendientes.md:
+   - Líneas 995-1030: Marcada tarea [TASK-009] como [X] Completado.
+===============================================================================

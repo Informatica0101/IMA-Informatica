@@ -144,7 +144,7 @@ function getOrCreateSheet(ss, name) {
     if (name === "HorariosLaborales") sheet.appendRow(["HorarioID", "NombreHorario", "JornadaTipo", "HoraEntrada", "HoraSalida", "ToleranciaMinutos", "DiasLaboralesJSON", "Estado", "Observaciones"]);
     if (name === "CorreccionesAsistencia") sheet.appendRow(["CorreccionID", "AsistenciaID", "EmpleadoId", "FechaIncidencia", "HoraOriginal", "HoraSolicitada", "Motivo", "EvidenciaUrl", "EstadoAprobacion", "AprobadoPor", "Observaciones"]);
     if (name === "IncidenciasNomina") sheet.appendRow(["IncidenciaID", "PlanillaID", "PeriodoMes", "EmpleadoId", "EmpleadoNombre", "TipoIncidencia", "Descripcion", "FechaRegistro", "Estado"]);
-    if (name === "PlanillasNomenclatura") sheet.appendRow(["PlanillaID", "FechaGeneracion", "PeriodoMes", "EmpleadoId", "EmpleadoNombre", "CargoPuesto", "SalarioBase", "HorasExtras", "MontoHorasExtras", "Bonificaciones", "DeduccionIHSS", "DeduccionRAP", "DeduccionISR", "OtrasDeducciones", "SalarioNeto", "Estado"]);
+    if (name === "PlanillasNomenclatura") sheet.appendRow(["PlanillaID", "FechaGeneracion", "PeriodoMes", "EmpleadoId", "EmpleadoNombre", "CargoPuesto", "SalarioBase", "HorasExtras", "MontoHorasExtras", "Bonificaciones", "DeduccionIHSS", "DeduccionRAP", "DeduccionISR", "OtrasDeducciones", "SalarioNeto", "Estado", "PatronalIHSS", "PatronalRAP", "PatronalINFOP", "CostoLaboralTotal"]);
     if (name === "DeduccionesAsistencia") sheet.appendRow(["AsistenciaID", "Fecha", "EmpleadoId", "EmpleadoNombre", "HoraEntrada", "HoraSalida", "MinutosTardanza", "EstadoAsistencia", "Observaciones"]);
     if (name === "BoletasPago") sheet.appendRow(["BoletaID", "PlanillaID", "FechaEmision", "EmpleadoId", "EmpleadoNombre", "PeriodoMes", "TotalDevengado", "TotalDeducciones", "NetoAPagar", "EstadoBoleta"]);
     if (name === "DocumentosLaborales") sheet.appendRow(["DocumentoID", "ExpedienteID", "CategoriaDoc", "TituloDocumento", "ArchivoUrl", "FechaCarga", "CargadoPor", "EstadoVisibilidad", "Observaciones"]);
@@ -4811,6 +4811,16 @@ function calculatePayrollPeriod(payload) {
       const totalDeducciones = parseFloat((dedIHSS + dedRAP + dedISR + otrasDed).toFixed(2));
       const salarioNeto = parseFloat(Math.max(0, totalDevengado - totalDeducciones).toFixed(2));
 
+      // [TASK-009] [F17-Task03] - Aportaciones patronales independientes y costo laboral institucional total
+      // Legislación de Honduras:
+      // IHSS Patronal: 7.2% sobre techo de L 10,317.38 (Salud, Maternidad, IVM y Riesgos)
+      // RAP Patronal: 1.5% sobre excedente del techo de L 10,317.38
+      // INFOP Patronal: 1.0% sobre salario devengado
+      const patronalIHSS = parseFloat((Math.min(salarioBase, 10317.38) * 0.072).toFixed(2));
+      const patronalRAP = parseFloat((Math.max(0, salarioBase - 10317.38) * 0.015).toFixed(2));
+      const patronalINFOP = parseFloat((salarioBase * 0.01).toFixed(2));
+      const costoLaboralTotal = parseFloat((totalDevengado + patronalIHSS + patronalRAP + patronalINFOP).toFixed(2));
+
       processedRows.push([
         planillaId,
         now,
@@ -4827,7 +4837,11 @@ function calculatePayrollPeriod(payload) {
         dedISR,
         otrasDed,
         salarioNeto,
-        "Calculada"
+        "Calculada",
+        patronalIHSS,
+        patronalRAP,
+        patronalINFOP,
+        costoLaboralTotal
       ]);
     });
 
@@ -4836,7 +4850,7 @@ function calculatePayrollPeriod(payload) {
     }
 
     if (processedRows.length > 0) {
-      planSheet.getRange(planSheet.getLastRow() + 1, 1, processedRows.length, 16).setValues(processedRows);
+      planSheet.getRange(planSheet.getLastRow() + 1, 1, processedRows.length, 20).setValues(processedRows);
 
       // 4. Marcar novedades como procesadas garantizando trazabilidad e idempotencia
       ovtUpdates.forEach(u => {
@@ -4887,6 +4901,10 @@ function updatePayrollPeriodStatus(payload) {
   let totalSalarioNeto = 0;
   let totalDeducciones = 0;
   let totalBruto = 0;
+  let totalPatronalIHSS = 0;
+  let totalPatronalRAP = 0;
+  let totalPatronalINFOP = 0;
+  let totalPatronal = 0;
 
   for (let i = 1; i < data.length; i++) {
     if (String(data[i][0]).trim() === String(planillaId).trim()) {
@@ -4904,28 +4922,47 @@ function updatePayrollPeriodStatus(payload) {
 
       const neto = parseFloat(data[i][14] || (dev - ded));
 
+      // Aportaciones patronales independientes [TASK-009]
+      const pIHSS = parseFloat(data[i][16] || (Math.min(sBase, 10317.38) * 0.072));
+      const pRAP = parseFloat(data[i][17] || (Math.max(0, sBase - 10317.38) * 0.015));
+      const pINFOP = parseFloat(data[i][18] || (sBase * 0.01));
+      const pTot = pIHSS + pRAP + pINFOP;
+
       totalBruto += dev;
       totalDeducciones += ded;
       totalSalarioNeto += neto;
+      totalPatronalIHSS += pIHSS;
+      totalPatronalRAP += pRAP;
+      totalPatronalINFOP += pINFOP;
+      totalPatronal += pTot;
       count++;
     }
   }
 
   if (count === 0) throw new Error("Planilla no encontrada.");
 
-  // Generar asiento contable automático por partida doble al APROBAR o CERRAR la planilla
+  totalBruto = parseFloat(totalBruto.toFixed(2));
+  totalDeducciones = parseFloat(totalDeducciones.toFixed(2));
+  totalSalarioNeto = parseFloat(totalSalarioNeto.toFixed(2));
+  totalPatronal = parseFloat(totalPatronal.toFixed(2));
+  const totalGastoPatronal = totalPatronal;
+  const totalPasivoPatronal = totalPatronal;
+
+  // Generar asiento contable automático por partida doble equilibrada al APROBAR o CERRAR la planilla [TASK-009]
   let asientoRes = null;
   if (nuevoEstado === "Aprobada" || nuevoEstado === "Cerrada" || nuevoEstado === "Contabilizada") {
     try {
       asientoRes = recordAccountingJournalEntry({
-        descripcion: `Contabilización de Planilla ${planillaId} (${nuevoEstado})`,
+        descripcion: `Contabilización de Planilla ${planillaId} (${nuevoEstado}) - Salarios y Aportaciones Patronales`,
         origenModulo: "Planillas",
         referenciaId: planillaId,
         creadoPor: authRole || "RecursosHumanos",
         lineas: [
           { cuenta: "5101", nombre: "Gasto de Salarios y Planilla", debe: totalBruto, haber: 0 },
-          { cuenta: "2101", nombre: "Retenciones y Deducciones por Pagar", debe: 0, haber: totalDeducciones },
-          { cuenta: "1101", nombre: "Bancos / Sueldos por Pagar", debe: 0, haber: totalSalarioNeto }
+          { cuenta: "5102", nombre: "Gasto de Aportaciones Patronales (IHSS/RAP/INFOP)", debe: totalGastoPatronal, haber: 0 },
+          { cuenta: "2101", nombre: "Retenciones y Deducciones de Empleados por Pagar", debe: 0, haber: totalDeducciones },
+          { cuenta: "2102", nombre: "Obligaciones Patronales por Pagar (IHSS/RAP/INFOP)", debe: 0, haber: totalPasivoPatronal },
+          { cuenta: "1101", nombre: "Bancos / Sueldos Netos por Pagar", debe: 0, haber: totalSalarioNeto }
         ]
       });
     } catch (e) {
@@ -4957,6 +4994,11 @@ function getPayrollPeriodSummary(payload) {
   let totalBruto = 0;
   let totalDeducciones = 0;
   let totalNeto = 0;
+  let totalPatronalIHSS = 0;
+  let totalPatronalRAP = 0;
+  let totalPatronalINFOP = 0;
+  let totalPatronal = 0;
+  let totalCostoLaboralInstitucional = 0;
 
   const mapped = filtered.map(r => {
     const sBase = parseFloat(r[6] || 0);
@@ -4972,9 +5014,21 @@ function getPayrollPeriodSummary(payload) {
 
     const neto = parseFloat(r[14] || (dev - ded));
 
+    // Aportaciones patronales independientes y costo laboral institucional total [TASK-009]
+    const pIHSS = parseFloat(r[16] || (Math.min(sBase, 10317.38) * 0.072));
+    const pRAP = parseFloat(r[17] || (Math.max(0, sBase - 10317.38) * 0.015));
+    const pINFOP = parseFloat(r[18] || (sBase * 0.01));
+    const pTot = pIHSS + pRAP + pINFOP;
+    const cLaboral = parseFloat(r[19] || (dev + pTot));
+
     totalBruto += dev;
     totalDeducciones += ded;
     totalNeto += neto;
+    totalPatronalIHSS += pIHSS;
+    totalPatronalRAP += pRAP;
+    totalPatronalINFOP += pINFOP;
+    totalPatronal += pTot;
+    totalCostoLaboralInstitucional += cLaboral;
 
     return {
       planillaId: r[0],
@@ -4987,7 +5041,12 @@ function getPayrollPeriodSummary(payload) {
       totalDevengado: dev,
       totalDeducciones: ded,
       salarioNeto: neto,
-      estadoCiclo: r[15]
+      estadoCiclo: r[15],
+      patronalIHSS: pIHSS,
+      patronalRAP: pRAP,
+      patronalINFOP: pINFOP,
+      totalAportacionesPatronales: pTot,
+      costoLaboralTotal: cLaboral
     };
   });
 
@@ -4995,9 +5054,14 @@ function getPayrollPeriodSummary(payload) {
     status: "success",
     resumen: {
       totalEmpleados: mapped.length,
-      totalBruto: totalBruto,
-      totalDeducciones: totalDeducciones,
-      totalNeto: totalNeto
+      totalBruto: parseFloat(totalBruto.toFixed(2)),
+      totalDeducciones: parseFloat(totalDeducciones.toFixed(2)),
+      totalNeto: parseFloat(totalNeto.toFixed(2)),
+      totalPatronalIHSS: parseFloat(totalPatronalIHSS.toFixed(2)),
+      totalPatronalRAP: parseFloat(totalPatronalRAP.toFixed(2)),
+      totalPatronalINFOP: parseFloat(totalPatronalINFOP.toFixed(2)),
+      totalAportacionesPatronales: parseFloat(totalPatronal.toFixed(2)),
+      totalCostoLaboralInstitucional: parseFloat(totalCostoLaboralInstitucional.toFixed(2))
     },
     empleados: mapped
   };
