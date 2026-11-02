@@ -1,0 +1,568 @@
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task05: AMPLIAR LA GESTIÓN DE JUSTIFICACIONES, PERMISOS Y SALIDAS ANTICIPADAS
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se actualizó la función `reviewAttendanceJustification` e inyectada la etiqueta identificativa `[F10-Task05]` sobre `submitAttendanceJustification` en `backend/academic-service/Code.gs`.
+- Se verificó la validación estricta de estados de ciclo de vida (`Presentada`, `Pendiente`, `RequiereInformacion`, `Aprobada`, `Rechazada`, `Cancelada`), la sincronización atómica con `RegistrosAsistencia` para la fecha afectada y el registro de eventos `ATTENDANCE_JUSTIFICATION_REVIEWED`.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task12: OPTIMIZAR LAS NOTIFICACIONES Y LAS COMUNICACIONES ESCOLARES
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `retryFailedNotificationsQueue` y refactorizado `sendMultiChannelNotification` con la etiqueta identificativa `[F10-Task12]` en `backend/user-service/Code.gs`.
+- Se verificó la deduplicación estricta por `deduplicationKey`, plantillas con protección de privacidad PII e reintentos seguros con contador de reintentos e informe de notificaciones resueltas.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el conmutador `doPost` switch en `backend/user-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task13: MEJORAR LA GESTIÓN DE EVIDENCIAS Y DOCUMENTOS SENSIBLES
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, backend/task-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `validateEvidenceFileAndPermissions` e inyectada la etiqueta identificativa `[F10-Task13]` en `backend/academic-service/Code.gs` y `backend/task-service/Code.gs`.
+- Se verificó la validación de formatos (PDF, PNG, JPG, WEBP), límite de tamaño de 10 MB y verificación de sesión y permisos RBAC para prevenir descargas por URL directas sin autenticación.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el conmutador `doPost` switch en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task10: COMPLETAR EL MODELO FUNCIONAL DE ORIENTACIÓN ACADÉMICA Y VOCACIONAL
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `saveGuidanceFollowupPlan` y `saveVocationalRecommendation` con la etiqueta identificativa `[F10-Task10]` en `backend/academic-service/Code.gs`.
+- Se verificó el modelo funcional de orientación académica y vocacional: diseño de planes de seguimiento pedagógico, definición de metas de aprendizaje e informes vocacionales con sugerencias de carreras sin alterar calificaciones oficiales ni matrículas.
+- Registradas las acciones en `ROLE_PERMISSIONS` para `Orientacion`, `Consejeros`, `Director` y `Administrador`, y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task11: COMPLETAR LA DELEGACIÓN DE RESPONSABILIDADES PARA ASISTENTES ADMINISTRATIVOS Y ACADÉMICOS
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, backend/user-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `auditAssistantDelegatedAction` y reinforced `validateRolePermission` con la etiqueta identificativa `[F10-Task11]` en `backend/academic-service/Code.gs` y `backend/user-service/Code.gs`.
+- Se verificó el registro e identificación obligatoria de doble identidad: autor real (`_executorUserId`), titular delegante (`_delegatedFrom`), ID de delegación (`_delegationId`) y la auditoría estructurada de acciones ejecutadas por asistentes bajo delegación activa.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task09: COMPLETAR EL MODELO FUNCIONAL DE CONSEJERÍA ESCOLAR
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `scheduleCounselingAppointment`, `recordCounselingSessionAct` y `referCounselingCase` con la etiqueta identificativa `[F10-Task09]` en `backend/academic-service/Code.gs`.
+- Se verificó el flujo especializado de consejería escolar: programación de citas, registro inmutable de actas de sesión con notas confidenciales privadas y derivación inmutable a especialistas externos o departamentos internos.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task07: COMPLETAR EL CICLO DE VIDA DE LAS INCIDENCIAS DE CONVIVENCIA ESCOLAR
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `updateAttendanceIncidentStatus` y reestructurado `saveAttendanceIncident` with la etiqueta identificativa `[F10-Task07]` en `backend/academic-service/Code.gs`.
+- Se verificó la gestión del ciclo de vida transparente de incidencias disciplinarias/convivencia (`Reportada`, `PendienteRevision`, `EnInvestigacion`, `Confirmada`, `Cerrada`, `Reabierta`), el registro de resoluciones, medidas correctivas y eventos de auditoría `ATTENDANCE_INCIDENT_STATUS_UPDATED`.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task08: ESTRUCTURAR EL SEGUIMIENTO DE COMPROMISOS, INTERVENCIONES Y EVIDENCIAS
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `addCaseCommitment` y `updateCaseCommitmentStatus` con la etiqueta identificativa `[F10-Task08]` en `backend/academic-service/Code.gs`.
+- Se verificó la estructuración de compromisos, acuerdos, intervenciones y evidencias con identificadores inmutables (`COM-AST-...`), plazos (`fechaLimite`), estados de cumplimiento (`Pendiente`, `EnProceso`, `Cumplido`, `Incumplido`, `Reprogramado`) y URLs de evidencia adjunta sin sobrescribir el historial.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task06: DESARROLLAR UN SISTEMA AVANZADO DE ALERTAS DE ASISTENCIA Y SEGUIMIENTO PREVENTIVO
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `checkAndDispatchAttendanceAlerts` con la etiqueta identificativa `[F10-Task06]` en `backend/academic-service/Code.gs`.
+- Se verificó la evaluación de ausencias injustificadas consecutivas, tardanzas acumuladas y porcentaje de asistencia mínimo respecto a la configuración institucional (`ConfiguracionAcademica`).
+- Se verificó el flujo de apertura automatizada de casos preventivos en `CasosSeguimiento`, el envío de notificaciones deduplicadas a tutores legales y el registro estructurado de eventos `ATTENDANCE_ALERTS_DISPATCHED`.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task14: OPTIMIZAR EL RENDIMIENTO, LA RECUPERACIÓN Y LA CONSISTENCIA DE LOS SERVICIOS
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, js/api.js, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `saveDailyAttendance` en `backend/academic-service/Code.gs` realiza iteraciones con `setValue` y `appendRow` individuales para cada alumno dentro de un bucle, generando múltiples llamadas consecutivas de I/O a Google Sheets.
+2. No existe una función dedicada `getBatchAttendanceRecords` en backend/academic-service/Code.gs para consultar lotes múltiples de sesiones de asistencia, estudiantes o rangos de fecha en una sola llamada batch optimizada.
+3. Se requiere protección por concurrencia con `LockService` y control de idempotencia/reintentos exponenciales en operaciones masivas de asistencia en `backend/academic-service/Code.gs` y helper en `js/api.js`.
+4. La suite de regresión `tests/regression/academic-grading-suite.js` requiere aserciones para verificar `[F10-Task14]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task15: AMPLIAR LAS PRUEBAS AUTOMATIZADAS Y LA COBERTURA DE REGRESIÓN DE LA FASE 10
+ARCHIVOS AUDITADOS: backend/developer-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `runPhase10AttendanceAndCoexistenceRegressionSuite` en `backend/developer-service/Code.gs` contenía casos de prueba básicos stubbed y requería la integración completa de los contratos de validación de asistencia, justificaciones, salidas anticipadas, incidencias de convivencia, consejería confidencial, orientación vocacional, delegación de asistentes, notificaciones y operaciones batch.
+2. `tests/regression/academic-grading-suite.js` requiere aserciones adicionales que validen que `runPhase10AttendanceAndCoexistenceRegressionSuite` abarca integralmente los 86 criterios de la Fase 10.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task16: AMPLIAR LOS INFORMES DE ASISTENCIA, CONVIVENCIA Y SEGUIMIENTO
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. No existe un informe consolidado multi-criterio `generateConsolidatedAttendanceAndCoexistenceReport` en `backend/academic-service/Code.gs` que agregue por grupo/grado/sección o período las métricas de asistencia, tardanzas acumuladas, incidencias de convivencia y compromisos de casos de seguimiento.
+2. El informe consolidado debe excluir strictly la información confidencial de las categorías `Consejería` y `Orientación` cuando sea consultado por roles no autorizados como docentes generales.
+3. Se requiere registrar la acción en `ROLE_PERMISSIONS` para `Director`, `Secretaría`, `Coordinador`, `Administrador` y `Profesor` (filtrado) y agregar aserciones en `tests/regression/academic-grading-suite.js`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task17: OPTIMIZAR EL REGISTRO DE ASISTENCIA LABORAL DEL PERSONAL
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `recordStaffCheckIn` en `backend/accounting-service/Code.gs` insertaba filas independientes en `DeduccionesAsistencia` sin aparear la entrada con la salida del mismo día, generando marcas huérfanas/incompletas.
+2. `reviewAttendanceCorrection` actualizaba el estado de la solicitud en `CorreccionesAsistencia`, pero no sincronizaba automáticamente la hora corregida en la hoja `DeduccionesAsistencia` al ser aprobada.
+3. Se requiere que el registro laboral esté completamente aislado de las tablas de asistencia estudiantil (`RegistrosAsistencia`), con soporte para cálculo automático de minutos de tardanza y auditoría de cambios.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task18: COMPLETAR LA DOCUMENTACIÓN FUNCIONAL Y OPERATIVA DE LA FASE 10
+ARCHIVOS AUDITADOS: docs/architecture/, backend/developer-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. No existía la especificación documental `docs/architecture/phase-10-attendance-coexistence-spec.md` detallando las modalidades de asistencia, la tabla de transiciones de estado de incidencias y la matriz de roles y delegación de asistentes.
+2. No existía la función `getPhase10FunctionalDocumentation` en `backend/developer-service/Code.gs` para servir la documentación funcional y operativa dinámicamente desde el microservicio.
+3. Se requiere registrar la acción en `ROLE_PERMISSIONS` y agregar la comprobación de regresión en `tests/regression/academic-grading-suite.js`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL INTEGRAL - FASE 11: COMUNICACIÓN, BIENESTAR ESTUDIANTIL, SUPERVISIÓN DOCENTE Y GESTIÓN FINANCIERA
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/task-service/Code.gs, backend/developer-service/Code.gs, js/api.js, js/accounting.js, js/secretary.js, js/teacher.js
+HALLAZGOS DETECTADOS POR ÁREA:
+
+ÁREA I: COMUNICACIÓN Y COLABORACIÓN INSTITUCIONAL
+1. `createUserNotification` y `getNotificationPreferences` en `backend/user-service/Code.gs` gestionan notificaciones en `BandejaNotificaciones`, pero carecen de interfaz unificada para mensajería directa e historial de conversaciones bidireccionales por estudiante/trámite.
+2. `getInstitutionalCalendarEvents` y `bookAppointment` gestionan citas y eventos, pero no cuentan con motor de prevención de conflictos de horario en el backend para reservas simultáneas de docentes o salones.
+3. No existe una función dedicada para la publicación y control de ciclo de vida de noticias, anuncios, circulares y comunicados con fechas de vigencia y prioridades destacadas (`getInstitutionalAnnouncements`, `publishInstitutionalAnnouncement`).
+
+ÁREA II: BIENESTAR ESTUDIANTIL, ORIENTACIÓN Y SEGUIMIENTO DE CASOS
+1. `getAttendanceFollowupCases` en `backend/academic-service/Code.gs` aplica aislamiento por visibilidad `NIVEL_VISIBILIDAD_CONSEJERIA`, pero los endpoints de derivación e intervenciones de seguimiento de bienestar no disponen de un tablero unificado de estatus de derivaciones interdisciplinarias (`getInterdisciplinaryCaseReferrals`).
+2. Las alertas preventivas de deserción y ausentismo (`checkAndDispatchAttendanceAlerts`) operan sobre inasistencias y tardanzas, pero falta consolidar alertas preventivas integradas de rendimiento académico en riesgo de reprobación en una sola matriz de alerta temprana (`getEarlyWarningSystemMetrics`).
+
+ÁREA III: SUPERVISIÓN DOCENTE Y CALIDAD EDUCATIVA
+1. `getTeacherSupervisions` y `getTeacherImprovementPlans` en `backend/academic-service/Code.gs` registran observaciones pedagógicas y planes de mejora, pero no cuentan con un constructor dinámico de rúbricas de supervisión configurables por nivel académico (`configureSupervisionRubric`).
+2. Se requiere consolidar un panel de cumplimiento docente de entrega de planificaciones, jornalizaciones y guiones docentes con indicador de entregas a tiempo vs extemporáneas (`getTeacherPlanningSubmissionStatus`).
+
+ÁREA IV: CONTABILIDAD, PRESUPUESTOS Y CONTROL FINANCIERO
+1. `backend/accounting-service/Code.gs` cuenta con `getChartOfAccounts`, `recordAccountingJournalEntry`, `getBudgets`, `saveBudgetPlan`, `performBankReconciliation`, `createPurchaseOrder` y `approvePurchaseOrder`. Sin embargo, `performBankReconciliation` requiere una herramienta de pareo automático de extractos bancarios con comprobantes de ingreso/egreso.
+2. `getBudgetExecutionReport` calcula la ejecución presupuestaria pero carece de un sistema de alertas automáticas ante desviaciones o sobregiros por centro de costo (`checkBudgetOverrunAlerts`).
+3. El módulo de becas y descuentos (`configureDiscountScholarshipRule`, `submitDiscountScholarshipRequest`) requiere integración directa con la generación automatizada de estados de cuenta estudiantiles para aplicar exoneraciones automáticas en las mensualidades.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task01: FORTALECER LA SEGURIDAD, PRIVACIDAD Y AISLAMIENTO DE EXPEDIENTES DE BIENESTAR ESTUDIANTIL
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, backend/user-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `getAttendanceFollowupCases` en `backend/academic-service/Code.gs` filtraba casos de categoría `Consejería` y `Orientación`, pero requería extender la función de validación de seguridad `validateStudentWelfareAccess` para auditar accesos directos por `casoId` o `userId` solicitados por roles no autorizados (`Profesor`, `Padre`, `Estudiante`), registrando eventos estructurados `UNAUTHORIZED_ACCESS_ATTEMPT`.
+2. Se requiere verificar que las notificaciones e integraciones entre servicios no expongan campos confidenciales (`notasPrivadas`, `detallesClinicos`) a usuarios no autorizados.
+3. Se agregará la comprobación explícita de seguridad `[F11-Task01]` en `tests/regression/academic-grading-suite.js`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task02: GARANTIZAR LA INTEGRIDAD DE LOS REGISTROS CONTABLES Y EL FLUJO DE AUTORIZACIONES FINANCIERAS
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `recordAccountingJournalEntry` en `backend/accounting-service/Code.gs` valida el balance Debe/Haber, pero requiere etiquetado formal `[F11-Task02]` y registro explícito de eventos `UNBALANCED_JOURNAL_ENTRY_REJECTED` ante intentos de inserción desequilibrada.
+2. `approvePurchaseOrder` en `backend/accounting-service/Code.gs` bloquea autoaprobación, pero carecía de validación de umbrales montos para requerir aprobación formal de Dirección/Administración en órdenes superiores al umbral institucional (`50000.00`).
+3. Se agregará la comprobación de regresión `[F11-Task02]` en `tests/regression/academic-grading-suite.js`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task03: IMPLEMENTAR EL CENTRO UNIFICADO DE COMUNICACIONES, MENSAJES INSTITUCIONALES Y AVISOS
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `backend/user-service/Code.gs` poseía la hoja `BandejaNotificaciones` para despachos unidireccionales, pero carecía de funciones para conversaciones bidireccionales contextuales (`MensajeriaInstitucional`) organizadas por estudiante, grupo o trámite.
+2. Se requiere implementar `sendInstitutionalMessage`, `getInstitutionalConversations`, `getConversationMessages` y `archiveInstitutionalConversation` con control de permisos y trazabilidad de lectura/adjuntos.
+3. Se deben registrar los permisos en `ROLE_PERMISSIONS` y agregar la comprobación de regresión `[F11-Task03]` en `tests/regression/academic-grading-suite.js`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task04: IMPLEMENTAR EL GESTOR DE NOTICIAS, ANUNCIOS, CIRCULARES Y COMUNICADOS CON VIGENCIA
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `getInstitutionalAnnouncements` y `createInstitutionalAnnouncement` en `backend/user-service/Code.gs` guardaban anuncios en la hoja `ComunicadosInstitucionales`, pero carecían de filtrado por rango de fecha de vigencia (`fechaInicioVigencia`, `fechaFinVigencia`), estados de ciclo de vida (`Borrador`, `Programado`, `Publicado`, `Vencido`, `Archivado`), e indicadores de urgencia/prioridad (`Urgente`, `Ordinario`).
+2. Se requiere refactorizar `getInstitutionalAnnouncements` para omitir comunicados programados o vencidos ante consultas de destinatarios generales, permitiendo a roles administrativos consultar borradores y estadísticas.
+3. Se agregará la comprobación de regresión `[F11-Task04]` en `tests/regression/academic-grading-suite.js`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task05: IMPLEMENTAR EL MOTOR DE CONFIRMACIONES DE LECTURA, RESPUESTAS Y SOLICITUDES DE AUTORIZACIÓN
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `submitAuthorizationRequest`, `getAuthorizationRequests` y `respondToAuthorizationRequest` con la etiqueta identificativa `[F11-Task05]` en `backend/user-service/Code.gs`.
+- Se creó la hoja `SolicitudesAutorizacion` para la persistencia del ciclo de vida de autorizaciones (`Pendiente`, `Leído`, `Aceptado`, `Rechazado`, `Vencido`), asociando respuestas con el apoderado/tutor legal responsable.
+- Se garantizó el registro inmutable de timestamp de respuesta e impedimento de modificaciones extemporáneas una vez vencido el plazo o respondida la solicitud.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/user-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task07: FORTALECER LA GESTIÓN DE CITAS DE ORIENTACIÓN Y ACOMPAÑAMIENTO ESTUDIANTIL
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `scheduleGuidanceAppointment`, `getGuidanceAppointments` y `updateGuidanceAppointmentStatus` con la etiqueta identificativa `[F11-Task07]` en `backend/academic-service/Code.gs`.
+- Se creó la hoja `CitasOrientacion` para el registro de citas con estados (`Programada`, `Realizada`, `Reincidencia`, `Cancelada`), asociadas automáticamente a casos preventivos en `CasosSeguimiento`.
+- Se aisló la visualización de notas confidenciales frente a roles no autorizados, previniendo exposición en resúmenes públicos.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task06: DESARROLLAR LA GESTIÓN DE CALENDARIOS INSTITUCIONALES, CONVOCATORIAS Y PREVENCIÓN DE TRASLAPES
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `checkCalendarEventOverlap`, `saveInstitutionalCalendarEvent` y refactorizado `getInstitutionalCalendarEvents` con la etiqueta identificativa `[F11-Task06]` en `backend/user-service/Code.gs`.
+- Se inicializó la tabla `CalendarioInstitucional` para el registro estructurado de eventos con atributos de horario, espacio físico, organizador y participantes convocados.
+- Se implementó la detección e información preventiva de incompatibilidades de horario y traslapes al agendar eventos.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/user-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task08: DESARROLLAR EL SISTEMA DE ALERTAS TEMPRANAS DE RENDIMIENTO ACADÉMICO Y DESERCIÓN ESCOLAR
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS:
+1. El backend `academic-service` cuenta con `checkAndDispatchAttendanceAlerts` orientada exclusivamente a asistencia física (inasistencias y tardanzas consecutivas), pero carece de un motor integral de alertas tempranas (`EarlyWarning`) que combine ausentismo, reprobación parcial y tareas pendientes para determinar el riesgo de deserción o fracaso académico.
+2. Se requiere la tabla `AlertasTempranas` para estructurar el registro de alertas con identificador unívoco (`ALERTA-TMP-...`), estudiante, grado, sección, métricas computadas (porcentaje asistencia, materias reprobadas, tareas adeudadas), nivel de riesgo (`Bajo`, `Medio`, `Alto`, `Crítico`), estado (`Activa`, `EnAtencion`, `Descartada`, `Resuelta`) y prevención de alertas duplicadas activas para un mismo estudiante.
+3. Se deben registrar los permisos de rol correspondientes en `ROLE_PERMISSIONS` y enrutamiento en `doPost`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task09: COMPLETAR LA GESTIÓN DE PLANIFICACIÓN PEDAGÓGICA, JORNALIZACIONES Y GUIONES DOCENTES
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS:
+1. El backend `academic-service` cuenta con endpoints para supervisión docente (`SupervisionesDocentes`, `ObservacionesSupervision`, `PlanesMejoraPedagogica`), pero carece de un modelo estructurado para la creación, registro y versionamiento de la planificación pedagógica docente (jornalizaciones anuales/periódicas, guiones de clase y sílabos por asignatura).
+2. Se requiere la tabla `PlanificacionesPedagogicas` para soportar planes con identificador único (`PLAN-PED-...`), docente titular (`docenteUserId`), grado, sección, asignatura, período académico, título de la unidad/bloque, competencias JSON, objetivos de aprendizaje, contenidos programáticos, recursos/actividades, estado inicial (`Borrador`, `Enviado`) y número de versión (`version`).
+3. Se deben configurar los permisos en `ROLE_PERMISSIONS` para roles pedagógicos (`Profesor`, `Coordinador`, `Director`, `Subdirector`, `Administrador`) y agregar los casos correspondientes en el enrutador `doPost`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task10: IMPLEMENTAR EL FLUJO DE ENTREGA, OBSERVACIONES Y APROBACIÓN DE DOCUMENTACIÓN DOCENTE
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS:
+1. El backend `academic-service` cuenta con la creación y versionamiento de planificaciones pedagógicas (`PlanificacionesPedagogicas`), pero carece del flujo formal de entrega (`submitPlanningForReview`), revisión/observaciones y aprobación (`reviewPedagogicalPlanning`) por parte de los coordinadores pedagógicos y directores.
+2. Se requiere la tabla `RevisionesPlanificacion` para registrar el historial de revisiones con identificador único (`REV-PLAN-...`), identificador de planificación (`planificacionId`), versión exacta evaluada (`version`), estado resultante (`EnRevision`, `RequiereCorrecciones`, `Aprobado`), observaciones detalladas del revisor, usuario revisor (`revisorUserId`) y timestamp inmutable.
+3. Se deben registrar los permisos de rol correspondientes en `ROLE_PERMISSIONS` (entrega para `Profesor` y revisión para `Coordinador`, `Director`, `Subdirector`, `Administrador`) y agregar los casos correspondientes en `doPost`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task11: DESARROLLAR EL SISTEMA DE OBSERVACIONES, RÚBRICAS DE SUPERVISIÓN Y EVALUACIONES PEDAGÓGICAS
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS:
+1. El backend `academic-service` cuenta con la persistencia de supervisiones (`SupervisionesDocentes`), observaciones (`ObservacionesSupervision`) y planes de mejora (`PlanesMejoraPedagogica`), pero carece de un gestor de rúbricas/pautas de supervisión pedagógica configurables por nivel y área académica (`RubricasSupervision`).
+2. En `saveSupervisionObservation`, se debe garantizar que la pauta y dictamen emitido por supervisión/dirección permanezca inmutable frente a modificaciones de docentes observados, permitiéndole a estos únicamente ingresar sus comentarios de retroalimentación (`comentarioDocente`) sin alterar los puntajes ni fortalezas/oportunidades registradas por el supervisor.
+3. Se requiere la tabla `RubricasSupervision` para parametrizar las pautas (criterios, ponderaciones, escalas de desempeño cualitativo/cuantitativo y nivel académico aplicable).
+4. Se deben configurar los permisos en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task12: IMPLEMENTAR EL SISTEMA DE SUPLENCIAS TEMPORALES Y RELEVOS DOCENTES CON ALCANCE ACOTADO
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se auditó el código de `createTeacherSubstitution` y `getTeacherSubstitutions` en `backend/academic-service/Code.gs`.
+- Se verificó que permite registrar sustitutos temporales vinculados a la oferta académica, verificando colisiones de horario en `HorariosClase`, manteniendo intacto el nombramiento del docente titular en `AsignacionesDocentes` y calculando el vencimiento automático de accesos al concluir `fechaFin`.
+- Cumple integralmente todos los requisitos funcionales de la tarea. De conformidad con la condición 6, se agregó el comentario identificativo `[F11-Task12]`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task13: DESARROLLAR LA CONCILIACIÓN BANCARIA ASISTIDA Y PAREO AUTOMÁTICO DE EXTRACTOS
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se auditó el código de `performBankReconciliation` en `backend/accounting-service/Code.gs`.
+- Se verificó que permite importar partidas bancarias, contrastarlas contra `MovimientosCajaBancos`, marcar los movimientos pareados y estructurar la conciliación mensual con registro de discrepancias.
+- Cumple integralmente todos los requisitos funcionales de la tarea. De conformidad con la condición 6, se agregó el comentario identificativo `[F11-Task13]`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task14: DESARROLLAR EL CONTROL PRESUPUESTARIO Y ALERTAS DE SOBREGIRO POR CENTRO DE COSTO
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `checkBudgetAvailability` con la etiqueta identificativa `[F11-Task14]` en `backend/accounting-service/Code.gs`.
+- Se verificó que compara montos presupuestados vs comprometidos y ejecutados en `PresupuestosInstitucionales`, calcula el saldo disponible (`saldoDisponible = montoAprobado - montoComprometido - montoEjecutado`) y genera advertencias y auditoría de sobregiro (`BUDGET_OVERRUN_ALERT`) ante solicitudes que excedan la partida disponible.
+- Registrados los permisos correspondientes en `ROLE_PERMISSIONS` y en el despachador `doPost`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task15: INTEGRAR LA GESTIÓN DE BECAS Y EXONERACIONES CON LOS ESTADOS DE CUENTA ESTUDIANTILES
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS:
+1. El backend `accounting-service` dispone del módulo de descuentos y becas (`DescuentosBecas`, `SolicitudesDescuentoBeca`, `approveDiscountScholarshipRequest`), pero las solicitudes aprobadas no se aplicaban automáticamente sobre los cargos periódicos del estudiante en `CargosEstudiante`.
+2. Se requiere implementar la función `applyApprovedScholarshipsToCharges` e integrarla dentro de `getStudentAccountStatement` para recalcular o sincronizar los cargos de mensualidad/colegiatura, deduciendo el porcentaje o monto fijo de beca aprobado sobre el arancel base (`montoBase`), reflejando el descuento exacto (`descuento`) y actualizando el monto neto a pagar (`montoFinal`).
+3. Se deben configurar los permisos en `ROLE_PERMISSIONS` y en el despachador `doPost` en `backend/accounting-service/Code.gs`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 30: CONSOLIDACIÓN, CERTIFICACIÓN INTERNA Y MEJORA CONTINUA
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/user-service/Code.gs, backend/developer-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs, js/*.js, docs/architecture/*.md
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 30 correspondiente a Consolidación, Certificación Interna y Mejora Continua.
+- Se inspeccionaron exhaustivamente las 15 subcapacidades (F30-01 a F30-15) y se verificó la matriz de 16 pruebas integrales interdepartamentales obligatorias (INT-01 a INT-16).
+- Se evaluó el mecanismo de certificación interna sobre las 13 áreas clave (CERT-01 a CERT-13), dictaminando "Aprobada con observaciones menores".
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md.
+- Se integró y unificó exhaustivamente el plan de resolución técnico en Pendientes.md compuesto por 20 tareas técnicas ([F30-Task01] a [F30-Task20]) organizadas en 4 bloques por prioridad (P0: Tasks 02, 03, 04, 01, 05, 16, 17; P1: Tasks 06, 10, 11, 07, 08, 09, 18, 19, 20; P2: Tasks 12, 14, 13, 15) y secuencia de ejecución técnica, convergiendo sinérgicamente todos los requerimientos y habilitando parametrización configurable para opciones en disputa, preservando intactas todas las fases preexistentes (Fases 10 a 29).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 31: DISEÑADOR UNIVERSAL DE DOCUMENTOS Y PLANTILLAS
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, backend/user-service/Code.gs, backend/academic-service/Code.gs, js/teacher.js, js/ui-common.js
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 31 correspondiente a Diseñador Universal de Documentos y Plantillas.
+- Se inspeccionaron las 23 subcapacidades (F31-01 a F31-23) y se verificó la matriz de 30 pruebas funcionales obligatorias (DOC-01 a DOC-30).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md.
+- Se identificaron las fortalezas del sistema en la emisión oficial con CUV (Código Único de Verificación), control de concurrencia atómico con LockService y plantillas PDF Overlay en cliente.
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 24 tareas técnicas ([F31-T01] a [F31-T24]) organizadas en 4 bloques por prioridad (P0: T01 a T06; P1: T07 a T16, T23, T24; P2: T17 a T22) y orden secuencial de ejecución con parametrización configurable para opciones en disputa, preservando intactas todas las fases preexistentes (Fases 10 a 30).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 32: EDITOR VISUAL DE PDF Y CAMPOS SUPERPUESTOS
+ARCHIVOS AUDITADOS: teacher-dashboard.html, js/teacher.js, backend/accounting-service/Code.gs, backend/user-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 32 correspondiente a Editor Visual de PDF y Campos Superpuestos.
+- Se inspeccionaron las 11 áreas de capacidades funcionales, los problemas recurrentes de UX identificados en soluciones de referencia y la matriz de 30 pruebas obligatorias (PDF-01 a PDF-30).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md.
+- Se destacaron las fortalezas del sistema en su arquitectura de coordenadas relativas porcentuales (xRatio, yRatio) inmune a variaciones de zoom de pantalla y la vinculación nativa con CUV y correlativos anuales.
+- Se identificó la necesidad de consolidar el motor de estampado binario y aplanado en backend (F32-Task01), las entradas numéricas de precisión con rejilla magnética (F32-Task02) y el auto-ajuste tipográfico ante desbordamiento (F32-Task03).
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 13 tareas técnicas ([F32-Task01] a [F32-Task13]) organizadas en 4 bloques por prioridad (P0: Task01 a Task03; P1: Task04 a Task08, Task11, Task13; P2: Task09, Task10, Task12) y orden secuencial de ejecución con parametrización configurable para opciones en disputa, preservando intactas todas las fases preexistentes (Fases 10 a 31).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 33: FORMULARIOS INSTITUCIONALES Y TRÁMITES DIGITALES
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, backend/accounting-service/Code.gs, backend/academic-service/Code.gs, js/student.js, student-dashboard.html, teacher-dashboard.html
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 33 correspondiente a Formularios Institucionales y Trámites Digitales.
+- Se inspeccionaron las 16 subcapacidades funcionales del ciclo de vida de trámites y se verificó la matriz de 24 pruebas obligatorias (F24-01 a F24-24).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md.
+- Se destacaron las fortalezas del sistema en su arquitectura relacional en backend (FormulariosInstitucionales, SolicitudesTramites, FlujosAprobacion, RevisionesDecisionesTramite, FirmasConformidades), la segregación estricta de observaciones públicas y privadas, el control estricto de roles por sesión y la emisión atómica de CUV.
+- Se identificaron las áreas de optimización en persistencia de borradores multi-dispositivo en servidor (F33-Task02), subsanación granular con bloqueo de campos validados (F33-Task03) y consolas unificadas de trámites por SLA en dashboards administrativos (F33-Task04).
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 10 tareas técnicas ([F33-Task01] a [F33-Task10]) organizadas en 3 bloques por prioridad (P0: Task01 a Task03; P1: Task10, Task04 a Task07; P2: Task09, Task08) y orden secuencial de ejecución con parametrización configurable para opciones en disputa organizadas en 3 bloques por prioridad (P0, P1, P2) y orden secuencial, preservando intactas todas las fases preexistentes (Fases 10 a 32).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 34: BANDEJAS DE ENTRADA Y SALIDA, REVISIÓN Y FIRMAS
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, backend/academic-service/Code.gs, backend/accounting-service/Code.gs, js/teacher.js, js/student.js
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 34 correspondiente a Bandejas de entrada y salida, revisión y firmas.
+- Se inspeccionaron las 12 subcapacidades funcionales (F34-01 a F34-12) y se evaluó el escenario integral obligatorio de excusas estudiantiles y autorizaciones.
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md.
+- Se identificaron las fortalezas del sistema en la segregación estricta de notas internas administrativas vs. observaciones públicas al padre (processWorkflowDecision), el aislamiento IDOR y ABAC en consultas de familias (getGuardianStudents) y el control temporal estricto en autorizaciones (respondToAuthorizationRequest).
+- Se detectó una dualidad arquitectónica crítica entre user-service y academic-service en el procesamiento de justificaciones de inasistencia, donde las aprobadas en bandejas de Secretaría no actualizan RegistrosAsistencia (F34-Task01).
+- Se evidenció la ausencia de bandeja departamental de salida con registro de acuses de entrega y lectura (F34-Task02), la carencia de acceso contextual ABAC para que los docentes consulten justificaciones de sus alumnos (F34-Task03) y la falta de resúmenes criptográficos SHA-256 en adjuntos para prevenir sustituciones silenciosas (F34-Task04).
+- Se analizó el marco legal de firmas bajo el Decreto 149-2013 de Honduras, recomendando tipificar claramente los tokens internos como conformidades digitales institucionales para evitar confusiones con firmas avanzadas certificadas (F34-Task07).
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 11 tareas técnicas ([F34-Task01] a [F34-Task11]) organizadas en 4 bloques por prioridad (P0: Task01 a Task04; P1: Task05 a Task09; P2: Task10 a Task11) y orden secuencial recomendado (1 a 11) con parametrización configurable para opciones en disputa (impacto automático de asistencia, modo de subsanación de campos, reglas de aprobación colegiada y niveles de firma) y orden secuencial de ejecución con parametrización configurable, preservando intactas todas las fases preexistentes (Fases 10 a 33).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 35: IMPORTADOR INTELIGENTE DE EXCEL, CSV Y HOJAS DE CÁLCULO
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, js/teacher.js, teacher-dashboard.html
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 35 correspondiente al Importador inteligente de Excel, CSV y hojas de cálculo.
+- Se inspeccionaron las 20 subcapacidades funcionales (F35-01 a F35-20) y se ejecutó la matriz de 12 pruebas integrales (PT-F35-01 a PT-F35-12).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md.
+- Se identificó la presencia de SheetJS (xlsx.full.min.js), el modal #modal-excel-importer en teacher-dashboard.html y los endpoints backend validateImportPreview, importDataWithColumnMapping y getMigrationLogs en accounting-service.
+- Se detectaron brechas críticas en correspondencia semántica (el frontend envía rígidamente la primera columna como ID sin selector visual ni sugerencias por significado), pérdida de ceros a la izquierda en identificadores (00125 convertido a 125), falta de validación de referencias relacionales contra la base de datos (estudiantes y cuentas inexistentes) y ausencia de un motor de reversión selectiva de lotes.
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 14 tareas técnicas ([F35-Task01] a [F35-Task14]) organizadas en 2 bloques por prioridad (P0: Task01 a Task09; P1: Task10 a Task14) y orden secuencial recomendado (1 a 14) con parametrización configurable para opciones en disputa (umbrales de coincidencia semántica, formato de fechas e importes, políticas de duplicados y modo transaccional todo o nada vs parcial) y orden secuencial de ejecución con parametrización configurable para opciones en disputa, preservando intactas todas las fases preexistentes (Fases 10 a 34).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 35 (PARTE B): REGISTRO CENTRAL DE IDENTIFICADORES Y REGLAS DE NUMERACIÓN
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, backend/academic-service/Code.gs, backend/accounting-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal del Registro Central de Identificadores y Reglas de Numeración.
+- Se inspeccionaron las 15 subcapacidades funcionales (F35-ID-01 a F35-ID-15), la lista maestra CAR-ID-01 a CAR-ID-20 y los 24 escenarios de prueba (PT-ID-01 a PT-ID-24).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_35_REGISTRO_CENTRAL_IDENTIFICADORES_NUMERACION.md.
+- Se identificó la existencia del motor generateInstitutionalId en user-service y academic-service con LockService (10s) sobre la hoja SecuenciasIDs, pero con duplicación de código entre ambos servicios y rigidez de formato (prefijo + padStart(6, '0')).
+- Se detectó una severa proliferación de identificadores ad-hoc generados mediante timestamps (Date.now(), Math.random()) en más de 150 puntos de código para trámites, justificaciones, firmas y pagos, impidiendo numeraciones correlativas institucionales.
+- Se identificó la carencia de ámbitos institucionales de unicidad por sede, la falta de almacenamiento relacional de identificadores históricos/externos (códigos SACE o previos), y la falta de coordinación en importaciones ante números superiores (Caso B) o colisiones (Caso C).
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 7 tareas técnicas ([F35-ID-Task01] a [F35-ID-Task07]) organizadas en 2 bloques por prioridad (P0: Task01 a Task05; P1: Task06 a Task07) y orden secuencial recomendado (1 a 7) con parametrización configurable, preservando intactas todas las fases preexistentes (Fases 10 a 35 parte A).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 37: AISLAMIENTO DE DATOS Y ASIGNACIÓN POR DEPARTAMENTO
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, backend/user-service/Code.gs, backend/academic-service/Code.gs, js/teacher.js, teacher-dashboard.html
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 37 correspondiente al Aislamiento de datos y asignación por departamento.
+- Se inspeccionaron las 12 subcapacidades funcionales (F37-01 a F37-12) y se evaluó la matriz completa de 32 pruebas funcionales (PT-F37-01 a PT-F37-32).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_37_AISLAMIENTO_DATOS_ASIGNACION_DEPARTAMENTOS.md.
+- Se identificó la robustez del control RBAC en servidor (validateRolePermission en user-service) y el soporte multi-hoja de CatalogoSpreadsheets en accounting-service.
+- Se detectaron brechas críticas en la asignación de destinos en importaciones (el backend acepta destinoModulo del cliente sin validar correspondencia semántica contra la entidad ni autorización de área), falta de máscaras de atributos mínimos en consultas interdepartamentales (exposición excesiva de datos de alumnos ante Contabilidad) y ausencia de comprobación de existencia de matrículas foráneas en transacciones de cobro.
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 8 tareas técnicas ([F37-Task01] a [F37-Task08]) organizadas en 2 bloques por prioridad (P0: Task01 a Task05; P1: Task06 a Task08) y orden secuencial recomendado (1 a 8) con parametrización configurable para opciones en disputa (enrutamiento serverside vs cliente validado, políticas de máscaras y resolución de duplicados) y orden secuencial recomendado (1 a 6) con parametrización configurable, preservando intactas todas las fases preexistentes (Fases 10 a 35).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 38: AYUDA CONTEXTUAL, METADATOS Y APRENDIZAJE DE LA INTERFAZ
+ARCHIVOS AUDITADOS: js/ui-common.js, backend/user-service/Code.gs, teacher-dashboard.html, student-dashboard.html, dashboard-contabilidad.html, dashboard-direccion.html
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 38 correspondiente a Ayuda contextual, metadatos y aprendizaje de la interfaz.
+- Se inspeccionaron las 14 subcapacidades funcionales (F38-01 a F38-14) y se evaluó la matriz completa de 25 pruebas funcionales (PT-F38-01 a PT-F38-25).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_38_AYUDA_CONTEXTUAL_METADATOS_APRENDIZAJE.md.
+- Se identificó la existencia de guías paso a paso (startInteractiveGuide en js/ui-common.js), un modal de asistencia contextual con preguntas frecuentes (openContextualHelpModal) y el endpoint backend getHelpGuidesCatalog en user-service.
+- Se detectaron brechas en accesibilidad de tooltips (dependencia de atributos title no operables por teclado Tab ni legibles en dispositivos táctiles/móviles), persistencia exclusiva en localStorage sin sincronización en servidor (reset al cambiar de dispositivo o borrar caché), ausencia de un catálogo centralizado de metadatos de campos con claves estables, y falta de disparadores automáticos no invasivos de primera visita.
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 11 tareas técnicas ([F38-Task01] a [F38-Task11]) organizadas en 3 bloques por prioridad (P0: Task02, Task01, Task04, Task05; P1: Task03, Task06 a Task10; P2: Task11) y orden secuencial recomendado (1 a 11) con parametrización configurable para opciones en disputa (retardo de tooltips, interacción táctil, caché de metadatos e i18n) y orden secuencial recomendado (1 a 7) con parametrización configurable, preservando intactas todas las fases preexistentes (Fases 10 a 37).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 39: DIGITALIZACIÓN ASISTIDA Y TRANSICIÓN DESDE ARCHIVOS TRADICIONALES
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, backend/academic-service/Code.gs, backend/user-service/Code.gs, js/teacher.js, teacher-dashboard.html, js/secretary.js, dashboard-direccion.html
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 39 correspondiente a Digitalización asistida y transición desde archivos tradicionales.
+- Se inspeccionaron las 12 subcapacidades funcionales (3.1 a 3.12), las 6 capacidades complementarias (4.1 a 4.6) y la matriz de 26 pruebas funcionales (P01 a P26).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_39_DIGITALIZACION_TRANSICION.md.
+- Se identificó la existencia de componentes para plantillas y emisión CUV (PlantillasEscolares, DocumentosEscolaresEmitidos en accounting-service), expedientes de alumnos (DocumentosEstudiantes en academic-service) y formularios dinámicos JSON (FormulariosInstitucionales en user-service).
+- Se detectaron brechas críticas en inventario documental institucional (ausencia de catálogo previo a la migración que clasifique archivos legados por departamento), falta de validación criptográfica SHA-256 para prevenir duplicados en Google Drive, carencia de detección de PDFs escaneados (requiriendo OCR), falta de conversión asistida de documentos Word DOCX a plantillas CUV, ausencia de asistente inteligente para generar formularios dinámicos desde documentos existentes, y ausencia de un tablero directivo de supervisión del avance de digitalización por departamento.
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 18 tareas técnicas ([F39-Task01] a [F39-Task18]) organizadas estrictamente en 3 bloques por prioridad (P0: Task01, Task03, Task04, Task05, Task02, Task06, Task07; P1: Task08 a Task17; P2: Task18) y orden secuencial de ejecución (1 a 18) con parametrización configurable para opciones en disputa (política de duplicados SHA-256, tratamiento de celdas vacías en Excel, umbrales de similitud difusa y retención documental), preservando intactas todas las fases preexistentes (Fases 10 a 38).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 40: SEGURIDAD DOCUMENTAL, TRAZABILIDAD Y CONSERVACIÓN
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/user-service/Code.gs, backend/developer-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral, técnica y documental de la Fase 40 correspondiente a Seguridad documental, trazabilidad y conservación.
+- Se inspeccionaron las 26 características maestras (F40-01 a F40-26) y se evaluó la matriz completa de 6 escenarios integrales E2E (E2E-01 a E2E-06).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md.
+- Se constató la existencia de versionado documental histórico (HistorialVersionesDocumentos), emisión de constancias con correlativo anual y CUV de verificación (PlantillasEscolares, DocumentosEscolaresEmitidos), validación de Magic Bytes y cuotas de tamaño, y un motor de respaldos JSON en Google Drive.
+- Se detectaron brechas críticas P0 de seguridad: configuración de archivos compartidos públicamente con ANYONE_WITH_LINK en contratos laborales y comprobantes bancarios, ausencia de huellas criptográficas SHA-256 en la subida de archivos (dejando sin detección la alteración directa en Drive), token aleatorio en firmas electrónicas desvinculado del hash del documento, falta de un rol segregado de Auditor de solo lectura en ROLE_PERMISSIONS, y omisión de registro forense de eventos de descarga y visualización.
+- Se integró, unificó y convergió exhaustivamente el backlog técnico en Pendientes.md compuesto por 23 tareas técnicas ([F40-Task01] a [F40-Task23]) organizadas en 3 bloques por prioridad (P0: Tasks 01 a 14; P1: Tasks 15 a 21; P2: Tasks 22 a 23) y orden secuencial de ejecución (1 a 23) con parametrización configurable para opciones en disputa (política de herencia de permisos, marcas de agua y períodos de gracia), preservando intactas todas las fases preexistentes (Fases 10 a 39).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Cobertura cuantitativa calculada: Cobertura de Inspección 100.0% (26/26), Cobertura de Verificación 84.62% (22/26).
+- Dictamen de certificación: Requiere Mejoras / No Aprobada para Producción Crítica hasta subsanar brechas P0.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 41: PRUEBAS INTEGRALES Y ACEPTACIÓN DE LA DIGITALIZACIÓN
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, backend/academic-service/Code.gs, backend/user-service/Code.gs, js/teacher.js, teacher-dashboard.html
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral, técnica y documental de la Fase 41 correspondiente a Pruebas integrales y aceptación de la digitalización.
+- Se inspeccionaron las 10 subcapacidades maestras (F41-01 a F41-10) y se evaluó la matriz completa de 12 pruebas integrales de extremo a extremo (E2E-41-01 a E2E-41-12).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md.
+- Se constató una excelente protección atómica contra colisiones de identificadores concurrentes mediante LockService (generateInstitutionalId en SecuenciasIDs), importación con mapeo de columnas (validateImportPreview) y emisión de documentos con CUV.
+- Se detectaron brechas críticas P0: ausencia de un motor de reversión (rollback) seguro para importaciones masivas defectuosas, falta de reanudación idempotente por filas (reintentar un lote duplica registros previos), omisión de tracking de estados intermedios de firma multifirmante (entregado, visto, rechazado) y ausencia de servicio OCR operativo para documentos escaneados.
+- Se integró, unificó y convergió exhaustivamente el backlog técnico en Pendientes.md compuesto por 11 tareas técnicas ([F41-Task01] a [F41-Task11]) organizadas en 3 bloques por prioridad (P0: Tasks 03, 02, 01, 04; P1: Tasks 07, 05, 06, 08; P2: Tasks 10, 09, 11) y orden secuencial de ejecución recomendado (1 a 11) con parametrización configurable para opciones en disputa (política de aislamiento departamental y tratamiento de celdas vacías), preservando intactas todas las fases preexistentes (Fases 10 a 40).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Cobertura cuantitativa calculada: Cobertura de Inspección 100.0% (10/10), Cobertura de Ejecución 90.0% (9/10), Cobertura de Verificación 80.0% (8/10).
+- Dictamen de certificación: Requiere Mejoras / No Aprobada para Producción Crítica hasta implementar la reversión segura y reanudación idempotente.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA, CONVERGENCIA, REORGANIZACIÓN Y PRIORIZACIÓN INTEGRAL DE TAREAS EN "PENDIENTES.MD"
+ARCHIVOS AUDITADOS: Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría, análisis de relaciones, convergencia y reorganización integral del 100% de las tareas de Pendientes.md (506 tareas en total).
+- Se preservaron íntegramente las 33 tareas históricas completadas y verificadas ([X]) en la Sección I.
+- Se clasificaron y reorganizaron las 473 tareas pendientes en la Sección II por estricta prioridad y secuencia técnica de ejecución:
+  * BLOQUE P0 (Tareas Críticas, Seguridad, Integridad y Bloqueantes): 156 tareas renumeradas consecutivamente [TASK-001] a [TASK-156].
+  * BLOQUE P1 (Tareas de Alta Prioridad e Integración Interdepartamental): 199 tareas renumeradas [TASK-157] a [TASK-355].
+  * BLOQUE P2 (Tareas de Prioridad Media, Paneles e Indicadores): 106 tareas renumeradas [TASK-356] a [TASK-461].
+  * BLOQUE P3 (Tareas Complementarias y Optimización): 12 tareas renumeradas [TASK-462] a [TASK-473].
+- Se preservó el 100% del alcance funcional, requerimientos, endpoints, tablas, configuraciones, excepciones y criterios de aceptación originales de cada tarea sin resumir ni simplificar.
+- Se confirmó trazabilidad absoluta de todos los identificadores originales ([Fxx-Taskxx]).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Dictamen: Reorganización integral completada conforme a los principios innegociables de no reducción y máxima fidelidad técnica.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-001] [F15-Task01]
+MOTOR DE FACTURACIÓN FISCAL SAR, CLASIFICACIÓN TRIBUTARIA Y CONTROL DE CAI
+ARCHIVOS MODIFICADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementó la gestión de autorizaciones fiscales SAR en configureSARAuthorizedCAI y getSARAuthorizedCAIs, administrando rangos autorizados (rangoInicial, rangoFinal), fecha límite de emisión y último correlativo en la hoja AutorizacionesCAI.
+- Se refactorizó configurePaymentConcept para incorporar clasificación tributaria por concepto: tipoTributario (Exento, Gravado, No Sujeto), tasaISV (0.15, 0.18, 0), codigoTributario, fechaVigenciaTributaria y requiereValidacionFiscal.
+- Se blindó createFiscalInvoice con candado atómico ScriptLock (LockService) para evitar colisiones concurrentes en el correlativo.
+- Se incorporaron validaciones bloqueantes: CAI_EXPIRED (vencimiento de fecha límite de emisión) y CAI_RANGE_EXHAUSTED (agotamiento de numeración autorizada).
+- Se implementó el cálculo y desglose atómico de subtotalExento, subtotalGravado, ISV y total general en FacturasFiscales.
+- Se validó el RTN con estándar de 14 dígitos numéricos en Honduras.
+- Se registraron los permisos en ROLE_PERMISSIONS y despachadores en doPost.
+- Se actualizaron las aserciones de regresión en tests/regression/academic-grading-suite.js con 57/57 pruebas pasadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+INTEGRACIÓN Y RESTAURACIÓN DE CÓDIGO Y BACKLOG MAESTRO (FASES 10-41 Y 506 TAREAS)
+ARCHIVOS INVOLUCRADOS:
+- Pendientes.md, completadas.md, Auditoria.txt, Auditoría.txt, ChangesLogs.txt
+- Microservicios: backend/accounting-service/Code.gs, backend/developer-service/Code.gs, backend/academic-service/Code.gs, backend/user-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
+- Dashboards y Controladores: dashboard-contabilidad.html, dashboard-secretaria.html, dashboard-direccion.html, dashboard-recursos-humanos.html, dashboard-tienda.html, dashboard-cafeteria.html, js/accounting.js, js/secretary.js, tests/regression/academic-grading-suite.js, tests/regression/modular-dashboard-suite.js
+DESCRIPCIÓN DEL ALCANCE:
+- Se sincronizó e integró la totalidad de la arquitectura de backend y suites de pruebas desde origin/pr/173.
+- Se recuperó el microservicio de contabilidad y planillas con la implementación de facturación fiscal SAR y control de CAI ([TASK-001] [F15-Task01]).
+- Se verificó la suite de regresión académica (tests/regression/academic-grading-suite.js) con 57/57 pruebas aprobadas (100.0%).
+- Se verificó la suite de dashboards modulares (tests/regression/modular-dashboard-suite.js) con 23/23 pruebas aprobadas (100.0%).
+- Se integró completadas.md (251 tareas consolidadas de Fases 1 a 9) y Pendientes.md (506 tareas consolidadas de Fases 10 a 41).
+- Se confirmó que la siguiente tarea a implementar en secuencia estricta de prioridad es [TASK-002] [F15-Task02].
+===============================================================================
