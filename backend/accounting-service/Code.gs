@@ -202,7 +202,7 @@ const ROLE_PERMISSIONS = {
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
-  "RecursosHumanos": ["initializeFinancialDriveStructure", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "processEmployeeOffboarding", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport", "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory", "manageStaffingNeeds", "getStaffingNeedsPlanning", "manageWorkShiftAndSubstitution", "getWorkShiftsAndSubstitutionsHistory", "getEmployeeSelfServicePortal", "verifyLaborAndTaxInformation", "runHRIntegrationAndRegressionTests", "runCriticalProcessConcurrencySuite"],
+  "RecursosHumanos": ["initializeFinancialDriveStructure", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "processEmployeeOffboarding", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "calculateExtraordinaryPayroll", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport", "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory", "manageStaffingNeeds", "getStaffingNeedsPlanning", "manageWorkShiftAndSubstitution", "getWorkShiftsAndSubstitutionsHistory", "getEmployeeSelfServicePortal", "verifyLaborAndTaxInformation", "runHRIntegrationAndRegressionTests", "runCriticalProcessConcurrencySuite"],
   "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments", "getPerformanceEvaluations", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getEmployeeSelfServicePortal"],
   "Padre": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Tutor": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
@@ -588,6 +588,7 @@ function doPost(e) {
       case "submitAttendanceCorrection": result = submitAttendanceCorrection(payload); break;
       case "reviewAttendanceCorrection": result = reviewAttendanceCorrection(payload); break;
       case "calculatePayrollPeriod": result = calculatePayrollPeriod(payload); break;
+      case "calculateExtraordinaryPayroll": result = calculateExtraordinaryPayroll(payload); break;
       case "updatePayrollPeriodStatus": result = updatePayrollPeriodStatus(payload); break;
       case "getPayrollPeriodSummary": result = getPayrollPeriodSummary(payload); break;
       case "requestEmployeeLoanAdvance": result = requestEmployeeLoanAdvance(payload); break;
@@ -5110,6 +5111,214 @@ function getPayrollPeriodSummary(payload) {
 
 function generatePayrollPeriod(payload) {
   return calculatePayrollPeriod(payload);
+}
+
+// [TASK-011] [F17-Task05] - Motor de cálculo y procesamiento independiente del Décimo Tercer (Aguinaldo) y Décimo Cuarto Mes (Decreto 135-94)
+function calculateExtraordinaryPayroll(payload) {
+  const { tipoBeneficio, anoLectivo, idempotencyToken, authRole } = payload || {};
+  // tipoBeneficio: "DecimoTercerMes" (Aguinaldo) o "DecimoCuartoMes" (Compensación Social)
+  if (!tipoBeneficio || !anoLectivo) {
+    throw new Error("tipoBeneficio ('DecimoTercerMes' o 'DecimoCuartoMes') y anoLectivo son requeridos.");
+  }
+
+  const validTypes = ["DecimoTercerMes", "DecimoCuartoMes", "Aguinaldo", "Catorceavo"];
+  if (validTypes.indexOf(tipoBeneficio) === -1) {
+    throw new Error("tipoBeneficio no válido. Debe ser 'DecimoTercerMes' o 'DecimoCuartoMes'.");
+  }
+
+  const is13th = (tipoBeneficio === "DecimoTercerMes" || tipoBeneficio === "Aguinaldo");
+  const normalizedBeneficio = is13th ? "DecimoTercerMes" : "DecimoCuartoMes";
+  const periodoClave = `${normalizedBeneficio}-${anoLectivo}`;
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const planSheet = getOrCreateSheet(ss, "PlanillasNomenclatura");
+    const expsRows = getOrCreateSheet(ss, "ExpedientesLaborales").getDataRange().getValues().slice(1);
+    const ctrsRows = getOrCreateSheet(ss, "ContratosLaborales").getDataRange().getValues().slice(1);
+    const advSheet = getOrCreateSheet(ss, "AnticiposPrestamosEmpleado");
+    const advRows = advSheet.getDataRange().getValues().slice(1);
+    const planData = planSheet.getDataRange().getValues();
+
+    // Prevención de pagos duplicados para el mismo beneficio social extraordinario y año lectivo
+    const existingPlan = planData.find(r => String(r[2]).trim() === periodoClave && r[15] !== "Anulada");
+    if (existingPlan) {
+      return {
+        status: "success",
+        planillaId: existingPlan[0],
+        periodoBeneficio: periodoClave,
+        tipoBeneficio: normalizedBeneficio,
+        estadoCiclo: existingPlan[15],
+        message: `La planilla extraordinaria '${periodoClave}' ya existe con estado '${existingPlan[15]}'.`
+      };
+    }
+
+    const activeEmployees = expsRows.filter(r => r[8] === "active" || r[8] === "Activo" || r[8] === "EnPeriodoPrueba" || r[8] === "Desvinculado");
+    if (activeEmployees.length === 0) {
+      throw new Error("No hay empleados elegibles para el cálculo del beneficio extraordinario.");
+    }
+
+    const y = parseInt(anoLectivo, 10);
+    // Definición legal de períodos de acumulación en Honduras:
+    // 13º mes (Aguinaldo): 1 de diciembre del año anterior al 30 de noviembre del año actual (365 días)
+    // 14º mes: 1 de julio del año anterior al 30 de junio del año actual (Decreto 135-94)
+    let periodStart, periodEnd;
+    if (is13th) {
+      periodStart = new Date(y - 1, 11, 1, 0, 0, 0, 0); // 1 Dic (y-1)
+      periodEnd = new Date(y, 10, 30, 23, 59, 59, 999); // 30 Nov (y)
+    } else {
+      periodStart = new Date(y - 1, 6, 1, 0, 0, 0, 0); // 1 Jul (y-1)
+      periodEnd = new Date(y, 5, 30, 23, 59, 59, 999);  // 30 Jun (y)
+    }
+    const totalPeriodDays = Math.round((periodEnd - periodStart) / (1000 * 60 * 60 * 24)) + 1; // 365 días
+
+    const now = new Date();
+    const planillaId = `PLN-EXTRA-${is13th ? '13M' : '14M'}-${now.getTime()}`;
+    const processedRows = [];
+    const advUpdates = []; // { rowIdx, montoDeducido }
+
+    function parseSafeDate(val) {
+      if (!val) return null;
+      if (val instanceof Date) return isNaN(val.getTime()) ? null : val;
+      const parsed = new Date(val);
+      return isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    activeEmployees.forEach(e => {
+      const empExpId = String(e[0]).trim();
+      const empUserId = String(e[2] || "").trim();
+      const puesto = e[3] || "Personal";
+      const empNombre = e[9] || e[3] || "Empleado";
+      const fechaIngresoExp = parseSafeDate(e[6]);
+      const fechaSalidaExp = parseSafeDate(e[7]);
+      const estadoLaboral = String(e[8]).trim();
+
+      // Consultar contrato laboral vigente o más reciente
+      const empContracts = ctrsRows.filter(c => {
+        const cExp = String(c[1]).trim();
+        return (cExp === empExpId || (empUserId && cExp === empUserId)) && String(c[7]).toLowerCase() !== "anulado";
+      });
+
+      if (empContracts.length === 0) return; // Omitir empleados sin contrato registrado
+
+      // Seleccionar el contrato más representativo del período
+      const activeContract = empContracts[empContracts.length - 1];
+      const contractualSalary = parseFloat(activeContract[5] || 0);
+      if (contractualSalary <= 0) return;
+
+      // Calcular intervalo efectivo laborado dentro del período de acumulación
+      let effStart = periodStart;
+      let effEnd = periodEnd;
+
+      if (fechaIngresoExp && fechaIngresoExp > effStart) effStart = fechaIngresoExp;
+      if (fechaSalidaExp && fechaSalidaExp < effEnd) effEnd = fechaSalidaExp;
+
+      // Si el empleado ingresó después del fin del período o salió antes del inicio, no acumula
+      if (effStart > periodEnd || (fechaSalidaExp && fechaSalidaExp < periodStart)) {
+        return;
+      }
+
+      let daysWorkedInPeriod = Math.max(0, Math.round((effEnd - effStart) / (1000 * 60 * 60 * 24)) + 1);
+      if (daysWorkedInPeriod > totalPeriodDays) daysWorkedInPeriod = totalPeriodDays;
+      if (daysWorkedInPeriod <= 0) return;
+
+      // Cálculo del monto bruto del beneficio social (Aguinaldo o Décimo Cuarto Mes):
+      // Si laboró el período completo de 12 meses -> salario ordinario mensual completo
+      // Si laboró fraccionado -> proporcional a los días laborados
+      const montoBrutoBeneficio = parseFloat(((contractualSalary / totalPeriodDays) * daysWorkedInPeriod).toFixed(2));
+
+      // 2. Consulta y deducción de anticipos otorgados previamente sobre este beneficio
+      let anticiposAplicables = 0;
+      advRows.forEach((r, idx) => {
+        const aEmp = String(r[2]).trim();
+        const aTipo = String(r[3]).trim().toLowerCase();
+        const aSaldo = parseFloat(r[8] || 0);
+        const aState = String(r[9]).trim();
+        const matchesEmp = (aEmp === empExpId || (empUserId && aEmp === empUserId));
+
+        const isAdvanceForBenefit = (is13th && (aTipo.includes("aguinaldo") || aTipo.includes("13"))) ||
+                                   (!is13th && (aTipo.includes("decimocuarto") || aTipo.includes("14") || aTipo.includes("catorce")));
+
+        if (matchesEmp && isAdvanceForBenefit && aSaldo > 0 && (aState === "Aprobado" || aState === "Aprobada")) {
+          const deduction = Math.min(aSaldo, montoBrutoBeneficio - anticiposAplicables);
+          if (deduction > 0) {
+            anticiposAplicables += deduction;
+            advUpdates.push({ rowIdx: idx + 2, montoDeducido: deduction, saldoRestante: aSaldo - deduction, planillaId: planillaId });
+          }
+        }
+      });
+      anticiposAplicables = parseFloat(anticiposAplicables.toFixed(2));
+
+      // 3. Exenciones de Ley en Honduras:
+      // El 13º y 14º Mes están totalmente exentos de deducciones de IHSS y RAP, y de ISR hasta los límites legales.
+      const dedIHSS = 0;
+      const dedRAP = 0;
+      const dedISR = 0;
+      const otrasDed = anticiposAplicables; // Descuento exclusivo de anticipos del beneficio
+
+      const totalDevengado = montoBrutoBeneficio;
+      const totalDeducciones = otrasDed;
+      const salarioNeto = parseFloat(Math.max(0, totalDevengado - totalDeducciones).toFixed(2));
+
+      // Las aportaciones patronales ordinarias (IHSS, RAP, INFOP) tampoco aplican sobre el 13º y 14º mes en Honduras
+      const patronalIHSS = 0;
+      const patronalRAP = 0;
+      const patronalINFOP = 0;
+      const costoLaboralTotal = totalDevengado;
+
+      processedRows.push([
+        planillaId,
+        now,
+        periodoClave,
+        empExpId,
+        empNombre,
+        `${puesto} (${normalizedBeneficio})`,
+        montoBrutoBeneficio,
+        0, // Horas extras
+        0, // Monto horas extras
+        0, // Bonificaciones
+        dedIHSS,
+        dedRAP,
+        dedISR,
+        otrasDed, // Anticipos descontados
+        salarioNeto,
+        "Calculada",
+        patronalIHSS,
+        patronalRAP,
+        patronalINFOP,
+        costoLaboralTotal
+      ]);
+    });
+
+    if (processedRows.length > 0) {
+      planSheet.getRange(planSheet.getLastRow() + 1, 1, processedRows.length, 20).setValues(processedRows);
+
+      // Marcar y descontar saldo de anticipos procesados
+      advUpdates.forEach(u => {
+        advSheet.getRange(u.rowIdx, 9).setValue(u.saldoRestante); // SaldoPendiente
+        const curObs = String(advSheet.getRange(u.rowIdx, 12).getValue() || "");
+        advSheet.getRange(u.rowIdx, 12).setValue(curObs + ` [LIQUIDADO_EXTRAORDINARIO_${u.planillaId}: L ${u.montoDeducido}]`);
+      });
+    }
+
+    return {
+      status: "success",
+      planillaId: planillaId,
+      periodoBeneficio: periodoClave,
+      tipoBeneficio: normalizedBeneficio,
+      anoLectivo: y,
+      empleadosProcesados: processedRows.length,
+      totalMontoBruto: processedRows.reduce((acc, r) => acc + r[6], 0),
+      totalAnticiposDeducidos: processedRows.reduce((acc, r) => acc + r[13], 0),
+      totalNetoAPagar: processedRows.reduce((acc, r) => acc + r[14], 0),
+      estadoCiclo: "Calculada",
+      message: `Planilla extraordinaria de ${normalizedBeneficio} para el año ${anoLectivo} procesada con éxito.`
+    };
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function configureWorkSchedule(payload) {

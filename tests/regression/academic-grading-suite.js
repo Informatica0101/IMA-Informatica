@@ -163,6 +163,13 @@ assert(acctCode.includes("199539.96") && acctCode.includes("304324.78") && acctC
 assert(acctCode.includes("annualTax / 12"), "backend/accounting-service/Code.gs proyecta y prorratea el impuesto anual en retenciones mensuales [TASK-010]");
 assert(acctCode.includes("POL-ISR-SAR") && acctCode.includes("Escala Progresiva SAR"), "backend/accounting-service/Code.gs parametriza la escala progresiva del SAR en PoliticasFiscales [TASK-010]");
 
+// [TASK-011] [F17-Task05] - Cálculo y procesamiento independiente del 13º (Aguinaldo) y 14º Mes (Decreto 135-94)
+assert(acctCode.includes("calculateExtraordinaryPayroll") && acctCode.includes("[TASK-011]"), "backend/accounting-service/Code.gs contiene función calculateExtraordinaryPayroll [TASK-011]");
+assert(acctCode.includes("DecimoTercerMes") && acctCode.includes("DecimoCuartoMes"), "backend/accounting-service/Code.gs soporta diferenciación de beneficios 13º y 14º mes [TASK-011]");
+assert(acctCode.includes("daysWorkedInPeriod") && acctCode.includes("totalPeriodDays"), "backend/accounting-service/Code.gs calcula beneficios proporcionales basados en días laborados del período legal [TASK-011]");
+assert(acctCode.includes("AnticiposPrestamosEmpleado") && acctCode.includes("LIQUIDADO_EXTRAORDINARIO_"), "backend/accounting-service/Code.gs descuenta anticipos otorgados previamente previniendo duplicados [TASK-011]");
+assert(acctCode.includes("PLN-EXTRA-"), "backend/accounting-service/Code.gs genera planillas extraordinarias independientes [TASK-011]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

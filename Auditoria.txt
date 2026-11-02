@@ -774,3 +774,42 @@ RESULTADO DE EVALUACIÓN:
 - Pruebas automatizadas añadidas en tests/regression/academic-grading-suite.js pasando al 100% (101/101 pruebas pasadas).
 - Estado: Completado y Verificado funcionalmente.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+AUDITORIA INICIAL — [TASK-011] [F17-Task05]
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (calculatePayrollPeriod, updatePayrollPeriodStatus, getStaffPayrollReceipt, AnticiposPrestamosEmpleado)
+- Estructuras: PlanillasNomenclatura, ContratosLaborales, ExpedientesLaborales, BoletasPago, AsientosContables
+HALLAZGOS:
+1. Inexistencia de motor para nóminas extraordinarias: El sistema carece de un endpoint o función especializada para calcular y liquidar de forma separada el Décimo Tercer Mes (Aguinaldo) y el Décimo Cuarto Mes de Compensación Social (Decreto 135-94).
+2. Períodos legales de acumulación no contemplados:
+   - 13º Mes (Aguinaldo): Cómputo del 1 de diciembre al 30 de noviembre.
+   - 14º Mes (Compensación Social): Cómputo del 1 de julio al 30 de junio.
+   Actualmente no se evalúa el tiempo de servicio para determinar el beneficio completo (12 meses) o el proporcional exacto a los días o meses efectivamente laborados.
+3. Tratamiento tributario y deducciones: Conforme a la legislación de Honduras, el 13º y 14º mes gozan de exención de retenciones ordinarias de seguridad social (IHSS, RAP) e ISR hasta los topes legales de exención. El sistema no provee esta discriminación si se procesara como nómina ordinaria.
+4. Descuento de anticipos: No existe vinculación entre la hoja AnticiposPrestamosEmpleado (donde se registran tipos 'AnticipoAguinaldo' o 'AnticipoDecimoCuarto') y el cálculo extraordinario, lo que propicia el riesgo de pagos dobles.
+5. Asientos contables y boletas: Falta generación de boletas de pago de beneficio social extraordinario y asientos contables en cuentas de gasto específicas (5103 Gasto Décimo Tercer Mes / 5104 Gasto Décimo Cuarto Mes) con pasivos correspondientes.
+ESTADO: Auditoría finalizada. Procediendo con el diseño e implementación de calculateExtraordinaryPayroll.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-011] [F17-Task05]
+CÁLCULO Y PROCESAMIENTO INDEPENDIENTE DE 13º (AGUINALDO) Y 14º MES (DEC. 135-94)
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (calculateExtraordinaryPayroll, doPost)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt / Auditoría.txt / ChangesLogs.txt
+RESULTADO DE EVALUACIÓN:
+- Se implementó calculateExtraordinaryPayroll en backend/accounting-service/Code.gs para procesar en forma autónoma e independiente las planillas extraordinarias de beneficios sociales:
+  * 13º Mes (Aguinaldo): período legal acumulativo del 1 de diciembre al 30 de noviembre.
+  * 14º Mes (Decreto 135-94): período legal acumulativo del 1 de julio al 30 de junio.
+- Admisión de colaboradores con acumulación completa (12 meses completos devengan 1 salario ordinario) y cálculo matemático proporcional exacto en base a días trabajados dentro del ciclo para colaboradores de ingreso reciente o finiquito.
+- Deducción automática y trazable de anticipos de beneficios otorgados previamente desde AnticiposPrestamosEmpleado ('AnticipoAguinaldo' o 'AnticipoDecimoCuarto'), actualizando el saldo deudor pendiente y previniendo pagos duplicados.
+- Aplicación de las exenciones de ley en Honduras: sin retención de IHSS, RAP ni ISR ordinario sobre estos beneficios extraordinarios.
+- Registro en PlanillasNomenclatura bajo identificador único 'PLN-EXTRA-{13M|14M}-{timestamp}', ciclo 'Calculada', sin aportaciones patronales ordinarias (no aplicables a 13º/14º mes).
+- Suite de pruebas de regresión en tests/regression/academic-grading-suite.js alcanzando 106/106 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================

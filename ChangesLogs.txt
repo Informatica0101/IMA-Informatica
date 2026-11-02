@@ -3926,3 +3926,17 @@ ARCHIVOS MODIFICADOS:
 3. Pendientes.md:
    - Líneas 1034-1067: Marcada tarea [TASK-010] como [X] Completado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+TAREA: [TASK-011] [F17-Task05]
+ARCHIVOS MODIFICADOS:
+1. backend/accounting-service/Code.gs:
+   - Línea 205: Habilitación del permiso 'calculateExtraordinaryPayroll' en la matriz RBAC para RecursosHumanos.
+   - Línea 591: Ruteo del endpoint 'calculateExtraordinaryPayroll' en el switch doPost.
+   - Líneas 5115-5320: Implementación completa de calculateExtraordinaryPayroll para cálculo y procesamiento independiente del 13º y 14º mes, períodos de acumulación legal, proporcionalidad por tiempo laborado, deducción de anticipos en AnticiposPrestamosEmpleado y generación de planillas extraordinarias bajo ScriptLock.
+2. tests/regression/academic-grading-suite.js:
+   - Líneas 169-178: Aserciones automatizadas para validar endpoint extraordinario, cómputo legal acumulado de 13º y 14º mes, proporcionalidad, descuento de anticipos y emisión de lotes extraordinarios.
+3. Pendientes.md:
+   - Líneas 1071-1107: Marcada tarea [TASK-011] como [X] Completado.
+===============================================================================
