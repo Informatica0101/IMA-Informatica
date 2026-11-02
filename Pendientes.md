@@ -854,7 +854,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-006] [ ] [F16-Task03] Implementar el flujo de desvinculación laboral con revocación coordinada de accesos y asignaciones
+### [TASK-006] [X] [F16-Task03] Implementar el flujo de desvinculación laboral con revocación coordinada de accesos y asignaciones
 - **Origen del Hallazgo:** `AUDITORIA_FASE_16_RECURSOS_HUMANOS.md` / Sección F (Brecha F.3) y Sección H (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Seguridad de la información, prevención de accesos residuales e integridad en el cese laboral)
@@ -904,7 +904,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Si una etapa falla, el sistema identifica las tareas pendientes sin reactivar las cuentas.
   - Se emite el log estructurado `EMPLOYEE_OFFBOARDED_CASCADED` con trazabilidad completa.
   - La liquidación laboral permanece en estado preliminar hasta su aprobación formal.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

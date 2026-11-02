@@ -130,6 +130,13 @@ assert(academicCode.includes("removeTeacherFromAcademicArea") && academicCode.in
 assert(academicCode.includes("DocentesAreasAcademicas"), "backend/academic-service/Code.gs normaliza la hoja DocentesAreasAcademicas [TASK-005]");
 assert(academicCode.includes("esCoordinadorTitular") && academicCode.includes("esCoordinadorSuplente"), "backend/academic-service/Code.gs soporta designación de coordinadores titular y suplente [TASK-005]");
 
+// [TASK-006] [F16-Task03] - Verificación del flujo de desvinculación laboral coordinada y revocación en cascada
+assert(acctCode.includes("processEmployeeOffboarding") && acctCode.includes("[TASK-006]"), "backend/accounting-service/Code.gs contiene processEmployeeOffboarding [TASK-006]");
+assert(acctCode.includes("EMPLOYEE_OFFBOARDED_CASCADED"), "backend/accounting-service/Code.gs emite evento de auditoría EMPLOYEE_OFFBOARDED_CASCADED [TASK-006]");
+assert(acctCode.includes("isAlreadyOffboarded"), "backend/accounting-service/Code.gs implementa idempotencia ante re-ejecución de desvinculación [TASK-006]");
+assert(acctCode.includes("vacacionesEstimadasDias") && acctCode.includes("liquidacionPreliminar"), "backend/accounting-service/Code.gs calcula liquidación preliminar no vinculante [TASK-006]");
+
+
 
 
 

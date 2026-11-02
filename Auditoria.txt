@@ -630,3 +630,21 @@ RESULTADO DE EVALUACIÓN:
 - Se actualizaron las aserciones en tests/regression/academic-grading-suite.js alcanzando 78/78 pruebas aprobadas (100.0%).
 - Estado: Completado y Verificado funcionalmente.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-006] [F16-Task03]
+FLUJO DE DESVINCULACIÓN LABORAL CON REVOCACIÓN COORDINADA DE ACCESOS Y ASIGNACIONES
+ARCHIVOS MODIFICADOS: backend/accounting-service/Code.gs, js/accounting.js, tests/regression/academic-grading-suite.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementó processEmployeeOffboarding en backend/accounting-service/Code.gs para orquestar la desvinculación laboral integral e inmutable exigiendo motivo obligatorio (>= 10 caracteres) y fecha efectiva de salida.
+- Revocación inmediata y prioritaria de credenciales: actualiza el estado de la cuenta en Usuarios a 'Desactivada' e invalida tokens en tiempo real.
+- Actualización de estado en ExpedientesLaborales a 'Desvinculado' fijando FechaSalida sin eliminar físicamente registros.
+- Cierre coordinado en cascada: pasa a estado 'Inactiva' las adscripciones en HistorialAdscripciones, finaliza ámbitos en AsignacionesAmbitosRoles y desactiva asignaciones en DocentesAreasAcademicas y CoordinacionesArea.
+- Cálculo preliminar de liquidación conforme a la legislación laboral (días trabajados y vacaciones no gozadas estimadas) en estado 'PendienteRevisionContabilidad', sin emitir pagos definitivos sin autorización previa.
+- Identificación de lista de tareas pendientes de entrega de bienes y traspaso de responsabilidades.
+- Idempotencia: previene ejecuciones redundantes reportando el cese previo intacto si el empleado ya estaba desvinculado.
+- Emisión de evento de auditoría estructurado EMPLOYEE_OFFBOARDED_CASCADED.
+- Se actualizaron las aserciones en tests/regression/academic-grading-suite.js alcanzando 82/82 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================

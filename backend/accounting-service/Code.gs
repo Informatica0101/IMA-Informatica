@@ -201,7 +201,7 @@ const ROLE_PERMISSIONS = {
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
-  "RecursosHumanos": ["initializeFinancialDriveStructure", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport", "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory", "manageStaffingNeeds", "getStaffingNeedsPlanning", "manageWorkShiftAndSubstitution", "getWorkShiftsAndSubstitutionsHistory", "getEmployeeSelfServicePortal", "verifyLaborAndTaxInformation", "runHRIntegrationAndRegressionTests", "runCriticalProcessConcurrencySuite"],
+  "RecursosHumanos": ["initializeFinancialDriveStructure", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "processEmployeeOffboarding", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport", "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory", "manageStaffingNeeds", "getStaffingNeedsPlanning", "manageWorkShiftAndSubstitution", "getWorkShiftsAndSubstitutionsHistory", "getEmployeeSelfServicePortal", "verifyLaborAndTaxInformation", "runHRIntegrationAndRegressionTests", "runCriticalProcessConcurrencySuite"],
   "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments", "getPerformanceEvaluations", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getEmployeeSelfServicePortal"],
   "Padre": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Tutor": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
@@ -635,6 +635,7 @@ function doPost(e) {
       case "getAssetDisposals": result = getAssetDisposals(payload); break;
       case "createEmployeeRecord": result = createEmployeeRecord(payload); break;
       case "getEmployeeRecords": result = getEmployeeRecords(payload); break;
+      case "processEmployeeOffboarding": result = processEmployeeOffboarding(payload); break;
       case "updateEmployeeLaborStatus": result = updateEmployeeLaborStatus(payload); break;
       case "manageEmployeeContract": result = manageEmployeeContract(payload); break;
       case "getEmployeeContracts": result = getEmployeeContracts(payload); break;
@@ -6196,6 +6197,19 @@ function updateEmployeeLaborStatus(payload) {
   if (idx === -1) throw new Error("Expediente laboral no encontrado.");
 
   sheet.getRange(idx + 1, 9).setValue(nuevoEstadoLaboral);
+  if (nuevoEstadoLaboral === "Desvinculado" || nuevoEstadoLaboral === "Retirado") {
+    try {
+      return processEmployeeOffboarding({
+        expedienteId: expedienteId,
+        motivoSalida: motivo || "Desvinculación laboral registrada mediante actualización de estado",
+        fechaEfectivaSalida: fechaSalida,
+        authorizedBy: payload && payload.authRole
+      });
+    } catch (offErr) {
+      logDebug("Advertencia en offboarding coordinado:", offErr.message);
+    }
+  }
+
   if (fechaSalida || nuevoEstadoLaboral === "Retirado") {
     sheet.getRange(idx + 1, 8).setValue(fechaSalida || new Date());
   }
@@ -6204,7 +6218,7 @@ function updateEmployeeLaborStatus(payload) {
     sheet.getRange(idx + 1, 10).setValue(curObs + ` [Cambio Estado: ${nuevoEstadoLaboral} - ${motivo}]`);
   }
 
-  logStructuredEvent("ACCOUNTING", "updateEmployeeLaborStatus", "INFO", "LABOR_STATUS_UPDATED", `Estado laboral de ${expedienteId} actualizado a ${nuevoEstadoLaboral}`, payload, payload.authRole);
+  logStructuredEvent("ACCOUNTING", "processEmployeeOffboarding", "updateEmployeeLaborStatus", "INFO", "LABOR_STATUS_UPDATED", `Estado laboral de ${expedienteId} actualizado a ${nuevoEstadoLaboral}`, payload, payload.authRole);
 
   return {
     status: "success",
@@ -11712,6 +11726,217 @@ function processPaymentRefund(payload) {
       saldoRestantePago: parseFloat((saldoReembolsable - montoRef).toFixed(2)),
       metodoDevolucion: metodoDevolucion,
       message: "Reembolso monetario procesado con éxito y registrado como egreso en tesorería/caja."
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+
+// ===========================================================================
+// [TASK-006] [F16-Task03] - FLUJO DE DESVINCULACIÓN LABORAL COORDINADA (OFFBOARDING)
+// ===========================================================================
+
+function processEmployeeOffboarding(payload) {
+  const {
+    expedienteId,
+    userId,
+    motivoSalida,
+    fechaEfectivaSalida,
+    authorizedBy,
+    documentacionRespaldoUrl = "",
+    observaciones = ""
+  } = payload || {};
+
+  if (!expedienteId && !userId) {
+    throw new Error("expedienteId o userId es obligatorio para procesar la desvinculación laboral.");
+  }
+  if (!motivoSalida || String(motivoSalida).trim().length < 10) {
+    throw new Error("El motivo de la desvinculación es obligatorio y debe tener al menos 10 caracteres explicativos.");
+  }
+
+  const lock = LockService.getScriptLock();
+  const hasLock = lock.tryLock(30000);
+  if (!hasLock) {
+    return { status: "error", code: "LOCK_TIMEOUT", message: "Operación bloqueada por concurrencia en Recursos Humanos." };
+  }
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const now = new Date();
+    const effectiveDateStr = fechaEfectivaSalida || now.toISOString().split("T")[0];
+    const offboardingBatchId = "OFFB-" + now.getTime();
+
+    // 1. Localizar y validar en ExpedientesLaborales
+    const expSheet = getOrCreateSheet(ss, "ExpedientesLaborales");
+    const expData = expSheet.getDataRange().getValues();
+
+    const cleanExpId = expedienteId ? String(expedienteId).trim() : "";
+    const cleanUserId = userId ? String(userId).trim() : "";
+
+    const expIdx = expData.findIndex((r, idx) => {
+      if (idx === 0) return false;
+      if (cleanExpId && String(r[0]).trim() === cleanExpId) return true;
+      if (cleanUserId && String(r[2]).trim() === cleanUserId) return true;
+      return false;
+    });
+
+    if (expIdx === -1) {
+      throw new Error("Expediente laboral no encontrado para desvinculación.");
+    }
+
+    const expRow = expData[expIdx];
+    const targetExpId = expRow[0];
+    const targetUserId = String(expRow[2] || cleanUserId).trim();
+    const targetPersonaId = expRow[1];
+    const estadoLaboralActual = String(expRow[8] || "Activo").trim();
+
+    // Idempotencia: si ya está desvinculado
+    if (estadoLaboralActual === "Desvinculado" || estadoLaboralActual === "Retirado") {
+      return {
+        status: "success",
+        isAlreadyOffboarded: true,
+        expedienteId: targetExpId,
+        userId: targetUserId,
+        estadoLaboral: estadoLaboralActual,
+        fechaSalida: expRow[7],
+        message: "El empleado ya se encuentra desvinculado previamente. Estado e historial conservados intactos."
+      };
+    }
+
+    const stepsExecuted = [];
+
+    // 2. REVOCACIÓN INMEDIATA DE ACCESO EN HOJA Usuarios
+    if (targetUserId) {
+      const userSheet = ss.getSheetByName("Usuarios");
+      if (userSheet) {
+        const uData = userSheet.getDataRange().getValues();
+        const uIdx = uData.findIndex(r => String(r[0]).trim() === targetUserId);
+        if (uIdx !== -1) {
+          userSheet.getRange(uIdx + 1, 11).setValue("Desactivada"); // Col 11: Estado de cuenta
+          const prevObs = String(uData[uIdx][12] || "");
+          userSheet.getRange(uIdx + 1, 13).setValue(prevObs + );
+          stepsExecuted.push("Cuenta de usuario desactivada e invalidada en tiempo real");
+        }
+      }
+    }
+
+    // 3. ACTUALIZAR ExpedientesLaborales
+    expSheet.getRange(expIdx + 1, 8).setValue(effectiveDateStr); // FechaSalida
+    expSheet.getRange(expIdx + 1, 9).setValue("Desvinculado"); // EstadoLaboral
+    const expObs = String(expRow[9] || "");
+    expSheet.getRange(expIdx + 1, 10).setValue(expObs + );
+    stepsExecuted.push("Estado en ExpedientesLaborales actualizado a Desvinculado");
+
+    // 4. CERRAR ADSCRIPCIONES EN HistorialAdscripciones
+    if (targetUserId) {
+      const adsSheet = ss.getSheetByName("HistorialAdscripciones");
+      if (adsSheet) {
+        const adsData = adsSheet.getDataRange().getValues();
+        for (let i = 1; i < adsData.length; i++) {
+          if (String(adsData[i][1]).trim() === targetUserId && String(adsData[i][7] || "Activa").trim() === "Activa") {
+            adsSheet.getRange(i + 1, 6).setValue(effectiveDateStr); // FechaFin
+            adsSheet.getRange(i + 1, 8).setValue("Inactiva"); // Estado
+            stepsExecuted.push();
+          }
+        }
+      }
+    }
+
+    // 5. CERRAR RESPONSABILIDADES Y ÁMBITOS EN AsignacionesAmbitosRoles
+    if (targetUserId) {
+      const ambSheet = ss.getSheetByName("AsignacionesAmbitosRoles");
+      if (ambSheet) {
+        const ambData = ambSheet.getDataRange().getValues();
+        for (let i = 1; i < ambData.length; i++) {
+          if (String(ambData[i][1]).trim() === targetUserId && String(ambData[i][5] || "Activo").trim() === "Activo") {
+            ambSheet.getRange(i + 1, 6).setValue("Inactivo"); // Estado
+            if (ambData[i].length >= 10) ambSheet.getRange(i + 1, 10).setValue(effectiveDateStr); // FechaFin
+            stepsExecuted.push();
+          }
+        }
+      }
+    }
+
+    // 6. CERRAR ASIGNACIONES EN DocentesAreasAcademicas Y CoordinacionesArea
+    if (targetUserId) {
+      const areaSheet = ss.getSheetByName("DocentesAreasAcademicas");
+      if (areaSheet) {
+        const areaData = areaSheet.getDataRange().getValues();
+        for (let i = 1; i < areaData.length; i++) {
+          if (String(areaData[i][1]).trim() === targetUserId && String(areaData[i][10] || "Activo").trim() === "Activo") {
+            areaSheet.getRange(i + 1, 10).setValue(effectiveDateStr); // FechaFin
+            areaSheet.getRange(i + 1, 11).setValue("Inactivo"); // Estado
+            stepsExecuted.push();
+          }
+        }
+      }
+
+      const coordSheet = ss.getSheetByName("CoordinacionesArea");
+      if (coordSheet) {
+        const coordData = coordSheet.getDataRange().getValues();
+        for (let i = 1; i < coordData.length; i++) {
+          if (String(coordData[i][2]).trim() === targetUserId && String(coordData[i][5] || "Activo").trim() === "Activo") {
+            coordSheet.getRange(i + 1, 6).setValue("Inactivo"); // Estado
+            stepsExecuted.push();
+          }
+        }
+      }
+    }
+
+    // 7. CÁLCULO PRELIMINAR DE LIQUIDACIÓN Y PENDIENTES
+    const fechaIngreso = expRow[6] ? new Date(expRow[6]) : new Date(now.getFullYear(), 0, 1);
+    const fechaSalidaDate = new Date(effectiveDateStr);
+    const diasLaboradosTotal = Math.max(0, Math.floor((fechaSalidaDate - fechaIngreso) / (1000 * 60 * 60 * 24)));
+
+    // Cálculo preliminar de vacaciones no gozadas conforme al Código de Trabajo
+    const vacacionesEstimadasDias = Math.min(30, parseFloat(((diasLaboradosTotal / 360) * 15).toFixed(1)));
+
+    const liquidacionPreliminar = {
+      fechaIngreso: expRow[6],
+      fechaSalida: effectiveDateStr,
+      diasLaboradosTotal: diasLaboradosTotal,
+      vacacionesEstimadasDias: vacacionesEstimadasDias,
+      estadoLiquidacion: "PendienteRevisionContabilidad",
+      observaciones: "Cálculo preliminar que requiere aprobación formal de Dirección/Contabilidad antes de emisión."
+    };
+
+    const tareasPendientes = [
+      "Entrega y recepción de equipos de computo / activos asignados",
+      "Devolución de llaves y credenciales institucionales",
+      "Reasignación de asignaturas / grupos lectivos pendientes",
+      "Auditoría y conciliación de libros de notas y registros académicos"
+    ];
+
+    logStructuredEvent(
+      "ACCOUNTING",
+      "processEmployeeOffboarding",
+      "WARN",
+      "EMPLOYEE_OFFBOARDED_CASCADED",
+      ,
+      {
+        offboardingBatchId,
+        expedienteId: targetExpId,
+        userId: targetUserId,
+        motivoSalida,
+        fechaEfectivaSalida: effectiveDateStr,
+        stepsExecuted,
+        authorizedBy: authorizedBy || "Admin"
+      },
+      authorizedBy || "Admin"
+    );
+
+    return {
+      status: "success",
+      offboardingBatchId,
+      expedienteId: targetExpId,
+      userId: targetUserId,
+      estadoLaboral: "Desvinculado",
+      fechaSalida: effectiveDateStr,
+      stepsExecuted,
+      tareasPendientes,
+      liquidacionPreliminar,
+      message:
     };
   } finally {
     lock.releaseLock();

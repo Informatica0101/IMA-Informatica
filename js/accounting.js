@@ -1342,3 +1342,14 @@ window.processPaymentRefund = async function(payload) {
     throw error;
   }
 };
+
+
+// [TASK-006] [F16-Task03] - Método cliente para desvinculación laboral coordinada (Offboarding)
+window.processEmployeeOffboarding = async function(payload) {
+  try {
+    return await window.callApi('ACCOUNTING', 'processEmployeeOffboarding', payload || {});
+  } catch (error) {
+    console.error('[ACCOUNTING] Error en desvinculación laboral coordinada:', error);
+    throw error;
+  }
+};
