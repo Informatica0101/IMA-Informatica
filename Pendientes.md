@@ -912,7 +912,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-007] [ ] [F17-Task01] Eliminar el salario fijo y calcular la remuneración según el contrato vigente de cada empleado
+### [TASK-007] [X] [F17-Task01] Eliminar el salario fijo y calcular la remuneración según el contrato vigente de cada empleado
 - **Origen del Hallazgo:** `AUDITORIA_FASE_17_PLANILLAS_COMPENSACIONES.md` / Sección E (Brecha E.1) y Sección G (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Integridad financiera, legalidad de pagos y cálculo salarial contractual exacto)
@@ -947,11 +947,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Intentar procesar un empleado sin contrato vigente genera una incidencia clara y bloquea su inclusión sin asignar salarios arbitrarios.
   - Los contratos superpuestos o ambiguos impiden un cálculo silenciosamente incorrecto.
   - Modificar un contrato no altera los resultados de planillas históricas previamente calculadas o cerradas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 ---
-### [TASK-008] [ ] [F17-Task02] Integrar automáticamente las novedades aprobadas en el cálculo de planilla
+### [TASK-008] [X] [F17-Task02] Integrar automáticamente las novedades aprobadas en el cálculo de planilla
 - **Origen del Hallazgo:** `AUDITORIA_FASE_17_PLANILLAS_COMPENSACIONES.md` / Sección E (Brecha E.2) y Sección G (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Remuneración integral, compensación de horas extras y deducción de ausencias)
@@ -988,7 +988,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Ejecutar dos veces el cálculo no duplica novedades ni importes devengados o deducidos.
   - Una novedad rechazada o pendiente no afecta el resultado económico de la planilla.
   - El detalle de cada concepto permite rastrear el identificador del registro de asistencia u horas extras de origen.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 ---

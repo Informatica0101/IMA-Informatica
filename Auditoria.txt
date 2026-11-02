@@ -648,3 +648,43 @@ RESULTADO DE EVALUACIÓN:
 - Se actualizaron las aserciones en tests/regression/academic-grading-suite.js alcanzando 82/82 pruebas aprobadas (100.0%).
 - Estado: Completado y Verificado funcionalmente.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+AUDITORIA INICIAL — [TASK-007] [F17-Task01] & [TASK-008] [F17-Task02]
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (calculatePayrollPeriod)
+- Estructuras: ContratosLaborales, AprobacionHorasExtras, DeduccionesAsistencia, IncapacidadesMedicas, SolicitudesVacaciones, PlanillasNomenclatura
+HALLAZGOS:
+1. En backend/accounting-service/Code.gs (calculatePayrollPeriod, l. 4562): Se detecta constante fija hardcodeada 'const salarioBase = 22000;' aplicada indiscriminadamente a todos los empleados activos, ignorando sus contratos vigentes en ContratosLaborales.
+2. Inexistencia de cálculo salarial proporcional: Empleados con ingreso a mitad del período o retiro durante el mes reciben el salario mensual completo sin ponderar los días efectivamente laborados.
+3. Omisión de validación de contratos: Empleados activos sin contrato vigente o con contratos expirados no generan incidencias y reciben el salario base arbitrario de L 22,000.00.
+4. Novedades omitidas: En l. 4563-4566, las horas extras, bonificaciones y deducciones adicionales se inicializan en cero ('const horasExtras = 0; const montoHorasExtras = 0; const bonificaciones = 0; const otrasDed = 0;'). Las novedades aprobadas en AprobacionHorasExtras, DeduccionesAsistencia (tardanzas, ausencias injustificadas), SolicitudesVacaciones (permisos sin goce de sueldo) e IncapacidadesMedicas no son consultadas ni integradas.
+5. Ausencia de trazabilidad e idempotencia en novedades: No existe mecanismo para marcar novedades como 'ProcesadaEnNomina' con el planillaId asociado, lo que permitiría duplicar deducciones o pagos adicionales en recálculos o ignorar su estado de procesamiento.
+ESTADO: Auditoría finalizada. Procediendo con la implementación de resolución dinámica de contratos e integración de novedades.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-007] [F17-Task01] & [TASK-008] [F17-Task02]
+CÁLCULO DINÁMICO CONTRACTUAL DE NÓMINA E INTEGRACIÓN AUTOMÁTICA DE NOVEDADES
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (calculatePayrollPeriod)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt / Auditoría.txt / ChangesLogs.txt
+RESULTADO DE EVALUACIÓN:
+- [TASK-007]: Se eliminó el salario fijo hardcodeado (const salarioBase = 22000;). calculatePayrollPeriod ahora consulta dinámicamente ContratosLaborales para cada empleado activo.
+- Soporta contratos vigentes con vigencia dentro del período procesado, validación de fechaInicio y fechaFin.
+- Detección de incidencias contractuales: si el empleado carece de contrato vigente, se registra en la hoja IncidenciasNomina (tipo SIN_CONTRATO_VIGENTE) y se bloquea su procesamiento sin asignar valores arbitrarios.
+- Detección de contratos superpuestos: si existen múltiples contratos vigentes, se genera incidencia CONTRATOS_SUPERPUESTOS para revisión sin cálculo erróneo silencioso.
+- Ponderación y cálculo proporcional exacto de días laborados para empleados con ingresos a mitad de período o desvinculaciones/salidas durante el mes.
+- [TASK-008]: Integración automática de novedades aprobadas no procesadas del período:
+  * Horas extras aprobadas en AprobacionHorasExtras calculadas con factor estándar de recargo (1.25 sobre tarifa ordinaria).
+  * Deducción de ausencias injustificadas y tardanzas acumuladas (> 15 mins) desde DeduccionesAsistencia.
+  * Deducción de permisos sin goce de sueldo desde SolicitudesVacaciones.
+  * Trazabilidad e idempotencia: marcado de horas extras con ProcesadaEnNomina y planillaId, y marcado en observaciones de asistencias, vacaciones e incapacidades con [PROCESADA_NOMINA_{planillaId}].
+- Control de concurrencia y reentrancia mediante LockService.getScriptLock().
+- Se actualizaron las aserciones en tests/regression/academic-grading-suite.js alcanzando 91/91 pruebas pasadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================

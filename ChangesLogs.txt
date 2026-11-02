@@ -3885,3 +3885,16 @@ Módulo: Recursos Humanos y Seguridad Laboral ([TASK-006] [F16-Task03])
   * Pendientes.md:
     - Marcada tarea [TASK-006] [F16-Task03] como [X] Completado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+TAREAS: [TASK-007] [F17-Task01] & [TASK-008] [F17-Task02]
+ARCHIVOS MODIFICADOS:
+1. backend/accounting-service/Code.gs:
+   - Líneas 146: Inicialización de la hoja 'IncidenciasNomina' para registrar bloqueos y anomalías contractuales.
+   - Líneas 4527-4880: Reescritura de calculatePayrollPeriod sustituyendo salario hardcodeado por consulta dinámica de contratos vigentes en ContratosLaborales, cálculo proporcional de salario base por días laborados en el período, registro de incidencias por contrato faltante o superpuesto, e integración de horas extras, tardanzas, ausencias y permisos aprobados con marcado de trazabilidad e idempotencia bajo ScriptLock.
+2. tests/regression/academic-grading-suite.js:
+   - Líneas 138-152: Nuevas aserciones automatizadas para validar la eliminación del salario fijo, consulta dinámica de ContratosLaborales, cálculo proporcional, registro de incidencias e integración trazable de novedades.
+3. Pendientes.md:
+   - Líneas 915-992: Marcadas tareas [TASK-007] y [TASK-008] como [X] Completado.
+===============================================================================

@@ -143,6 +143,7 @@ function getOrCreateSheet(ss, name) {
     if (name === "AsientosContables") sheet.appendRow(["AsientoID", "Fecha", "Descripcion", "OrigenModulo", "ReferenciaID", "LineasJSON", "Estado", "CreadoPor"]);
     if (name === "HorariosLaborales") sheet.appendRow(["HorarioID", "NombreHorario", "JornadaTipo", "HoraEntrada", "HoraSalida", "ToleranciaMinutos", "DiasLaboralesJSON", "Estado", "Observaciones"]);
     if (name === "CorreccionesAsistencia") sheet.appendRow(["CorreccionID", "AsistenciaID", "EmpleadoId", "FechaIncidencia", "HoraOriginal", "HoraSolicitada", "Motivo", "EvidenciaUrl", "EstadoAprobacion", "AprobadoPor", "Observaciones"]);
+    if (name === "IncidenciasNomina") sheet.appendRow(["IncidenciaID", "PlanillaID", "PeriodoMes", "EmpleadoId", "EmpleadoNombre", "TipoIncidencia", "Descripcion", "FechaRegistro", "Estado"]);
     if (name === "PlanillasNomenclatura") sheet.appendRow(["PlanillaID", "FechaGeneracion", "PeriodoMes", "EmpleadoId", "EmpleadoNombre", "CargoPuesto", "SalarioBase", "HorasExtras", "MontoHorasExtras", "Bonificaciones", "DeduccionIHSS", "DeduccionRAP", "DeduccionISR", "OtrasDeducciones", "SalarioNeto", "Estado"]);
     if (name === "DeduccionesAsistencia") sheet.appendRow(["AsistenciaID", "Fecha", "EmpleadoId", "EmpleadoNombre", "HoraEntrada", "HoraSalida", "MinutosTardanza", "EstadoAsistencia", "Observaciones"]);
     if (name === "BoletasPago") sheet.appendRow(["BoletaID", "PlanillaID", "FechaEmision", "EmpleadoId", "EmpleadoNombre", "PeriodoMes", "TotalDevengado", "TotalDeducciones", "NetoAPagar", "EstadoBoleta"]);
@@ -4523,89 +4524,355 @@ function getCashBankSummary(payload) {
 // PLANILLAS, DEDUCCIONES Y ASISTENCIA DE PERSONAL
 // ---------------------------------------------------------------------------
 
-// [REQ-EXP-014] [Requerimientos de Expansión y Desarrollo] - Cálculo de planillas con retenciones de ley en Honduras (IHSS, RAP, ISR) y comprobantes.
+// [TASK-007] [TASK-008] [F17-Task01] [F17-Task02] [REQ-EXP-014] - Cálculo dinámico de nómina según ContratosLaborales e integración de novedades aprobadas
 function calculatePayrollPeriod(payload) {
   const { periodoMes, idempotencyToken } = payload || {};
   if (!periodoMes) throw new Error("periodoMes requerido.");
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const planSheet = getOrCreateSheet(ss, "PlanillasNomenclatura");
-  const expsRows = getOrCreateSheet(ss, "ExpedientesLaborales").getDataRange().getValues().slice(1);
-  const planData = planSheet.getDataRange().getValues();
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
 
-  // Control Anti-Duplicados por Periodo Mes e Idempotencia
-  const existingPlan = planData.find(r => String(r[2]).trim() === String(periodoMes).trim() && r[15] !== "Anulada");
-  if (existingPlan) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const planSheet = getOrCreateSheet(ss, "PlanillasNomenclatura");
+    const expsRows = getOrCreateSheet(ss, "ExpedientesLaborales").getDataRange().getValues().slice(1);
+    const ctrsSheet = getOrCreateSheet(ss, "ContratosLaborales");
+    const ctrsRows = ctrsSheet.getDataRange().getValues().slice(1);
+    const incidenciasSheet = getOrCreateSheet(ss, "IncidenciasNomina");
+    const planData = planSheet.getDataRange().getValues();
+
+    // Control Anti-Duplicados por Periodo Mes e Idempotencia
+    const existingPlan = planData.find(r => String(r[2]).trim() === String(periodoMes).trim() && r[15] !== "Anulada");
+    if (existingPlan) {
+      return {
+        status: "success",
+        planillaId: existingPlan[0],
+        periodoMes: periodoMes,
+        estadoCiclo: existingPlan[15],
+        message: `La planilla para el periodo '${periodoMes}' ya existe con estado '${existingPlan[15]}'.`
+      };
+    }
+
+    const activeEmployees = expsRows.filter(r => r[8] === "active" || r[8] === "Activo" || r[8] === "EnPeriodoPrueba");
+    if (activeEmployees.length === 0) {
+      throw new Error("No hay empleados activos en estado de nómina elegible.");
+    }
+
+    // Determinar rango de fechas del período (ej: '2026-03' o '2026-03-31')
+    let year = 2026;
+    let month = 1; // 1..12
+    const mMatch = String(periodoMes).trim().match(/^(\d{4})[-/](\d{1,2})/);
+    if (mMatch) {
+      year = parseInt(mMatch[1], 10);
+      month = parseInt(mMatch[2], 10);
+    } else {
+      const nowD = new Date();
+      year = nowD.getFullYear();
+      month = nowD.getMonth() + 1;
+    }
+
+    const periodStart = new Date(year, month - 1, 1, 0, 0, 0, 0);
+    const periodEnd = new Date(year, month, 0, 23, 59, 59, 999);
+    const daysInPeriod = new Date(year, month, 0).getDate(); // 28, 29, 30 o 31
+
+    const now = new Date();
+    const planillaId = "PLN-" + now.getTime();
+
+    // Consultar hojas de novedades
+    const ovtSheet = getOrCreateSheet(ss, "AprobacionHorasExtras");
+    const ovtData = ovtSheet.getDataRange().getValues();
+    const ovtRows = ovtData.slice(1);
+
+    const attSheet = getOrCreateSheet(ss, "DeduccionesAsistencia");
+    const attData = attSheet.getDataRange().getValues();
+    const attRows = attData.slice(1);
+
+    const vacSheet = getOrCreateSheet(ss, "SolicitudesVacaciones");
+    const vacData = vacSheet.getDataRange().getValues();
+    const vacRows = vacData.slice(1);
+
+    const incSheet = getOrCreateSheet(ss, "IncapacidadesMedicas");
+    const incData = incSheet.getDataRange().getValues();
+    const incRows = incData.slice(1);
+
+    const processedRows = [];
+    const incidenciasNuevas = [];
+    const ovtUpdates = []; // { rowIdx, planillaId }
+    const attUpdates = []; // { rowIdx, planillaId }
+    const vacUpdates = [];
+    const incUpdates = [];
+
+    // Función auxiliar para parsear fechas de forma segura
+    function parseSafeDate(val) {
+      if (!val) return null;
+      if (val instanceof Date) return isNaN(val.getTime()) ? null : val;
+      const parsed = new Date(val);
+      return isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    activeEmployees.forEach(e => {
+      const empExpId = String(e[0]).trim();
+      const empUserId = String(e[2] || "").trim();
+      const puesto = e[3] || "Personal";
+      const empNombre = e[9] || e[3] || "Empleado";
+      const fechaIngresoExp = parseSafeDate(e[6]);
+      const fechaSalidaExp = parseSafeDate(e[7]);
+
+      // 1. Vinculación y validación de contratos laborales en ContratosLaborales
+      // Esquema: ContratoID (0), ExpedienteID (1), TipoContrato (2), FechaInicio (3), FechaFin (4), SalarioBase (5), Jornada (6), EstadoContrato (7), Observaciones (8)
+      const empContracts = ctrsRows.filter(c => {
+        const cExp = String(c[1]).trim();
+        return (cExp === empExpId || (empUserId && cExp === empUserId)) && String(c[7]).toLowerCase() !== "anulado" && String(c[7]).toLowerCase() !== "inactivo";
+      });
+
+      // Filtrar contratos cuya vigencia cubra el período procesado
+      const validContracts = empContracts.filter(c => {
+        const fIni = parseSafeDate(c[3]);
+        const fFin = parseSafeDate(c[4]);
+        const startsBeforeOrDuring = !fIni || fIni <= periodEnd;
+        const endsAfterOrDuring = !fFin || fFin >= periodStart;
+        return startsBeforeOrDuring && endsAfterOrDuring;
+      });
+
+      // Detección de incidencias contractuales [TASK-007]
+      if (validContracts.length === 0) {
+        const descIncidencia = `Empleado ${empNombre} (${empExpId}) no tiene contrato laboral vigente para el período ${periodoMes}.`;
+        incidenciasNuevas.push([
+          "INC-" + Math.floor(100000 + Math.random() * 900000),
+          planillaId,
+          periodoMes,
+          empExpId,
+          empNombre,
+          "SIN_CONTRATO_VIGENTE",
+          descIncidencia,
+          now.toISOString(),
+          "PendienteResolucion"
+        ]);
+        return; // Excluir de nómina procesada para prevenir asignación de salarios arbitrarios
+      }
+
+      if (validContracts.length > 1) {
+        // Contratos superpuestos
+        const descIncidencia = `Empleado ${empNombre} (${empExpId}) presenta múltiples contratos vigentes superpuestos (${validContracts.length}) en el período ${periodoMes}.`;
+        incidenciasNuevas.push([
+          "INC-" + Math.floor(100000 + Math.random() * 900000),
+          planillaId,
+          periodoMes,
+          empExpId,
+          empNombre,
+          "CONTRATOS_SUPERPUESTOS",
+          descIncidencia,
+          now.toISOString(),
+          "PendienteResolucion"
+        ]);
+        return;
+      }
+
+      const activeContract = validContracts[0];
+      const contractualSalary = parseFloat(activeContract[5] || 0);
+      if (contractualSalary <= 0) {
+        incidenciasNuevas.push([
+          "INC-" + Math.floor(100000 + Math.random() * 900000),
+          planillaId,
+          periodoMes,
+          empExpId,
+          empNombre,
+          "SALARIO_INVALIDO",
+          `Empleado ${empNombre} posee salario contractual cero o negativo (L ${contractualSalary}).`,
+          now.toISOString(),
+          "PendienteResolucion"
+        ]);
+        return;
+      }
+
+      // 2. Cálculo de días laborados y proporcionalidad
+      let effectiveStart = periodStart;
+      let effectiveEnd = periodEnd;
+
+      const contractStart = parseSafeDate(activeContract[3]);
+      const contractEnd = parseSafeDate(activeContract[4]);
+
+      if (fechaIngresoExp && fechaIngresoExp > effectiveStart) effectiveStart = fechaIngresoExp;
+      if (contractStart && contractStart > effectiveStart) effectiveStart = contractStart;
+
+      if (fechaSalidaExp && fechaSalidaExp < effectiveEnd) effectiveEnd = fechaSalidaExp;
+      if (contractEnd && contractEnd < effectiveEnd) effectiveEnd = contractEnd;
+
+      let workedDays = daysInPeriod;
+      if (effectiveStart > periodStart || effectiveEnd < periodEnd) {
+        const startDay = effectiveStart > periodStart ? effectiveStart.getDate() : 1;
+        const endDay = effectiveEnd < periodEnd ? effectiveEnd.getDate() : daysInPeriod;
+        workedDays = Math.max(0, endDay - startDay + 1);
+        if (workedDays > daysInPeriod) workedDays = daysInPeriod;
+      }
+
+      // Salario base devengado proporcional
+      const salarioBase = parseFloat(((contractualSalary / daysInPeriod) * workedDays).toFixed(2));
+      const hourlyRate = (contractualSalary / 30 / 8); // Tarifa hora estándar ordinaria
+
+      // 3. Integración de novedades aprobadas [TASK-008]
+      // A. Horas Extras Aprobadas (AprobacionHorasExtras)
+      // Esquema: OvertimeID(0), UserId(1), Nombre(2), Fecha(3), HorasReg(4), HorasAprob(5), Motivo(6), EstadoAprob(7), AprobadoPor(8), PeriodoNominaId(9), EstadoPago(10)
+      let empHorasExtras = 0;
+      let montoHorasExtras = 0;
+      ovtRows.forEach((r, idx) => {
+        const oUser = String(r[1]).trim();
+        const oState = String(r[7]).trim();
+        const oPayment = String(r[10]).trim();
+        const oPeriodId = String(r[9] || "").trim();
+        const oDate = parseSafeDate(r[3]);
+
+        const matchesEmp = (oUser === empExpId || (empUserId && oUser === empUserId));
+        const isApproved = (oState === "Aprobada" || oState === "Aprobado");
+        const notPaid = (oPayment !== "Pagado" && oPayment !== "ProcesadaEnNomina" && !oPeriodId);
+        const inPeriod = oDate ? (oDate >= periodStart && oDate <= periodEnd) : true;
+
+        if (matchesEmp && isApproved && notPaid && inPeriod) {
+          const hApproved = parseFloat(r[5] || r[4] || 0);
+          empHorasExtras += hApproved;
+          // Recargo estándar legal horas extras (25% diurno, promedio 1.25)
+          montoHorasExtras += (hApproved * hourlyRate * 1.25);
+          ovtUpdates.push({ rowIdx: idx + 2, planillaId: planillaId });
+        }
+      });
+      montoHorasExtras = parseFloat(montoHorasExtras.toFixed(2));
+
+      // B. Tardanzas y Ausencias Injustificadas (DeduccionesAsistencia)
+      // Esquema: AsistenciaID(0), Fecha(1), EmpleadoId(2), Nombre(3), HoraEntrada(4), HoraSalida(5), MinutosTardanza(6), EstadoAsistencia(7), Obs(8)
+      let deduccionTardanzas = 0;
+      let deduccionAusencias = 0;
+      attRows.forEach((r, idx) => {
+        const aEmp = String(r[2]).trim();
+        const aDate = parseSafeDate(r[1]);
+        const aStatus = String(r[7]).trim().toLowerCase();
+        const aObs = String(r[8] || "");
+        const inPeriod = aDate ? (aDate >= periodStart && aDate <= periodEnd) : true;
+        const matchesEmp = (aEmp === empExpId || (empUserId && aEmp === empUserId));
+        const notProcessed = !aObs.includes("PROCESADA_NOMINA_");
+
+        if (matchesEmp && inPeriod && notProcessed) {
+          if (aStatus === "ausente" || aStatus === "injustificada" || aStatus === "ausencia injustificada") {
+            // Descuento de un día de salario ordinario
+            deduccionAusencias += (contractualSalary / 30);
+            attUpdates.push({ rowIdx: idx + 2, planillaId: planillaId });
+          } else if (aStatus === "tardanza" || parseInt(r[6] || 0) > 0) {
+            const mins = parseInt(r[6] || 0);
+            if (mins > 15) { // Tolerancia legal superada
+              deduccionTardanzas += (mins / 60) * hourlyRate;
+              attUpdates.push({ rowIdx: idx + 2, planillaId: planillaId });
+            }
+          }
+        }
+      });
+
+      // C. Permisos sin goce de sueldo (SolicitudesVacaciones)
+      // Esquema: SolicitudID(0), ExpedienteID(1), Tipo(2), FechaInicio(3), FechaFin(4), DiasSolicitados(5), Estado(6), AprobadoPor(7), Obs(8)
+      let deduccionPermisosSinSueldo = 0;
+      vacRows.forEach((r, idx) => {
+        const vExp = String(r[1]).trim();
+        const vTipo = String(r[2]).trim().toLowerCase();
+        const vState = String(r[6]).trim().toLowerCase();
+        const vObs = String(r[8] || "");
+        const matchesEmp = (vExp === empExpId || (empUserId && vExp === empUserId));
+        const notProcessed = !vObs.includes("PROCESADA_NOMINA_");
+
+        if (matchesEmp && (vState === "aprobada" || vState === "aprobado") && notProcessed) {
+          if (vTipo.includes("sin goce") || vTipo.includes("no remunerado")) {
+            const dias = parseFloat(r[5] || 1);
+            deduccionPermisosSinSueldo += (dias * (contractualSalary / 30));
+            vacUpdates.push({ rowIdx: idx + 2, planillaId: planillaId });
+          }
+        }
+      });
+
+      // D. Incapacidades Médicas (IncapacidadesMedicas)
+      // Esquema: IncapacidadID(0), ExpedienteID(1), CentroMedico(2), Diagnostico(3), FechaInicio(4), FechaFin(5), DiasOtorgados(6), EstadoIHSS(7), Obs(8)
+      incRows.forEach((r, idx) => {
+        const iExp = String(r[1]).trim();
+        const iState = String(r[7]).trim().toLowerCase();
+        const iObs = String(r[8] || "");
+        const matchesEmp = (iExp === empExpId || (empUserId && iExp === empUserId));
+        const notProcessed = !iObs.includes("PROCESADA_NOMINA_");
+
+        if (matchesEmp && (iState === "aprobado" || iState === "aceptado" || iState === "cubierto") && notProcessed) {
+          incUpdates.push({ rowIdx: idx + 2, planillaId: planillaId });
+        }
+      });
+
+      const bonificaciones = 0;
+      const otrasDed = parseFloat((deduccionTardanzas + deduccionAusencias + deduccionPermisosSinSueldo).toFixed(2));
+
+      // Deducciones de Ley Honduras (IHSS, RAP, ISR sobre base proporcional devengada)
+      const dedIHSS = parseFloat((Math.min(salarioBase, 10317.38) * 0.035).toFixed(2));
+      const dedRAP = parseFloat((Math.max(0, salarioBase - 10317.38) * 0.015).toFixed(2));
+      const dedISR = parseFloat((salarioBase > 20000 ? (salarioBase - 20000) * 0.15 : 0).toFixed(2));
+
+      const totalDevengado = parseFloat((salarioBase + montoHorasExtras + bonificaciones).toFixed(2));
+      const totalDeducciones = parseFloat((dedIHSS + dedRAP + dedISR + otrasDed).toFixed(2));
+      const salarioNeto = parseFloat(Math.max(0, totalDevengado - totalDeducciones).toFixed(2));
+
+      processedRows.push([
+        planillaId,
+        now,
+        periodoMes,
+        empExpId,
+        empNombre,
+        puesto,
+        salarioBase,
+        empHorasExtras,
+        montoHorasExtras,
+        bonificaciones,
+        dedIHSS,
+        dedRAP,
+        dedISR,
+        otrasDed,
+        salarioNeto,
+        "Calculada"
+      ]);
+    });
+
+    if (incidenciasNuevas.length > 0) {
+      incidenciasSheet.getRange(incidenciasSheet.getLastRow() + 1, 1, incidenciasNuevas.length, 9).setValues(incidenciasNuevas);
+    }
+
+    if (processedRows.length > 0) {
+      planSheet.getRange(planSheet.getLastRow() + 1, 1, processedRows.length, 16).setValues(processedRows);
+
+      // 4. Marcar novedades como procesadas garantizando trazabilidad e idempotencia
+      ovtUpdates.forEach(u => {
+        ovtSheet.getRange(u.rowIdx, 10).setValue(u.planillaId);
+        ovtSheet.getRange(u.rowIdx, 11).setValue("ProcesadaEnNomina");
+      });
+
+      attUpdates.forEach(u => {
+        const curObs = String(attSheet.getRange(u.rowIdx, 9).getValue() || "");
+        attSheet.getRange(u.rowIdx, 9).setValue(curObs + ` [PROCESADA_NOMINA_${u.planillaId}]`);
+      });
+
+      vacUpdates.forEach(u => {
+        const curObs = String(vacSheet.getRange(u.rowIdx, 9).getValue() || "");
+        vacSheet.getRange(u.rowIdx, 9).setValue(curObs + ` [PROCESADA_NOMINA_${u.planillaId}]`);
+      });
+
+      incUpdates.forEach(u => {
+        const curObs = String(incSheet.getRange(u.rowIdx, 9).getValue() || "");
+        incSheet.getRange(u.rowIdx, 9).setValue(curObs + ` [PROCESADA_NOMINA_${u.planillaId}]`);
+      });
+    }
+
     return {
       status: "success",
-      planillaId: existingPlan[0],
+      planillaId: planillaId,
       periodoMes: periodoMes,
-      estadoCiclo: existingPlan[15],
-      message: `La planilla para el periodo '${periodoMes}' ya existe con estado '${existingPlan[15]}'.`
+      empleadosProcesados: processedRows.length,
+      incidenciasRegistradas: incidenciasNuevas.length,
+      incidencias: incidenciasNuevas.map(inc => ({ id: inc[0], empleado: inc[4], tipo: inc[5], descripcion: inc[6] })),
+      estadoCiclo: "Calculada",
+      message: `Cálculo preliminar de planilla '${periodoMes}' completado con éxito. Empleados procesados: ${processedRows.length}, Incidencias: ${incidenciasNuevas.length}.`
     };
+  } finally {
+    lock.releaseLock();
   }
-
-  const activeEmployees = expsRows.filter(r => r[8] === "active" || r[8] === "Activo" || r[8] === "EnPeriodoPrueba");
-  if (activeEmployees.length === 0) {
-    throw new Error("No hay empleados activos en estado de nómina elegible.");
-  }
-
-  const now = new Date();
-  const planillaId = "PLN-" + now.getTime();
-
-  const processedRows = [];
-
-  activeEmployees.forEach(e => {
-    const empId = String(e[0]).trim();
-    const empNombre = e[9] || e[3] || "Empleado";
-    const puesto = e[3] || "Personal";
-    const salarioBase = 22000; // Salario estándar base
-    const horasExtras = 0;
-    const montoHorasExtras = 0;
-    const bonificaciones = 0;
-
-    // Deducciones de Ley Honduras (IHSS, RAP, ISR)
-    const dedIHSS = Math.min(salarioBase, 10317.38) * 0.035;
-    const dedRAP = Math.max(0, salarioBase - 10317.38) * 0.015;
-    const dedISR = salarioBase > 20000 ? (salarioBase - 20000) * 0.15 : 0;
-    const otrasDed = 0;
-
-    const totalDevengado = salarioBase + montoHorasExtras + bonificaciones;
-    const totalDeducciones = dedIHSS + dedRAP + dedISR + otrasDed;
-    const salarioNeto = Math.max(0, totalDevengado - totalDeducciones);
-
-    processedRows.push([
-      planillaId,
-      now,
-      periodoMes,
-      empId,
-      empNombre,
-      puesto,
-      salarioBase,
-      horasExtras,
-      montoHorasExtras,
-      bonificaciones,
-      dedIHSS,
-      dedRAP,
-      dedISR,
-      otrasDed,
-      salarioNeto,
-      "Calculada"
-    ]);
-  });
-
-  if (processedRows.length > 0) {
-    planSheet.getRange(planSheet.getLastRow() + 1, 1, processedRows.length, 16).setValues(processedRows);
-  }
-
-  return {
-    status: "success",
-    planillaId: planillaId,
-    periodoMes: periodoMes,
-    empleadosProcesados: processedRows.length,
-    estadoCiclo: "Calculada",
-    message: `Cálculo preliminar de planilla '${periodoMes}' completado con éxito.`
-  };
 }
 
 function updatePayrollPeriodStatus(payload) {
@@ -11815,7 +12082,7 @@ function processEmployeeOffboarding(payload) {
         if (uIdx !== -1) {
           userSheet.getRange(uIdx + 1, 11).setValue("Desactivada"); // Col 11: Estado de cuenta
           const prevObs = String(uData[uIdx][12] || "");
-          userSheet.getRange(uIdx + 1, 13).setValue(prevObs + );
+          userSheet.getRange(uIdx + 1, 13).setValue((prevObs ? prevObs + " | " : "") + "[DESVINCULADO: " + effectiveDateStr + " - " + motivoBaja + "]");
           stepsExecuted.push("Cuenta de usuario desactivada e invalidada en tiempo real");
         }
       }
@@ -11825,7 +12092,7 @@ function processEmployeeOffboarding(payload) {
     expSheet.getRange(expIdx + 1, 8).setValue(effectiveDateStr); // FechaSalida
     expSheet.getRange(expIdx + 1, 9).setValue("Desvinculado"); // EstadoLaboral
     const expObs = String(expRow[9] || "");
-    expSheet.getRange(expIdx + 1, 10).setValue(expObs + );
+    expSheet.getRange(expIdx + 1, 10).setValue((expObs ? expObs + " | " : "") + "[BAJA: " + effectiveDateStr + " - " + motivoBaja + "]");
     stepsExecuted.push("Estado en ExpedientesLaborales actualizado a Desvinculado");
 
     // 4. CERRAR ADSCRIPCIONES EN HistorialAdscripciones
@@ -11837,7 +12104,7 @@ function processEmployeeOffboarding(payload) {
           if (String(adsData[i][1]).trim() === targetUserId && String(adsData[i][7] || "Activa").trim() === "Activa") {
             adsSheet.getRange(i + 1, 6).setValue(effectiveDateStr); // FechaFin
             adsSheet.getRange(i + 1, 8).setValue("Inactiva"); // Estado
-            stepsExecuted.push();
+            stepsExecuted.push("Adscripción " + adsData[i][0] + " cerrada");
           }
         }
       }
@@ -11852,7 +12119,7 @@ function processEmployeeOffboarding(payload) {
           if (String(ambData[i][1]).trim() === targetUserId && String(ambData[i][5] || "Activo").trim() === "Activo") {
             ambSheet.getRange(i + 1, 6).setValue("Inactivo"); // Estado
             if (ambData[i].length >= 10) ambSheet.getRange(i + 1, 10).setValue(effectiveDateStr); // FechaFin
-            stepsExecuted.push();
+            stepsExecuted.push("Ámbito de rol " + ambData[i][0] + " revocado");
           }
         }
       }
@@ -11867,7 +12134,7 @@ function processEmployeeOffboarding(payload) {
           if (String(areaData[i][1]).trim() === targetUserId && String(areaData[i][10] || "Activo").trim() === "Activo") {
             areaSheet.getRange(i + 1, 10).setValue(effectiveDateStr); // FechaFin
             areaSheet.getRange(i + 1, 11).setValue("Inactivo"); // Estado
-            stepsExecuted.push();
+            stepsExecuted.push("Asignación de área docente " + areaData[i][0] + " revocada");
           }
         }
       }
@@ -11878,7 +12145,7 @@ function processEmployeeOffboarding(payload) {
         for (let i = 1; i < coordData.length; i++) {
           if (String(coordData[i][2]).trim() === targetUserId && String(coordData[i][5] || "Activo").trim() === "Activo") {
             coordSheet.getRange(i + 1, 6).setValue("Inactivo"); // Estado
-            stepsExecuted.push();
+            stepsExecuted.push("Coordinación de área " + coordData[i][0] + " desactivada");
           }
         }
       }
@@ -11913,7 +12180,7 @@ function processEmployeeOffboarding(payload) {
       "processEmployeeOffboarding",
       "WARN",
       "EMPLOYEE_OFFBOARDED_CASCADED",
-      ,
+      "Desvinculación laboral en cascada ejecutada para empleado " + targetExpId,
       {
         offboardingBatchId,
         expedienteId: targetExpId,
@@ -11936,7 +12203,7 @@ function processEmployeeOffboarding(payload) {
       stepsExecuted,
       tareasPendientes,
       liquidacionPreliminar,
-      message:
+      message: `Desvinculación laboral coordinada en cascada completada exitosamente para ${targetExpId}.`
     };
   } finally {
     lock.releaseLock();

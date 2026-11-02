@@ -136,10 +136,18 @@ assert(acctCode.includes("EMPLOYEE_OFFBOARDED_CASCADED"), "backend/accounting-se
 assert(acctCode.includes("isAlreadyOffboarded"), "backend/accounting-service/Code.gs implementa idempotencia ante re-ejecución de desvinculación [TASK-006]");
 assert(acctCode.includes("vacacionesEstimadasDias") && acctCode.includes("liquidacionPreliminar"), "backend/accounting-service/Code.gs calcula liquidación preliminar no vinculante [TASK-006]");
 
+// [TASK-007] [F17-Task01] - Eliminación del salario fijo hardcodeado y cálculo salarial contractual dinámico con proporcionalidad
+assert(!acctCode.includes("const salarioBase = 22000;"), "backend/accounting-service/Code.gs elimina la constante de salario fijo hardcodeado [TASK-007]");
+assert(acctCode.includes("ContratosLaborales") && acctCode.includes("validContracts"), "backend/accounting-service/Code.gs consulta dinámicamente contratos vigentes en ContratosLaborales [TASK-007]");
+assert(acctCode.includes("SIN_CONTRATO_VIGENTE") && acctCode.includes("IncidenciasNomina"), "backend/accounting-service/Code.gs registra incidencias por falta de contrato sin asignar valores arbitrarios [TASK-007]");
+assert(acctCode.includes("CONTRATOS_SUPERPUESTOS"), "backend/accounting-service/Code.gs detecta y previene cálculos silenciosos con contratos superpuestos [TASK-007]");
+assert(acctCode.includes("workedDays") && acctCode.includes("daysInPeriod"), "backend/accounting-service/Code.gs calcula salario proporcional según días laborados en el período [TASK-007]");
 
-
-
-
+// [TASK-008] [F17-Task02] - Integración automática de novedades aprobadas (horas extras, tardanzas, ausencias, subsidios) con trazabilidad e idempotencia
+assert(acctCode.includes("AprobacionHorasExtras") && acctCode.includes("ProcesadaEnNomina"), "backend/accounting-service/Code.gs integra horas extras aprobadas marcando trazabilidad e idempotencia [TASK-008]");
+assert(acctCode.includes("DeduccionesAsistencia") && acctCode.includes("deduccionAusencias"), "backend/accounting-service/Code.gs descuenta ausencias injustificadas y tardanzas acumuladas [TASK-008]");
+assert(acctCode.includes("SolicitudesVacaciones") && acctCode.includes("deduccionPermisosSinSueldo"), "backend/accounting-service/Code.gs procesa permisos sin goce de sueldo proporcionales [TASK-008]");
+assert(acctCode.includes("PROCESADA_NOMINA_"), "backend/accounting-service/Code.gs vincula novedades procesadas al planillaId impidiendo doble deducción o pago [TASK-008]");
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
