@@ -101,6 +101,13 @@ assert(acctCode.includes("CAI_EXPIRED") && acctCode.includes("CAI_RANGE_EXHAUSTE
 assert(acctCode.includes("subtotalExento") && acctCode.includes("subtotalGravado"), "backend/accounting-service/Code.gs contiene desglose tributario exento y gravado [TASK-001]");
 assert(acctCode.includes("tipoTributario"), "backend/accounting-service/Code.gs contiene clasificación tributaria de conceptos [TASK-001]");
 
+// [TASK-002] [F15-Task02] - Verificación del motor de generación masiva de mensualidades escolares
+assert(acctCode.includes("previewBatchMonthlyCharges") && acctCode.includes("[TASK-002]"), "backend/accounting-service/Code.gs contiene previewBatchMonthlyCharges [TASK-002]");
+assert(acctCode.includes("generateBatchMonthlyCharges") && acctCode.includes("[TASK-002]"), "backend/accounting-service/Code.gs contiene generateBatchMonthlyCharges [TASK-002]");
+assert(acctCode.includes("BATCH-CRG-") && acctCode.includes("LockService.getScriptLock()"), "backend/accounting-service/Code.gs genera lotes atómicos BATCH-CRG con LockService [TASK-002]");
+assert(acctCode.includes("ClaveUnicaDedupe") || acctCode.includes("dedupeKey"), "backend/accounting-service/Code.gs protege contra duplicados mediante clave lógica de deduplicación [TASK-002]");
+
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

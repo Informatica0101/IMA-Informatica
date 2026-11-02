@@ -1284,3 +1284,23 @@ function renderResumenModule(container) {
     </div>
   `;
 }
+
+
+// [TASK-002] [F15-Task02] - Métodos clientes para simulación y generación masiva de mensualidades escolares
+window.previewBatchMonthlyCharges = async function(payload) {
+  try {
+    return await window.callApi('ACCOUNTING', 'previewBatchMonthlyCharges', payload || {});
+  } catch (error) {
+    console.error('[ACCOUNTING] Error en simulación previa de mensualidades:', error);
+    throw error;
+  }
+};
+
+window.generateBatchMonthlyCharges = async function(payload) {
+  try {
+    return await window.callApi('ACCOUNTING', 'generateBatchMonthlyCharges', payload || {});
+  } catch (error) {
+    console.error('[ACCOUNTING] Error en generación masiva de mensualidades:', error);
+    throw error;
+  }
+};

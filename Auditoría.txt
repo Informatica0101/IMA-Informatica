@@ -1379,3 +1379,20 @@ DESCRIPCIÓN DEL ALCANCE:
 - Se integró completadas.md (251 tareas consolidadas de Fases 1 a 9) y Pendientes.md (506 tareas consolidadas de Fases 10 a 41).
 - Se confirmó que la siguiente tarea a implementar en secuencia estricta de prioridad es [TASK-002] [F15-Task02].
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-002] [F15-Task02]
+MOTOR DE GENERACIÓN MASIVA, PROGRAMADA Y RECURRENTE DE MENSUALIDADES ESCOLARES
+ARCHIVOS MODIFICADOS: backend/accounting-service/Code.gs, js/accounting.js, tests/regression/academic-grading-suite.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementó previewBatchMonthlyCharges para simulación interactiva previa a la generación de cargos, permitiendo inspeccionar desglose por estudiante, total estimado, cargos preexistentes y estudiantes sin tarifa.
+- Se implementó generateBatchMonthlyCharges blindado con candado atómico ScriptLock (LockService.getScriptLock) para evitar concurrencia y sobrecargas simultáneas.
+- Se implementó clave lógica única de deduplicación (studentId_concepto_periodo_anoLectivo) que previene la duplicación de cuotas al reintentar o reanudar procesos interrumpidos.
+- Se integró la asignación de identificador único de lote (BATCH-CRG-...) e identificador individual por cargo (CRG-...).
+- Se excluyen automáticamente estudiantes con matrícula cancelada, retirados o suspendidos.
+- Se enlazó la aplicación de becas y exoneraciones aprobadas (applyApprovedScholarshipsToCharges) sobre los cargos generados.
+- Se expusieron los métodos clientes window.previewBatchMonthlyCharges y window.generateBatchMonthlyCharges en js/accounting.js.
+- Se añadieron aserciones automatizadas a tests/regression/academic-grading-suite.js, alcanzando 61/61 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================

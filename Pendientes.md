@@ -625,7 +625,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-002] [ ] [F15-Task02] Motor de generación masiva, programada y recurrente de mensualidades escolares
+### [TASK-002] [X] [F15-Task02] Motor de generación masiva, programada y recurrente de mensualidades escolares
 - **Origen del Hallazgo:** `AUDITORIA_FASE_15_PAGOS_COBROS_FACTURACION.md` / Sección E (Brecha E.1) y Sección J (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Ciclo de cobranza institucional, prevención de omisiones e integridad financiera)
@@ -680,7 +680,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Se puede consultar el resultado y métricas de cada lote de ejecución masiva.
   - Un estudiante retirado no recibe mensualidades posteriores a la fecha efectiva de retiro.
   - Los cargos históricos permanecen intactos cuando se modifica una tarifa futura.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 ---
