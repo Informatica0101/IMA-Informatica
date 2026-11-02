@@ -3913,3 +3913,16 @@ ARCHIVOS MODIFICADOS:
 3. Pendientes.md:
    - Líneas 995-1030: Marcada tarea [TASK-009] como [X] Completado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+TAREA: [TASK-010] [F17-Task04]
+ARCHIVOS MODIFICADOS:
+1. backend/accounting-service/Code.gs:
+   - Líneas 4805-4850: Implementación del motor de retención progresiva anualizada de ISR (Art. 22 del SAR) sustituyendo cálculo plano de 15%, considerando gastos médicos de L 40,000, cotizaciones anuales IHSS/RAP y tramos progresivos (exento, 15%, 20%, 25%).
+   - Líneas 7100-7115: Parametrización oficial de la regla POL-ISR-SAR en getFiscalPolicies sobre PoliticasFiscales.
+2. tests/regression/academic-grading-suite.js:
+   - Líneas 161-168: Aserciones automatizadas que validan la eliminación de la tasa plana, deducción médica de ley, aplicación de tramos progresivos del SAR y parametrización fiscal.
+3. Pendientes.md:
+   - Líneas 1034-1067: Marcada tarea [TASK-010] como [X] Completado.
+===============================================================================

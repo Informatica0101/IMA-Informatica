@@ -4802,10 +4802,51 @@ function calculatePayrollPeriod(payload) {
       const bonificaciones = 0;
       const otrasDed = parseFloat((deduccionTardanzas + deduccionAusencias + deduccionPermisosSinSueldo).toFixed(2));
 
-      // Deducciones de Ley Honduras (IHSS, RAP, ISR sobre base proporcional devengada)
+      // Deducciones de Ley Honduras (IHSS, RAP)
       const dedIHSS = parseFloat((Math.min(salarioBase, 10317.38) * 0.035).toFixed(2));
       const dedRAP = parseFloat((Math.max(0, salarioBase - 10317.38) * 0.015).toFixed(2));
-      const dedISR = parseFloat((salarioBase > 20000 ? (salarioBase - 20000) * 0.15 : 0).toFixed(2));
+
+      // [TASK-010] [F17-Task04] - Motor de retención progresiva anualizada del Impuesto Sobre la Renta (SAR Art. 22)
+      // 1. Proyección de ingresos anuales gravables (12 meses de salario ordinario contractual más horas extras proyectadas)
+      const annualGross = (contractualSalary * 12) + (montoHorasExtras * 12);
+
+      // 2. Deducciones de ley autorizadas:
+      // - Deducción fija por gastos médicos de ley conforme al Código Tributario / Art. 22: L 40,000.00 anuales
+      // - Cotizaciones anuales del empleado a seguridad social (IHSS y RAP)
+      const annualMedicalDeduction = 40000.00;
+      const annualIHSS = dedIHSS * 12;
+      const annualRAP = dedRAP * 12;
+      const totalAnnualExemptions = annualMedicalDeduction + annualIHSS + annualRAP;
+
+      // 3. Base imponible neta anual proyectada
+      const netTaxableIncome = Math.max(0, annualGross - totalAnnualExemptions);
+
+      // 4. Escala progresiva oficial del SAR Honduras (Art. 22):
+      // Tramo 1: De L 0.01 a L 199,539.96 -> Exento (0%)
+      // Tramo 2: De L 199,539.97 a L 304,324.78 -> 15%
+      // Tramo 3: De L 304,324.79 a L 707,729.04 -> 20%
+      // Tramo 4: De L 707,729.05 en adelante -> 25%
+      let annualTax = 0;
+      const t1Limit = 199539.96;
+      const t2Limit = 304324.78;
+      const t3Limit = 707729.04;
+
+      if (netTaxableIncome > t1Limit) {
+        if (netTaxableIncome <= t2Limit) {
+          annualTax += (netTaxableIncome - t1Limit) * 0.15;
+        } else {
+          annualTax += (t2Limit - t1Limit) * 0.15;
+          if (netTaxableIncome <= t3Limit) {
+            annualTax += (netTaxableIncome - t2Limit) * 0.20;
+          } else {
+            annualTax += (t3Limit - t2Limit) * 0.20;
+            annualTax += (netTaxableIncome - t3Limit) * 0.25;
+          }
+        }
+      }
+
+      // 5. Retención mensual en la fuente del período (impuesto anual proyectado dividido entre 12 meses)
+      const dedISR = parseFloat((annualTax > 0 ? (annualTax / 12) : 0).toFixed(2));
 
       const totalDevengado = parseFloat((salarioBase + montoHorasExtras + bonificaciones).toFixed(2));
       const totalDeducciones = parseFloat((dedIHSS + dedRAP + dedISR + otrasDed).toFixed(2));
@@ -7100,11 +7141,11 @@ function getFiscalPolicies(payload) {
   let rows = getOrCreateSheet(ss, "PoliticasFiscales").getDataRange().getValues().slice(1);
 
   if (rows.length === 0) {
-    // Cargar políticas fiscales hondureñas por defecto (IHSS, RAP, ISR)
+    // Cargar políticas fiscales hondureñas por defecto (IHSS, RAP, ISR Art. 22) [TASK-010]
     const defaults = [
       ["POL-IHSS", "IHSS-EMP", "Retención IHSS Empleado 3.5%", "Retenciones", "Salario Base (Tope L 10,317.38)", "Porcentaje", 0.035, "active", "1.0", "Ley del Seguro Social Honduras"],
       ["POL-RAP", "RAP-EMP", "Aportación RAP Empleado 1.5%", "Aportaciones", "Excedente L 10,317.38", "Porcentaje", 0.015, "active", "1.0", "Régimen de Aportaciones Privadas"],
-      ["POL-ISR", "ISR-RET", "Impuesto Sobre la Renta (ISR)", "Impuestos", "Proyección Anual Gravable", "Tramos Gravables", 0.15, "active", "1.0", "Código Tributario Honduras"]
+      ["POL-ISR-SAR", "ISR-RET-PROGRESSIVE", "Impuesto Sobre la Renta Progresivo SAR (Art. 22)", "Impuestos", "Proyección Anual Gravable con deducciones de ley", "Escala Progresiva SAR", 0, "active", "2026.1", "Tramos: Exento hasta L 199,539.96 | 15% hasta L 304,324.78 | 20% hasta L 707,729.04 | 25% excedente | Gastos médicos ley: L 40,000.00"]
     ];
     const sheet = getOrCreateSheet(ss, "PoliticasFiscales");
     sheet.getRange(2, 1, defaults.length, 10).setValues(defaults);

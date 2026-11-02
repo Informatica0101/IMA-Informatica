@@ -1031,7 +1031,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-010] [ ] [F17-Task04] Sustituir el cálculo simplificado del ISR por un motor de retención progresiva y anualizada
+### [TASK-010] [X] [F17-Task04] Sustituir el cálculo simplificado del ISR por un motor de retención progresiva y anualizada
 - **Origen del Hallazgo:** `AUDITORIA_FASE_17_PLANILLAS_COMPENSACIONES.md` / Sección C (C.1), Sección E (Brecha E.3) y Sección G (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Cumplimiento tributario con el SAR, retención progresiva y prevención de multas)
@@ -1064,7 +1064,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Los resultados se contrastan y coinciden con cálculos independientes basados en los parámetros oficiales del ejercicio del SAR.
   - La retención de un período no sobrescribe las retenciones históricas de meses anteriores.
   - La actualización de la tabla tributaria para un nuevo año fiscal no altera los cálculos de planillas cerradas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 ---

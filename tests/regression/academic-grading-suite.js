@@ -156,6 +156,13 @@ assert(acctCode.includes("costoLaboralTotal"), "backend/accounting-service/Code.
 assert(acctCode.includes("Gasto de Aportaciones Patronales") && acctCode.includes("Obligaciones Patronales por Pagar"), "backend/accounting-service/Code.gs genera asiento contable equilibrado con cuentas patronales por partida doble [TASK-009]");
 assert(acctCode.includes("totalCostoLaboralInstitucional"), "backend/accounting-service/Code.gs desglosa costo laboral institucional en el resumen de nómina [TASK-009]");
 
+// [TASK-010] [F17-Task04] - Sustitución del cálculo plano de ISR por motor progresivo anualizado SAR Art. 22
+assert(!acctCode.includes("(salarioBase - 20000) * 0.15"), "backend/accounting-service/Code.gs elimina el cálculo plano del 15% sobre excedente de 20k [TASK-010]");
+assert(acctCode.includes("annualMedicalDeduction = 40000") && acctCode.includes("totalAnnualExemptions"), "backend/accounting-service/Code.gs deduce gastos médicos de ley (L 40,000) y cotizaciones sociales [TASK-010]");
+assert(acctCode.includes("199539.96") && acctCode.includes("304324.78") && acctCode.includes("707729.04"), "backend/accounting-service/Code.gs aplica la escala progresiva por tramos oficial del SAR (Art. 22) [TASK-010]");
+assert(acctCode.includes("annualTax / 12"), "backend/accounting-service/Code.gs proyecta y prorratea el impuesto anual en retenciones mensuales [TASK-010]");
+assert(acctCode.includes("POL-ISR-SAR") && acctCode.includes("Escala Progresiva SAR"), "backend/accounting-service/Code.gs parametriza la escala progresiva del SAR en PoliticasFiscales [TASK-010]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

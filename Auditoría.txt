@@ -1545,3 +1545,45 @@ RESULTADO DE EVALUACIÓN:
 - Pruebas automatizadas actualizadas en tests/regression/academic-grading-suite.js pasando al 100% (96/96 pruebas pasadas).
 - Estado: Completado y Verificado funcionalmente.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+AUDITORIA INICIAL — [TASK-010] [F17-Task04]
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (calculatePayrollPeriod, l. 4807, configureFiscalPolicy, getFiscalPolicies)
+- Estructuras: PoliticasFiscales, PlanillasNomenclatura
+HALLAZGOS:
+1. En backend/accounting-service/Code.gs (calculatePayrollPeriod, l. 4807): El cálculo actual aplica una deducción fija simplificada:
+   'const dedISR = parseFloat((salarioBase > 20000 ? (salarioBase - 20000) * 0.15 : 0).toFixed(2));'
+   Esto infringe la Ley de Impuesto Sobre la Renta de Honduras (Art. 22), al ignorar la escala de tramos progresivos (exento, 15%, 20%, 25%), los gastos médicos deducibles por ley (L 40,000 anuales) y las deducciones de seguridad social (IHSS y RAP).
+2. Omisión de cálculo progresivo anualizado: Para retener correctamente el ISR en la fuente, los ingresos ordinarios del trabajador deben proyectarse a 12 meses, deducir los gastos médicos de ley autorizados (L 40,000.00) y las cotizaciones anuales al IHSS/RAP, aplicar la escala progresiva por tramos del SAR y dividir el impuesto anual resultante entre 12 meses.
+3. Parametrización en PoliticasFiscales: La tabla PoliticasFiscales no contiene la definición estructurada de los tramos progresivos del SAR (Art. 22) ni gastos médicos de ley autorizados para permitir su actualización anual sin modificar código duro.
+ESTADO: Auditoría finalizada. Procediendo con la implementación del motor de retención progresiva anualizada del ISR conforme al Art. 22 del SAR.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-010] [F17-Task04]
+MOTOR DE RETENCIÓN PROGRESIVA ANUALIZADA DE ISR (SAR ART. 22)
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (calculatePayrollPeriod, getFiscalPolicies)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt / Auditoría.txt / ChangesLogs.txt
+RESULTADO DE EVALUACIÓN:
+- Se eliminó el porcentaje plano del 15% sobre el excedente de L 20,000.00 en calculatePayrollPeriod.
+- Se implementó el motor de retención progresiva anualizada conforme al Artículo 22 de la Ley de Impuesto Sobre la Renta de Honduras:
+  * Proyección de ingresos brutos anuales (12 meses de salario ordinario contractual más horas extras proyectadas).
+  * Deducción legal fija por gastos médicos de L 40,000.00 anuales.
+  * Deducción de aportaciones anuales del trabajador a la seguridad social (IHSS y RAP).
+  * Determinación de base imponible neta anual proyectada.
+  * Aplicación de la escala oficial progresiva del SAR:
+    - Tramo 1 (hasta L 199,539.96): Exento (0%).
+    - Tramo 2 (L 199,539.97 a L 304,324.78): 15%.
+    - Tramo 3 (L 304,324.79 a L 707,729.04): 20%.
+    - Tramo 4 (excedente de L 707,729.04): 25%.
+  * Retención mensual exacta en la fuente prorrateada en 12 meses.
+- Se parametrizó la política 'POL-ISR-SAR' en getFiscalPolicies dentro de PoliticasFiscales.
+- Pruebas automatizadas añadidas en tests/regression/academic-grading-suite.js pasando al 100% (101/101 pruebas pasadas).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
