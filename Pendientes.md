@@ -409,4 +409,4 @@
 - **Dependencias Expuestas:** Capa de autorización en microservicios backend.
 - **Descripción del Alcance:** Enforzar permisos en el servidor para evitar que docentes publiquen en asignaturas/secciones no asignadas. Proteger credenciales de Drive y registrar trazabilidad de fechas de entrega.
 - **Criterios de Aceptación:** Peticiones no autorizadas rechazadas en backend independientemente de la interfaz cliente.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada

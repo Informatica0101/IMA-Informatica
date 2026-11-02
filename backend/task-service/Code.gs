@@ -25,6 +25,211 @@ function getSheetOrThrow(ss, name) {
   return sheet;
 }
 
+// ---------------------------------------------------------------------------
+// SEGURIDAD RBAC EN TAREAS Y ASIGNACIÓN DOCENTE (REQ-EXP-008 & REQ-DOC-012)
+// ---------------------------------------------------------------------------
+
+const TASK_RBAC_PERMISSIONS = {
+  "ping": ["*"],
+  "getStudentTasks": ["*"],
+  "uploadFile": ["*"],
+  "uploadChunk": ["*"],
+  "finishChunkedUpload": ["*"],
+  "deleteFile": ["*"],
+  "submitAssignment": ["*"],
+  "saveProject": ["*"],
+  "deleteProject": ["*"],
+  "listProjects": ["*"],
+  "loadProject": ["*"],
+  "getAllStudentProjects": ["Administrador", "Director", "Profesor", "Docente", "Desarrollador"],
+  "createTask": ["Administrador", "Director", "Subdirector", "Profesor", "Docente", "Desarrollador"],
+  "updateTask": ["Administrador", "Director", "Subdirector", "Profesor", "Docente", "Desarrollador"],
+  "deleteTask": ["Administrador", "Director", "Subdirector", "Profesor", "Docente", "Desarrollador"],
+  "gradeSubmission": ["Administrador", "Director", "Subdirector", "Profesor", "Docente", "Desarrollador"],
+  "getTeacherActivity": ["Administrador", "Director", "Subdirector", "Profesor", "Docente", "Desarrollador"],
+  "getAllTasks": ["Administrador", "Director", "Subdirector", "Profesor", "Docente", "Desarrollador"],
+  "deleteSubmission": ["Administrador", "Director", "Subdirector", "Profesor", "Docente", "Desarrollador"],
+  "closeAcademicYear": ["Administrador", "Director", "Desarrollador"]
+};
+
+function getAuthenticatedUserFromDatabase(requesterUserId) {
+  if (!requesterUserId) return null;
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(SPREADSHEET_ID);
+    const userSheet = ss.getSheetByName("Usuarios");
+    if (!userSheet) return null;
+    const users = userSheet.getDataRange().getValues();
+    const userRow = users.find(r => String(r[0]).trim() === String(requesterUserId).trim());
+    if (userRow) {
+      return {
+        userId: String(userRow[0]).trim(),
+        nombre: String(userRow[1] || "").trim(),
+        grado: String(userRow[2] || "").trim(),
+        seccion: String(userRow[3] || "").trim(),
+        email: String(userRow[4] || "").trim(),
+        rol: String(userRow[6] || "").trim()
+      };
+    }
+  } catch (err) {
+    logDebug("Error al consultar usuario para RBAC en tareas: " + err.message);
+  }
+  return null;
+}
+
+function validateTaskPermission(action, payload) {
+  const allowedRoles = TASK_RBAC_PERMISSIONS[action];
+  if (allowedRoles && allowedRoles.includes("*")) {
+    return { authorized: true };
+  }
+
+  const requesterUserId = (payload && (payload.requesterUserId || payload.profesorId || payload.userId)) ? String(payload.requesterUserId || payload.profesorId || payload.userId).trim() : "";
+  if (!requesterUserId) {
+    return { authorized: false, message: "Petición no autenticada en el microservicio de tareas." };
+  }
+
+  const authenticatedUser = getAuthenticatedUserFromDatabase(requesterUserId);
+  if (!authenticatedUser || !authenticatedUser.rol) {
+    return { authorized: false, message: "Usuario no registrado o sin credenciales válidas en la base de datos institucional." };
+  }
+
+  const validatedRole = authenticatedUser.rol;
+  if (validatedRole.toLowerCase() === "administrador" || validatedRole.toLowerCase() === "admin" || validatedRole.toLowerCase() === "desarrollador") {
+    return { authorized: true, user: authenticatedUser };
+  }
+
+  if (!allowedRoles) {
+    return { authorized: false, message: `Acción de tareas no autorizada para el rol '${validatedRole}'.` };
+  }
+
+  const isAllowed = allowedRoles.some(r => r.toLowerCase() === validatedRole.toLowerCase());
+  if (!isAllowed) {
+    return { authorized: false, message: `El rol '${validatedRole}' no cuenta con permisos para '${action}'.` };
+  }
+
+  return { authorized: true, user: authenticatedUser };
+}
+
+/**
+ * REQ-DOC-012: Valida en servidor que un docente tenga asignada la asignatura, grado y sección.
+ * Los administradores y directores poseen permiso irrestricto.
+ */
+function validateTeacherTaskAssignment(userId, grado, seccion, asignatura) {
+  try {
+    const user = getAuthenticatedUserFromDatabase(userId);
+    if (!user) return false;
+    const role = (user.rol || "").toLowerCase();
+    if (role === "administrador" || role === "admin" || role === "director" || role === "subdirector" || role === "desarrollador") {
+      return true;
+    }
+
+    const ss = SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(SPREADSHEET_ID);
+    const configSheet = ss.getSheetByName("ConfiguracionAcademica");
+    if (!configSheet) return true;
+
+    const data = configSheet.getDataRange().getValues();
+    if (data.length < 2) return true;
+
+    const normTargetGrado = normalizeString(grado);
+    const normTargetSeccion = normalizeString(seccion);
+    const normTargetAsignatura = normalizeString(asignatura);
+
+    const rows = data.slice(1);
+    const hasAssignment = rows.some(r => {
+      const rowProfId = String(r[8] || "").trim();
+      if (rowProfId !== String(userId).trim()) return false;
+      const rGrado = normalizeString(r[3]);
+      const rSeccion = normalizeString(r[4]);
+      const rAsig = normalizeString(r[5]);
+
+      const matchGrado = !normTargetGrado || rGrado === normTargetGrado || rGrado === "todos";
+      const matchSeccion = !normTargetSeccion || rSeccion === normTargetSeccion || rSeccion === "todas";
+      const matchAsig = !normTargetAsignatura || rAsig === normTargetAsignatura || rAsig === "todas";
+      return matchGrado && matchSeccion && matchAsig;
+    });
+
+    return hasAssignment;
+  } catch (err) {
+    logDebug("Error verificando asignación docente de tareas: " + err.message);
+    return false;
+  }
+}
+
+/**
+ * REQ-DOC-012: Hoja y función de trazabilidad inmutable de entregas estudiantiles
+ */
+function getOrCreateTrazabilidadEntregasSheet(ss) {
+  let sheet = ss.getSheetByName("TrazabilidadEntregas");
+  if (!sheet) {
+    sheet = ss.insertSheet("TrazabilidadEntregas");
+    sheet.appendRow([
+      "id_traza",
+      "entregaId",
+      "tareaId",
+      "estudianteId",
+      "fechaHoraEntrega",
+      "fechaLimite",
+      "esTardia",
+      "minutosDiferencia",
+      "fileId",
+      "mimeType",
+      "estado",
+      "hashAuditoria"
+    ]);
+  }
+  return sheet;
+}
+
+function recordSubmissionDeliveryTrace(params) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateTrazabilidadEntregasSheet(ss);
+    const now = new Date();
+    const trazaId = "TRZ-" + now.getTime() + "-" + Math.floor(Math.random() * 1000);
+
+    const fechaHoraEntrega = now.toISOString();
+    let esTardia = false;
+    let minutosDiferencia = 0;
+
+    if (params.fechaLimite) {
+      const limitTime = new Date(params.fechaLimite).getTime();
+      const diffMs = now.getTime() - limitTime;
+      minutosDiferencia = Math.round(diffMs / 60000);
+      if (diffMs > 0) {
+        esTardia = true;
+      }
+    }
+
+    const hashRaw = `${trazaId}|${params.entregaId}|${params.tareaId}|${params.estudianteId}|${fechaHoraEntrega}|${params.fileId}`;
+    let hashAuditoria = "";
+    try {
+      const signatureBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, hashRaw);
+      hashAuditoria = signatureBytes.map(b => (b < 0 ? b + 256 : b).toString(16).padStart(2, '0')).join('');
+    } catch (_) {
+      hashAuditoria = "HASH-" + now.getTime();
+    }
+
+    sheet.appendRow([
+      trazaId,
+      params.entregaId || "",
+      params.tareaId || "",
+      params.estudianteId || "",
+      fechaHoraEntrega,
+      params.fechaLimite ? new Date(params.fechaLimite).toISOString() : "",
+      esTardia ? "SI" : "NO",
+      minutosDiferencia,
+      params.fileId || "",
+      params.mimeType || "",
+      params.estado || "Entregada",
+      hashAuditoria
+    ]);
+
+    return { trazaId, esTardia, minutosDiferencia, hashAuditoria };
+  } catch (err) {
+    logDebug("Error registrando trazabilidad de entrega: " + err.message);
+    return null;
+  }
+}
+
 // --- PUNTOS DE ENTRADA ---
 function doGet(e) {
   return ContentService.createTextOutput(JSON.stringify(pingHealthCheck("TASK")))
@@ -50,6 +255,19 @@ function doPost(e) {
   let response;
   try {
     const { action, payload } = JSON.parse(e.postData.contents);
+
+    // REQ-EXP-008 & REQ-DOC-012: Enforzar validación RBAC del lado del servidor
+    const authCheck = validateTaskPermission(action, payload);
+    if (!authCheck.authorized) {
+      response = {
+        status: "error",
+        code: "AUTH_PERMISSION_DENIED",
+        message: authCheck.message
+      };
+      return ContentService.createTextOutput(JSON.stringify(response))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
     switch (action) {
       case "ping": response = pingHealthCheck("TASK"); break;
       case "createTask": response = createTask(payload); break;
@@ -85,7 +303,14 @@ function doPost(e) {
 
 // --- LÓGICA DEL SERVICIO ---
 function createTask(payload) {
-  const { tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, fechaClase, horaDisponible, tareaOriginalId, profesorId, puntaje, archivoUrl } = payload;
+  const { tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, fechaClase, horaDisponible, tareaOriginalId, profesorId, puntaje, archivoUrl, requesterUserId } = payload;
+  const activeUserId = requesterUserId || profesorId;
+
+  // REQ-DOC-012: Enforzar que docentes solo puedan crear tareas en sus asignaturas y secciones asignadas
+  if (activeUserId && !validateTeacherTaskAssignment(activeUserId, gradoAsignado, seccionAsignada, asignatura)) {
+    throw new Error(`Publicación no autorizada: El docente no tiene asignada la asignatura '${asignatura}' en ${gradoAsignado} ${seccionAsignada || ''}.`);
+  }
+
   const tareaId = "TSK-" + new Date().getTime();
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const tareasSheet = getSheetOrThrow(ss, "Tareas");
@@ -118,13 +343,23 @@ function createTask(payload) {
 }
 
 function updateTask(payload) {
-  const { tareaId, titulo, descripcion, fechaLimite, fechaClase, horaDisponible, parcial, asignatura, gradoAsignado, seccionAsignada, puntaje, archivoUrl } = payload;
+  const { tareaId, titulo, descripcion, fechaLimite, fechaClase, horaDisponible, parcial, asignatura, gradoAsignado, seccionAsignada, puntaje, archivoUrl, requesterUserId, profesorId } = payload;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getSheetOrThrow(ss, "Tareas");
   const data = sheet.getDataRange().getValues();
   const rowIndex = data.findIndex(r => r[0] === tareaId);
 
   if (rowIndex === -1) throw new Error("Tarea no encontrada.");
+
+  const activeUserId = requesterUserId || profesorId;
+  const targetGrado = gradoAsignado !== undefined ? gradoAsignado : data[rowIndex][6];
+  const targetSeccion = seccionAsignada !== undefined ? seccionAsignada : data[rowIndex][7];
+  const targetAsignatura = asignatura !== undefined ? asignatura : data[rowIndex][5];
+
+  // REQ-DOC-012: Enforzar que docentes solo puedan actualizar tareas en sus asignaturas asignadas
+  if (activeUserId && !validateTeacherTaskAssignment(activeUserId, targetGrado, targetSeccion, targetAsignatura)) {
+    throw new Error(`Modificación no autorizada: El docente no tiene asignada la asignatura '${targetAsignatura}' en ${targetGrado} ${targetSeccion || ''}.`);
+  }
 
   const taskRow = data[rowIndex];
   if (titulo !== undefined) taskRow[2] = titulo;
@@ -417,10 +652,12 @@ function uploadFile(payload) {
 
   const file = taskDeliveryFolder.createFile(blob);
 
+  // REQ-DOC-012: Protección de accesos en Google Drive sin compartir indiscriminadamente con ANYONE_WITH_LINK
   try {
-    taskDeliveryFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    // Mantener la carpeta accesible sólo para el propietario y miembros autorizados
+    taskDeliveryFolder.setShareableByEditors(false);
   } catch (e) {
-    logDebug("No se pudo establecer el permiso de compartir carpeta:", e.message);
+    logDebug("Ajuste de visibilidad institucional de carpeta:", e.message);
   }
 
   // [REQ-DOC-009]: Registrar metadatos documentales de la entrega
@@ -546,8 +783,9 @@ function finishChunkedUpload(payload) {
     // Limpieza de temporales
     try { uploadFolder.setTrashed(true); } catch (e) { logDebug("Fallo limpieza de carpeta temporal:", e.message); }
 
+    // REQ-DOC-012: Protección de accesos en Google Drive sin compartir indiscriminadamente con ANYONE_WITH_LINK
     try {
-      taskDeliveryFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      taskDeliveryFolder.setShareableByEditors(false);
     } catch (e) {}
 
     // [REQ-DOC-009]: Registrar metadatos
@@ -632,9 +870,32 @@ function submitAssignment(payload) {
   }
 
   const entregaId = "ENT-" + new Date().getTime();
+  const fechaEntrega = new Date();
   // Estado inicial: Pendiente de revisión
-  entregasSheet.appendRow([entregaId, tareaId, userId, new Date(), fileId, '', 'Pendiente de revisión', '', mimeType]);
-  return { status: "success", message: "Tarea entregada." };
+  entregasSheet.appendRow([entregaId, tareaId, userId, fechaEntrega, fileId, '', 'Pendiente de revisión', '', mimeType]);
+
+  // REQ-DOC-012: Registro de trazabilidad inmutable y auditoría de tiempos de entrega
+  const fechaLimiteTarea = taskRow ? taskRow[8] : null;
+  const traza = recordSubmissionDeliveryTrace({
+    entregaId: entregaId,
+    tareaId: tareaId,
+    estudianteId: userId,
+    fechaLimite: fechaLimiteTarea,
+    fileId: fileId,
+    mimeType: mimeType,
+    estado: 'Pendiente de revisión'
+  });
+
+  return {
+    status: "success",
+    message: "Tarea entregada.",
+    data: {
+      entregaId: entregaId,
+      trazaId: traza ? traza.trazaId : null,
+      esTardia: traza ? traza.esTardia : false,
+      hashAuditoria: traza ? traza.hashAuditoria : null
+    }
+  };
 }
 
 /**

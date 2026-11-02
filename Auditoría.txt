@@ -1345,3 +1345,21 @@ Sector: Evaluación de desempeño estudiantil, analítica psicométrica y contro
 Hallazgo [Alto]: Carencia de penalización explícita del 50% para tareas y actividades entregadas con posterioridad a la fecha límite, ausencia de métricas psicométricas y analíticas (ICR: Índice de Cumplimiento de Responsabilidades, GP: Grado de Participación, y Mastery: Dominio Académico) en la vista de desempeño, y falta de segregación estricta entre el índice de asistencia estudiantil y las notas académicas, con riesgo de computar ausencias de registros como ceros absolutos en el cálculo global.
 Impacto: Distorsión en las calificaciones acumuladas de los alumnos al no reflejar el impacto de la puntualidad ni diferenciar la falta de asistencia respecto a la inactividad académica o asignaturas no evaluadas.
 Recomendación: En 'backend/academic-service/Code.gs', crear la hoja 'AsistenciaEstudiantes' e implementar 'recordStudentAttendance' y 'getStudentAttendanceSummary' con cálculo ponderado neto (Presente 100%, Tardanza 50%, Justificada 80%) y retorno de 'null' cuando no existan sesiones registradas. En 'js/api.js', enlazar 'window.recordStudentAttendance' y 'window.getStudentAttendanceSummary'. En 'js/student.js', implementar la penalización del 50% para entregas tardías, calcular las métricas ICR, GP y Mastery, e integrar una tarjeta analítica segregada para el control de asistencia.
+
+REGISTRO DE AUDITORÍA - SEGURIDAD EN SERVIDOR, PERMISOS Y TRAZABILIDAD DE CONTENIDOS (REQ-DOC-012) - Sun Nov 1 2026
+
+Archivo: backend/academic-service/Code.gs, backend/task-service/Code.gs, js/api.js
+Sector: Seguridad backend, control de acceso RBAC, protección de archivos en Google Drive y trazabilidad inmutable de entregas
+Hallazgo [Crítico]:
+1. 'backend/academic-service/Code.gs' y 'backend/task-service/Code.gs' carecían de validación de identidad y rol RBAC en sus puntos de entrada 'doPost'. Las peticiones no autorizadas o que no provenían de usuarios con roles legítimos no eran interceptadas ni validadas contra la base de datos de 'Usuarios'.
+2. Docentes podían potencialmente publicar tareas ('createTask') o guías de estudio ('createOrUpdateStudyGuide') para grados, secciones o asignaturas en las que no tenían asignación académica formal según 'ConfiguracionAcademica', ya que el backend no cruzaba las credenciales y el alcance docente asignado.
+3. Las entregas de tareas ('submitAssignment') en 'backend/task-service/Code.gs' no registraban una pista de auditoría inmutable de trazabilidad de tiempos, fechas y estados que certificara de forma auditada entregas a tiempo versus extemporáneas en una hoja independiente de trazabilidad.
+4. Se configuraban permisos de acceso público 'ANYONE_WITH_LINK' sobre carpetas y archivos en Google Drive ('uploadFile', 'finishChunkedUpload') debilitando el aislamiento y la privacidad institucional de las tareas y archivos de los alumnos.
+Impacto:
+Vulnerabilidad de suplantación y alteración de contenidos por parte de usuarios no autorizados, descontrol en la publicación docente fuera de su carga académica, debilidad probatoria en disputas sobre fechas y horas de entrega de tareas estudiantiles, y exposición de archivos de Drive a accesos no controlados.
+Recomendación:
+1. Implementar en 'backend/academic-service/Code.gs' y 'backend/task-service/Code.gs' matrices de control de acceso RBAC y funciones de validación de identidad 'validateAcademicPermission' y 'validateTaskPermission' que verifiquen el rol contra la hoja 'Usuarios', devolviendo 'AUTH_PERMISSION_DENIED' en caso de infracción.
+2. En 'createTask', 'updateTask' y 'createOrUpdateStudyGuide', verificar si el usuario es Docente/Profesor y rechazar la acción si la asignatura, grado o sección no coinciden con su carga en 'ConfiguracionAcademica' (permitiendo bypass a Administrador/Director).
+3. Crear la estructura tabular 'TrazabilidadEntregas' y registrar formalmente cada intento o entrega completada con metadatos de tiempo, fecha límite, estado de puntualidad y hash identificador SHA-256.
+4. Restringir la exposición de enlaces públicos en Drive, manteniendo los accesos confinados a la organización o a los usuarios vinculados.
+5. Garantizar en 'js/api.js' la inyección consistente de credenciales de usuario y manejo elegante de respuestas denegadas.
