@@ -927,3 +927,41 @@ RESULTADO DE EVALUACIÓN:
 - Pruebas automatizadas en tests/regression/academic-grading-suite.js alcanzando 121/121 pruebas aprobadas (100.0%).
 - Estado: Completado y Verificado funcionalmente.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+AUDITORIA INICIAL — [TASK-015] [F18-Task04]
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (createPurchaseOrder, approvePurchaseOrder, getPurchaseOrders, l. 6230-6320)
+- Estructura: OrdenesCompra (12 columnas actuales)
+HALLAZGOS:
+1. Ausencia de documento PDF oficial: Las órdenes de compra se almacenan únicamente como datos en la hoja OrdenesCompra. No existe la función generatePurchaseOrderPDF que elabore el comprobante formal descargable e imprimible con identidad institucional de New Generation.
+2. Ciclo de estados incompleto y rígido: Actualmente approvePurchaseOrder solo cambia el estado arbitrariamente según el payload recibido ('Aprobada', 'Rechazada'), sin gobernar la secuencia legal: Borrador -> PendienteAprobacion -> Aprobada -> Emitida -> EnviadaProveedor -> AceptadaProveedor/RechazadaProveedor -> PendienteRecepcion -> RecibidaParcial -> RecibidaTotal -> Cerrada/Cancelada.
+3. Riesgo de emisión y despacho sin aprobación: El sistema no valida que una orden deba estar obligatoriamente en estado 'Aprobada' antes de poder transicionar a 'Emitida' o 'EnviadaProveedor'.
+4. Carencia de versionado documental: Si una orden aprobada sufre ajustes de partidas o fechas, el registro se sobreescribe sin mantener número de versión ni auditoría de ediciones documentales previas.
+ESTADO: Auditoría finalizada. Procediendo con la implementación de generatePurchaseOrderPDF, ampliación de estados con validación de transiciones y versionado documental.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-015] [F18-Task04]
+DOCUMENTOS PDF OFICIALES PARA ÓRDENES DE COMPRA Y AMPLIACIÓN DE CICLO DE ESTADOS
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (generatePurchaseOrderPDF, approvePurchaseOrder, createPurchaseOrder, doPost, ROLE_PERMISSIONS)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt / Auditoría.txt / ChangesLogs.txt
+RESULTADO DE EVALUACIÓN:
+- Implementación de generatePurchaseOrderPDF para formalización contractual de compras:
+  * Membrete institucional: 'New Generation Bilingual School and Institute'.
+  * Correlativo oficial ORD-CMP-...
+  * Datos completos del proveedor (Razón Social, RTN, Teléfono, Email).
+  * Desglose de partidas (código, descripción, cantidad, unidad de medida, precio unitario, subtotal e impuesto ISV 15%).
+  * Moneda oficial HNL (Lempiras) y firmas autorizadas de la Dirección y Contabilidad Institucional.
+- Soporte de versionado documental inmutable: incremento progresivo (v1.0 -> v1.1) en la columna VersionDocumental y almacenamiento de ArchivoPdfUrl sin sobrescribir archivos previos.
+- Ampliación del ciclo de estados a 13 etapas legales en approvePurchaseOrder:
+  * 'Borrador' -> 'PendienteAprobacion' -> 'Aprobada' -> 'Emitida' -> 'EnviadaProveedor' -> 'AceptadaProveedor' / 'RechazadaProveedor' -> 'PendienteRecepcion' -> 'RecibidaParcial' -> 'RecibidaTotal' -> 'EnDisputa' -> 'Cerrada' -> 'Cancelada'.
+  * Bloqueo estricto de transiciones no autorizadas: una orden no puede transicionar a 'Emitida' o 'EnviadaProveedor' si no cuenta con aprobación formal ('Aprobada').
+- Cobertura de pruebas automatizadas en tests/regression/academic-grading-suite.js alcanzando 126/126 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================

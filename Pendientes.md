@@ -1247,7 +1247,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-015] [ ] [F18-Task04] Implementar documentos PDF oficiales para órdenes de compra y ampliar su ciclo de estados
+### [TASK-015] [X] [F18-Task04] Implementar documentos PDF oficiales para órdenes de compra y ampliar su ciclo de estados
 - **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección B (B.3), Sección E y Sección G (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Formalización contractual de adquisiciones y emisión documental oficial)
@@ -1274,7 +1274,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Se impide enviar al proveedor o emitir una orden que no haya sido formalmente aprobada.
   - Se pueden registrar la aceptación o rechazo formal del proveedor con fecha y motivo.
   - Una orden parcialmente recibida refleja con exactitud el estado `RecibidaParcial`.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 ---

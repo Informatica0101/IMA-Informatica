@@ -192,6 +192,13 @@ assert(accountingClientCode.includes("renderComprasOrdenesView") && accountingCl
 assert(accountingClientCode.includes("renderComprasThreeWayView") && accountingClientCode.includes("executeThreeWayMatchTest"), "js/accounting.js implementa interfaz visual de Three-Way Matching [TASK-014]");
 assert(accountingClientCode.includes("renderComprasProveedoresView"), "js/accounting.js integra directorio operativo de proveedores [TASK-014]");
 
+// [TASK-015] [F18-Task04] - Documentos PDF oficiales para órdenes de compra y ciclo ampliado de estados
+assert(acctCode.includes("generatePurchaseOrderPDF") && acctCode.includes("[TASK-015]"), "backend/accounting-service/Code.gs contiene función generatePurchaseOrderPDF [TASK-015]");
+assert(acctCode.includes("VersionDocumental") && acctCode.includes("ArchivoPdfUrl"), "backend/accounting-service/Code.gs soporta versionado documental y almacenamiento PDF [TASK-015]");
+assert(acctCode.includes("EnviadaProveedor") && acctCode.includes("AceptadaProveedor") && acctCode.includes("RechazadaProveedor"), "backend/accounting-service/Code.gs amplía el ciclo de estados formales de compra [TASK-015]");
+assert(acctCode.includes("La orden debe estar previamente 'Aprobada'"), "backend/accounting-service/Code.gs bloquea emisión/envío al proveedor de órdenes no aprobadas [TASK-015]");
+assert(acctCode.includes("New Generation Bilingual School and Institute"), "backend/accounting-service/Code.gs emite documento formal con identidad institucional de New Generation [TASK-015]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

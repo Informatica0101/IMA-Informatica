@@ -3979,3 +3979,19 @@ ARCHIVOS MODIFICADOS:
 3. Pendientes.md:
    - Líneas 1209-1247: Marcada tarea [TASK-014] como [X] Completado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+TAREA: [TASK-015] [F18-Task04]
+ARCHIVOS MODIFICADOS:
+1. backend/accounting-service/Code.gs:
+   - Línea 154: Ampliación de columnas en OrdenesCompra agregando 'SolicitanteUserId', 'VersionDocumental' y 'ArchivoPdfUrl'.
+   - Líneas 197, 201, 624: Habilitación de 'generatePurchaseOrderPDF' en permisos RBAC y switch doPost.
+   - Líneas 6235-6265: createPurchaseOrder inicializa estado en 'Borrador' y versión documental '1.0'.
+   - Líneas 6268-6330: approvePurchaseOrder amplía ciclo a 13 estados formales y bloquea transiciones a 'Emitida' o 'EnviadaProveedor' sin aprobación previa formal.
+   - Líneas 6332-6420: Implementación de generatePurchaseOrderPDF con estructura formal de New Generation, desglose tributario, cálculo de subtotales y versionado documental incremental.
+2. tests/regression/academic-grading-suite.js:
+   - Líneas 207-216: Aserciones automatizadas para validar función generatePurchaseOrderPDF, columnas de versionado documental, ciclo de 13 estados, validación de bloqueo de emisión no aprobada y membrete oficial.
+3. Pendientes.md:
+   - Líneas 1250-1278: Marcada tarea [TASK-015] como [X] Completado.
+===============================================================================
