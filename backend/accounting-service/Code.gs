@@ -5838,73 +5838,127 @@ function getStaffPayrollReceipt(payload) {
 }
 
 // [REQ-EXP-015] [Requerimientos de Expansión y Desarrollo] - Control de inventarios Kardex, activo fijo, custodia, mantenimientos y proveedores.
+// [TASK-019] [F19-Task01] - Corrección integral del control de existencias multialmacén
 function recordInventoryMovement(payload) {
-  const { itemCodigo, itemNombre, categoriaTipo, tipoMovimiento, cantidad, stockMinimo, ubicacionResponsable, observaciones } = payload || {};
+  const {
+    itemCodigo, itemNombre, categoriaTipo, tipoMovimiento, cantidad, stockMinimo,
+    ubicacionResponsable, almacenId, ubicacionId, numeroLote, numeroSerie,
+    observaciones, documentOrigen, referenciaMovimiento
+  } = payload || {};
+
   if (!itemCodigo || !itemNombre || cantidad === undefined || parseFloat(cantidad) <= 0) {
     throw new Error("itemCodigo, itemNombre y cantidad válida requeridos.");
   }
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getOrCreateSheet(ss, "InventariosKardex");
-  const data = sheet.getDataRange().getValues().slice(1);
   const sCodigo = String(itemCodigo).trim();
+  const sNombre = String(itemNombre).trim();
   const tipoNorm = String(tipoMovimiento || "Entrada").trim();
   const qty = parseFloat(cantidad);
 
-  let currentStock = 0;
-  data.forEach(r => {
-    if (String(r[2]).trim() === sCodigo) {
-      currentStock = parseFloat(r[8] || 0);
-    }
-  });
+  // Normalización de ubicación física / almacén (Bodega General como estándar para registros históricos)
+  const targetUbicacion = String(ubicacionId || ubicacionResponsable || almacenId || "Bodega General").trim();
 
-  let newStock = currentStock;
-  if (tipoNorm === "Entrada" || tipoNorm === "Devolucion") {
-    newStock = currentStock + qty;
-  } else if (tipoNorm === "Salida" || tipoNorm === "Prestamo" || tipoNorm === "Baja" || tipoNorm === "TransferenciaSalida") {
-    if (currentStock < qty) {
-      throw new Error(`Stock insuficiente para '${itemNombre}' (Código: ${sCodigo}). Stock disponible: ${currentStock}, Solicitado: ${qty}.`);
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "InventariosKardex");
+    const data = sheet.getDataRange().getValues().slice(1);
+
+    // 1. Obtener saldo local exacto de la ubicación física específica
+    let currentStockLocal = 0;
+    const ubicacionesMap = {};
+
+    data.forEach(r => {
+      const rowItem = String(r[2]).trim();
+      const rowUbicacion = String(r[10] || "Bodega General").trim();
+      if (rowItem === sCodigo) {
+        ubicacionesMap[rowUbicacion.toLowerCase()] = parseFloat(r[8] || 0);
+        if (rowUbicacion.toLowerCase() === targetUbicacion.toLowerCase()) {
+          currentStockLocal = parseFloat(r[8] || 0);
+        }
+      }
+    });
+
+    let newStockLocal = currentStockLocal;
+    const esEntrada = (tipoNorm === "Entrada" || tipoNorm === "Devolucion" || tipoNorm === "AjustePositivo");
+    const esSalida = (tipoNorm === "Salida" || tipoNorm === "Prestamo" || tipoNorm === "Baja" || tipoNorm === "TransferenciaSalida" || tipoNorm === "Consumo" || tipoNorm === "AjusteNegativo");
+
+    if (esEntrada) {
+      newStockLocal = parseFloat((currentStockLocal + qty).toFixed(2));
+    } else if (esSalida) {
+      if (currentStockLocal < qty) {
+        throw new Error(`Stock insuficiente para '${sNombre}' (Código: ${sCodigo}) en la ubicación '${targetUbicacion}'. Stock disponible en ubicación: ${currentStockLocal}, Solicitado: ${qty}.`);
+      }
+      newStockLocal = parseFloat((currentStockLocal - qty).toFixed(2));
+    } else {
+      newStockLocal = parseFloat(qty.toFixed(2));
     }
-    newStock = currentStock - qty;
+
+    // Actualizar mapa local de la bodega y calcular total consolidado institucional
+    ubicacionesMap[targetUbicacion.toLowerCase()] = newStockLocal;
+    let nuevoTotalConsolidado = 0;
+    Object.keys(ubicacionesMap).forEach(k => {
+      nuevoTotalConsolidado += ubicacionesMap[k];
+    });
+    nuevoTotalConsolidado = parseFloat(nuevoTotalConsolidado.toFixed(2));
+
+    const minStock = parseFloat(stockMinimo || 5);
+    const now = new Date();
+    const kardexId = "KDX-" + now.getTime();
+
+    // Metadatos trazables de lote, serie, documentos y referencias
+    let metaObs = observaciones || "";
+    if (numeroLote) metaObs += ` | [LOTE:${numeroLote}]`;
+    if (numeroSerie) metaObs += ` | [SERIE:${numeroSerie}]`;
+    if (documentOrigen) metaObs += ` | [DOC:${documentOrigen}]`;
+    if (referenciaMovimiento) metaObs += ` | [REF:${referenciaMovimiento}]`;
+
+    sheet.appendRow([
+      kardexId,
+      now,
+      sCodigo,
+      sNombre,
+      categoriaTipo || "Consumible",
+      tipoNorm,
+      qty,
+      currentStockLocal,     // Col 8: StockAnterior (Local de la ubicación)
+      newStockLocal,         // Col 9: StockNuevo (Local de la ubicación)
+      minStock,              // Col 10: StockMinimo
+      targetUbicacion,       // Col 11: UbicacionResponsable
+      metaObs.trim()         // Col 12: Observaciones
+    ]);
+
+    const alertStockBajo = newStockLocal <= minStock;
+
+    return {
+      status: "success",
+      kardexId: kardexId,
+      itemCodigo: sCodigo,
+      itemNombre: sNombre,
+      ubicacion: targetUbicacion,
+      stockAnteriorUbicacion: currentStockLocal,
+      stockNuevoUbicacion: newStockLocal,
+      stockConsolidadoInstitucional: nuevoTotalConsolidado,
+      stockMinimo: minStock,
+      alertaStockMinimo: alertStockBajo,
+      message: alertStockBajo
+        ? `Movimiento registrado en '${targetUbicacion}'. ¡ALERTA! El stock de '${sNombre}' (${newStockLocal}) está en o por debajo del mínimo (${minStock}).`
+        : `Movimiento de inventario registrado con éxito en '${targetUbicacion}'.`
+    };
+  } finally {
+    lock.releaseLock();
   }
-
-  const minStock = parseFloat(stockMinimo || 5);
-  const now = new Date();
-  const kardexId = "KDX-" + now.getTime();
-
-  sheet.appendRow([
-    kardexId,
-    now,
-    sCodigo,
-    itemNombre,
-    categoriaTipo || "Consumible",
-    tipoNorm,
-    qty,
-    currentStock,
-    newStock,
-    minStock,
-    ubicacionResponsable || "Bodega General",
-    observaciones || ""
-  ]);
-
-  const alertStockBajo = newStock <= minStock;
-
-  return {
-    status: "success",
-    kardexId: kardexId,
-    itemCodigo: sCodigo,
-    stockAnterior: currentStock,
-    stockNuevo: newStock,
-    stockMinimo: minStock,
-    alertaStockMinimo: alertStockBajo,
-    message: alertStockBajo ? `Movimiento registrado. ¡ALERTA! El stock de '${itemNombre}' (${newStock}) está en o por debajo del mínimo (${minStock}).` : "Movimiento de inventario registrado con éxito."
-  };
 }
 
+// [TASK-019] [F19-Task01] - Consulta multidimensional de Kardex y existencias por almacén
 function getInventoryKardex(payload) {
-  const { itemCodigo, categoriaTipo } = payload || {};
+  const { itemCodigo, categoriaTipo, ubicacionId, ubicacionResponsable, almacenId, fechaInicio, fechaFin } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const rows = getOrCreateSheet(ss, "InventariosKardex").getDataRange().getValues().slice(1);
+
+  const filtroUbicacion = String(ubicacionId || ubicacionResponsable || almacenId || "").trim().toLowerCase();
 
   let filtered = rows;
   if (itemCodigo) {
@@ -5913,20 +5967,77 @@ function getInventoryKardex(payload) {
   if (categoriaTipo) {
     filtered = filtered.filter(r => String(r[4]).toLowerCase().trim() === String(categoriaTipo).toLowerCase().trim());
   }
+  if (filtroUbicacion) {
+    filtered = filtered.filter(r => String(r[10] || "Bodega General").toLowerCase().trim() === filtroUbicacion);
+  }
+  if (fechaInicio) {
+    const fIni = new Date(fechaInicio);
+    filtered = filtered.filter(r => new Date(r[1]) >= fIni);
+  }
+  if (fechaFin) {
+    const fFin = new Date(fechaFin);
+    filtered = filtered.filter(r => new Date(r[1]) <= fFin);
+  }
 
-  const latestStockMap = {};
-  filtered.forEach(r => {
+  // Estructura multidimensional de existencias
+  const existenciasPorUbicacionMap = {};
+  const consolidadoMap = {};
+
+  rows.forEach(r => {
     const code = String(r[2]).trim();
-    latestStockMap[code] = {
-      itemCodigo: code,
-      itemNombre: r[3],
-      categoriaTipo: r[4],
-      stockNuevo: parseFloat(r[8] || 0),
-      stockMinimo: parseFloat(r[9] || 0),
-      alertaStockMinimo: parseFloat(r[8] || 0) <= parseFloat(r[9] || 0),
-      ubicacionResponsable: r[10],
-      ultimaActualizacion: r[1]
-    };
+    const nombre = r[3];
+    const cat = r[4];
+    const ubic = String(r[10] || "Bodega General").trim();
+    const stockFila = parseFloat(r[8] || 0);
+    const minStk = parseFloat(r[9] || 0);
+
+    if (!existenciasPorUbicacionMap[code]) {
+      existenciasPorUbicacionMap[code] = {};
+    }
+    existenciasPorUbicacionMap[code][ubic] = stockFila;
+
+    if (!consolidadoMap[code]) {
+      consolidadoMap[code] = {
+        itemCodigo: code,
+        itemNombre: nombre,
+        categoriaTipo: cat,
+        stockMinimo: minStk,
+        totalInstitucional: 0,
+        ubicaciones: {}
+      };
+    }
+    consolidadoMap[code].ubicaciones[ubic] = stockFila;
+  });
+
+  // Calcular consolidado institucional exacto sumando existencias por ubicación
+  Object.keys(consolidadoMap).forEach(code => {
+    const itemData = consolidadoMap[code];
+    let total = 0;
+    Object.keys(itemData.ubicaciones).forEach(ub => {
+      total += itemData.ubicaciones[ub];
+    });
+    itemData.totalInstitucional = parseFloat(total.toFixed(2));
+    itemData.alertaStockMinimo = itemData.totalInstitucional <= itemData.stockMinimo;
+  });
+
+  // Resumen por ubicación física
+  const resumenPorUbicacion = [];
+  Object.keys(existenciasPorUbicacionMap).forEach(code => {
+    const ubMap = existenciasPorUbicacionMap[code];
+    Object.keys(ubMap).forEach(ub => {
+      const stockUb = ubMap[ub];
+      const itemInfo = consolidadoMap[code] || {};
+      resumenPorUbicacion.push({
+        itemCodigo: code,
+        itemNombre: itemInfo.itemNombre || code,
+        categoriaTipo: itemInfo.categoriaTipo || "Consumible",
+        ubicacion: ub,
+        stockUbicacion: stockUb,
+        stockMinimo: itemInfo.stockMinimo || 5,
+        alertaStockMinimo: stockUb <= (itemInfo.stockMinimo || 5),
+        totalConsolidadoInstitucional: itemInfo.totalInstitucional || stockUb
+      });
+    });
   });
 
   const mapped = filtered.map(r => ({
@@ -5940,14 +6051,17 @@ function getInventoryKardex(payload) {
     stockAnterior: parseFloat(r[7] || 0),
     stockNuevo: parseFloat(r[8] || 0),
     stockMinimo: parseFloat(r[9] || 0),
-    ubicacionResponsable: r[10],
-    observaciones: r[11]
+    ubicacionResponsable: r[10] || "Bodega General",
+    observaciones: r[11] || ""
   }));
 
   return {
     status: "success",
     data: mapped,
-    resumenExistencias: Object.values(latestStockMap)
+    kardex: mapped,
+    resumenExistencias: Object.values(consolidadoMap),
+    resumenPorUbicacion: resumenPorUbicacion,
+    existenciasMultialmacen: consolidadoMap
   };
 }
 
@@ -10877,38 +10991,60 @@ function getWarehouseLocations(payload) {
   };
 }
 
+// [TASK-019] [F19-Task01] - Transferencia atómica entre almacenes manteniendo integridad multialmacén
 function transferInventoryStock(payload) {
   const { itemCodigo, itemNombre, cantidad, ubicacionOrigen, ubicacionDestino, responsableUserId, observaciones } = payload || {};
   if (!itemCodigo || !cantidad || !ubicacionOrigen || !ubicacionDestino) {
     throw new Error("itemCodigo, cantidad, ubicacionOrigen y ubicacionDestino son requeridos.");
   }
 
+  const uOrigen = String(ubicacionOrigen).trim();
+  const uDestino = String(ubicacionDestino).trim();
+
+  if (uOrigen.toLowerCase() === uDestino.toLowerCase()) {
+    throw new Error("La ubicación de origen y destino no pueden ser iguales en una transferencia.");
+  }
+
   const qty = parseFloat(cantidad);
   if (qty <= 0) throw new Error("La cantidad debe ser mayor a cero.");
 
-  // Registrar Salida por transferencia en Ubicación Origen
-  recordInventoryMovement({
+  const transferBatchId = "TRF-" + Date.now();
+
+  // 1. Registrar Salida por transferencia en Ubicación Origen
+  const salidaRes = recordInventoryMovement({
     itemCodigo,
     itemNombre: itemNombre || itemCodigo,
     tipoMovimiento: "TransferenciaSalida",
     cantidad: qty,
-    ubicacionResponsable: ubicacionOrigen,
-    observaciones: `Transferencia hacia ${ubicacionDestino}. ${observaciones || ""}`
+    ubicacionResponsable: uOrigen,
+    documentOrigen: transferBatchId,
+    referenciaMovimiento: `Hacia ${uDestino}`,
+    observaciones: `Transferencia hacia '${uDestino}' (Lote: ${transferBatchId}). ${observaciones || ""}`
   });
 
-  // Registrar Entrada por transferencia en Ubicación Destino
-  recordInventoryMovement({
+  // 2. Registrar Entrada por transferencia en Ubicación Destino
+  const entradaRes = recordInventoryMovement({
     itemCodigo,
     itemNombre: itemNombre || itemCodigo,
     tipoMovimiento: "Entrada",
     cantidad: qty,
-    ubicacionResponsable: ubicacionDestino,
-    observaciones: `Transferencia recibida desde ${ubicacionOrigen}. ${observaciones || ""}`
+    ubicacionResponsable: uDestino,
+    documentOrigen: transferBatchId,
+    referenciaMovimiento: `Desde ${uOrigen}`,
+    observaciones: `Transferencia recibida desde '${uOrigen}' (Lote: ${transferBatchId}). ${observaciones || ""}`
   });
 
   return {
     status: "success",
-    message: `Transferencia de ${qty} unidades de '${itemNombre || itemCodigo}' desde '${ubicacionOrigen}' hacia '${ubicacionDestino}' realizada correctamente.`
+    transferBatchId: transferBatchId,
+    itemCodigo: itemCodigo,
+    cantidadTransferida: qty,
+    ubicacionOrigen: uOrigen,
+    stockNuevoOrigen: salidaRes.stockNuevoUbicacion,
+    ubicacionDestino: uDestino,
+    stockNuevoDestino: entradaRes.stockNuevoUbicacion,
+    stockConsolidadoInstitucional: entradaRes.stockConsolidadoInstitucional,
+    message: `Transferencia de ${qty} unidades de '${itemNombre || itemCodigo}' desde '${uOrigen}' hacia '${uDestino}' realizada exitosamente.`
   };
 }
 
@@ -11091,8 +11227,11 @@ function reconcilePhysicalCount(payload) {
       const cantidadContada = parseFloat(item.cantidadContada || 0);
 
       let stockTeorico = 0;
+      const targetAlmacen = String(data[idx][2] || "Almacén Central").trim();
       kardexRows.forEach(kr => {
-        if (String(kr[2]).trim() === code) stockTeorico = parseFloat(kr[8] || 0);
+        if (String(kr[2]).trim() === code && String(kr[10] || "Bodega General").toLowerCase().trim() === targetAlmacen.toLowerCase()) {
+          stockTeorico = parseFloat(kr[8] || 0);
+        }
       });
 
       const dif = cantidadContada - stockTeorico;
@@ -11100,18 +11239,19 @@ function reconcilePhysicalCount(payload) {
         diferencias.push({
           itemCodigo: code,
           itemNombre: item.itemNombre || code,
+          ubicacion: targetAlmacen,
           stockTeorico: stockTeorico,
           cantidadContada: cantidadContada,
           diferencia: dif
         });
 
-        // Generar movimiento de ajuste autorizado
+        // Generar movimiento de ajuste autorizado en la ubicación auditada [TASK-019]
         recordInventoryMovement({
           itemCodigo: code,
           itemNombre: item.itemNombre || code,
           tipoMovimiento: dif > 0 ? "Entrada" : "Baja",
           cantidad: Math.abs(dif),
-          ubicacionResponsable: data[idx][2] || "Almacén Central",
+          ubicacionResponsable: targetAlmacen,
           observaciones: `Ajuste por Conteo Físico ${conteoId}. Diferencia: ${dif}`
         });
       }

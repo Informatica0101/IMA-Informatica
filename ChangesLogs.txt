@@ -4058,3 +4058,29 @@ DESCRIPCIÓN DE MODIFICACIONES:
 4. En Pendientes.md:
    - Actualización del estado de [TASK-018] de pendiente a completado [X].
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-11-03
+TAREA: [TASK-019] [F19-Task01] Corrección integral del control de existencias multialmacén
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs
+- js/accounting.js
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+DESCRIPCIÓN DE MODIFICACIONES:
+1. En backend/accounting-service/Code.gs:
+   - Reestructuración de 'recordInventoryMovement' con protección de concurrencia mediante LockService.getScriptLock() (timeout 15s).
+   - Cálculo estricto de 'currentStockLocal' filtrando exclusivamente por 'itemCodigo' y 'targetUbicacion' (normalizado con 'Bodega General' como estándar para históricos o sin ubicación explícita).
+   - Validación de stock suficiente en la ubicación de origen: los movimientos de salida (Salida, Consumo, Baja, Préstamo, TransferenciaSalida) se rechazan si la existencia local es menor a la solicitada, sin afectar el saldo de otras bodegas.
+   - Cálculo simultáneo y retorno del stock consolidado institucional sumando los saldos finales de todas las ubicaciones físicas del artículo.
+   - Reestructuración de 'getInventoryKardex' con filtrado multidimensional por artículo, categoría, almacén/ubicación ('ubicacionResponsable' / 'ubicacionId' / 'almacenId') y fechas. Generación de 'resumenPorUbicacion', 'resumenExistencias' consolidado y mapa 'existenciasMultialmacen'.
+   - Adaptación de 'transferInventoryStock' para asegurar que la salida descuenta de la ubicación origen y la entrada incrementa en la ubicación destino con lote de trazabilidad común, manteniendo constante el total institucional.
+   - Adaptación de 'reconcilePhysicalCount' para cotejar el stock teórico contra la ubicación auditada ('targetAlmacen') y generar los ajustes en esa misma bodega.
+2. En js/accounting.js:
+   - Modificación de 'loadKardexData' para aceptar 'filtroUbicacion' opcional y renderizar la tarjeta de resumen con existencias por almacén individual y total consolidado institucional.
+   - Inclusión de columnas 'Stock Ant.', 'Stock Nuevo', 'Ubicación / Almacén' y 'Observaciones' con alertas visuales de stock bajo.
+3. En tests/regression/academic-grading-suite.js:
+   - Inclusión de 7 aserciones para verificar el cálculo local por ubicación, validación de stock local, consolidado institucional, transferencias atómicas y conciliación por bodega. Suite superada con 149/149 pruebas (100.0%).
+4. En Pendientes.md:
+   - Actualización del estado de [TASK-019] a completado [X].
+===============================================================================

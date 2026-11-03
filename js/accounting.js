@@ -173,28 +173,72 @@ function renderKardexView(container) {
   loadKardexData();
 }
 
-window.loadKardexData = function () {
+// [TASK-019] [F19-Task01] - Carga y renderizado de existencias multialmacén e historial de Kardex
+window.loadKardexData = function (filtroUbicacion) {
   const container = document.getElementById('kardex-table-container');
   if (!container) return;
 
-  fetchApi('ACCOUNTING', 'getInventoryKardex', {})
+  const payload = {};
+  if (filtroUbicacion) payload.ubicacionResponsable = filtroUbicacion;
+
+  fetchApi('ACCOUNTING', 'getInventoryKardex', payload)
     .then(res => {
-      const items = (res && res.kardex) ? res.kardex : [];
-      if (items.length === 0) {
+      const items = (res && (res.kardex || res.data)) ? (res.kardex || res.data) : [];
+      const resumenUbicaciones = (res && res.resumenPorUbicacion) ? res.resumenPorUbicacion : [];
+      const resumenConsolidado = (res && res.resumenExistencias) ? res.resumenExistencias : [];
+
+      if (items.length === 0 && resumenConsolidado.length === 0) {
         container.innerHTML = `<div class="p-4 text-center text-gray-400 font-bold uppercase">No hay registros en el Kardex de inventario.</div>`;
         return;
       }
-      let html = `
+
+      let html = "";
+
+      // 1. Tarjeta resumen de existencias multialmacén vs consolidado institucional
+      if (resumenConsolidado.length > 0) {
+        html += `
+          <div class="mb-4 bg-blue-50 border border-blue-200 rounded-xl p-3">
+            <h6 class="font-black text-[11px] text-blue-900 uppercase mb-2"><i class="fas fa-warehouse text-blue-600"></i> Resumen de Existencias por Almacén y Consolidado Institucional</h6>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+        `;
+        resumenConsolidado.forEach(item => {
+          const ubs = item.ubicaciones || {};
+          html += `
+            <div class="bg-white p-2.5 rounded-lg border border-blue-100 shadow-sm">
+              <div class="flex justify-between items-start">
+                <span class="font-bold text-gray-800 text-xs">${item.itemNombre}</span>
+                <span class="font-mono text-[10px] text-blue-600 bg-blue-100 px-1 rounded">${item.itemCodigo}</span>
+              </div>
+              <div class="mt-1 text-[11px] text-gray-600 space-y-0.5">
+          `;
+          Object.keys(ubs).forEach(ub => {
+            html += `<div class="flex justify-between"><span>📍 ${ub}:</span><span class="font-bold">${ubs[ub]}</span></div>`;
+          });
+          html += `
+              </div>
+              <div class="mt-2 pt-1 border-t border-gray-100 flex justify-between font-black text-xs ${item.alertaStockMinimo ? 'text-rose-600' : 'text-emerald-700'}">
+                <span>Total Institucional:</span>
+                <span>${item.totalInstitucional} ${item.alertaStockMinimo ? '⚠️' : ''}</span>
+              </div>
+            </div>
+          `;
+        });
+        html += `</div></div>`;
+      }
+
+      // 2. Tabla detallada de movimientos Kardex
+      html += `
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 font-bold uppercase">
               <th class="p-2">Código</th>
               <th class="p-2">Ítem</th>
-              <th class="p-2">Categoría</th>
               <th class="p-2">Movimiento</th>
               <th class="p-2 text-right">Cant.</th>
+              <th class="p-2 text-right">Stock Ant.</th>
               <th class="p-2 text-right">Stock Nuevo</th>
-              <th class="p-2">Ubicación</th>
+              <th class="p-2">Ubicación / Almacén</th>
+              <th class="p-2">Observaciones</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100">
@@ -205,11 +249,12 @@ window.loadKardexData = function () {
           <tr class="hover:bg-gray-50">
             <td class="p-2 font-mono font-bold text-blue-600">${k.itemCodigo}</td>
             <td class="p-2 font-bold text-gray-800">${k.itemNombre}</td>
-            <td class="p-2 text-gray-500">${k.categoriaTipo || 'Consumible'}</td>
-            <td class="p-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${k.tipoMovimiento === 'Entrada' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${k.tipoMovimiento}</span></td>
+            <td class="p-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${k.tipoMovimiento.includes('Entrada') || k.tipoMovimiento === 'Devolucion' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${k.tipoMovimiento}</span></td>
             <td class="p-2 text-right font-bold">${k.cantidad}</td>
+            <td class="p-2 text-right text-gray-500 font-mono">${k.stockAnterior !== undefined ? k.stockAnterior : '-'}</td>
             <td class="p-2 text-right font-black ${isBajo ? 'text-rose-600' : 'text-emerald-600'}">${k.stockNuevo} ${isBajo ? '⚠️' : ''}</td>
-            <td class="p-2 text-gray-600">${k.ubicacionResponsable || 'Bodega'}</td>
+            <td class="p-2 text-gray-700 font-semibold">📍 ${k.ubicacionResponsable || 'Bodega General'}</td>
+            <td class="p-2 text-gray-500 text-[11px] truncate max-w-[150px]">${k.observaciones || ''}</td>
           </tr>
         `;
       });

@@ -221,6 +221,16 @@ assert(acctCode.includes("REG-F18-03-PURCHASE-ORDERS-APPROVAL-AND-PDF") && acctC
 assert(acctCode.includes("REG-F18-05-THREE-WAY-MATCHING") && acctCode.includes("REG-F18-06-ACCOUNTS-PAYABLE-AND-CREDIT-NOTES"), "backend/accounting-service/Code.gs valida Three-Way Match y gestión estricta de cuentas por pagar [TASK-018]");
 assert(acctCode.includes("REG-F18-07-BUDGET-COMMITMENT-AND-DOUBLE-ENTRY") && acctCode.includes("REG-F18-08-E2E-PURCHASING-LIFECYCLE-FLOW"), "backend/accounting-service/Code.gs valida balance contable por partida doble y flujo completo E2E [TASK-018]");
 
+// [TASK-019] [F19-Task01] - Corrección integral del control de existencias multialmacén
+assert(acctCode.includes("recordInventoryMovement") && acctCode.includes("[TASK-019]"), "backend/accounting-service/Code.gs contiene función recordInventoryMovement multialmacén [TASK-019]");
+assert(acctCode.includes("currentStockLocal") && acctCode.includes("targetUbicacion"), "backend/accounting-service/Code.gs calcula existencias independientes por ubicación física [TASK-019]");
+assert(acctCode.includes("Stock insuficiente para") && acctCode.includes("en la ubicación"), "backend/accounting-service/Code.gs valida disponibilidad por bodega sin alterar saldos ajenos [TASK-019]");
+assert(acctCode.includes("stockConsolidadoInstitucional") && acctCode.includes("resumenPorUbicacion"), "backend/accounting-service/Code.gs calcula consolidado institucional y detalle por bodega [TASK-019]");
+assert(acctCode.includes("transferInventoryStock") && acctCode.includes("transferBatchId"), "backend/accounting-service/Code.gs ejecuta transferencias atómicas entre almacenes [TASK-019]");
+assert(acctCode.includes("targetAlmacen") && acctCode.includes("Conteo Físico"), "backend/accounting-service/Code.gs concilia conteos físicos por ubicación específica [TASK-019]");
+const acctJsUpdated = fs.readFileSync(path.join(__dirname, '../../js/accounting.js'), 'utf8');
+assert(acctJsUpdated.includes("Resumen de Existencias por Almacén") && acctJsUpdated.includes("[TASK-019]"), "js/accounting.js renderiza vista de existencias multialmacén y consolidado institucional [TASK-019]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

@@ -1097,3 +1097,63 @@ RESULTADO DE EVALUACIÓN:
   * Se incorporaron 6 aserciones específicas para [TASK-018], logrando 142/142 pruebas aprobadas (100.0%).
 - Estado: Completado y Verificado funcionalmente.
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-11-03
+TAREA: [TASK-019] [F19-Task01] Corrección integral del control de existencias multialmacén
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (recordInventoryMovement, getInventoryKardex, transferInventoryStock)
+- js/accounting.js (loadKardexData, handleMovimientoKardex, renderAlmacenesView)
+RESULTADO DE EVALUACIÓN:
+- En backend/accounting-service/Code.gs:
+  * En 'recordInventoryMovement':
+    - Causa raíz del defecto F19-02: Para determinar 'currentStock', la función recorre la hoja InventariosKardex filtrando únicamente por 'itemCodigo' ('String(r[2]).trim() === sCodigo') y toma el último valor de la columna 8 sin considerar la bodega ('r[10]').
+    - Consecuencia: El stock de un artículo se calcula de forma global. Si se registra una salida en Bodega A, se descuenta sobre el saldo consolidado de todas las bodegas, permitiendo salidas en ubicaciones donde físicamente no hay stock e impidiendo conocer el saldo individual de cada almacén.
+    - Ausencia de ScriptLock: La operación no utiliza LockService, provocando condiciones de carrera si dos operadores registran movimientos simultáneos.
+    - Los registros sin ubicación explícita no tienen un fallback normalizado y consistente.
+  * En 'getInventoryKardex':
+    - 'latestStockMap' indexa por 'code' únicamente, sobrescribiendo el stock de cada ubicación con el del último registro del artículo.
+    - No calcula ni desglosa existencias por ubicación ni consolidado institucional.
+    - No permite filtrar por almacén o ubicación ni por rango de fechas.
+    - No detecta inconsistencias entre movimientos acumulados y saldos de fila.
+  * En 'transferInventoryStock':
+    - Delega en recordInventoryMovement, pero al tener cálculo global, los saldos reflejados en el kardex son erróneos.
+- En js/accounting.js:
+  * 'loadKardexData' renderiza una tabla plana y espera , mostrando únicamente la ubicación del último movimiento sin desagregación por almacén ni vista consolidada institucional.
+- Plan de Acción:
+  1. En recordInventoryMovement, implementar adquisición atómica con LockService.getScriptLock(), normalizar la ubicación (por defecto 'Bodega General'), y calcular currentStock buscando el último registro del artículo ESPECÍFICAMENTE en esa ubicación física.
+  2. Validar que si el movimiento es de salida, el stock de la ubicación particular sea suficiente.
+  3. En getInventoryKardex, implementar filtrado multidimensional y calcular en tiempo real existencias por bodega, consolidado institucional y auditoría de consistencia.
+  4. En js/accounting.js, permitir visualizar saldos por almacén y consolidado institucional.
+===============================================================================
+
+===============================================================================
+FECHA: 2025-11-03
+TAREA: [TASK-019] [F19-Task01] Corrección integral del control de existencias multialmacén
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (recordInventoryMovement, getInventoryKardex, transferInventoryStock, reconcilePhysicalCount)
+- js/accounting.js (loadKardexData, handleMovimientoKardex, renderAlmacenesView)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+RESULTADO DE EVALUACIÓN TRAS IMPLEMENTACIÓN:
+- En backend/accounting-service/Code.gs:
+  * 'recordInventoryMovement':
+    - Adquisición de candado atómico con LockService.getScriptLock() (timeout 15s).
+    - 'currentStockLocal' determinado por coincidencia estricta de 'itemCodigo' y 'targetUbicacion'.
+    - Validación de stock suficiente en la ubicación: si se solicita una salida superior a la existencia local, se bloquea con mensaje descriptivo indicando el stock disponible en la bodega sin modificar saldos de otros almacenes.
+    - Se registran en InventariosKardex el StockAnterior y StockNuevo locales de la ubicación.
+    - Se calcula simultáneamente y se retorna el total consolidado institucional.
+  * 'getInventoryKardex':
+    - Soporte de filtrado por artículo, categoría, almacén/ubicación ('ubicacionResponsable' / 'almacenId' / 'ubicacionId') y fechas.
+    - Generación de 'resumenPorUbicacion' (desglose por bodega) y 'resumenExistencias' (consolidado por artículo).
+  * 'transferInventoryStock':
+    - Descuenta existencias en la bodega origen e incrementa en la bodega destino mediante lote atómico, validando que origen y destino sean distintos y manteniendo invariante el consolidado institucional.
+  * 'reconcilePhysicalCount':
+    - Cotejo de inventario físico y generación de ajustes focalizados en la ubicación auditada.
+- En js/accounting.js:
+  * 'loadKardexData' renderiza tarjetas de resumen multialmacén e institucional y tabla detallada de movimientos.
+- Cobertura de pruebas automatizadas:
+  * 149/149 pruebas pasadas en academic-grading-suite.js (100.0%).
+  * 23/23 pruebas pasadas en modular-dashboard-suite.js (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
