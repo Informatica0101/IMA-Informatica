@@ -240,6 +240,20 @@ assert(acctCode.includes("MantenimientoOrdenes") && acctCode.includes("RequiereR
 assert(acctCode.includes("ACTA-DEV-") && acctCode.includes("actaDevolucionId"), "backend/accounting-service/Code.gs genera acta formal e inmutable de entrega-recepción de activo [TASK-020]");
 assert(acctJsUpdated.includes("handleDevolverCustodia") && acctJsUpdated.includes("returnAssetCustody"), "js/accounting.js implementa acción e interfaz reactiva para devolver custodias [TASK-020]");
 
+// [TASK-021] [F19-Task03] - Validación transaccional de transferencias entre almacenes y ciclo documental TRF
+assert(acctCode.includes("INSUFFICIENT_SOURCE_STOCK"), "backend/accounting-service/Code.gs rechaza transferencias con saldo insuficiente en bodega origen [TASK-021]");
+assert(acctCode.includes("TransferenciasInventario") && acctCode.includes("TRF-"), "backend/accounting-service/Code.gs persiste transferencias en TransferenciasInventario con código TRF [TASK-021]");
+assert(acctCode.includes("confirmTransferReceipt") && acctCode.includes("[TASK-021]"), "backend/accounting-service/Code.gs implementa función confirmTransferReceipt [TASK-021]");
+assert(acctCode.includes("TRANSFER_ALREADY_RECEIVED"), "backend/accounting-service/Code.gs impide recepciones duplicadas de transferencias [TASK-021]");
+assert(acctCode.includes("getInventoryTransfers"), "backend/accounting-service/Code.gs implementa consulta getInventoryTransfers [TASK-021]");
+assert(acctJsUpdated.includes("handleRecibirTransferencia") && acctJsUpdated.includes("renderTransferenciasView"), "js/accounting.js contiene interfaz operativa para transferencias y recepción [TASK-021]");
+
+// [TASK-022] [F19-Task20] - Suite automatizada de pruebas y regresión integral de inventario y activos
+assert(acctCode.includes("runPhase19InventoryAndAssetsRegressionSuite") && acctCode.includes("[TASK-022]"), "backend/accounting-service/Code.gs contiene suite runPhase19InventoryAndAssetsRegressionSuite [TASK-022]");
+assert(devCode.includes("runPhase19InventoryAndAssetsRegressionSuite") && devCode.includes("[TASK-022]"), "backend/developer-service/Code.gs integra suite runPhase19InventoryAndAssetsRegressionSuite [TASK-022]");
+assert(acctCode.includes("PT19-01") && acctCode.includes("PT19-07") && acctCode.includes("PT19-20"), "backend/accounting-service/Code.gs cubre la batería completa de pruebas PT19-01 a PT19-20 [TASK-022]");
+assert(acctCode.includes("totalDebe === totalHaber") || acctCode.includes("debe !== haber"), "backend/accounting-service/Code.gs valida balance de partida doble en depreciación [TASK-022]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

@@ -1189,3 +1189,30 @@ RESULTADO DE EVALUACIÓN:
   4. Integrar función de devolución en js/accounting.js.
   5. Validar con pruebas automatizadas en tests/regression/academic-grading-suite.js.
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-11-03
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs
+- backend/developer-service/Code.gs
+- js/accounting.js
+TAREAS ASOCIADAS:
+- [TASK-021] [F19-Task03] Validación transaccional de transferencias entre almacenes
+- [TASK-022] [F19-Task20] Implementar suite automatizada de pruebas y regresión integral de inventario y activos
+RESULTADO DE EVALUACIÓN:
+- En backend/accounting-service/Code.gs:
+  * "transferInventoryStock":
+    - Defecto detectado: No realizaba una comprobación previa atómica del stock local disponible en la bodega de origen antes de despachar, lo que permitía solicitar transferencias superiores a las existencias físicas.
+    - Carencia: No existía persistencia en "TransferenciasInventario" ni ciclo documental completo (Borrador, EnTransito, RecibidaTotal, RecibidaParcial, Rechazada).
+    - Carencia: No existía la función "confirmTransferReceipt" para que el custodio receptor valide físicamente las unidades que ingresan a su almacén e ingrese discrepancias justificadas.
+  * Suite de regresión integral Fase 19:
+    - Inexistencia de "runPhase19InventoryAndAssetsRegressionSuite" para evaluar de forma continua las 20 pruebas transversales (PT19-01 a PT19-20) de inventario y activos patrimoniales, incluyendo la partida doble en depreciaciones contables.
+- En js/accounting.js:
+  * Inexistencia de interfaz para transferencias entre bodegas ni botón de recepción física en almacén de destino.
+- Plan de Acción Ejecutado:
+  1. Modificar "transferInventoryStock" para validar stock disponible local en origen bajo ScriptLock, rechazar transferencias sin existencia suficiente ("INSUFFICIENT_SOURCE_STOCK") y registrar la operación en "TransferenciasInventario" con lote "TRF-...".
+  2. Implementar "confirmTransferReceipt" y "getInventoryTransfers", actualizando Kardex al confirmar la recepción en destino y documentando discrepancias.
+  3. Implementar "runPhase19InventoryAndAssetsRegressionSuite" cubriendo las 20 pruebas transversales en accounting-service y developer-service.
+  4. Integrar vista de transferencias y acciones de despacho y recepción en "js/accounting.js".
+  5. Extender tests/regression/academic-grading-suite.js con validaciones específicas.
+===============================================================================

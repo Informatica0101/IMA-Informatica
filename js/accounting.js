@@ -71,6 +71,7 @@ function renderInventarioModule(container) {
         <div class="flex flex-wrap gap-2 text-xs font-bold uppercase">
           <button onclick="switchInventarioSubtab('kardex')" id="btn-sub-kardex" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-blue-600 text-white">Kardex</button>
           <button onclick="switchInventarioSubtab('almacenes')" id="btn-sub-almacenes" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100">Almacenes</button>
+          <button onclick="switchInventarioSubtab('transferencias')" id="btn-sub-transferencias" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100">Transferencias</button>
           <button onclick="switchInventarioSubtab('solicitudes')" id="btn-sub-solicitudes" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100">Solicitudes & Entregas</button>
           <button onclick="switchInventarioSubtab('activos')" id="btn-sub-activos" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100">Activos Fijos</button>
           <button onclick="switchInventarioSubtab('mantenimiento')" id="btn-sub-mantenimiento" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100">Mantenimiento</button>
@@ -88,7 +89,7 @@ function renderInventarioModule(container) {
 
 window.switchInventarioSubtab = function (subtab) {
   currentInventarioSubtab = subtab;
-  ['kardex', 'almacenes', 'solicitudes', 'activos', 'mantenimiento', 'bajas'].forEach(s => {
+  ['kardex', 'almacenes', 'transferencias', 'solicitudes', 'activos', 'mantenimiento', 'bajas'].forEach(s => {
     const btn = document.getElementById(`btn-sub-${s}`);
     if (btn) {
       if (s === subtab) {
@@ -104,6 +105,7 @@ window.switchInventarioSubtab = function (subtab) {
 
   if (subtab === 'kardex') renderKardexView(subContainer);
   else if (subtab === 'almacenes') renderAlmacenesView(subContainer);
+  else if (subtab === 'transferencias') renderTransferenciasView(subContainer);
   else if (subtab === 'solicitudes') renderSolicitudesView(subContainer);
   else if (subtab === 'activos') renderActivosView(subContainer);
   else if (subtab === 'mantenimiento') renderMantenimientoView(subContainer);
@@ -1866,4 +1868,168 @@ window.processEmployeeOffboarding = async function(payload) {
     console.error('[ACCOUNTING] Error en desvinculación laboral coordinada:', error);
     throw error;
   }
+};
+
+
+
+// --- [TASK-021] [F19-Task03] TRANSFERENCIAS ENTRE ALMACENES ---
+
+function renderTransferenciasView(container) {
+  container.innerHTML = `
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-gray-50 p-5 rounded-2xl border border-gray-200">
+        <h5 class="font-black text-xs uppercase text-gray-800 mb-3"><i class="fas fa-dolly text-blue-600"></i> Despachar Transferencia</h5>
+        <form id="form-transferencia" onsubmit="handleSaveTransferencia(event)" class="space-y-3 text-xs">
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Código del Artículo *</label>
+            <input type="text" id="trf-codigo" required class="w-full p-2 border border-gray-300 rounded-xl" placeholder="EJ: MAT-PAP-01">
+          </div>
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Nombre / Descripción</label>
+            <input type="text" id="trf-nombre" class="w-full p-2 border border-gray-300 rounded-xl" placeholder="EJ: Resma Papel Bond Carta">
+          </div>
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Cantidad a Transferir *</label>
+            <input type="number" id="trf-cantidad" required step="1" min="1" class="w-full p-2 border border-gray-300 rounded-xl" placeholder="1">
+          </div>
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Bodega / Ubicación Origen *</label>
+            <input type="text" id="trf-origen" required class="w-full p-2 border border-gray-300 rounded-xl" placeholder="Bodega General">
+          </div>
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Bodega / Ubicación Destino *</label>
+            <input type="text" id="trf-destino" required class="w-full p-2 border border-gray-300 rounded-xl" placeholder="Laboratorio de Cómputo 1">
+          </div>
+          <div class="flex items-center gap-2 pt-1">
+            <input type="checkbox" id="trf-requiere-recepcion" checked class="rounded text-blue-600">
+            <label for="trf-requiere-recepcion" class="font-bold text-gray-700 text-[11px]">Requiere confirmación física en destino (En Tránsito)</label>
+          </div>
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Observaciones</label>
+            <input type="text" id="trf-obs" class="w-full p-2 border border-gray-300 rounded-xl" placeholder="Motivo o referencia del traslado">
+          </div>
+          <button type="submit" class="w-full py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all uppercase">
+            Emitir Transferencia
+          </button>
+        </form>
+      </div>
+
+      <div class="md:col-span-2 bg-white p-5 rounded-2xl border border-gray-200">
+        <div class="flex justify-between items-center mb-4">
+          <h5 class="font-black text-xs uppercase text-gray-800"><i class="fas fa-exchange-alt text-indigo-600"></i> Historial y Seguimiento de Transferencias</h5>
+          <button onclick="loadTransferenciasData()" class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-200"><i class="fas fa-sync"></i> Actualizar</button>
+        </div>
+        <div id="transferencias-table-container" class="overflow-x-auto text-xs">
+          <div class="text-center py-6 text-gray-400 font-bold uppercase">Cargando transferencias...</div>
+        </div>
+      </div>
+    </div>
+  `;
+  loadTransferenciasData();
+}
+
+window.loadTransferenciasData = function () {
+  const container = document.getElementById('transferencias-table-container');
+  if (!container) return;
+
+  fetchApi('ACCOUNTING', 'getInventoryTransfers', {})
+    .then(res => {
+      const items = (res && res.transferencias) ? res.transferencias : [];
+      if (items.length === 0) {
+        container.innerHTML = `<div class="p-4 text-center text-gray-400 font-bold uppercase">No hay transferencias registradas.</div>`;
+        return;
+      }
+      let html = `
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 font-bold uppercase">
+              <th class="p-2">Lote TRF</th>
+              <th class="p-2">Artículo</th>
+              <th class="p-2 text-right">Despachado</th>
+              <th class="p-2">Origen &rarr; Destino</th>
+              <th class="p-2">Estado</th>
+              <th class="p-2 text-right">Acción</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+      `;
+      items.forEach(t => {
+        let badgeClass = "bg-blue-100 text-blue-800";
+        if (t.estadoTransferencia === "EnTransito") badgeClass = "bg-amber-100 text-amber-800";
+        else if (t.estadoTransferencia === "RecibidaTotal") badgeClass = "bg-emerald-100 text-emerald-800";
+        else if (t.estadoTransferencia === "RecibidaParcial") badgeClass = "bg-orange-100 text-orange-800";
+        else if (t.estadoTransferencia === "Rechazada" || t.estadoTransferencia === "Cancelada") badgeClass = "bg-rose-100 text-rose-800";
+
+        const accionBtn = (t.estadoTransferencia === "EnTransito")
+          ? `<button onclick="handleRecibirTransferencia('${t.transferBatchId}', '${t.itemCodigo}', '${t.cantidadDespachada}', '${t.ubicacionDestino}')" class="px-2 py-1 bg-emerald-50 text-emerald-600 rounded font-bold text-[10px] hover:bg-emerald-100 uppercase">Recibir</button>`
+          : `<span class="text-gray-400 font-bold text-[10px]">${t.cantidadRecibida || t.cantidadDespachada} rec.</span>`;
+
+        html += `
+          <tr class="hover:bg-gray-50">
+            <td class="p-2 font-mono font-bold text-indigo-600">${t.transferBatchId}</td>
+            <td class="p-2"><span class="font-bold text-gray-800">${t.itemNombre || t.itemCodigo}</span> <span class="font-mono text-gray-400 text-[10px]">(${t.itemCodigo})</span></td>
+            <td class="p-2 text-right font-mono font-bold">${t.cantidadDespachada}</td>
+            <td class="p-2 text-gray-700 font-medium">${t.ubicacionOrigen} &rarr; ${t.ubicacionDestino}</td>
+            <td class="p-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${badgeClass}">${t.estadoTransferencia}</span></td>
+            <td class="p-2 text-right">${accionBtn}</td>
+          </tr>
+        `;
+      });
+      html += `</tbody></table>`;
+      container.innerHTML = html;
+    })
+    .catch(err => {
+      container.innerHTML = `<div class="p-4 text-rose-600 font-bold text-center">Error al cargar transferencias: ${err.message}</div>`;
+    });
+};
+
+window.handleSaveTransferencia = function (e) {
+  e.preventDefault();
+  const payload = {
+    itemCodigo: document.getElementById('trf-codigo').value,
+    itemNombre: document.getElementById('trf-nombre').value,
+    cantidad: document.getElementById('trf-cantidad').value,
+    ubicacionOrigen: document.getElementById('trf-origen').value,
+    ubicacionDestino: document.getElementById('trf-destino').value,
+    requiereConfirmacionFisica: document.getElementById('trf-requiere-recepcion').checked,
+    observaciones: document.getElementById('trf-obs').value
+  };
+
+  fetchApi('ACCOUNTING', 'transferInventoryStock', payload)
+    .then(res => {
+      alert(res.message || "Transferencia despachada con éxito.");
+      document.getElementById('form-transferencia').reset();
+      loadTransferenciasData();
+      if (typeof loadKardexData === "function") loadKardexData();
+    })
+    .catch(err => alert("Error: " + err.message));
+};
+
+window.handleRecibirTransferencia = function (transferBatchId, itemCodigo, cantDespachada, uDestino) {
+  const cantStr = prompt(`Confirmar unidades físicas recibidas en ${uDestino} (Despachadas: ${cantDespachada}):`, cantDespachada);
+  if (cantStr === null) return;
+
+  const cantRec = parseFloat(cantStr);
+  if (isNaN(cantRec) || cantRec < 0) {
+    alert("Cantidad recibida inválida.");
+    return;
+  }
+
+  let justif = "";
+  if (cantRec !== parseFloat(cantDespachada)) {
+    justif = prompt("Especifique justificación de la discrepancia de recepción:") || "Diferencia de conteo en destino";
+  }
+
+  fetchApi('ACCOUNTING', 'confirmTransferReceipt', {
+    transferBatchId: transferBatchId,
+    cantidadRecibida: cantRec,
+    justificacionDiscrepancia: justif,
+    observaciones: "Recepción confirmada desde interfaz contable"
+  })
+    .then(res => {
+      alert(res.message || "Recepción confirmada con éxito.");
+      loadTransferenciasData();
+      if (typeof loadKardexData === "function") loadKardexData();
+    })
+    .catch(err => alert("Error: " + err.message));
 };

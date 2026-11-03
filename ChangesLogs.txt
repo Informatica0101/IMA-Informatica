@@ -1,4 +1,34 @@
 ===============================================================================
+FECHA: 2025-11-03
+TAREAS:
+- [TASK-021] [F19-Task03] Validación transaccional de transferencias entre almacenes
+- [TASK-022] [F19-Task20] Implementar suite automatizada de pruebas y regresión integral de inventario y activos
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs
+- backend/developer-service/Code.gs
+- js/accounting.js
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+DESCRIPCIÓN DE MODIFICACIONES:
+1. En backend/accounting-service/Code.gs:
+   - Modificación de "transferInventoryStock" protegida con LockService (15s): comprobación de existencia y disponibilidad local estricta en el almacén de origen antes de operar; rechazo inmediato con código "INSUFFICIENT_SOURCE_STOCK" si la cantidad excede el stock local de la bodega; soporte para estado "EnTransito" cuando requiere confirmación física en destino.
+   - Persistencia en hoja "TransferenciasInventario" con lote identificador único "TRF-YYYY-NNNNNN", solicitante, estado, ubicaciones y metadatos de auditoría.
+   - Implementación de "confirmTransferReceipt": validación de recepción física, prevención de recepciones duplicadas ("TRANSFER_ALREADY_RECEIVED"), registro de discrepancias cuantitativas justificadas e ingreso a Kardex de las unidades efectivamente recibidas.
+   - Implementación de "getInventoryTransfers" con filtros de estado y ubicación.
+   - Habilitación de permisos en "ROLE_PERMISSIONS" para roles autorizados ("Director", "Subdirector", "Contador") y mapeo en el enrutador "doPost".
+   - Implementación de "runPhase19InventoryAndAssetsRegressionSuite" ejecutando la batería completa de 20 casos de prueba transversales (PT19-01 a PT19-20), cubriendo multialmacén independiente, salidas y transferencias sin saldo, devoluciones sanas y dañadas con órdenes técnicas, depreciación lineal balanceada por partida doble ("totalDebe === totalHaber"), algoritmo FEFO y reportes valorizados.
+2. En backend/developer-service/Code.gs:
+   - Integración de "runPhase19InventoryAndAssetsRegressionSuite" permitiendo la invocación transversal de la suite de regresión de inventarios desde la consola de desarrollo.
+3. En js/accounting.js:
+   - Inclusión de la subpestaña "Transferencias" en el menú de navegación del módulo de Inventario y Activos.
+   - Implementación de "renderTransferenciasView", "loadTransferenciasData", "handleSaveTransferencia" y "handleRecibirTransferencia" para emitir traslados entre bodegas y confirmar la recepción física con captura de discrepancias.
+4. En tests/regression/academic-grading-suite.js:
+   - Incorporación de 10 aserciones verificando las capacidades de TASK-021 y TASK-022. Suite superada al 100% (166/166 pruebas pasadas).
+5. En Pendientes.md:
+   - Actualización del estado de [TASK-021] y [TASK-022] a completado [X].
+===============================================================================
+
+===============================================================================
 REGISTRO DE CAMBIOS Y MODIFICACIONES TÉCNICAS (ChangesLogs.txt)
 Plataforma: Ecosistema Educativo New Generation Christian Academy
 ===============================================================================

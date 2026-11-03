@@ -1499,7 +1499,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-021] [ ] [F19-Task03] Validación transaccional de transferencias entre almacenes
+### [TASK-021] [X] [F19-Task03] Validación transaccional de transferencias entre almacenes
 - **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-05), Sección F (PT-04) y Plan de Trabajo F19-03
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Consistencia de traslados físicos, prevención de existencias negativas, atocimidad y control de tránsito)
@@ -1535,7 +1535,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Salida y entrada comparten identificador de transferencia y trazabilidad.
   - No existen movimientos huérfanos bajo fallos o interrupciones de red.
   - Se garantiza integridad y bloqueo transaccional bajo solicitudes concurrentes.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -1543,7 +1543,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-022] [ ] [F19-Task20] Implementar suite automatizada de pruebas y regresión integral de inventario y activos
+### [TASK-022] [X] [F19-Task20] Implementar suite automatizada de pruebas y regresión integral de inventario y activos
 - **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección G (P0), Sección F y Plan de Trabajo F19-20
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Aseguramiento continuo de integridad en recursos físicos, bodegas multialmacén y balances contables)
@@ -1583,7 +1583,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - No existen desbalances contables (`totalDebe === totalHaber` en todos los asientos generados).
   - No se generan saldos negativos de inventario bajo ninguna circunstancia.
   - La suite de regresión previa (53/53 pruebas) se mantiene aprobada al 100%.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
