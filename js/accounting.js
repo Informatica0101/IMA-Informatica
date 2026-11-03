@@ -1371,15 +1371,18 @@ window.switchBibliotecaSubtab = function (subtab) {
 function renderLibrosView(container) {
   container.innerHTML = `
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="bg-gray-50 p-5 rounded-2xl border border-gray-200">
-        <h5 class="font-black text-xs uppercase text-gray-800 mb-3"><i class="fas fa-book text-indigo-600"></i> Registrar Obra / Ejemplar</h5>
+      <div class="bg-gray-50 p-5 rounded-2xl border border-gray-200 space-y-4">
+        <div>
+          <h5 class="font-black text-xs uppercase text-gray-800 mb-2"><i class="fas fa-book text-indigo-600"></i> Registrar Obra / Ejemplar</h5>
+          <p class="text-[11px] text-gray-500">Modelo relacional FRBR/RDA: Metadatos bibliográficos y copias físicas independientes.</p>
+        </div>
         <form id="form-libro" onsubmit="handleSaveLibro(event)" class="space-y-3 text-xs">
           <div>
             <label class="block font-bold text-gray-600 mb-1">Título de la Obra *</label>
             <input type="text" id="bib-titulo" required class="w-full p-2 border border-gray-300 rounded-xl font-bold" placeholder="EJ: Cien Años de Soledad">
           </div>
           <div>
-            <label class="block font-bold text-gray-600 mb-1">Autor *</label>
+            <label class="block font-bold text-gray-600 mb-1">Autor(es) *</label>
             <input type="text" id="bib-autor" required class="w-full p-2 border border-gray-300 rounded-xl" placeholder="EJ: Gabriel García Márquez">
           </div>
           <div>
@@ -1402,11 +1405,14 @@ function renderLibrosView(container) {
 
       <div class="md:col-span-2 bg-white p-5 rounded-2xl border border-gray-200">
         <div class="flex justify-between items-center mb-4">
-          <h5 class="font-black text-xs uppercase text-gray-800"><i class="fas fa-search text-indigo-600"></i> Catálogo Bibliográfico</h5>
+          <div>
+            <h5 class="font-black text-xs uppercase text-gray-800"><i class="fas fa-layer-group text-indigo-600"></i> Catálogo Maestro de Obras & Existencias</h5>
+            <span class="text-[10px] text-gray-400 font-bold uppercase">Consolidado de Obras y Desglose de Ejemplares</span>
+          </div>
           <button onclick="loadLibrosData()" class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-200"><i class="fas fa-sync"></i> Actualizar</button>
         </div>
         <div id="libros-table-container" class="overflow-x-auto text-xs">
-          <div class="text-center py-6 text-gray-400 font-bold uppercase">Cargando libros...</div>
+          <div class="text-center py-6 text-gray-400 font-bold uppercase">Cargando obras y ejemplares...</div>
         </div>
       </div>
     </div>
@@ -1418,50 +1424,119 @@ window.loadLibrosData = function () {
   const container = document.getElementById('libros-table-container');
   if (!container) return;
 
-  fetchApi('ACCOUNTING', 'getLibraryBooks', {})
+  // Consultar catálogo consolidado de obras con desglose de ejemplares físicos [TASK-025]
+  fetchApi('ACCOUNTING', 'getBibliographicWorks', { incluirEjemplares: true })
     .then(res => {
-      const books = (res && res.libros) ? res.libros : [];
-      if (books.length === 0) {
-        container.innerHTML = `<div class="p-4 text-center text-gray-400 font-bold uppercase">No hay libros registrados en catálogo.</div>`;
-        return;
+      const obras = (res && res.obras) ? res.obras : [];
+      if (obras.length === 0) {
+        return fetchApi('ACCOUNTING', 'getLibraryBooks', {}).then(legacyRes => {
+          const books = (legacyRes && legacyRes.libros) ? legacyRes.libros : [];
+          if (books.length === 0) {
+            container.innerHTML = `<div class="p-4 text-center text-gray-400 font-bold uppercase">No hay libros registrados en catálogo.</div>`;
+            return;
+          }
+          renderLegacyBooksTable(container, books);
+        });
       }
+
       let html = `
         <table class="w-full text-left border-collapse">
           <thead>
-            <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 font-bold uppercase">
-              <th class="p-2">Ejemplar ID</th>
-              <th class="p-2">Título</th>
-              <th class="p-2">Autor</th>
-              <th class="p-2">Ubicación</th>
-              <th class="p-2">Estado</th>
-              <th class="p-2 text-right">Acciones</th>
+            <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 font-bold uppercase text-[11px]">
+              <th class="p-2.5">Obra ID / ISBN</th>
+              <th class="p-2.5">Título & Autores</th>
+              <th class="p-2.5">Categoría</th>
+              <th class="p-2.5 text-center">Ejemplares</th>
+              <th class="p-2.5 text-center">Disponibles</th>
+              <th class="p-2.5 text-right">Acciones</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100">
       `;
-      books.forEach(b => {
-        const isDisp = b.estado === 'available';
+
+      obras.forEach(o => {
+        const m = o.metricasEjemplares || { totalEjemplares: 0, disponibles: 0, prestados: 0 };
+        const primerEjemplar = (o.ejemplares && o.ejemplares.length > 0) ? o.ejemplares[0] : null;
+        let autoresDisplay = o.autoresJSON;
+        try {
+          const parsed = JSON.parse(o.autoresJSON);
+          if (Array.isArray(parsed)) autoresDisplay = parsed.join(', ');
+        } catch (_) {}
+
         html += `
           <tr class="hover:bg-gray-50">
-            <td class="p-2 font-mono font-bold text-indigo-600">${b.ejemplarId}</td>
-            <td class="p-2 font-bold text-gray-800">${b.titulo}</td>
-            <td class="p-2 text-gray-600">${b.autor}</td>
-            <td class="p-2 text-gray-500">${b.ubicacionFisica}</td>
-            <td class="p-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isDisp ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${b.estado}</span></td>
-            <td class="p-2 text-right flex justify-end gap-1">
-              ${isDisp ? `<button onclick="handlePrestarLibro('${b.ejemplarId}')" class="px-2 py-1 bg-indigo-600 text-white rounded font-bold text-[10px] hover:bg-indigo-700 uppercase">Prestar</button>` : ''}
-              <button onclick="handleReservarLibro('${b.ejemplarId}')" class="px-2 py-1 bg-gray-100 text-gray-700 rounded font-bold text-[10px] hover:bg-gray-200 uppercase">Reservar</button>
+            <td class="p-2.5 align-top">
+              <span class="font-mono font-bold text-indigo-600 block">${o.obraId}</span>
+              <span class="text-[10px] text-gray-400 font-mono">${o.isbnCodigo || 'S/N ISBN'}</span>
+            </td>
+            <td class="p-2.5 align-top">
+              <div class="font-bold text-gray-800">${o.titulo}</div>
+              <div class="text-[11px] text-gray-500">${autoresDisplay || 'Autor no especificado'}</div>
+              ${o.editorial ? `<div class="text-[10px] text-gray-400">Ed. ${o.editorial} (${o.edicionAno || 'N/A'})</div>` : ''}
+            </td>
+            <td class="p-2.5 align-top">
+              <span class="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-[10px] font-bold">${o.categoria || 'General'}</span>
+            </td>
+            <td class="p-2.5 align-top text-center font-bold text-gray-700">
+              ${m.totalEjemplares}
+            </td>
+            <td class="p-2.5 align-top text-center">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${m.disponibles > 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                ${m.disponibles} disp.
+              </span>
+            </td>
+            <td class="p-2.5 align-top text-right space-y-1">
+              <div class="flex justify-end gap-1">
+                ${primerEjemplar && m.disponibles > 0 ? `<button onclick="handlePrestarLibro('${primerEjemplar.ejemplarId}')" class="px-2 py-1 bg-indigo-600 text-white rounded font-bold text-[10px] hover:bg-indigo-700 uppercase" title="Prestar ejemplar disponible">Prestar</button>` : ''}
+                ${primerEjemplar ? `<button onclick="handleReservarLibro('${primerEjemplar.ejemplarId}')" class="px-2 py-1 bg-gray-100 text-gray-700 rounded font-bold text-[10px] hover:bg-gray-200 uppercase" title="Reservar ejemplar">Reservar</button>` : ''}
+              </div>
             </td>
           </tr>
         `;
       });
+
       html += `</tbody></table>`;
       container.innerHTML = html;
     })
     .catch(err => {
-      container.innerHTML = `<div class="p-4 text-rose-600 font-bold text-center">Error al cargar libros: ${err.message}</div>`;
+      container.innerHTML = `<div class="p-4 text-rose-600 font-bold text-center">Error al cargar obras de biblioteca: ${err.message}</div>`;
     });
 };
+
+function renderLegacyBooksTable(container, books) {
+  let html = `
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 font-bold uppercase text-[11px]">
+          <th class="p-2">Ejemplar ID</th>
+          <th class="p-2">Título</th>
+          <th class="p-2">Autor</th>
+          <th class="p-2">Ubicación</th>
+          <th class="p-2">Estado</th>
+          <th class="p-2 text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+  `;
+  books.forEach(b => {
+    const isDisp = b.estado === 'available';
+    html += `
+      <tr class="hover:bg-gray-50">
+        <td class="p-2 font-mono font-bold text-indigo-600">${b.ejemplarId}</td>
+        <td class="p-2 font-bold text-gray-800">${b.titulo}</td>
+        <td class="p-2 text-gray-600">${b.autor}</td>
+        <td class="p-2 text-gray-500">${b.ubicacionFisica}</td>
+        <td class="p-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isDisp ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${b.estado}</span></td>
+        <td class="p-2 text-right flex justify-end gap-1">
+          ${isDisp ? `<button onclick="handlePrestarLibro('${b.ejemplarId}')" class="px-2 py-1 bg-indigo-600 text-white rounded font-bold text-[10px] hover:bg-indigo-700 uppercase">Prestar</button>` : ''}
+          <button onclick="handleReservarLibro('${b.ejemplarId}')" class="px-2 py-1 bg-gray-100 text-gray-700 rounded font-bold text-[10px] hover:bg-gray-200 uppercase">Reservar</button>
+        </td>
+      </tr>
+    `;
+  });
+  html += `</tbody></table>`;
+  container.innerHTML = html;
+}
 
 window.handleSaveLibro = function (e) {
   e.preventDefault();

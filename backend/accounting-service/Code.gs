@@ -163,7 +163,9 @@ function getOrCreateSheet(ss, name) {
     if (name === "PoliticasFiscales") sheet.appendRow(["PoliticaID", "CodigoRegla", "NombreRegla", "Categoria", "BaseCalculo", "MetodoCalculo", "TasaImporte", "Estado", "Version", "Observaciones"]);
     if (name === "PoliticasInstitucionales") sheet.appendRow(["PoliticaInstID", "TipoDocumento", "Titulo", "Version", "ContenidoHTML", "Estado", "FechaPublicacion", "Observaciones"]);
     if (name === "AceptacionesPoliticas") sheet.appendRow(["AceptacionID", "UserId", "PoliticaInstID", "Version", "FechaAceptacion", "IpMetadata", "Estado"]);
-    if (name === "BibliotecaEjemplares") sheet.appendRow(["EjemplarID", "IsbnCodigo", "Titulo", "Autor", "Categoria", "UbicacionFisica", "Estado", "Observaciones"]);
+    if (name === "BibliotecaCatalogoObras") sheet.appendRow(["ObraID", "IsbnCodigo", "Titulo", "Subtitulo", "AutoresJSON", "Editorial", "EdicionAno", "Idioma", "Categoria", "MateriaAcademica", "NivelEducativo", "PortadaUrl", "Descripcion", "PalabrasClave", "EstadoObra"]);
+    if (name === "BibliotecaEjemplares") sheet.appendRow(["EjemplarID", "ObraID", "CodigoBarrasQR", "UbicacionFisica", "CondicionFisica", "EstadoDisponibilidad", "Observaciones", "IsbnCodigo", "Titulo", "Autor", "Categoria"]);
+    if (name === "BibliotecaPoliticasCirculacion") sheet.appendRow(["PoliticaID", "RolTarget", "LimiteLibrosSimultaneos", "DiasPrestamo", "PermitePrestamoDomicilio", "DiasGraciaMora", "Estado", "Observaciones"]);
     if (name === "BibliotecaPrestamos") sheet.appendRow(["PrestamoID", "EjemplarID", "UserId", "FechaPrestamo", "FechaDevolucionPrevista", "FechaDevolucionReal", "Estado", "Observaciones"]);
     if (name === "BibliotecaReservas") sheet.appendRow(["ReservaID", "EjemplarID", "UserId", "FechaSolicitud", "FechaExpiracion", "EstadoReserva", "Observaciones"]);
     if (name === "BibliotecaIncidencias") sheet.appendRow(["IncidenciaID", "PrestamoID", "EjemplarID", "UserId", "TipoIncidencia", "Descripcion", "Estado", "Resolucion", "Observaciones"]);
@@ -195,24 +197,24 @@ function doGet() { return textResponse({ status: "success", service: "ACCOUNTING
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
   "Director": [
-    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "verifyThreeWayMatch", "recordSupplierPayment", "applySupplierCreditNote", "getSupplierAccountsPayableSummary", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "getCashFlowSixMonthProjection", "recordCollectionManagementAction", "getCollectionManagementLogs", "getComparativeFinancialSummary", "reconcileFinancialReportCoherence", "verifyAccountingIntegrity", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "manageSupplierContract", "getSupplierContractAlerts", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createFamilyPaymentAgreement", "getFamilyPaymentAgreements", "saveMultiYearBudgetProjection", "getMultiYearBudgetProjections", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "getPurchaseReceipts", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "purgeSecurityCaches"],
+    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "verifyThreeWayMatch", "recordSupplierPayment", "applySupplierCreditNote", "getSupplierAccountsPayableSummary", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "getCashFlowSixMonthProjection", "recordCollectionManagementAction", "getCollectionManagementLogs", "getComparativeFinancialSummary", "reconcileFinancialReportCoherence", "verifyAccountingIntegrity", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "manageSupplierContract", "getSupplierContractAlerts", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageBibliographicWork", "getBibliographicWorks", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createFamilyPaymentAgreement", "getFamilyPaymentAgreements", "saveMultiYearBudgetProjection", "getMultiYearBudgetProjections", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "getPurchaseReceipts", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "purgeSecurityCaches"],
   "Subdirector": [
-    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite"],
+    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageBibliographicWork", "getBibliographicWorks", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite"],
   "Contador": [
-    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "verifyThreeWayMatch", "recordSupplierPayment", "applySupplierCreditNote", "getSupplierAccountsPayableSummary", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "calculateAppliedDiscount", "getStoreProducts", "getStoreOrders", "getCafeteriaMenu", "getCafeteriaOrders", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "getPurchaseReceipts", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite"],
+    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "verifyThreeWayMatch", "recordSupplierPayment", "applySupplierCreditNote", "getSupplierAccountsPayableSummary", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageBibliographicWork", "getBibliographicWorks", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "calculateAppliedDiscount", "getStoreProducts", "getStoreOrders", "getCafeteriaMenu", "getCafeteriaOrders", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "getPurchaseReceipts", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite"],
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "RecursosHumanos": ["initializeFinancialDriveStructure", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "processEmployeeOffboarding", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "calculateExtraordinaryPayroll", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport", "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory", "manageStaffingNeeds", "getStaffingNeedsPlanning", "manageWorkShiftAndSubstitution", "getWorkShiftsAndSubstitutionsHistory", "getEmployeeSelfServicePortal", "verifyLaborAndTaxInformation", "runHRIntegrationAndRegressionTests", "runCriticalProcessConcurrencySuite"],
   "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments", "getPerformanceEvaluations", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getEmployeeSelfServicePortal"],
-  "Padre": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
-  "Tutor": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
-  "Responsable": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
-  "Consejeros": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments"],
-  "Profesor": ["getStaffPayrollReceipt", "submitVacationRequest", "getVacationRequests", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "verifySACETemplateCompatibility", "generateSACEReportFile", "fillAndExportSACETemplate", "validateSACETemplateFile", "getEmployeeSelfServicePortal"],
-  "Asistente": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "getDigitalResources", "getSchoolDocumentTemplates"],
-  "Estudiante": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase"],
-  "Alumno": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase"]
+  "Padre": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getBibliographicWorks", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
+  "Tutor": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getBibliographicWorks", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
+  "Responsable": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getBibliographicWorks", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
+  "Consejeros": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getBibliographicWorks", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments"],
+  "Profesor": ["getStaffPayrollReceipt", "submitVacationRequest", "getVacationRequests", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getBibliographicWorks", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "verifySACETemplateCompatibility", "generateSACEReportFile", "fillAndExportSACETemplate", "validateSACETemplateFile", "getEmployeeSelfServicePortal"],
+  "Asistente": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getBibliographicWorks", "getLibraryBooks", "getLibraryLoans", "getDigitalResources", "getSchoolDocumentTemplates"],
+  "Estudiante": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getBibliographicWorks", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase"],
+  "Alumno": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getBibliographicWorks", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase"]
 };
 
 const PUBLIC_ACTIONS = ["ping", "getInstitutionalPolicies", "verifySchoolDocumentByCUV"];
@@ -695,6 +697,8 @@ function doPost(e) {
       case "recordPolicyAcceptance": result = recordPolicyAcceptance(payload); break;
       case "getPolicyAcceptances": result = getPolicyAcceptances(payload); break;
       case "getAdvancedDashboardAnalytics": result = getAdvancedDashboardAnalytics(payload); break;
+      case "manageBibliographicWork": result = manageBibliographicWork(payload); break;
+      case "getBibliographicWorks": result = getBibliographicWorks(payload); break;
       case "manageLibraryBook": result = manageLibraryBook(payload); break;
       case "getLibraryBooks": result = getLibraryBooks(payload); break;
       case "processLibraryLoan": result = processLibraryLoan(payload); break;
@@ -8755,58 +8759,357 @@ function getHRDashboardAnalytics(payload) {
 }
 
 // ---------------------------------------------------------------------------
-// FASE 11: BIBLIOTECA Y RECURSOS EDUCATIVOS
+// FASE 11 / [TASK-025] [F20-Task03]: BIBLIOTECA Y CATÁLOGO FRBR (OBRAS Y EJEMPLARES)
 // ---------------------------------------------------------------------------
 
-function manageLibraryBook(payload) {
-  const { ejemplarId, isbnCodigo, titulo, autor, categoria, ubicacionFisica, estado, observaciones } = payload || {};
-  if (!titulo || !autor) throw new Error("Título y autor son requeridos.");
+// 1. Catálogo Maestro de Obras Bibliográficas (FRBR / RDA)
+function manageBibliographicWork(payload) {
+  const {
+    obraId,
+    isbnCodigo,
+    titulo,
+    subtitulo,
+    autoresJSON,
+    editorial,
+    edicionAno,
+    idioma,
+    categoria,
+    materiaAcademica,
+    nivelEducativo,
+    portadaUrl,
+    descripcion,
+    palabrasClave,
+    estadoObra
+  } = payload || {};
 
+  if (!titulo || String(titulo).trim().length === 0) {
+    throw new Error("El título de la obra es obligatorio.");
+  }
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "BibliotecaCatalogoObras");
+    const data = sheet.getDataRange().getValues();
+    const now = new Date();
+
+    let targetObraId = obraId ? String(obraId).trim() : null;
+    let existingIndex = -1;
+
+    if (targetObraId) {
+      existingIndex = data.findIndex(r => String(r[0]).trim() === targetObraId);
+    } else if (isbnCodigo && String(isbnCodigo).trim().length > 0) {
+      const cleanIsbn = String(isbnCodigo).trim();
+      existingIndex = data.findIndex(r => String(r[1]).trim() === cleanIsbn);
+      if (existingIndex !== -1) {
+        targetObraId = String(data[existingIndex][0]).trim();
+      }
+    }
+
+    const autoresStr = typeof autoresJSON === "string" ? autoresJSON : JSON.stringify(autoresJSON || []);
+    const keywordsStr = Array.isArray(palabrasClave) ? palabrasClave.join(", ") : (palabrasClave || "");
+
+    if (existingIndex > 0) {
+      targetObraId = data[existingIndex][0];
+      sheet.getRange(existingIndex + 1, 1, 1, 15).setValues([[
+        targetObraId,
+        isbnCodigo !== undefined ? String(isbnCodigo).trim() : (data[existingIndex][1] || ""),
+        String(titulo).trim(),
+        subtitulo !== undefined ? String(subtitulo).trim() : (data[existingIndex][3] || ""),
+        autoresStr,
+        editorial !== undefined ? String(editorial).trim() : (data[existingIndex][5] || ""),
+        edicionAno !== undefined ? String(edicionAno).trim() : (data[existingIndex][6] || ""),
+        idioma !== undefined ? String(idioma).trim() : (data[existingIndex][7] || "Español"),
+        categoria !== undefined ? String(categoria).trim() : (data[existingIndex][8] || "General"),
+        materiaAcademica !== undefined ? String(materiaAcademica).trim() : (data[existingIndex][9] || ""),
+        nivelEducativo !== undefined ? String(nivelEducativo).trim() : (data[existingIndex][10] || "Todos"),
+        portadaUrl !== undefined ? String(portadaUrl).trim() : (data[existingIndex][11] || ""),
+        descripcion !== undefined ? String(descripcion).trim() : (data[existingIndex][12] || ""),
+        keywordsStr,
+        estadoObra !== undefined ? String(estadoObra).trim() : (data[existingIndex][14] || "Activa")
+      ]]);
+    } else {
+      targetObraId = "OBRA-" + now.getFullYear() + "-" + String(now.getTime()).slice(-6);
+      sheet.appendRow([
+        targetObraId,
+        isbnCodigo ? String(isbnCodigo).trim() : "",
+        String(titulo).trim(),
+        subtitulo ? String(subtitulo).trim() : "",
+        autoresStr,
+        editorial ? String(editorial).trim() : "",
+        edicionAno ? String(edicionAno).trim() : "",
+        idioma ? String(idioma).trim() : "Español",
+        categoria ? String(categoria).trim() : "General",
+        materiaAcademica ? String(materiaAcademica).trim() : "",
+        nivelEducativo ? String(nivelEducativo).trim() : "Todos",
+        portadaUrl ? String(portadaUrl).trim() : "",
+        descripcion ? String(descripcion).trim() : "",
+        keywordsStr,
+        estadoObra ? String(estadoObra).trim() : "Activa"
+      ]);
+    }
+
+    return {
+      status: "success",
+      obraId: targetObraId,
+      message: "Obra bibliográfica guardada exitosamente en el catálogo maestro."
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// 2. Consulta Consolidada de Obras con Desglose de Ejemplares Físicos
+function getBibliographicWorks(payload) {
+  const { obraId, categoria, nivelEducativo, busqueda, incluirEjemplares } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getOrCreateSheet(ss, "BibliotecaEjemplares");
-  const data = sheet.getDataRange().getValues();
-  const now = new Date();
+  const obrasSheet = getOrCreateSheet(ss, "BibliotecaCatalogoObras");
+  const ejemplaresSheet = getOrCreateSheet(ss, "BibliotecaEjemplares");
 
-  let eId = ejemplarId;
-  let existingIndex = -1;
+  let obrasRows = obrasSheet.getDataRange().getValues().slice(1);
+  let ejemplaresRows = ejemplaresSheet.getDataRange().getValues().slice(1);
 
-  if (eId) {
-    existingIndex = data.findIndex(r => String(r[0]).trim() === String(eId).trim());
-  } else if (isbnCodigo) {
-    existingIndex = data.findIndex(r => String(r[1]).trim() === String(isbnCodigo).trim());
+  if (obrasRows.length === 0) {
+    const defaultObras = [
+      ["OBRA-2025-000101", "978-0131103627", "El Lenguaje de Programación C", "Segunda Edición", JSON.stringify(["Brian W. Kernighan", "Dennis M. Ritchie"]), "Prentice Hall", "1988", "Español", "Informática", "Programación", "Secundaria/Bachillerato", "", "Libro clásico sobre desarrollo de software en C.", "C, Algoritmos, Computación", "Activa"],
+      ["OBRA-2025-000102", "978-0201633610", "Design Patterns", "Elements of Reusable Object-Oriented Software", JSON.stringify(["Erich Gamma", "Richard Helm", "Ralph Johnson", "John Vlissides"]), "Addison-Wesley", "1994", "Inglés", "Software", "Ingeniería de Software", "Bachillerato", "", "Patrones clásicos de arquitectura de software.", "OOP, Arquitectura, Patrones", "Activa"]
+    ];
+    obrasSheet.getRange(2, 1, defaultObras.length, 15).setValues(defaultObras);
+    obrasRows = defaultObras;
   }
 
-  if (existingIndex !== -1) {
-    eId = data[existingIndex][0];
-    sheet.getRange(existingIndex + 1, 1, 1, 8).setValues([[
-      eId,
-      isbnCodigo || "",
-      titulo,
-      autor,
-      categoria || "General",
-      ubicacionFisica || "Estante A1",
-      estado || "available",
-      observaciones || ""
-    ]]);
-  } else {
-    eId = "LIB-" + now.getTime();
-    sheet.appendRow([
-      eId,
-      isbnCodigo || "",
-      titulo,
-      autor,
-      categoria || "General",
-      ubicacionFisica || "Estante A1",
-      "available",
-      observaciones || ""
-    ]);
+  let filteredObras = obrasRows;
+  if (obraId) {
+    filteredObras = filteredObras.filter(r => String(r[0]).trim() === String(obraId).trim());
   }
+  if (categoria) {
+    filteredObras = filteredObras.filter(r => String(r[8]).toLowerCase().trim() === String(categoria).toLowerCase().trim());
+  }
+  if (nivelEducativo) {
+    filteredObras = filteredObras.filter(r => String(r[10]).toLowerCase().trim() === String(nivelEducativo).toLowerCase().trim() || String(r[10]).toLowerCase().trim() === "todos");
+  }
+  if (busqueda) {
+    const q = String(busqueda).toLowerCase().trim();
+    filteredObras = filteredObras.filter(r => {
+      const matchTitulo = String(r[2] || "").toLowerCase().includes(q);
+      const matchIsbn = String(r[1] || "").toLowerCase().includes(q);
+      const matchAutores = String(r[4] || "").toLowerCase().includes(q);
+      const matchKeywords = String(r[13] || "").toLowerCase().includes(q);
+      return matchTitulo || matchIsbn || matchAutores || matchKeywords;
+    });
+  }
+
+  const obras = filteredObras.map(o => {
+    const oId = String(o[0]).trim();
+    const oIsbn = String(o[1]).trim();
+    const oTitulo = String(o[2]).trim().toLowerCase();
+
+    const matchingEjemplares = ejemplaresRows.filter(e => {
+      const eObraId = String(e[1] || "").trim();
+      const eIsbn = String(e[7] || e[1] || "").trim();
+      const eTitulo = String(e[8] || e[2] || "").trim().toLowerCase();
+      if (eObraId && eObraId === oId) return true;
+      if (oIsbn && eIsbn === oIsbn) return true;
+      if (oTitulo && eTitulo === oTitulo) return true;
+      return false;
+    });
+
+    let disponibles = 0;
+    let prestados = 0;
+    let reservados = 0;
+    let enMantenimiento = 0;
+    let extraviados = 0;
+
+    const copiasMapeadas = matchingEjemplares.map(e => {
+      let eId = String(e[0]).trim();
+      let est = "";
+      let ubic = "";
+      let cond = "Bueno";
+      let qr = "";
+      let obs = "";
+
+      if (e.length >= 11 || (e[1] && String(e[1]).startsWith("OBRA-"))) {
+        ubic = e[3] || "";
+        cond = e[4] || "Bueno";
+        est = String(e[5] || "available").trim().toLowerCase();
+        obs = e[6] || "";
+        qr = e[2] || eId;
+      } else {
+        ubic = e[5] || "";
+        est = String(e[6] || "available").trim().toLowerCase();
+        obs = e[7] || "";
+        cond = "Bueno";
+        qr = eId;
+      }
+
+      if (est === "available" || est === "disponible") disponibles++;
+      else if (est === "on_loan" || est === "prestado") prestados++;
+      else if (est === "reserved" || est === "reservado") reservados++;
+      else if (est === "maintenance" || est === "mantenimiento" || est === "damaged" || est === "danado") enMantenimiento++;
+      else if (est === "lost" || est === "extraviado") extraviados++;
+      else disponibles++;
+
+      return {
+        ejemplarId: eId,
+        obraId: oId,
+        codigoBarrasQR: qr,
+        ubicacionFisica: ubic,
+        condicionFisica: cond,
+        estadoDisponibilidad: est,
+        observaciones: obs
+      };
+    });
+
+    return {
+      obraId: oId,
+      isbnCodigo: o[1],
+      titulo: o[2],
+      subtitulo: o[3],
+      autoresJSON: o[4],
+      editorial: o[5],
+      edicionAno: o[6],
+      idioma: o[7],
+      categoria: o[8],
+      materiaAcademica: o[9],
+      nivelEducativo: o[10],
+      portadaUrl: o[11],
+      descripcion: o[12],
+      palabrasClave: o[13],
+      estadoObra: o[14],
+      metricasEjemplares: {
+        totalEjemplares: copiasMapeadas.length,
+        disponibles: disponibles,
+        prestados: prestados,
+        reservados: reservados,
+        enMantenimiento: enMantenimiento,
+        extraviados: extraviados
+      },
+      ejemplares: incluirEjemplares !== false ? copiasMapeadas : []
+    };
+  });
 
   return {
     status: "success",
-    ejemplarId: eId,
-    message: "Ejemplar bibliográfico registrado/actualizado exitosamente."
+    obras: obras
   };
+}
+
+function manageLibraryBook(payload) {
+  const {
+    ejemplarId,
+    obraId,
+    codigoBarrasQR,
+    ubicacionFisica,
+    condicionFisica,
+    estado,
+    estadoDisponibilidad,
+    observaciones,
+    isbnCodigo,
+    titulo,
+    autor,
+    categoria
+  } = payload || {};
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const ejemplarSheet = getOrCreateSheet(ss, "BibliotecaEjemplares");
+    const obrasSheet = getOrCreateSheet(ss, "BibliotecaCatalogoObras");
+    const data = ejemplarSheet.getDataRange().getValues();
+    const now = new Date();
+
+    let targetObraId = obraId ? String(obraId).trim() : null;
+
+    if (!targetObraId && titulo) {
+      const obrasData = obrasSheet.getDataRange().getValues();
+      const existingObraIdx = obrasData.findIndex(r =>
+        (isbnCodigo && String(r[1]).trim() === String(isbnCodigo).trim()) ||
+        (String(r[2]).trim().toLowerCase() === String(titulo).trim().toLowerCase())
+      );
+      if (existingObraIdx !== -1) {
+        targetObraId = String(obrasData[existingObraIdx][0]).trim();
+      } else {
+        targetObraId = "OBRA-" + now.getFullYear() + "-" + String(now.getTime()).slice(-6);
+        obrasSheet.appendRow([
+          targetObraId,
+          isbnCodigo || "",
+          String(titulo).trim(),
+          "",
+          JSON.stringify([autor || "Autor Desconocido"]),
+          "",
+          now.getFullYear().toString(),
+          "Español",
+          categoria || "General",
+          "",
+          "Todos",
+          "",
+          "",
+          "",
+          "Activa"
+        ]);
+      }
+    }
+
+    let eId = ejemplarId ? String(ejemplarId).trim() : null;
+    let existingIndex = -1;
+
+    if (eId) {
+      existingIndex = data.findIndex(r => String(r[0]).trim() === eId);
+    } else if (isbnCodigo) {
+      existingIndex = data.findIndex(r => String(r[1]).trim() === String(isbnCodigo).trim());
+    }
+
+    const disp = estadoDisponibilidad || estado || "available";
+    const cond = condicionFisica || "Bueno";
+    const qrCode = codigoBarrasQR || eId || ("QR-" + now.getTime());
+    const ubic = ubicacionFisica || "Estante A1";
+    const obs = observaciones || "";
+
+    if (existingIndex !== -1) {
+      eId = data[existingIndex][0];
+      ejemplarSheet.getRange(existingIndex + 1, 1, 1, 11).setValues([[
+        eId,
+        targetObraId || data[existingIndex][1] || "",
+        qrCode,
+        ubic,
+        cond,
+        disp,
+        obs,
+        isbnCodigo || data[existingIndex][1] || "",
+        titulo || data[existingIndex][2] || "",
+        autor || data[existingIndex][3] || "",
+        categoria || data[existingIndex][4] || "General"
+      ]]);
+    } else {
+      eId = eId || ("LIB-" + now.getTime());
+      ejemplarSheet.appendRow([
+        eId,
+        targetObraId || "",
+        qrCode,
+        ubic,
+        cond,
+        disp,
+        obs,
+        isbnCodigo || "",
+        titulo || "",
+        autor || "",
+        categoria || "General"
+      ]);
+    }
+
+    return {
+      status: "success",
+      ejemplarId: eId,
+      obraId: targetObraId,
+      message: "Ejemplar bibliográfico registrado/actualizado exitosamente."
+    };
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function getLibraryBooks(payload) {
@@ -8845,50 +9148,189 @@ function getLibraryBooks(payload) {
   };
 }
 
+// [TASK-026] [F20-Task04] & [TASK-027] [F20-Task05]: Control de políticas de circulación, límites de préstamo, mora activa, candados atómicos e idempotencia
 function processLibraryLoan(payload) {
-  const { ejemplarId, userId, fechaDevolucionPrevista, accion, observaciones } = payload || {};
+  const { ejemplarId, userId, userRole, fechaDevolucionPrevista, accion, observaciones, idempotencyKey } = payload || {};
   if (!ejemplarId || !userId) throw new Error("ejemplarId y userId requeridos.");
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const bookSheet = getOrCreateSheet(ss, "BibliotecaEjemplares");
-  const loanSheet = getOrCreateSheet(ss, "BibliotecaPrestamos");
-  const now = new Date();
+  const eId = String(ejemplarId).trim();
+  const uId = String(userId).trim();
 
-  const books = bookSheet.getDataRange().getValues();
-  const bIdx = books.findIndex(r => String(r[0]).trim() === String(ejemplarId).trim());
-  if (bIdx === -1) throw new Error("Ejemplar bibliográfico no encontrado.");
+  // Candado atómico transaccional para evitar doble asignación concurrente [TASK-027]
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
 
-  if (accion === "Devolucion") {
-    bookSheet.getRange(bIdx + 1, 7).setValue("available");
-    const loans = loanSheet.getDataRange().getValues();
-    const lIdx = loans.findIndex(r => String(r[1]).trim() === String(ejemplarId).trim() && r[6] === "on_loan");
-    if (lIdx !== -1) {
-      loanSheet.getRange(lIdx + 1, 5).setValue(now);
-      loanSheet.getRange(lIdx + 1, 7).setValue("returned");
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const bookSheet = getOrCreateSheet(ss, "BibliotecaEjemplares");
+    const loanSheet = getOrCreateSheet(ss, "BibliotecaPrestamos");
+    const polSheet = getOrCreateSheet(ss, "BibliotecaPoliticasCirculacion");
+    const now = new Date();
+
+    const books = bookSheet.getDataRange().getValues();
+    const bIdx = books.findIndex(r => String(r[0]).trim() === eId);
+    if (bIdx === -1) throw new Error("Ejemplar bibliográfico no encontrado.");
+
+    if (accion === "Devolucion") {
+      // Registrar devolución y restablecer disponibilidad
+      if (books[bIdx].length >= 6) {
+        bookSheet.getRange(bIdx + 1, 6).setValue("available"); // columna 6: EstadoDisponibilidad
+      }
+      bookSheet.getRange(bIdx + 1, 7).setValue("available"); // columna 7 legacy: Estado
+
+      const loans = loanSheet.getDataRange().getValues();
+      const lIdx = loans.findIndex(r => String(r[1]).trim() === eId && String(r[6]).trim() === "on_loan");
+      if (lIdx !== -1) {
+        loanSheet.getRange(lIdx + 1, 5).setValue(now); // FechaDevolucionReal
+        loanSheet.getRange(lIdx + 1, 7).setValue("returned"); // Estado
+      }
+      return { status: "success", message: "Devolución de ejemplar registrada exitosamente." };
     }
-    return { status: "success", message: "Devolución de ejemplar registrada exitosamente." };
-  } else {
-    // Préstamo
-    if (books[bIdx][6] === "on_loan") throw new Error("El ejemplar ya se encuentra prestado.");
 
-    bookSheet.getRange(bIdx + 1, 7).setValue("on_loan");
+    // --- ACCIÓN DE PRÉSTAMO ---
+
+    // 1. Re-verificar disponibilidad atómica del ejemplar en BibliotecaEjemplares [TASK-027]
+    const estadoActual = String(books[bIdx][5] || books[bIdx][6] || "").trim().toLowerCase();
+    if (estadoActual === "on_loan" || estadoActual === "prestado") {
+      return {
+        status: "error",
+        code: "BOOK_ALREADY_LOANED",
+        message: `El ejemplar '${eId}' ya se encuentra prestado a otro usuario.`
+      };
+    }
+    if (estadoActual === "maintenance" || estadoActual === "damaged" || estadoActual === "lost") {
+      return {
+        status: "error",
+        code: "BOOK_NOT_AVAILABLE",
+        message: `El ejemplar '${eId}' no está disponible para préstamo (estado: '${estadoActual}').`
+      };
+    }
+
+    // 2. Cargar políticas de circulación configuradas [TASK-026]
+    let polRows = polSheet.getDataRange().getValues().slice(1);
+    if (polRows.length === 0) {
+      const defaultPols = [
+        ["POL-EST", "Estudiante", 2, 7, true, 0, "Activa", "Política para estudiantes: máximo 2 libros por 7 días."],
+        ["POL-ALU", "Alumno", 2, 7, true, 0, "Activa", "Política para alumnos: máximo 2 libros por 7 días."],
+        ["POL-DOC", "Profesor", 5, 15, true, 0, "Activa", "Política para docentes: máximo 5 libros por 15 días."],
+        ["POL-DOC2", "Docente", 5, 15, true, 0, "Activa", "Política para docentes: máximo 5 libros por 15 días."],
+        ["POL-DIR", "Director", 5, 15, true, 0, "Activa", "Política directiva."],
+        ["POL-ADM", "Administrador", 5, 15, true, 0, "Activa", "Política administrativa."],
+        ["POL-CON", "Contador", 3, 15, true, 0, "Activa", "Personal contable."],
+        ["POL-GEN", "General", 2, 7, true, 0, "Activa", "Política por defecto para otros roles."]
+      ];
+      polSheet.getRange(2, 1, defaultPols.length, 8).setValues(defaultPols);
+      polRows = defaultPols;
+    }
+
+    // Determinar rol efectivo del usuario
+    const rolTarget = String(userRole || payload.authRole || "Estudiante").trim();
+    let userPol = polRows.find(p => String(p[1]).toLowerCase().trim() === rolTarget.toLowerCase().trim() && String(p[6]).trim() === "Activa");
+    if (!userPol) {
+      userPol = polRows.find(p => String(p[1]).toLowerCase().trim() === "general") || polRows[0];
+    }
+
+    const limiteLibros = parseInt(userPol[2] || 2, 10);
+    const diasPrestamo = parseInt(userPol[3] || 7, 10);
+
+    // 3. Inspeccionar préstamos actuales del usuario en BibliotecaPrestamos [TASK-026]
+    const loanRows = loanSheet.getDataRange().getValues().slice(1);
+    let prestamosActivosUsuario = 0;
+    let tieneMoraActiva = false;
+    let libroVencidoId = null;
+
+    // Clave de idempotencia para evitar duplicados por reintentos de red [TASK-027]
+    const opKey = String(idempotencyKey || `${eId}_${uId}_${now.toISOString().slice(0, 10)}`).trim();
+    const yaProcesadoIdempotente = loanRows.some(r =>
+      String(r[1]).trim() === eId &&
+      String(r[2]).trim() === uId &&
+      String(r[6]).trim() === "on_loan" &&
+      Math.abs(new Date(r[3]).getTime() - now.getTime()) < 60000 // Menos de 1 minuto
+    );
+    if (yaProcesadoIdempotente) {
+      return {
+        status: "error",
+        code: "IDEMPOTENCY_DUPLICATE_REQUEST",
+        message: `Solicitud de préstamo idéntica detectada para el ejemplar '${eId}' y usuario '${uId}'. Operación ya procesada.`
+      };
+    }
+
+    loanRows.forEach(r => {
+      const rowUId = String(r[2]).trim();
+      const rowEstado = String(r[6]).trim().toLowerCase();
+      if (rowUId === uId && (rowEstado === "on_loan" || rowEstado === "prestado")) {
+        prestamosActivosUsuario++;
+        const fechaPrevista = new Date(r[4]);
+        if (!isNaN(fechaPrevista.getTime()) && fechaPrevista.getTime() < now.getTime()) {
+          tieneMoraActiva = true;
+          libroVencidoId = r[1];
+        }
+      }
+    });
+
+    // Validación A: Bloqueo por mora activa [TASK-026]
+    if (tieneMoraActiva) {
+      return {
+        status: "error",
+        code: "ACTIVE_OVERDUE_BLOCK",
+        message: `El usuario '${uId}' mantiene al menos un libro con fecha de devolución vencida (${libroVencidoId}). No se permiten nuevos préstamos hasta regularizar su situación.`
+      };
+    }
+
+    // Validación B: Límite de cupo simultáneo por rol [TASK-026]
+    if (prestamosActivosUsuario >= limiteLibros) {
+      return {
+        status: "error",
+        code: "LOAN_LIMIT_EXCEEDED",
+        message: `El usuario con rol '${rolTarget}' ha alcanzado el límite máximo de ${limiteLibros} libros prestados simultáneamente (actuales: ${prestamosActivosUsuario}).`
+      };
+    }
+
+    // 4. Conceder préstamo actualizando estado y persistiendo registro [TASK-026 y TASK-027]
+    if (books[bIdx].length >= 6) {
+      bookSheet.getRange(bIdx + 1, 6).setValue("on_loan"); // EstadoDisponibilidad
+    }
+    bookSheet.getRange(bIdx + 1, 7).setValue("on_loan");   // Estado legacy
+
     const prestamoId = "LNM-" + now.getTime();
+    const fechaRetorno = fechaDevolucionPrevista
+      ? new Date(fechaDevolucionPrevista)
+      : new Date(now.getTime() + diasPrestamo * 24 * 60 * 60 * 1000);
+
     loanSheet.appendRow([
       prestamoId,
-      String(ejemplarId).trim(),
-      String(userId).trim(),
+      eId,
+      uId,
       now,
-      fechaDevolucionPrevista || new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000),
+      fechaRetorno,
       "",
       "on_loan",
-      observaciones || ""
+      `${observaciones || ""}${observaciones ? ' | ' : ''}Rol: ${rolTarget} | Plazo: ${diasPrestamo}d | Limite: ${limiteLibros}`.trim()
     ]);
+
+    logStructuredEvent(
+      "ACCOUNTING",
+      "processLibraryLoan",
+      "INFO",
+      "LOAN_GRANTED",
+      `Préstamo ${prestamoId} otorgado a '${uId}' (Rol: ${rolTarget}) para ejemplar '${eId}'. Vence: ${fechaRetorno.toISOString().slice(0, 10)}`,
+      { prestamoId, ejemplarId: eId, userId: uId, rolTarget, diasPrestamo, fechaRetorno },
+      uId
+    );
 
     return {
       status: "success",
       prestamoId: prestamoId,
-      message: "Préstamo de ejemplar bibliográfico otorgado con éxito."
+      ejemplarId: eId,
+      userId: uId,
+      fechaDevolucionPrevista: fechaRetorno,
+      diasOtorgados: diasPrestamo,
+      limiteRol: limiteLibros,
+      prestamosActivosTotal: prestamosActivosUsuario + 1,
+      message: `Préstamo de ejemplar bibliográfico otorgado con éxito por ${diasPrestamo} días (vence ${fechaRetorno.toISOString().slice(0, 10)}).`
     };
+  } finally {
+    lock.releaseLock();
   }
 }
 

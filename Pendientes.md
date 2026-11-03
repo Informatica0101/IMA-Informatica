@@ -1650,7 +1650,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-025] [ ] [F20-Task03] Normalización relacional del catálogo: separación entre Obras y Ejemplares
+### [TASK-025] [X] [F20-Task03] Normalización relacional del catálogo: separación entre Obras y Ejemplares
 - **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E (Defecto 3), Sección C y Plan de Trabajo P0
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Normalización de datos bibliográficos, modelo FRBR/RDA y prevención de duplicidad de obras)
@@ -1673,11 +1673,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Se puede registrar una obra bibliográfica una sola vez y asociarle múltiples ejemplares físicos independientes.
   - Modificar los datos de la obra (ej. corregir nombre de la editorial) actualiza la ficha global sin tocar los registros de préstamos de sus ejemplares.
   - Cada ejemplar físico mantiene su propio estado de disponibilidad y ubicación física aislada.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-026] [ ] [F20-Task04] Control de políticas de circulación, límites de préstamo y bloqueo por mora
+### [TASK-026] [X] [F20-Task04] Control de políticas de circulación, límites de préstamo y bloqueo por mora
 - **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E (Defecto 4), Sección C y Plan de Trabajo P0
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Políticas institucionales de circulación, límites por rol escolar y prevención de retención indebida de libros)
@@ -1702,11 +1702,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Un estudiante con 2 libros en préstamo intenta solicitar un 3º y el sistema rechaza la operación por límite de cupo alcanzado.
   - Un usuario con un libro vencido no puede recibir nuevos préstamos hasta devolver el material atrasado.
   - Un docente puede recibir hasta 5 libros con fecha de retorno configurada a 15 días.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-027] [ ] [F20-Task05] Control de concurrencia e idempotencia en circulación bibliotecaria
+### [TASK-027] [X] [F20-Task05] Control de concurrencia e idempotencia en circulación bibliotecaria
 - **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E, Sección F (PT-20-24, PT-20-25) y Plan de Trabajo P0
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Integridad transaccional, prevención de doble asignación de ejemplares y protección de reintentos)
@@ -1727,7 +1727,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 - **Criterios de Aceptación:**
   - Dos solicitudes simultáneas sobre el mismo ejemplar resultan en un préstamo exitoso y un rechazo controlado.
   - Los reintentos de red no duplican las filas de préstamo en `BibliotecaPrestamos`.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 

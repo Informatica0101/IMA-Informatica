@@ -267,6 +267,23 @@ const dashAcctHtml = fs.readFileSync(path.join(__dirname, '../../dashboard-conta
 assert(dashAcctHtml.includes("switchTab('biblioteca')") && dashAcctHtml.includes("fa-book-reader"), "dashboard-contabilidad.html incluye botón de acceso a Biblioteca con icono representativo [TASK-024]");
 assert(acctJsUpdated.includes("tab === 'biblioteca'") && acctJsUpdated.includes("renderBibliotecaModule(container)"), "js/accounting.js enruta tab === 'biblioteca' a renderBibliotecaModule [TASK-024]");
 
+// [TASK-025] [F20-Task03] - Normalización relacional del catálogo: separación entre Obras y Ejemplares (FRBR/RDA)
+assert(acctCode.includes("BibliotecaCatalogoObras") && acctCode.includes("manageBibliographicWork"), "backend/accounting-service/Code.gs implementa función manageBibliographicWork en BibliotecaCatalogoObras [TASK-025]");
+assert(acctCode.includes("OBRA-") && acctCode.includes("autoresJSON"), "backend/accounting-service/Code.gs genera código correlativo OBRA- y almacena metadatos FRBR [TASK-025]");
+assert(acctCode.includes("getBibliographicWorks") && acctCode.includes("metricasEjemplares"), "backend/accounting-service/Code.gs implementa getBibliographicWorks calculando métricas de copias por estado [TASK-025]");
+assert(acctCode.includes("targetObraId") && acctCode.includes("obraId"), "backend/accounting-service/Code.gs vincula ejemplares físicos a obraId maestro en BibliotecaEjemplares [TASK-025]");
+assert(acctJsUpdated.includes("getBibliographicWorks") && acctJsUpdated.includes("loadLibrosData"), "js/accounting.js consulta y renderiza el catálogo normalizado de obras y copias en UI [TASK-025]");
+
+// [TASK-026] [F20-Task04] - Control de políticas de circulación, límites de préstamo y bloqueo por mora
+assert(acctCode.includes("BibliotecaPoliticasCirculacion"), "backend/accounting-service/Code.gs contiene hoja y catálogo BibliotecaPoliticasCirculacion [TASK-026]");
+assert(acctCode.includes("LOAN_LIMIT_EXCEEDED"), "backend/accounting-service/Code.gs bloquea préstamos al superar el límite simultáneo por rol [TASK-026]");
+assert(acctCode.includes("ACTIVE_OVERDUE_BLOCK"), "backend/accounting-service/Code.gs bloquea nuevos préstamos ante mora activa de libros atrasados [TASK-026]");
+assert(acctCode.includes("diasPrestamo") && acctCode.includes("fechaRetorno"), "backend/accounting-service/Code.gs calcula fecha de retorno dinámica según política de rol [TASK-026]");
+
+// [TASK-027] [F20-Task05] - Control de concurrencia e idempotencia en circulación bibliotecaria
+assert(acctCode.includes("BOOK_ALREADY_LOANED"), "backend/accounting-service/Code.gs previene asignación duplicada concurrente en processLibraryLoan [TASK-027]");
+assert(acctCode.includes("IDEMPOTENCY_DUPLICATE_REQUEST"), "backend/accounting-service/Code.gs implementa clave de idempotencia en préstamos de biblioteca [TASK-027]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

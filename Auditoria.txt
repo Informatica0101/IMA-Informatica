@@ -1246,3 +1246,25 @@ RESULTADO DE EVALUACIÓN:
      - Añadir bifurcación else if (tab === "biblioteca") renderBibliotecaModule(container); dentro de switchTab.
   4. Extender tests/regression/academic-grading-suite.js con 8 aserciones de verificación funcional.
 ===============================================================================
+
+================================================================================
+AUDITORÍA TÉCNICA - [TASK-026] [F20-Task04] Y [TASK-027] [F20-Task05]
+Fecha: 2025-05-18
+Archivos Auditados:
+- backend/accounting-service/Code.gs
+- js/accounting.js
+- tests/regression/academic-grading-suite.js
+
+Hallazgos Técnicos:
+1. Ausencia de límites por perfil: "processLibraryLoan" asignaba de forma fija 7 días de préstamo sin importar el rol del usuario (Estudiante vs Docente vs Administrativo) ni validaba cuántos libros activos mantenía el usuario.
+2. Inexistencia de bloqueo por morosidad: No se comprobaba si el prestatario mantenía préstamos vencidos no devueltos, permitiendo retirar más material acumulando morosidad sin control.
+3. Vulnerabilidad de concurrencia e idempotencia: Las operaciones de préstamo en circulación no adquirían candado ScriptLock y carecían de verificación idempotente frente a reintentos o pulsaciones duplicadas en la red.
+
+Acciones Ejecutadas:
+1. Creación de hoja "BibliotecaPoliticasCirculacion" con esquema formal (PoliticaID, RolTarget, LimiteLibrosSimultaneos, DiasPrestamo, PermitePrestamoDomicilio, DiasGraciaMora, Estado, Observaciones) y políticas institucionales por defecto.
+2. Implementación de control estricto de cupos en "processLibraryLoan", bloqueando con código "LOAN_LIMIT_EXCEEDED" cuando el usuario alcanza el límite de su rol.
+3. Bloqueo preventivo de nuevos préstamos por mora activa con código "ACTIVE_OVERDUE_BLOCK" si el usuario mantiene libros vencidos pendientes de devolución.
+4. Cálculo dinámico de "fechaDevolucionPrevista" según la política configurada para el rol del usuario.
+5. Protección atómica integral mediante "LockService.getScriptLock(15000)", re-verificación de disponibilidad del ejemplar dentro de la sección crítica (código "BOOK_ALREADY_LOANED"), y prevención de duplicados idempotentes ("IDEMPOTENCY_DUPLICATE_REQUEST").
+6. Cobertura completa en la suite tests/regression/academic-grading-suite.js alcanzando 185/185 pruebas aprobadas (100%).
+================================================================================
