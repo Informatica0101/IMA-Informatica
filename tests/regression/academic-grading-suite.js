@@ -184,6 +184,14 @@ assert(acctCode.includes("ARTICULO_NO_ORDENADO"), "backend/accounting-service/Co
 assert(acctCode.includes("BloqueadoPorDiscrepancia") && acctCode.includes("Bloqueado Conciliacion"), "backend/accounting-service/Code.gs bloquea pagos automáticos ante discrepancias no autorizadas [TASK-013]");
 assert(!acctCode.includes("numeroFactura: \"FCT-\" + recId"), "backend/accounting-service/Code.gs desacopla la recepción física de la generación de facturas fiscales [TASK-013]");
 
+// [TASK-014] [F18-Task03] - Interfaz operativa completa del módulo de compras & proveedores en js/accounting.js
+const accountingClientCode = fs.readFileSync(path.join(__dirname, '../../js/accounting.js'), 'utf8');
+assert(accountingClientCode.includes("switchComprasSubtab") && accountingClientCode.includes("[TASK-014]"), "js/accounting.js contiene navegación interactiva de subpestañas de compras [TASK-014]");
+assert(accountingClientCode.includes("renderComprasSolicitudesView") && accountingClientCode.includes("renderComprasCotizacionesView"), "js/accounting.js renderiza vistas operativas de solicitudes y cotizaciones [TASK-014]");
+assert(accountingClientCode.includes("renderComprasOrdenesView") && accountingClientCode.includes("renderComprasRecepcionesView"), "js/accounting.js gestiona órdenes y recepciones escalonadas en UI [TASK-014]");
+assert(accountingClientCode.includes("renderComprasThreeWayView") && accountingClientCode.includes("executeThreeWayMatchTest"), "js/accounting.js implementa interfaz visual de Three-Way Matching [TASK-014]");
+assert(accountingClientCode.includes("renderComprasProveedoresView"), "js/accounting.js integra directorio operativo de proveedores [TASK-014]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

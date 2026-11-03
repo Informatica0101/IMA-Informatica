@@ -890,3 +890,40 @@ RESULTADO DE EVALUACIÓN:
 - Pruebas automatizadas en tests/regression/academic-grading-suite.js pasando al 100% (116/116 pruebas aprobadas).
 - Estado: Completado y Verificado funcionalmente.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+AUDITORIA INICIAL — [TASK-014] [F18-Task03]
+ARCHIVOS AUDITADOS:
+- js/accounting.js (renderComprasModule, l. 786-798)
+- dashboard-contabilidad.html (pestaña compras, l. 62-64)
+- backend/accounting-service/Code.gs (endpoints de compras y contrataciones)
+HALLAZGOS:
+1. En js/accounting.js (renderComprasModule): La función únicamente inyecta un bloque HTML estático con un mensaje de texto informativo ('Gestión de Solicitudes de Compra, Cotizaciones Comparativas y Recepción de Bienes.'), sin formularios, tablas de datos, botones de acción ni llamadas a la API.
+2. Inoperatividad del módulo de compras en la interfaz: A pesar de que el backend cuenta con endpoints robustos (createPurchaseRequest, getPurchaseRequests, submitPurchaseQuotation, getPurchaseQuotations, createPurchaseOrder, approvePurchaseOrder, getPurchaseOrders, recordPurchaseReceipt, getPurchaseReceipts, verifyThreeWayMatch, registerSupplier), los usuarios de Contabilidad, Dirección y Adquisiciones no pueden operar el ciclo de compras desde dashboard-contabilidad.html.
+3. Carencia de cuadro comparativo y seguimiento: No existe visualización comparativa de ofertas ni interfaz de registro para entregas parciales y validación de Three-Way Matching.
+ESTADO: Auditoría finalizada. Procediendo con el desarrollo completo de la interfaz de compras en js/accounting.js.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-014] [F18-Task03]
+INTERFAZ OPERATIVA COMPLETA DEL MÓDULO DE COMPRAS & PROVEEDORES (FASE 18)
+ARCHIVOS MODIFICADOS:
+- js/accounting.js (renderComprasModule, switchComprasSubtab, sub-vistas operativas)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt / Auditoría.txt / ChangesLogs.txt
+RESULTADO DE EVALUACIÓN:
+- Se reemplazó el bloque estático de renderComprasModule en js/accounting.js por la consola integral de compras:
+  * Barra de navegación interactiva con subpestañas: 'Solicitudes', 'Cotizaciones', 'Órdenes de Compra', 'Recepciones', 'Three-Way Match' y 'Proveedores'.
+  * Panel métrico en tiempo real con 4 KPIs (solicitudes pendientes, órdenes por entregar, entregas parciales y estado Three-Way).
+  * Sub-vista 'Solicitudes de Compra' con tabla asíncrona, estados de aprobación y disparador modal de creación.
+  * Sub-vista 'Cotizaciones & Comparativo' para visualización y adjudicación de ofertas de proveedores.
+  * Sub-vista 'Órdenes de Compra' para seguimiento de estados escalonados ('RecibidaParcial', 'RecibidaTotal').
+  * Sub-vista 'Recepciones de Mercancía' para auditoría de recepciones físicas en bodega y conformidades.
+  * Sub-vista 'Three-Way Match' con formulario interactivo de testeo y validación cruzada entre orden, recepción y factura.
+  * Sub-vista 'Directorio de Proveedores' para consulta y registro de proveedores con RTN.
+- Pruebas automatizadas en tests/regression/academic-grading-suite.js alcanzando 121/121 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================

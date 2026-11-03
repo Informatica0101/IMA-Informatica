@@ -3967,3 +3967,15 @@ ARCHIVOS MODIFICADOS:
 3. Pendientes.md:
    - Líneas 1160-1200: Marcada tarea [TASK-013] como [X] Completado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+TAREA: [TASK-014] [F18-Task03]
+ARCHIVOS MODIFICADOS:
+1. js/accounting.js:
+   - Líneas 786-1230: Reescritura completa de renderComprasModule implementando navegación por subpestañas, indicadores en tiempo real, renderComprasSolicitudesView, renderComprasCotizacionesView, renderComprasOrdenesView, renderComprasRecepcionesView, renderComprasThreeWayView (con executeThreeWayMatchTest) y renderComprasProveedoresView conectadas asíncronamente con el backend.
+2. tests/regression/academic-grading-suite.js:
+   - Líneas 199-206: Aserciones automatizadas para navegación de subpestañas de compras, renderizado de solicitudes/cotizaciones/órdenes/recepciones, interfaz visual Three-Way Match y directorio de proveedores.
+3. Pendientes.md:
+   - Líneas 1209-1247: Marcada tarea [TASK-014] como [X] Completado.
+===============================================================================

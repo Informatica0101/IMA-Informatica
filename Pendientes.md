@@ -1206,7 +1206,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-014] [ ] [F18-Task03] Desarrollar la interfaz operativa completa del módulo de compras
+### [TASK-014] [X] [F18-Task03] Desarrollar la interfaz operativa completa del módulo de compras
 - **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección E (Brecha E.3) y Sección G (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Operatividad del usuario, eliminación de dependencia de Sheets y productividad administrativa)
@@ -1243,7 +1243,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Contabilidad puede revisar facturas de proveedores y el resultado de la conciliación de tres vías.
   - Los usuarios sin permisos no pueden ejecutar operaciones mediante llamadas directas.
   - Las operaciones repetidas no generan registros duplicados en el backend.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 ---

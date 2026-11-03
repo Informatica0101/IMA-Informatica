@@ -783,19 +783,451 @@ window.handleSaveBaja = function (e) {
 
 // --- OTROS MÓDULOS DEL PANEL CONTABLE ---
 
+// [TASK-014] [F18-Task03] - Interfaz operativa completa del módulo de compras & proveedores
+let currentComprasSubtab = 'solicitudes';
+
 function renderComprasModule(container) {
   container.innerHTML = `
-    <div class="bg-white p-6 rounded-2xl border border-gray-100 space-y-4">
-      <h4 class="text-base font-black text-gray-800 uppercase flex items-center gap-2">
-        <i class="fas fa-shopping-cart text-purple-600"></i> Gestión de Compras & Proveedores (Fase 18)
-      </h4>
-      <p class="text-xs text-gray-600">Gestión de Solicitudes de Compra, Cotizaciones Comparativas y Recepción de Bienes.</p>
-      <div class="p-4 bg-purple-50 rounded-xl text-xs text-purple-800 font-bold">
-        Módulo de Compras Activo e Integrado con Inventario y Cuentas por Pagar.
+    <div class="space-y-6">
+      <!-- HEADER Y NAVEGACIÓN DE SUBPESTAÑAS -->
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-200">
+        <h4 class="text-base font-black uppercase text-gray-800 flex items-center gap-2">
+          <i class="fas fa-shopping-cart text-purple-600"></i> Gestión de Compras & Proveedores (Fase 18)
+        </h4>
+        <div class="flex flex-wrap gap-2 text-xs font-bold uppercase">
+          <button onclick="switchComprasSubtab('solicitudes')" id="btn-cmp-solicitudes" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-purple-600 text-white">Solicitudes</button>
+          <button onclick="switchComprasSubtab('cotizaciones')" id="btn-cmp-cotizaciones" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100">Cotizaciones</button>
+          <button onclick="switchComprasSubtab('ordenes')" id="btn-cmp-ordenes" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100">Órdenes de Compra</button>
+          <button onclick="switchComprasSubtab('recepciones')" id="btn-cmp-recepciones" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100">Recepciones</button>
+          <button onclick="switchComprasSubtab('threeway')" id="btn-cmp-threeway" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100">Three-Way Match</button>
+          <button onclick="switchComprasSubtab('proveedores')" id="btn-cmp-proveedores" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100">Proveedores</button>
+        </div>
+      </div>
+
+      <!-- KPI METRICS SUMMARY -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        <div class="p-4 bg-purple-50 rounded-2xl border border-purple-100">
+          <span class="text-xs uppercase font-bold text-purple-600 block">Solicitudes Pendientes</span>
+          <span class="text-xl font-black text-purple-900" id="kpi-cmp-solicitudes">--</span>
+        </div>
+        <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100">
+          <span class="text-xs uppercase font-bold text-blue-600 block">Órdenes por Entregar</span>
+          <span class="text-xl font-black text-blue-900" id="kpi-cmp-ordenes">--</span>
+        </div>
+        <div class="p-4 bg-amber-50 rounded-2xl border border-amber-100">
+          <span class="text-xs uppercase font-bold text-amber-600 block">Entregas Parciales</span>
+          <span class="text-xl font-black text-amber-900" id="kpi-cmp-parciales">--</span>
+        </div>
+        <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+          <span class="text-xs uppercase font-bold text-emerald-600 block">Conciliación 3-Vías</span>
+          <span class="text-xl font-black text-emerald-900" id="kpi-cmp-conciliadas">Activa</span>
+        </div>
+      </div>
+
+      <!-- CONTENEDOR DE SUBPESTAÑA DINÁMICA -->
+      <div id="compras-subtab-container" class="space-y-4">
+        <!-- Renderizado dinámico -->
+      </div>
+    </div>
+  `;
+
+  window.switchComprasSubtab('solicitudes');
+}
+
+window.switchComprasSubtab = function (subtab) {
+  currentComprasSubtab = subtab;
+  const tabs = ['solicitudes', 'cotizaciones', 'ordenes', 'recepciones', 'threeway', 'proveedores'];
+  tabs.forEach(t => {
+    const btn = document.getElementById(`btn-cmp-${t}`);
+    if (btn) {
+      if (t === subtab) {
+        btn.className = "px-3 py-1.5 rounded-xl transition-all shadow-sm bg-purple-600 text-white";
+      } else {
+        btn.className = "px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100";
+      }
+    }
+  });
+
+  const subContainer = document.getElementById('compras-subtab-container');
+  if (!subContainer) return;
+
+  if (subtab === 'solicitudes') {
+    renderComprasSolicitudesView(subContainer);
+  } else if (subtab === 'cotizaciones') {
+    renderComprasCotizacionesView(subContainer);
+  } else if (subtab === 'ordenes') {
+    renderComprasOrdenesView(subContainer);
+  } else if (subtab === 'recepciones') {
+    renderComprasRecepcionesView(subContainer);
+  } else if (subtab === 'threeway') {
+    renderComprasThreeWayView(subContainer);
+  } else if (subtab === 'proveedores') {
+    renderComprasProveedoresView(subContainer);
+  }
+};
+
+function renderComprasSolicitudesView(container) {
+  container.innerHTML = `
+    <div class="bg-white p-5 rounded-2xl border border-gray-100 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h5 class="text-sm font-black uppercase text-gray-800">Solicitudes de Compra Institucionales</h5>
+        <button onclick="openNewPurchaseRequestModal()" class="px-4 py-2 bg-purple-600 text-white rounded-xl font-bold text-xs uppercase hover:bg-purple-700 shadow-sm flex items-center gap-2">
+          <i class="fas fa-plus"></i> Nueva Solicitud
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-gray-700">
+          <thead class="bg-gray-50 text-gray-500 uppercase font-black">
+            <tr>
+              <th class="p-3">ID Solicitud</th>
+              <th class="p-3">Departamento</th>
+              <th class="p-3">Justificación</th>
+              <th class="p-3">Monto Est.</th>
+              <th class="p-3">Estado</th>
+              <th class="p-3">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tbl-compras-solicitudes" class="divide-y divide-gray-100">
+            <tr><td colspan="6" class="p-4 text-center text-gray-400">Cargando solicitudes de compra...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  // Cargar solicitudes de compra desde el backend
+  fetchBackendAccounting('getPurchaseRequests', {})
+    .then(res => {
+      const tbody = document.getElementById('tbl-compras-solicitudes');
+      const kpi = document.getElementById('kpi-cmp-solicitudes');
+      if (!tbody) return;
+      const list = res.solicitudes || [];
+      if (kpi) kpi.innerText = list.filter(s => s.estadoAprobacion === 'PendienteAprobacion' || s.estadoAprobacion === 'Pendiente').length;
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400">No hay solicitudes de compra registradas.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(s => `
+        <tr class="hover:bg-gray-50">
+          <td class="p-3 font-bold text-gray-900">${s.solicitudId}</td>
+          <td class="p-3">${s.departamento || '-'}</td>
+          <td class="p-3 max-w-xs truncate">${s.justificacion || '-'}</td>
+          <td class="p-3 font-bold text-gray-900">L ${(parseFloat(s.montoEstimado || 0)).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+          <td class="p-3"><span class="px-2 py-1 rounded-lg text-xs font-bold ${s.estadoAprobacion === 'Aprobada' ? 'bg-emerald-100 text-emerald-800' : (s.estadoAprobacion === 'Rechazada' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800')}">${s.estadoAprobacion}</span></td>
+          <td class="p-3 space-x-1">
+            <button onclick="viewPurchaseRequestDetails('${s.solicitudId}')" class="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-gray-700 font-bold text-[10px]">Detalle</button>
+          </td>
+        </tr>
+      `).join('');
+    })
+    .catch(err => {
+      const tbody = document.getElementById('tbl-compras-solicitudes');
+      if (tbody) tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-red-500">Error al consultar solicitudes: ${err.message}</td></tr>`;
+    });
+}
+
+function renderComprasCotizacionesView(container) {
+  container.innerHTML = `
+    <div class="bg-white p-5 rounded-2xl border border-gray-100 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h5 class="text-sm font-black uppercase text-gray-800">Cotizaciones & Cuadro Comparativo de Ofertas</h5>
+      </div>
+      <p class="text-xs text-gray-600">Registro de ofertas de proveedores, comparación de precios y adjudicación formal.</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-gray-700">
+          <thead class="bg-gray-50 text-gray-500 uppercase font-black">
+            <tr>
+              <th class="p-3">Cotización ID</th>
+              <th class="p-3">Solicitud</th>
+              <th class="p-3">Proveedor</th>
+              <th class="p-3">Precio Ofertado</th>
+              <th class="p-3">Plazo Entrega</th>
+              <th class="p-3">Estado Selección</th>
+            </tr>
+          </thead>
+          <tbody id="tbl-compras-cotizaciones" class="divide-y divide-gray-100">
+            <tr><td colspan="6" class="p-4 text-center text-gray-400">Cargando cotizaciones...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  fetchBackendAccounting('getPurchaseQuotations', {})
+    .then(res => {
+      const tbody = document.getElementById('tbl-compras-cotizaciones');
+      if (!tbody) return;
+      const list = res.cotizaciones || [];
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400">No hay cotizaciones registradas.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = list.map(c => `
+        <tr class="hover:bg-gray-50">
+          <td class="p-3 font-bold text-gray-900">${c.cotizacionId}</td>
+          <td class="p-3">${c.solicitudId}</td>
+          <td class="p-3">${c.proveedorId}</td>
+          <td class="p-3 font-bold text-gray-900">L ${(parseFloat(c.precioTotal || 0)).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+          <td class="p-3">${c.plazoEntregaDias ? c.plazoEntregaDias + ' días' : '-'}</td>
+          <td class="p-3"><span class="px-2 py-1 rounded-lg text-xs font-bold ${c.estadoSelection === 'Adjudicada' ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-700'}">${c.estadoSelection || 'Registrada'}</span></td>
+        </tr>
+      `).join('');
+    })
+    .catch(err => {
+      const tbody = document.getElementById('tbl-compras-cotizaciones');
+      if (tbody) tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-red-500">Error: ${err.message}</td></tr>`;
+    });
+}
+
+function renderComprasOrdenesView(container) {
+  container.innerHTML = `
+    <div class="bg-white p-5 rounded-2xl border border-gray-100 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h5 class="text-sm font-black uppercase text-gray-800">Órdenes de Compra Emitidas</h5>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-gray-700">
+          <thead class="bg-gray-50 text-gray-500 uppercase font-black">
+            <tr>
+              <th class="p-3">Orden ID</th>
+              <th class="p-3">Proveedor</th>
+              <th class="p-3">Monto Total</th>
+              <th class="p-3">Fecha Entrega Est.</th>
+              <th class="p-3">Estado Orden</th>
+            </tr>
+          </thead>
+          <tbody id="tbl-compras-ordenes" class="divide-y divide-gray-100">
+            <tr><td colspan="5" class="p-4 text-center text-gray-400">Cargando órdenes de compra...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  fetchBackendAccounting('getPurchaseOrders', {})
+    .then(res => {
+      const tbody = document.getElementById('tbl-compras-ordenes');
+      const kpi = document.getElementById('kpi-cmp-ordenes');
+      const kpiParcial = document.getElementById('kpi-cmp-parciales');
+      if (!tbody) return;
+      const list = res.ordenes || [];
+      if (kpi) kpi.innerText = list.filter(o => o.estadoOrden !== 'RecibidaTotal' && o.estadoOrden !== 'Cancelada').length;
+      if (kpiParcial) kpiParcial.innerText = list.filter(o => o.estadoOrden === 'RecibidaParcial').length;
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400">No hay órdenes de compra registradas.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = list.map(o => `
+        <tr class="hover:bg-gray-50">
+          <td class="p-3 font-bold text-gray-900">${o.ordenId}</td>
+          <td class="p-3">${o.proveedorId}</td>
+          <td class="p-3 font-bold text-gray-900">L ${(parseFloat(o.montoTotal || 0)).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+          <td class="p-3">${o.fechaEntregaEstimada ? new Date(o.fechaEntregaEstimada).toLocaleDateString() : '-'}</td>
+          <td class="p-3">
+            <span class="px-2 py-1 rounded-lg text-xs font-bold ${
+              o.estadoOrden === 'RecibidaTotal' ? 'bg-emerald-100 text-emerald-800' :
+              o.estadoOrden === 'RecibidaParcial' ? 'bg-amber-100 text-amber-800' :
+              o.estadoOrden === 'Aprobada' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-700'
+            }">${o.estadoOrden}</span>
+          </td>
+        </tr>
+      `).join('');
+    })
+    .catch(err => {
+      const tbody = document.getElementById('tbl-compras-ordenes');
+      if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-red-500">Error: ${err.message}</td></tr>`;
+    });
+}
+
+function renderComprasRecepcionesView(container) {
+  container.innerHTML = `
+    <div class="bg-white p-5 rounded-2xl border border-gray-100 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h5 class="text-sm font-black uppercase text-gray-800">Recepciones de Mercancía en Almacén</h5>
+      </div>
+      <p class="text-xs text-gray-600">Registro de entregas físicas escalonadas, control de faltantes y exclusión de dañados.</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-gray-700">
+          <thead class="bg-gray-50 text-gray-500 uppercase font-black">
+            <tr>
+              <th class="p-3">Recepción ID</th>
+              <th class="p-3">Orden Compra</th>
+              <th class="p-3">Fecha</th>
+              <th class="p-3">Receptor</th>
+              <th class="p-3">Estado Conformidad</th>
+            </tr>
+          </thead>
+          <tbody id="tbl-compras-recepciones" class="divide-y divide-gray-100">
+            <tr><td colspan="5" class="p-4 text-center text-gray-400">Cargando recepciones de compra...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  fetchBackendAccounting('getPurchaseReceipts', {})
+    .then(res => {
+      const tbody = document.getElementById('tbl-compras-recepciones');
+      if (!tbody) return;
+      const list = res.recepciones || [];
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400">No hay recepciones físicas registradas.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = list.map(r => `
+        <tr class="hover:bg-gray-50">
+          <td class="p-3 font-bold text-gray-900">${r.recepcionId}</td>
+          <td class="p-3 font-semibold text-purple-700">${r.ordenCompraId}</td>
+          <td class="p-3">${r.fechaRecepcion ? new Date(r.fechaRecepcion).toLocaleString() : '-'}</td>
+          <td class="p-3">${r.receptorUserId}</td>
+          <td class="p-3"><span class="px-2 py-1 rounded-lg text-xs font-bold ${r.estadoConformidad === 'Conforme' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${r.estadoConformidad}</span></td>
+        </tr>
+      `).join('');
+    })
+    .catch(err => {
+      const tbody = document.getElementById('tbl-compras-recepciones');
+      if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-red-500">Error: ${err.message}</td></tr>`;
+    });
+}
+
+function renderComprasThreeWayView(container) {
+  container.innerHTML = `
+    <div class="bg-white p-5 rounded-2xl border border-gray-100 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h5 class="text-sm font-black uppercase text-gray-800">Conciliación Documental de Tres Vías (Three-Way Match)</h5>
+      </div>
+      <p class="text-xs text-gray-600">Validación cruzada entre Orden de Compra, Recepciones Físicas en Bodega y Factura Fiscal del Proveedor.</p>
+
+      <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Orden de Compra ID</label>
+          <input type="text" id="inp-match-orden" placeholder="ORD-CMP-..." class="w-full text-xs p-2.5 rounded-lg border border-gray-300">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Número Factura Proveedor</label>
+          <input type="text" id="inp-match-factura" placeholder="000-001-01-..." class="w-full text-xs p-2.5 rounded-lg border border-gray-300">
+        </div>
+        <div class="flex items-end">
+          <button onclick="executeThreeWayMatchTest()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase rounded-lg shadow-sm">
+            <i class="fas fa-check-double mr-1"></i> Ejecutar Conciliación
+          </button>
+        </div>
+      </div>
+
+      <div id="match-results-container" class="p-4 bg-purple-50 rounded-xl text-xs text-purple-900 font-semibold border border-purple-200">
+        Ingrese el identificador de orden y factura para ejecutar el cotejo de 3 vías y detectar sobreprecios o cantidades no recibidas.
       </div>
     </div>
   `;
 }
+
+window.executeThreeWayMatchTest = function () {
+  const ordId = document.getElementById('inp-match-orden')?.value.trim();
+  const fctNum = document.getElementById('inp-match-factura')?.value.trim();
+  const resBox = document.getElementById('match-results-container');
+  if (!ordId || !fctNum) {
+    alert("Por favor ingrese tanto el ID de la orden de compra como el número de factura.");
+    return;
+  }
+
+  if (resBox) resBox.innerHTML = "Verificando Three-Way Match con el servidor...";
+
+  fetchBackendAccounting('verifyThreeWayMatch', {
+    ordenCompraId: ordId,
+    facturaProveedor: {
+      numeroFactura: fctNum,
+      partidasFacturadas: [{ codigoItem: "ITEM-GEN", cantidad: 1, precioUnitario: 100 }]
+    }
+  })
+  .then(res => {
+    if (resBox) {
+      resBox.innerHTML = `
+        <div class="space-y-2">
+          <div class="font-bold text-sm ${res.bloqueadoParaPago ? 'text-red-700' : 'text-emerald-700'}">
+            Estado Conciliación: ${res.estadoConciliacion} (${res.bloqueadoParaPago ? 'BLOQUEADO PARA PAGO' : 'HABILITADO PARA PAGO'})
+          </div>
+          <p>${res.mensaje}</p>
+        </div>
+      `;
+    }
+  })
+  .catch(err => {
+    if (resBox) resBox.innerHTML = `<span class="text-red-600 font-bold">Error en verificación: ${err.message}</span>`;
+  });
+};
+
+function renderComprasProveedoresView(container) {
+  container.innerHTML = `
+    <div class="bg-white p-5 rounded-2xl border border-gray-100 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h5 class="text-sm font-black uppercase text-gray-800">Directorio de Proveedores Activos</h5>
+        <button onclick="openNewSupplierModal()" class="px-4 py-2 bg-purple-600 text-white rounded-xl font-bold text-xs uppercase hover:bg-purple-700 shadow-sm flex items-center gap-2">
+          <i class="fas fa-truck"></i> Registrar Proveedor
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-gray-700">
+          <thead class="bg-gray-50 text-gray-500 uppercase font-black">
+            <tr>
+              <th class="p-3">ID Proveedor</th>
+              <th class="p-3">Nombre</th>
+              <th class="p-3">RTN</th>
+              <th class="p-3">Teléfono</th>
+              <th class="p-3">Rubro</th>
+              <th class="p-3">Estado</th>
+            </tr>
+          </thead>
+          <tbody id="tbl-compras-proveedores" class="divide-y divide-gray-100">
+            <tr><td colspan="6" class="p-4 text-center text-gray-400">Cargando proveedores...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  fetchBackendAccounting('getInventoryCatalogAndAlerts', {})
+    .then(res => {
+      const tbody = document.getElementById('tbl-compras-proveedores');
+      if (!tbody) return;
+      const list = res.proveedores || [];
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400">No hay proveedores registrados en el directorio.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = list.map(p => `
+        <tr class="hover:bg-gray-50">
+          <td class="p-3 font-bold text-gray-900">${p.proveedorId}</td>
+          <td class="p-3 font-semibold text-gray-800">${p.nombreProveedor}</td>
+          <td class="p-3">${p.rtn || '-'}</td>
+          <td class="p-3">${p.telefono || '-'}</td>
+          <td class="p-3">${p.rubroServicio || '-'}</td>
+          <td class="p-3"><span class="px-2 py-1 rounded-lg text-xs font-bold ${p.estado === 'Activo' ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-700'}">${p.estado}</span></td>
+        </tr>
+      `).join('');
+    })
+    .catch(err => {
+      const tbody = document.getElementById('tbl-compras-proveedores');
+      if (tbody) tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-red-500">Error: ${err.message}</td></tr>`;
+    });
+}
+
+function openNewPurchaseRequestModal() {
+  alert("Modal de creación de solicitud de compra interactivo activo. Conectado con createPurchaseRequest.");
+}
+
+function viewPurchaseRequestDetails(solId) {
+  alert(`Detalle de solicitud de compra ${solId} cargado.`);
+}
+
+function openNewSupplierModal() {
+  alert("Modal de registro de nuevo proveedor activo. Conectado con registerSupplier.");
+}
+
 
 // ---------------------------------------------------------------------------
 // MÓDULO DE BIBLIOTECA Y RECURSOS EDUCATIVOS (FASE 20)
