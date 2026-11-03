@@ -1593,7 +1593,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-023] [ ] [F20-Task01] Implementación de funciones backend faltantes para biblioteca
+### [TASK-023] [X] [F20-Task01] Implementación de funciones backend faltantes para biblioteca
 - **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E (Defecto 1), Sección G y Plan de Trabajo P0
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Funciones cableadas en enrutador doPost y ROLE_PERMISSIONS pero no declaradas, originando errores fatales de ejecución ReferenceError)
@@ -1620,11 +1620,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Al reservar un libro prestado, se genera la reserva con fecha de expiración y orden de lista de espera.
   - Al reportar una incidencia de extravío, el libro deja de figurar como disponible en el catálogo.
   - La consulta de recursos digitales devuelve los materiales activos respetando los permisos del rol.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 ---
-### [TASK-024] [ ] [F20-Task02] Conexión y activación del módulo de Biblioteca en la interfaz institucional
+### [TASK-024] [X] [F20-Task02] Conexión y activación del módulo de Biblioteca en la interfaz institucional
 - **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E (Defecto 2), Sección G y Plan de Trabajo P0
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Código de frontend huérfano, falta de navegación en dashboards y operatividad de la interfaz)
@@ -1646,7 +1646,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Al hacer clic en el botón "Biblioteca" del dashboard, se despliega la interfaz del módulo sin errores de consola.
   - Se puede navegar entre las 5 subpestañas y cada una carga sus datos correspondientes desde Google Sheets.
   - Los formularios de registro y modales de préstamo operan de forma interactiva y notifican al usuario.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 ---

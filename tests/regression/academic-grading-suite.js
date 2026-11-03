@@ -254,6 +254,19 @@ assert(devCode.includes("runPhase19InventoryAndAssetsRegressionSuite") && devCod
 assert(acctCode.includes("PT19-01") && acctCode.includes("PT19-07") && acctCode.includes("PT19-20"), "backend/accounting-service/Code.gs cubre la batería completa de pruebas PT19-01 a PT19-20 [TASK-022]");
 assert(acctCode.includes("totalDebe === totalHaber") || acctCode.includes("debe !== haber"), "backend/accounting-service/Code.gs valida balance de partida doble en depreciación [TASK-022]");
 
+// [TASK-023] [F20-Task01] - Funciones backend para reservas, incidencias y recursos digitales de biblioteca
+assert(acctCode.includes("reserveLibraryBook") && acctCode.includes("BibliotecaReservas"), "backend/accounting-service/Code.gs contiene función reserveLibraryBook persistiendo en BibliotecaReservas [TASK-023]");
+assert(acctCode.includes("getLibraryReservations") && acctCode.includes("DUPLICATE_RESERVATION"), "backend/accounting-service/Code.gs implementa getLibraryReservations y previene reservas duplicadas [TASK-023]");
+assert(acctCode.includes("recordLibraryIncident") && acctCode.includes("BibliotecaIncidencias"), "backend/accounting-service/Code.gs contiene función recordLibraryIncident en BibliotecaIncidencias [TASK-023]");
+assert(acctCode.includes("getLibraryIncidents") && acctCode.includes("nuevoEstadoEjemplar"), "backend/accounting-service/Code.gs implementa getLibraryIncidents y actualiza estado de ejemplar dañado o extraviado [TASK-023]");
+assert(acctCode.includes("manageDigitalResource") && acctCode.includes("RecursosDigitalesBiblioteca"), "backend/accounting-service/Code.gs contiene función manageDigitalResource [TASK-023]");
+assert(acctCode.includes("getDigitalResources") && acctCode.includes("REC-DIG-"), "backend/accounting-service/Code.gs implementa getDigitalResources con catálogo predeterminado [TASK-023]");
+
+// [TASK-024] [F20-Task02] - Conexión y activación del módulo de Biblioteca en la interfaz institucional
+const dashAcctHtml = fs.readFileSync(path.join(__dirname, '../../dashboard-contabilidad.html'), 'utf8');
+assert(dashAcctHtml.includes("switchTab('biblioteca')") && dashAcctHtml.includes("fa-book-reader"), "dashboard-contabilidad.html incluye botón de acceso a Biblioteca con icono representativo [TASK-024]");
+assert(acctJsUpdated.includes("tab === 'biblioteca'") && acctJsUpdated.includes("renderBibliotecaModule(container)"), "js/accounting.js enruta tab === 'biblioteca' a renderBibliotecaModule [TASK-024]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

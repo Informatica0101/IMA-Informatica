@@ -1216,3 +1216,33 @@ RESULTADO DE EVALUACIÓN:
   4. Integrar vista de transferencias y acciones de despacho y recepción en "js/accounting.js".
   5. Extender tests/regression/academic-grading-suite.js con validaciones específicas.
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-11-03
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs
+- dashboard-contabilidad.html
+- js/accounting.js
+TAREAS ASOCIADAS:
+- [TASK-023] [F20-Task01] Implementación de funciones backend faltantes para biblioteca
+- [TASK-024] [F20-Task02] Conexión y activación del módulo de Biblioteca en la interfaz institucional
+RESULTADO DE EVALUACIÓN:
+- En backend/accounting-service/Code.gs:
+  * Las funciones reserveLibraryBook, getLibraryReservations, recordLibraryIncident, getLibraryIncidents, manageDigitalResource y getDigitalResources se encontraban declaradas en ROLE_PERMISSIONS y en el switch de doPost, pero carecían de implementación ejecutable en el backend.
+  * Invocaciones a estas acciones producían ReferenceError en el entorno de Apps Script.
+- En dashboard-contabilidad.html y js/accounting.js:
+  * La función renderBibliotecaModule y sus subpestañas estaban codificadas en js/accounting.js, pero la navegación en switchTab no tenía el caso para "biblioteca" ni existía un botón de acceso en el submenú de dashboard-contabilidad.html, resultando en un módulo huérfano e inaccesible.
+- Plan de Acción Ejecutado:
+  1. Implementar en backend/accounting-service/Code.gs las 6 funciones faltantes:
+     - reserveLibraryBook: reserva con ScriptLock en "BibliotecaReservas", prevención de reservas duplicadas y comprobación de estado "on_loan".
+     - getLibraryReservations: consulta filtrada por usuario, ejemplar y estado.
+     - recordLibraryIncident: reporte en "BibliotecaIncidencias" con actualización automática de estado del libro a "damaged" o "lost" en "BibliotecaEjemplares".
+     - getLibraryIncidents: consulta de incidencias y estado resolutivo.
+     - manageDigitalResource: alta/edición en "RecursosDigitalesBiblioteca" con serialización de permisos y URLs.
+     - getDigitalResources: consulta con catálogo predeterminado y filtrado de recursos activos.
+  2. En dashboard-contabilidad.html:
+     - Agregar botón de acceso "Biblioteca" con icono fas fa-book-reader en la grilla de submenús.
+  3. En js/accounting.js:
+     - Añadir bifurcación else if (tab === "biblioteca") renderBibliotecaModule(container); dentro de switchTab.
+  4. Extender tests/regression/academic-grading-suite.js con 8 aserciones de verificación funcional.
+===============================================================================

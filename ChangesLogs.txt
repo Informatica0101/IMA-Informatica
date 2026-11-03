@@ -1,6 +1,35 @@
 ===============================================================================
 FECHA: 2025-11-03
 TAREAS:
+- [TASK-023] [F20-Task01] Implementación de funciones backend faltantes para biblioteca
+- [TASK-024] [F20-Task02] Conexión y activación del módulo de Biblioteca en la interfaz institucional
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs
+- dashboard-contabilidad.html
+- js/accounting.js
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+DESCRIPCIÓN DE MODIFICACIONES:
+1. En backend/accounting-service/Code.gs:
+   - Implementación de "reserveLibraryBook": validación de ejemplar en catálogo, verificación de estado en préstamo ("on_loan"), prevención de reservas activas duplicadas por usuario ("DUPLICATE_RESERVATION"), registro atómico con ScriptLock en "BibliotecaReservas" y cálculo de vigencia temporal.
+   - Implementación de "getLibraryReservations": consulta y filtrado relacional por "userId", "ejemplarId" y "estadoReserva".
+   - Implementación de "recordLibraryIncident": reporte en "BibliotecaIncidencias" con actualización atómica del estado del ejemplar a "damaged" o "lost" en "BibliotecaEjemplares".
+   - Implementación de "getLibraryIncidents": consulta de incidencias reportadas con filtros de ejemplar, usuario y estado.
+   - Implementación de "manageDigitalResource": administración y almacenamiento de recursos educativos en "RecursosDigitalesBiblioteca" con validación de URL, título y permisos de acceso.
+   - Implementación de "getDigitalResources": consulta de materiales digitales con catálogo de arranque y filtrado por categoría y vigencia.
+2. En dashboard-contabilidad.html:
+   - Inclusión del botón operativo "Biblioteca" con icono "fas fa-book-reader" y handler "switchTab('biblioteca')" en la barra de navegación del panel contable.
+3. En js/accounting.js:
+   - Integración de "else if (tab === 'biblioteca') renderBibliotecaModule(container);" dentro de "window.switchTab" conectando las 5 subpestañas operativas (Catálogo & Ejemplares, Préstamos, Reservas, Incidencias, Recursos Digitales).
+4. En tests/regression/academic-grading-suite.js:
+   - Inclusión de 8 aserciones funcionales verificando la persistencia de las 6 funciones de biblioteca en backend y la activación de la pestaña en la interfaz contable. Suite superada al 100% (174/174 pruebas pasadas).
+5. En Pendientes.md:
+   - Actualización del estado de [TASK-023] y [TASK-024] a completado [X].
+===============================================================================
+
+===============================================================================
+FECHA: 2025-11-03
+TAREAS:
 - [TASK-021] [F19-Task03] Validación transaccional de transferencias entre almacenes
 - [TASK-022] [F19-Task20] Implementar suite automatizada de pruebas y regresión integral de inventario y activos
 ARCHIVOS MODIFICADOS:

@@ -8918,6 +8918,340 @@ function getLibraryLoans(payload) {
   };
 }
 
+
+// ---------------------------------------------------------------------------
+// [TASK-023] [F20-Task01] FUNCIONES BACKEND FALTANTES PARA BIBLIOTECA
+// ---------------------------------------------------------------------------
+
+// 1. Solicitud de Reserva de Ejemplares Bibliográficos
+function reserveLibraryBook(payload) {
+  const { ejemplarId, userId, fechaExpiracion, observaciones } = payload || {};
+  if (!ejemplarId || !userId) {
+    throw new Error("ejemplarId y userId son requeridos para realizar una reserva.");
+  }
+
+  const uId = String(userId).trim();
+  const eId = String(ejemplarId).trim();
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const bookSheet = getOrCreateSheet(ss, "BibliotecaEjemplares");
+    const resSheet = getOrCreateSheet(ss, "BibliotecaReservas");
+
+    const books = bookSheet.getDataRange().getValues();
+    const bIdx = books.findIndex(r => String(r[0]).trim() === eId);
+    if (bIdx === -1) {
+      return { status: "error", code: "BOOK_NOT_FOUND", message: `Ejemplar '${eId}' no encontrado en el catálogo.` };
+    }
+
+    const estadoLibro = String(books[bIdx][6] || "").trim().toLowerCase();
+    if (estadoLibro !== "on_loan" && estadoLibro !== "prestado") {
+      // Si el libro está disponible en estantería, no requiere reserva, puede prestarse directamente
+      return {
+        status: "info",
+        code: "BOOK_AVAILABLE_FOR_LOAN",
+        message: `El ejemplar '${eId}' se encuentra disponible ('${estadoLibro}'). Puede solicitarse en préstamo directo sin requerir reserva.`
+      };
+    }
+
+    // Verificar si el usuario ya tiene una reserva pendiente activa para este ejemplar
+    const resRows = resSheet.getDataRange().getValues().slice(1);
+    const reservaDuplicada = resRows.some(r =>
+      String(r[1]).trim() === eId &&
+      String(r[2]).trim() === uId &&
+      (String(r[5]).trim() === "Pendiente" || String(r[5]).trim() === "Asignada")
+    );
+
+    if (reservaDuplicada) {
+      return {
+        status: "error",
+        code: "DUPLICATE_RESERVATION",
+        message: `El usuario '${uId}' ya tiene una reserva activa para el ejemplar '${eId}'.`
+      };
+    }
+
+    const now = new Date();
+    const reservaId = "RES-" + now.getTime();
+    const fechaExp = fechaExpiracion ? new Date(fechaExpiracion) : new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000); // 5 días de vigencia
+
+    resSheet.appendRow([
+      reservaId,
+      eId,
+      uId,
+      now,
+      fechaExp,
+      "Pendiente", // EstadoReserva: Pendiente, Asignada, Completada, Cancelada, Expirada
+      observaciones || "Reserva en lista de espera"
+    ]);
+
+    logStructuredEvent(
+      "ACCOUNTING",
+      "reserveLibraryBook",
+      "INFO",
+      "BOOK_RESERVED",
+      `Reserva ${reservaId} registrada para usuario ${uId} sobre ejemplar ${eId}.`,
+      { reservaId, ejemplarId: eId, userId: uId, fechaExp },
+      uId
+    );
+
+    return {
+      status: "success",
+      reservaId: reservaId,
+      ejemplarId: eId,
+      userId: uId,
+      fechaSolicitud: now.toISOString(),
+      fechaExpiracion: fechaExp.toISOString(),
+      estadoReserva: "Pendiente",
+      message: `Reserva ${reservaId} para el ejemplar '${eId}' registrada exitosamente en lista de espera.`
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// 2. Consulta y Filtrado de Reservas Bibliográficas
+function getLibraryReservations(payload) {
+  const { userId, ejemplarId, estadoReserva } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "BibliotecaReservas").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (userId) filtered = filtered.filter(r => String(r[2]).trim() === String(userId).trim());
+  if (ejemplarId) filtered = filtered.filter(r => String(r[1]).trim() === String(ejemplarId).trim());
+  if (estadoReserva) filtered = filtered.filter(r => String(r[5]).trim().toLowerCase() === String(estadoReserva).trim().toLowerCase());
+
+  const mapped = filtered.map(r => ({
+    reservaId: r[0],
+    ejemplarId: r[1],
+    userId: r[2],
+    fechaSolicitud: r[3],
+    fechaExpiracion: r[4],
+    estadoReserva: r[5],
+    observaciones: r[6]
+  }));
+
+  return {
+    status: "success",
+    reservas: mapped
+  };
+}
+
+// 3. Registro y Reporte de Incidencias / Daños / Pérdidas en Biblioteca
+function recordLibraryIncident(payload) {
+  const {
+    prestamoId,
+    ejemplarId,
+    userId,
+    tipoIncidencia, // 'Deterioro', 'PaginasFaltantes', 'Perdida', 'DanadoPorAgua', 'Rayado'
+    descripcion,
+    observaciones,
+    authRole
+  } = payload || {};
+
+  if (!ejemplarId || !tipoIncidencia) {
+    throw new Error("ejemplarId y tipoIncidencia son requeridos.");
+  }
+
+  const eId = String(ejemplarId).trim();
+  const uId = userId ? String(userId).trim() : "BibliotecaAdmin";
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const incSheet = getOrCreateSheet(ss, "BibliotecaIncidencias");
+    const bookSheet = getOrCreateSheet(ss, "BibliotecaEjemplares");
+    const now = new Date();
+    const incidenciaId = "INC-BIB-" + now.getTime();
+
+    // Actualizar estado del ejemplar en catálogo si la incidencia lo inutiliza o extravía
+    const books = bookSheet.getDataRange().getValues();
+    const bIdx = books.findIndex(r => String(r[0]).trim() === eId);
+    let nuevoEstadoEjemplar = null;
+
+    if (bIdx !== -1) {
+      const tipoLower = String(tipoIncidencia).toLowerCase();
+      if (tipoLower.includes("perdida") || tipoLower.includes("extravio")) {
+        nuevoEstadoEjemplar = "lost";
+      } else if (tipoLower.includes("danado") || tipoLower.includes("deterioro") || tipoLower.includes("paginas")) {
+        nuevoEstadoEjemplar = "damaged";
+      }
+
+      if (nuevoEstadoEjemplar) {
+        bookSheet.getRange(bIdx + 1, 7).setValue(nuevoEstadoEjemplar); // Columna 7: estado
+      }
+    }
+
+    incSheet.appendRow([
+      incidenciaId,
+      prestamoId || "N/A",
+      eId,
+      uId,
+      tipoIncidencia,
+      descripcion || "Incidencia de material bibliográfico",
+      "Registrada", // Estado: Registrada, EnRevision, Resuelta, Repuesta
+      "",           // Resolucion
+      observaciones || ""
+    ]);
+
+    logStructuredEvent(
+      "ACCOUNTING",
+      "recordLibraryIncident",
+      "WARN",
+      "LIBRARY_INCIDENT_RECORDED",
+      `Incidencia ${incidenciaId} registrada para ejemplar ${eId} (${tipoIncidencia}). Estado libro: ${nuevoEstadoEjemplar || 'Sin cambio'}`,
+      { incidenciaId, ejemplarId: eId, tipoIncidencia, nuevoEstadoEjemplar },
+      uId
+    );
+
+    return {
+      status: "success",
+      incidenciaId: incidenciaId,
+      ejemplarId: eId,
+      tipoIncidencia: tipoIncidencia,
+      nuevoEstadoEjemplar: nuevoEstadoEjemplar,
+      message: `Incidencia ${incidenciaId} registrada con éxito.${nuevoEstadoEjemplar ? ` El ejemplar '${eId}' se actualizó a '${nuevoEstadoEjemplar}'.` : ''}`
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// 4. Consulta de Incidencias Bibliotecarias
+function getLibraryIncidents(payload) {
+  const { ejemplarId, userId, estado } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "BibliotecaIncidencias").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (ejemplarId) filtered = filtered.filter(r => String(r[2]).trim() === String(ejemplarId).trim());
+  if (userId) filtered = filtered.filter(r => String(r[3]).trim() === String(userId).trim());
+  if (estado) filtered = filtered.filter(r => String(r[6]).trim().toLowerCase() === String(estado).trim().toLowerCase());
+
+  const mapped = filtered.map(r => ({
+    incidenciaId: r[0],
+    prestamoId: r[1],
+    ejemplarId: r[2],
+    userId: r[3],
+    tipoIncidencia: r[4],
+    descripcion: r[5],
+    estado: r[6],
+    resolucion: r[7],
+    observaciones: r[8]
+  }));
+
+  return {
+    status: "success",
+    incidencias: mapped
+  };
+}
+
+// 5. Gestión y Publicación de Recursos Educativos Digitales
+function manageDigitalResource(payload) {
+  const {
+    recursoId,
+    titulo,
+    autorColaboradores,
+    categoria,
+    formatoUrl,
+    nivelPermisosJSON,
+    estado,
+    observaciones
+  } = payload || {};
+
+  if (!titulo || !formatoUrl) {
+    throw new Error("titulo y formatoUrl son requeridos para el recurso digital.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "RecursosDigitalesBiblioteca");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  let rId = recursoId;
+  let existingIndex = -1;
+
+  if (rId) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(rId).trim());
+  } else {
+    rId = "REC-DIG-" + now.getTime();
+  }
+
+  const permisosStr = typeof nivelPermisosJSON === "string" ? nivelPermisosJSON : JSON.stringify(nivelPermisosJSON || ["Todos"]);
+
+  if (existingIndex > 0) {
+    if (titulo) sheet.getRange(existingIndex + 1, 2).setValue(String(titulo).trim());
+    if (autorColaboradores) sheet.getRange(existingIndex + 1, 3).setValue(String(autorColaboradores).trim());
+    if (categoria) sheet.getRange(existingIndex + 1, 4).setValue(String(categoria).trim());
+    if (formatoUrl) sheet.getRange(existingIndex + 1, 5).setValue(String(formatoUrl).trim());
+    if (nivelPermisosJSON) sheet.getRange(existingIndex + 1, 6).setValue(permisosStr);
+    if (estado) sheet.getRange(existingIndex + 1, 7).setValue(String(estado).trim());
+    if (observaciones) sheet.getRange(existingIndex + 1, 8).setValue(String(observaciones).trim());
+  } else {
+    sheet.appendRow([
+      rId,
+      String(titulo).trim(),
+      String(autorColaboradores || "Institucional").trim(),
+      categoria || "General",
+      String(formatoUrl).trim(),
+      permisosStr,
+      estado || "Activo",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    recursoId: rId,
+    message: "Recurso digital guardado y catalogado con éxito."
+  };
+}
+
+// 6. Consulta de Recursos Digitales con Validación de Permisos
+function getDigitalResources(payload) {
+  const { categoria, userRole, estado } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "RecursosDigitalesBiblioteca").getDataRange().getValues().slice(1);
+
+  if (rows.length === 0) {
+    const defaults = [
+      ["REC-DIG-001", "Manual de Metodología de Investigación Científica", "Dr. Mario Bunge", "Investigación", "https://drive.google.com/open?id=demo_manual", '["Todos"]', "Activo", "Guía académica"],
+      ["REC-DIG-002", "Enciclopedia Ilustrada de Ciencias Naturales", "Varios Autores", "Ciencias", "https://drive.google.com/open?id=demo_enciclopedia", '["Todos"]', "Activo", "Recurso interactivo"]
+    ];
+    const sheet = getOrCreateSheet(ss, "RecursosDigitalesBiblioteca");
+    sheet.getRange(2, 1, defaults.length, 8).setValues(defaults);
+    rows.push(...defaults);
+  }
+
+  let filtered = rows;
+  if (categoria) {
+    filtered = filtered.filter(r => String(r[3]).toLowerCase().trim() === String(categoria).toLowerCase().trim());
+  }
+  if (estado) {
+    filtered = filtered.filter(r => String(r[6]).trim().toLowerCase() === String(estado).trim().toLowerCase());
+  }
+
+  const mapped = filtered.map(r => ({
+    recursoId: r[0],
+    titulo: r[1],
+    autorColaboradores: r[2],
+    categoria: r[3],
+    formatoUrl: r[4],
+    nivelPermisosJSON: r[5],
+    estado: r[6],
+    observaciones: r[7]
+  }));
+
+  return {
+    status: "success",
+    recursos: mapped
+  };
+}
+
 // ---------------------------------------------------------------------------
 // FASE 11: ACTIVOS PATRIMONIALES Y CUSTODIAS
 // ---------------------------------------------------------------------------

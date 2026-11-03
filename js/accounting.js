@@ -42,6 +42,8 @@ window.switchTab = function (tab) {
     renderInventarioModule(container);
   } else if (tab === 'compras') {
     renderComprasModule(container);
+  } else if (tab === 'biblioteca') {
+    renderBibliotecaModule(container);
   } else if (tab === 'diario') {
     renderDiarioModule(container);
   } else if (tab === 'presupuestos') {
