@@ -4061,6 +4061,31 @@ DESCRIPCIÓN DE MODIFICACIONES:
 
 ===============================================================================
 FECHA: 2025-11-03
+TAREA: [TASK-020] [F19-Task02] Implementación del flujo completo de devolución y recepción de activos bajo custodia
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs
+- js/accounting.js
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+DESCRIPCIÓN DE MODIFICACIONES:
+1. En backend/accounting-service/Code.gs:
+   - Implementación de la función 'returnAssetCustody' protegida por 'LockService.getScriptLock()' con timeout de 15 segundos.
+   - Vinculación obligatoria a la asignación activa en 'AsignacionesActivos', registrando 'FechaDevolucion', responsable de recepción ('recibidoPor' / 'receptorUserId'), ubicación de entrega y acta de finiquito.
+   - Validación y normalización de estados de condición física: 'Nuevo', 'Bueno', 'Regular', 'Dañado', 'Incompleto', 'RequiereReparacion'.
+   - Generación automática de orden de mantenimiento técnico en 'MantenimientoOrdenes' cuando el activo es recibido con daños o averías ('Dañado', 'Incompleto', 'RequiereReparacion'), actualizando su estado a 'maintenance' y bloqueando su reasignación inmediata.
+   - Liberación de custodia a estado 'available' y vaciado de custodio actual cuando el activo se recibe conforme ('Nuevo', 'Bueno', 'Regular').
+   - Emisión de identificador inmutable de acta de entrega-recepción ('ACTA-DEV-...').
+   - Actualización de 'assignAssetCustody' con validación estricta de estado operativo: rechaza asignación si el activo no está en estado 'available' o si ya posee una custodia activa previa sin devolución formal ('ASSET_ALREADY_ASSIGNED').
+   - Registro de 'returnAssetCustody' en 'ROLE_PERMISSIONS' para roles autorizados ('Director', 'Subdirector', 'Contador', 'Desarrollador') y en el enrutador 'doPost'.
+2. En js/accounting.js:
+   - Inclusión del botón contextual 'Devolver' en la tabla de activos patrimoniales cuando el bien tiene custodio asignado o estado 'assigned'.
+   - Implementación del controlador interactivo 'handleDevolverCustodia' que solicita confirmación del custodio, responsable receptor, condición física de reingreso y observaciones de entrega, invocando 'returnAssetCustody' y alertando sobre órdenes técnicas o actas generadas.
+3. En tests/regression/academic-grading-suite.js:
+   - Inclusión de 7 aserciones verificando función 'returnAssetCustody', rechazo sin asignación activa ('CUSTODY_ASSIGNMENT_NOT_FOUND'), rechazo de duplicados ('CUSTODY_ALREADY_RETURNED'), bloqueo de reasignación sin disponibilidad ('ASSET_ALREADY_ASSIGNED'), generación automática de orden de mantenimiento técnico, acta formal 'ACTA-DEV-' e integración en cliente 'js/accounting.js'. Suite superada al 100% (156/156 pruebas).
+4. En Pendientes.md:
+   - Actualización del estado de [TASK-020] a completado [X].
+===============================================================================
+FECHA: 2025-11-03
 TAREA: [TASK-019] [F19-Task01] Corrección integral del control de existencias multialmacén
 ARCHIVOS MODIFICADOS:
 - backend/accounting-service/Code.gs

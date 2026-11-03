@@ -231,6 +231,15 @@ assert(acctCode.includes("targetAlmacen") && acctCode.includes("Conteo Físico")
 const acctJsUpdated = fs.readFileSync(path.join(__dirname, '../../js/accounting.js'), 'utf8');
 assert(acctJsUpdated.includes("Resumen de Existencias por Almacén") && acctJsUpdated.includes("[TASK-019]"), "js/accounting.js renderiza vista de existencias multialmacén y consolidado institucional [TASK-019]");
 
+// [TASK-020] [F19-Task02] - Devolución y recepción de activos bajo custodia con actas e incidencias de mantenimiento
+assert(acctCode.includes("returnAssetCustody") && acctCode.includes("[TASK-020]"), "backend/accounting-service/Code.gs contiene función returnAssetCustody [TASK-020]");
+assert(acctCode.includes("CUSTODY_ASSIGNMENT_NOT_FOUND"), "backend/accounting-service/Code.gs rechaza devoluciones sin asignación activa previa [TASK-020]");
+assert(acctCode.includes("CUSTODY_ALREADY_RETURNED"), "backend/accounting-service/Code.gs rechaza devoluciones duplicadas de una misma custodia [TASK-020]");
+assert(acctCode.includes("ASSET_ALREADY_ASSIGNED"), "backend/accounting-service/Code.gs impide asignar activos no disponibles o ya bajo custodia [TASK-020]");
+assert(acctCode.includes("MantenimientoOrdenes") && acctCode.includes("RequiereReparacion"), "backend/accounting-service/Code.gs genera orden de mantenimiento técnica automática ante daños o averías [TASK-020]");
+assert(acctCode.includes("ACTA-DEV-") && acctCode.includes("actaDevolucionId"), "backend/accounting-service/Code.gs genera acta formal e inmutable de entrega-recepción de activo [TASK-020]");
+assert(acctJsUpdated.includes("handleDevolverCustodia") && acctJsUpdated.includes("returnAssetCustody"), "js/accounting.js implementa acción e interfaz reactiva para devolver custodias [TASK-020]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

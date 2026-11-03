@@ -1458,7 +1458,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-020] [ ] [F19-Task02] Implementación del flujo completo de devolución y recepción de activos bajo custodia
+### [TASK-020] [X] [F19-Task02] Implementación del flujo completo de devolución y recepción de activos bajo custodia
 - **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-06), Sección G (Defecto 2) y Plan de Trabajo F19-02
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Control patrimonial, cierre formal de responsabilidades de custodios, actas de devolución y reasignación de bienes)
@@ -1495,7 +1495,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Los activos dañados no pueden reasignarse como disponibles.
   - Se genera un acta verificable de entrega-recepción descargable en PDF.
   - Se rechazan devoluciones duplicadas de una misma asignación.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 ---

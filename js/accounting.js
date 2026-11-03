@@ -559,8 +559,9 @@ window.loadActivosData = function () {
             <td class="p-2 text-gray-500">${a.categoria}</td>
             <td class="p-2 text-gray-700 font-medium">${a.ubicacionActual}</td>
             <td class="p-2 text-gray-600 font-mono">${a.custodioUserId || 'Sin Custodio'}</td>
-            <td class="p-2 text-right">
-              <button onclick="handleAsignarCustodia('${a.activoId}')" class="px-2 py-1 bg-blue-50 text-blue-600 rounded font-bold text-[10px] hover:bg-blue-100 uppercase">Custodia</button>
+            <td class="p-2 text-right space-x-1 whitespace-nowrap">
+              <button onclick="handleAsignarCustodia('${a.activoId}')" class="px-2 py-1 bg-blue-50 text-blue-600 rounded font-bold text-[10px] hover:bg-blue-100 uppercase" title="Asignar Custodia">Asignar</button>
+              ${(a.custodioUserId || a.estado === 'assigned') ? `<button onclick="handleDevolverCustodia('${a.activoId}', '${a.codigoPatrimonial || ''}', '${(a.nombre || '').replace(/'/g, "\\'")}', '${a.custodioUserId || ''}')" class="px-2 py-1 bg-rose-50 text-rose-600 rounded font-bold text-[10px] hover:bg-rose-100 uppercase" title="Registrar Devolución y Acta">Devolver</button>` : ''}
             </td>
           </tr>
         `;
@@ -602,6 +603,42 @@ window.handleAsignarCustodia = function (activoId) {
       loadActivosData();
     })
     .catch(err => alert("Error: " + err.message));
+};
+
+window.handleDevolverCustodia = function (activoId, codigoPatrimonial, nombre, custodioUserId) {
+  const custodio = prompt(`Confirmar custodio que entrega el activo (${codigoPatrimonial} - ${nombre}):`, custodioUserId || "");
+  if (!custodio) return;
+
+  const receptor = prompt("UserId o nombre del responsable institucional que recibe el activo:", (window.currentUser && window.currentUser.userId) || "DIR-01");
+  if (!receptor) return;
+
+  const condicionPrompt = prompt("Condición física al reingreso (Nuevo, Bueno, Regular, Dañado, Incompleto, RequiereReparacion):", "Bueno");
+  if (!condicionPrompt) return;
+
+  const obs = prompt("Observaciones de la entrega / componentes o detalles:", "Devolución en orden y revisión conforme");
+
+  fetchApi('ACCOUNTING', 'returnAssetCustody', {
+    activoId: activoId,
+    custodioUserId: custodio,
+    recibidoPor: receptor,
+    receptorUserId: receptor,
+    estadoFisico: condicionPrompt,
+    condicionRecepcion: condicionPrompt,
+    observaciones: obs || "Recepción formal de custodia",
+    ubicacionRecepcion: "Bodega General"
+  })
+    .then(res => {
+      let msg = res.message || "Devolución registrada correctamente.";
+      if (res.ordenMantenimientoId) {
+        msg += `\nSe generó orden de mantenimiento: ${res.ordenMantenimientoId}`;
+      }
+      if (res.actaDevolucionId) {
+        msg += `\nActa de Entrega-Recepción: ${res.actaDevolucionId}`;
+      }
+      alert(msg);
+      loadActivosData();
+    })
+    .catch(err => alert("Error al devolver custodia: " + (err.message || err)));
 };
 
 // --- MANTENIMIENTO ---

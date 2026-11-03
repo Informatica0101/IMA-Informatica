@@ -1157,3 +1157,35 @@ RESULTADO DE EVALUACIÓN TRAS IMPLEMENTACIÓN:
   * 23/23 pruebas pasadas en modular-dashboard-suite.js (100.0%).
 - Estado: Completado y Verificado funcionalmente.
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-11-03
+TAREA: [TASK-020] [F19-Task02] Implementación del flujo completo de devolución y recepción de activos bajo custodia
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (assignAssetCustody, getAssetAssignments, manageAssetItem, manageMaintenanceOrder)
+- js/accounting.js
+RESULTADO DE EVALUACIÓN:
+- En backend/accounting-service/Code.gs:
+  * 'assignAssetCustody':
+    - Permite asignar un custodio a un activo en 'ActivosPatrimoniales' (columna 7 = custodioUserId, columna 8 = 'assigned') y crea un registro en 'AsignacionesActivos' con FechaEntrega y EstadoActa = 'Acta Firmada'.
+    - Defecto detectado: No valida el estado operativo actual del activo ('available'). Permite asignar activos que ya están asignados o que están en mantenimiento ('maintenance') o de baja.
+    - Carencia crítica: No existe la función inversa 'returnAssetCustody'. Una vez asignado, el activo no puede ser devuelto formalmente, permaneciendo indefinidamente ligado al custodio sin finiquito ni inspección física.
+  * 'getAssetAssignments':
+    - Mapea las filas de AsignacionesActivos, pero la columna 4 (FechaDevolucion) nunca se actualiza al no existir endpoint de devolución.
+  * Inexistencia de enlace automático con mantenimiento:
+    - No hay lógica para evaluar la condición física del bien devuelto (Nuevo, Bueno, Regular, Dañado, Incompleto, RequiereReparacion) ni para generar órdenes automáticas en 'MantenimientoOrdenes' cuando un activo reingresa con averías.
+  * ROLE_PERMISSIONS y doPost:
+    - No contemplan la acción 'returnAssetCustody'.
+- En js/accounting.js:
+  * No existe controlador ni formulario para registrar la devolución de activos bajo custodia ni visualizar su acta de entrega-recepción.
+- Plan de Acción:
+  1. Implementar 'returnAssetCustody' con LockService en backend/accounting-service/Code.gs:
+     - Validar que exista una asignación activa (FechaDevolucion vacía) para el activo y custodio.
+     - Registrar FechaDevolucion, responsable de recepción, estado físico y acta formal.
+     - Si el estado físico es Dañado, Incompleto o RequiereReparacion, cambiar estado a 'maintenance', generar orden de mantenimiento y bloquear reasignación.
+     - Si es conforme, liberar custodio (vacío) y establecer estado 'available'.
+  2. Ajustar 'assignAssetCustody' para impedir asignar activos que no estén en estado 'available'.
+  3. Registrar 'returnAssetCustody' en ROLE_PERMISSIONS y doPost.
+  4. Integrar función de devolución en js/accounting.js.
+  5. Validar con pruebas automatizadas en tests/regression/academic-grading-suite.js.
+===============================================================================
