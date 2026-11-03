@@ -1287,3 +1287,23 @@ Acciones Ejecutadas:
 3. Registro de permisos en ROLE_PERMISSIONS y despachadores doPost de ambos microservicios.
 4. Cobertura en la suite tests/regression/academic-grading-suite.js alcanzando 188/188 pruebas aprobadas (100%) sin regresiones en las 53 pruebas de las fases previas.
 ================================================================================
+
+================================================================================
+AUDITORÍA TÉCNICA - [TASK-029] [F21-Task01] Y [TASK-030] [F21-Task02]
+Fecha: 2025-05-18
+Archivos Auditados:
+- backend/accounting-service/Code.gs
+- tests/regression/academic-grading-suite.js
+
+Hallazgos Técnicos:
+1. Sobrecupo e inexistencia de control de capacidad vehicular: La función "assignStudentTransport" realizaba inserciones directas con "appendRow" sin evaluar la capacidad máxima del vehículo asignado ni contabilizar las plazas ocupadas, exponiendo a sobrecupo físico y sanciones legales.
+2. Carencia de detección de colisiones de horario: No se validaba si un estudiante ya contaba con otra ruta en el mismo horario o asignaciones duplicadas para la misma jornada.
+3. Fuga de datos personales y geolocalización (IDOR/ABAC): "getTransportAssignments" devolvía la totalidad institucional de asignaciones de transporte ante consultas sin parámetros, permitiendo que estudiantes o tutores consultaran paradas, direcciones y rutas de menores ajenos a su núcleo familiar.
+
+Acciones Ejecutadas:
+1. Creación de la hoja maestra "TransporteVehiculos" y ampliación del esquema de "TransporteAsignaciones" (AsignacionTranspID, RutaID, EstudianteUserId, ParadaNombre, HorarioPlan, Jornada, PeriodoVigencia, DiasSemanaJSON, Estado, FechaAsignacion, Observaciones).
+2. Implementación de control estricto de cupos en "assignStudentTransport" bajo LockService.getScriptLock(15000), bloqueando sobrecupos con código "TRANSPORT_CAPACITY_EXCEEDED", duplicados con "DUPLICATE_TRANSPORT_ASSIGNMENT" y colisiones con "TRANSPORT_SCHEDULE_CONFLICT".
+3. Cálculo dinámico de ocupación en tiempo real en "getTransportRoutes" (cuposTotales, cuposOcupados, cuposDisponibles) enlazando la capacidad autorizada del vehículo en "TransporteVehiculos".
+4. Aislamiento RBAC/ABAC estricto en "getTransportAssignments": estudiantes limitados a sus propios registros, tutores restringidos a estudiantes autorizados en "RelacionesFamiliares", conductores limitados a sus rutas, bloqueo de volcados globales a roles no directivos y auditoría estructurada "UNAUTHORIZED_ACCESS_ATTEMPT".
+5. Verificación completa en tests/regression/academic-grading-suite.js pasando 195/195 pruebas (100%).
+================================================================================

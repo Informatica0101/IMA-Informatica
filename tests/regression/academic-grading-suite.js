@@ -289,6 +289,17 @@ assert(acctCode.includes("runPhase20LibraryAndResourcesRegressionSuite") && acct
 assert(devCode.includes("runPhase20LibraryAndResourcesRegressionSuite") && devCode.includes("[TASK-028]"), "backend/developer-service/Code.gs integra suite runPhase20LibraryAndResourcesRegressionSuite [TASK-028]");
 assert(acctCode.includes("PT20-01") && acctCode.includes("PT20-07") && acctCode.includes("PT20-14"), "backend/accounting-service/Code.gs cubre la batería completa de pruebas PT20-01 a PT20-14 [TASK-028]");
 
+// [TASK-029] [F21-Task01] - Control estricto de cupos, capacidad vehicular e integridad de asignaciones de transporte
+assert(acctCode.includes("TransporteVehiculos") && acctCode.includes("CapacidadPasajeros"), "backend/accounting-service/Code.gs incluye esquema de TransporteVehiculos [TASK-029]");
+assert(acctCode.includes("TRANSPORT_CAPACITY_EXCEEDED"), "backend/accounting-service/Code.gs bloquea sobrecupo con código TRANSPORT_CAPACITY_EXCEEDED [TASK-029]");
+assert(acctCode.includes("DUPLICATE_TRANSPORT_ASSIGNMENT"), "backend/accounting-service/Code.gs rechaza asignaciones duplicadas de transporte [TASK-029]");
+assert(acctCode.includes("TRANSPORT_SCHEDULE_CONFLICT"), "backend/accounting-service/Code.gs detecta y rechaza colisiones de horarios entre rutas [TASK-029]");
+assert(acctCode.includes("cuposDisponibles") && acctCode.includes("cuposOcupados"), "backend/accounting-service/Code.gs calcula métricas de ocupación en getTransportRoutes [TASK-029]");
+
+// [TASK-030] [F21-Task02] - Protección de datos de transporte y aislamiento de consultas por usuario (RBAC/ABAC)
+assert(acctCode.includes("UNAUTHORIZED_ACCESS_ATTEMPT") && acctCode.includes("RelacionesFamiliares"), "backend/accounting-service/Code.gs aísla consultas por núcleo familiar y rol [TASK-030]");
+assert(acctCode.includes("allowedStudentIds") && acctCode.includes("effectiveRole"), "backend/accounting-service/Code.gs valida autorización estricta en getTransportAssignments [TASK-030]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

@@ -1770,7 +1770,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-029] [ ] [F21-Task01] Control estricto de cupos, capacidad vehicular y asignaciones de transporte
+### [TASK-029] [X] [F21-Task01] Control estricto de cupos, capacidad vehicular y asignaciones de transporte
 - **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-02), Sección G (Defecto 1) y Plan de Implementación TAREA 01
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Seguridad física de estudiantes, cumplimiento de límites legales de capacidad vehicular y prevención de sobrecupos)
@@ -1806,11 +1806,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Se detectan y bloquean asignaciones duplicadas o colisiones de horario en el mismo estudiante.
   - Las solicitudes simultáneas concurrentes no producen sobrecupos.
   - Los reportes de ocupación coinciden con las asignaciones reales.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-030] [ ] [F21-Task02] Protección de datos de transporte y aislamiento de consultas por usuario (RBAC/ABAC)
+### [TASK-030] [X] [F21-Task02] Protección de datos de transporte y aislamiento de consultas por usuario (RBAC/ABAC)
 - **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-49), Sección G (Defecto 2) y Plan de Implementación TAREA 02
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Privacidad y protección de datos de menores, FERPA y prevención de fuga de geolocalización y paradas a terceros)
@@ -1840,7 +1840,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Una consulta sin filtros nunca devuelve todos los estudiantes de la institución a un rol no directivo.
   - Las coordenadas GPS no son accesibles mediante enlaces públicos sin autenticación.
   - Se auditan los intentos de acceso no autorizado.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 ---

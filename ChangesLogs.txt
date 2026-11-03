@@ -4216,3 +4216,23 @@ Detalle de Cambios:
 4. Pendientes.md:
    - Marcada como completada [X] la tarea [TASK-028] [F20-Task14].
 ================================================================================
+
+================================================================================
+CHANGESLOG - [TASK-029] [F21-Task01] Y [TASK-030] [F21-Task02]
+Fecha: 2025-05-18
+Archivos Afectados:
+- backend/accounting-service/Code.gs
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+
+Detalle de Cambios:
+1. backend/accounting-service/Code.gs:
+   - Línea ~180: Añadido esquema para "TransporteVehiculos" y ampliado esquema de "TransporteAsignaciones" en getOrCreateSheet.
+   - Línea ~15060: Modificada función "getTransportRoutes" para calcular en tiempo real cuposTotales, cuposOcupados y cuposDisponibles considerando la capacidad autorizada de la unidad vehicular.
+   - Línea ~15120: Modificada función "assignStudentTransport" con LockService.getScriptLock(15000), validación de capacidad (código "TRANSPORT_CAPACITY_EXCEEDED"), validación de duplicados (código "DUPLICATE_TRANSPORT_ASSIGNMENT") y colisión de horarios (código "TRANSPORT_SCHEDULE_CONFLICT").
+   - Línea ~15265: Reescrita función "getTransportAssignments" con aislamiento RBAC/ABAC por rol, validación familiar en "RelacionesFamiliares" y emisión de evento de seguridad "UNAUTHORIZED_ACCESS_ATTEMPT".
+2. tests/regression/academic-grading-suite.js:
+   - Añadidas aserciones para verificar TransporteVehiculos, códigos de control de cupos y aislamiento ABAC. Total: 195/195 pruebas superadas (100%).
+3. Pendientes.md:
+   - Marcadas como completadas [X] las tareas [TASK-029] y [TASK-030].
+================================================================================
