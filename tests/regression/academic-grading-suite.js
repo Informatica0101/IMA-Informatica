@@ -311,6 +311,15 @@ assert(acctCode.includes("getTripPassengerManifest") && acctCode.includes("pasaj
 assert(acctCode.includes("TransportePersonasAutorizadas") && acctCode.includes("getAuthorizedPickupPersons"), "backend/accounting-service/Code.gs incluye gestión de adultos autorizados [TASK-032]");
 assert(acctCode.includes("recordStudentSafeDelivery") && acctCode.includes("UNAUTHORIZED_PICKUP_PERSON"), "backend/accounting-service/Code.gs bloquea entregas a adultos no autorizados [TASK-032]");
 
+// [TASK-033] [F21-Task05] - Flota vehicular, conductores y documentación habilitante
+assert(acctCode.includes("manageTransportVehicle") && acctCode.includes("getTransportVehicles"), "backend/accounting-service/Code.gs implementa gestión de flota vehicular [TASK-033]");
+assert(acctCode.includes("manageTransportDriver") && acctCode.includes("getTransportDrivers"), "backend/accounting-service/Code.gs implementa gestión de conductores y acompañantes [TASK-033]");
+assert(acctCode.includes("VEHICLE_INSURANCE_EXPIRED") && acctCode.includes("DRIVER_LICENSE_EXPIRED"), "backend/accounting-service/Code.gs bloquea asignaciones con seguros o licencias vencidas [TASK-033]");
+
+// [TASK-034] [F21-Task06] - Cierre obligatorio de recorrido y confirmación de unidad vacía
+assert(acctCode.includes("finalizeTransportTrip") && acctCode.includes("STUDENTS_STILL_ON_BOARD"), "backend/accounting-service/Code.gs bloquea cierre de viaje si quedan estudiantes a bordo [TASK-034]");
+assert(acctCode.includes("PHYSICAL_INSPECTION_REQUIRED") && acctCode.includes("CerradoNormal"), "backend/accounting-service/Code.gs exige inspección física de unidad vacía para cierre normal [TASK-034]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

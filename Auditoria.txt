@@ -1329,3 +1329,22 @@ Acciones Ejecutadas:
 6. Registro de acciones en ROLE_PERMISSIONS y despachador doPost.
 7. Cobertura en la suite tests/regression/academic-grading-suite.js alcanzando 202/202 pruebas pasadas (100%).
 ================================================================================
+
+================================================================================
+AUDITORÍA TÉCNICA - [TASK-033] [F21-Task05] Y [TASK-034] [F21-Task06]
+Fecha: 2025-05-18
+Archivos Auditados:
+- backend/accounting-service/Code.gs
+- tests/regression/academic-grading-suite.js
+
+Hallazgos Técnicos:
+1. Gestión no normalizada de flota y conductores: Se utilizaban textos libres en las rutas para asignar vehículos y empleados sin comprobación de vigencia de pólizas de seguro de accidentes, revisión técnico-mecánica ni licencias de conducir de categoría pesada.
+2. Inexistencia de protocolo de cierre de viaje con barrido físico: El sistema no verificaba si los estudiantes que abordaron la unidad habían descendido en sus respectivas paradas, posibilitando el cierre accidental con menores a bordo.
+
+Acciones Ejecutadas:
+1. Creación de la hoja maestra "TransporteConductores" y expansión de "TransporteVehiculos" con datos de aseguramiento, pólizas, revisiones técnicas y categorías de licencias.
+2. Implementación de "manageTransportVehicle", "getTransportVehicles", "manageTransportDriver" y "getTransportDrivers".
+3. Enriquecimiento de "manageTransportRoute" bloqueando la asignación de vehículos fuera de servicio o con seguro vencido ("VEHICLE_INSURANCE_EXPIRED") y conductores con licencia vencida ("DRIVER_LICENSE_EXPIRED").
+4. Implementación de "finalizeTransportTrip" bajo LockService.getScriptLock(15000), bloqueando taxativamente el fin de viaje con código "STUDENTS_STILL_ON_BOARD" si algún alumno permanece a bordo, exigiendo confirmación explícita de inspección física de unidad vacía ("PHYSICAL_INSPECTION_REQUIRED") y registrando el cierre inmutable en "TransporteViajes".
+5. Verificación en la suite tests/regression/academic-grading-suite.js alcanzando 207/207 pruebas pasadas (100%).
+================================================================================

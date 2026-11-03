@@ -1906,7 +1906,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-033] [ ] [F21-Task05] Administración de flota vehicular, conductores, acompañantes y documentación habilitante
+### [TASK-033] [X] [F21-Task05] Administración de flota vehicular, conductores, acompañantes y documentación habilitante
 - **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-01, PT-21-03, PT-21-04), Sección C (1.1, 1.2) y Plan de Implementación TAREA 05
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Habilitación legal de transporte escolar, pólizas de seguros vigentes y licencias de conducir pesada)
@@ -1932,11 +1932,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Un vehículo fuera de servicio o con póliza vencida no puede asignarse a una ruta activa.
   - Un conductor con licencia vencida queda bloqueado para operar recorridos.
   - Las sustituciones quedan registradas sin borrar la asignación titular histórica.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-034] [ ] [F21-Task06] Cierre obligatorio de recorrido, control de pasajeros y confirmación de unidad vacía
+### [TASK-034] [X] [F21-Task06] Cierre obligatorio de recorrido, control de pasajeros y confirmación de unidad vacía
 - **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-24), Sección C (1.9) y Plan de Implementación TAREA 06
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Seguridad infantil absoluta, prevención de niños olvidados a bordo y protocolo de fin de viaje)
@@ -1963,7 +1963,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - La inspección física final queda registrada con responsable y fecha.
   - Se generan alertas inmediatas cuando se detecta un pasajero sin descenso confirmado.
   - El historial permite reconstruir con exactitud el cierre de cada recorrido escolar.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 ---

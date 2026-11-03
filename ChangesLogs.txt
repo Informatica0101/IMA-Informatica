@@ -4256,3 +4256,24 @@ Detalle de Cambios:
 3. Pendientes.md:
    - Marcadas como completadas [X] las tareas [TASK-031] y [TASK-032].
 ================================================================================
+
+================================================================================
+CHANGESLOG - [TASK-033] [F21-Task05] Y [TASK-034] [F21-Task06]
+Fecha: 2025-05-18
+Archivos Afectados:
+- backend/accounting-service/Code.gs
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+
+Detalle de Cambios:
+1. backend/accounting-service/Code.gs:
+   - Línea ~181: Añadida hoja "TransporteConductores" y expandida "TransporteVehiculos" en getOrCreateSheet.
+   - Línea ~205: Registradas acciones "manageTransportVehicle", "getTransportVehicles", "manageTransportDriver", "getTransportDrivers" y "finalizeTransportTrip" en ROLE_PERMISSIONS.
+   - Línea ~730: Añadidos casos en doPost switch.
+   - Línea ~15010: Implementadas funciones "manageTransportVehicle", "getTransportVehicles", "manageTransportDriver", "getTransportDrivers" y adaptada "manageTransportRoute" con validación de operatividad y vigencias.
+   - Línea ~16075: Implementada función "finalizeTransportTrip" con bloqueo por estudiantes a bordo y verificación obligatoria de barrido físico.
+2. tests/regression/academic-grading-suite.js:
+   - Añadidas aserciones para flota vehicular, conductores, vigencias, STUDENTS_STILL_ON_BOARD y PHYSICAL_INSPECTION_REQUIRED. Total: 207/207 pruebas (100%).
+3. Pendientes.md:
+   - Marcadas como completadas [X] las tareas [TASK-033] y [TASK-034].
+================================================================================
