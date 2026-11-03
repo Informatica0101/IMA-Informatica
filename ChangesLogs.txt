@@ -4010,3 +4010,19 @@ ARCHIVOS MODIFICADOS:
 3. Pendientes.md:
    - Líneas 1281-1319: Marcada tarea [TASK-016] como [X] Completado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+TAREA: [TASK-017] [F18-Task07]
+ARCHIVOS MODIFICADOS:
+1. backend/accounting-service/Code.gs:
+   - Línea 156: Inclusión de inicialización de hoja PresupuestosInstitucionales en getOrCreateSheet con 8 columnas estándar.
+   - Líneas 199, 201, 628: Habilitación de 'modifyPurchaseOrderAmount' en permisos RBAC y switch doPost.
+   - Líneas 6270-6395: Modificación de approvePurchaseOrder con ScriptLock, verificación atómica de saldo disponible en PresupuestosInstitucionales, reserva de compromiso presupuestario, gestión de sobregiros extraordinarios auditados con log BUDGET_OVERRUN_ALERT y liberación de compromiso ante cancelación formal.
+   - Líneas 6397-6490: Implementación de modifyPurchaseOrderAmount con ScriptLock para ajuste autorizado de importe de orden de compra y ajuste compensatorio en montoComprometido.
+   - Líneas 7300-7350: Modificación de recordAccountsPayableExpense con transferencia atómica de montoComprometido hacia montoEjecutado al vincular factura a orden de compra aprobada.
+2. tests/regression/academic-grading-suite.js:
+   - Líneas 209-216: Aserciones automatizadas para validar reserva de compromiso presupuestario en approvePurchaseOrder, bloqueo por insuficiencia presupuestaria, sobregiros autorizados, liberación ante cancelación y función modifyPurchaseOrderAmount.
+3. Pendientes.md:
+   - Líneas 1320-1370: Marcada tarea [TASK-017] como [X] Completado.
+===============================================================================

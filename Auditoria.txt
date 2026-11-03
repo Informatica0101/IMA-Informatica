@@ -1004,3 +1004,61 @@ RESULTADO DE EVALUACIÓN:
 - Cobertura de pruebas automatizadas en tests/regression/academic-grading-suite.js alcanzando 131/131 pruebas aprobadas (100.0%).
 - Estado: Completado y Verificado funcionalmente.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+AUDITORÍA INICIAL DE ARCHIVOS — [TASK-017] [F18-Task07]
+COMPROMISO PRESUPUESTARIO FORMAL AL APROBAR ÓRDENES DE COMPRA
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (approvePurchaseOrder, checkBudgetAvailability, createPurchaseOrder, recordAccountsPayableExpense, getBudgets, saveBudgetPlan)
+- PresupuestosInstitucionales (Hoja de cálculo en SPREADSHEET_ID)
+- OrdenesCompra (Hoja de cálculo en SPREADSHEET_ID)
+
+HALLAZGOS DETALLADOS:
+1. approvePurchaseOrder (Línea 6271):
+   - Actualmente valida transiciones de estado, autoaprobaciones y umbrales de L 50,000, pero NO ejecuta verificación ni reserva de fondos presupuestarios.
+   - Cuando una orden de compra transiciona a 'Aprobada', no se adquiere ScriptLock ni se actualiza 'montoComprometido' en la partida presupuestaria del centro de costo.
+   - Si una orden de compra aprobada transiciona a 'Cancelada', no se libera ningún compromiso presupuestario acumulado.
+2. checkBudgetAvailability (Línea 10997):
+   - Calcula saldoDisponible = montoAprobado - montoComprometido - montoEjecutado.
+   - Sin embargo, opera de manera puramente consultiva sin bloquear concurrentemente ni reservar el compromiso.
+3. recordAccountsPayableExpense (Línea 7033):
+   - Al registrar una factura de proveedor vinculada a ordenCompraId, no transfiere los fondos desde 'montoComprometido' hacia 'montoEjecutado' en PresupuestosInstitucionales, manteniendo el compromiso duplicado o sin sincronización con la ejecución real del gasto.
+4. Concurrencia y ScriptLock:
+   - Falta orquestación con LockService.getScriptLock() durante la aprobación y reserva para evitar condiciones de carrera donde dos órdenes concurrentes se aprueben contra el mismo remanente presupuestario.
+5. Autorizaciones extraordinarias:
+   - Debe permitirse el sobregiro solo si el rol directivo (Director / Administrador) proporciona justificación explícita de sobregiro presupuestario, emitiendo log estructurado BUDGET_OVERRUN_ALERT.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-017] [F18-Task07]
+COMPROMISO PRESUPUESTARIO FORMAL AL APROBAR ÓRDENES DE COMPRA
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (approvePurchaseOrder, modifyPurchaseOrderAmount, recordAccountsPayableExpense, getOrCreateSheet, doPost, ROLE_PERMISSIONS)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt / Auditoría.txt / ChangesLogs.txt
+RESULTADO DE EVALUACIÓN:
+- En approvePurchaseOrder:
+  * Adquisición de candado atómico mediante LockService.getScriptLock() (timeout 15s).
+  * Al formalizar la aprobación de la orden (transición a 'Aprobada'):
+    - Verificación del saldo disponible en PresupuestosInstitucionales: saldoDisponible = montoAprobado - montoComprometido - montoEjecutado.
+    - Bloqueo preventivo de órdenes si saldoDisponible < montoTotal con código BUDGET_INSUFFICIENT.
+    - Soporte para sobregiros presupuestarios extraordinarios exclusivamente por rol directivo (Director / Administrador) con justificación obligatoria (motivoSobregiro) y emisión de log estructurado BUDGET_OVERRUN_ALERT.
+    - Incremento atómico del montoComprometido en la partida presupuestaria del centro de costo correspondiente.
+  * Al cancelar una orden formalmente aprobada (transición a 'Cancelada'):
+    - Liberación atómica del compromiso presupuestario no ejecutado devolviendo los fondos a saldo disponible.
+- En modifyPurchaseOrderAmount:
+  * Endpoint transaccional con LockService para autorizar modificaciones de importe de órdenes de compra.
+  * Si la orden ya está aprobada, evalúa la diferencia: si se incrementa, valida disponibilidad y reserva la diferencia; si se reduce, libera la diferencia hacia el saldo disponible.
+  * Registro de metadatos de auditoría en Observaciones.
+- En recordAccountsPayableExpense:
+  * Al recibir la factura vinculada a una orden de compra aprobada, transfiere atómicamente el monto facturado desde montoComprometido hacia montoEjecutado en PresupuestosInstitucionales.
+- En getOrCreateSheet:
+  * Inicialización automática de la hoja PresupuestosInstitucionales con sus 8 columnas de control presupuestario.
+- En ROLE_PERMISSIONS y doPost:
+  * Inclusión de modifyPurchaseOrderAmount para Director, Subdirector y Contador.
+- Cobertura de pruebas automatizadas en tests/regression/academic-grading-suite.js alcanzando 136/136 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================

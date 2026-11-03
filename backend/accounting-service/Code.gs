@@ -153,6 +153,7 @@ function getOrCreateSheet(ss, name) {
     if (name === "ProveedoresActivos") sheet.appendRow(["ProveedorID", "FechaRegistro", "NombreProveedor", "RTN", "Telefono", "Email", "RubroServicio", "Estado", "Observaciones"]);
     if (name === "SolicitudesCompra") sheet.appendRow(["SolicitudID", "Fecha", "Departamento", "SolicitanteUserId", "Justificacion", "Categoria", "DetalleItemsJSON", "MontoEstimado", "CentroCosto", "EstadoAprobacion", "Observaciones"]);
     if (name === "CotizacionesCompra") sheet.appendRow(["CotizacionID", "SolicitudID", "ProveedorID", "FechaRecepcion", "VigenciaOferta", "PrecioTotal", "PlazoEntregaDias", "CondicionesPago", "DocumentoAdjuntoUrl", "EstadoSelection", "Observaciones"]);
+    if (name === "PresupuestosInstitucionales") sheet.appendRow(["PresupuestoID", "AnoID", "CentroCosto", "PartidaCodigo", "MontoAprobado", "MontoComprometido", "MontoEjecutado", "Estado"]);
     if (name === "OrdenesCompra") sheet.appendRow(["OrdenCompraID", "SolicitudID", "CotizacionID", "ProveedorID", "FechaEmision", "FechaEntregaEstimada", "DetalleItemsJSON", "MontoTotal", "CentroCosto", "EstadoOrden", "AprobadoPor", "Observaciones", "SolicitanteUserId", "VersionDocumental", "ArchivoPdfUrl"]);
     if (name === "RecepcionesCompra") sheet.appendRow(["RecepcionID", "OrdenCompraID", "FechaRecepcion", "ReceptorUserId", "DetalleRecibidoJSON", "EstadoConformidad", "RegistradoEnInventario", "AsientoID", "Observaciones"]);
     if (name === "ExpedientesLaborales") sheet.appendRow(["ExpedienteID", "PersonaId", "UserId", "Puesto", "Departamento", "CentroCosto", "FechaIngreso", "FechaSalida", "EstadoLaboral", "Observaciones"]);
@@ -196,9 +197,9 @@ const ROLE_PERMISSIONS = {
   "Director": [
     "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "verifyThreeWayMatch", "recordSupplierPayment", "applySupplierCreditNote", "getSupplierAccountsPayableSummary", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "getCashFlowSixMonthProjection", "recordCollectionManagementAction", "getCollectionManagementLogs", "getComparativeFinancialSummary", "reconcileFinancialReportCoherence", "verifyAccountingIntegrity", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "manageSupplierContract", "getSupplierContractAlerts", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createFamilyPaymentAgreement", "getFamilyPaymentAgreements", "saveMultiYearBudgetProjection", "getMultiYearBudgetProjections", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "getPurchaseReceipts", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "purgeSecurityCaches"],
   "Subdirector": [
-    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
+    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
   "Contador": [
-    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "verifyThreeWayMatch", "recordSupplierPayment", "applySupplierCreditNote", "getSupplierAccountsPayableSummary", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "calculateAppliedDiscount", "getStoreProducts", "getStoreOrders", "getCafeteriaMenu", "getCafeteriaOrders", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "getPurchaseReceipts", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
+    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "verifyThreeWayMatch", "recordSupplierPayment", "applySupplierCreditNote", "getSupplierAccountsPayableSummary", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "calculateAppliedDiscount", "getStoreProducts", "getStoreOrders", "getCafeteriaMenu", "getCafeteriaOrders", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "getPurchaseReceipts", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
@@ -624,6 +625,7 @@ function doPost(e) {
       case "getPurchaseQuotations": result = getPurchaseQuotations(payload); break;
       case "createPurchaseOrder": result = createPurchaseOrder(payload); break;
       case "approvePurchaseOrder": result = approvePurchaseOrder(payload); break;
+      case "modifyPurchaseOrderAmount": result = modifyPurchaseOrderAmount(payload); break;
       case "generatePurchaseOrderPDF": result = generatePurchaseOrderPDF(payload); break;
       case "getPurchaseOrders": result = getPurchaseOrders(payload); break;
       case "recordPurchaseReceipt": result = recordPurchaseReceipt(payload); break;
@@ -6267,9 +6269,9 @@ function createPurchaseOrder(payload) {
   return { status: "success", ordenCompraId: ordenId, estadoOrden: "Borrador", versionDocumental: "1.0", message: "Órden de compra emitida en borrador." };
 }
 
-// [TASK-015] [F18-Task04] [T-GOV-04] [F11-Task02] [P0] - Ciclo de vida ampliado, control de transiciones y prevención de autoaprobaciones
+// [TASK-017] [F18-Task07] [TASK-015] [F18-Task04] [T-GOV-04] [F11-Task02] [P0] - Ciclo de vida ampliado, control de transiciones, prevención de autoaprobaciones y compromiso presupuestario formal atómico
 function approvePurchaseOrder(payload) {
-  const { ordenCompraId, nuevoEstado, observacionesAdmin, authRole, motivoRechazo } = payload || {};
+  const { ordenCompraId, nuevoEstado, observacionesAdmin, authRole, motivoRechazo, partidaCodigo, autorizarSobregiro, motivoSobregiro } = payload || {};
   if (!ordenCompraId || !nuevoEstado) throw new Error("ordenCompraId y nuevoEstado son requeridos.");
 
   const validTransitions = [
@@ -6282,55 +6284,254 @@ function approvePurchaseOrder(payload) {
     throw new Error(`Estado '${nuevoEstado}' no reconocido en el ciclo de vida de compras.`);
   }
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getOrCreateSheet(ss, "OrdenesCompra");
-  const data = sheet.getDataRange().getValues();
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
 
-  const idx = data.findIndex(r => String(r[0]).trim() === String(ordenCompraId).trim());
-  if (idx === -1) throw new Error("Órden de compra no encontrada.");
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "OrdenesCompra");
+    const data = sheet.getDataRange().getValues();
 
-  const estadoActual = String(data[idx][9] || "Borrador").trim();
-  const montoTotal = parseFloat(data[idx][7] || 0);
-  const solicitanteId = String(data[idx][12] || data[idx][1] || "").trim();
-  const aprobadorId = String((payload && (payload.authenticatedUserId || payload.userId || payload.actorId)) || "").trim();
-  const roleUpper = String((payload && payload._verifiedRole) || authRole || "").toUpperCase();
+    const idx = data.findIndex(r => String(r[0]).trim() === String(ordenCompraId).trim());
+    if (idx === -1) throw new Error("Órden de compra no encontrada.");
 
-  // 1. Control de transiciones seguras: Impedir emitir o enviar al proveedor sin estar Aprobada
-  if ((nuevoEstado === "Emitida" || nuevoEstado === "EnviadaProveedor") && (estadoActual !== "Aprobada" && estadoActual !== "Emitida")) {
-    throw new Error(`Transición inválida: La orden debe estar previamente 'Aprobada' antes de poder pasar a '${nuevoEstado}'. Estado actual: '${estadoActual}'.`);
-  }
-
-  // 2. Prevención de autoaprobación
-  if (nuevoEstado === "Aprobada" && aprobadorId && solicitanteId && solicitanteId === aprobadorId) {
-    logStructuredEvent("ACCOUNTING", "approvePurchaseOrder", "WARN", "AUTO_APPROVAL_BLOCKED", `Auto-aprobación de orden de compra bloqueada para usuario ${solicitanteId}`, payload, authRole);
-    return { status: "error", code: "AUTO_APPROVAL_BLOCKED", message: "Acción denegada: Un usuario no puede aprobar su propia orden de compra." };
-  }
-
-  // 3. Umbral de autorización financiera (Director / Administrador para > L 50,000)
-  if (nuevoEstado === "Aprobada" && montoTotal > 50000) {
+    const estadoActual = String(data[idx][9] || "Borrador").trim();
+    const montoTotal = parseFloat(data[idx][7] || 0);
+    const centroCosto = String(data[idx][8] || "Operaciones").trim();
+    const solicitanteId = String(data[idx][12] || data[idx][1] || "").trim();
+    const aprobadorId = String((payload && (payload.authenticatedUserId || payload.userId || payload.actorId)) || "").trim();
+    const roleUpper = String((payload && payload._verifiedRole) || authRole || "").toUpperCase();
     const isHighLevelApprover = ["ADMINISTRADOR", "ADMIN", "DIRECTOR", "DIRECCION"].indexOf(roleUpper) >= 0;
-    if (!isHighLevelApprover) {
-      logStructuredEvent("ACCOUNTING", "approvePurchaseOrder", "WARN", "HIGH_VALUE_APPROVAL_REQUIRED", `Intento de aprobación de orden de compra por L ${montoTotal} rechazado por rol insuficiente ${roleUpper}`, payload, authRole);
-      return { status: "error", code: "HIGH_VALUE_APPROVAL_REQUIRED", message: `Órdenes de compra superiores a L 50,000.00 requieren aprobación formal de Dirección o Administración.` };
+
+    // 1. Control de transiciones seguras: Impedir emitir o enviar al proveedor sin estar Aprobada
+    if ((nuevoEstado === "Emitida" || nuevoEstado === "EnviadaProveedor") && (estadoActual !== "Aprobada" && estadoActual !== "Emitida")) {
+      throw new Error(`Transición inválida: La orden debe estar previamente 'Aprobada' antes de poder pasar a '${nuevoEstado}'. Estado actual: '${estadoActual}'.`);
     }
+
+    // 2. Prevención de autoaprobación
+    if (nuevoEstado === "Aprobada" && aprobadorId && solicitanteId && solicitanteId === aprobadorId) {
+      logStructuredEvent("ACCOUNTING", "approvePurchaseOrder", "WARN", "AUTO_APPROVAL_BLOCKED", `Auto-aprobación de orden de compra bloqueada para usuario ${solicitanteId}`, payload, authRole);
+      return { status: "error", code: "AUTO_APPROVAL_BLOCKED", message: "Acción denegada: Un usuario no puede aprobar su propia orden de compra." };
+    }
+
+    // 3. Umbral de autorización financiera (Director / Administrador para > L 50,000)
+    if (nuevoEstado === "Aprobada" && montoTotal > 50000) {
+      if (!isHighLevelApprover) {
+        logStructuredEvent("ACCOUNTING", "approvePurchaseOrder", "WARN", "HIGH_VALUE_APPROVAL_REQUIRED", `Intento de aprobación de orden de compra por L ${montoTotal} rechazado por rol insuficiente ${roleUpper}`, payload, authRole);
+        return { status: "error", code: "HIGH_VALUE_APPROVAL_REQUIRED", message: `Órdenes de compra superiores a L 50,000.00 requieren aprobación formal de Dirección o Administración.` };
+      }
+    }
+
+    // [TASK-017] [F18-Task07] 4. Reserva Atómica y Verificación del Compromiso Presupuestario
+    const pSheet = getOrCreateSheet(ss, "PresupuestosInstitucionales");
+    const pData = pSheet.getDataRange().getValues();
+    let compromisoInfo = null;
+
+    if (nuevoEstado === "Aprobada" && estadoActual !== "Aprobada") {
+      let pIdx = -1;
+      const targetPartida = partidaCodigo ? String(partidaCodigo).trim() : "";
+
+      for (let i = 1; i < pData.length; i++) {
+        const rowCC = normalizeString(pData[i][2]);
+        const rowPartida = String(pData[i][3]).trim();
+        if (rowCC === normalizeString(centroCosto)) {
+          if (!targetPartida || rowPartida === targetPartida) {
+            pIdx = i;
+            break;
+          }
+        }
+      }
+
+      if (pIdx !== -1) {
+        const montoAprobado = parseFloat(pData[pIdx][4] || 0);
+        const montoComprometido = parseFloat(pData[pIdx][5] || 0);
+        const montoEjecutado = parseFloat(pData[pIdx][6] || 0);
+        const saldoDisponible = Math.round((montoAprobado - montoComprometido - montoEjecutado) * 100) / 100;
+
+        if (saldoDisponible < montoTotal) {
+          if (autorizarSobregiro && isHighLevelApprover && motivoSobregiro && String(motivoSobregiro).trim().length >= 5) {
+            logStructuredEvent("ACCOUNTING", "approvePurchaseOrder", "WARN", "BUDGET_OVERRUN_ALERT", `Sobregiro presupuestario extraordinario autorizado por ${roleUpper} para orden ${ordenCompraId}: Monto L ${montoTotal}, Disponible L ${saldoDisponible}. Motivo: ${motivoSobregiro}`, {
+              ordenCompraId: ordenCompraId,
+              centroCosto: centroCosto,
+              montoSolicitado: montoTotal,
+              saldoDisponible: saldoDisponible,
+              motivoSobregiro: motivoSobregiro,
+              autorizadoPor: aprobadorId || roleUpper
+            }, authRole);
+          } else {
+            logStructuredEvent("ACCOUNTING", "approvePurchaseOrder", "WARN", "BUDGET_INSUFFICIENT", `Aprobación rechazada por insuficiencia presupuestaria en centro de costo ${centroCosto}: Solicitado L ${montoTotal}, Disponible L ${saldoDisponible}`, {
+              ordenCompraId: ordenCompraId,
+              centroCosto: centroCosto,
+              montoSolicitado: montoTotal,
+              saldoDisponible: saldoDisponible
+            }, authRole);
+            return {
+              status: "error",
+              code: "BUDGET_INSUFFICIENT",
+              message: `Disponibilidad presupuestaria insuficiente en el centro de costo '${centroCosto}'. Saldo disponible: L ${saldoDisponible.toFixed(2)}, Requerido: L ${montoTotal.toFixed(2)}. Requiere autorización extraordinaria de Dirección.`,
+              saldoDisponible: saldoDisponible,
+              montoSolicitado: montoTotal
+            };
+          }
+        }
+
+        const nuevoComprometido = Math.round((montoComprometido + montoTotal) * 100) / 100;
+        pSheet.getRange(pIdx + 1, 6).setValue(nuevoComprometido);
+        compromisoInfo = {
+          presupuestoId: pData[pIdx][0],
+          partidaCodigo: pData[pIdx][3],
+          centroCosto: centroCosto,
+          montoComprometidoAnterior: montoComprometido,
+          montoComprometidoNuevo: nuevoComprometido,
+          saldoDisponibleRestante: Math.round((montoAprobado - nuevoComprometido - montoEjecutado) * 100) / 100
+        };
+      }
+    }
+
+    // [TASK-017] [F18-Task07] 5. Liberación de compromiso ante cancelación formal
+    const estadosConCompromiso = ["Aprobada", "Emitida", "EnviadaProveedor", "AceptadaProveedor", "PendienteRecepcion", "RecibidaParcial"];
+    if (nuevoEstado === "Cancelada" && estadosConCompromiso.indexOf(estadoActual) >= 0) {
+      for (let i = 1; i < pData.length; i++) {
+        if (normalizeString(pData[i][2]) === normalizeString(centroCosto)) {
+          const montoComprometido = parseFloat(pData[i][5] || 0);
+          const liberado = Math.max(0, Math.round((montoComprometido - montoTotal) * 100) / 100);
+          pSheet.getRange(i + 1, 6).setValue(liberado);
+          compromisoInfo = {
+            presupuestoId: pData[i][0],
+            centroCosto: centroCosto,
+            compromisoLiberado: montoTotal,
+            montoComprometidoNuevo: liberado
+          };
+          break;
+        }
+      }
+    }
+
+    sheet.getRange(idx + 1, 10).setValue(nuevoEstado);
+    sheet.getRange(idx + 1, 11).setValue(authRole || "Dirección/Contabilidad");
+
+    const obsPrev = String(data[idx][11] || "");
+    const extraObs = observacionesAdmin || (motivoRechazo ? `Motivo Rechazo: ${motivoRechazo}` : "") || (motivoSobregiro ? `Sobregiro: ${motivoSobregiro}` : "");
+    if (extraObs) {
+      sheet.getRange(idx + 1, 12).setValue((obsPrev ? obsPrev + " | " : "") + `[${nuevoEstado}: ${extraObs}]`);
+    }
+
+    return {
+      status: "success",
+      ordenCompraId: ordenCompraId,
+      estadoAnterior: estadoActual,
+      nuevoEstado: nuevoEstado,
+      compromisoPresupuestario: compromisoInfo,
+      message: `Órden de compra ${ordenCompraId} transicionó a '${nuevoEstado}' exitosamente.`
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// [TASK-017] [F18-Task07] - Modificación autorizada de importe de orden de compra con ajuste presupuestario trazable
+function modifyPurchaseOrderAmount(payload) {
+  const { ordenCompraId, nuevoMontoTotal, nuevoDetalleItems, motivoModificacion, authRole, autorizarSobregiro, motivoSobregiro } = payload || {};
+  if (!ordenCompraId || nuevoMontoTotal === undefined || parseFloat(nuevoMontoTotal) < 0) {
+    throw new Error("ordenCompraId y nuevoMontoTotal válidos son requeridos.");
   }
 
-  sheet.getRange(idx + 1, 10).setValue(nuevoEstado);
-  sheet.getRange(idx + 1, 11).setValue(authRole || "Dirección/Contabilidad");
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
 
-  const obsPrev = String(data[idx][11] || "");
-  const extraObs = observacionesAdmin || (motivoRechazo ? `Motivo Rechazo: ${motivoRechazo}` : "");
-  if (extraObs) {
-    sheet.getRange(idx + 1, 12).setValue((obsPrev ? obsPrev + " | " : "") + `[${nuevoEstado}: ${extraObs}]`);
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "OrdenesCompra");
+    const data = sheet.getDataRange().getValues();
+
+    const idx = data.findIndex(r => String(r[0]).trim() === String(ordenCompraId).trim());
+    if (idx === -1) throw new Error("Órden de compra no encontrada.");
+
+    const estadoActual = String(data[idx][9] || "Borrador").trim();
+    if (["Cancelada", "Cerrada", "Liquidada", "RecibidaTotal"].indexOf(estadoActual) >= 0) {
+      throw new Error(`No se puede modificar el importe de una orden en estado '${estadoActual}'.`);
+    }
+
+    const montoAnterior = parseFloat(data[idx][7] || 0);
+    const nuevoMonto = parseFloat(nuevoMontoTotal || 0);
+    const diferencia = Math.round((nuevoMonto - montoAnterior) * 100) / 100;
+    const centroCosto = String(data[idx][8] || "Operaciones").trim();
+    const roleUpper = String((payload && payload._verifiedRole) || authRole || "").toUpperCase();
+    const isHighLevelApprover = ["ADMINISTRADOR", "ADMIN", "DIRECTOR", "DIRECCION"].indexOf(roleUpper) >= 0;
+
+    let ajustePresupuestario = null;
+    const esOrdenAprobada = ["Aprobada", "Emitida", "EnviadaProveedor", "AceptadaProveedor", "PendienteRecepcion", "RecibidaParcial"].indexOf(estadoActual) >= 0;
+
+    if (esOrdenAprobada && diferencia !== 0) {
+      const pSheet = getOrCreateSheet(ss, "PresupuestosInstitucionales");
+      const pData = pSheet.getDataRange().getValues();
+      let pIdx = -1;
+
+      for (let i = 1; i < pData.length; i++) {
+        if (normalizeString(pData[i][2]) === normalizeString(centroCosto)) {
+          pIdx = i;
+          break;
+        }
+      }
+
+      if (pIdx !== -1) {
+        const montoAprobado = parseFloat(pData[pIdx][4] || 0);
+        const montoComprometido = parseFloat(pData[pIdx][5] || 0);
+        const montoEjecutado = parseFloat(pData[pIdx][6] || 0);
+        const saldoDisponible = Math.round((montoAprobado - montoComprometido - montoEjecutado) * 100) / 100;
+
+        if (diferencia > 0 && saldoDisponible < diferencia) {
+          if (autorizarSobregiro && isHighLevelApprover && motivoSobregiro && String(motivoSobregiro).trim().length >= 5) {
+            logStructuredEvent("ACCOUNTING", "modifyPurchaseOrderAmount", "WARN", "BUDGET_OVERRUN_ALERT", `Sobregiro presupuestario en modificación autorizado por ${roleUpper} para orden ${ordenCompraId}: Incremento L ${diferencia}, Disponible L ${saldoDisponible}. Motivo: ${motivoSobregiro}`, {
+              ordenCompraId: ordenCompraId,
+              centroCosto: centroCosto,
+              incremento: diferencia,
+              saldoDisponible: saldoDisponible,
+              motivoSobregiro: motivoSobregiro
+            }, authRole);
+          } else {
+            return {
+              status: "error",
+              code: "BUDGET_INSUFFICIENT",
+              message: `No se puede incrementar el importe de la orden. Saldo presupuestario disponible insuficiente en '${centroCosto}' (Disponible: L ${saldoDisponible.toFixed(2)}, Requerido: L ${diferencia.toFixed(2)}).`
+            };
+          }
+        }
+
+        const nuevoComprometido = Math.max(0, Math.round((montoComprometido + diferencia) * 100) / 100);
+        pSheet.getRange(pIdx + 1, 6).setValue(nuevoComprometido);
+        ajustePresupuestario = {
+          presupuestoId: pData[pIdx][0],
+          centroCosto: centroCosto,
+          diferenciaAjustada: diferencia,
+          montoComprometidoAnterior: montoComprometido,
+          montoComprometidoNuevo: nuevoComprometido,
+          saldoDisponibleRestante: Math.round((montoAprobado - nuevoComprometido - montoEjecutado) * 100) / 100
+        };
+      }
+    }
+
+    sheet.getRange(idx + 1, 8).setValue(nuevoMonto);
+    if (Array.isArray(nuevoDetalleItems)) {
+      sheet.getRange(idx + 1, 7).setValue(JSON.stringify(nuevoDetalleItems));
+    }
+
+    const obsPrev = String(data[idx][11] || "");
+    const metaModif = `[MODIF_IMPORTE: De L ${montoAnterior.toFixed(2)} a L ${nuevoMonto.toFixed(2)}. Motivo: ${motivoModificacion || "Ajuste autorizado"}]`;
+    sheet.getRange(idx + 1, 12).setValue((obsPrev ? obsPrev + " | " : "") + metaModif);
+
+    return {
+      status: "success",
+      ordenCompraId: ordenCompraId,
+      montoAnterior: montoAnterior,
+      nuevoMontoTotal: nuevoMonto,
+      diferencia: diferencia,
+      ajustePresupuestario: ajustePresupuestario,
+      message: `Importe de la orden ${ordenCompraId} modificado de L ${montoAnterior.toFixed(2)} a L ${nuevoMonto.toFixed(2)} exitosamente.`
+    };
+  } finally {
+    lock.releaseLock();
   }
-
-  return {
-    status: "success",
-    ordenCompraId: ordenCompraId,
-    estadoAnterior: estadoActual,
-    nuevoEstado: nuevoEstado,
-    message: `Órden de compra ${ordenCompraId} transicionó a '${nuevoEstado}' exitosamente.`
-  };
 }
 
 // [TASK-015] [F18-Task04] - Emisión de documento PDF oficial de Orden de Compra y versionado documental
@@ -7097,6 +7298,55 @@ function recordAccountsPayableExpense(payload) {
     fechaRecepcionStr  // Col 15: FechaRecepcion
   ]);
 
+  // [TASK-017] [F18-Task07] - Si la obligación está vinculada a una orden de compra aprobada, transferir monto de Comprometido a Ejecutado en PresupuestosInstitucionales
+  let ejecucionPresupuestaria = null;
+  if (ordenCompraId && estadoAprobacion !== "BloqueadoPorDiscrepancia") {
+    const lock = LockService.getScriptLock();
+    try {
+      if (lock.tryLock(10000)) {
+        const ordSheet = getOrCreateSheet(ss, "OrdenesCompra");
+        const ordData = ordSheet.getDataRange().getValues();
+        const ordRow = ordData.find(r => String(r[0]).trim() === String(ordenCompraId).trim());
+        const centroCosto = ordRow ? String(ordRow[8] || "Operaciones").trim() : "Operaciones";
+
+        const pSheet = getOrCreateSheet(ss, "PresupuestosInstitucionales");
+        const pData = pSheet.getDataRange().getValues();
+        let pIdx = -1;
+
+        for (let i = 1; i < pData.length; i++) {
+          if (normalizeString(pData[i][2]) === normalizeString(centroCosto)) {
+            pIdx = i;
+            break;
+          }
+        }
+
+        if (pIdx !== -1) {
+          const mComprometido = parseFloat(pData[pIdx][5] || 0);
+          const mEjecutado = parseFloat(pData[pIdx][6] || 0);
+          const mAprobado = parseFloat(pData[pIdx][4] || 0);
+
+          const transferir = Math.min(mComprometido, totalFactura);
+          const nuevoComprometido = Math.max(0, Math.round((mComprometido - transferir) * 100) / 100);
+          const nuevoEjecutado = Math.round((mEjecutado + totalFactura) * 100) / 100;
+
+          pSheet.getRange(pIdx + 1, 6).setValue(nuevoComprometido);
+          pSheet.getRange(pIdx + 1, 7).setValue(nuevoEjecutado);
+
+          ejecucionPresupuestaria = {
+            presupuestoId: pData[pIdx][0],
+            centroCosto: centroCosto,
+            montoTransferido: transferir,
+            montoComprometidoNuevo: nuevoComprometido,
+            montoEjecutadoNuevo: nuevoEjecutado,
+            saldoDisponibleRestante: Math.round((mAprobado - nuevoComprometido - nuevoEjecutado) * 100) / 100
+          };
+        }
+      }
+    } finally {
+      try { lock.releaseLock(); } catch (e) {}
+    }
+  }
+
   return {
     status: "success",
     obligacionId: obligacionId,
@@ -7106,6 +7356,7 @@ function recordAccountsPayableExpense(payload) {
     estadoAprobacion: estadoAprobacion,
     estadoPago: estadoPago,
     conciliacionThreeWay: conciliacionResultado,
+    ejecucionPresupuestaria: ejecucionPresupuestaria,
     message: estadoAprobacion === "BloqueadoPorDiscrepancia"
       ? "Obligación registrada pero BLOQUEADA para pago por discrepancias en la conciliación de tres vías."
       : "Obligación de cuenta por pagar / gasto registrada y conciliada exitosamente."

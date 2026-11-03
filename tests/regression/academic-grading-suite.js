@@ -206,6 +206,13 @@ assert(acctCode.includes("applySupplierCreditNote") && acctCode.includes("CREDIT
 assert(acctCode.includes("getSupplierAccountsPayableSummary") && acctCode.includes("clasificacionVencimiento"), "backend/accounting-service/Code.gs programa y clasifica vencimientos de cuentas por pagar [TASK-016]");
 assert(acctCode.includes("PagoParcial") && acctCode.includes("Pagada"), "backend/accounting-service/Code.gs actualiza automáticamente estados de pago según saldo remanente [TASK-016]");
 
+// [TASK-017] [F18-Task07] - Compromiso presupuestario formal al aprobar órdenes de compra
+assert(acctCode.includes("[TASK-017]") && acctCode.includes("compromisoPresupuestario"), "backend/accounting-service/Code.gs integra reserva de compromiso presupuestario en approvePurchaseOrder [TASK-017]");
+assert(acctCode.includes("BUDGET_INSUFFICIENT"), "backend/accounting-service/Code.gs bloquea aprobación de órdenes sin disponibilidad presupuestaria suficiente [TASK-017]");
+assert(acctCode.includes("BUDGET_OVERRUN_ALERT") && acctCode.includes("autorizarSobregiro"), "backend/accounting-service/Code.gs audita y permite sobregiros excepcionales autorizados por rol directivo [TASK-017]");
+assert(acctCode.includes("compromisoLiberado") && acctCode.includes("estadosConCompromiso"), "backend/accounting-service/Code.gs libera el compromiso presupuestario ante cancelación formal de orden [TASK-017]");
+assert(acctCode.includes("modifyPurchaseOrderAmount") && acctCode.includes("ajustePresupuestario"), "backend/accounting-service/Code.gs implementa función modifyPurchaseOrderAmount con ajuste presupuestario trazable [TASK-017]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

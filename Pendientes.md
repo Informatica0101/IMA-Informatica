@@ -1320,7 +1320,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-017] [ ] [F18-Task07] Implementar el compromiso presupuestario formal al aprobar órdenes de compra
+### [TASK-017] [X] [F18-Task07] Implementar el compromiso presupuestario formal al aprobar órdenes de compra
 - **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección B (B.6), Sección E y Sección G (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Control preventivo del gasto, protección presupuestaria y concurrencia)
@@ -1349,7 +1349,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - La cancelación formal de una orden de compra libera el compromiso devolviendo los fondos a disponibilidad.
   - Reducir el importe de una orden ajusta la diferencia en el compromiso de forma trazable.
   - Las autorizaciones de sobregiro quedan auditadas con usuario directivo responsable y motivo.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
