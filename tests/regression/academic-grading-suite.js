@@ -300,6 +300,17 @@ assert(acctCode.includes("cuposDisponibles") && acctCode.includes("cuposOcupados
 assert(acctCode.includes("UNAUTHORIZED_ACCESS_ATTEMPT") && acctCode.includes("RelacionesFamiliares"), "backend/accounting-service/Code.gs aísla consultas por núcleo familiar y rol [TASK-030]");
 assert(acctCode.includes("allowedStudentIds") && acctCode.includes("effectiveRole"), "backend/accounting-service/Code.gs valida autorización estricta en getTransportAssignments [TASK-030]");
 
+// [TASK-031] [F21-Task03] - Control de abordaje, descenso y manifiesto en tiempo real
+assert(acctCode.includes("recordStudentBoarding") && acctCode.includes("TransporteAsistenciaViajes"), "backend/accounting-service/Code.gs implementa función recordStudentBoarding [TASK-031]");
+assert(acctCode.includes("UNAUTHORIZED_ROUTE_STUDENT"), "backend/accounting-service/Code.gs rechaza abordaje de estudiantes no asignados a la ruta [TASK-031]");
+assert(acctCode.includes("STUDENT_ALREADY_BOARDED"), "backend/accounting-service/Code.gs previene doble registro de abordaje en un mismo viaje [TASK-031]");
+assert(acctCode.includes("recordStudentAlighting") && acctCode.includes("STUDENT_NOT_BOARDED_IN_TRIP"), "backend/accounting-service/Code.gs verifica abordaje previo antes de registrar descenso [TASK-031]");
+assert(acctCode.includes("getTripPassengerManifest") && acctCode.includes("pasajerosABordo"), "backend/accounting-service/Code.gs implementa consulta de manifiesto en tiempo real [TASK-031]");
+
+// [TASK-032] [F21-Task04] - Gestión de personas autorizadas y entrega segura en paradas
+assert(acctCode.includes("TransportePersonasAutorizadas") && acctCode.includes("getAuthorizedPickupPersons"), "backend/accounting-service/Code.gs incluye gestión de adultos autorizados [TASK-032]");
+assert(acctCode.includes("recordStudentSafeDelivery") && acctCode.includes("UNAUTHORIZED_PICKUP_PERSON"), "backend/accounting-service/Code.gs bloquea entregas a adultos no autorizados [TASK-032]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

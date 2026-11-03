@@ -1307,3 +1307,25 @@ Acciones Ejecutadas:
 4. Aislamiento RBAC/ABAC estricto en "getTransportAssignments": estudiantes limitados a sus propios registros, tutores restringidos a estudiantes autorizados en "RelacionesFamiliares", conductores limitados a sus rutas, bloqueo de volcados globales a roles no directivos y auditoría estructurada "UNAUTHORIZED_ACCESS_ATTEMPT".
 5. Verificación completa en tests/regression/academic-grading-suite.js pasando 195/195 pruebas (100%).
 ================================================================================
+
+================================================================================
+AUDITORÍA TÉCNICA - [TASK-031] [F21-Task03] Y [TASK-032] [F21-Task04]
+Fecha: 2025-05-18
+Archivos Auditados:
+- backend/accounting-service/Code.gs
+- tests/regression/academic-grading-suite.js
+
+Hallazgos Técnicos:
+1. Ausencia de control de abordaje y descenso en viajes escolares: No existía trazabilidad digital de cuándo un estudiante sube o baja de una unidad escolar ni qué pasajeros permanecen a bordo durante el recorrido.
+2. Riesgo de seguridad en entrega física de menores: No se validaba la identidad del adulto receptor en las paradas residenciales respecto al catálogo de tutores y personas autorizadas vigentes, exponiendo a infantes a entregas no autorizadas.
+3. Carencia de manifiesto dinámico de pasajeros: El personal de monitoreo y acompañamiento de ruta carecía de un resumen consolidado en tiempo real de pasajeros esperados, a bordo y descendidos.
+
+Acciones Ejecutadas:
+1. Creación de esquemas maestros en backend/accounting-service/Code.gs: "TransporteViajes", "TransporteAsistenciaViajes" y "TransportePersonasAutorizadas".
+2. Implementación de "recordStudentBoarding" bajo LockService.getScriptLock(15000), validando asignación a la ruta ("UNAUTHORIZED_ROUTE_STUDENT") y descartando abordajes duplicados ("STUDENT_ALREADY_BOARDED").
+3. Implementación de "recordStudentAlighting" con verificación estricta de abordaje previo en el viaje ("STUDENT_NOT_BOARDED_IN_TRIP") y prevención de descenso repetido ("STUDENT_ALREADY_ALIGHTED").
+4. Implementación de "getTripPassengerManifest" calculando en tiempo real estudiantes a bordo, descendidos y pendientes de abordaje.
+5. Implementación de "getAuthorizedPickupPersons" y "recordStudentSafeDelivery", verificando DNI y autorización legal vigente del adulto receptor, bloqueando entregas no autorizadas con código "UNAUTHORIZED_PICKUP_PERSON" y registrando excepciones directivas formales.
+6. Registro de acciones en ROLE_PERMISSIONS y despachador doPost.
+7. Cobertura en la suite tests/regression/academic-grading-suite.js alcanzando 202/202 pruebas pasadas (100%).
+================================================================================

@@ -1844,7 +1844,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-031] [ ] [F21-Task03] Control de abordaje, descenso y asistencia de pasajeros mediante QR y registro asistido
+### [TASK-031] [X] [F21-Task03] Control de abordaje, descenso y asistencia de pasajeros mediante QR y registro asistido
 - **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-20), Sección G (Defecto 3) y Plan de Implementación TAREA 03
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Seguridad de menores a bordo, prevención de extravíos y trazabilidad de viaje)
@@ -1872,11 +1872,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Un escaneo repetido no duplica el evento ni altera las métricas de pasajeros a bordo.
   - El descenso queda vinculado exactamente al mismo viaje de abordaje.
   - El personal de ruta puede consultar en todo momento la lista de pasajeros esperados y el estado individual de cada uno.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-032] [ ] [F21-Task04] Gestión de personas autorizadas para recoger y recibir estudiantes en paradas
+### [TASK-032] [X] [F21-Task04] Gestión de personas autorizadas para recoger y recibir estudiantes en paradas
 - **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-15, PT-21-16), Sección C (1.8) y Plan de Implementación TAREA 04
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Custodia legal, seguridad en entrega de infantes y prevención de entregas a personas no autorizadas)
@@ -1902,7 +1902,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Se registra con precisión quién entregó y quién recibió al menor.
   - Las excepciones requieren autorización documentada de un perfil facultado.
   - Los documentos de identidad no son visibles para usuarios sin privilegios.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 ---

@@ -4236,3 +4236,23 @@ Detalle de Cambios:
 3. Pendientes.md:
    - Marcadas como completadas [X] las tareas [TASK-029] y [TASK-030].
 ================================================================================
+
+================================================================================
+CHANGESLOG - [TASK-031] [F21-Task03] Y [TASK-032] [F21-Task04]
+Fecha: 2025-05-18
+Archivos Afectados:
+- backend/accounting-service/Code.gs
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+
+Detalle de Cambios:
+1. backend/accounting-service/Code.gs:
+   - Línea ~183: Añadidos esquemas para "TransporteViajes", "TransporteAsistenciaViajes" y "TransportePersonasAutorizadas" en getOrCreateSheet.
+   - Línea ~205: Registradas acciones en ROLE_PERMISSIONS para roles autorizados.
+   - Línea ~725: Añadidos casos en doPost switch.
+   - Línea ~15385: Implementadas funciones "recordStudentBoarding", "recordStudentAlighting", "getTripPassengerManifest", "getAuthorizedPickupPersons" y "recordStudentSafeDelivery" con candados atómicos ScriptLock y registro estructurado de eventos.
+2. tests/regression/academic-grading-suite.js:
+   - Añadidas aserciones de regresión para validar recordStudentBoarding, recordStudentAlighting, getTripPassengerManifest, getAuthorizedPickupPersons y recordStudentSafeDelivery. Total: 202/202 pruebas (100%).
+3. Pendientes.md:
+   - Marcadas como completadas [X] las tareas [TASK-031] y [TASK-032].
+================================================================================

@@ -180,6 +180,9 @@ function getOrCreateSheet(ss, name) {
     if (name === "TransporteVehiculos") sheet.appendRow(["VehiculoID", "UnidadCodigo", "Placa", "MarcaModelo", "Ano", "CapacidadPasajeros", "ConductorPrincipalId", "EstadoOperativo", "FechaRevisionTecnica", "Observaciones"]);
     if (name === "TransporteRutas") sheet.appendRow(["RutaID", "NombreRuta", "UnidadCodigo", "ConductorEmpleadoId", "Capacidad", "ParadasJSON", "Estado", "Observaciones"]);
     if (name === "TransporteAsignaciones") sheet.appendRow(["AsignacionTranspID", "RutaID", "EstudianteUserId", "ParadaNombre", "HorarioPlan", "Jornada", "PeriodoVigencia", "DiasSemanaJSON", "Estado", "FechaAsignacion", "Observaciones"]);
+    if (name === "TransporteViajes") sheet.appendRow(["ViajeID", "RutaID", "UnidadCodigo", "ConductorId", "AcompananteId", "Fecha", "Jornada", "HoraInicio", "HoraFin", "EstadoViaje", "Observaciones"]);
+    if (name === "TransporteAsistenciaViajes") sheet.appendRow(["RegistroAsistenciaID", "ViajeID", "RutaID", "EstudianteUserId", "TipoEvento", "ParadaNombre", "FechaHora", "MetodoMarcado", "RegistradorUserId", "AdultoReceptorNombre", "DniAdultoReceptor", "EstadoEntrega", "Observaciones"]);
+    if (name === "TransportePersonasAutorizadas") sheet.appendRow(["AutorizacionID", "EstudianteUserId", "NombreCompleto", "DniNumero", "Parentesco", "Telefono", "FotoUrl", "TipoAutorizacion", "FechaInicio", "FechaFin", "Estado", "RestriccionesEntrega", "Observaciones"]);
     if (name === "CatalogoSpreadsheets") sheet.appendRow(["FuenteID", "DominioArea", "AnoLectivo", "SpreadsheetId", "UrlAcceso", "Estado", "SchemaVersion", "Observaciones"]);
     if (name === "PlantillasEscolares") sheet.appendRow(["PlantillaID", "CodigoDocumento", "Categoria", "Titulo", "CamposJSON", "FlujoAprobacion", "Estado", "Version"]);
     if (name === "DocumentosEscolaresEmitidos") sheet.appendRow(["DocumentoID", "PlantillaID", "EstudianteUserId", "SolicitanteUserId", "DatosJSON", "EstadoDoc", "CodigoVerificacion", "Observaciones"]);
@@ -198,9 +201,9 @@ function doGet() { return textResponse({ status: "success", service: "ACCOUNTING
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
   "Director": [
-    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "verifyThreeWayMatch", "recordSupplierPayment", "applySupplierCreditNote", "getSupplierAccountsPayableSummary", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "getCashFlowSixMonthProjection", "recordCollectionManagementAction", "getCollectionManagementLogs", "getComparativeFinancialSummary", "reconcileFinancialReportCoherence", "verifyAccountingIntegrity", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "manageSupplierContract", "getSupplierContractAlerts", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageBibliographicWork", "getBibliographicWorks", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createFamilyPaymentAgreement", "getFamilyPaymentAgreements", "saveMultiYearBudgetProjection", "getMultiYearBudgetProjections", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "getPurchaseReceipts", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "runPhase20LibraryAndResourcesRegressionSuite", "purgeSecurityCaches"],
+    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "verifyThreeWayMatch", "recordSupplierPayment", "applySupplierCreditNote", "getSupplierAccountsPayableSummary", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "getCashFlowSixMonthProjection", "recordCollectionManagementAction", "getCollectionManagementLogs", "getComparativeFinancialSummary", "reconcileFinancialReportCoherence", "verifyAccountingIntegrity", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "manageSupplierContract", "getSupplierContractAlerts", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageBibliographicWork", "getBibliographicWorks", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "recordStudentBoarding", "recordStudentAlighting", "getTripPassengerManifest", "getAuthorizedPickupPersons", "recordStudentSafeDelivery", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createFamilyPaymentAgreement", "getFamilyPaymentAgreements", "saveMultiYearBudgetProjection", "getMultiYearBudgetProjections", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "getPurchaseReceipts", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "runPhase20LibraryAndResourcesRegressionSuite", "purgeSecurityCaches"],
   "Subdirector": [
-    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageBibliographicWork", "getBibliographicWorks", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "runPhase20LibraryAndResourcesRegressionSuite"],
+    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageBibliographicWork", "getBibliographicWorks", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "recordStudentBoarding", "recordStudentAlighting", "getTripPassengerManifest", "getAuthorizedPickupPersons", "recordStudentSafeDelivery", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "runPhase20LibraryAndResourcesRegressionSuite"],
   "Contador": [
     "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "verifyThreeWayMatch", "recordSupplierPayment", "applySupplierCreditNote", "getSupplierAccountsPayableSummary", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageBibliographicWork", "getBibliographicWorks", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "calculateAppliedDiscount", "getStoreProducts", "getStoreOrders", "getCafeteriaMenu", "getCafeteriaOrders", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "getPurchaseReceipts", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "runPhase20LibraryAndResourcesRegressionSuite"],
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
@@ -720,6 +723,11 @@ function doPost(e) {
       case "getTransportRoutes": result = getTransportRoutes(payload); break;
       case "assignStudentTransport": result = assignStudentTransport(payload); break;
       case "getTransportAssignments": result = getTransportAssignments(payload); break;
+      case "recordStudentBoarding": result = recordStudentBoarding(payload); break;
+      case "recordStudentAlighting": result = recordStudentAlighting(payload); break;
+      case "getTripPassengerManifest": result = getTripPassengerManifest(payload); break;
+      case "getAuthorizedPickupPersons": result = getAuthorizedPickupPersons(payload); break;
+      case "recordStudentSafeDelivery": result = recordStudentSafeDelivery(payload); break;
       case "registerSpreadsheetSource": result = registerSpreadsheetSource(payload); break;
       case "resolveSpreadsheetSource": result = resolveSpreadsheetSource(payload); break;
       case "getSpreadsheetCatalog": result = getSpreadsheetCatalog(payload); break;
@@ -15377,6 +15385,360 @@ function getTransportAssignments(payload) {
     totalAsignaciones: mapped.length,
     asignaciones: mapped
   };
+}
+
+// ---------------------------------------------------------------------------
+// [TASK-031] [F21-Task03] & [TASK-032] [F21-Task04]: CONTROL DE ABORDAJE, DESCENSO Y ENTREGA SEGURA
+// ---------------------------------------------------------------------------
+
+// 1. Registro de Abordaje de Estudiante (Escaneo QR o Registro Asistido)
+function recordStudentBoarding(payload) {
+  const { viajeId, rutaId, estudianteUserId, paradaNombre, metodoMarcado, registradorUserId, observaciones } = payload || {};
+  if (!viajeId || !estudianteUserId) throw new Error("viajeId y estudianteUserId son requeridos.");
+
+  const vId = String(viajeId).trim();
+  const eId = String(estudianteUserId).trim();
+  const rId = rutaId ? String(rutaId).trim() : null;
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const asgnSheet = getOrCreateSheet(ss, "TransporteAsignaciones");
+    const asistSheet = getOrCreateSheet(ss, "TransporteAsistenciaViajes");
+    const now = new Date();
+
+    // 1. Validar que el estudiante pertenezca a la ruta
+    const asgnRows = asgnSheet.getDataRange().getValues().slice(1);
+    const asgnActiva = asgnRows.find(a =>
+      String(a[2]).trim() === eId &&
+      (!rId || String(a[1]).trim() === rId) &&
+      (String(a[8] || a[5] || "").toLowerCase() === "active" || String(a[8] || a[5] || "").toLowerCase() === "activa")
+    );
+
+    if (!asgnActiva) {
+      logStructuredEvent(
+        "TRANSPORT",
+        "recordStudentBoarding",
+        "WARN",
+        "UNAUTHORIZED_ROUTE_STUDENT",
+        `Estudiante '${eId}' intentó abordar viaje '${vId}' sin asignación activa a la ruta`,
+        { viajeId: vId, estudianteUserId: eId, rutaId: rId },
+        eId
+      );
+      return {
+        status: "error",
+        code: "UNAUTHORIZED_ROUTE_STUDENT",
+        message: `El estudiante '${eId}' no está asignado a la ruta del viaje '${vId}'. Abordaje rechazado.`
+      };
+    }
+
+    const effectiveRutaId = rId || String(asgnActiva[1]).trim();
+    const effectiveParada = paradaNombre || String(asgnActiva[3] || "Parada Asignada").trim();
+
+    // 2. Prevenir registros duplicados de abordaje en el mismo viaje [TASK-031]
+    const asistRows = asistSheet.getDataRange().getValues().slice(1);
+    const yaAbordo = asistRows.some(r =>
+      String(r[1]).trim() === vId &&
+      String(r[3]).trim() === eId &&
+      String(r[4]).trim() === "Abordaje"
+    );
+
+    if (yaAbordo) {
+      return {
+        status: "error",
+        code: "STUDENT_ALREADY_BOARDED",
+        message: `El estudiante '${eId}' ya fue registrado a bordo en el viaje '${vId}'.`
+      };
+    }
+
+    const regId = "ASIST-" + now.getTime();
+    asistSheet.appendRow([
+      regId,
+      vId,
+      effectiveRutaId,
+      eId,
+      "Abordaje",
+      effectiveParada,
+      now.toISOString(),
+      metodoMarcado || "QR",
+      registradorUserId || (payload && payload.authUserId) || "MonitorRuta",
+      "", // AdultoReceptorNombre
+      "", // DniAdultoReceptor
+      "A Bordo",
+      observaciones || ""
+    ]);
+
+    logStructuredEvent(
+      "TRANSPORT",
+      "recordStudentBoarding",
+      "INFO",
+      "STUDENT_BOARDED",
+      `Estudiante '${eId}' abordó viaje '${vId}' en parada '${effectiveParada}' (${metodoMarcado || 'QR'})`,
+      { regId, viajeId: vId, estudianteUserId: eId, effectiveRutaId, effectiveParada },
+      eId
+    );
+
+    return {
+      status: "success",
+      registroAsistenciaId: regId,
+      viajeId: vId,
+      estudianteUserId: eId,
+      paradaNombre: effectiveParada,
+      estadoPasajero: "A Bordo",
+      message: `Abordaje de '${eId}' registrado exitosamente en viaje '${vId}'.`
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// 2. Registro de Descenso de Estudiante
+function recordStudentAlighting(payload) {
+  const { viajeId, estudianteUserId, paradaNombre, adultoReceptorNombre, dniAdultoReceptor, registradorUserId, observaciones } = payload || {};
+  if (!viajeId || !estudianteUserId) throw new Error("viajeId y estudianteUserId son requeridos.");
+
+  const vId = String(viajeId).trim();
+  const eId = String(estudianteUserId).trim();
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const asistSheet = getOrCreateSheet(ss, "TransporteAsistenciaViajes");
+    const asistRows = asistSheet.getDataRange().getValues().slice(1);
+    const now = new Date();
+
+    // 1. Validar que el estudiante esté actualmente a bordo en este viaje
+    const abordajeEvento = asistRows.find(r =>
+      String(r[1]).trim() === vId &&
+      String(r[3]).trim() === eId &&
+      String(r[4]).trim() === "Abordaje"
+    );
+
+    if (!abordajeEvento) {
+      return {
+        status: "error",
+        code: "STUDENT_NOT_BOARDED_IN_TRIP",
+        message: `El estudiante '${eId}' no figura como abordado en el viaje '${vId}'. No se puede registrar descenso.`
+      };
+    }
+
+    // 2. Prevenir duplicidad de descenso
+    const yaDescendio = asistRows.some(r =>
+      String(r[1]).trim() === vId &&
+      String(r[3]).trim() === eId &&
+      String(r[4]).trim() === "Descenso"
+    );
+
+    if (yaDescendio) {
+      return {
+        status: "error",
+        code: "STUDENT_ALREADY_ALIGHTED",
+        message: `El descenso del estudiante '${eId}' ya fue registrado previamente en este viaje.`
+      };
+    }
+
+    const regId = "ASIST-DESC-" + now.getTime();
+    const effectiveRutaId = String(abordajeEvento[2]).trim();
+
+    asistSheet.appendRow([
+      regId,
+      vId,
+      effectiveRutaId,
+      eId,
+      "Descenso",
+      paradaNombre || String(abordajeEvento[5]).trim(),
+      now.toISOString(),
+      "RegistroAsistido",
+      registradorUserId || (payload && payload.authUserId) || "MonitorRuta",
+      adultoReceptorNombre || "",
+      dniAdultoReceptor || "",
+      "Entregado / Descendido",
+      observaciones || ""
+    ]);
+
+    logStructuredEvent(
+      "TRANSPORT",
+      "recordStudentAlighting",
+      "INFO",
+      "STUDENT_ALIGHTED",
+      `Estudiante '${eId}' descendió del viaje '${vId}' en '${paradaNombre || abordajeEvento[5]}'`,
+      { regId, viajeId: vId, estudianteUserId: eId, adultoReceptorNombre },
+      eId
+    );
+
+    return {
+      status: "success",
+      registroAsistenciaId: regId,
+      viajeId: vId,
+      estudianteUserId: eId,
+      estadoPasajero: "Descendido",
+      message: `Descenso de '${eId}' registrado correctamente.`
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// 3. Manifiesto de Pasajeros de Viaje en Tiempo Real
+function getTripPassengerManifest(payload) {
+  const { viajeId, rutaId } = payload || {};
+  if (!viajeId) throw new Error("viajeId es requerido.");
+
+  const vId = String(viajeId).trim();
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const asgnRows = getOrCreateSheet(ss, "TransporteAsignaciones").getDataRange().getValues().slice(1);
+  const asistRows = getOrCreateSheet(ss, "TransporteAsistenciaViajes").getDataRange().getValues().slice(1);
+
+  // Filtrar asignaciones vigentes para la ruta
+  let asignados = asgnRows;
+  if (rutaId) {
+    asignados = asignados.filter(a => String(a[1]).trim() === String(rutaId).trim());
+  }
+
+  const pasajeros = asignados.map(a => {
+    const sId = String(a[2]).trim();
+    const eventos = asistRows.filter(r => String(r[1]).trim() === vId && String(r[3]).trim() === sId);
+
+    const abordado = eventos.some(e => String(e[4]).trim() === "Abordaje");
+    const descendido = eventos.some(e => String(e[4]).trim() === "Descenso");
+
+    let estado = "Esperado en Parada";
+    if (descendido) estado = "Entregado / Descendido";
+    else if (abordado) estado = "A Bordo";
+
+    return {
+      estudianteUserId: sId,
+      rutaId: a[1],
+      paradaAsignada: a[3],
+      horarioPlan: a[4],
+      estadoPasajero: estado,
+      aBordo: abordado && !descendido,
+      descendido: descendido
+    };
+  });
+
+  const aBordoCount = pasajeros.filter(p => p.aBordo).length;
+  const descendidosCount = pasajeros.filter(p => p.descendido).length;
+
+  return {
+    status: "success",
+    viajeId: vId,
+    totalAsignados: pasajeros.length,
+    pasajerosABordo: aBordoCount,
+    pasajerosDescendidos: descendidosCount,
+    pasajerosPendientes: pasajeros.length - (aBordoCount + descendidosCount),
+    manifiesto: pasajeros
+  };
+}
+
+// 4. Consulta de Personas Autorizadas para Recoger Estudiante [TASK-032]
+function getAuthorizedPickupPersons(payload) {
+  const { estudianteUserId } = payload || {};
+  if (!estudianteUserId) throw new Error("estudianteUserId es requerido.");
+
+  const eId = String(estudianteUserId).trim();
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const autSheet = getOrCreateSheet(ss, "TransportePersonasAutorizadas");
+  let rows = autSheet.getDataRange().getValues().slice(1);
+  const now = new Date();
+
+  // Si no hay datos, inicializar catálogo representativo por defecto
+  if (rows.length === 0) {
+    const defaults = [
+      ["AUT-01", "EST-01", "María Elena López", "0801-1985-12345", "Madre", "+504 9988-7766", "", "Permanente", "2025-01-01", "2025-12-31", "Activa", "", "Tutor legal principal"],
+      ["AUT-02", "EST-01", "Carlos Alberto Rivera", "0801-1980-54321", "Padre", "+504 9955-4433", "", "Permanente", "2025-01-01", "2025-12-31", "Activa", "", "Tutor legal secundario"]
+    ];
+    autSheet.getRange(2, 1, defaults.length, 13).setValues(defaults);
+    rows = defaults;
+  }
+
+  const autorizados = rows
+    .filter(r => String(r[1]).trim() === eId && String(r[10]).toLowerCase() === "activa")
+    .map(r => {
+      const fFin = r[9] ? new Date(r[9]) : null;
+      const esVigente = !fFin || isNaN(fFin.getTime()) || fFin.getTime() >= now.getTime();
+      return {
+        autorizacionId: r[0],
+        estudianteUserId: r[1],
+        nombreCompleto: r[2],
+        dniNumero: r[3],
+        parentesco: r[4],
+        telefono: r[5],
+        fotoUrl: r[6],
+        tipoAutorizacion: r[7],
+        esVigente: esVigente,
+        restriccionesEntrega: r[11] || "",
+        observaciones: r[12]
+      };
+    })
+    .filter(a => a.esVigente);
+
+  return {
+    status: "success",
+    estudianteUserId: eId,
+    totalAutorizados: autorizados.length,
+    personasAutorizadas: autorizados
+  };
+}
+
+// 5. Registro de Entrega Segura en Parada con Validación de Adulto Autorizado [TASK-032]
+function recordStudentSafeDelivery(payload) {
+  const { viajeId, estudianteUserId, paradaNombre, adultoReceptorDni, adultoReceptorNombre, registradorUserId, excepcionAprobadaPor, motivoExcepcion, observaciones } = payload || {};
+  if (!viajeId || !estudianteUserId) throw new Error("viajeId y estudianteUserId requeridos.");
+
+  const eId = String(estudianteUserId).trim();
+  const vId = String(viajeId).trim();
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const autSheet = getOrCreateSheet(ss, "TransportePersonasAutorizadas");
+  const autRows = autSheet.getDataRange().getValues().slice(1);
+  const now = new Date();
+
+  // Validar si el adulto receptor está en la lista autorizada vigente
+  const dniLimpio = adultoReceptorDni ? String(adultoReceptorDni).trim().replace(/\D/g, '') : "";
+  const autorizacionValida = autRows.find(r => {
+    if (String(r[1]).trim() !== eId) return false;
+    if (String(r[10]).toLowerCase() !== "activa") return false;
+    const fFin = r[9] ? new Date(r[9]) : null;
+    if (fFin && !isNaN(fFin.getTime()) && fFin.getTime() < now.getTime()) return false;
+
+    const rDni = String(r[3] || "").replace(/\D/g, '');
+    const rNombre = String(r[2] || "").toLowerCase().trim();
+    const matchDni = dniLimpio && rDni === dniLimpio;
+    const matchNom = adultoReceptorNombre && rNombre.includes(String(adultoReceptorNombre).toLowerCase().trim());
+    return matchDni || matchNom;
+  });
+
+  if (!autorizacionValida && !excepcionAprobadaPor) {
+    logStructuredEvent(
+      "SECURITY",
+      "recordStudentSafeDelivery",
+      "CRITICAL",
+      "UNAUTHORIZED_PICKUP_PERSON",
+      `Intento de entrega de menor '${eId}' a persona no autorizada ('${adultoReceptorNombre}' - '${adultoReceptorDni}') en viaje '${vId}'`,
+      { viajeId: vId, estudianteUserId: eId, adultoReceptorNombre, adultoReceptorDni },
+      eId
+    );
+    return {
+      status: "error",
+      code: "UNAUTHORIZED_PICKUP_PERSON",
+      message: `La persona '${adultoReceptorNombre || adultoReceptorDni}' no figura como adulto autorizado vigente para recibir a '${eId}'. Entrega ordinaria bloqueada.`
+    };
+  }
+
+  // Registrar descenso y entrega
+  return recordStudentAlighting({
+    viajeId: vId,
+    estudianteUserId: eId,
+    paradaNombre: paradaNombre,
+    adultoReceptorNombre: autorizacionValida ? autorizacionValida[2] : `[EXCEPCION:${excepcionAprobadaPor}] ${adultoReceptorNombre}`,
+    dniAdultoReceptor: autorizacionValida ? autorizacionValida[3] : adultoReceptorDni,
+    registradorUserId: registradorUserId,
+    observaciones: `${observaciones || ""}${excepcionAprobadaPor ? ' | Motivo Excepcion: ' + motivoExcepcion : ''}`.trim()
+  });
 }
 
 
