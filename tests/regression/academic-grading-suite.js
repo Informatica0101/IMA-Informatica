@@ -320,6 +320,19 @@ assert(acctCode.includes("VEHICLE_INSURANCE_EXPIRED") && acctCode.includes("DRIV
 assert(acctCode.includes("finalizeTransportTrip") && acctCode.includes("STUDENTS_STILL_ON_BOARD"), "backend/accounting-service/Code.gs bloquea cierre de viaje si quedan estudiantes a bordo [TASK-034]");
 assert(acctCode.includes("PHYSICAL_INSPECTION_REQUIRED") && acctCode.includes("CerradoNormal"), "backend/accounting-service/Code.gs exige inspección física de unidad vacía para cierre normal [TASK-034]");
 
+// [TASK-035] [F21-Task07] - Integración con Mantenimiento Vehicular
+assert(acctCode.includes("VEHICLE_UNDER_MAINTENANCE"), "backend/accounting-service/Code.gs bloquea asignación a rutas de vehículos en mantenimiento [TASK-035]");
+assert(acctCode.includes("TransporteVehiculos") && acctCode.includes("manageMaintenanceOrder"), "backend/accounting-service/Code.gs sincroniza estado de vehículo al gestionar órdenes de mantenimiento [TASK-035]");
+
+// [TASK-036] [F21-Task08] - Auditoría y Migración de Datos de Transporte
+assert(acctCode.includes("auditAndMigrateTransportData"), "backend/accounting-service/Code.gs expone función auditAndMigrateTransportData [TASK-036]");
+assert(acctCode.includes("CORRECTIVE_AUTO_PROVISIONED_VEHICLE") && acctCode.includes("rutasSinVehiculoMaestro"), "backend/accounting-service/Code.gs audita inconsistencias y auto-aprovisiona vehículos faltantes [TASK-036]");
+
+// [TASK-037] [F21-Task34] - Suite Automatizada de Pruebas y Regresión Integral de Transporte
+assert(acctCode.includes("runPhase21TransportAndServicesRegressionSuite") && acctCode.includes("[TASK-037]"), "backend/accounting-service/Code.gs contiene suite runPhase21TransportAndServicesRegressionSuite [TASK-037]");
+assert(devCode.includes("runPhase21TransportAndServicesRegressionSuite") && devCode.includes("[TASK-037]"), "backend/developer-service/Code.gs integra orquestación de suite de transporte [TASK-037]");
+assert(acctCode.includes("PT21-01") && acctCode.includes("PT21-06") && acctCode.includes("PT21-12"), "backend/accounting-service/Code.gs cubre pruebas completas PT21-01 a PT21-12 [TASK-037]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

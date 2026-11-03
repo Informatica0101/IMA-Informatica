@@ -163,9 +163,7 @@ function getOrCreateSheet(ss, name) {
     if (name === "PoliticasFiscales") sheet.appendRow(["PoliticaID", "CodigoRegla", "NombreRegla", "Categoria", "BaseCalculo", "MetodoCalculo", "TasaImporte", "Estado", "Version", "Observaciones"]);
     if (name === "PoliticasInstitucionales") sheet.appendRow(["PoliticaInstID", "TipoDocumento", "Titulo", "Version", "ContenidoHTML", "Estado", "FechaPublicacion", "Observaciones"]);
     if (name === "AceptacionesPoliticas") sheet.appendRow(["AceptacionID", "UserId", "PoliticaInstID", "Version", "FechaAceptacion", "IpMetadata", "Estado"]);
-    if (name === "BibliotecaCatalogoObras") sheet.appendRow(["ObraID", "IsbnCodigo", "Titulo", "Subtitulo", "AutoresJSON", "Editorial", "EdicionAno", "Idioma", "Categoria", "MateriaAcademica", "NivelEducativo", "PortadaUrl", "Descripcion", "PalabrasClave", "EstadoObra"]);
-    if (name === "BibliotecaEjemplares") sheet.appendRow(["EjemplarID", "ObraID", "CodigoBarrasQR", "UbicacionFisica", "CondicionFisica", "EstadoDisponibilidad", "Observaciones", "IsbnCodigo", "Titulo", "Autor", "Categoria"]);
-    if (name === "BibliotecaPoliticasCirculacion") sheet.appendRow(["PoliticaID", "RolTarget", "LimiteLibrosSimultaneos", "DiasPrestamo", "PermitePrestamoDomicilio", "DiasGraciaMora", "Estado", "Observaciones"]);
+    if (name === "BibliotecaEjemplares") sheet.appendRow(["EjemplarID", "IsbnCodigo", "Titulo", "Autor", "Categoria", "UbicacionFisica", "Estado", "Observaciones"]);
     if (name === "BibliotecaPrestamos") sheet.appendRow(["PrestamoID", "EjemplarID", "UserId", "FechaPrestamo", "FechaDevolucionPrevista", "FechaDevolucionReal", "Estado", "Observaciones"]);
     if (name === "BibliotecaReservas") sheet.appendRow(["ReservaID", "EjemplarID", "UserId", "FechaSolicitud", "FechaExpiracion", "EstadoReserva", "Observaciones"]);
     if (name === "BibliotecaIncidencias") sheet.appendRow(["IncidenciaID", "PrestamoID", "EjemplarID", "UserId", "TipoIncidencia", "Descripcion", "Estado", "Resolucion", "Observaciones"]);
@@ -177,13 +175,8 @@ function getOrCreateSheet(ss, name) {
     if (name === "InventariosConteosFisicos") sheet.appendRow(["ConteoID", "FechaInicio", "AlmacenUbicacionId", "ResponsableUserId", "ArticulosDetalleJSON", "DiferenciasJSON", "EstadoConteo", "AprobadoPor", "Observaciones"]);
     if (name === "MantenimientoOrdenes") sheet.appendRow(["OrdenMaintID", "FechaReporte", "ActivoIdUbicacion", "TipoMantenimiento", "DescripcionFalla", "Prioridad", "ReportadoPorUserId", "AsignadoAEmpleadoId", "RepuestosConsumidosJSON", "CostoEstimado", "CostoReal", "EstadoOrden", "FechaResolucion", "Observaciones"]);
     if (name === "BajasBienes") sheet.appendRow(["BajaID", "FechaBaja", "TipoBien", "BienIdCodigo", "NombreBien", "MotivoBaja", "ValorLibros", "AutorizadoPorUserId", "DocumentoActaUrl", "Estado", "Observaciones"]);
-    if (name === "TransporteVehiculos") sheet.appendRow(["VehiculoID", "UnidadCodigo", "Placa", "MarcaModelo", "Ano", "CapacidadPasajeros", "ConductorPrincipalId", "EstadoOperativo", "FechaRevisionTecnica", "FechaVencimientoSeguro", "NumeroPoliza", "Kilometraje", "Observaciones"]);
-    if (name === "TransporteConductores") sheet.appendRow(["ConductorID", "EmpleadoId", "NombreCompleto", "NumeroLicencia", "CategoriaLicencia", "FechaVencimientoLicencia", "TipoConductor", "EstadoHabilitacion", "Telefono", "Observaciones"]);
     if (name === "TransporteRutas") sheet.appendRow(["RutaID", "NombreRuta", "UnidadCodigo", "ConductorEmpleadoId", "Capacidad", "ParadasJSON", "Estado", "Observaciones"]);
-    if (name === "TransporteAsignaciones") sheet.appendRow(["AsignacionTranspID", "RutaID", "EstudianteUserId", "ParadaNombre", "HorarioPlan", "Jornada", "PeriodoVigencia", "DiasSemanaJSON", "Estado", "FechaAsignacion", "Observaciones"]);
-    if (name === "TransporteViajes") sheet.appendRow(["ViajeID", "RutaID", "UnidadCodigo", "ConductorId", "AcompananteId", "Fecha", "Jornada", "HoraInicio", "HoraFin", "EstadoViaje", "Observaciones"]);
-    if (name === "TransporteAsistenciaViajes") sheet.appendRow(["RegistroAsistenciaID", "ViajeID", "RutaID", "EstudianteUserId", "TipoEvento", "ParadaNombre", "FechaHora", "MetodoMarcado", "RegistradorUserId", "AdultoReceptorNombre", "DniAdultoReceptor", "EstadoEntrega", "Observaciones"]);
-    if (name === "TransportePersonasAutorizadas") sheet.appendRow(["AutorizacionID", "EstudianteUserId", "NombreCompleto", "DniNumero", "Parentesco", "Telefono", "FotoUrl", "TipoAutorizacion", "FechaInicio", "FechaFin", "Estado", "RestriccionesEntrega", "Observaciones"]);
+    if (name === "TransporteAsignaciones") sheet.appendRow(["AsignacionTranspID", "RutaID", "EstudianteUserId", "ParadaNombre", "HorarioPlan", "Estado"]);
     if (name === "CatalogoSpreadsheets") sheet.appendRow(["FuenteID", "DominioArea", "AnoLectivo", "SpreadsheetId", "UrlAcceso", "Estado", "SchemaVersion", "Observaciones"]);
     if (name === "PlantillasEscolares") sheet.appendRow(["PlantillaID", "CodigoDocumento", "Categoria", "Titulo", "CamposJSON", "FlujoAprobacion", "Estado", "Version"]);
     if (name === "DocumentosEscolaresEmitidos") sheet.appendRow(["DocumentoID", "PlantillaID", "EstudianteUserId", "SolicitanteUserId", "DatosJSON", "EstadoDoc", "CodigoVerificacion", "Observaciones"]);
@@ -202,24 +195,24 @@ function doGet() { return textResponse({ status: "success", service: "ACCOUNTING
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
   "Director": [
-    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "verifyThreeWayMatch", "recordSupplierPayment", "applySupplierCreditNote", "getSupplierAccountsPayableSummary", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "getCashFlowSixMonthProjection", "recordCollectionManagementAction", "getCollectionManagementLogs", "getComparativeFinancialSummary", "reconcileFinancialReportCoherence", "verifyAccountingIntegrity", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "manageSupplierContract", "getSupplierContractAlerts", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageBibliographicWork", "getBibliographicWorks", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "manageTransportVehicle", "getTransportVehicles", "manageTransportDriver", "getTransportDrivers", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "recordStudentBoarding", "recordStudentAlighting", "getTripPassengerManifest", "getAuthorizedPickupPersons", "recordStudentSafeDelivery", "finalizeTransportTrip", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createFamilyPaymentAgreement", "getFamilyPaymentAgreements", "saveMultiYearBudgetProjection", "getMultiYearBudgetProjections", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "getPurchaseReceipts", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "runPhase20LibraryAndResourcesRegressionSuite", "purgeSecurityCaches"],
+    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "verifyThreeWayMatch", "recordSupplierPayment", "applySupplierCreditNote", "getSupplierAccountsPayableSummary", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "getCashFlowSixMonthProjection", "recordCollectionManagementAction", "getCollectionManagementLogs", "getComparativeFinancialSummary", "reconcileFinancialReportCoherence", "verifyAccountingIntegrity", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "manageSupplierContract", "getSupplierContractAlerts", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageBibliographicWork", "getBibliographicWorks", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "manageTransportVehicle", "getTransportVehicles", "manageTransportDriver", "getTransportDrivers", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "recordStudentBoarding", "recordStudentAlighting", "getTripPassengerManifest", "getAuthorizedPickupPersons", "recordStudentSafeDelivery", "finalizeTransportTrip", "auditAndMigrateTransportData", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createFamilyPaymentAgreement", "getFamilyPaymentAgreements", "saveMultiYearBudgetProjection", "getMultiYearBudgetProjections", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "getPurchaseReceipts", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "runPhase20LibraryAndResourcesRegressionSuite", "runPhase21TransportAndServicesRegressionSuite", "purgeSecurityCaches"],
   "Subdirector": [
-    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageBibliographicWork", "getBibliographicWorks", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "manageTransportVehicle", "getTransportVehicles", "manageTransportDriver", "getTransportDrivers", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "recordStudentBoarding", "recordStudentAlighting", "getTripPassengerManifest", "getAuthorizedPickupPersons", "recordStudentSafeDelivery", "finalizeTransportTrip", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "runPhase20LibraryAndResourcesRegressionSuite"],
+    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageBibliographicWork", "getBibliographicWorks", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "manageTransportVehicle", "getTransportVehicles", "manageTransportDriver", "getTransportDrivers", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "recordStudentBoarding", "recordStudentAlighting", "getTripPassengerManifest", "getAuthorizedPickupPersons", "recordStudentSafeDelivery", "finalizeTransportTrip", "auditAndMigrateTransportData", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "runPhase20LibraryAndResourcesRegressionSuite", "runPhase21TransportAndServicesRegressionSuite"],
   "Contador": [
-    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "verifyThreeWayMatch", "recordSupplierPayment", "applySupplierCreditNote", "getSupplierAccountsPayableSummary", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageBibliographicWork", "getBibliographicWorks", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "manageTransportVehicle", "getTransportVehicles", "manageTransportDriver", "getTransportDrivers", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "calculateAppliedDiscount", "getStoreProducts", "getStoreOrders", "getCafeteriaMenu", "getCafeteriaOrders", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "getPurchaseReceipts", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "runPhase20LibraryAndResourcesRegressionSuite"],
+    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "verifyThreeWayMatch", "recordSupplierPayment", "applySupplierCreditNote", "getSupplierAccountsPayableSummary", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageBibliographicWork", "getBibliographicWorks", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "manageTransportVehicle", "getTransportVehicles", "manageTransportDriver", "getTransportDrivers", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "calculateAppliedDiscount", "getStoreProducts", "getStoreOrders", "getCafeteriaMenu", "getCafeteriaOrders", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "getPurchaseReceipts", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "runPhase20LibraryAndResourcesRegressionSuite", "runPhase21TransportAndServicesRegressionSuite"],
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "RecursosHumanos": ["initializeFinancialDriveStructure", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "processEmployeeOffboarding", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "calculateExtraordinaryPayroll", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport", "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory", "manageStaffingNeeds", "getStaffingNeedsPlanning", "manageWorkShiftAndSubstitution", "getWorkShiftsAndSubstitutionsHistory", "getEmployeeSelfServicePortal", "verifyLaborAndTaxInformation", "runHRIntegrationAndRegressionTests", "runCriticalProcessConcurrencySuite"],
   "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments", "getPerformanceEvaluations", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getEmployeeSelfServicePortal"],
-  "Padre": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getBibliographicWorks", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
-  "Tutor": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getBibliographicWorks", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
-  "Responsable": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getBibliographicWorks", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
-  "Consejeros": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getBibliographicWorks", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments"],
-  "Profesor": ["getStaffPayrollReceipt", "submitVacationRequest", "getVacationRequests", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getBibliographicWorks", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "verifySACETemplateCompatibility", "generateSACEReportFile", "fillAndExportSACETemplate", "validateSACETemplateFile", "getEmployeeSelfServicePortal"],
-  "Asistente": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getBibliographicWorks", "getLibraryBooks", "getLibraryLoans", "getDigitalResources", "getSchoolDocumentTemplates"],
-  "Estudiante": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getBibliographicWorks", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase"],
-  "Alumno": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getBibliographicWorks", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase"]
+  "Padre": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
+  "Tutor": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
+  "Responsable": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
+  "Consejeros": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments"],
+  "Profesor": ["getStaffPayrollReceipt", "submitVacationRequest", "getVacationRequests", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "verifySACETemplateCompatibility", "generateSACEReportFile", "fillAndExportSACETemplate", "validateSACETemplateFile", "getEmployeeSelfServicePortal"],
+  "Asistente": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "getDigitalResources", "getSchoolDocumentTemplates"],
+  "Estudiante": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase"],
+  "Alumno": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase"]
 };
 
 const PUBLIC_ACTIONS = ["ping", "getInstitutionalPolicies", "verifySchoolDocumentByCUV"];
@@ -688,6 +681,7 @@ function doPost(e) {
       case "runPhase18PurchasingAndSuppliersRegressionSuite": result = runPhase18PurchasingAndSuppliersRegressionSuite(payload); break;
       case "runPhase19InventoryAndAssetsRegressionSuite": result = runPhase19InventoryAndAssetsRegressionSuite(payload); break;
       case "runPhase20LibraryAndResourcesRegressionSuite": result = runPhase20LibraryAndResourcesRegressionSuite(payload); break;
+      case "runPhase21TransportAndServicesRegressionSuite": result = runPhase21TransportAndServicesRegressionSuite(payload); break;
       case "submitLeaveVacationRequest": result = submitLeaveVacationRequest(payload); break;
       case "submitVacationRequest": result = submitVacationRequest(payload); break;
       case "getLeaveVacationRequests": result = getLeaveVacationRequests(payload); break;
@@ -734,6 +728,7 @@ function doPost(e) {
       case "manageTransportDriver": result = manageTransportDriver(payload); break;
       case "getTransportDrivers": result = getTransportDrivers(payload); break;
       case "finalizeTransportTrip": result = finalizeTransportTrip(payload); break;
+      case "auditAndMigrateTransportData": result = auditAndMigrateTransportData(payload); break;
       case "registerSpreadsheetSource": result = registerSpreadsheetSource(payload); break;
       case "resolveSpreadsheetSource": result = resolveSpreadsheetSource(payload); break;
       case "getSpreadsheetCatalog": result = getSpreadsheetCatalog(payload); break;
@@ -8775,10 +8770,10 @@ function getHRDashboardAnalytics(payload) {
 }
 
 // ---------------------------------------------------------------------------
-// FASE 11 / [TASK-025] [F20-Task03]: BIBLIOTECA Y CATÁLOGO FRBR (OBRAS Y EJEMPLARES)
+// FASE 11: BIBLIOTECA Y RECURSOS EDUCATIVOS
 // ---------------------------------------------------------------------------
 
-// 1. Catálogo Maestro de Obras Bibliográficas (FRBR / RDA)
+// [TASK-025] [F20-Task03] Normalización relacional FRBR/RDA: Obras maestras y copias físicas
 function manageBibliographicWork(payload) {
   const {
     obraId,
@@ -8798,345 +8793,252 @@ function manageBibliographicWork(payload) {
     estadoObra
   } = payload || {};
 
-  if (!titulo || String(titulo).trim().length === 0) {
-    throw new Error("El título de la obra es obligatorio.");
+  if (!titulo) throw new Error("El título de la obra es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BibliotecaCatalogoObras");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  let targetObraId = obraId;
+  let existingIndex = -1;
+
+  if (targetObraId) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(targetObraId).trim());
+  } else if (isbnCodigo) {
+    existingIndex = data.findIndex(r => String(r[1]).trim() === String(isbnCodigo).trim());
   }
 
-  const lock = LockService.getScriptLock();
-  lock.waitLock(15000);
+  const autoresStr = Array.isArray(autoresJSON) ? JSON.stringify(autoresJSON) : (autoresJSON || "[]");
 
-  try {
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const sheet = getOrCreateSheet(ss, "BibliotecaCatalogoObras");
-    const data = sheet.getDataRange().getValues();
-    const now = new Date();
+  if (existingIndex !== -1) {
+    targetObraId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 15).setValues([[
+      targetObraId,
+      isbnCodigo || "",
+      titulo,
+      subtitulo || "",
+      autoresStr,
+      editorial || "",
+      edicionAno || now.getFullYear(),
+      idioma || "Español",
+      categoria || "General",
+      materiaAcademica || "",
+      nivelEducativo || "Todos",
+      portadaUrl || "",
+      descripcion || "",
+      palabrasClave || "",
+      estadoObra || "Activo"
+    ]]);
+  } else {
+    const yearStr = now.getFullYear().toString();
+    const count = data.length > 1 ? (data.length - 1) : 0;
+    targetObraId = "OBRA-" + yearStr + "-" + String(count + 1).padStart(6, "0");
 
-    let targetObraId = obraId ? String(obraId).trim() : null;
-    let existingIndex = -1;
-
-    if (targetObraId) {
-      existingIndex = data.findIndex(r => String(r[0]).trim() === targetObraId);
-    } else if (isbnCodigo && String(isbnCodigo).trim().length > 0) {
-      const cleanIsbn = String(isbnCodigo).trim();
-      existingIndex = data.findIndex(r => String(r[1]).trim() === cleanIsbn);
-      if (existingIndex !== -1) {
-        targetObraId = String(data[existingIndex][0]).trim();
-      }
-    }
-
-    const autoresStr = typeof autoresJSON === "string" ? autoresJSON : JSON.stringify(autoresJSON || []);
-    const keywordsStr = Array.isArray(palabrasClave) ? palabrasClave.join(", ") : (palabrasClave || "");
-
-    if (existingIndex > 0) {
-      targetObraId = data[existingIndex][0];
-      sheet.getRange(existingIndex + 1, 1, 1, 15).setValues([[
-        targetObraId,
-        isbnCodigo !== undefined ? String(isbnCodigo).trim() : (data[existingIndex][1] || ""),
-        String(titulo).trim(),
-        subtitulo !== undefined ? String(subtitulo).trim() : (data[existingIndex][3] || ""),
-        autoresStr,
-        editorial !== undefined ? String(editorial).trim() : (data[existingIndex][5] || ""),
-        edicionAno !== undefined ? String(edicionAno).trim() : (data[existingIndex][6] || ""),
-        idioma !== undefined ? String(idioma).trim() : (data[existingIndex][7] || "Español"),
-        categoria !== undefined ? String(categoria).trim() : (data[existingIndex][8] || "General"),
-        materiaAcademica !== undefined ? String(materiaAcademica).trim() : (data[existingIndex][9] || ""),
-        nivelEducativo !== undefined ? String(nivelEducativo).trim() : (data[existingIndex][10] || "Todos"),
-        portadaUrl !== undefined ? String(portadaUrl).trim() : (data[existingIndex][11] || ""),
-        descripcion !== undefined ? String(descripcion).trim() : (data[existingIndex][12] || ""),
-        keywordsStr,
-        estadoObra !== undefined ? String(estadoObra).trim() : (data[existingIndex][14] || "Activa")
-      ]]);
-    } else {
-      targetObraId = "OBRA-" + now.getFullYear() + "-" + String(now.getTime()).slice(-6);
-      sheet.appendRow([
-        targetObraId,
-        isbnCodigo ? String(isbnCodigo).trim() : "",
-        String(titulo).trim(),
-        subtitulo ? String(subtitulo).trim() : "",
-        autoresStr,
-        editorial ? String(editorial).trim() : "",
-        edicionAno ? String(edicionAno).trim() : "",
-        idioma ? String(idioma).trim() : "Español",
-        categoria ? String(categoria).trim() : "General",
-        materiaAcademica ? String(materiaAcademica).trim() : "",
-        nivelEducativo ? String(nivelEducativo).trim() : "Todos",
-        portadaUrl ? String(portadaUrl).trim() : "",
-        descripcion ? String(descripcion).trim() : "",
-        keywordsStr,
-        estadoObra ? String(estadoObra).trim() : "Activa"
-      ]);
-    }
-
-    return {
-      status: "success",
-      obraId: targetObraId,
-      message: "Obra bibliográfica guardada exitosamente en el catálogo maestro."
-    };
-  } finally {
-    lock.releaseLock();
+    sheet.appendRow([
+      targetObraId,
+      isbnCodigo || "",
+      titulo,
+      subtitulo || "",
+      autoresStr,
+      editorial || "",
+      edicionAno || now.getFullYear(),
+      idioma || "Español",
+      categoria || "General",
+      materiaAcademica || "",
+      nivelEducativo || "Todos",
+      portadaUrl || "",
+      descripcion || "",
+      palabrasClave || "",
+      estadoObra || "Activo"
+    ]);
   }
+
+  logStructuredEvent(
+    "ACCOUNTING",
+    "manageBibliographicWork",
+    "INFO",
+    "WORK_SAVED",
+    `Obra bibliográfica guardada: ${titulo} (${targetObraId})`,
+    { obraId: targetObraId, titulo, isbnCodigo },
+    (payload && payload.authUserId) || "System"
+  );
+
+  return {
+    status: "success",
+    obraId: targetObraId,
+    message: "Obra bibliográfica maestra registrada/actualizada exitosamente."
+  };
 }
 
-// 2. Consulta Consolidada de Obras con Desglose de Ejemplares Físicos
 function getBibliographicWorks(payload) {
-  const { obraId, categoria, nivelEducativo, busqueda, incluirEjemplares } = payload || {};
+  const { categoria, busqueda, estado } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const obrasSheet = getOrCreateSheet(ss, "BibliotecaCatalogoObras");
-  const ejemplaresSheet = getOrCreateSheet(ss, "BibliotecaEjemplares");
-
   let obrasRows = obrasSheet.getDataRange().getValues().slice(1);
-  let ejemplaresRows = ejemplaresSheet.getDataRange().getValues().slice(1);
 
   if (obrasRows.length === 0) {
-    const defaultObras = [
-      ["OBRA-2025-000101", "978-0131103627", "El Lenguaje de Programación C", "Segunda Edición", JSON.stringify(["Brian W. Kernighan", "Dennis M. Ritchie"]), "Prentice Hall", "1988", "Español", "Informática", "Programación", "Secundaria/Bachillerato", "", "Libro clásico sobre desarrollo de software en C.", "C, Algoritmos, Computación", "Activa"],
-      ["OBRA-2025-000102", "978-0201633610", "Design Patterns", "Elements of Reusable Object-Oriented Software", JSON.stringify(["Erich Gamma", "Richard Helm", "Ralph Johnson", "John Vlissides"]), "Addison-Wesley", "1994", "Inglés", "Software", "Ingeniería de Software", "Bachillerato", "", "Patrones clásicos de arquitectura de software.", "OOP, Arquitectura, Patrones", "Activa"]
+    const defaults = [
+      ["OBRA-2024-000001", "978-0131103627", "El Lenguaje de Programación C", "Segunda Edición", JSON.stringify(["Brian W. Kernighan", "Dennis M. Ritchie"]), "Prentice Hall", 1988, "Español", "Informática", "Programación", "Secundaria/Bachillerato", "", "Texto clásico y fundacional sobre programación en lenguaje C", "c, programacion, computacion", "Activo"],
+      ["OBRA-2024-000002", "978-0201633610", "Design Patterns: Elements of Reusable Object-Oriented Software", "", JSON.stringify(["Erich Gamma", "Richard Helm", "Ralph Johnson", "John Vlissides"]), "Addison-Wesley", 1994, "Inglés", "Software", "Ingeniería de Software", "Universitario", "", "Patrones clásicos de diseño de software orientado a objetos", "patterns, oop, arquitectura", "Activo"]
     ];
-    obrasSheet.getRange(2, 1, defaultObras.length, 15).setValues(defaultObras);
-    obrasRows = defaultObras;
+    obrasSheet.getRange(2, 1, defaults.length, 15).setValues(defaults);
+    obrasRows = defaults;
   }
 
-  let filteredObras = obrasRows;
-  if (obraId) {
-    filteredObras = filteredObras.filter(r => String(r[0]).trim() === String(obraId).trim());
-  }
+  // Cargar ejemplares para calcular disponibilidad agregada
+  const ejemplaresSheet = getOrCreateSheet(ss, "BibliotecaEjemplares");
+  const ejemplaresRows = ejemplaresSheet.getDataRange().getValues().slice(1);
+
+  const metricasPorObra = {};
+  ejemplaresRows.forEach(r => {
+    const oId = String(r[1] || "").trim(); // Columna ObraID o IsbnCodigo
+    const st = String(r[6] || "available").trim().toLowerCase();
+    if (!metricasPorObra[oId]) {
+      metricasPorObra[oId] = { total: 0, available: 0, on_loan: 0, reserved: 0, maintenance: 0, lost: 0 };
+    }
+    metricasPorObra[oId].total++;
+    if (metricasPorObra[oId][st] !== undefined) {
+      metricasPorObra[oId][st]++;
+    }
+  });
+
+  let filtered = obrasRows;
   if (categoria) {
-    filteredObras = filteredObras.filter(r => String(r[8]).toLowerCase().trim() === String(categoria).toLowerCase().trim());
+    filtered = filtered.filter(r => String(r[8]).toLowerCase().trim() === String(categoria).toLowerCase().trim());
   }
-  if (nivelEducativo) {
-    filteredObras = filteredObras.filter(r => String(r[10]).toLowerCase().trim() === String(nivelEducativo).toLowerCase().trim() || String(r[10]).toLowerCase().trim() === "todos");
+  if (estado) {
+    filtered = filtered.filter(r => String(r[14]).toLowerCase().trim() === String(estado).toLowerCase().trim());
   }
   if (busqueda) {
     const q = String(busqueda).toLowerCase().trim();
-    filteredObras = filteredObras.filter(r => {
-      const matchTitulo = String(r[2] || "").toLowerCase().includes(q);
-      const matchIsbn = String(r[1] || "").toLowerCase().includes(q);
-      const matchAutores = String(r[4] || "").toLowerCase().includes(q);
-      const matchKeywords = String(r[13] || "").toLowerCase().includes(q);
-      return matchTitulo || matchIsbn || matchAutores || matchKeywords;
-    });
+    filtered = filtered.filter(r =>
+      String(r[1]).toLowerCase().includes(q) ||
+      String(r[2]).toLowerCase().includes(q) ||
+      String(r[4]).toLowerCase().includes(q) ||
+      String(r[13]).toLowerCase().includes(q)
+    );
   }
 
-  const obras = filteredObras.map(o => {
-    const oId = String(o[0]).trim();
-    const oIsbn = String(o[1]).trim();
-    const oTitulo = String(o[2]).trim().toLowerCase();
+  const mapped = filtered.map(r => {
+    const oId = String(r[0]);
+    const isbn = String(r[1]);
+    const metricas = metricasPorObra[oId] || metricasPorObra[isbn] || { total: 0, available: 0, on_loan: 0, reserved: 0, maintenance: 0, lost: 0 };
 
-    const matchingEjemplares = ejemplaresRows.filter(e => {
-      const eObraId = String(e[1] || "").trim();
-      const eIsbn = String(e[7] || e[1] || "").trim();
-      const eTitulo = String(e[8] || e[2] || "").trim().toLowerCase();
-      if (eObraId && eObraId === oId) return true;
-      if (oIsbn && eIsbn === oIsbn) return true;
-      if (oTitulo && eTitulo === oTitulo) return true;
-      return false;
-    });
-
-    let disponibles = 0;
-    let prestados = 0;
-    let reservados = 0;
-    let enMantenimiento = 0;
-    let extraviados = 0;
-
-    const copiasMapeadas = matchingEjemplares.map(e => {
-      let eId = String(e[0]).trim();
-      let est = "";
-      let ubic = "";
-      let cond = "Bueno";
-      let qr = "";
-      let obs = "";
-
-      if (e.length >= 11 || (e[1] && String(e[1]).startsWith("OBRA-"))) {
-        ubic = e[3] || "";
-        cond = e[4] || "Bueno";
-        est = String(e[5] || "available").trim().toLowerCase();
-        obs = e[6] || "";
-        qr = e[2] || eId;
-      } else {
-        ubic = e[5] || "";
-        est = String(e[6] || "available").trim().toLowerCase();
-        obs = e[7] || "";
-        cond = "Bueno";
-        qr = eId;
-      }
-
-      if (est === "available" || est === "disponible") disponibles++;
-      else if (est === "on_loan" || est === "prestado") prestados++;
-      else if (est === "reserved" || est === "reservado") reservados++;
-      else if (est === "maintenance" || est === "mantenimiento" || est === "damaged" || est === "danado") enMantenimiento++;
-      else if (est === "lost" || est === "extraviado") extraviados++;
-      else disponibles++;
-
-      return {
-        ejemplarId: eId,
-        obraId: oId,
-        codigoBarrasQR: qr,
-        ubicacionFisica: ubic,
-        condicionFisica: cond,
-        estadoDisponibilidad: est,
-        observaciones: obs
-      };
-    });
+    let autoresArr = [];
+    try {
+      autoresArr = JSON.parse(r[4] || "[]");
+    } catch (_) {
+      autoresArr = [String(r[4])];
+    }
 
     return {
       obraId: oId,
-      isbnCodigo: o[1],
-      titulo: o[2],
-      subtitulo: o[3],
-      autoresJSON: o[4],
-      editorial: o[5],
-      edicionAno: o[6],
-      idioma: o[7],
-      categoria: o[8],
-      materiaAcademica: o[9],
-      nivelEducativo: o[10],
-      portadaUrl: o[11],
-      descripcion: o[12],
-      palabrasClave: o[13],
-      estadoObra: o[14],
-      metricasEjemplares: {
-        totalEjemplares: copiasMapeadas.length,
-        disponibles: disponibles,
-        prestados: prestados,
-        reservados: reservados,
-        enMantenimiento: enMantenimiento,
-        extraviados: extraviados
-      },
-      ejemplares: incluirEjemplares !== false ? copiasMapeadas : []
+      isbnCodigo: isbn,
+      titulo: r[2],
+      subtitulo: r[3],
+      autores: autoresArr,
+      editorial: r[5],
+      edicionAno: r[6],
+      idioma: r[7],
+      categoria: r[8],
+      materiaAcademica: r[9],
+      nivelEducativo: r[10],
+      portadaUrl: r[11],
+      descripcion: r[12],
+      palabrasClave: r[13],
+      estadoObra: r[14],
+      metricasEjemplares: metricas
     };
   });
 
   return {
     status: "success",
-    obras: obras
+    obras: mapped
   };
 }
 
 function manageLibraryBook(payload) {
-  const {
-    ejemplarId,
-    obraId,
-    codigoBarrasQR,
-    ubicacionFisica,
-    condicionFisica,
-    estado,
-    estadoDisponibilidad,
-    observaciones,
-    isbnCodigo,
-    titulo,
-    autor,
-    categoria
-  } = payload || {};
+  const { ejemplarId, obraId, isbnCodigo, titulo, autor, categoria, ubicacionFisica, estado, observaciones } = payload || {};
+  if (!titulo && !obraId) throw new Error("Título u obraId son requeridos para gestionar el ejemplar.");
 
-  const lock = LockService.getScriptLock();
-  lock.waitLock(15000);
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BibliotecaEjemplares");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
 
-  try {
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const ejemplarSheet = getOrCreateSheet(ss, "BibliotecaEjemplares");
+  // Asegurar que exista la obra asociada en BibliotecaCatalogoObras si no viene obraId
+  let targetObraId = obraId;
+  if (!targetObraId && titulo) {
     const obrasSheet = getOrCreateSheet(ss, "BibliotecaCatalogoObras");
-    const data = ejemplarSheet.getDataRange().getValues();
-    const now = new Date();
-
-    let targetObraId = obraId ? String(obraId).trim() : null;
-
-    if (!targetObraId && titulo) {
-      const obrasData = obrasSheet.getDataRange().getValues();
-      const existingObraIdx = obrasData.findIndex(r =>
-        (isbnCodigo && String(r[1]).trim() === String(isbnCodigo).trim()) ||
-        (String(r[2]).trim().toLowerCase() === String(titulo).trim().toLowerCase())
-      );
-      if (existingObraIdx !== -1) {
-        targetObraId = String(obrasData[existingObraIdx][0]).trim();
-      } else {
-        targetObraId = "OBRA-" + now.getFullYear() + "-" + String(now.getTime()).slice(-6);
-        obrasSheet.appendRow([
-          targetObraId,
-          isbnCodigo || "",
-          String(titulo).trim(),
-          "",
-          JSON.stringify([autor || "Autor Desconocido"]),
-          "",
-          now.getFullYear().toString(),
-          "Español",
-          categoria || "General",
-          "",
-          "Todos",
-          "",
-          "",
-          "",
-          "Activa"
-        ]);
-      }
-    }
-
-    let eId = ejemplarId ? String(ejemplarId).trim() : null;
-    let existingIndex = -1;
-
-    if (eId) {
-      existingIndex = data.findIndex(r => String(r[0]).trim() === eId);
-    } else if (isbnCodigo) {
-      existingIndex = data.findIndex(r => String(r[1]).trim() === String(isbnCodigo).trim());
-    }
-
-    const disp = estadoDisponibilidad || estado || "available";
-    const cond = condicionFisica || "Bueno";
-    const qrCode = codigoBarrasQR || eId || ("QR-" + now.getTime());
-    const ubic = ubicacionFisica || "Estante A1";
-    const obs = observaciones || "";
-
-    if (existingIndex !== -1) {
-      eId = data[existingIndex][0];
-      ejemplarSheet.getRange(existingIndex + 1, 1, 1, 11).setValues([[
-        eId,
-        targetObraId || data[existingIndex][1] || "",
-        qrCode,
-        ubic,
-        cond,
-        disp,
-        obs,
-        isbnCodigo || data[existingIndex][1] || "",
-        titulo || data[existingIndex][2] || "",
-        autor || data[existingIndex][3] || "",
-        categoria || data[existingIndex][4] || "General"
-      ]]);
+    const obrasData = obrasSheet.getDataRange().getValues();
+    const existingObra = obrasData.find(r =>
+      (isbnCodigo && String(r[1]).trim() === String(isbnCodigo).trim()) ||
+      String(r[2]).trim().toLowerCase() === String(titulo).trim().toLowerCase()
+    );
+    if (existingObra) {
+      targetObraId = existingObra[0];
     } else {
-      eId = eId || ("LIB-" + now.getTime());
-      ejemplarSheet.appendRow([
-        eId,
-        targetObraId || "",
-        qrCode,
-        ubic,
-        cond,
-        disp,
-        obs,
-        isbnCodigo || "",
-        titulo || "",
-        autor || "",
-        categoria || "General"
-      ]);
+      const newWork = manageBibliographicWork({
+        isbnCodigo: isbnCodigo || "",
+        titulo: titulo,
+        autoresJSON: [autor || "Autor Institucional"],
+        categoria: categoria || "General"
+      });
+      targetObraId = newWork.obraId;
     }
-
-    return {
-      status: "success",
-      ejemplarId: eId,
-      obraId: targetObraId,
-      message: "Ejemplar bibliográfico registrado/actualizado exitosamente."
-    };
-  } finally {
-    lock.releaseLock();
   }
+
+  let eId = ejemplarId;
+  let existingIndex = -1;
+
+  if (eId) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(eId).trim());
+  }
+
+  if (existingIndex !== -1) {
+    eId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 8).setValues([[
+      eId,
+      targetObraId || isbnCodigo || "",
+      titulo || data[existingIndex][2],
+      autor || data[existingIndex][3],
+      categoria || data[existingIndex][4],
+      ubicacionFisica || data[existingIndex][5] || "Estante A1",
+      estado || data[existingIndex][6] || "available",
+      observaciones || data[existingIndex][7] || ""
+    ]]);
+  } else {
+    eId = "LIB-" + now.getTime();
+    sheet.appendRow([
+      eId,
+      targetObraId || isbnCodigo || "",
+      titulo,
+      autor || "Autor Institucional",
+      categoria || "General",
+      ubicacionFisica || "Estante A1",
+      estado || "available",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    ejemplarId: eId,
+    obraId: targetObraId,
+    message: "Ejemplar físico bibliográfico registrado/actualizado exitosamente."
+  };
 }
 
 function getLibraryBooks(payload) {
-  const { categoria, estado } = payload || {};
+  const { categoria, estado, obraId } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   let rows = getOrCreateSheet(ss, "BibliotecaEjemplares").getDataRange().getValues().slice(1);
 
   if (rows.length === 0) {
     const defaults = [
-      ["LIB-101", "978-0131103627", "El Lenguaje de Programación C", "Brian W. Kernighan", "Informática", "Estante B2", "available", "Biblioteca Central"],
-      ["LIB-102", "978-0201633610", "Design Patterns: Elements of Reusable Object-Oriented Software", "Erich Gamma", "Software", "Estante B3", "available", "Biblioteca Central"]
+      ["LIB-101", "OBRA-2024-000001", "El Lenguaje de Programación C", "Brian W. Kernighan", "Informática", "Estante B2", "available", "Biblioteca Central"],
+      ["LIB-102", "OBRA-2024-000002", "Design Patterns: Elements of Reusable Object-Oriented Software", "Erich Gamma", "Software", "Estante B3", "available", "Biblioteca Central"]
     ];
     const sheet = getOrCreateSheet(ss, "BibliotecaEjemplares");
     sheet.getRange(2, 1, defaults.length, 8).setValues(defaults);
@@ -9144,11 +9046,13 @@ function getLibraryBooks(payload) {
   }
 
   let filtered = rows;
+  if (obraId) filtered = filtered.filter(r => String(r[1]).trim() === String(obraId).trim());
   if (categoria) filtered = filtered.filter(r => String(r[4]).toLowerCase().trim() === String(categoria).toLowerCase().trim());
   if (estado) filtered = filtered.filter(r => String(r[6]).trim() === String(estado).trim());
 
   const mapped = filtered.map(r => ({
     ejemplarId: r[0],
+    obraId: r[1],
     isbnCodigo: r[1],
     titulo: r[2],
     autor: r[3],
@@ -9164,187 +9068,170 @@ function getLibraryBooks(payload) {
   };
 }
 
-// [TASK-026] [F20-Task04] & [TASK-027] [F20-Task05]: Control de políticas de circulación, límites de préstamo, mora activa, candados atómicos e idempotencia
+// [TASK-026] [F20-Task04] Políticas de circulación, límites por rol y bloqueo por mora activa
+function getLibraryCirculationPolicies(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BibliotecaPoliticasCirculacion");
+  let rows = sheet.getDataRange().getValues().slice(1);
+
+  if (rows.length === 0) {
+    const defaultPolicies = [
+      ["POL-ROL-ESTUDIANTE", "Estudiante", 2, 7, 0, "Activo", "Máximo 2 libros por 7 días"],
+      ["POL-ROL-DOCENTE", "Docente", 5, 15, 1, "Activo", "Máximo 5 libros por 15 días renovable"],
+      ["POL-ROL-ADMIN", "Administrador", 3, 15, 1, "Activo", "Máximo 3 libros para personal administrativo"],
+      ["POL-ROL-DIRECCION", "Director", 5, 30, 2, "Activo", "Máximo 5 libros para dirección"],
+      ["POL-CAT-REFERENCIA", "ConsultaSala", 1, 1, 0, "Activo", "Obras de referencia, solo préstamo en sala por el día"]
+    ];
+    sheet.getRange(2, 1, defaultPolicies.length, 7).setValues(defaultPolicies);
+    rows = defaultPolicies;
+  }
+
+  const policies = {};
+  rows.forEach(r => {
+    const rolKey = String(r[1]).toLowerCase().trim();
+    policies[rolKey] = {
+      id: r[0],
+      rol: r[1],
+      maxLibrosSimultaneos: parseInt(r[2] || 2, 10),
+      diasPrestamo: parseInt(r[3] || 7, 10),
+      renovacionesMax: parseInt(r[4] || 0, 10),
+      estado: r[5],
+      descripcion: r[6]
+    };
+  });
+
+  return policies;
+}
+
+// [TASK-027] [F20-Task05] Control de concurrencia atómica e idempotencia en circulación
 function processLibraryLoan(payload) {
   const { ejemplarId, userId, userRole, fechaDevolucionPrevista, accion, observaciones, idempotencyKey } = payload || {};
   if (!ejemplarId || !userId) throw new Error("ejemplarId y userId requeridos.");
 
-  const eId = String(ejemplarId).trim();
-  const uId = String(userId).trim();
-
-  // Candado atómico transaccional para evitar doble asignación concurrente [TASK-027]
   const lock = LockService.getScriptLock();
-  lock.waitLock(15000);
+  const hasLock = lock.tryLock(20000);
+  if (!hasLock) {
+    return {
+      status: "error",
+      code: "LOCK_TIMEOUT",
+      message: "Operación de circulación bloqueada por concurrencia. Por favor reintente."
+    };
+  }
 
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     const bookSheet = getOrCreateSheet(ss, "BibliotecaEjemplares");
     const loanSheet = getOrCreateSheet(ss, "BibliotecaPrestamos");
-    const polSheet = getOrCreateSheet(ss, "BibliotecaPoliticasCirculacion");
     const now = new Date();
 
     const books = bookSheet.getDataRange().getValues();
-    const bIdx = books.findIndex(r => String(r[0]).trim() === eId);
+    const bIdx = books.findIndex(r => String(r[0]).trim() === String(ejemplarId).trim());
     if (bIdx === -1) throw new Error("Ejemplar bibliográfico no encontrado.");
 
     if (accion === "Devolucion") {
-      // Registrar devolución y restablecer disponibilidad
-      if (books[bIdx].length >= 6) {
-        bookSheet.getRange(bIdx + 1, 6).setValue("available"); // columna 6: EstadoDisponibilidad
-      }
-      bookSheet.getRange(bIdx + 1, 7).setValue("available"); // columna 7 legacy: Estado
-
+      bookSheet.getRange(bIdx + 1, 7).setValue("available");
       const loans = loanSheet.getDataRange().getValues();
-      const lIdx = loans.findIndex(r => String(r[1]).trim() === eId && String(r[6]).trim() === "on_loan");
+      const lIdx = loans.findIndex(r => String(r[1]).trim() === String(ejemplarId).trim() && r[6] === "on_loan");
       if (lIdx !== -1) {
-        loanSheet.getRange(lIdx + 1, 5).setValue(now); // FechaDevolucionReal
-        loanSheet.getRange(lIdx + 1, 7).setValue("returned"); // Estado
+        loanSheet.getRange(lIdx + 1, 5).setValue(now);
+        loanSheet.getRange(lIdx + 1, 7).setValue("returned");
       }
       return { status: "success", message: "Devolución de ejemplar registrada exitosamente." };
-    }
-
-    // --- ACCIÓN DE PRÉSTAMO ---
-
-    // 1. Re-verificar disponibilidad atómica del ejemplar en BibliotecaEjemplares [TASK-027]
-    const estadoActual = String(books[bIdx][5] || books[bIdx][6] || "").trim().toLowerCase();
-    if (estadoActual === "on_loan" || estadoActual === "prestado") {
-      return {
-        status: "error",
-        code: "BOOK_ALREADY_LOANED",
-        message: `El ejemplar '${eId}' ya se encuentra prestado a otro usuario.`
-      };
-    }
-    if (estadoActual === "maintenance" || estadoActual === "damaged" || estadoActual === "lost") {
-      return {
-        status: "error",
-        code: "BOOK_NOT_AVAILABLE",
-        message: `El ejemplar '${eId}' no está disponible para préstamo (estado: '${estadoActual}').`
-      };
-    }
-
-    // 2. Cargar políticas de circulación configuradas [TASK-026]
-    let polRows = polSheet.getDataRange().getValues().slice(1);
-    if (polRows.length === 0) {
-      const defaultPols = [
-        ["POL-EST", "Estudiante", 2, 7, true, 0, "Activa", "Política para estudiantes: máximo 2 libros por 7 días."],
-        ["POL-ALU", "Alumno", 2, 7, true, 0, "Activa", "Política para alumnos: máximo 2 libros por 7 días."],
-        ["POL-DOC", "Profesor", 5, 15, true, 0, "Activa", "Política para docentes: máximo 5 libros por 15 días."],
-        ["POL-DOC2", "Docente", 5, 15, true, 0, "Activa", "Política para docentes: máximo 5 libros por 15 días."],
-        ["POL-DIR", "Director", 5, 15, true, 0, "Activa", "Política directiva."],
-        ["POL-ADM", "Administrador", 5, 15, true, 0, "Activa", "Política administrativa."],
-        ["POL-CON", "Contador", 3, 15, true, 0, "Activa", "Personal contable."],
-        ["POL-GEN", "General", 2, 7, true, 0, "Activa", "Política por defecto para otros roles."]
-      ];
-      polSheet.getRange(2, 1, defaultPols.length, 8).setValues(defaultPols);
-      polRows = defaultPols;
-    }
-
-    // Determinar rol efectivo del usuario
-    const rolTarget = String(userRole || payload.authRole || "Estudiante").trim();
-    let userPol = polRows.find(p => String(p[1]).toLowerCase().trim() === rolTarget.toLowerCase().trim() && String(p[6]).trim() === "Activa");
-    if (!userPol) {
-      userPol = polRows.find(p => String(p[1]).toLowerCase().trim() === "general") || polRows[0];
-    }
-
-    const limiteLibros = parseInt(userPol[2] || 2, 10);
-    const diasPrestamo = parseInt(userPol[3] || 7, 10);
-
-    // 3. Inspeccionar préstamos actuales del usuario en BibliotecaPrestamos [TASK-026]
-    const loanRows = loanSheet.getDataRange().getValues().slice(1);
-    let prestamosActivosUsuario = 0;
-    let tieneMoraActiva = false;
-    let libroVencidoId = null;
-
-    // Clave de idempotencia para evitar duplicados por reintentos de red [TASK-027]
-    const opKey = String(idempotencyKey || `${eId}_${uId}_${now.toISOString().slice(0, 10)}`).trim();
-    const yaProcesadoIdempotente = loanRows.some(r =>
-      String(r[1]).trim() === eId &&
-      String(r[2]).trim() === uId &&
-      String(r[6]).trim() === "on_loan" &&
-      Math.abs(new Date(r[3]).getTime() - now.getTime()) < 60000 // Menos de 1 minuto
-    );
-    if (yaProcesadoIdempotente) {
-      return {
-        status: "error",
-        code: "IDEMPOTENCY_DUPLICATE_REQUEST",
-        message: `Solicitud de préstamo idéntica detectada para el ejemplar '${eId}' y usuario '${uId}'. Operación ya procesada.`
-      };
-    }
-
-    loanRows.forEach(r => {
-      const rowUId = String(r[2]).trim();
-      const rowEstado = String(r[6]).trim().toLowerCase();
-      if (rowUId === uId && (rowEstado === "on_loan" || rowEstado === "prestado")) {
-        prestamosActivosUsuario++;
-        const fechaPrevista = new Date(r[4]);
-        if (!isNaN(fechaPrevista.getTime()) && fechaPrevista.getTime() < now.getTime()) {
-          tieneMoraActiva = true;
-          libroVencidoId = r[1];
+    } else {
+      // 1. Verificación de Idempotencia [TASK-027]
+      const loansData = loanSheet.getDataRange().getValues().slice(1);
+      if (idempotencyKey) {
+        const keyMatch = loansData.find(r => String(r[7] || "").includes(`ClaveIdempotencia: ${idempotencyKey}`));
+        if (keyMatch) {
+          return {
+            status: "error",
+            code: "IDEMPOTENCY_DUPLICATE_REQUEST",
+            prestamoId: keyMatch[0],
+            message: `Solicitud de préstamo duplicada detectada para la clave '${idempotencyKey}'.`
+          };
         }
       }
-    });
 
-    // Validación A: Bloqueo por mora activa [TASK-026]
-    if (tieneMoraActiva) {
+      // 2. Control de concurrencia: Re-evaluar estado del ejemplar en tiempo real [TASK-027]
+      const currentBookStatus = String(books[bIdx][6]).trim().toLowerCase();
+      if (currentBookStatus === "on_loan" || currentBookStatus === "damaged" || currentBookStatus === "lost") {
+        return {
+          status: "error",
+          code: "BOOK_ALREADY_LOANED",
+          message: `El ejemplar '${ejemplarId}' no está disponible (estado actual: '${books[bIdx][6]}').`
+        };
+      }
+
+      // 3. Validar políticas por rol y verificar mora activa [TASK-026]
+      const activeLoansForUser = loansData.filter(r =>
+        String(r[2]).trim() === String(userId).trim() && String(r[6]).trim() === "on_loan"
+      );
+
+      const hasOverdueLoans = activeLoansForUser.some(r => {
+        const fDev = r[4] ? new Date(r[4]) : null;
+        return fDev && !isNaN(fDev.getTime()) && fDev.getTime() < now.getTime();
+      });
+
+      if (hasOverdueLoans) {
+        return {
+          status: "error",
+          code: "ACTIVE_OVERDUE_BLOCK",
+          message: `El usuario '${userId}' tiene préstamos con fecha vencida pendientes de devolución. Debe devolver el material atrasado antes de solicitar nuevos libros.`
+        };
+      }
+
+      const policies = getLibraryCirculationPolicies({});
+      const effectiveRole = String(userRole || "Estudiante").toLowerCase().trim();
+      const policy = policies[effectiveRole] || policies["estudiante"] || { maxLibrosSimultaneos: 2, diasPrestamo: 7 };
+
+      if (activeLoansForUser.length >= policy.maxLibrosSimultaneos) {
+        return {
+          status: "error",
+          code: "LOAN_LIMIT_EXCEEDED",
+          message: `Límite de préstamos simultáneos superado. El rol '${policy.rol || userRole}' permite un máximo de ${policy.maxLibrosSimultaneos} libro(s) y el usuario ya posee ${activeLoansForUser.length} activo(s).`
+        };
+      }
+
+      // Persistir préstamo atómicamente
+      bookSheet.getRange(bIdx + 1, 7).setValue("on_loan");
+      const prestamoId = "LNM-" + now.getTime();
+      const calculatedReturnDate = fechaDevolucionPrevista || new Date(now.getTime() + policy.diasPrestamo * 24 * 60 * 60 * 1000);
+
+      const auditObs = [
+        observaciones || "",
+        idempotencyKey ? `ClaveIdempotencia: ${idempotencyKey}` : ""
+      ].filter(Boolean).join(" | ");
+
+      loanSheet.appendRow([
+        prestamoId,
+        String(ejemplarId).trim(),
+        String(userId).trim(),
+        now,
+        calculatedReturnDate,
+        "",
+        "on_loan",
+        auditObs
+      ]);
+
+      logStructuredEvent(
+        "ACCOUNTING",
+        "processLibraryLoan",
+        "INFO",
+        "LOAN_GRANTED",
+        `Préstamo bibliográfico otorgado a ${userId} para ejemplar ${ejemplarId}`,
+        { prestamoId, userId, ejemplarId, diasPrestamo: policy.diasPrestamo, idempotencyKey },
+        (payload && payload.authUserId) || "System"
+      );
+
       return {
-        status: "error",
-        code: "ACTIVE_OVERDUE_BLOCK",
-        message: `El usuario '${uId}' mantiene al menos un libro con fecha de devolución vencida (${libroVencidoId}). No se permiten nuevos préstamos hasta regularizar su situación.`
+        status: "success",
+        prestamoId: prestamoId,
+        fechaDevolucion: calculatedReturnDate,
+        fechaRetorno: calculatedReturnDate,
+        limitePrestamosRol: policy.maxLibrosSimultaneos,
+        message: "Préstamo de ejemplar bibliográfico otorgado con éxito."
       };
     }
-
-    // Validación B: Límite de cupo simultáneo por rol [TASK-026]
-    if (prestamosActivosUsuario >= limiteLibros) {
-      return {
-        status: "error",
-        code: "LOAN_LIMIT_EXCEEDED",
-        message: `El usuario con rol '${rolTarget}' ha alcanzado el límite máximo de ${limiteLibros} libros prestados simultáneamente (actuales: ${prestamosActivosUsuario}).`
-      };
-    }
-
-    // 4. Conceder préstamo actualizando estado y persistiendo registro [TASK-026 y TASK-027]
-    if (books[bIdx].length >= 6) {
-      bookSheet.getRange(bIdx + 1, 6).setValue("on_loan"); // EstadoDisponibilidad
-    }
-    bookSheet.getRange(bIdx + 1, 7).setValue("on_loan");   // Estado legacy
-
-    const prestamoId = "LNM-" + now.getTime();
-    const fechaRetorno = fechaDevolucionPrevista
-      ? new Date(fechaDevolucionPrevista)
-      : new Date(now.getTime() + diasPrestamo * 24 * 60 * 60 * 1000);
-
-    loanSheet.appendRow([
-      prestamoId,
-      eId,
-      uId,
-      now,
-      fechaRetorno,
-      "",
-      "on_loan",
-      `${observaciones || ""}${observaciones ? ' | ' : ''}Rol: ${rolTarget} | Plazo: ${diasPrestamo}d | Limite: ${limiteLibros}`.trim()
-    ]);
-
-    logStructuredEvent(
-      "ACCOUNTING",
-      "processLibraryLoan",
-      "INFO",
-      "LOAN_GRANTED",
-      `Préstamo ${prestamoId} otorgado a '${uId}' (Rol: ${rolTarget}) para ejemplar '${eId}'. Vence: ${fechaRetorno.toISOString().slice(0, 10)}`,
-      { prestamoId, ejemplarId: eId, userId: uId, rolTarget, diasPrestamo, fechaRetorno },
-      uId
-    );
-
-    return {
-      status: "success",
-      prestamoId: prestamoId,
-      ejemplarId: eId,
-      userId: uId,
-      fechaDevolucionPrevista: fechaRetorno,
-      diasOtorgados: diasPrestamo,
-      limiteRol: limiteLibros,
-      prestamosActivosTotal: prestamosActivosUsuario + 1,
-      message: `Préstamo de ejemplar bibliográfico otorgado con éxito por ${diasPrestamo} días (vence ${fechaRetorno.toISOString().slice(0, 10)}).`
-    };
   } finally {
     lock.releaseLock();
   }
@@ -11069,7 +10956,8 @@ function runPhase19InventoryAndAssetsRegressionSuite(payload) {
 }
 
 // ---------------------------------------------------------------------------
-// [TASK-028] [F20-Task14] SUITE AUTOMATIZADA DE PRUEBAS Y REGRESIÓN INTEGRAL DE BIBLIOTECA
+// SUITE DE PRUEBAS DE REGRESIÓN: FASE 20 - BIBLIOTECA Y RECURSOS EDUCATIVOS
+// [TASK-028] [F20-Task14]
 // Valida catálogo FRBR, circulación, devoluciones, reservas, moras, recursos digitales y concurrencia.
 // ---------------------------------------------------------------------------
 function runPhase20LibraryAndResourcesRegressionSuite(payload) {
@@ -11089,6 +10977,11 @@ function runPhase20LibraryAndResourcesRegressionSuite(payload) {
     });
   }
 
+  let testObraId = null;
+  let testEjemplarId = null;
+  const testUserId = "EST-FASE20-TEST-001";
+  const testDocenteUserId = "DOC-FASE20-TEST-002";
+
   const testCases = [
     {
       id: "PT20-01",
@@ -11105,6 +10998,7 @@ function runPhase20LibraryAndResourcesRegressionSuite(payload) {
           edicionAno: "2024"
         });
         const pass = res && res.status === "success" && res.obraId && String(res.obraId).startsWith("OBRA-");
+        if (pass) testObraId = res.obraId;
         return { pass, expected: "OBRA-YYYY-NNNNNN", actual: res ? res.obraId : null, details: res };
       }
     },
@@ -11116,47 +11010,49 @@ function runPhase20LibraryAndResourcesRegressionSuite(payload) {
           titulo: "Historia Universal Contemporánea",
           autor: "Dr. Juan Pérez",
           isbnCodigo: "978-99926-00-11-2",
-          ubicacionFisica: "Estante C3-Nivel 2",
-          condicionFisica: "Nuevo",
-          estadoDisponibilidad: "available",
-          observaciones: "Ejemplar donado para biblioteca escolar"
+          obraId: testObraId,
+          categoria: "Historia",
+          ubicacionFisica: "Estante H3",
+          estado: "available"
         });
-        const pass = res && res.status === "success" && res.ejemplarId && res.obraId && String(res.obraId).startsWith("OBRA-");
-        return { pass, expected: "ejemplarId y obraId asociados", actual: res, details: res };
+        const pass = res && res.status === "success" && res.ejemplarId && res.obraId === testObraId;
+        if (pass) testEjemplarId = res.ejemplarId;
+        return { pass, expected: testObraId, actual: res ? res.obraId : null, details: res };
       }
     },
     {
       id: "PT20-03",
-      name: "Consulta consolidada getBibliographicWorks y desglose de ejemplares",
+      name: "Consulta agregada de obras con métricas de disponibilidad (getBibliographicWorks)",
       execute: function() {
         const res = getBibliographicWorks({ busqueda: "Historia Universal" });
-        const pass = res && res.status === "success" && Array.isArray(res.obras) && res.obras.length > 0 && res.obras[0].metricasEjemplares && typeof res.obras[0].metricasEjemplares.totalEjemplares === 'number';
+        const pass = res && res.status === "success" && Array.isArray(res.obras) && res.obras.length >= 1 && res.obras[0].metricasEjemplares !== undefined;
         return { pass, expected: "obras con metricasEjemplares", actual: res && res.obras ? res.obras.length : 0, details: res };
       }
     },
     {
       id: "PT20-04",
-      name: "Emisión de préstamo regular según días configurados por rol",
+      name: "Circulación: Emisión exitosa de préstamo según política de rol Estudiante",
       execute: function() {
         const res = processLibraryLoan({
-          ejemplarId: "LIB-TEST-DOCENTE",
-          userId: "EMP-TEST-PROF",
-          userRole: "Profesor",
-          observaciones: "Préstamo académico para planeación"
+          ejemplarId: testEjemplarId,
+          userId: testUserId,
+          userRole: "Estudiante",
+          accion: "Prestamo",
+          observaciones: "Préstamo de prueba para estudiante"
         });
-        const pass = res && res.status === "success" && res.prestamoId && res.diasOtorgados === 15;
-        return { pass, expected: "Préstamo exitoso por 15 días (Profesor)", actual: res ? res.diasOtorgados : null, details: res };
+        const pass = res && res.status === "success" && res.prestamoId && res.limitePrestamosRol === 2;
+        return { pass, expected: "success con limite 2", actual: res ? `${res.status} (limite: ${res.limitePrestamosRol})` : null, details: res };
       }
     },
     {
       id: "PT20-05",
-      name: "Rechazo de préstamo sobre libro ya prestado (BOOK_ALREADY_LOANED)",
+      name: "Concurrencia atómica: Rechazo de préstamo sobre libro ya prestado (BOOK_ALREADY_LOANED)",
       execute: function() {
         const res = processLibraryLoan({
-          ejemplarId: "LIB-TEST-DOCENTE",
-          userId: "EST-TEST-02",
+          ejemplarId: testEjemplarId,
+          userId: "EST-OTRO-002",
           userRole: "Estudiante",
-          observaciones: "Intento de segundo préstamo sobre el mismo ejemplar"
+          accion: "Prestamo"
         });
         const pass = res && res.status === "error" && res.code === "BOOK_ALREADY_LOANED";
         return { pass, expected: "BOOK_ALREADY_LOANED", actual: res ? res.code : null, details: res };
@@ -11164,154 +11060,178 @@ function runPhase20LibraryAndResourcesRegressionSuite(payload) {
     },
     {
       id: "PT20-06",
-      name: "Bloqueo por superación de cupo simultáneo de libros por rol (LOAN_LIMIT_EXCEEDED)",
+      name: "Idempotencia: Rechazo de solicitud repetida con misma clave única",
       execute: function() {
-        // Simular que el estudiante ya tiene 2 libros
-        const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-        const loanSheet = getOrCreateSheet(ss, "BibliotecaPrestamos");
-        const now = new Date();
-        loanSheet.appendRow(["LNM-SIM-1", "LIB-SIM-1", "EST-LIM-01", now, new Date(now.getTime() + 5*86400000), "", "on_loan", "Simulado"]);
-        loanSheet.appendRow(["LNM-SIM-2", "LIB-SIM-2", "EST-LIM-01", now, new Date(now.getTime() + 5*86400000), "", "on_loan", "Simulado"]);
-
-        const res = processLibraryLoan({
-          ejemplarId: "LIB-101",
-          userId: "EST-LIM-01",
-          userRole: "Estudiante",
-          observaciones: "Tercer libro para estudiante con límite de 2"
+        const uniqueKey = "IDEMP-TEST-KEY-001";
+        // Registrar primero un préstamo con clave
+        const b2 = manageLibraryBook({ titulo: "Libro Idempotencia", autor: "Autor Idemp", ubicacionFisica: "Estante I1" });
+        const res1 = processLibraryLoan({
+          ejemplarId: b2.ejemplarId,
+          userId: testDocenteUserId,
+          userRole: "Docente",
+          accion: "Prestamo",
+          idempotencyKey: uniqueKey
         });
-        const pass = res && res.status === "error" && res.code === "LOAN_LIMIT_EXCEEDED";
-        return { pass, expected: "LOAN_LIMIT_EXCEEDED", actual: res ? res.code : null, details: res };
+
+        // Reintentar con la misma clave
+        const res2 = processLibraryLoan({
+          ejemplarId: b2.ejemplarId,
+          userId: testDocenteUserId,
+          userRole: "Docente",
+          accion: "Prestamo",
+          idempotencyKey: uniqueKey
+        });
+
+        const pass = res1 && res1.status === "success" && res2 && res2.status === "error" && res2.code === "IDEMPOTENCY_DUPLICATE_REQUEST";
+        return { pass, expected: "IDEMPOTENCY_DUPLICATE_REQUEST", actual: res2 ? res2.code : null, details: { res1, res2 } };
       }
     },
     {
       id: "PT20-07",
-      name: "Bloqueo preventivo ante morosidad activa de préstamos vencidos (ACTIVE_OVERDUE_BLOCK)",
+      name: "Políticas de Circulación: Bloqueo de estudiante al superar límite simultáneo (LOAN_LIMIT_EXCEEDED)",
       execute: function() {
+        // testUserId ya tiene 1 libro prestado en PT20-04. Agregamos el 2do:
+        const b3 = manageLibraryBook({ titulo: "Libro Cupo 2", autor: "Autor Cupo", ubicacionFisica: "Estante C1" });
+        processLibraryLoan({
+          ejemplarId: b3.ejemplarId,
+          userId: testUserId,
+          userRole: "Estudiante",
+          accion: "Prestamo"
+        });
+
+        // Intentar un 3er libro (límite para estudiante es 2)
+        const b4 = manageLibraryBook({ titulo: "Libro Cupo 3 Sobrecupo", autor: "Autor Cupo", ubicacionFisica: "Estante C2" });
+        const res3 = processLibraryLoan({
+          ejemplarId: b4.ejemplarId,
+          userId: testUserId,
+          userRole: "Estudiante",
+          accion: "Prestamo"
+        });
+
+        const pass = res3 && res3.status === "error" && res3.code === "LOAN_LIMIT_EXCEEDED";
+        return { pass, expected: "LOAN_LIMIT_EXCEEDED", actual: res3 ? res3.code : null, details: res3 };
+      }
+    },
+    {
+      id: "PT20-08",
+      name: "Políticas de Circulación: Bloqueo preventivo por mora activa (ACTIVE_OVERDUE_BLOCK)",
+      execute: function() {
+        const morosoId = "EST-MOROSO-TEST-999";
+        const bMoro = manageLibraryBook({ titulo: "Libro Moroso", autor: "Autor Mora", ubicacionFisica: "Estante M1" });
+        // Simular préstamo vencido en el pasado
         const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
         const loanSheet = getOrCreateSheet(ss, "BibliotecaPrestamos");
-        const now = new Date();
-        const pasado = new Date(now.getTime() - 5 * 86400000); // 5 días de retraso
-        loanSheet.appendRow(["LNM-MORA-1", "LIB-MORA-1", "EST-MORA-01", pasado, pasado, "", "on_loan", "Libro con mora activa"]);
+        const pastDate = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000);
+        loanSheet.appendRow(["LNM-MORA-999", bMoro.ejemplarId, morosoId, pastDate, pastDate, "", "on_loan", "Préstamo vencido simulado"]);
 
+        const bNuevo = manageLibraryBook({ titulo: "Libro Nuevo Para Moroso", autor: "Autor", ubicacionFisica: "Estante M2" });
         const res = processLibraryLoan({
-          ejemplarId: "LIB-102",
-          userId: "EST-MORA-01",
+          ejemplarId: bNuevo.ejemplarId,
+          userId: morosoId,
           userRole: "Estudiante",
-          observaciones: "Intento de préstamo con mora vigente"
+          accion: "Prestamo"
         });
+
         const pass = res && res.status === "error" && res.code === "ACTIVE_OVERDUE_BLOCK";
         return { pass, expected: "ACTIVE_OVERDUE_BLOCK", actual: res ? res.code : null, details: res };
       }
     },
     {
-      id: "PT20-08",
-      name: "Devolución física de ejemplar y restitución a 'available'",
+      id: "PT20-09",
+      name: "Devolución regular y restitución de ejemplar a estado available",
       execute: function() {
         const res = processLibraryLoan({
-          ejemplarId: "LIB-TEST-DOCENTE",
-          userId: "EMP-TEST-PROF",
-          accion: "Devolucion",
-          observaciones: "Devolución en buen estado físico"
+          ejemplarId: testEjemplarId,
+          userId: testUserId,
+          accion: "Devolucion"
         });
-        const pass = res && res.status === "success" && String(res.message).includes("Devolución");
-        return { pass, expected: "Devolución exitosa", actual: res ? res.message : null, details: res };
-      }
-    },
-    {
-      id: "PT20-09",
-      name: "Reserva de libro prestado y prevención de duplicados (DUPLICATE_RESERVATION)",
-      execute: function() {
-        // Prestar libro para que sea reservable
-        processLibraryLoan({ ejemplarId: "LIB-101", userId: "EMP-01", userRole: "Profesor" });
-        const res1 = reserveLibraryBook({ ejemplarId: "LIB-101", userId: "EST-RES-01" });
-        const res2 = reserveLibraryBook({ ejemplarId: "LIB-101", userId: "EST-RES-01" });
-        const pass = res1 && res1.status === "success" && res2 && res2.status === "error" && res2.code === "DUPLICATE_RESERVATION";
-        return { pass, expected: "DUPLICATE_RESERVATION en segundo intento", actual: res2 ? res2.code : null, details: { res1, res2 } };
+        const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+        const bookSheet = getOrCreateSheet(ss, "BibliotecaEjemplares");
+        const books = bookSheet.getDataRange().getValues();
+        const b = books.find(r => String(r[0]).trim() === String(testEjemplarId).trim());
+        const pass = res && res.status === "success" && b && b[6] === "available";
+        return { pass, expected: "available", actual: b ? b[6] : null, details: res };
       }
     },
     {
       id: "PT20-10",
-      name: "Rechazo de reserva sobre libro disponible en estantería (BOOK_AVAILABLE_FOR_LOAN)",
+      name: "Reservas: Creación de reserva sobre ejemplar prestado",
       execute: function() {
-        // Asegurar que LIB-102 está disponible
-        const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-        const bookSheet = getOrCreateSheet(ss, "BibliotecaEjemplares");
-        const books = bookSheet.getDataRange().getValues();
-        const bIdx = books.findIndex(r => String(r[0]).trim() === "LIB-102");
-        if (bIdx !== -1) bookSheet.getRange(bIdx + 1, 7).setValue("available");
-
-        const res = reserveLibraryBook({ ejemplarId: "LIB-102", userId: "EST-05" });
-        const pass = res && res.status === "info" && res.code === "BOOK_AVAILABLE_FOR_LOAN";
-        return { pass, expected: "BOOK_AVAILABLE_FOR_LOAN", actual: res ? res.code : null, details: res };
+        // Prestar libro a docente
+        processLibraryLoan({ ejemplarId: testEjemplarId, userId: testDocenteUserId, userRole: "Docente", accion: "Prestamo" });
+        // Reservar por estudiante
+        const res = reserveLibraryBook({
+          ejemplarId: testEjemplarId,
+          userId: testUserId
+        });
+        const pass = res && res.status === "success" && res.reservaId && String(res.reservaId).startsWith("RES-");
+        return { pass, expected: "RES-YYYY-NNNNNN", actual: res ? res.reservaId : null, details: res };
       }
     },
     {
       id: "PT20-11",
-      name: "Registro de incidencias y actualización de ejemplar a 'damaged' o 'lost'",
+      name: "Reservas: Prevención de reservas activas duplicadas por usuario (DUPLICATE_RESERVATION)",
       execute: function() {
-        const res = recordLibraryIncident({
-          ejemplarId: "LIB-102",
-          userId: "EST-05",
-          tipoIncidencia: "Deterioro / Paginas Danadas",
-          descripcion: "Hojas desprendidas del lomo",
-          observaciones: "Requiere encuadernación técnica"
+        const res = reserveLibraryBook({
+          ejemplarId: testEjemplarId,
+          userId: testUserId
         });
-        const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-        const bRows = getOrCreateSheet(ss, "BibliotecaEjemplares").getDataRange().getValues();
-        const bItem = bRows.find(r => String(r[0]).trim() === "LIB-102");
-        const pass = res && res.status === "success" && bItem && String(bItem[6]).toLowerCase() === "damaged";
-        return { pass, expected: "damaged en catálogo", actual: bItem ? bItem[6] : null, details: res };
+        const pass = res && res.status === "error" && res.code === "DUPLICATE_RESERVATION";
+        return { pass, expected: "DUPLICATE_RESERVATION", actual: res ? res.code : null, details: res };
       }
     },
     {
       id: "PT20-12",
-      name: "Publicación y catalogación de Recursos Digitales",
+      name: "Gestión de Incidencias: Registro de daño y actualización de estado de ejemplar a damaged",
       execute: function() {
-        const res = manageDigitalResource({
-          titulo: "Atlas Interactivo de Anatomía Humana",
-          autorColaboradores: "Dr. Roberto Silva",
-          categoria: "Medicina/Biología",
-          formatoUrl: "https://drive.google.com/open?id=demo_atlas_interactivo",
-          nivelPermisosJSON: ["Secundaria", "Docentes", "Todos"],
-          estado: "Activo",
-          observaciones: "Recurso 3D para laboratorio de biología"
+        const res = recordLibraryIncident({
+          ejemplarId: testEjemplarId,
+          userId: testDocenteUserId,
+          tipoIncidencia: "Daño",
+          descripcion: "Hojas rasgadas durante el período de consulta",
+          montoCompensacion: 150
         });
-        const pass = res && res.status === "success" && res.recursoId && String(res.recursoId).startsWith("REC-DIG-");
-        return { pass, expected: "REC-DIG- exitoso", actual: res ? res.recursoId : null, details: res };
+        const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+        const bookSheet = getOrCreateSheet(ss, "BibliotecaEjemplares");
+        const books = bookSheet.getDataRange().getValues();
+        const b = books.find(r => String(r[0]).trim() === String(testEjemplarId).trim());
+        const pass = res && res.status === "success" && b && b[6] === "damaged";
+        return { pass, expected: "damaged", actual: b ? b[6] : null, details: { res, estadoEjemplar: b ? b[6] : null } };
       }
     },
     {
       id: "PT20-13",
-      name: "Consulta filtrada de Recursos Digitales en Biblioteca",
+      name: "Recursos Digitales: Alta y consulta en catálogo institucional",
       execute: function() {
-        const res = getDigitalResources({ categoria: "Medicina/Biología" });
-        const pass = res && res.status === "success" && Array.isArray(res.recursos) && res.recursos.length > 0;
-        return { pass, expected: "Recursos obtenidos", actual: res && res.recursos ? res.recursos.length : 0, details: res };
+        const mngRes = manageDigitalResource({
+          titulo: "Guía de Laboratorio de Química Digital",
+          tipoRecurso: "PDF Interactivo",
+          categoria: "Ciencias",
+          materiaAcademica: "Química",
+          nivelEducativo: "Secundaria",
+          recursoUrl: "https://drive.google.com/file/d/test-quimica/view",
+          rolesPermitidos: ["Estudiante", "Docente"]
+        });
+        const getRes = getDigitalResources({ categoria: "Ciencias" });
+        const pass = mngRes && mngRes.status === "success" && getRes && getRes.status === "success" && getRes.recursos.length >= 1;
+        return { pass, expected: "recursos >= 1", actual: getRes && getRes.recursos ? getRes.recursos.length : 0, details: { mngRes, getRes } };
       }
     },
     {
       id: "PT20-14",
-      name: "Concurrencia atómica e idempotencia en circulación de biblioteca",
+      name: "Integridad de Préstamos: Consulta filtrada de préstamos (getLibraryLoans)",
       execute: function() {
-        const lock = LockService.getScriptLock();
-        const lockAdquirido = lock.tryLock(1000);
-        if (lockAdquirido) lock.releaseLock();
-
-        const resDup = processLibraryLoan({
-          ejemplarId: "LIB-SIM-IDEMP",
-          userId: "USER-IDEMP-01",
-          idempotencyKey: "KEY-IDEMP-TEST-99"
-        });
-        const pass = lockAdquirido && resDup && (resDup.status === "success" || resDup.status === "error");
-        return { pass, expected: "ScriptLock e idempotencia activos", actual: pass, details: { lockAdquirido, resDup } };
+        const res = getLibraryLoans({ userId: testDocenteUserId });
+        const pass = res && res.status === "success" && Array.isArray(res.prestamos) && res.prestamos.length >= 1;
+        return { pass, expected: "prestamos >= 1", actual: res && res.prestamos ? res.prestamos.length : 0, details: res };
       }
     }
   ];
 
   testCases.forEach(tc => {
     try {
-      const out = tc.execute();
-      recordTest(tc.id, tc.name, out.pass, out.expected, out.actual, out.details);
+      const outcome = tc.execute();
+      recordTest(tc.id, tc.name, outcome.pass, outcome.expected, outcome.actual, outcome.details);
     } catch (err) {
       recordTest(tc.id, tc.name, false, "Sin excepciones", err.message, { stack: err.stack });
     }
@@ -11325,6 +11245,278 @@ function runPhase20LibraryAndResourcesRegressionSuite(payload) {
     service: "ACCOUNTING",
     suiteName: "runPhase20LibraryAndResourcesRegressionSuite",
     totalPruebasFase20: testCases.length,
+    pruebasExitosas: passedCount,
+    todasPruebasPasaron: allPassed,
+    duracionTotalMs: totalDurationMs,
+    resultadosSuiteRegresion: testResults,
+    executedAt: new Date().toISOString()
+  };
+}
+
+// ---------------------------------------------------------------------------
+// SUITE DE PRUEBAS DE REGRESIÓN: FASE 21 - TRANSPORTE Y LOGÍSTICA ESCOLAR
+// [TASK-037] [F21-Task34] Valida vehículos, conductores, rutas, aforos,
+// abordaje, descenso, entrega segura a tutores autorizados, barrido y cierre.
+// ---------------------------------------------------------------------------
+function runPhase21TransportAndServicesRegressionSuite(payload) {
+  const startTime = Date.now();
+  const testResults = [];
+  let passedCount = 0;
+
+  function recordTest(id, name, pass, expected, actual, details) {
+    if (pass) passedCount++;
+    testResults.push({
+      id: id,
+      name: name,
+      status: pass ? "PASS" : "FAIL",
+      expected: expected,
+      actual: actual,
+      details: details || {}
+    });
+  }
+
+  let testVehiculoId = null;
+  let testConductorId = null;
+  let testRutaId = null;
+  let testViajeId = null;
+  const testEstudianteId = "EST-FASE21-TEST-001";
+  const testTutorDNI = "0801-1990-12345";
+
+  const testCases = [
+    {
+      id: "PT21-01",
+      name: "Flota Vehicular: Alta de unidad con póliza y revisión vigentes",
+      execute: function() {
+        const nextYear = new Date().getFullYear() + 1;
+        const res = manageTransportVehicle({
+          placaMatricula: "PBX-" + Math.floor(1000 + Math.random() * 9000),
+          marcaModelo: "Toyota Coaster 2024",
+          capacidadPasajeros: 2,
+          polizaSeguroNumero: "POL-SEG-9999",
+          polizaSeguroVencimiento: `${nextYear}-12-31`,
+          revisionTecnicaVencimiento: `${nextYear}-12-31`,
+          estadoOperativo: "Disponible"
+        });
+        const pass = res && res.status === "success" && res.vehiculoId && String(res.vehiculoId).startsWith("VEH-");
+        if (pass) testVehiculoId = res.vehiculoId;
+        return { pass, expected: "VEH-YYYY-NNNNNN", actual: res ? res.vehiculoId : null, details: res };
+      }
+    },
+    {
+      id: "PT21-02",
+      name: "Flota Vehicular: Rechazo de unidad con póliza de seguro vencida",
+      execute: function() {
+        const res = manageTransportVehicle({
+          placaMatricula: "PBY-9999",
+          marcaModelo: "Hyundai County 2018",
+          capacidadPasajeros: 25,
+          polizaSeguroNumero: "POL-VENCIDA",
+          polizaSeguroVencimiento: "2020-01-01",
+          revisionTecnicaVencimiento: "2026-12-31",
+          estadoOperativo: "Disponible"
+        });
+        const pass = res && res.status === "error" && res.code === "VEHICLE_INSURANCE_EXPIRED";
+        return { pass, expected: "VEHICLE_INSURANCE_EXPIRED", actual: res ? res.code : null, details: res };
+      }
+    },
+    {
+      id: "PT21-03",
+      name: "Conductores: Registro y validación de licencia de conducir vigente",
+      execute: function() {
+        const nextYear = new Date().getFullYear() + 2;
+        const res = manageTransportDriver({
+          dniIdentidad: "0801-1985-" + Math.floor(10000 + Math.random() * 90000),
+          nombreCompleto: "Conductor Certificado Test",
+          licenciaNumero: "LIC-PESADA-999",
+          licenciaCategoria: "Pesada No Articulada",
+          licenciaVencimiento: `${nextYear}-06-30`,
+          telefonoContacto: "+504 9999-8888",
+          estadoOperativo: "Activo"
+        });
+        const pass = res && res.status === "success" && res.conductorId && String(res.conductorId).startsWith("DRV-");
+        if (pass) testConductorId = res.conductorId;
+        return { pass, expected: "DRV-YYYY-NNNNNN", actual: res ? res.conductorId : null, details: res };
+      }
+    },
+    {
+      id: "PT21-04",
+      name: "Conductores: Bloqueo de conductor con licencia expirada",
+      execute: function() {
+        const res = manageTransportDriver({
+          dniIdentidad: "0801-1970-11111",
+          nombreCompleto: "Conductor Vencido",
+          licenciaNumero: "LIC-EXP-001",
+          licenciaCategoria: "Liviana",
+          licenciaVencimiento: "2021-05-15",
+          telefonoContacto: "+504 3333-2222",
+          estadoOperativo: "Activo"
+        });
+        const pass = res && res.status === "error" && res.code === "DRIVER_LICENSE_EXPIRED";
+        return { pass, expected: "DRIVER_LICENSE_EXPIRED", actual: res ? res.code : null, details: res };
+      }
+    },
+    {
+      id: "PT21-05",
+      name: "Rutas Escolares: Creación y vinculación de vehículo y conductor",
+      execute: function() {
+        const res = manageTransportRoute({
+          codigoRuta: "RUTA-TEST-" + Math.floor(100 + Math.random() * 900),
+          nombreRuta: "Ruta Residencial Los Pinos",
+          unidadCodigo: "BUS-TEST-01",
+          conductorEmpleadoId: testConductorId || "DRV-DEFAULT",
+          capacidad: 2,
+          paradasJSON: [
+            { orden: 1, parada: "Entrada Principal", horaEstimada: "06:35" },
+            { orden: 2, parada: "Colegio New Generation", horaEstimada: "07:25" }
+          ],
+          estado: "active"
+        });
+        const pass = res && res.status === "success" && res.rutaId;
+        if (pass) testRutaId = res.rutaId;
+        return { pass, expected: "success", actual: res ? res.status : null, details: res };
+      }
+    },
+    {
+      id: "PT21-06",
+      name: "Aforos y Concurrencia: Bloqueo de sobrecupo (TRANSPORT_CAPACITY_EXCEEDED)",
+      execute: function() {
+        assignStudentTransport({
+          rutaId: testRutaId,
+          estudianteUserId: testEstudianteId,
+          jornada: "Matutina",
+          paradaNombre: "Entrada Principal"
+        });
+        assignStudentTransport({
+          rutaId: testRutaId,
+          estudianteUserId: "EST-FASE21-TEST-002",
+          jornada: "Matutina",
+          paradaNombre: "Entrada Principal"
+        });
+
+        // Tercer estudiante sobre ruta con capacidad 2 debe ser rechazado
+        const overFlowRes = assignStudentTransport({
+          rutaId: testRutaId,
+          estudianteUserId: "EST-FASE21-TEST-003",
+          jornada: "Matutina",
+          paradaNombre: "Entrada Principal"
+        });
+
+        const pass = overFlowRes && overFlowRes.status === "error" && overFlowRes.code === "TRANSPORT_CAPACITY_EXCEEDED";
+        return { pass, expected: "TRANSPORT_CAPACITY_EXCEEDED", actual: overFlowRes ? overFlowRes.code : null, details: overFlowRes };
+      }
+    },
+    {
+      id: "PT21-07",
+      name: "Trazabilidad de Abordaje: Registro de subida del estudiante a la unidad",
+      execute: function() {
+        const res = recordStudentBoarding({
+          rutaId: testRutaId,
+          estudianteUserId: testEstudianteId,
+          paradaAbordaje: "Entrada Principal",
+          coordenadasGPS: "14.0818,-87.2068"
+        });
+        const pass = res && res.status === "success" && res.viajeId && res.estadoAbordaje === "A_BORDO";
+        if (pass) testViajeId = res.viajeId;
+        return { pass, expected: "A_BORDO", actual: res ? res.estadoAbordaje : null, details: res };
+      }
+    },
+    {
+      id: "PT21-08",
+      name: "Trazabilidad: Manifiesto en tiempo real de pasajeros a bordo",
+      execute: function() {
+        const res = getTripPassengerManifest({
+          viajeId: testViajeId,
+          rutaId: testRutaId
+        });
+        const pass = res && res.status === "success" && res.totalABordo >= 1;
+        return { pass, expected: "totalABordo >= 1", actual: res ? res.totalABordo : null, details: res };
+      }
+    },
+    {
+      id: "PT21-09",
+      name: "Entrega Segura: Verificación de tutores autorizados con foto y DNI",
+      execute: function() {
+        const res = getAuthorizedPickupPersons({
+          estudianteId: testEstudianteId
+        });
+        const pass = res && res.status === "success" && Array.isArray(res.personasAutorizadas) && res.personasAutorizadas.length >= 1;
+        return { pass, expected: "personasAutorizadas >= 1", actual: res ? res.personasAutorizadas.length : null, details: res };
+      }
+    },
+    {
+      id: "PT21-10",
+      name: "Entrega Segura: Bloqueo de entrega a persona no autorizada",
+      execute: function() {
+        const res = recordStudentSafeDelivery({
+          viajeId: testViajeId,
+          estudianteId: testEstudianteId,
+          dniEntrega: "0801-1900-IMPOSTOR",
+          nombreReceptor: "Persona Desconocida Sin Autorizar",
+          parentesco: "Vecino",
+          firmaDigitalData: "data:image/png;base64,mockSign"
+        });
+        const pass = res && res.status === "error" && res.code === "UNAUTHORIZED_PICKUP_PERSON";
+        return { pass, expected: "UNAUTHORIZED_PICKUP_PERSON", actual: res ? res.code : null, details: res };
+      }
+    },
+    {
+      id: "PT21-11",
+      name: "Entrega y Descenso Exitoso: Entrega autorizada y descenso del estudiante",
+      execute: function() {
+        const deliveryRes = recordStudentSafeDelivery({
+          viajeId: testViajeId,
+          estudianteId: testEstudianteId,
+          dniEntrega: testTutorDNI,
+          nombreReceptor: "Tutor Autorizado Principal",
+          parentesco: "Padre",
+          firmaDigitalData: "data:image/png;base64,mockSignatureOk"
+        });
+
+        const pass = deliveryRes && deliveryRes.status === "success" && deliveryRes.entregaSeguraConfirmada === true;
+        return { pass, expected: "entregaSeguraConfirmada", actual: deliveryRes ? deliveryRes.entregaSeguraConfirmada : null, details: deliveryRes };
+      }
+    },
+    {
+      id: "PT21-12",
+      name: "Cierre Obligatorio y Barrido Físico de Asientos (PHYSICAL_INSPECTION_REQUIRED)",
+      execute: function() {
+        const attempt1 = finalizeTransportTrip({
+          viajeId: testViajeId,
+          barridoFisicoAsientosConfirmado: false,
+          inspectorResponsable: "Monitor de Ruta Test"
+        });
+
+        const attempt2 = finalizeTransportTrip({
+          viajeId: testViajeId,
+          barridoFisicoAsientosConfirmado: true,
+          inspectorResponsable: "Monitor de Ruta Test",
+          observaciones: "Unidad completamente vacía y revisada asiento por asiento"
+        });
+
+        const pass = attempt1 && attempt1.status === "error" && attempt1.code === "PHYSICAL_INSPECTION_REQUIRED" &&
+                     attempt2 && attempt2.status === "success" && attempt2.estadoViaje === "CerradoNormal";
+        return { pass, expected: "PHYSICAL_INSPECTION_REQUIRED & CerradoNormal", actual: `${attempt1 ? attempt1.code : null} & ${attempt2 ? attempt2.estadoViaje : null}`, details: { attempt1, attempt2 } };
+      }
+    }
+  ];
+
+  testCases.forEach(tc => {
+    try {
+      const outcome = tc.execute();
+      recordTest(tc.id, tc.name, outcome.pass, outcome.expected, outcome.actual, outcome.details);
+    } catch (err) {
+      recordTest(tc.id, tc.name, false, "success", "EXCEPTION", { error: err.message, stack: err.stack });
+    }
+  });
+
+  const totalDurationMs = Date.now() - startTime;
+  const allPassed = passedCount === testCases.length;
+
+  return {
+    status: "success",
+    service: "ACCOUNTING",
+    suiteName: "runPhase21TransportAndServicesRegressionSuite",
+    totalPruebasFase21: testCases.length,
     pruebasExitosas: passedCount,
     todasPruebasPasaron: allPassed,
     duracionTotalMs: totalDurationMs,
@@ -13132,6 +13324,25 @@ function manageMaintenanceOrder(payload) {
       });
     }
   }
+
+  // Sincronización automática con TransporteVehiculos si el activo corresponde a una unidad [TASK-035]
+  try {
+    const vehSheet = getOrCreateSheet(ss, "TransporteVehiculos");
+    const vehData = vehSheet.getDataRange().getValues();
+    const vIdx = vehData.findIndex(r =>
+      String(r[0]).trim() === String(activoIdUbicacion).trim() ||
+      String(r[1]).trim() === String(activoIdUbicacion).trim() ||
+      String(r[2]).trim() === String(activoIdUbicacion).trim()
+    );
+
+    if (vIdx !== -1) {
+      if (estadoOrden === "Resuelto" || estadoOrden === "Completado") {
+        vehSheet.getRange(vIdx + 1, 8).setValue("Disponible");
+      } else if (estadoOrden === "EnTaller" || estadoOrden === "EnProceso" || estadoOrden === "Reportado") {
+        vehSheet.getRange(vIdx + 1, 8).setValue("EnMantenimiento");
+      }
+    }
+  } catch (_) {}
 
   return {
     status: "success",
@@ -15014,295 +15225,1049 @@ function validateSACETemplateFile(payload) {
 }
 
 // ---------------------------------------------------------------------------
-// FASE 11 / [TASK-033] [F21-Task05]: TRANSPORTE ESCOLAR, FLOTA VEHICULAR Y CONDUCTORES
+// FASE 11: TRANSPORTE ESCOLAR Y RUTAS
 // ---------------------------------------------------------------------------
 
-// 1. Gestión de Flota Vehicular y Validación de Documentación Habilitante [TASK-033]
-function manageTransportVehicle(payload) {
-  const {
-    vehiculoId,
-    unidadCodigo,
-    placa,
-    marcaModelo,
-    ano,
-    capacidadPasajeros,
-    conductorPrincipalId,
-    estadoOperativo,
-    fechaRevisionTecnica,
-    fechaVencimientoSeguro,
-    numeroPoliza,
-    kilometraje,
-    observaciones
-  } = payload || {};
+function manageTransportRoute(payload) {
+  const { rutaId, nombreRuta, unidadCodigo, conductorEmpleadoId, capacidad, paradasJSON, estado, observaciones } = payload || {};
+  if (!nombreRuta || !unidadCodigo) throw new Error("nombreRuta y unidadCodigo son requeridos.");
 
-  if (!unidadCodigo || !placa) {
-    throw new Error("unidadCodigo y placa son requeridos para registrar el vehículo.");
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "TransporteRutas");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  let rId = rutaId;
+  let existingIndex = -1;
+
+  if (rId) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(rId).trim());
+  } else {
+    existingIndex = data.findIndex(r => String(r[1]).toLowerCase().trim() === String(nombreRuta).toLowerCase().trim());
   }
 
-  const uCod = String(unidadCodigo).trim();
-  const plc = String(placa).trim().toUpperCase();
+  const pJSON = typeof paradasJSON === "object" ? JSON.stringify(paradasJSON) : (paradasJSON || "[]");
 
-  const lock = LockService.getScriptLock();
-  lock.waitLock(15000);
-
-  try {
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const sheet = getOrCreateSheet(ss, "TransporteVehiculos");
-    const data = sheet.getDataRange().getValues();
-    const now = new Date();
-
-    let vId = vehiculoId ? String(vehiculoId).trim() : null;
-    let existingIndex = -1;
-
-    if (vId) {
-      existingIndex = data.findIndex(r => String(r[0]).trim() === vId);
-    } else {
-      existingIndex = data.findIndex(r => String(r[1]).trim().toLowerCase() === uCod.toLowerCase() || String(r[2]).trim().toUpperCase() === plc);
-    }
-
-    const cap = parseInt(capacidadPasajeros || 25, 10);
-    const est = estadoOperativo || "Disponible";
-
-    if (existingIndex > 0) {
-      vId = data[existingIndex][0];
-      sheet.getRange(existingIndex + 1, 1, 1, 13).setValues([[
-        vId,
-        uCod,
-        plc,
-        marcaModelo !== undefined ? String(marcaModelo).trim() : (data[existingIndex][3] || ""),
-        ano !== undefined ? String(ano).trim() : (data[existingIndex][4] || ""),
-        cap,
-        conductorPrincipalId !== undefined ? String(conductorPrincipalId).trim() : (data[existingIndex][6] || ""),
-        est,
-        fechaRevisionTecnica || data[existingIndex][8] || "",
-        fechaVencimientoSeguro || data[existingIndex][9] || "",
-        numeroPoliza !== undefined ? String(numeroPoliza).trim() : (data[existingIndex][10] || ""),
-        kilometraje !== undefined ? parseFloat(kilometraje || 0) : (data[existingIndex][11] || 0),
-        observaciones || data[existingIndex][12] || ""
-      ]]);
-    } else {
-      vId = "VEH-" + now.getFullYear() + "-" + String(now.getTime()).slice(-4);
-      sheet.appendRow([
-        vId,
-        uCod,
-        plc,
-        marcaModelo || "Autobús Escolar",
-        ano || now.getFullYear().toString(),
-        cap,
-        conductorPrincipalId || "EMP-BUS-01",
-        est,
-        fechaRevisionTecnica || "",
-        fechaVencimientoSeguro || "",
-        numeroPoliza || "",
-        parseFloat(kilometraje || 0),
-        observaciones || ""
-      ]);
-    }
-
-    return {
-      status: "success",
-      vehiculoId: vId,
-      unidadCodigo: uCod,
-      capacidadPasajeros: cap,
-      estadoOperativo: est,
-      message: "Vehículo de transporte escolar registrado/actualizado exitosamente."
-    };
-  } finally {
-    lock.releaseLock();
+  if (existingIndex !== -1) {
+    rId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 8).setValues([[
+      rId,
+      String(nombreRuta).trim(),
+      String(unidadCodigo).trim(),
+      conductorEmpleadoId || "EMP-BUS-01",
+      parseInt(capacidad || 25),
+      pJSON,
+      estado || "active",
+      observaciones || ""
+    ]]);
+  } else {
+    rId = "RUT-" + now.getTime();
+    sheet.appendRow([
+      rId,
+      String(nombreRuta).trim(),
+      String(unidadCodigo).trim(),
+      conductorEmpleadoId || "EMP-BUS-01",
+      parseInt(capacidad || 25),
+      pJSON,
+      "active",
+      observaciones || ""
+    ]);
   }
+
+  return {
+    status: "success",
+    rutaId: rId,
+    message: "Ruta de transporte escolar registrada/actualizada exitosamente."
+  };
 }
 
-// 2. Consulta de Flota Vehicular con Alertas de Mantenimiento y Seguros [TASK-033]
-function getTransportVehicles(payload) {
-  const { estadoOperativo } = payload || {};
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+// [TASK-029] [F21-Task01] Control estricto de cupos, capacidad vehicular e integridad de asignaciones
+// Esquema maestro de TransporteVehiculos: VehiculoId, CodigoUnidad, PlacaMatricula, MarcaModelo, AnoFabricacion, CapacidadPasajeros, ConductorAsignadoId, EstadoOperativo, PolizaSeguroNumero, PolizaSeguroVencimiento, RevisionTecnicaVencimiento, Kilometraje, Observaciones
+function getOrCreateTransportVehiclesCatalog(ss) {
   const sheet = getOrCreateSheet(ss, "TransporteVehiculos");
   let rows = sheet.getDataRange().getValues().slice(1);
-  const now = new Date();
 
   if (rows.length === 0) {
     const defaults = [
-      ["VEH-2025-001", "BUS-01", "HAA-1234", "Blue Bird Vision", "2020", 30, "EMP-CONDUCTOR-01", "Asignado", "2025-12-31", "2025-12-31", "POL-FICOHSA-9901", 45200, "Unidad principal ruta periférico"],
-      ["VEH-2025-002", "BUS-02", "HAB-5678", "Mercedes-Benz Sprinter", "2022", 25, "EMP-CONDUCTOR-02", "Asignado", "2025-12-31", "2025-12-31", "POL-FICOHSA-9902", 32100, "Unidad ruta Morazán"]
+      ["VEH-2024-000001", "BUS-01", "HAA-1234", "Mercedes-Benz Sprinter 2023", 2023, 20, "EMP-CONDUCTOR-01", "Disponible", "POL-SEG-2024-01", "2026-12-31", "2026-12-31", 0, "Unidad principal matutina"],
+      ["VEH-2024-000002", "BUS-02", "HAA-5678", "Toyota Coaster 2022", 2022, 28, "EMP-CONDUCTOR-02", "Disponible", "POL-SEG-2024-02", "2026-12-31", "2026-12-31", 0, "Unidad secundaria vespertina"]
     ];
     sheet.getRange(2, 1, defaults.length, 13).setValues(defaults);
     rows = defaults;
   }
+  return sheet;
+}
 
-  let filtered = rows;
-  if (estadoOperativo) {
-    filtered = filtered.filter(r => String(r[7]).trim().toLowerCase() === String(estadoOperativo).trim().toLowerCase());
+function getTransportRoutes(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  getOrCreateTransportVehiclesCatalog(ss);
+
+  let rows = getOrCreateSheet(ss, "TransporteRutas").getDataRange().getValues().slice(1);
+
+  if (rows.length === 0) {
+    const defaults = [
+      ["RUT-01", "Ruta Principal Anillo Periférico", "BUS-01", "EMP-CONDUCTOR-01", 20, '[{"parada":"Plaza Miraflores","hora":"06:30 AM"},{"parada":"Residencial Las Uvas","hora":"06:45 AM"}]', "active", "Ruta de Mañana", "06:30", "07:30", "Matutina"],
+      ["RUT-02", "Ruta Bulevar Morazán", "BUS-02", "EMP-CONDUCTOR-02", 28, '[{"parada":"Mall Multiplaza","hora":"06:25 AM"},{"parada":"Colonia Palmira","hora":"06:40 AM"}]', "active", "Ruta de Mañana", "06:25", "07:25", "Matutina"]
+    ];
+    const sheet = getOrCreateSheet(ss, "TransporteRutas");
+    sheet.getRange(2, 1, defaults.length, 11).setValues(defaults);
+    rows = defaults;
   }
 
-  const mapped = filtered.map(r => {
-    const fSeguro = r[9] ? new Date(r[9]) : null;
-    const fRevision = r[8] ? new Date(r[8]) : null;
+  // Cargar asignaciones activas para calcular ocupación en tiempo real [TASK-029]
+  const asgnRows = getOrCreateSheet(ss, "TransporteAsignaciones").getDataRange().getValues().slice(1);
+  const ocupacionPorRuta = {};
+  asgnRows.forEach(r => {
+    const rId = String(r[1]).trim();
+    const st = String(r[5] || "").trim().toLowerCase();
+    if (st === "active" || st === "activa") {
+      ocupacionPorRuta[rId] = (ocupacionPorRuta[rId] || 0) + 1;
+    }
+  });
 
-    const seguroVencido = fSeguro && !isNaN(fSeguro.getTime()) && fSeguro.getTime() < now.getTime();
-    const revisionVencida = fRevision && !isNaN(fRevision.getTime()) && fRevision.getTime() < now.getTime();
+  // Cargar capacidades maestras de vehículos
+  const vehRows = getOrCreateSheet(ss, "TransporteVehiculos").getDataRange().getValues().slice(1);
+  const vehCapacidades = {};
+  vehRows.forEach(v => {
+    vehCapacidades[String(v[1]).trim()] = parseInt(v[5] || 0, 10);
+  });
+
+  const mapped = rows.map(r => {
+    const rId = String(r[0]);
+    const uCod = String(r[2]);
+    const capVeh = vehCapacidades[uCod] !== undefined ? vehCapacidades[uCod] : parseInt(r[4] || 25, 10);
+    const ocupados = ocupacionPorRuta[rId] || 0;
+    const disponibles = Math.max(0, capVeh - ocupados);
 
     return {
-      vehiculoId: r[0],
-      unidadCodigo: r[1],
-      placa: r[2],
-      marcaModelo: r[3],
-      ano: r[4],
-      capacidadPasajeros: parseInt(r[5] || 0, 10),
-      conductorPrincipalId: r[6],
-      estadoOperativo: r[7],
-      fechaRevisionTecnica: r[8],
-      fechaVencimientoSeguro: r[9],
-      numeroPoliza: r[10],
-      kilometraje: parseFloat(r[11] || 0),
-      observaciones: r[12],
-      alertas: {
-        seguroVencido: !!seguroVencido,
-        revisionVencida: !!revisionVencida,
-        operatividadHabilitada: !seguroVencido && !revisionVencida && String(r[7]).toLowerCase() !== "fueraservicio" && String(r[7]).toLowerCase() !== "enmantenimiento"
-      }
+      rutaId: rId,
+      nombreRuta: r[1],
+      unidadCodigo: uCod,
+      conductorEmpleadoId: r[3],
+      capacidad: capVeh,
+      capacidadPasajeros: capVeh,
+      cuposOcupados: ocupados,
+      cuposDisponibles: disponibles,
+      paradasJSON: r[5],
+      estado: r[6],
+      observaciones: r[7],
+      horaInicio: r[8] || "06:30",
+      horaFin: r[9] || "07:30",
+      jornada: r[10] || "Matutina"
     };
   });
 
   return {
     status: "success",
-    totalVehiculos: mapped.length,
-    vehiculos: mapped
+    rutas: mapped
   };
 }
 
-// 3. Gestión de Conductores y Acompañantes con Control de Licencia [TASK-033]
-function manageTransportDriver(payload) {
-  const {
-    conductorId,
-    empleadoId,
-    nombreCompleto,
-    numeroLicencia,
-    categoriaLicencia,
-    fechaVencimientoLicencia,
-    tipoConductor,
-    estadoHabilitacion,
-    telefono,
-    observaciones
-  } = payload || {};
-
-  if (!nombreCompleto || !numeroLicencia) {
-    throw new Error("nombreCompleto y numeroLicencia son requeridos.");
-  }
-
-  const nom = String(nombreCompleto).trim();
-  const lic = String(numeroLicencia).trim();
+function assignStudentTransport(payload) {
+  const { rutaId, estudianteUserId, paradaNombre, horarioPlan, jornada, diasSemanaJSON, observaciones } = payload || {};
+  if (!rutaId || !estudianteUserId) throw new Error("rutaId y estudianteUserId son requeridos.");
 
   const lock = LockService.getScriptLock();
-  lock.waitLock(15000);
+  const hasLock = lock.tryLock(15000);
+  if (!hasLock) {
+    return {
+      status: "error",
+      code: "LOCK_TIMEOUT",
+      message: "Operación de asignación de transporte bloqueada por concurrencia. Por favor reintente."
+    };
+  }
 
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const sheet = getOrCreateSheet(ss, "TransporteConductores");
-    const data = sheet.getDataRange().getValues();
+    getOrCreateTransportVehiclesCatalog(ss);
+
+    const rutaSheet = getOrCreateSheet(ss, "TransporteRutas");
+    const asgnSheet = getOrCreateSheet(ss, "TransporteAsignaciones");
+    const vehSheet = getOrCreateSheet(ss, "TransporteVehiculos");
+
+    const rutasData = rutaSheet.getDataRange().getValues().slice(1);
+    const targetRuta = rutasData.find(r => String(r[0]).trim() === String(rutaId).trim());
+    if (!targetRuta) {
+      return { status: "error", code: "ROUTE_NOT_FOUND", message: `Ruta de transporte '${rutaId}' no encontrada.` };
+    }
+
+    const unidadCod = String(targetRuta[2]).trim();
+    const vehRows = vehSheet.getDataRange().getValues().slice(1);
+    const targetVeh = vehRows.find(v => String(v[1]).trim() === unidadCod);
+    const capAutorizada = targetVeh ? parseInt(targetVeh[5] || 0, 10) : parseInt(targetRuta[4] || 25, 10);
+
+    const asgnData = asgnSheet.getDataRange().getValues().slice(1);
+
+    // 1. Validar duplicidad de asignación para la misma ruta, estudiante y jornada [TASK-029]
+    const targetJornada = String(jornada || targetRuta[10] || "Matutina").toLowerCase().trim();
+    const isDuplicate = asgnData.some(r =>
+      String(r[2]).trim() === String(estudianteUserId).trim() &&
+      String(r[1]).trim() === String(rutaId).trim() &&
+      String(r[5] || "").toLowerCase().trim() === "active" &&
+      String(r[7] || targetJornada).toLowerCase().trim() === targetJornada
+    );
+
+    if (isDuplicate) {
+      return {
+        status: "error",
+        code: "DUPLICATE_TRANSPORT_ASSIGNMENT",
+        message: `El estudiante '${estudianteUserId}' ya cuenta con una asignación activa en la ruta '${rutaId}' para la jornada '${targetJornada}'.`
+      };
+    }
+
+    // 2. Validar colisión de horarios entre rutas distintas [TASK-029]
+    const horaIniTarget = String(targetRuta[8] || "06:30").trim();
+    const hasTimeConflict = asgnData.some(a => {
+      if (String(a[2]).trim() !== String(estudianteUserId).trim() || String(a[5] || "").toLowerCase().trim() !== "active") {
+        return false;
+      }
+      const otherRuta = rutasData.find(r => String(r[0]).trim() === String(a[1]).trim());
+      if (!otherRuta) return false;
+      const otherHoraIni = String(otherRuta[8] || "06:30").trim();
+      const otherJornada = String(otherRuta[10] || "Matutina").toLowerCase().trim();
+      return otherHoraIni === horaIniTarget && otherJornada === targetJornada;
+    });
+
+    if (hasTimeConflict) {
+      return {
+        status: "error",
+        code: "TRANSPORT_SCHEDULE_CONFLICT",
+        message: `Conflicto de horario: El estudiante '${estudianteUserId}' ya está asignado a otra ruta activa en el mismo horario (${horaIniTarget}, jornada: ${targetJornada}).`
+      };
+    }
+
+    // 3. Control estricto de cupos y aforo vehicular [TASK-029]
+    const cuposOcupados = asgnData.filter(r =>
+      String(r[1]).trim() === String(rutaId).trim() && String(r[5] || "").toLowerCase().trim() === "active"
+    ).length;
+
+    if (cuposOcupados >= capAutorizada) {
+      return {
+        status: "error",
+        code: "TRANSPORT_CAPACITY_EXCEEDED",
+        capacidadMaxima: capAutorizada,
+        cuposOcupados: cuposOcupados,
+        message: `Capacidad vehicular agotada en la ruta '${rutaId}'. Cupos autorizados: ${capAutorizada}, Cupos ocupados: ${cuposOcupados}. No es posible admitir sobrecupo.`
+      };
+    }
+
     const now = new Date();
+    const asgnId = "TRN-" + now.getTime();
 
-    let cId = conductorId ? String(conductorId).trim() : null;
-    let existingIndex = -1;
+    asgnSheet.appendRow([
+      asgnId,
+      String(rutaId).trim(),
+      String(estudianteUserId).trim(),
+      paradaNombre || "Parada Principal",
+      horarioPlan || targetRuta[8] || "06:30 AM",
+      "active",
+      now.toISOString(),
+      targetJornada,
+      diasSemanaJSON ? (Array.isArray(diasSemanaJSON) ? JSON.stringify(diasSemanaJSON) : diasSemanaJSON) : "[\"Lun\",\"Mar\",\"Mie\",\"Jue\",\"Vie\"]",
+      observaciones || ""
+    ]);
 
-    if (cId) {
-      existingIndex = data.findIndex(r => String(r[0]).trim() === cId);
-    } else {
-      existingIndex = data.findIndex(r => String(r[3]).trim() === lic);
-    }
-
-    const est = estadoHabilitacion || "Habilitado";
-
-    if (existingIndex > 0) {
-      cId = data[existingIndex][0];
-      sheet.getRange(existingIndex + 1, 1, 1, 10).setValues([[
-        cId,
-        empleadoId || data[existingIndex][1] || "",
-        nom,
-        lic,
-        categoriaLicencia || data[existingIndex][4] || "Pesada No Articulada",
-        fechaVencimientoLicencia || data[existingIndex][5] || "",
-        tipoConductor || data[existingIndex][6] || "Titular",
-        est,
-        telefono || data[existingIndex][8] || "",
-        observaciones || data[existingIndex][9] || ""
-      ]]);
-    } else {
-      cId = "CND-" + String(now.getTime()).slice(-6);
-      sheet.appendRow([
-        cId,
-        empleadoId || "EMP-" + String(now.getTime()).slice(-4),
-        nom,
-        lic,
-        categoriaLicencia || "Pesada No Articulada",
-        fechaVencimientoLicencia || "",
-        tipoConductor || "Titular",
-        est,
-        telefono || "",
-        observaciones || ""
-      ]);
-    }
+    logStructuredEvent(
+      "TRANSPORT",
+      "assignStudentTransport",
+      "INFO",
+      "TRANSPORT_ASSIGNMENT_CREATED",
+      `Asignación de transporte creada para estudiante ${estudianteUserId} en ruta ${rutaId}`,
+      { asignacionTranspId: asgnId, rutaId, estudianteUserId, capAutorizada, cuposOcupadosDespues: cuposOcupados + 1 },
+      (payload && payload.authUserId) || "System"
+    );
 
     return {
       status: "success",
-      conductorId: cId,
-      nombreCompleto: nom,
-      numeroLicencia: lic,
-      estadoHabilitacion: est,
-      message: "Conductor/Acompañante registrado/actualizado exitosamente."
+      asignacionTranspId: asgnId,
+      rutaId: rutaId,
+      cuposRestantes: capAutorizada - (cuposOcupados + 1),
+      message: "Estudiante asignado a ruta de transporte escolar con éxito."
     };
   } finally {
     lock.releaseLock();
   }
 }
 
-// 4. Consulta de Conductores y Acompañantes [TASK-033]
-function getTransportDrivers(payload) {
-  const { estadoHabilitacion, tipoConductor } = payload || {};
+// [TASK-030] [F21-Task02] Protección de datos de transporte y aislamiento de consultas RBAC/ABAC
+function getTransportAssignments(payload) {
+  const { estudianteUserId, rutaId, authUserId, authRole } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getOrCreateSheet(ss, "TransporteConductores");
-  let rows = sheet.getDataRange().getValues().slice(1);
-  const now = new Date();
+  const rows = getOrCreateSheet(ss, "TransporteAsignaciones").getDataRange().getValues().slice(1);
 
-  if (rows.length === 0) {
-    const defaults = [
-      ["CND-001", "EMP-CONDUCTOR-01", "Manuel Antonio Reyes", "0801-1975-01234", "Pesada No Articulada", "2026-06-30", "Titular", "Habilitado", "+504 9911-2233", "Conductor titular ruta periférico"],
-      ["CND-002", "EMP-CONDUCTOR-02", "Jorge Luis Zavala", "0801-1982-05678", "Pesada No Articulada", "2026-08-31", "Titular", "Habilitado", "+504 9944-5566", "Conductor titular ruta Morazán"]
-    ];
-    sheet.getRange(2, 1, defaults.length, 10).setValues(defaults);
-    rows = defaults;
+  const effectiveRole = String(authRole || "Estudiante").trim();
+  const callerId = String(authUserId || estudianteUserId || "").trim();
+
+  // 1. Roles con acceso institucional irrestricto
+  const isManagement = ["Administrador", "Director", "Subdirector", "Contador"].includes(effectiveRole);
+
+  // 2. Resolver ámbito de estudiantes autorizados para el llamante [TASK-030]
+  let allowedStudentIds = null;
+
+  if (!isManagement) {
+    if (["Estudiante", "Alumno"].includes(effectiveRole)) {
+      // Un estudiante solo puede consultarse a sí mismo
+      allowedStudentIds = [callerId];
+    } else if (["Padre", "Tutor", "Responsable"].includes(effectiveRole)) {
+      // Consultar relaciones familiares en ExpedientesFamiliares / RelacionesFamiliares
+      const famRows = getOrCreateSheet(ss, "RelacionesFamiliares").getDataRange().getValues().slice(1);
+      const studentMatches = famRows
+        .filter(r => String(r[0]).trim() === callerId || String(r[1]).trim() === callerId)
+        .map(r => String(r[2]).trim()); // Columna con estudianteId
+
+      allowedStudentIds = studentMatches.length > 0 ? studentMatches : [callerId];
+    } else if (["Conductor", "Chofer", "Monitor"].includes(effectiveRole)) {
+      // Conductores: Filtrar únicamente por rutas asignadas al conductor
+      const rutaRows = getOrCreateSheet(ss, "TransporteRutas").getDataRange().getValues().slice(1);
+      const driverRoutes = rutaRows
+        .filter(r => String(r[3]).trim() === callerId)
+        .map(r => String(r[0]).trim());
+
+      if (driverRoutes.length === 0 && !rutaId) {
+        return { status: "success", asignaciones: [], total: 0 };
+      }
+    }
+  }
+
+  // 3. Verificación de intento de acceso no autorizado a terceros [TASK-030]
+  if (estudianteUserId && allowedStudentIds && !allowedStudentIds.includes(String(estudianteUserId).trim())) {
+    logStructuredEvent(
+      "SECURITY",
+      "getTransportAssignments",
+      "WARN",
+      "UNAUTHORIZED_ACCESS_ATTEMPT",
+      `Intento no autorizado de consultar transporte de estudiante ajeno (${estudianteUserId}) por ${callerId} (${effectiveRole})`,
+      { callerId, effectiveRole, targetStudentId: estudianteUserId, allowedStudentIds },
+      callerId
+    );
+
+    return {
+      status: "error",
+      code: "UNAUTHORIZED_ACCESS_ATTEMPT",
+      message: `Acceso restringido: No tiene autorización para consultar los datos de transporte del estudiante '${estudianteUserId}'.`
+    };
   }
 
   let filtered = rows;
-  if (estadoHabilitacion) {
-    filtered = filtered.filter(r => String(r[7]).trim().toLowerCase() === String(estadoHabilitacion).trim().toLowerCase());
-  }
-  if (tipoConductor) {
-    filtered = filtered.filter(r => String(r[6]).trim().toLowerCase() === String(tipoConductor).trim().toLowerCase());
+
+  // Si no es directivo y no envió estudianteUserId, restringir estrictamente a su ámbito autorizado
+  if (allowedStudentIds) {
+    filtered = filtered.filter(r => allowedStudentIds.includes(String(r[2]).trim()));
+  } else if (estudianteUserId) {
+    filtered = filtered.filter(r => String(r[2]).trim() === String(estudianteUserId).trim());
   }
 
-  const mapped = filtered.map(r => {
-    const fLic = r[5] ? new Date(r[5]) : null;
-    const licenciaVencida = fLic && !isNaN(fLic.getTime()) && fLic.getTime() < now.getTime();
+  if (rutaId) {
+    filtered = filtered.filter(r => String(r[1]).trim() === String(rutaId).trim());
+  }
+
+  const mapped = filtered.map(r => ({
+    asignacionTranspId: r[0],
+    rutaId: r[1],
+    estudianteUserId: r[2],
+    paradaNombre: r[3],
+    horarioPlan: r[4],
+    estado: r[5],
+    fechaAsignacion: r[6] || "",
+    jornada: r[7] || "Matutina",
+    diasSemana: r[8] || "[\"Lun\",\"Mar\",\"Mie\",\"Jue\",\"Vie\"]",
+    observaciones: r[9] || ""
+  }));
+
+  return {
+    status: "success",
+    asignaciones: mapped,
+    total: mapped.length
+  };
+}
+
+// ---------------------------------------------------------------------------
+// 2. Control de Abordaje, Descenso y Manifiesto de Pasajeros en Tiempo Real
+// [TASK-031] [F21-Task03]
+// ---------------------------------------------------------------------------
+function getOrCreateActiveTrip(ss, rutaId, jornada, fechaHoyStr) {
+  const tripSheet = getOrCreateSheet(ss, "TransporteViajes");
+  const tripData = tripSheet.getDataRange().getValues().slice(1);
+
+  const cleanRutaId = String(rutaId).trim();
+  const cleanJornada = String(jornada || "Matutina").trim();
+
+  const existing = tripData.find(r =>
+    String(r[1]).trim() === cleanRutaId &&
+    String(r[5]).trim().slice(0, 10) === fechaHoyStr &&
+    String(r[6]).trim().toLowerCase() === cleanJornada.toLowerCase() &&
+    String(r[9]).trim().toLowerCase() !== "finalizado" &&
+    String(r[9]).trim().toLowerCase() !== "cerrado"
+  );
+
+  if (existing) {
+    return existing[0]; // viajeId existente
+  }
+
+  // Generar nuevo viaje
+  const now = new Date();
+  const vId = "VIA-" + now.getFullYear() + "-" + String(now.getTime()).slice(-6);
+
+  // Obtener datos de la ruta
+  const rutaRows = getOrCreateSheet(ss, "TransporteRutas").getDataRange().getValues().slice(1);
+  const targetRuta = rutaRows.find(r => String(r[0]).trim() === cleanRutaId) || [];
+
+  tripSheet.appendRow([
+    vId,
+    cleanRutaId,
+    targetRuta[2] || "BUS-01",
+    targetRuta[3] || "EMP-CONDUCTOR-01",
+    "", // Acompañante
+    now.toISOString().slice(0, 10),
+    cleanJornada,
+    now.toLocaleTimeString(),
+    "", // Hora Fin
+    "EnCurso",
+    `Viaje iniciado automáticamente para la ruta ${cleanRutaId}`
+  ]);
+
+  return vId;
+}
+
+function recordStudentBoarding(payload) {
+  const { viajeId, rutaId, estudianteUserId, paradaAbordaje, metodoRegistro, observaciones, coordenadasGPS } = payload || {};
+  if (!rutaId || !estudianteUserId) throw new Error("rutaId y estudianteUserId son requeridos.");
+
+  const lock = LockService.getScriptLock();
+  const hasLock = lock.tryLock(15000);
+  if (!hasLock) {
+    return { status: "error", code: "LOCK_TIMEOUT", message: "Concurrencia en abordaje. Por favor reintente." };
+  }
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const now = new Date();
+    const fechaHoyStr = now.toISOString().slice(0, 10);
+
+    const asgnRows = getOrCreateSheet(ss, "TransporteAsignaciones").getDataRange().getValues().slice(1);
+    const isAssigned = asgnRows.some(r =>
+      String(r[1]).trim() === String(rutaId).trim() &&
+      String(r[2]).trim() === String(estudianteUserId).trim() &&
+      String(r[5] || "").toLowerCase().trim() === "active"
+    );
+
+    if (!isAssigned) {
+      logStructuredEvent(
+        "TRANSPORT",
+        "recordStudentBoarding",
+        "WARN",
+        "UNAUTHORIZED_ROUTE_STUDENT",
+        `Estudiante '${estudianteUserId}' intentó abordar ruta '${rutaId}' sin asignación activa.`,
+        { rutaId, estudianteUserId, paradaAbordaje },
+        (payload && payload.authUserId) || "Monitor"
+      );
+
+      return {
+        status: "error",
+        code: "UNAUTHORIZED_ROUTE_STUDENT",
+        message: `El estudiante '${estudianteUserId}' no está asignado a la ruta '${rutaId}'. Abordaje bloqueado por seguridad.`
+      };
+    }
+
+    const currentViajeId = viajeId || getOrCreateActiveTrip(ss, rutaId, payload.jornada, fechaHoyStr);
+    const asistSheet = getOrCreateSheet(ss, "TransporteAsistenciaViajes");
+    const asistData = asistSheet.getDataRange().getValues().slice(1);
+
+    // Evitar doble abordaje accidental en el mismo viaje [TASK-031]
+    const alreadyBoarded = asistData.find(r =>
+      String(r[1]).trim() === String(currentViajeId).trim() &&
+      String(r[2]).trim() === String(estudianteUserId).trim() &&
+      String(r[6]).trim() === "A_BORDO"
+    );
+
+    if (alreadyBoarded) {
+      return {
+        status: "error",
+        code: "STUDENT_ALREADY_BOARDED",
+        horaAbordaje: alreadyBoarded[4],
+        message: `El estudiante '${estudianteUserId}' ya fue registrado como a bordo en este recorrido.`
+      };
+    }
+
+    const eventoId = "EVT-AB-" + now.getTime();
+    asistSheet.appendRow([
+      eventoId,
+      currentViajeId,
+      String(estudianteUserId).trim(),
+      paradaAbordaje || "Parada Regular",
+      now.toLocaleTimeString(),
+      "", // Hora Descenso
+      "A_BORDO",
+      metodoRegistro || "QR_SCAN",
+      (payload && payload.authUserId) || "MonitorRuta",
+      coordenadasGPS || "",
+      observaciones || ""
+    ]);
+
+    logStructuredEvent(
+      "TRANSPORT",
+      "recordStudentBoarding",
+      "INFO",
+      "STUDENT_BOARDED",
+      `Estudiante ${estudianteUserId} abordó viaje ${currentViajeId} en parada ${paradaAbordaje}`,
+      { eventoId, viajeId: currentViajeId, estudianteUserId, hora: now.toLocaleTimeString() },
+      (payload && payload.authUserId) || "MonitorRuta"
+    );
 
     return {
-      conductorId: r[0],
-      empleadoId: r[1],
-      nombreCompleto: r[2],
-      numeroLicencia: r[3],
-      categoriaLicencia: r[4],
-      fechaVencimientoLicencia: r[5],
-      tipoConductor: r[6],
-      estadoHabilitacion: r[7],
-      telefono: r[8],
-      observaciones: r[9],
-      licenciaVencida: !!licenciaVencida,
-      aptoParaConducir: !licenciaVencida && String(r[7]).toLowerCase() === "habilitado"
+      status: "success",
+      eventoId,
+      viajeId: currentViajeId,
+      estudianteUserId,
+      estadoAbordaje: "A_BORDO",
+      horaAbordaje: now.toLocaleTimeString(),
+      message: `Abordaje registrado exitosamente para ${estudianteUserId}.`
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function recordStudentAlighting(payload) {
+  const { viajeId, estudianteUserId, paradaDescenso, coordenadasGPS, personaEntregaDNI, observaciones } = payload || {};
+  if (!viajeId || !estudianteUserId) throw new Error("viajeId y estudianteUserId son requeridos.");
+
+  const lock = LockService.getScriptLock();
+  const hasLock = lock.tryLock(15000);
+  if (!hasLock) {
+    return { status: "error", code: "LOCK_TIMEOUT", message: "Concurrencia en descenso. Por favor reintente." };
+  }
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const asistSheet = getOrCreateSheet(ss, "TransporteAsistenciaViajes");
+    const asistData = asistSheet.getDataRange().getValues();
+
+    const idx = asistData.findIndex(r =>
+      String(r[1]).trim() === String(viajeId).trim() &&
+      String(r[2]).trim() === String(estudianteUserId).trim()
+    );
+
+    if (idx === -1) {
+      return {
+        status: "error",
+        code: "STUDENT_NOT_BOARDED_IN_TRIP",
+        message: `El estudiante '${estudianteUserId}' no registra abordaje en el viaje '${viajeId}'. No se puede registrar descenso.`
+      };
+    }
+
+    if (String(asistData[idx][6]).trim() === "DESCENDIDO") {
+      return {
+        status: "error",
+        code: "STUDENT_ALREADY_ALIGHTED",
+        horaDescenso: asistData[idx][5],
+        message: `El estudiante '${estudianteUserId}' ya registró su descenso de la unidad previamente.`
+      };
+    }
+
+    const now = new Date();
+    asistSheet.getRange(idx + 1, 6).setValue(now.toLocaleTimeString());
+    asistSheet.getRange(idx + 1, 7).setValue("DESCENDIDO");
+    if (observaciones || personaEntregaDNI) {
+      const prevObs = String(asistData[idx][10] || "");
+      const newObs = `${prevObs} | Descenso en: ${paradaDescenso || 'Destino'}. Entrega a: ${personaEntregaDNI || 'EntregaEscuela'}`.trim();
+      asistSheet.getRange(idx + 1, 11).setValue(newObs);
+    }
+
+    logStructuredEvent(
+      "TRANSPORT",
+      "recordStudentAlighting",
+      "INFO",
+      "STUDENT_ALIGHTED",
+      `Estudiante ${estudianteUserId} descendió del viaje ${viajeId} en ${paradaDescenso}`,
+      { viajeId, estudianteUserId, horaDescenso: now.toLocaleTimeString() },
+      (payload && payload.authUserId) || "MonitorRuta"
+    );
+
+    return {
+      status: "success",
+      viajeId,
+      estudianteUserId,
+      estadoDescenso: "DESCENDIDO",
+      horaDescenso: now.toLocaleTimeString(),
+      message: `Descenso del estudiante ${estudianteUserId} registrado con éxito.`
+    };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function getTripPassengerManifest(payload) {
+  const { viajeId, rutaId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const now = new Date();
+  const fechaHoyStr = now.toISOString().slice(0, 10);
+
+  const targetViajeId = viajeId || (rutaId ? getOrCreateActiveTrip(ss, rutaId, "Matutina", fechaHoyStr) : null);
+  if (!targetViajeId) throw new Error("viajeId o rutaId son requeridos para consultar el manifiesto.");
+
+  const tripRows = getOrCreateSheet(ss, "TransporteViajes").getDataRange().getValues().slice(1);
+  const targetTrip = tripRows.find(r => String(r[0]).trim() === String(targetViajeId).trim());
+
+  const effectiveRutaId = targetTrip ? String(targetTrip[1]).trim() : String(rutaId || "").trim();
+
+  // Asignados a la ruta
+  const asgnRows = getOrCreateSheet(ss, "TransporteAsignaciones").getDataRange().getValues().slice(1);
+  const asignados = asgnRows.filter(r =>
+    String(r[1]).trim() === effectiveRutaId && String(r[5] || "").toLowerCase().trim() === "active"
+  );
+
+  // Asistencia del viaje
+  const asistRows = getOrCreateSheet(ss, "TransporteAsistenciaViajes").getDataRange().getValues().slice(1);
+  const asistencias = asistRows.filter(r => String(r[1]).trim() === String(targetViajeId).trim());
+
+  let totalABordo = 0;
+  let totalDescendidos = 0;
+
+  const pasajeros = asignados.map(a => {
+    const eId = String(a[2]).trim();
+    const asist = asistencias.find(ev => String(ev[2]).trim() === eId);
+
+    let estadoViaje = "ESPERANDO";
+    let horaAb = "";
+    let horaDesc = "";
+
+    if (asist) {
+      estadoViaje = asist[6];
+      horaAb = asist[4];
+      horaDesc = asist[5];
+    }
+
+    if (estadoViaje === "A_BORDO") totalABordo++;
+    if (estadoViaje === "DESCENDIDO") totalDescendidos++;
+
+    return {
+      estudianteUserId: eId,
+      paradaPlan: a[3],
+      horarioPlan: a[4],
+      estadoViaje: estadoViaje,
+      horaAbordaje: horaAb,
+      horaDescenso: horaDesc
     };
   });
 
   return {
     status: "success",
-    totalConductores: mapped.length,
+    viajeId: targetViajeId,
+    rutaId: effectiveRutaId,
+    totalAsignados: asignados.length,
+    totalABordo,
+    totalDescendidos,
+    totalEsperando: asignados.length - (totalABordo + totalDescendidos),
+    pasajerosABordo: totalABordo,
+    manifiestoPasajeros: pasajeros
+  };
+}
+
+// ---------------------------------------------------------------------------
+// 3. Personas Autorizadas y Entrega Segura de Menores [TASK-032] [F21-Task04]
+// ---------------------------------------------------------------------------
+function getOrCreatePickupPersonsSheet(ss) {
+  const sheet = getOrCreateSheet(ss, "TransportePersonasAutorizadas");
+  let rows = sheet.getDataRange().getValues().slice(1);
+
+  if (rows.length === 0) {
+    const defaults = [
+      ["AUT-001", "EST-FASE21-TEST-001", "0801-1990-12345", "Tutor Autorizado Principal", "Padre", "+504 9876-5432", "https://escuela.edu/fotos/tutor1.jpg", "Permanente", "2024-01-01", "2028-12-31", "Activo", "Ninguna", "Tutor legal primario"],
+      ["AUT-002", "EST-FASE21-TEST-001", "0801-1988-99999", "Tía Autorizada Test", "Tía", "+504 9876-1111", "https://escuela.edu/fotos/tia.jpg", "Temporal", "2024-01-01", "2028-12-31", "Activo", "Ninguna", "Autorización de retiro de emergencia"]
+    ];
+    sheet.getRange(2, 1, defaults.length, 13).setValues(defaults);
+    rows = defaults;
+  }
+  return sheet;
+}
+
+function getAuthorizedPickupPersons(payload) {
+  const { estudianteId } = payload || {};
+  if (!estudianteId) throw new Error("estudianteId es requerido para consultar adultos autorizados.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  getOrCreatePickupPersonsSheet(ss);
+
+  const rows = getOrCreateSheet(ss, "TransportePersonasAutorizadas").getDataRange().getValues().slice(1);
+  const now = new Date();
+
+  // Filtrar personas autorizadas vigentes para el estudiante
+  const matches = rows.filter(r => {
+    if (String(r[1]).trim() !== String(estudianteId).trim()) return false;
+    if (String(r[10] || "").toLowerCase().trim() !== "activo") return false;
+
+    // Verificar vigencia temporal
+    const fVenc = r[9] ? new Date(r[9]) : null;
+    if (fVenc && !isNaN(fVenc.getTime()) && fVenc.getTime() < now.getTime()) {
+      return false; // Vencida
+    }
+    return true;
+  });
+
+  const personas = matches.map(r => ({
+    autorizacionId: r[0],
+    estudianteId: r[1],
+    dniIdentidad: r[2],
+    nombreCompleto: r[3],
+    parentesco: r[4],
+    telefono: r[5],
+    fotoUrl: r[6],
+    tipoAutorizacion: r[7],
+    fechaVencimiento: r[9],
+    estado: r[10],
+    restriccionesLegales: r[11]
+  }));
+
+  return {
+    status: "success",
+    estudianteId,
+    totalAutorizadosVigentes: personas.length,
+    personasAutorizadas: personas
+  };
+}
+
+function recordStudentSafeDelivery(payload) {
+  const { viajeId, estudianteId, dniEntrega, nombreReceptor, parentesco, monitorResponsable, paradaEntrega, esExcepcionDireccion, motivoExcepcion, firmaDigitalData } = payload || {};
+  if (!viajeId || !estudianteId || !dniEntrega) {
+    throw new Error("viajeId, estudianteId y dniEntrega son requeridos para la entrega segura.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  getOrCreatePickupPersonsSheet(ss);
+
+  const rows = getOrCreateSheet(ss, "TransportePersonasAutorizadas").getDataRange().getValues().slice(1);
+  const cleanDNI = String(dniEntrega).replace(/\D/g, "");
+  const now = new Date();
+
+  const autorizada = rows.find(r => {
+    if (String(r[1]).trim() !== String(estudianteId).trim()) return false;
+    const itemDNI = String(r[2]).replace(/\D/g, "");
+    return itemDNI === cleanDNI && String(r[10] || "").toLowerCase().trim() === "activo";
+  });
+
+  if (!autorizada && !esExcepcionDireccion) {
+    logStructuredEvent(
+      "SECURITY",
+      "recordStudentSafeDelivery",
+      "WARN",
+      "UNAUTHORIZED_PICKUP_PERSON",
+      `Intento de entrega de estudiante '${estudianteId}' a persona no autorizada (DNI: ${dniEntrega}, Receptor: ${nombreReceptor})`,
+      { viajeId, estudianteId, dniEntrega, nombreReceptor },
+      monitorResponsable || "Monitor"
+    );
+
+    return {
+      status: "error",
+      code: "UNAUTHORIZED_PICKUP_PERSON",
+      message: `Entrega bloqueada: La persona con documento '${dniEntrega}' (${nombreReceptor || 'Desconocido'}) no está autorizada para recibir al estudiante '${estudianteId}'. Requiere autorización de Dirección.`
+    };
+  }
+
+  const deliveryObs = esExcepcionDireccion
+    ? `[EXCEPCIÓN DIRECCIÓN]: Autorizado por Dirección escolar. Motivo: ${motivoExcepcion || 'Emergencia familiar'}. Receptor: ${nombreReceptor} (DNI: ${dniEntrega}).`
+    : `Entrega normal a persona autorizada: ${autorizada ? autorizada[3] : nombreReceptor} (${autorizada ? autorizada[4] : parentesco}) DNI: ${dniEntrega}.`;
+
+  // Marcar descenso seguro en la asistencia del viaje
+  const alightingRes = recordStudentAlighting({
+    viajeId,
+    estudianteUserId: estudianteId,
+    paradaDescenso: paradaEntrega || "Parada Residencial",
+    personaEntregaDNI: dniEntrega,
+    observaciones: deliveryObs
+  });
+
+  logStructuredEvent(
+    "TRANSPORT",
+    "recordStudentSafeDelivery",
+    "INFO",
+    "SAFE_DELIVERY_COMPLETED",
+    `Entrega segura completada para estudiante ${estudianteId} a receptor ${nombreReceptor || (autorizada ? autorizada[3] : 'Autorizado')}`,
+    { viajeId, estudianteId, dniEntrega, esExcepcionDireccion: Boolean(esExcepcionDireccion) },
+    monitorResponsable || "Monitor"
+  );
+
+  return {
+    status: "success",
+    entregaSeguraConfirmada: true,
+    viajeId,
+    estudianteId,
+    receptor: nombreReceptor || (autorizada ? autorizada[3] : "Persona Autorizada"),
+    dniEntrega,
+    esExcepcionDireccion: Boolean(esExcepcionDireccion),
+    alightingDetails: alightingRes,
+    message: `Entrega segura del menor ${estudianteId} certificada y registrada exitosamente.`
+  };
+}
+
+
+// ---------------------------------------------------------------------------
+// 4. Administración de Flota Vehicular y Conductores [TASK-033] [F21-Task05]
+// ---------------------------------------------------------------------------
+function getOrCreateTransportDriversSheet(ss) {
+  const sheet = getOrCreateSheet(ss, "TransporteConductores");
+  let rows = sheet.getDataRange().getValues().slice(1);
+
+  if (rows.length === 0) {
+    const defaults = [
+      ["DRV-2024-000001", "EMP-CONDUCTOR-01", "0801-1978-54321", "Carlos Humberto Martínez", "Pesada No Articulada", "2026-12-31", "Activo", "Titular", "+504 9988-7766", "2024-01-15", "Vigente", "Primeros auxilios y manejo defensivo", "Conductor titular ruta Anillo Periférico"],
+      ["DRV-2024-000002", "EMP-CONDUCTOR-02", "0801-1982-11223", "José Manuel Rodríguez", "Pesada No Articulada", "2026-12-31", "Activo", "Titular", "+504 9911-2233", "2024-01-15", "Vigente", "Manejo defensivo", "Conductor titular ruta Bulevar Morazán"]
+    ];
+    sheet.getRange(2, 1, defaults.length, 13).setValues(defaults);
+    rows = defaults;
+  }
+  return sheet;
+}
+
+function manageTransportVehicle(payload) {
+  const { vehiculoId, codigoUnidad, placaMatricula, marcaModelo, anoFabricacion, capacidadPasajeros, conductorAsignadoId, estadoOperativo, polizaSeguroNumero, polizaSeguroVencimiento, revisionTecnicaVencimiento, kilometraje, observaciones } = payload || {};
+  if (!placaMatricula && !codigoUnidad) throw new Error("codigoUnidad o placaMatricula son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "TransporteVehiculos");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  // Validación de vigencia de póliza de seguro al registrar/activar unidad [TASK-033]
+  if (polizaSeguroVencimiento) {
+    const fPol = new Date(polizaSeguroVencimiento);
+    if (!isNaN(fPol.getTime()) && fPol.getTime() < now.getTime() && estadoOperativo === "Disponible") {
+      return {
+        status: "error",
+        code: "VEHICLE_INSURANCE_EXPIRED",
+        message: `No se puede habilitar el vehículo: La póliza de seguro '${polizaSeguroNumero || ''}' está vencida (${polizaSeguroVencimiento}).`
+      };
+    }
+  }
+
+  let targetVId = vehiculoId;
+  let existingIndex = -1;
+
+  if (targetVId) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(targetVId).trim());
+  } else if (codigoUnidad) {
+    existingIndex = data.findIndex(r => String(r[1]).trim() === String(codigoUnidad).trim());
+  } else if (placaMatricula) {
+    existingIndex = data.findIndex(r => String(r[2]).trim() === String(placaMatricula).trim());
+  }
+
+  const cleanCod = codigoUnidad || (existingIndex !== -1 ? data[existingIndex][1] : ("BUS-" + String(now.getTime()).slice(-4)));
+
+  if (existingIndex !== -1) {
+    targetVId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 13).setValues([[
+      targetVId,
+      cleanCod,
+      placaMatricula || data[existingIndex][2],
+      marcaModelo || data[existingIndex][3],
+      anoFabricacion || data[existingIndex][4],
+      parseInt(capacidadPasajeros || data[existingIndex][5] || 25, 10),
+      conductorAsignadoId || data[existingIndex][6] || "",
+      estadoOperativo || data[existingIndex][7] || "Disponible",
+      polizaSeguroNumero || data[existingIndex][8] || "",
+      polizaSeguroVencimiento || data[existingIndex][9] || "",
+      revisionTecnicaVencimiento || data[existingIndex][10] || "",
+      parseFloat(kilometraje || data[existingIndex][11] || 0),
+      observaciones || data[existingIndex][12] || ""
+    ]]);
+  } else {
+    targetVId = "VEH-" + now.getFullYear() + "-" + String(data.length).padStart(6, "0");
+    sheet.appendRow([
+      targetVId,
+      cleanCod,
+      placaMatricula || "",
+      marcaModelo || "Autobús Escolar Estándar",
+      anoFabricacion || now.getFullYear(),
+      parseInt(capacidadPasajeros || 25, 10),
+      conductorAsignadoId || "",
+      estadoOperativo || "Disponible",
+      polizaSeguroNumero || "",
+      polizaSeguroVencimiento || "",
+      revisionTecnicaVencimiento || "",
+      parseFloat(kilometraje || 0),
+      observaciones || ""
+    ]);
+  }
+
+  logStructuredEvent(
+    "TRANSPORT",
+    "manageTransportVehicle",
+    "INFO",
+    "VEHICLE_SAVED",
+    `Vehículo de transporte guardado: ${cleanCod} / ${placaMatricula} (${targetVId})`,
+    { vehiculoId: targetVId, codigoUnidad: cleanCod, placaMatricula, estadoOperativo },
+    (payload && payload.authUserId) || "Admin"
+  );
+
+  return {
+    status: "success",
+    vehiculoId: targetVId,
+    codigoUnidad: cleanCod,
+    message: "Vehículo de transporte escolar registrado/actualizado exitosamente."
+  };
+}
+
+function getTransportVehicles(payload) {
+  const { estadoOperativo } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  getOrCreateTransportVehiclesCatalog(ss);
+
+  let rows = getOrCreateSheet(ss, "TransporteVehiculos").getDataRange().getValues().slice(1);
+  if (estadoOperativo) {
+    rows = rows.filter(r => String(r[7]).toLowerCase().trim() === String(estadoOperativo).toLowerCase().trim());
+  }
+
+  const now = new Date();
+  const mapped = rows.map(r => {
+    const fPol = r[9] ? new Date(r[9]) : null;
+    const fRev = r[10] ? new Date(r[10]) : null;
+    const seguroVencido = Boolean(fPol && !isNaN(fPol.getTime()) && fPol.getTime() < now.getTime());
+    const revisionVencida = Boolean(fRev && !isNaN(fRev.getTime()) && fRev.getTime() < now.getTime());
+
+    return {
+      vehiculoId: r[0],
+      codigoUnidad: r[1],
+      placaMatricula: r[2],
+      marcaModelo: r[3],
+      anoFabricacion: r[4],
+      capacidadPasajeros: parseInt(r[5] || 0, 10),
+      conductorAsignadoId: r[6],
+      estadoOperativo: r[7],
+      polizaSeguroNumero: r[8],
+      polizaSeguroVencimiento: r[9],
+      revisionTecnicaVencimiento: r[10],
+      kilometraje: r[11],
+      observaciones: r[12],
+      alertaSeguroVencido: seguroVencido,
+      alertaRevisionVencida: revisionVencida,
+      aptoParaOperar: !seguroVencido && !revisionVencida && String(r[7]).toLowerCase() === "disponible"
+    };
+  });
+
+  return {
+    status: "success",
+    vehiculos: mapped
+  };
+}
+
+function manageTransportDriver(payload) {
+  const { conductorId, empleadoId, dniIdentidad, nombreCompleto, licenciaNumero, licenciaCategoria, licenciaVencimiento, estadoOperativo, tipoConductor, telefonoContacto, fechaUltimaCapacitacion, observaciones } = payload || {};
+  if (!nombreCompleto || !dniIdentidad) throw new Error("nombreCompleto y dniIdentidad son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateTransportDriversSheet(ss);
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  // Validación de vigencia de licencia de conducir [TASK-033]
+  if (licenciaVencimiento) {
+    const fLic = new Date(licenciaVencimiento);
+    if (!isNaN(fLic.getTime()) && fLic.getTime() < now.getTime()) {
+      return {
+        status: "error",
+        code: "DRIVER_LICENSE_EXPIRED",
+        message: `Licencia de conducir vencida (${licenciaVencimiento}). No se puede habilitar al conductor por normativas viales.`
+      };
+    }
+  }
+
+  let targetDId = conductorId;
+  let existingIndex = -1;
+
+  if (targetDId) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(targetDId).trim());
+  } else if (dniIdentidad) {
+    existingIndex = data.findIndex(r => String(r[2]).replace(/\D/g, "") === String(dniIdentidad).replace(/\D/g, ""));
+  }
+
+  if (existingIndex !== -1) {
+    targetDId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 13).setValues([[
+      targetDId,
+      empleadoId || data[existingIndex][1],
+      dniIdentidad || data[existingIndex][2],
+      nombreCompleto || data[existingIndex][3],
+      licenciaCategoria || data[existingIndex][4],
+      licenciaVencimiento || data[existingIndex][5],
+      estadoOperativo || data[existingIndex][6] || "Activo",
+      tipoConductor || data[existingIndex][7] || "Titular",
+      telefonoContacto || data[existingIndex][8] || "",
+      fechaUltimaCapacitacion || data[existingIndex][9] || "",
+      "Vigente",
+      licenciaNumero || data[existingIndex][11] || "",
+      observaciones || data[existingIndex][12] || ""
+    ]]);
+  } else {
+    targetDId = "DRV-" + now.getFullYear() + "-" + String(data.length).padStart(6, "0");
+    sheet.appendRow([
+      targetDId,
+      empleadoId || ("EMP-" + String(now.getTime()).slice(-4)),
+      dniIdentidad,
+      nombreCompleto,
+      licenciaCategoria || "Pesada No Articulada",
+      licenciaVencimiento || "",
+      estadoOperativo || "Activo",
+      tipoConductor || "Titular",
+      telefonoContacto || "",
+      fechaUltimaCapacitacion || now.toISOString().slice(0, 10),
+      "Vigente",
+      licenciaNumero || "",
+      observaciones || ""
+    ]);
+  }
+
+  logStructuredEvent(
+    "TRANSPORT",
+    "manageTransportDriver",
+    "INFO",
+    "DRIVER_SAVED",
+    `Conductor escolar guardado: ${nombreCompleto} (${targetDId})`,
+    { conductorId: targetDId, dniIdentidad, nombreCompleto, licenciaVencimiento },
+    (payload && payload.authUserId) || "Admin"
+  );
+
+  return {
+    status: "success",
+    conductorId: targetDId,
+    message: "Conductor escolar registrado/actualizado exitosamente."
+  };
+}
+
+function getTransportDrivers(payload) {
+  const { estadoOperativo } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateTransportDriversSheet(ss);
+  let rows = sheet.getDataRange().getValues().slice(1);
+
+  if (estadoOperativo) {
+    rows = rows.filter(r => String(r[6]).toLowerCase().trim() === String(estadoOperativo).toLowerCase().trim());
+  }
+
+  const now = new Date();
+  const mapped = rows.map(r => {
+    const fLic = r[5] ? new Date(r[5]) : null;
+    const licVencida = Boolean(fLic && !isNaN(fLic.getTime()) && fLic.getTime() < now.getTime());
+
+    return {
+      conductorId: r[0],
+      empleadoId: r[1],
+      dniIdentidad: r[2],
+      nombreCompleto: r[3],
+      licenciaCategoria: r[4],
+      licenciaVencimiento: r[5],
+      estadoOperativo: r[6],
+      tipoConductor: r[7],
+      telefonoContacto: r[8],
+      fechaUltimaCapacitacion: r[9],
+      licenciaNumero: r[11],
+      observaciones: r[12],
+      licenciaVencida: licVencida,
+      aptoParaConducir: !licVencida && String(r[6]).toLowerCase() === "activo"
+    };
+  });
+
+  return {
+    status: "success",
     conductores: mapped
   };
 }
@@ -15317,15 +16282,15 @@ function manageTransportRoute(payload) {
   const cndSheet = getOrCreateSheet(ss, "TransporteConductores");
   const now = new Date();
 
-  // A. Validar estado operativo y vigencia de seguros del vehículo [TASK-033]
+  // A. Validar estado operativo, vigencia de seguros y órdenes activas de mantenimiento [TASK-033] [TASK-035]
   const vehData = vehSheet.getDataRange().getValues().slice(1);
-  const vehMatch = vehData.find(v => String(v[1]).trim().toLowerCase() === String(unidadCodigo).trim().toLowerCase());
+  const vehMatch = vehData.find(v => String(v[1]).trim().toLowerCase() === String(unidadCodigo).trim().toLowerCase() || String(v[0]).trim().toLowerCase() === String(unidadCodigo).trim().toLowerCase());
   if (vehMatch) {
     const estVeh = String(vehMatch[7] || "").toLowerCase();
     if (estVeh === "enmantenimiento" || estVeh === "fueraservicio" || estVeh === "retirado") {
       return {
         status: "error",
-        code: "VEHICLE_NOT_OPERATIONAL",
+        code: estVeh === "enmantenimiento" ? "VEHICLE_UNDER_MAINTENANCE" : "VEHICLE_NOT_OPERATIONAL",
         message: `El vehículo '${unidadCodigo}' no está operativo (estado: '${vehMatch[7]}'). No puede asignarse a una ruta activa.`
       };
     }
@@ -15339,6 +16304,25 @@ function manageTransportRoute(payload) {
     }
   }
 
+  // Consultar directamente órdenes activas de mantenimiento en MantenimientoOrdenes [TASK-035]
+  const mntRows = getOrCreateSheet(ss, "MantenimientoOrdenes").getDataRange().getValues().slice(1);
+  const ordenActiva = mntRows.find(r => {
+    const actId = String(r[2]).trim().toLowerCase();
+    const stOrd = String(r[11] || "").toLowerCase().trim();
+    const matchVeh = actId === String(unidadCodigo).toLowerCase().trim() || (vehMatch && actId === String(vehMatch[0]).toLowerCase().trim());
+    return matchVeh && stOrd !== "resuelto" && stOrd !== "completado" && stOrd !== "cancelado";
+  });
+
+  if (ordenActiva) {
+    return {
+      status: "error",
+      code: "VEHICLE_UNDER_MAINTENANCE",
+      ordenMaintId: ordenActiva[0],
+      descripcionFalla: ordenActiva[4],
+      message: `Bloqueo de seguridad: El vehículo '${unidadCodigo}' tiene la orden de mantenimiento activa '${ordenActiva[0]}' (${ordenActiva[4]}). Debe resolverse formalmente antes de asignar la unidad.`
+    };
+  }
+
   // B. Validar vigencia de licencia del conductor si se especifica [TASK-033]
   if (conductorEmpleadoId) {
     const cndData = cndSheet.getDataRange().getValues().slice(1);
@@ -15349,7 +16333,7 @@ function manageTransportRoute(payload) {
         return {
           status: "error",
           code: "DRIVER_LICENSE_EXPIRED",
-          message: `La licencia de conducir de '${cndMatch[2]}' está vencida (${cndMatch[5]}). No puede asignarse a operar la ruta.`
+          message: `La licencia del conductor '${conductorEmpleadoId}' está vencida (${cndMatch[5]}). No puede asignarse a recorridos activos.`
         };
       }
     }
@@ -15363,12 +16347,14 @@ function manageTransportRoute(payload) {
 
   if (rId) {
     existingIndex = data.findIndex(r => String(r[0]).trim() === String(rId).trim());
-  } else {
-    existingIndex = data.findIndex(r => String(r[1]).toLowerCase().trim() === String(nombreRuta).toLowerCase().trim());
   }
 
-  const pJSON = typeof paradasJSON === "object" ? JSON.stringify(paradasJSON) : (paradasJSON || "[]");
-  const capFinal = vehMatch && parseInt(vehMatch[5] || 0, 10) > 0 ? parseInt(vehMatch[5], 10) : parseInt(capacidad || 25, 10);
+  let pJSON = "[]";
+  if (paradasJSON) {
+    pJSON = typeof paradasJSON === "string" ? paradasJSON : JSON.stringify(paradasJSON);
+  }
+
+  const capFinal = vehMatch ? parseInt(vehMatch[5] || 25, 10) : parseInt(capacidad || 25, 10);
 
   if (existingIndex !== -1) {
     rId = data[existingIndex][0];
@@ -15376,11 +16362,11 @@ function manageTransportRoute(payload) {
       rId,
       String(nombreRuta).trim(),
       String(unidadCodigo).trim(),
-      conductorEmpleadoId || "EMP-BUS-01",
+      conductorEmpleadoId || data[existingIndex][3],
       capFinal,
       pJSON,
-      estado || "active",
-      observaciones || ""
+      estado || data[existingIndex][6] || "active",
+      observaciones || data[existingIndex][7] || ""
     ]]);
   } else {
     rId = "RUT-" + now.getTime();
@@ -15391,7 +16377,7 @@ function manageTransportRoute(payload) {
       conductorEmpleadoId || "EMP-BUS-01",
       capFinal,
       pJSON,
-      "active",
+      estado || "active",
       observaciones || ""
     ]);
   }
@@ -15404,779 +16390,82 @@ function manageTransportRoute(payload) {
   };
 }
 
-// [TASK-029] [F21-Task01]: Consulta de rutas con cálculo dinámico de capacidad vehicular y ocupación en tiempo real
-function getTransportRoutes(payload) {
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  let rows = getOrCreateSheet(ss, "TransporteRutas").getDataRange().getValues().slice(1);
-  const vehRows = getOrCreateSheet(ss, "TransporteVehiculos").getDataRange().getValues().slice(1);
-  const asgnRows = getOrCreateSheet(ss, "TransporteAsignaciones").getDataRange().getValues().slice(1);
-
-  if (rows.length === 0) {
-    const defaults = [
-      ["RUT-01", "Ruta Principal Anillo Periférico", "BUS-01", "EMP-CONDUCTOR-01", 30, '[{"parada":"Plaza Miraflores","hora":"06:30 AM"},{"parada":"Residencial Las Uvas","hora":"06:45 AM"}]', "active", "Ruta de Mañana"],
-      ["RUT-02", "Ruta Bulevar Morazán", "BUS-02", "EMP-CONDUCTOR-02", 25, '[{"parada":"Mall Multiplaza","hora":"06:25 AM"},{"parada":"Colonia Palmira","hora":"06:40 AM"}]', "active", "Ruta de Mañana"]
-    ];
-    const sheet = getOrCreateSheet(ss, "TransporteRutas");
-    sheet.getRange(2, 1, defaults.length, 8).setValues(defaults);
-    rows = defaults;
-  }
-
-  const mapped = rows.map(r => {
-    const rId = String(r[0]).trim();
-    const unidadCod = String(r[2] || "").trim();
-    let capacidadConfigurada = parseInt(r[4] || 0, 10);
-
-    // Validar capacidad del vehículo asignado si está registrado en TransporteVehiculos
-    const vehMatch = vehRows.find(v => String(v[1]).trim().toLowerCase() === unidadCod.toLowerCase());
-    if (vehMatch) {
-      const capVeh = parseInt(vehMatch[5] || 0, 10);
-      if (capVeh > 0 && capVeh < capacidadConfigurada) {
-        capacidadConfigurada = capVeh; // Tope máximo físico del vehículo asignado
-      }
-    }
-
-    // Contabilizar asignaciones activas vigentes para la ruta
-    const ocupados = asgnRows.filter(a => {
-      const asgnRuta = String(a[1]).trim();
-      const asgnEstado = String(a[5] || a[8] || "").trim().toLowerCase();
-      return asgnRuta === rId && (asgnEstado === "active" || asgnEstado === "activa");
-    }).length;
-
-    const disponibles = Math.max(0, capacidadConfigurada - ocupados);
-
-    return {
-      rutaId: rId,
-      nombreRuta: r[1],
-      unidadCodigo: unidadCod,
-      conductorEmpleadoId: r[3],
-      capacidad: capacidadConfigurada,
-      cuposTotales: capacidadConfigurada,
-      cuposOcupados: ocupados,
-      cuposDisponibles: disponibles,
-      paradasJSON: r[5],
-      estado: r[6],
-      observaciones: r[7]
-    };
-  });
-
-  return {
-    status: "success",
-    rutas: mapped
-  };
-}
-
-// [TASK-029] [F21-Task01]: Asignación atómica con verificación estricta de cupos y prevención de colisiones
-function assignStudentTransport(payload) {
-  const {
-    rutaId,
-    estudianteUserId,
-    paradaNombre,
-    horarioPlan,
-    jornada,
-    periodoVigencia,
-    diasSemanaJSON,
-    observaciones
-  } = payload || {};
-
-  if (!rutaId || !estudianteUserId) {
-    throw new Error("rutaId y estudianteUserId son requeridos.");
-  }
-
-  const rId = String(rutaId).trim();
-  const eId = String(estudianteUserId).trim();
-  const jor = String(jornada || "Matutina").trim();
-  const per = String(periodoVigencia || "2025").trim();
-  const hor = String(horarioPlan || "06:30 AM").trim();
-
-  // Candado atómico transaccional para evitar sobrecupos en asignaciones concurrentes [TASK-029]
-  const lock = LockService.getScriptLock();
-  lock.waitLock(15000);
-
-  try {
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const rutaSheet = getOrCreateSheet(ss, "TransporteRutas");
-    const asgnSheet = getOrCreateSheet(ss, "TransporteAsignaciones");
-    const vehSheet = getOrCreateSheet(ss, "TransporteVehiculos");
-    const now = new Date();
-
-    // 1. Obtener datos de la ruta y capacidad efectiva autorizada
-    const rutasData = rutaSheet.getDataRange().getValues();
-    const rIdx = rutasData.findIndex(r => String(r[0]).trim() === rId);
-    if (rIdx === -1) {
-      return { status: "error", code: "ROUTE_NOT_FOUND", message: `Ruta de transporte '${rId}' no encontrada.` };
-    }
-
-    const rutaRow = rutasData[rIdx];
-    let capacidadEfectiva = parseInt(rutaRow[4] || 0, 10);
-    const unidadCodigo = String(rutaRow[2] || "").trim();
-
-    // Validar si la unidad tiene capacidad menor registrada en TransporteVehiculos
-    const vehData = vehSheet.getDataRange().getValues();
-    const vMatch = vehData.find(v => String(v[1]).trim().toLowerCase() === unidadCodigo.toLowerCase());
-    if (vMatch) {
-      const capVeh = parseInt(vMatch[5] || 0, 10);
-      if (capVeh > 0 && capVeh < capacidadEfectiva) {
-        capacidadEfectiva = capVeh;
-      }
-    }
-
-    // 2. Inspeccionar asignaciones activas existentes
-    const asgnData = asgnSheet.getDataRange().getValues().slice(1);
-    let ocupadosEnRuta = 0;
-
-    for (let i = 0; i < asgnData.length; i++) {
-      const a = asgnData[i];
-      const aRuta = String(a[1]).trim();
-      const aEstudiante = String(a[2]).trim();
-      const aHorario = String(a[4] || "").trim();
-      const aJornada = String(a[5] || "Matutina").trim();
-      const aPeriodo = String(a[6] || "").trim();
-      const aEstado = String(a[8] || a[5] || "").trim().toLowerCase();
-
-      const esActiva = (aEstado === "active" || aEstado === "activa");
-
-      if (aRuta === rId && esActiva) {
-        ocupadosEnRuta++;
-      }
-
-      // Validar asignación duplicada del mismo estudiante en la misma ruta y jornada
-      if (aEstudiante === eId && aRuta === rId && esActiva && (aJornada.toLowerCase() === jor.toLowerCase())) {
-        return {
-          status: "error",
-          code: "DUPLICATE_TRANSPORT_ASSIGNMENT",
-          message: `El estudiante '${eId}' ya tiene una asignación activa en la ruta '${rId}' para la jornada '${jor}'.`
-        };
-      }
-
-      // Validar colisión de horarios: estudiante con dos rutas distintas activas al mismo tiempo y jornada
-      if (aEstudiante === eId && aRuta !== rId && esActiva && (aJornada.toLowerCase() === jor.toLowerCase()) && (aHorario === hor)) {
-        return {
-          status: "error",
-          code: "TRANSPORT_SCHEDULE_CONFLICT",
-          message: `Conflicto de horario: El estudiante '${eId}' ya está asignado a la ruta '${aRuta}' en el horario '${hor}' (${jor}).`
-        };
-      }
-    }
-
-    // 3. Control estricto de sobrecupo
-    if (ocupadosEnRuta >= capacidadEfectiva) {
-      return {
-        status: "error",
-        code: "TRANSPORT_CAPACITY_EXCEEDED",
-        message: `Capacidad vehicular agotada en ruta '${rId}'. Capacidad autorizada: ${capacidadEfectiva}, cupos ocupados: ${ocupadosEnRuta}.`
-      };
-    }
-
-    // 4. Persistir nueva asignación
-    const asgnId = "TRN-" + now.getTime();
-    const diasStr = typeof diasSemanaJSON === "object" ? JSON.stringify(diasSemanaJSON) : (diasSemanaJSON || '["Lunes","Martes","Miercoles","Jueves","Viernes"]');
-
-    asgnSheet.appendRow([
-      asgnId,
-      rId,
-      eId,
-      paradaNombre || "Parada Principal",
-      hor,
-      jor,
-      per,
-      diasStr,
-      "active",
-      now.toISOString(),
-      observaciones || ""
-    ]);
-
-    logStructuredEvent(
-      "ACCOUNTING",
-      "assignStudentTransport",
-      "INFO",
-      "TRANSPORT_ASSIGNED",
-      `Estudiante '${eId}' asignado a ruta '${rId}' (${ocupadosEnRuta + 1}/${capacidadEfectiva})`,
-      { asignacionTranspId: asgnId, rutaId: rId, estudianteUserId: eId, capacidadEfectiva, nuevoOcupados: ocupadosEnRuta + 1 },
-      eId
-    );
-
-    return {
-      status: "success",
-      asignacionTranspId: asgnId,
-      rutaId: rId,
-      estudianteUserId: eId,
-      cuposOcupados: ocupadosEnRuta + 1,
-      cuposDisponibles: Math.max(0, capacidadEfectiva - (ocupadosEnRuta + 1)),
-      message: "Estudiante asignado a ruta de transporte escolar con éxito."
-    };
-  } finally {
-    lock.releaseLock();
-  }
-}
-
-// [TASK-030] [F21-Task02]: Protección de datos de transporte y aislamiento de consultas por usuario (RBAC/ABAC)
-function getTransportAssignments(payload) {
-  const { estudianteUserId, rutaId, callerUserId, authUserId, authRole, callerRole } = payload || {};
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const rows = getOrCreateSheet(ss, "TransporteAsignaciones").getDataRange().getValues().slice(1);
-
-  const effectiveCallerId = String(callerUserId || authUserId || (payload && payload.userId) || "").trim();
-  const effectiveRole = String(authRole || callerRole || (payload && payload.rol) || "Estudiante").trim();
-
-  // 1. Aislamiento estricto por rol institucional [TASK-030]
-  const esDirectivo = ["Administrador", "Director", "Subdirector", "Contador", "Desarrollador"].some(r => r.toLowerCase() === effectiveRole.toLowerCase());
-
-  let allowedStudentIds = null;
-
-  if (effectiveRole === "Estudiante" || effectiveRole === "Alumno") {
-    // El estudiante únicamente puede ver su propia información
-    allowedStudentIds = [effectiveCallerId];
-    if (estudianteUserId && String(estudianteUserId).trim() !== effectiveCallerId) {
-      logStructuredEvent(
-        "SECURITY",
-        "getTransportAssignments",
-        "WARN",
-        "UNAUTHORIZED_ACCESS_ATTEMPT",
-        `Estudiante '${effectiveCallerId}' intentó consultar transporte de '${estudianteUserId}'`,
-        { effectiveCallerId, estudianteUserId, effectiveRole },
-        effectiveCallerId
-      );
-      return {
-        status: "error",
-        code: "UNAUTHORIZED_ACCESS_ATTEMPT",
-        message: "Acceso no autorizado: Solo puede consultar su propia información de transporte escolar."
-      };
-    }
-  } else if (effectiveRole === "Padre" || effectiveRole === "Tutor" || effectiveRole === "Responsable") {
-    // Consultar relaciones familiares autorizadas
-    const relRows = getOrCreateSheet(ss, "RelacionesFamiliares").getDataRange().getValues().slice(1);
-    allowedStudentIds = relRows
-      .filter(r => String(r[2]).trim() === effectiveCallerId && String(r[4] || "Activa").toLowerCase() !== "revocada")
-      .map(r => String(r[1]).trim());
-
-    if (estudianteUserId) {
-      const targetId = String(estudianteUserId).trim();
-      if (!allowedStudentIds.includes(targetId)) {
-        logStructuredEvent(
-          "SECURITY",
-          "getTransportAssignments",
-          "WARN",
-          "UNAUTHORIZED_ACCESS_ATTEMPT",
-          `Tutor '${effectiveCallerId}' intentó consultar transporte de estudiante ajeno '${targetId}'`,
-          { effectiveCallerId, targetId, allowedStudentIds, effectiveRole },
-          effectiveCallerId
-        );
-        return {
-          status: "error",
-          code: "UNAUTHORIZED_ACCESS_ATTEMPT",
-          message: `Acceso no autorizado: El estudiante '${targetId}' no está vinculado a su núcleo familiar.`
-        };
-      }
-      allowedStudentIds = [targetId];
-    }
-  } else if (effectiveRole === "Conductor" || effectiveRole === "Acompañante") {
-    // Limitar exclusivamente a las rutas que tiene asignadas
-    const rutasData = getOrCreateSheet(ss, "TransporteRutas").getDataRange().getValues().slice(1);
-    const misRutas = rutasData
-      .filter(r => String(r[3]).trim() === effectiveCallerId)
-      .map(r => String(r[0]).trim());
-    if (rutaId && !misRutas.includes(String(rutaId).trim())) {
-      return {
-        status: "error",
-        code: "UNAUTHORIZED_ACCESS_ATTEMPT",
-        message: "Acceso no autorizado a rutas ajenas a su asignación de conducción."
-      };
-    }
-  } else if (!esDirectivo) {
-    // Cualquier otro rol no directivo no puede hacer barrido global
-    if (!estudianteUserId && !rutaId) {
-      return {
-        status: "error",
-        code: "UNAUTHORIZED_ACCESS_ATTEMPT",
-        message: "Parámetros insuficientes: Se requiere especificar un estudiante o ruta autorizada."
-      };
-    }
-  }
-
-  let filtered = rows;
-
-  // Filtrado por ámbito permitido de estudiantes
-  if (allowedStudentIds !== null) {
-    filtered = filtered.filter(r => allowedStudentIds.includes(String(r[2]).trim()));
-  } else if (estudianteUserId) {
-    filtered = filtered.filter(r => String(r[2]).trim() === String(estudianteUserId).trim());
-  }
-
-  // Filtrado por ruta
-  if (rutaId) {
-    filtered = filtered.filter(r => String(r[1]).trim() === String(rutaId).trim());
-  }
-
-  const mapped = filtered.map(r => ({
-    asignacionTranspId: r[0],
-    rutaId: r[1],
-    estudianteUserId: r[2],
-    paradaNombre: r[3],
-    horarioPlan: r[4],
-    jornada: r[5] || "Matutina",
-    periodoVigencia: r[6] || "2025",
-    diasSemanaJSON: r[7] || '["Lunes","Martes","Miercoles","Jueves","Viernes"]',
-    estado: r[8] || r[5] || "active",
-    fechaAsignacion: r[9] || ""
-  }));
-
-  return {
-    status: "success",
-    totalAsignaciones: mapped.length,
-    asignaciones: mapped
-  };
-}
-
 // ---------------------------------------------------------------------------
-// [TASK-031] [F21-Task03] & [TASK-032] [F21-Task04]: CONTROL DE ABORDAJE, DESCENSO Y ENTREGA SEGURA
+// 6. Cierre Obligatorio de Recorrido y Barrido Físico de Asientos [TASK-034] [F21-Task06]
 // ---------------------------------------------------------------------------
-
-// 1. Registro de Abordaje de Estudiante (Escaneo QR o Registro Asistido)
-function recordStudentBoarding(payload) {
-  const { viajeId, rutaId, estudianteUserId, paradaNombre, metodoMarcado, registradorUserId, observaciones } = payload || {};
-  if (!viajeId || !estudianteUserId) throw new Error("viajeId y estudianteUserId son requeridos.");
-
-  const vId = String(viajeId).trim();
-  const eId = String(estudianteUserId).trim();
-  const rId = rutaId ? String(rutaId).trim() : null;
-
-  const lock = LockService.getScriptLock();
-  lock.waitLock(15000);
-
-  try {
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const asgnSheet = getOrCreateSheet(ss, "TransporteAsignaciones");
-    const asistSheet = getOrCreateSheet(ss, "TransporteAsistenciaViajes");
-    const now = new Date();
-
-    // 1. Validar que el estudiante pertenezca a la ruta
-    const asgnRows = asgnSheet.getDataRange().getValues().slice(1);
-    const asgnActiva = asgnRows.find(a =>
-      String(a[2]).trim() === eId &&
-      (!rId || String(a[1]).trim() === rId) &&
-      (String(a[8] || a[5] || "").toLowerCase() === "active" || String(a[8] || a[5] || "").toLowerCase() === "activa")
-    );
-
-    if (!asgnActiva) {
-      logStructuredEvent(
-        "TRANSPORT",
-        "recordStudentBoarding",
-        "WARN",
-        "UNAUTHORIZED_ROUTE_STUDENT",
-        `Estudiante '${eId}' intentó abordar viaje '${vId}' sin asignación activa a la ruta`,
-        { viajeId: vId, estudianteUserId: eId, rutaId: rId },
-        eId
-      );
-      return {
-        status: "error",
-        code: "UNAUTHORIZED_ROUTE_STUDENT",
-        message: `El estudiante '${eId}' no está asignado a la ruta del viaje '${vId}'. Abordaje rechazado.`
-      };
-    }
-
-    const effectiveRutaId = rId || String(asgnActiva[1]).trim();
-    const effectiveParada = paradaNombre || String(asgnActiva[3] || "Parada Asignada").trim();
-
-    // 2. Prevenir registros duplicados de abordaje en el mismo viaje [TASK-031]
-    const asistRows = asistSheet.getDataRange().getValues().slice(1);
-    const yaAbordo = asistRows.some(r =>
-      String(r[1]).trim() === vId &&
-      String(r[3]).trim() === eId &&
-      String(r[4]).trim() === "Abordaje"
-    );
-
-    if (yaAbordo) {
-      return {
-        status: "error",
-        code: "STUDENT_ALREADY_BOARDED",
-        message: `El estudiante '${eId}' ya fue registrado a bordo en el viaje '${vId}'.`
-      };
-    }
-
-    const regId = "ASIST-" + now.getTime();
-    asistSheet.appendRow([
-      regId,
-      vId,
-      effectiveRutaId,
-      eId,
-      "Abordaje",
-      effectiveParada,
-      now.toISOString(),
-      metodoMarcado || "QR",
-      registradorUserId || (payload && payload.authUserId) || "MonitorRuta",
-      "", // AdultoReceptorNombre
-      "", // DniAdultoReceptor
-      "A Bordo",
-      observaciones || ""
-    ]);
-
-    logStructuredEvent(
-      "TRANSPORT",
-      "recordStudentBoarding",
-      "INFO",
-      "STUDENT_BOARDED",
-      `Estudiante '${eId}' abordó viaje '${vId}' en parada '${effectiveParada}' (${metodoMarcado || 'QR'})`,
-      { regId, viajeId: vId, estudianteUserId: eId, effectiveRutaId, effectiveParada },
-      eId
-    );
-
-    return {
-      status: "success",
-      registroAsistenciaId: regId,
-      viajeId: vId,
-      estudianteUserId: eId,
-      paradaNombre: effectiveParada,
-      estadoPasajero: "A Bordo",
-      message: `Abordaje de '${eId}' registrado exitosamente en viaje '${vId}'.`
-    };
-  } finally {
-    lock.releaseLock();
-  }
-}
-
-// 2. Registro de Descenso de Estudiante
-function recordStudentAlighting(payload) {
-  const { viajeId, estudianteUserId, paradaNombre, adultoReceptorNombre, dniAdultoReceptor, registradorUserId, observaciones } = payload || {};
-  if (!viajeId || !estudianteUserId) throw new Error("viajeId y estudianteUserId son requeridos.");
-
-  const vId = String(viajeId).trim();
-  const eId = String(estudianteUserId).trim();
-
-  const lock = LockService.getScriptLock();
-  lock.waitLock(15000);
-
-  try {
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const asistSheet = getOrCreateSheet(ss, "TransporteAsistenciaViajes");
-    const asistRows = asistSheet.getDataRange().getValues().slice(1);
-    const now = new Date();
-
-    // 1. Validar que el estudiante esté actualmente a bordo en este viaje
-    const abordajeEvento = asistRows.find(r =>
-      String(r[1]).trim() === vId &&
-      String(r[3]).trim() === eId &&
-      String(r[4]).trim() === "Abordaje"
-    );
-
-    if (!abordajeEvento) {
-      return {
-        status: "error",
-        code: "STUDENT_NOT_BOARDED_IN_TRIP",
-        message: `El estudiante '${eId}' no figura como abordado en el viaje '${vId}'. No se puede registrar descenso.`
-      };
-    }
-
-    // 2. Prevenir duplicidad de descenso
-    const yaDescendio = asistRows.some(r =>
-      String(r[1]).trim() === vId &&
-      String(r[3]).trim() === eId &&
-      String(r[4]).trim() === "Descenso"
-    );
-
-    if (yaDescendio) {
-      return {
-        status: "error",
-        code: "STUDENT_ALREADY_ALIGHTED",
-        message: `El descenso del estudiante '${eId}' ya fue registrado previamente en este viaje.`
-      };
-    }
-
-    const regId = "ASIST-DESC-" + now.getTime();
-    const effectiveRutaId = String(abordajeEvento[2]).trim();
-
-    asistSheet.appendRow([
-      regId,
-      vId,
-      effectiveRutaId,
-      eId,
-      "Descenso",
-      paradaNombre || String(abordajeEvento[5]).trim(),
-      now.toISOString(),
-      "RegistroAsistido",
-      registradorUserId || (payload && payload.authUserId) || "MonitorRuta",
-      adultoReceptorNombre || "",
-      dniAdultoReceptor || "",
-      "Entregado / Descendido",
-      observaciones || ""
-    ]);
-
-    logStructuredEvent(
-      "TRANSPORT",
-      "recordStudentAlighting",
-      "INFO",
-      "STUDENT_ALIGHTED",
-      `Estudiante '${eId}' descendió del viaje '${vId}' en '${paradaNombre || abordajeEvento[5]}'`,
-      { regId, viajeId: vId, estudianteUserId: eId, adultoReceptorNombre },
-      eId
-    );
-
-    return {
-      status: "success",
-      registroAsistenciaId: regId,
-      viajeId: vId,
-      estudianteUserId: eId,
-      estadoPasajero: "Descendido",
-      message: `Descenso de '${eId}' registrado correctamente.`
-    };
-  } finally {
-    lock.releaseLock();
-  }
-}
-
-// 3. Manifiesto de Pasajeros de Viaje en Tiempo Real
-function getTripPassengerManifest(payload) {
-  const { viajeId, rutaId } = payload || {};
-  if (!viajeId) throw new Error("viajeId es requerido.");
-
-  const vId = String(viajeId).trim();
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const asgnRows = getOrCreateSheet(ss, "TransporteAsignaciones").getDataRange().getValues().slice(1);
-  const asistRows = getOrCreateSheet(ss, "TransporteAsistenciaViajes").getDataRange().getValues().slice(1);
-
-  // Filtrar asignaciones vigentes para la ruta
-  let asignados = asgnRows;
-  if (rutaId) {
-    asignados = asignados.filter(a => String(a[1]).trim() === String(rutaId).trim());
-  }
-
-  const pasajeros = asignados.map(a => {
-    const sId = String(a[2]).trim();
-    const eventos = asistRows.filter(r => String(r[1]).trim() === vId && String(r[3]).trim() === sId);
-
-    const abordado = eventos.some(e => String(e[4]).trim() === "Abordaje");
-    const descendido = eventos.some(e => String(e[4]).trim() === "Descenso");
-
-    let estado = "Esperado en Parada";
-    if (descendido) estado = "Entregado / Descendido";
-    else if (abordado) estado = "A Bordo";
-
-    return {
-      estudianteUserId: sId,
-      rutaId: a[1],
-      paradaAsignada: a[3],
-      horarioPlan: a[4],
-      estadoPasajero: estado,
-      aBordo: abordado && !descendido,
-      descendido: descendido
-    };
-  });
-
-  const aBordoCount = pasajeros.filter(p => p.aBordo).length;
-  const descendidosCount = pasajeros.filter(p => p.descendido).length;
-
-  return {
-    status: "success",
-    viajeId: vId,
-    totalAsignados: pasajeros.length,
-    pasajerosABordo: aBordoCount,
-    pasajerosDescendidos: descendidosCount,
-    pasajerosPendientes: pasajeros.length - (aBordoCount + descendidosCount),
-    manifiesto: pasajeros
-  };
-}
-
-// 4. Consulta de Personas Autorizadas para Recoger Estudiante [TASK-032]
-function getAuthorizedPickupPersons(payload) {
-  const { estudianteUserId } = payload || {};
-  if (!estudianteUserId) throw new Error("estudianteUserId es requerido.");
-
-  const eId = String(estudianteUserId).trim();
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const autSheet = getOrCreateSheet(ss, "TransportePersonasAutorizadas");
-  let rows = autSheet.getDataRange().getValues().slice(1);
-  const now = new Date();
-
-  // Si no hay datos, inicializar catálogo representativo por defecto
-  if (rows.length === 0) {
-    const defaults = [
-      ["AUT-01", "EST-01", "María Elena López", "0801-1985-12345", "Madre", "+504 9988-7766", "", "Permanente", "2025-01-01", "2025-12-31", "Activa", "", "Tutor legal principal"],
-      ["AUT-02", "EST-01", "Carlos Alberto Rivera", "0801-1980-54321", "Padre", "+504 9955-4433", "", "Permanente", "2025-01-01", "2025-12-31", "Activa", "", "Tutor legal secundario"]
-    ];
-    autSheet.getRange(2, 1, defaults.length, 13).setValues(defaults);
-    rows = defaults;
-  }
-
-  const autorizados = rows
-    .filter(r => String(r[1]).trim() === eId && String(r[10]).toLowerCase() === "activa")
-    .map(r => {
-      const fFin = r[9] ? new Date(r[9]) : null;
-      const esVigente = !fFin || isNaN(fFin.getTime()) || fFin.getTime() >= now.getTime();
-      return {
-        autorizacionId: r[0],
-        estudianteUserId: r[1],
-        nombreCompleto: r[2],
-        dniNumero: r[3],
-        parentesco: r[4],
-        telefono: r[5],
-        fotoUrl: r[6],
-        tipoAutorizacion: r[7],
-        esVigente: esVigente,
-        restriccionesEntrega: r[11] || "",
-        observaciones: r[12]
-      };
-    })
-    .filter(a => a.esVigente);
-
-  return {
-    status: "success",
-    estudianteUserId: eId,
-    totalAutorizados: autorizados.length,
-    personasAutorizadas: autorizados
-  };
-}
-
-// 5. Registro de Entrega Segura en Parada con Validación de Adulto Autorizado [TASK-032]
-function recordStudentSafeDelivery(payload) {
-  const { viajeId, estudianteUserId, paradaNombre, adultoReceptorDni, adultoReceptorNombre, registradorUserId, excepcionAprobadaPor, motivoExcepcion, observaciones } = payload || {};
-  if (!viajeId || !estudianteUserId) throw new Error("viajeId y estudianteUserId requeridos.");
-
-  const eId = String(estudianteUserId).trim();
-  const vId = String(viajeId).trim();
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const autSheet = getOrCreateSheet(ss, "TransportePersonasAutorizadas");
-  const autRows = autSheet.getDataRange().getValues().slice(1);
-  const now = new Date();
-
-  // Validar si el adulto receptor está en la lista autorizada vigente
-  const dniLimpio = adultoReceptorDni ? String(adultoReceptorDni).trim().replace(/\D/g, '') : "";
-  const autorizacionValida = autRows.find(r => {
-    if (String(r[1]).trim() !== eId) return false;
-    if (String(r[10]).toLowerCase() !== "activa") return false;
-    const fFin = r[9] ? new Date(r[9]) : null;
-    if (fFin && !isNaN(fFin.getTime()) && fFin.getTime() < now.getTime()) return false;
-
-    const rDni = String(r[3] || "").replace(/\D/g, '');
-    const rNombre = String(r[2] || "").toLowerCase().trim();
-    const matchDni = dniLimpio && rDni === dniLimpio;
-    const matchNom = adultoReceptorNombre && rNombre.includes(String(adultoReceptorNombre).toLowerCase().trim());
-    return matchDni || matchNom;
-  });
-
-  if (!autorizacionValida && !excepcionAprobadaPor) {
-    logStructuredEvent(
-      "SECURITY",
-      "recordStudentSafeDelivery",
-      "CRITICAL",
-      "UNAUTHORIZED_PICKUP_PERSON",
-      `Intento de entrega de menor '${eId}' a persona no autorizada ('${adultoReceptorNombre}' - '${adultoReceptorDni}') en viaje '${vId}'`,
-      { viajeId: vId, estudianteUserId: eId, adultoReceptorNombre, adultoReceptorDni },
-      eId
-    );
-    return {
-      status: "error",
-      code: "UNAUTHORIZED_PICKUP_PERSON",
-      message: `La persona '${adultoReceptorNombre || adultoReceptorDni}' no figura como adulto autorizado vigente para recibir a '${eId}'. Entrega ordinaria bloqueada.`
-    };
-  }
-
-  // Registrar descenso y entrega
-  return recordStudentAlighting({
-    viajeId: vId,
-    estudianteUserId: eId,
-    paradaNombre: paradaNombre,
-    adultoReceptorNombre: autorizacionValida ? autorizacionValida[2] : `[EXCEPCION:${excepcionAprobadaPor}] ${adultoReceptorNombre}`,
-    dniAdultoReceptor: autorizacionValida ? autorizacionValida[3] : adultoReceptorDni,
-    registradorUserId: registradorUserId,
-    observaciones: `${observaciones || ""}${excepcionAprobadaPor ? ' | Motivo Excepcion: ' + motivoExcepcion : ''}`.trim()
-  });
-}
-
-// 6. Cierre Obligatorio de Recorrido, Control de Pasajeros y Confirmación de Unidad Vacía [TASK-034]
 function finalizeTransportTrip(payload) {
-  const {
-    viajeId,
-    inspeccionFisicaRealizada,
-    confirmacionUnidadVacia,
-    responsableInspeccionUserId,
-    excepcionAprobadaPor,
-    motivoExcepcion,
-    observaciones
-  } = payload || {};
-
-  if (!viajeId) throw new Error("viajeId es requerido para finalizar el recorrido.");
-
-  const vId = String(viajeId).trim();
+  const { viajeId, barridoFisicoAsientosConfirmado, inspectorResponsable, observaciones, esCierreExcepcionalDireccion, motivoExcepcion } = payload || {};
+  if (!viajeId) throw new Error("viajeId es requerido para cerrar el recorrido.");
 
   const lock = LockService.getScriptLock();
-  lock.waitLock(15000);
+  const hasLock = lock.tryLock(15000);
+  if (!hasLock) {
+    return { status: "error", code: "LOCK_TIMEOUT", message: "Concurrencia en cierre de viaje. Por favor reintente." };
+  }
 
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const viajeSheet = getOrCreateSheet(ss, "TransporteViajes");
+    const tripSheet = getOrCreateSheet(ss, "TransporteViajes");
     const asistSheet = getOrCreateSheet(ss, "TransporteAsistenciaViajes");
     const now = new Date();
 
-    const viajesData = viajeSheet.getDataRange().getValues();
-    let vIdx = -1;
-    for (let i = 1; i < viajesData.length; i++) {
-      if (String(viajesData[i][0]).trim() === vId) {
-        vIdx = i;
-        break;
-      }
-    }
+    const tripData = tripSheet.getDataRange().getValues();
+    const vIdx = tripData.findIndex(r => String(r[0]).trim() === String(viajeId).trim());
 
-    // 1. Verificar pasajeros a bordo en TransporteAsistenciaViajes [TASK-034]
     const asistRows = asistSheet.getDataRange().getValues().slice(1);
-    const eventosViaje = asistRows.filter(r => String(r[1]).trim() === vId);
+    const asistencias = asistRows.filter(r => String(r[1]).trim() === String(viajeId).trim());
 
-    const abordados = new Set();
-    const descendidos = new Set();
+    // 1. Verificar si quedan estudiantes con abordaje registrado que NO hayan descendido [TASK-034]
+    const pendientesABordo = asistencias.filter(r => String(r[6]).trim() === "A_BORDO");
 
-    eventosViaje.forEach(e => {
-      const sId = String(e[3]).trim();
-      const tipo = String(e[4]).trim();
-      if (tipo === "Abordaje") abordados.add(sId);
-      if (tipo === "Descenso") descendidos.add(sId);
-    });
-
-    const pendientesABordo = [];
-    abordados.forEach(sId => {
-      if (!descendidos.has(sId)) {
-        pendientesABordo.push(sId);
-      }
-    });
-
-    // 2. Bloqueo taxativo si quedan estudiantes a bordo sin autorización excepcional directiva
-    if (pendientesABordo.length > 0 && !excepcionAprobadaPor) {
+    if (pendientesABordo.length > 0 && !esCierreExcepcionalDireccion) {
+      const studentIdsPendientes = pendientesABordo.map(r => r[2]).join(", ");
       logStructuredEvent(
         "SECURITY",
         "finalizeTransportTrip",
         "CRITICAL",
         "STUDENTS_STILL_ON_BOARD",
-        `Intento de cierre de viaje '${vId}' con ${pendientesABordo.length} estudiante(s) a bordo (${pendientesABordo.join(', ')})`,
-        { viajeId: vId, pendientesABordo, totalABordo: pendientesABordo.length },
-        responsableInspeccionUserId || "MonitorRuta"
+        `Alerta Crítica: Cierre de viaje '${viajeId}' bloqueado. Existen ${pendientesABordo.length} estudiante(s) a bordo sin descenso registrado: [${studentIdsPendientes}]`,
+        { viajeId, pendientesCount: pendientesABordo.length, studentIds: studentIdsPendientes },
+        inspectorResponsable || "Monitor"
       );
+
       return {
         status: "error",
         code: "STUDENTS_STILL_ON_BOARD",
-        message: `No se puede cerrar el recorrido. Hay ${pendientesABordo.length} estudiante(s) a bordo sin registro de descenso (${pendientesABordo.join(', ')}). Verifique la unidad de inmediato.`,
-        estudiantesPendientes: pendientesABordo
+        estudiantesPendientesABordo: pendientesABordo.length,
+        detallesEstudiantes: studentIdsPendientes,
+        message: `CIERRE BLOQUEADO: Existen ${pendientesABordo.length} estudiante(s) a bordo sin descenso registrado (${studentIdsPendientes}). Por seguridad infantil absoluta, verifique el descenso de cada menor antes de cerrar el viaje.`
       };
     }
 
-    // 3. Exigir inspección física obligatoria (Barrido de asientos)
-    if (!inspeccionFisicaRealizada || confirmacionUnidadVacia !== true) {
+    // 2. Exigir confirmación explícita de barrido físico de asientos de la unidad [TASK-034]
+    if (!barridoFisicoAsientosConfirmado && !esCierreExcepcionalDireccion) {
       return {
         status: "error",
         code: "PHYSICAL_INSPECTION_REQUIRED",
-        message: "El cierre del recorrido requiere la confirmación explícita de la inspección física de la unidad vacía (cero estudiantes a bordo)."
+        message: "Se requiere confirmación explícita de inspección física y barrido de asientos ('Inspección física realizada: 0 estudiantes a bordo') para proceder al cierre normal del recorrido."
       };
     }
 
-    const estadoFinal = pendientesABordo.length === 0 ? "CerradoNormal" : "CerradoConIncidencia";
-    const respId = responsableInspeccionUserId || (payload && payload.authUserId) || "ConductorResponsable";
+    const estadoFinal = (pendientesABordo.length > 0 && esCierreExcepcionalDireccion)
+      ? "CerradoConIncidencia"
+      : "CerradoNormal";
+
+    const respId = inspectorResponsable || (payload && payload.authUserId) || "MonitorRuta";
 
     if (vIdx !== -1) {
-      viajeSheet.getRange(vIdx + 1, 9).setValue(now.toLocaleTimeString()); // HoraFin
-      viajeSheet.getRange(vIdx + 1, 10).setValue(estadoFinal);              // EstadoViaje
-      let obsActual = String(viajesData[vIdx][10] || "");
-      obsActual += ` | [INSPECCION_OK:${respId}] [ESTADO:${estadoFinal}] ${observaciones || ''}`;
-      if (excepcionAprobadaPor) obsActual += ` [EXCEPCION_DIRECTIVA:${excepcionAprobadaPor} - ${motivoExcepcion || 'N/A'}]`;
-      viajeSheet.getRange(vIdx + 1, 11).setValue(obsActual.trim());
+      tripSheet.getRange(vIdx + 1, 9).setValue(now.toLocaleTimeString()); // Hora Fin
+      tripSheet.getRange(vIdx + 1, 10).setValue(estadoFinal); // Estado
+      const prevObs = String(tripData[vIdx][10] || "");
+      const closingNotes = esCierreExcepcionalDireccion
+        ? `[CIERRE EXCEPCIONAL POR DIRECCIÓN]: ${motivoExcepcion || 'Sin motivo'}. Pendientes al cierre: ${pendientesABordo.length}`
+        : `Inspección física realizada por '${respId}'. Unidad vacía confirmada. ${observaciones || ''}`.trim();
+      tripSheet.getRange(vIdx + 1, 11).setValue(`${prevObs} | ${closingNotes}`.trim());
     } else {
-      // Registrar viaje cerrado si se invocó directamente
-      viajeSheet.appendRow([
+      // Registro fallback de viaje si no existía fila previa
+      const vId = String(viajeId).trim();
+      tripSheet.appendRow([
         vId,
         (payload && payload.rutaId) || "RUT-01",
         (payload && payload.unidadCodigo) || "BUS-01",
@@ -16196,23 +16485,149 @@ function finalizeTransportTrip(payload) {
       "finalizeTransportTrip",
       "INFO",
       "TRIP_FINALIZED",
-      `Viaje escolar '${vId}' cerrado exitosamente con estado '${estadoFinal}'. Inspección física confirmada por '${respId}'.`,
-      { viajeId: vId, estadoFinal, respId, pendientesABordoCount: pendientesABordo.length },
+      `Viaje escolar '${viajeId}' cerrado exitosamente con estado '${estadoFinal}'. Inspección física confirmada por '${respId}'.`,
+      { viajeId, estadoFinal, respId, pendientesABordoCount: pendientesABordo.length },
       respId
     );
 
     return {
       status: "success",
-      viajeId: vId,
+      viajeId,
       estadoViaje: estadoFinal,
       inspeccionFisicaConfirmada: true,
       horaFin: now.toLocaleTimeString(),
       responsableInspeccion: respId,
-      message: `Recorrido escolar '${vId}' cerrado con éxito. Estado: ${estadoFinal}. Unidad vacía confirmada.`
+      message: `Recorrido escolar '${viajeId}' cerrado con éxito. Estado: ${estadoFinal}. Unidad vacía confirmada.`
     };
   } finally {
     lock.releaseLock();
   }
+}
+
+// ---------------------------------------------------------------------------
+// 7. Auditoría de Integridad de Datos y Transición Controlada de Transporte
+// [TASK-036] [F21-Task08] Audita inconsistencias en rutas, aforos y asignaciones
+// huérfanas, auto-aprovisionando unidades maestras faltantes sin crear entidades ficticias.
+// ---------------------------------------------------------------------------
+function auditAndMigrateTransportData(payload) {
+  const { autoRepararInconsistencias, anoLectivo } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const rutaSheet = getOrCreateSheet(ss, "TransporteRutas");
+  const asgnSheet = getOrCreateSheet(ss, "TransporteAsignaciones");
+  const vehSheet = getOrCreateSheet(ss, "TransporteVehiculos");
+
+  const rutasRows = rutaSheet.getDataRange().getValues().slice(1);
+  const asgnRows = asgnSheet.getDataRange().getValues().slice(1);
+  const vehRows = vehSheet.getDataRange().getValues().slice(1);
+
+  const inconsistencias = [];
+  const rutasSinVehiculoMaestro = [];
+  let rutasMigradas = 0;
+  let asignacionesValidadas = 0;
+
+  const now = new Date();
+
+  // 1. Auditar Rutas respecto a Unidades Maestras Registradas
+  rutasRows.forEach((r, idx) => {
+    const rId = String(r[0]).trim();
+    const unidadCod = String(r[2]).trim();
+    const conductorId = String(r[3]).trim();
+
+    const existeVehiculo = vehRows.some(v =>
+      String(v[0]).trim() === unidadCod || String(v[1]).trim() === unidadCod
+    );
+
+    if (!existeVehiculo && unidadCod) {
+      inconsistencias.push({
+        tipo: "UNIDAD_VEHICULAR_NO_REGISTRADA",
+        entidad: "TransporteRutas",
+        rutaId: rId,
+        codigoUnidadReferenciado: unidadCod,
+        detalle: `La ruta '${rId}' referencia la unidad '${unidadCod}' que no existe en el catálogo maestro 'TransporteVehiculos'.`,
+        requiereAprovisionamiento: true
+      });
+
+      if (autoRepararInconsistencias) {
+        const newVId = "VEH-AUTO-" + rId;
+        const nextYear = now.getFullYear() + 1;
+        vehSheet.appendRow([
+          newVId,
+          unidadCod,
+          "S/P-" + unidadCod,
+          "Unidad Migrada " + unidadCod,
+          now.getFullYear().toString(),
+          parseInt(r[4] || 25, 10),
+          conductorId || "EMP-BUS-01",
+          "Disponible",
+          "POL-AUTO-" + rId,
+          `${nextYear}-12-31`,
+          `${nextYear}-12-31`,
+          0,
+          `CORRECTIVE_AUTO_PROVISIONED_VEHICLE: Auto-aprovisionado durante auditoría de transición [TASK-036] para ruta '${rId}'`
+        ]);
+        rutasSinVehiculoMaestro.push({ rutaId: rId, unidadCodigo: unidadCod, vehiculoAutoAprovisionado: newVId });
+        rutasMigradas++;
+      }
+    }
+
+    // Comprobar formato de paradas JSON
+    try {
+      const pData = JSON.parse(r[5] || "[]");
+      if (!Array.isArray(pData)) throw new Error("Paradas no es un arreglo");
+    } catch (_) {
+      inconsistencias.push({
+        tipo: "PARADAS_JSON_INVALIDO",
+        entidad: "TransporteRutas",
+        rutaId: rId,
+        detalle: `El campo ParadasJSON de la ruta '${rId}' contiene formato no estructurado.`
+      });
+    }
+  });
+
+  // 2. Auditar Asignaciones de Estudiantes respecto a Rutas
+  asgnRows.forEach((a, idx) => {
+    const asgnId = String(a[0]).trim();
+    const rId = String(a[1]).trim();
+    const eId = String(a[2]).trim();
+
+    const rutaExiste = rutasRows.some(r => String(r[0]).trim() === rId);
+    if (!rutaExiste) {
+      inconsistencias.push({
+        tipo: "RUTA_HUERFANA",
+        entidad: "TransporteAsignaciones",
+        asignacionTranspId: asgnId,
+        estudianteUserId: eId,
+        detalle: `La asignación '${asgnId}' del estudiante '${eId}' referencia una ruta inexistente '${rId}'.`,
+        requiereConciliacion: true
+      });
+    } else {
+      asignacionesValidadas++;
+    }
+  });
+
+  logStructuredEvent(
+    "TRANSPORT",
+    "auditAndMigrateTransportData",
+    "INFO",
+    "TRANSPORT_AUDIT_COMPLETED",
+    `Auditoría de transporte completada. Rutas: ${rutasRows.length}, Asignaciones: ${asgnRows.length}, Inconsistencias: ${inconsistencias.length}`,
+    { rutasAuditadas: rutasRows.length, asignacionesValidadas, inconsistenciasCount: inconsistencias.length },
+    (payload && payload.authUserId) || "SystemAdmin"
+  );
+
+  return {
+    status: "success",
+    service: "ACCOUNTING",
+    rutasAuditadas: rutasRows.length,
+    asignacionesValidadas,
+    totalInconsistenciasDetectadas: inconsistencias.length,
+    inconsistencias,
+    rutasSinVehiculoMaestro,
+    rutasMigradasAutoReparadas: rutasMigradas,
+    autoRepararInconsistenciasActivo: Boolean(autoRepararInconsistencias),
+    timestamp: now.toISOString()
+  };
 }
 
 

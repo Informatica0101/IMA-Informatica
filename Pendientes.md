@@ -1967,7 +1967,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-035] [ ] [F21-Task07] Integración con mantenimiento y bloqueo de vehículos no disponibles
+### [TASK-035] [X] [F21-Task07] Integración con mantenimiento y bloqueo de vehículos no disponibles
 - **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-36), Sección C (1.13) y Plan de Implementación TAREA 07
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Seguridad vial, prevención de fallas mecánicas en ruta y coherencia con activos fijos)
@@ -1993,11 +1993,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - La disponibilidad cambia automáticamente al abrir y cerrar órdenes de trabajo.
   - Se conserva el historial de reparaciones y costos por unidad vehicular.
   - La sustitución vehicular queda asociada al recorrido afectado sin duplicar activos patrimoniales.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-036] [ ] [F21-Task08] Auditoría de integridad de datos y transición de las estructuras actuales de transporte
+### [TASK-036] [X] [F21-Task08] Auditoría de integridad de datos y transición de las estructuras actuales de transporte
 - **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E, Sección G y Plan de Implementación TAREA 34
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Migración segura de datos, preservación de rutas existentes y prevención de relaciones huérfanas)
@@ -2023,7 +2023,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Las consultas antiguas continúan funcionando mientras se activa la nueva estructura.
   - No se generan duplicados de rutas ni asignaciones huérfanas.
   - Se genera un reporte claro de registros que requieran conciliación manual.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 
@@ -2031,7 +2031,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-037] [ ] [F21-Task34] Suite automatizada de pruebas y regresión integral de transporte y servicios complementarios
+### [TASK-037] [X] [F21-Task34] Suite automatizada de pruebas y regresión integral de transporte y servicios complementarios
 - **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E, Sección G (P0) y Plan de Implementación TAREA 33
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Aseguramiento continuo de integridad en movilidad escolar, cupos, seguridad infantil y cobros)
@@ -2058,7 +2058,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - La suite de regresión ejecuta todas las pruebas de transporte y servicios complementarios con el 100% de éxito (`PASS`).
   - Se valida el bloqueo efectivo de sobrecupos y la protección de datos de menores.
   - Las suites de regresión previas (53/53 pruebas) se mantienen aprobadas al 100%.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 

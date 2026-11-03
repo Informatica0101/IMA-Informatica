@@ -1,4 +1,41 @@
 ===============================================================================
+FECHA: 2026-11-03
+AUDITORÍA FUNCIONAL Y TÉCNICA - [TASK-035], [TASK-036], [TASK-037]: TRANSPORTE ESCOLAR INTEGRAL, MANTENIMIENTO, MIGRACIÓN Y REGRESIÓN
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, backend/developer-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- [TASK-035] [F21-Task07]: Sincronización entre órdenes de mantenimiento automáticas/preventivas y estado operativo del vehículo en `TransporteVehiculos`. Detección y bloqueo estricto con código `VEHICLE_UNDER_MAINTENANCE` al intentar asignar vehículos con órdenes activas a rutas escolares en `manageTransportRoute`.
+- [TASK-036] [F21-Task08]: Auditoría y migración de datos de transporte en `auditAndMigrateTransportData`. Detección de inconsistencias en rutas sin unidad vehicular en el catálogo maestro, formato estructurado de paradas JSON y asignaciones huérfanas de estudiantes. Auto-aprovisionamiento correctivo sin entidades ficticias (`CORRECTIVE_AUTO_PROVISIONED_VEHICLE`).
+- [TASK-037] [F21-Task34]: Suite automatizada de pruebas y regresión integral de transporte `runPhase21TransportAndServicesRegressionSuite` en `backend/accounting-service/Code.gs` y orquestación en `backend/developer-service/Code.gs`. Batería completa de pruebas (PT21-01 a PT21-12) verificando alta de flota, rechazo por póliza de seguro o licencia vencida, aforos, concurrencia, abordaje, manifiesto en tiempo real, entrega a tutores autorizados y cierre obligatorio con barrido físico.
+- Verificación: 214/214 pruebas superadas en `tests/regression/academic-grading-suite.js` (100%) y 23/23 en `tests/regression/modular-dashboard-suite.js` (100%).
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-03
+AUDITORÍA FUNCIONAL Y TÉCNICA - [TASK-029] A [TASK-034]: SEGURIDAD INFANTIL EN TRANSPORTE, CONTROL DE AFORO, ABORDAJE/DESCENSO Y CIERRE OBLIGATORIO
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- [TASK-029] [F21-Task01]: Control estricto de cupos y capacidad vehicular con hoja maestra `TransporteVehiculos`. Bloqueo atómico con ScriptLock ante sobrecupo (`TRANSPORT_CAPACITY_EXCEEDED`), duplicidad de asignación (`DUPLICATE_TRANSPORT_ASSIGNMENT`) y colisión horaria (`TRANSPORT_SCHEDULE_CONFLICT`).
+- [TASK-030] [F21-Task02]: Protección y aislamiento de datos de transporte RBAC/ABAC en `getTransportAssignments`. Restricción estricta de estudiantes y padres a su propio expediente o relaciones familiares en `RelacionesFamiliares`, auditando y bloqueando accesos no autorizados con código `UNAUTHORIZED_ACCESS_ATTEMPT`.
+- [TASK-031] [F21-Task03]: Trazabilidad de viaje con hojas `TransporteViajes` y `TransporteAsistenciaViajes`. Control de abordaje (`recordStudentBoarding`) con rechazo de estudiantes ajenos a la ruta (`UNAUTHORIZED_ROUTE_STUDENT`) y prevención de doble abordaje (`STUDENT_ALREADY_BOARDED`). Control de descenso (`recordStudentAlighting`) con verificación previa (`STUDENT_NOT_BOARDED_IN_TRIP`) y manifiesto en tiempo real (`getTripPassengerManifest`).
+- [TASK-032] [F21-Task04]: Gestión de personas autorizadas en `TransportePersonasAutorizadas`. Verificación de adultos vigentes en `getAuthorizedPickupPersons` y entrega segura en `recordStudentSafeDelivery` con bloqueo taxativo si el receptor no está autorizado (`UNAUTHORIZED_PICKUP_PERSON`), admitiendo excepciones documentadas de Dirección escolar.
+- [TASK-033] [F21-Task05]: Gestión de flota vehicular (`manageTransportVehicle`, `getTransportVehicles`) y conductores (`manageTransportDriver`, `getTransportDrivers`). Validación de pólizas de seguros vigentes (`VEHICLE_INSURANCE_EXPIRED`) y licencias pesadas no vencidas (`DRIVER_LICENSE_EXPIRED`) al vincular en `manageTransportRoute`.
+- [TASK-034] [F21-Task06]: Protocolo de fin de recorrido `finalizeTransportTrip`. Detección automática y bloqueo de cierre ordinario si permanecen menores a bordo con alerta crítica (`STUDENTS_STILL_ON_BOARD`) y requisito obligatorio de confirmación de barrido físico de asientos (`PHYSICAL_INSPECTION_REQUIRED`) para alcanzar el estado `CerradoNormal`.
+- Verificación: 207/207 pruebas superadas en `academic-grading-suite.js` (100%) y 23/23 en `modular-dashboard-suite.js` (100%).
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-03
+AUDITORÍA FUNCIONAL Y TÉCNICA - [TASK-025], [TASK-026], [TASK-027], [TASK-028]: BIBLIOTECA FRBR/RDA, POLÍTICAS DE CIRCULACIÓN, CONCURRENCIA Y REGRESIÓN
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, backend/developer-service/Code.gs, js/accounting.js, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- [TASK-025] [F20-Task03]: Normalización relacional FRBR/RDA. Creación de hoja `BibliotecaCatalogoObras` (15 columnas) y endpoints `manageBibliographicWork` y `getBibliographicWorks` generando identificadores correlativos `OBRA-YYYY-NNNNNN` y métricas agregadas de disponibilidad por obra. Separación estricta respecto a `BibliotecaEjemplares`. Actualizado `js/accounting.js` para renderizar el catálogo FRBR consolidado.
+- [TASK-026] [F20-Task04]: Políticas de circulación parametrizadas en `BibliotecaPoliticasCirculacion`. Cuotas simultáneas por rol (Estudiante: 2, Docente: 5, etc.) con bloqueo por `LOAN_LIMIT_EXCEEDED` y bloqueo preventivo por mora activa no devuelta `ACTIVE_OVERDUE_BLOCK`. Cálculo dinámico de fecha de retorno.
+- [TASK-027] [F20-Task05]: Control de concurrencia e idempotencia en `processLibraryLoan`. Protección con `LockService.getScriptLock()` re-evaluando estado en tiempo real para evitar préstamos simultáneos del mismo ejemplar físico (`BOOK_ALREADY_LOANED`) y claves de idempotencia para prevenir duplicados (`IDEMPOTENCY_DUPLICATE_REQUEST`).
+- [TASK-028] [F20-Task14]: Suite automatizada de pruebas y regresión integral `runPhase20LibraryAndResourcesRegressionSuite` en `backend/accounting-service/Code.gs` y orquestación en `backend/developer-service/Code.gs`. Batería completa de pruebas PT20-01 a PT20-14.
+- Verificación: 188/188 pruebas pasando en `academic-grading-suite.js` (100%) y 23/23 en `modular-dashboard-suite.js` (100%).
+===============================================================================
+
+===============================================================================
 FECHA: 2026-10-29
 AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task05: AMPLIAR LA GESTIÓN DE JUSTIFICACIONES, PERMISOS Y SALIDAS ANTICIPADAS
 ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
@@ -1246,105 +1283,3 @@ RESULTADO DE EVALUACIÓN:
      - Añadir bifurcación else if (tab === "biblioteca") renderBibliotecaModule(container); dentro de switchTab.
   4. Extender tests/regression/academic-grading-suite.js con 8 aserciones de verificación funcional.
 ===============================================================================
-
-================================================================================
-AUDITORÍA TÉCNICA - [TASK-026] [F20-Task04] Y [TASK-027] [F20-Task05]
-Fecha: 2025-05-18
-Archivos Auditados:
-- backend/accounting-service/Code.gs
-- js/accounting.js
-- tests/regression/academic-grading-suite.js
-
-Hallazgos Técnicos:
-1. Ausencia de límites por perfil: "processLibraryLoan" asignaba de forma fija 7 días de préstamo sin importar el rol del usuario (Estudiante vs Docente vs Administrativo) ni validaba cuántos libros activos mantenía el usuario.
-2. Inexistencia de bloqueo por morosidad: No se comprobaba si el prestatario mantenía préstamos vencidos no devueltos, permitiendo retirar más material acumulando morosidad sin control.
-3. Vulnerabilidad de concurrencia e idempotencia: Las operaciones de préstamo en circulación no adquirían candado ScriptLock y carecían de verificación idempotente frente a reintentos o pulsaciones duplicadas en la red.
-
-Acciones Ejecutadas:
-1. Creación de hoja "BibliotecaPoliticasCirculacion" con esquema formal (PoliticaID, RolTarget, LimiteLibrosSimultaneos, DiasPrestamo, PermitePrestamoDomicilio, DiasGraciaMora, Estado, Observaciones) y políticas institucionales por defecto.
-2. Implementación de control estricto de cupos en "processLibraryLoan", bloqueando con código "LOAN_LIMIT_EXCEEDED" cuando el usuario alcanza el límite de su rol.
-3. Bloqueo preventivo de nuevos préstamos por mora activa con código "ACTIVE_OVERDUE_BLOCK" si el usuario mantiene libros vencidos pendientes de devolución.
-4. Cálculo dinámico de "fechaDevolucionPrevista" según la política configurada para el rol del usuario.
-5. Protección atómica integral mediante "LockService.getScriptLock(15000)", re-verificación de disponibilidad del ejemplar dentro de la sección crítica (código "BOOK_ALREADY_LOANED"), y prevención de duplicados idempotentes ("IDEMPOTENCY_DUPLICATE_REQUEST").
-6. Cobertura completa en la suite tests/regression/academic-grading-suite.js alcanzando 185/185 pruebas aprobadas (100%).
-================================================================================
-
-================================================================================
-AUDITORÍA TÉCNICA - [TASK-028] [F20-Task14]
-Fecha: 2025-05-18
-Archivos Auditados:
-- backend/accounting-service/Code.gs
-- backend/developer-service/Code.gs
-- tests/regression/academic-grading-suite.js
-
-Hallazgos Técnicos:
-1. Carencia de suite de regresión integral para la Fase 20: No existía un arnés automatizado de validación continua que evaluara de forma holística el catálogo normalizado de obras y ejemplares, circulación con límites de cupo, morosidad activa, reservas, incidencias físicas, recursos digitales e integridad transaccional bajo ScriptLock.
-2. Falta de integración en developer-service: El monitor técnico y consola operativa de desarrollador no contaba con el caso de despacho para ejecutar y auditar el estado funcional del subsistema bibliotecario.
-
-Acciones Ejecutadas:
-1. Implementación de "runPhase20LibraryAndResourcesRegressionSuite" en backend/accounting-service/Code.gs cubriendo 14 pruebas de aceptación unitarias y de integración (PT20-01 a PT20-14).
-2. Integración de la suite en backend/developer-service/Code.gs, habilitando su invocación técnica con control de acceso por rol y métricas estructuradas de duración.
-3. Registro de permisos en ROLE_PERMISSIONS y despachadores doPost de ambos microservicios.
-4. Cobertura en la suite tests/regression/academic-grading-suite.js alcanzando 188/188 pruebas aprobadas (100%) sin regresiones en las 53 pruebas de las fases previas.
-================================================================================
-
-================================================================================
-AUDITORÍA TÉCNICA - [TASK-029] [F21-Task01] Y [TASK-030] [F21-Task02]
-Fecha: 2025-05-18
-Archivos Auditados:
-- backend/accounting-service/Code.gs
-- tests/regression/academic-grading-suite.js
-
-Hallazgos Técnicos:
-1. Sobrecupo e inexistencia de control de capacidad vehicular: La función "assignStudentTransport" realizaba inserciones directas con "appendRow" sin evaluar la capacidad máxima del vehículo asignado ni contabilizar las plazas ocupadas, exponiendo a sobrecupo físico y sanciones legales.
-2. Carencia de detección de colisiones de horario: No se validaba si un estudiante ya contaba con otra ruta en el mismo horario o asignaciones duplicadas para la misma jornada.
-3. Fuga de datos personales y geolocalización (IDOR/ABAC): "getTransportAssignments" devolvía la totalidad institucional de asignaciones de transporte ante consultas sin parámetros, permitiendo que estudiantes o tutores consultaran paradas, direcciones y rutas de menores ajenos a su núcleo familiar.
-
-Acciones Ejecutadas:
-1. Creación de la hoja maestra "TransporteVehiculos" y ampliación del esquema de "TransporteAsignaciones" (AsignacionTranspID, RutaID, EstudianteUserId, ParadaNombre, HorarioPlan, Jornada, PeriodoVigencia, DiasSemanaJSON, Estado, FechaAsignacion, Observaciones).
-2. Implementación de control estricto de cupos en "assignStudentTransport" bajo LockService.getScriptLock(15000), bloqueando sobrecupos con código "TRANSPORT_CAPACITY_EXCEEDED", duplicados con "DUPLICATE_TRANSPORT_ASSIGNMENT" y colisiones con "TRANSPORT_SCHEDULE_CONFLICT".
-3. Cálculo dinámico de ocupación en tiempo real en "getTransportRoutes" (cuposTotales, cuposOcupados, cuposDisponibles) enlazando la capacidad autorizada del vehículo en "TransporteVehiculos".
-4. Aislamiento RBAC/ABAC estricto en "getTransportAssignments": estudiantes limitados a sus propios registros, tutores restringidos a estudiantes autorizados en "RelacionesFamiliares", conductores limitados a sus rutas, bloqueo de volcados globales a roles no directivos y auditoría estructurada "UNAUTHORIZED_ACCESS_ATTEMPT".
-5. Verificación completa en tests/regression/academic-grading-suite.js pasando 195/195 pruebas (100%).
-================================================================================
-
-================================================================================
-AUDITORÍA TÉCNICA - [TASK-031] [F21-Task03] Y [TASK-032] [F21-Task04]
-Fecha: 2025-05-18
-Archivos Auditados:
-- backend/accounting-service/Code.gs
-- tests/regression/academic-grading-suite.js
-
-Hallazgos Técnicos:
-1. Ausencia de control de abordaje y descenso en viajes escolares: No existía trazabilidad digital de cuándo un estudiante sube o baja de una unidad escolar ni qué pasajeros permanecen a bordo durante el recorrido.
-2. Riesgo de seguridad en entrega física de menores: No se validaba la identidad del adulto receptor en las paradas residenciales respecto al catálogo de tutores y personas autorizadas vigentes, exponiendo a infantes a entregas no autorizadas.
-3. Carencia de manifiesto dinámico de pasajeros: El personal de monitoreo y acompañamiento de ruta carecía de un resumen consolidado en tiempo real de pasajeros esperados, a bordo y descendidos.
-
-Acciones Ejecutadas:
-1. Creación de esquemas maestros en backend/accounting-service/Code.gs: "TransporteViajes", "TransporteAsistenciaViajes" y "TransportePersonasAutorizadas".
-2. Implementación de "recordStudentBoarding" bajo LockService.getScriptLock(15000), validando asignación a la ruta ("UNAUTHORIZED_ROUTE_STUDENT") y descartando abordajes duplicados ("STUDENT_ALREADY_BOARDED").
-3. Implementación de "recordStudentAlighting" con verificación estricta de abordaje previo en el viaje ("STUDENT_NOT_BOARDED_IN_TRIP") y prevención de descenso repetido ("STUDENT_ALREADY_ALIGHTED").
-4. Implementación de "getTripPassengerManifest" calculando en tiempo real estudiantes a bordo, descendidos y pendientes de abordaje.
-5. Implementación de "getAuthorizedPickupPersons" y "recordStudentSafeDelivery", verificando DNI y autorización legal vigente del adulto receptor, bloqueando entregas no autorizadas con código "UNAUTHORIZED_PICKUP_PERSON" y registrando excepciones directivas formales.
-6. Registro de acciones en ROLE_PERMISSIONS y despachador doPost.
-7. Cobertura en la suite tests/regression/academic-grading-suite.js alcanzando 202/202 pruebas pasadas (100%).
-================================================================================
-
-================================================================================
-AUDITORÍA TÉCNICA - [TASK-033] [F21-Task05] Y [TASK-034] [F21-Task06]
-Fecha: 2025-05-18
-Archivos Auditados:
-- backend/accounting-service/Code.gs
-- tests/regression/academic-grading-suite.js
-
-Hallazgos Técnicos:
-1. Gestión no normalizada de flota y conductores: Se utilizaban textos libres en las rutas para asignar vehículos y empleados sin comprobación de vigencia de pólizas de seguro de accidentes, revisión técnico-mecánica ni licencias de conducir de categoría pesada.
-2. Inexistencia de protocolo de cierre de viaje con barrido físico: El sistema no verificaba si los estudiantes que abordaron la unidad habían descendido en sus respectivas paradas, posibilitando el cierre accidental con menores a bordo.
-
-Acciones Ejecutadas:
-1. Creación de la hoja maestra "TransporteConductores" y expansión de "TransporteVehiculos" con datos de aseguramiento, pólizas, revisiones técnicas y categorías de licencias.
-2. Implementación de "manageTransportVehicle", "getTransportVehicles", "manageTransportDriver" y "getTransportDrivers".
-3. Enriquecimiento de "manageTransportRoute" bloqueando la asignación de vehículos fuera de servicio o con seguro vencido ("VEHICLE_INSURANCE_EXPIRED") y conductores con licencia vencida ("DRIVER_LICENSE_EXPIRED").
-4. Implementación de "finalizeTransportTrip" bajo LockService.getScriptLock(15000), bloqueando taxativamente el fin de viaje con código "STUDENTS_STILL_ON_BOARD" si algún alumno permanece a bordo, exigiendo confirmación explícita de inspección física de unidad vacía ("PHYSICAL_INSPECTION_REQUIRED") y registrando el cierre inmutable en "TransporteViajes".
-5. Verificación en la suite tests/regression/academic-grading-suite.js alcanzando 207/207 pruebas pasadas (100%).
-================================================================================

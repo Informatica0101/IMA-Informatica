@@ -1,6 +1,92 @@
 ===============================================================================
 FECHA: 2025-11-03
 TAREAS:
+- [TASK-035] [F21-Task07] Integración con mantenimiento vehicular
+- [TASK-036] [F21-Task08] Auditoría y migración de datos de transporte
+- [TASK-037] [F21-Task34] Suite automatizada de pruebas y regresión integral de transporte
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs
+- backend/developer-service/Code.gs
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+DESCRIPCIÓN DE MODIFICACIONES:
+1. En backend/accounting-service/Code.gs:
+   - Sincronización entre órdenes de mantenimiento automáticas/preventivas y estado operativo del vehículo en "TransporteVehiculos".
+   - Verificación estricta en "manageTransportRoute" bloqueando la asignación a rutas activas de unidades en mantenimiento técnico con código "VEHICLE_UNDER_MAINTENANCE".
+   - Implementación de "auditAndMigrateTransportData" para auditar y conciliar rutas sin unidad física registrada en catálogo maestro, validación estructurada de paradas en JSON, reconciliación de asignaciones de transporte huérfanas y auto-aprovisionamiento seguro con identificador "CORRECTIVE_AUTO_PROVISIONED_VEHICLE".
+   - Implementación de la suite completa "runPhase21TransportAndServicesRegressionSuite" cubriendo los casos de prueba PT21-01 a PT21-12 (flota, seguros, conductores, licencias, rutas, aforos, abordaje, descenso, tutores autorizados y cierre obligatorio).
+   - Exposición de permisos en "ROLE_PERMISSIONS" y conmutadores en "doPost".
+2. En backend/developer-service/Code.gs:
+   - Integración de "runPhase21TransportAndServicesRegressionSuite" en la orquestación central de diagnóstico del desarrollador.
+   - Habilitación en "ROLE_PERMISSIONS" y switch de ejecución "doPost".
+3. En tests/regression/academic-grading-suite.js:
+   - Adición de aserciones automatizadas para TASK-035, TASK-036 y TASK-037.
+   - Verificación de 214 pruebas pasando con éxito al 100%.
+===============================================================================
+
+===============================================================================
+FECHA: 2025-11-03
+TAREAS:
+- [TASK-029] [F21-Task01] Control estricto de cupos, capacidad vehicular y asignaciones de transporte
+- [TASK-030] [F21-Task02] Protección de datos de transporte y aislamiento de consultas por usuario (RBAC/ABAC)
+- [TASK-031] [F21-Task03] Control de abordaje, descenso y manifiesto en tiempo real
+- [TASK-032] [F21-Task04] Gestión de personas autorizadas y entrega segura en paradas
+- [TASK-033] [F21-Task05] Flota vehicular, conductores y documentación habilitante
+- [TASK-034] [F21-Task06] Cierre obligatorio de recorrido y confirmación de unidad vacía
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+DESCRIPCIÓN DE MODIFICACIONES:
+1. En backend/accounting-service/Code.gs:
+   - Creación de catálogo maestro "TransporteVehiculos" con capacidades oficiales autorizadas y control de cupos dinámicos en "getTransportRoutes".
+   - Control de sobrecupo en "assignStudentTransport" mediante ScriptLock ("TRANSPORT_CAPACITY_EXCEEDED"), prevención de doble asignación ("DUPLICATE_TRANSPORT_ASSIGNMENT") y colisión horaria ("TRANSPORT_SCHEDULE_CONFLICT").
+   - Aislamiento RBAC/ABAC en "getTransportAssignments" restringiendo consultas a estudiantes propios o vínculos en "RelacionesFamiliares", con auditoría "UNAUTHORIZED_ACCESS_ATTEMPT".
+   - Implementación de hojas "TransporteViajes" y "TransporteAsistenciaViajes", con funciones "recordStudentBoarding", "recordStudentAlighting" y "getTripPassengerManifest", validando rutas ("UNAUTHORIZED_ROUTE_STUDENT") y previniendo duplicados ("STUDENT_ALREADY_BOARDED").
+   - Hoja "TransportePersonasAutorizadas", consulta "getAuthorizedPickupPersons" y entrega segura "recordStudentSafeDelivery" con bloqueo de entregas a terceros no autorizados ("UNAUTHORIZED_PICKUP_PERSON").
+   - Gestión de vehículos ("manageTransportVehicle", "getTransportVehicles") y conductores ("manageTransportDriver", "getTransportDrivers"), con validación de seguros ("VEHICLE_INSURANCE_EXPIRED") y licencias ("DRIVER_LICENSE_EXPIRED") en "manageTransportRoute".
+   - Implementación de "finalizeTransportTrip" con bloqueo si hay menores a bordo ("STUDENTS_STILL_ON_BOARD") y requisito de confirmación explícita de barrido físico ("PHYSICAL_INSPECTION_REQUIRED") para estado "CerradoNormal".
+   - Habilitación de endpoints en "ROLE_PERMISSIONS" y "doPost".
+2. En tests/regression/academic-grading-suite.js:
+   - Adición de aserciones para TASK-029 a TASK-034.
+   - Verificación de 207/207 pruebas pasando al 100%.
+===============================================================================
+
+===============================================================================
+FECHA: 2025-11-03
+TAREAS:
+- [TASK-025] [F20-Task03] Normalización relacional del catálogo: separación entre Obras y Ejemplares
+- [TASK-026] [F20-Task04] Control de políticas de circulación, límites de préstamo y bloqueo por mora
+- [TASK-027] [F20-Task05] Control de concurrencia e idempotencia en circulación bibliotecaria
+- [TASK-028] [F20-Task14] Suite automatizada de pruebas y regresión integral de biblioteca
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs
+- backend/developer-service/Code.gs
+- js/accounting.js
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+DESCRIPCIÓN DE MODIFICACIONES:
+1. En backend/accounting-service/Code.gs:
+   - Implementación de "manageBibliographicWork" y "getBibliographicWorks" persistiendo en "BibliotecaCatalogoObras" (15 columnas) con identificadores maestros "OBRA-YYYY-NNNNNN" y cálculo de disponibilidad por obra.
+   - Refactorización de "manageLibraryBook" y "getLibraryBooks" para vincular ejemplares físicos con la obra maestra correspondiente ("obraId").
+   - Implementación de "getLibraryCirculationPolicies" con catálogo base en "BibliotecaPoliticasCirculacion" para límites por rol institucional.
+   - Refactorización de "processLibraryLoan" para verificar límites simultáneos por rol ("LOAN_LIMIT_EXCEEDED") y mora activa de préstamos vencidos no devueltos ("ACTIVE_OVERDUE_BLOCK").
+   - Protección transaccional atómica mediante "LockService.getScriptLock()" y control de idempotencia con "idempotencyKey" ("BOOK_ALREADY_LOANED", "IDEMPOTENCY_DUPLICATE_REQUEST").
+   - Implementación de la suite de regresión "runPhase20LibraryAndResourcesRegressionSuite" cubriendo los casos PT20-01 a PT20-14.
+   - Habilitación en "ROLE_PERMISSIONS" y switch de "doPost".
+2. En backend/developer-service/Code.gs:
+   - Integración de "runPhase20LibraryAndResourcesRegressionSuite" en la consola diagnóstica del desarrollador.
+   - Registro en "ROLE_PERMISSIONS" y dispatcher "doPost".
+3. En js/accounting.js:
+   - Actualización de "loadLibrosData" para consultar obras maestras mediante "getBibliographicWorks" y renderizar métricas agregadas de ejemplares en estantería vs prestados.
+4. En tests/regression/academic-grading-suite.js:
+   - Adición de aserciones de regresión para [TASK-025], [TASK-026], [TASK-027] y [TASK-028].
+   - Verificación de 188/188 pruebas pasando al 100%.
+===============================================================================
+
+===============================================================================
+FECHA: 2025-11-03
+TAREAS:
 - [TASK-023] [F20-Task01] Implementación de funciones backend faltantes para biblioteca
 - [TASK-024] [F20-Task02] Conexión y activación del módulo de Biblioteca en la interfaz institucional
 ARCHIVOS MODIFICADOS:
@@ -4168,112 +4254,3 @@ DESCRIPCIÓN DE MODIFICACIONES:
 4. En Pendientes.md:
    - Actualización del estado de [TASK-019] a completado [X].
 ===============================================================================
-
-================================================================================
-CHANGESLOG - [TASK-026] [F20-Task04] Y [TASK-027] [F20-Task05]
-Fecha: 2025-05-18
-Archivos Afectados:
-- backend/accounting-service/Code.gs
-- tests/regression/academic-grading-suite.js
-- Pendientes.md
-
-Detalle de Cambios:
-1. backend/accounting-service/Code.gs:
-   - Línea ~166: Agregado esquema de "BibliotecaPoliticasCirculacion" en getOrCreateSheet.
-   - Línea ~9150: Reescrito "processLibraryLoan" bajo LockService.getScriptLock(15000).
-   - Implementada validación de duplicados idempotentes (código "IDEMPOTENCY_DUPLICATE_REQUEST").
-   - Implementada validación de estado disponible en sección crítica (código "BOOK_ALREADY_LOANED" y "BOOK_NOT_AVAILABLE").
-   - Implementada consulta dinámica de políticas por rol en "BibliotecaPoliticasCirculacion".
-   - Implementado bloqueo por mora activa (código "ACTIVE_OVERDUE_BLOCK").
-   - Implementado bloqueo por límite de cupo simultáneo (código "LOAN_LIMIT_EXCEEDED").
-   - Implementado cálculo dinámico de fecha de vencimiento según días de préstamo por rol.
-2. tests/regression/academic-grading-suite.js:
-   - Añadidas aserciones para BibliotecaPoliticasCirculacion, LOAN_LIMIT_EXCEEDED, ACTIVE_OVERDUE_BLOCK, cálculo de plazos dinámicos, BOOK_ALREADY_LOANED e IDEMPOTENCY_DUPLICATE_REQUEST. Total: 185 pruebas superadas (100%).
-3. Pendientes.md:
-   - Marcadas como completadas [X] las tareas [TASK-026] y [TASK-027].
-================================================================================
-
-================================================================================
-CHANGESLOG - [TASK-028] [F20-Task14]
-Fecha: 2025-05-18
-Archivos Afectados:
-- backend/accounting-service/Code.gs
-- backend/developer-service/Code.gs
-- tests/regression/academic-grading-suite.js
-- Pendientes.md
-
-Detalle de Cambios:
-1. backend/accounting-service/Code.gs:
-   - Línea ~200-214: Registrada acción "runPhase20LibraryAndResourcesRegressionSuite" en ROLE_PERMISSIONS.
-   - Línea ~685: Añadido caso "runPhase20LibraryAndResourcesRegressionSuite" en doPost.
-   - Línea ~11055: Implementada función "runPhase20LibraryAndResourcesRegressionSuite" cubriendo PT20-01 a PT20-14.
-2. backend/developer-service/Code.gs:
-   - Línea ~29: Registrada acción en ROLE_PERMISSIONS para rol Desarrollador.
-   - Línea ~125: Añadido caso en doPost.
-   - Línea ~735: Implementada función "runPhase20LibraryAndResourcesRegressionSuite".
-3. tests/regression/academic-grading-suite.js:
-   - Añadidas aserciones para verificar la existencia de runPhase20LibraryAndResourcesRegressionSuite en ambos servicios y cobertura completa de PT20-01 a PT20-14. Total: 188/188 pruebas (100%).
-4. Pendientes.md:
-   - Marcada como completada [X] la tarea [TASK-028] [F20-Task14].
-================================================================================
-
-================================================================================
-CHANGESLOG - [TASK-029] [F21-Task01] Y [TASK-030] [F21-Task02]
-Fecha: 2025-05-18
-Archivos Afectados:
-- backend/accounting-service/Code.gs
-- tests/regression/academic-grading-suite.js
-- Pendientes.md
-
-Detalle de Cambios:
-1. backend/accounting-service/Code.gs:
-   - Línea ~180: Añadido esquema para "TransporteVehiculos" y ampliado esquema de "TransporteAsignaciones" en getOrCreateSheet.
-   - Línea ~15060: Modificada función "getTransportRoutes" para calcular en tiempo real cuposTotales, cuposOcupados y cuposDisponibles considerando la capacidad autorizada de la unidad vehicular.
-   - Línea ~15120: Modificada función "assignStudentTransport" con LockService.getScriptLock(15000), validación de capacidad (código "TRANSPORT_CAPACITY_EXCEEDED"), validación de duplicados (código "DUPLICATE_TRANSPORT_ASSIGNMENT") y colisión de horarios (código "TRANSPORT_SCHEDULE_CONFLICT").
-   - Línea ~15265: Reescrita función "getTransportAssignments" con aislamiento RBAC/ABAC por rol, validación familiar en "RelacionesFamiliares" y emisión de evento de seguridad "UNAUTHORIZED_ACCESS_ATTEMPT".
-2. tests/regression/academic-grading-suite.js:
-   - Añadidas aserciones para verificar TransporteVehiculos, códigos de control de cupos y aislamiento ABAC. Total: 195/195 pruebas superadas (100%).
-3. Pendientes.md:
-   - Marcadas como completadas [X] las tareas [TASK-029] y [TASK-030].
-================================================================================
-
-================================================================================
-CHANGESLOG - [TASK-031] [F21-Task03] Y [TASK-032] [F21-Task04]
-Fecha: 2025-05-18
-Archivos Afectados:
-- backend/accounting-service/Code.gs
-- tests/regression/academic-grading-suite.js
-- Pendientes.md
-
-Detalle de Cambios:
-1. backend/accounting-service/Code.gs:
-   - Línea ~183: Añadidos esquemas para "TransporteViajes", "TransporteAsistenciaViajes" y "TransportePersonasAutorizadas" en getOrCreateSheet.
-   - Línea ~205: Registradas acciones en ROLE_PERMISSIONS para roles autorizados.
-   - Línea ~725: Añadidos casos en doPost switch.
-   - Línea ~15385: Implementadas funciones "recordStudentBoarding", "recordStudentAlighting", "getTripPassengerManifest", "getAuthorizedPickupPersons" y "recordStudentSafeDelivery" con candados atómicos ScriptLock y registro estructurado de eventos.
-2. tests/regression/academic-grading-suite.js:
-   - Añadidas aserciones de regresión para validar recordStudentBoarding, recordStudentAlighting, getTripPassengerManifest, getAuthorizedPickupPersons y recordStudentSafeDelivery. Total: 202/202 pruebas (100%).
-3. Pendientes.md:
-   - Marcadas como completadas [X] las tareas [TASK-031] y [TASK-032].
-================================================================================
-
-================================================================================
-CHANGESLOG - [TASK-033] [F21-Task05] Y [TASK-034] [F21-Task06]
-Fecha: 2025-05-18
-Archivos Afectados:
-- backend/accounting-service/Code.gs
-- tests/regression/academic-grading-suite.js
-- Pendientes.md
-
-Detalle de Cambios:
-1. backend/accounting-service/Code.gs:
-   - Línea ~181: Añadida hoja "TransporteConductores" y expandida "TransporteVehiculos" en getOrCreateSheet.
-   - Línea ~205: Registradas acciones "manageTransportVehicle", "getTransportVehicles", "manageTransportDriver", "getTransportDrivers" y "finalizeTransportTrip" en ROLE_PERMISSIONS.
-   - Línea ~730: Añadidos casos en doPost switch.
-   - Línea ~15010: Implementadas funciones "manageTransportVehicle", "getTransportVehicles", "manageTransportDriver", "getTransportDrivers" y adaptada "manageTransportRoute" con validación de operatividad y vigencias.
-   - Línea ~16075: Implementada función "finalizeTransportTrip" con bloqueo por estudiantes a bordo y verificación obligatoria de barrido físico.
-2. tests/regression/academic-grading-suite.js:
-   - Añadidas aserciones para flota vehicular, conductores, vigencias, STUDENTS_STILL_ON_BOARD y PHYSICAL_INSPECTION_REQUIRED. Total: 207/207 pruebas (100%).
-3. Pendientes.md:
-   - Marcadas como completadas [X] las tareas [TASK-033] y [TASK-034].
-================================================================================
