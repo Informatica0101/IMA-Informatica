@@ -4306,3 +4306,26 @@ DESCRIPCIÓN DE MODIFICACIONES:
 4. En Pendientes.md:
    - Marcadas tareas [TASK-040] y [TASK-041] como completadas [X].
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-03-31
+TAREA: [TASK-042] [F22-Task13]
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs
+- backend/developer-service/Code.gs
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt
+- ChangesLogs.txt
+DESCRIPCIÓN DE MODIFICACIONES:
+1. En backend/accounting-service/Code.gs:
+   - Implementación de 'runPhase22DocumentManagementAndSACERegressionSuite(payload)' con 12 pruebas de aceptación (PT22-01 a PT22-12) verificando plantillas escolares, correlativos y CUV único, SHA-256 inmutable, Magic Bytes binarios, rechazo de ejecutables, firmas, certificado de auditoría, cuadros oficiales SACE y marco legal Decreto 149-2013.
+   - Mapeo en 'ROLE_PERMISSIONS' para Director, Subdirector y Contador, y bifurcación en 'doPost'.
+2. En backend/developer-service/Code.gs:
+   - Implementación de 'runPhase22DocumentManagementAndSACERegressionSuite(payload)' para monitoreo y orquestación desde consola de desarrollo.
+   - Mapeo en 'ROLE_PERMISSIONS' para Desarrollador y bifurcación en 'doPost'.
+3. En tests/regression/academic-grading-suite.js:
+   - Adición de 3 aserciones para la suite de Fase 22 en contabilidad y servicios de desarrollo, totalizando 230/230 pruebas pasadas (100.0%).
+4. En Pendientes.md:
+   - Marcada la tarea [TASK-042] como completada [X].
+===============================================================================

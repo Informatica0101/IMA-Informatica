@@ -2244,7 +2244,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-042] [ ] [F22-Task13] Suite de pruebas automatizadas y regresión integral de la Fase 22
+### [TASK-042] [X] [F22-Task13] Suite de pruebas automatizadas y regresión integral de la Fase 22
 - **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección G (P0), Sección F y Plan de Trabajo TAREA 22-13
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Aseguramiento continuo de emisión CUV, correlativos seguros, firmas, compatibilidad SACE y no regresión)

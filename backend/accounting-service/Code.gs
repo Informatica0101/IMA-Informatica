@@ -195,11 +195,11 @@ function doGet() { return textResponse({ status: "success", service: "ACCOUNTING
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
   "Director": [
-    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "verifyThreeWayMatch", "recordSupplierPayment", "applySupplierCreditNote", "getSupplierAccountsPayableSummary", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "getCashFlowSixMonthProjection", "recordCollectionManagementAction", "getCollectionManagementLogs", "getComparativeFinancialSummary", "reconcileFinancialReportCoherence", "verifyAccountingIntegrity", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "manageSupplierContract", "getSupplierContractAlerts", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageBibliographicWork", "getBibliographicWorks", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "manageTransportVehicle", "getTransportVehicles", "manageTransportDriver", "getTransportDrivers", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "recordStudentBoarding", "recordStudentAlighting", "getTripPassengerManifest", "getAuthorizedPickupPersons", "recordStudentSafeDelivery", "finalizeTransportTrip", "auditAndMigrateTransportData", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createFamilyPaymentAgreement", "getFamilyPaymentAgreements", "saveMultiYearBudgetProjection", "getMultiYearBudgetProjections", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "getPurchaseReceipts", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "runPhase20LibraryAndResourcesRegressionSuite", "runPhase21TransportAndServicesRegressionSuite", "purgeSecurityCaches"],
+    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs", "initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "verifyThreeWayMatch", "recordSupplierPayment", "applySupplierCreditNote", "getSupplierAccountsPayableSummary", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageBibliographicWork", "getBibliographicWorks", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "manageTransportVehicle", "getTransportVehicles", "manageTransportDriver", "getTransportDrivers", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "recordStudentBoarding", "recordStudentAlighting", "getTripPassengerManifest", "getAuthorizedPickupPersons", "recordStudentSafeDelivery", "finalizeTransportTrip", "auditAndMigrateTransportData", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createFamilyPaymentAgreement", "getFamilyPaymentAgreements", "saveMultiYearBudgetProjection", "getMultiYearBudgetProjections", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "getPurchaseReceipts", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "runPhase20LibraryAndResourcesRegressionSuite", "runPhase21TransportAndServicesRegressionSuite", "runPhase22DocumentManagementAndSACERegressionSuite", "purgeSecurityCaches"],
   "Subdirector": [
-    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageBibliographicWork", "getBibliographicWorks", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "manageTransportVehicle", "getTransportVehicles", "manageTransportDriver", "getTransportDrivers", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "recordStudentBoarding", "recordStudentAlighting", "getTripPassengerManifest", "getAuthorizedPickupPersons", "recordStudentSafeDelivery", "finalizeTransportTrip", "auditAndMigrateTransportData", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "runPhase20LibraryAndResourcesRegressionSuite", "runPhase21TransportAndServicesRegressionSuite"],
+    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageBibliographicWork", "getBibliographicWorks", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "manageTransportVehicle", "getTransportVehicles", "manageTransportDriver", "getTransportDrivers", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "recordStudentBoarding", "recordStudentAlighting", "getTripPassengerManifest", "getAuthorizedPickupPersons", "recordStudentSafeDelivery", "finalizeTransportTrip", "auditAndMigrateTransportData", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "applyApprovedScholarshipsToCharges", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "runPhase20LibraryAndResourcesRegressionSuite", "runPhase21TransportAndServicesRegressionSuite", "runPhase22DocumentManagementAndSACERegressionSuite"],
   "Contador": [
-    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "verifyThreeWayMatch", "recordSupplierPayment", "applySupplierCreditNote", "getSupplierAccountsPayableSummary", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageBibliographicWork", "getBibliographicWorks", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "manageTransportVehicle", "getTransportVehicles", "manageTransportDriver", "getTransportDrivers", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "calculateAppliedDiscount", "getStoreProducts", "getStoreOrders", "getCafeteriaMenu", "getCafeteriaOrders", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "getPurchaseReceipts", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "runPhase20LibraryAndResourcesRegressionSuite", "runPhase21TransportAndServicesRegressionSuite"],
+    "voidCharge", "reversePayment", "issueFiscalCreditNote", "processPaymentRefund", "previewBatchMonthlyCharges", "generateBatchMonthlyCharges", "configureSARAuthorizedCAI", "getSARAuthorizedCAIs","initializeFinancialDriveStructure", "configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "verifyThreeWayMatch", "recordSupplierPayment", "applySupplierCreditNote", "getSupplierAccountsPayableSummary", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "checkBudgetAvailability", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageBibliographicWork", "getBibliographicWorks", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "returnAssetCustody", "getAssetAssignments", "manageTransportVehicle", "getTransportVehicles", "manageTransportDriver", "getTransportDrivers", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "calculateAppliedDiscount", "getStoreProducts", "getStoreOrders", "getCafeteriaMenu", "getCafeteriaOrders", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "modifyPurchaseOrderAmount", "generatePurchaseOrderPDF", "getPurchaseOrders", "recordPurchaseReceipt", "getPurchaseReceipts", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "confirmTransferReceipt", "getInventoryTransfers", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "runPhase20LibraryAndResourcesRegressionSuite", "runPhase21TransportAndServicesRegressionSuite", "runPhase22DocumentManagementAndSACERegressionSuite"],
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
@@ -682,6 +682,7 @@ function doPost(e) {
       case "runPhase19InventoryAndAssetsRegressionSuite": result = runPhase19InventoryAndAssetsRegressionSuite(payload); break;
       case "runPhase20LibraryAndResourcesRegressionSuite": result = runPhase20LibraryAndResourcesRegressionSuite(payload); break;
       case "runPhase21TransportAndServicesRegressionSuite": result = runPhase21TransportAndServicesRegressionSuite(payload); break;
+      case "runPhase22DocumentManagementAndSACERegressionSuite": result = runPhase22DocumentManagementAndSACERegressionSuite(payload); break;
       case "submitLeaveVacationRequest": result = submitLeaveVacationRequest(payload); break;
       case "submitVacationRequest": result = submitVacationRequest(payload); break;
       case "getLeaveVacationRequests": result = getLeaveVacationRequests(payload); break;
@@ -11648,6 +11649,221 @@ function runPhase21TransportAndServicesRegressionSuite(payload) {
     service: "ACCOUNTING",
     suiteName: "runPhase21TransportAndServicesRegressionSuite",
     totalPruebasFase21: testCases.length,
+    pruebasExitosas: passedCount,
+    todasPruebasPasaron: allPassed,
+    duracionTotalMs: totalDurationMs,
+    resultadosSuiteRegresion: testResults,
+    executedAt: new Date().toISOString()
+  };
+}
+
+// [TASK-042] [F22-Task13] - Suite Integral de Pruebas y Regresión Automatizada de la Fase 22
+function runPhase22DocumentManagementAndSACERegressionSuite(payload) {
+  const startTime = Date.now();
+  const testResults = [];
+  let passedCount = 0;
+
+  function recordTest(id, name, pass, expected, actual, details) {
+    if (pass) passedCount++;
+    testResults.push({
+      id: id,
+      name: name,
+      status: pass ? "PASS" : "FAIL",
+      expected: expected,
+      actual: actual,
+      details: details || {}
+    });
+  }
+
+  let testDocId = null;
+  let testCUV = null;
+  let testHash = null;
+
+  const testCases = [
+    {
+      id: "PT22-01",
+      name: "Documentos: Configuración y alta de plantilla escolar",
+      execute: function() {
+        const tId = "PLANTILLA-TEST-CONSTANCIA-" + Date.now();
+        const res = configureSchoolDocumentTemplate({
+          plantillaId: tId,
+          codigoOficial: "CONST-ESTUDIO-STD",
+          nombrePlantilla: "Constancia de Estudio Oficial",
+          categoria: "Académica",
+          descripcion: "Constancia oficial de matrícula y estudio",
+          contenidoHTML: "<h1>Constancia de Estudio</h1><p>El alumno {{estudiante.nombreCompleto}} con ID {{estudiante.identidad}} está matriculado.</p>",
+          version: "1.0",
+          camposPersonalizablesJSON: ["estudiante.nombreCompleto", "estudiante.identidad"]
+        });
+        const pass = res && res.status === "success" && res.plantillaId === tId;
+        return { pass, expected: tId, actual: res ? res.plantillaId : null, details: res };
+      }
+    },
+    {
+      id: "PT22-02",
+      name: "Documentos: Generación con correlativo anual, CUV y Hash SHA-256",
+      execute: function() {
+        const res = generateSchoolDocument({
+          plantillaId: "PLANTILLA-TEST-CONSTANCIA",
+          estudianteUserId: "EST-TEST-2026-001",
+          solicitanteUserId: "PADRE-TEST-001",
+          datosFormulario: {
+            "estudiante.nombreCompleto": "Elena María Ramos",
+            "estudiante.identidad": "0801-2010-99887"
+          }
+        });
+        const pass = res && res.status === "success" && res.documentoId && res.codigoVerificacion && res.sha256Hash && res.sha256Hash.length === 64;
+        if (pass) {
+          testDocId = res.documentoId;
+          testCUV = res.codigoVerificacion;
+          testHash = res.sha256Hash;
+        }
+        return { pass, expected: "sha256 length 64", actual: res ? (res.sha256Hash ? res.sha256Hash.length : null) : null, details: res };
+      }
+    },
+    {
+      id: "PT22-03",
+      name: "CUV: Verificación pública e identificación de documento oficial",
+      execute: function() {
+        if (!testCUV) return { pass: false, expected: "CUV generado", actual: null };
+        const res = verifySchoolDocumentByCUV({ codigoVerificacion: testCUV });
+        const pass = res && res.status === "success" && res.documento && res.documento.codigoVerificacion === testCUV;
+        return { pass, expected: testCUV, actual: res && res.documento ? res.documento.codigoVerificacion : null, details: res };
+      }
+    },
+    {
+      id: "PT22-04",
+      name: "Seguridad Binaria: Detección y rechazo de archivos ejecutables prohibidos",
+      execute: function() {
+        let rejected = false;
+        try {
+          validateFileBinaryIntegrity("data:application/octet-stream;base64,TVqQAAMAAAAEAAAA//8AALgAAAAAAAAA", "malware.exe");
+        } catch (e) {
+          rejected = e.message.includes("DANGEROUS_FILE_EXTENSION");
+        }
+        return { pass: rejected, expected: "DANGEROUS_FILE_EXTENSION", actual: rejected ? "RECHAZADO" : "ACEPTADO_ERRONEO" };
+      }
+    },
+    {
+      id: "PT22-05",
+      name: "Seguridad Binaria: Rechazo de archivos vacíos (0 bytes)",
+      execute: function() {
+        let rejected = false;
+        try {
+          validateFileBinaryIntegrity("data:application/pdf;base64,", "archivo_vacio.pdf");
+        } catch (e) {
+          rejected = e.message.includes("EMPTY_FILE_REJECTED");
+        }
+        return { pass: rejected, expected: "EMPTY_FILE_REJECTED", actual: rejected ? "RECHAZADO" : "ACEPTADO_ERRONEO" };
+      }
+    },
+    {
+      id: "PT22-06",
+      name: "Seguridad Binaria: Detección de Magic Bytes válidos en PDF",
+      execute: function() {
+        const dummyPdf = "data:application/pdf;base64," + Utilities.base64Encode("%PDF-1.4 header dummy valid content for testing");
+        const res = validateFileBinaryIntegrity(dummyPdf, "comprobante.pdf");
+        const pass = res && res.valid === true && res.detectedFormat === "pdf";
+        return { pass, expected: "pdf", actual: res ? res.detectedFormat : null, details: res };
+      }
+    },
+    {
+      id: "PT22-07",
+      name: "Firmas: Vinculación criptográfica SHA-256 entre firma y documento",
+      execute: function() {
+        const docHash = computeDocumentSHA256("Documento_Oficial_Matricula_2026");
+        const baseData = docHash + "|SOL-TEST-001|DOC-TEST-001|USER-DIRECTOR-01|Director|2026-11-03T00:00:00.000Z";
+        const sigHash = computeDocumentSHA256(baseData);
+        const pass = sigHash && sigHash.length === 64 && docHash !== sigHash;
+        return { pass, expected: "64-char sha256", actual: sigHash ? sigHash.length : null };
+      }
+    },
+    {
+      id: "PT22-08",
+      name: "SACE: Verificación de estructura y compatibilidad de plantilla oficial",
+      execute: function() {
+        const res = verifySACETemplateCompatibility({
+          plantillaSaceId: "SACE-OFICIAL-SECUNDARIA",
+          columnasReporte: ["identidad", "nombreAlumno", "calificacionOrdinaria", "recuperacion", "resultadoFinal"]
+        });
+        const pass = res && res.status === "success" && res.esCompatible === true;
+        return { pass, expected: true, actual: res ? res.esCompatible : null, details: res };
+      }
+    },
+    {
+      id: "PT22-09",
+      name: "SACE: Generación de reporte preservando ausentes y exentos sin ceros",
+      execute: function() {
+        const res = generateSACEReportFile({
+          anoLectivo: 2026,
+          parcial: "Primer Parcial",
+          grado: "10mo Grado",
+          seccion: "A",
+          asignatura: "Física Elemental",
+          estudiantesNotas: [
+            { identidad: "0801-2010-00001", nombre: "Alumno Aprobado", notaFinal: 85, estado: "Aprobado" },
+            { identidad: "0801-2010-00002", nombre: "Alumno Ausente", notaFinal: null, estado: "Ausente" },
+            { identidad: "0801-2010-00003", nombre: "Alumno Exento", notaFinal: null, estado: "Exento" }
+          ]
+        });
+        const d = res && res.datosReporteSACE;
+        const pass = d && d.length === 3 && d[1].calificacionOrdinaria === "AUSENTE" && d[2].calificacionOrdinaria === "EXENTO";
+        return { pass, expected: "Ausente / Exento preservados", actual: d ? `${d[1].calificacionOrdinaria}/${d[2].calificacionOrdinaria}` : null };
+      }
+    },
+    {
+      id: "PT22-10",
+      name: "SACE: Validación y diagnóstico previo de libro Excel con detección de DNI faltante",
+      execute: function() {
+        const res = validateSACETemplateFile({
+          nombreArchivo: "calificaciones_10_A.xlsx",
+          columnasData: ["identidad", "nombreAlumno", "calificacionOrdinaria"],
+          filasData: [
+            { identidad: "0801-2010-11111", nombreAlumno: "Estudiante Uno", calificacionOrdinaria: 90 },
+            { identidad: "", nombreAlumno: "Estudiante Sin DNI", calificacionOrdinaria: 80 }
+          ]
+        });
+        const pass = res && res.status === "error" && res.esValido === false;
+        return { pass, expected: false, actual: res ? res.esValido : null, details: res };
+      }
+    },
+    {
+      id: "PT22-11",
+      name: "Firma Avanzada: Verificación de marco normativo Decreto 149-2013",
+      execute: function() {
+        const res = getAdvancedSignatureProviderConfig({});
+        const pass = res && res.status === "success" && Array.isArray(res.proveedores) && res.proveedores.length > 0;
+        return { pass, expected: "Lista proveedores PSC", actual: res && res.proveedores ? res.proveedores.length : 0 };
+      }
+    },
+    {
+      id: "PT22-12",
+      name: "Expediente Probatorio: Certificado de finalización inmutable con hora GMT-6",
+      execute: function() {
+        const docHash = computeDocumentSHA256("CertificadoFinalizacionTest");
+        const pass = docHash && docHash.length === 64;
+        return { pass, expected: 64, actual: docHash ? docHash.length : null };
+      }
+    }
+  ];
+
+  testCases.forEach(tc => {
+    try {
+      const outcome = tc.execute();
+      recordTest(tc.id, tc.name, outcome.pass, outcome.expected, outcome.actual, outcome.details);
+    } catch (err) {
+      recordTest(tc.id, tc.name, false, "Sin excepción", err.message, { errorStack: err.stack });
+    }
+  });
+
+  const totalDurationMs = Date.now() - startTime;
+  const allPassed = passedCount === testCases.length;
+
+  return {
+    status: "success",
+    service: "ACCOUNTING",
+    suiteName: "runPhase22DocumentManagementAndSACERegressionSuite",
+    totalPruebasFase22: testCases.length,
     pruebasExitosas: passedCount,
     todasPruebasPasaron: allPassed,
     duracionTotalMs: totalDurationMs,

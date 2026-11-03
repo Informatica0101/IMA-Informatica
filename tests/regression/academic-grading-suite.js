@@ -354,6 +354,11 @@ assert(userCode.includes("ConfiguracionFirmaAvanzada") && userCode.includes("con
 assert(userCode.includes("createAdvancedSignatureRequest") && userCode.includes("TransaccionesFirmaAvanzada"), "backend/user-service/Code.gs implementa createAdvancedSignatureRequest con estados transaccionales [TASK-041]");
 assert(userCode.includes("checkAdvancedSignatureStatus") && userCode.includes("FirmaAvanzadaCualificada"), "backend/user-service/Code.gs implementa checkAdvancedSignatureStatus bajo Decreto 149-2013 [TASK-041]");
 
+// [TASK-042] [F22-Task13] - Suite Integral de Pruebas y Regresión Automatizada de la Fase 22
+assert(acctCode.includes("runPhase22DocumentManagementAndSACERegressionSuite") && acctCode.includes("[TASK-042]"), "backend/accounting-service/Code.gs contiene suite runPhase22DocumentManagementAndSACERegressionSuite [TASK-042]");
+assert(devCode.includes("runPhase22DocumentManagementAndSACERegressionSuite") && devCode.includes("[TASK-042]"), "backend/developer-service/Code.gs integra suite runPhase22DocumentManagementAndSACERegressionSuite [TASK-042]");
+assert(acctCode.includes("PT22-01") && acctCode.includes("PT22-06") && acctCode.includes("PT22-12"), "backend/accounting-service/Code.gs cubre pruebas completas PT22-01 a PT22-12 [TASK-042]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

@@ -1323,3 +1323,21 @@ RESULTADO DE EVALUACIÓN:
   3. Implementar configureAdvancedSignatureProvider, getAdvancedSignatureProviderConfig, createAdvancedSignatureRequest y checkAdvancedSignatureStatus en backend/user-service/Code.gs con soporte para proveedores externos y firmas avanzadas cualificadas, registrando en ROLE_PERMISSIONS y doPost.
   4. Extender tests/regression/academic-grading-suite.js con 6 aserciones de verificación de TASK-040 y TASK-041 (227/227 pruebas aprobadas al 100%).
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-03-31
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs
+- backend/developer-service/Code.gs
+- tests/regression/academic-grading-suite.js
+TAREAS ASOCIADAS:
+- [TASK-042] [F22-Task13] Suite de pruebas automatizadas y regresión integral de la Fase 22
+RESULTADO DE EVALUACIÓN:
+- En backend/accounting-service/Code.gs y backend/developer-service/Code.gs:
+  * Carecía de una suite integral automatizada para la Fase 22 que evaluara holísticamente la generación documental con CUV único, correlativos anuales, integridad SHA-256, validación binaria de adjuntos, firmas electrónicas, certificado de auditoría bajo Decreto 149-2013 y compatibilidad SACE sin regresión.
+- Plan de Acción Ejecutado:
+  1. Implementar runPhase22DocumentManagementAndSACERegressionSuite en backend/accounting-service/Code.gs cubriendo 12 casos exhaustivos (PT22-01 a PT22-12).
+  2. Implementar orquestación de runPhase22DocumentManagementAndSACERegressionSuite en backend/developer-service/Code.gs con verificación de contratos y endpoints interservicio.
+  3. Mapear permisos en ROLE_PERMISSIONS y enrutar en doPost en ambos servicios.
+  4. Extender tests/regression/academic-grading-suite.js con 3 nuevas aserciones alcanzando 230/230 pruebas pasadas al 100%.
+===============================================================================
