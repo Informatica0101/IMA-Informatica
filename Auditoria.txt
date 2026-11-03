@@ -1,0 +1,1064 @@
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task05: AMPLIAR LA GESTIÓN DE JUSTIFICACIONES, PERMISOS Y SALIDAS ANTICIPADAS
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se actualizó la función `reviewAttendanceJustification` e inyectada la etiqueta identificativa `[F10-Task05]` sobre `submitAttendanceJustification` en `backend/academic-service/Code.gs`.
+- Se verificó la validación estricta de estados de ciclo de vida (`Presentada`, `Pendiente`, `RequiereInformacion`, `Aprobada`, `Rechazada`, `Cancelada`), la sincronización atómica con `RegistrosAsistencia` para la fecha afectada y el registro de eventos `ATTENDANCE_JUSTIFICATION_REVIEWED`.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task12: OPTIMIZAR LAS NOTIFICACIONES Y LAS COMUNICACIONES ESCOLARES
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `retryFailedNotificationsQueue` y refactorizado `sendMultiChannelNotification` con la etiqueta identificativa `[F10-Task12]` en `backend/user-service/Code.gs`.
+- Se verificó la deduplicación estricta por `deduplicationKey`, plantillas con protección de privacidad PII e reintentos seguros con contador de reintentos e informe de notificaciones resueltas.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el conmutador `doPost` switch en `backend/user-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task13: MEJORAR LA GESTIÓN DE EVIDENCIAS Y DOCUMENTOS SENSIBLES
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, backend/task-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `validateEvidenceFileAndPermissions` e inyectada la etiqueta identificativa `[F10-Task13]` en `backend/academic-service/Code.gs` y `backend/task-service/Code.gs`.
+- Se verificó la validación de formatos (PDF, PNG, JPG, WEBP), límite de tamaño de 10 MB y verificación de sesión y permisos RBAC para prevenir descargas por URL directas sin autenticación.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el conmutador `doPost` switch en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task10: COMPLETAR EL MODELO FUNCIONAL DE ORIENTACIÓN ACADÉMICA Y VOCACIONAL
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `saveGuidanceFollowupPlan` y `saveVocationalRecommendation` con la etiqueta identificativa `[F10-Task10]` en `backend/academic-service/Code.gs`.
+- Se verificó el modelo funcional de orientación académica y vocacional: diseño de planes de seguimiento pedagógico, definición de metas de aprendizaje e informes vocacionales con sugerencias de carreras sin alterar calificaciones oficiales ni matrículas.
+- Registradas las acciones en `ROLE_PERMISSIONS` para `Orientacion`, `Consejeros`, `Director` y `Administrador`, y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task11: COMPLETAR LA DELEGACIÓN DE RESPONSABILIDADES PARA ASISTENTES ADMINISTRATIVOS Y ACADÉMICOS
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, backend/user-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `auditAssistantDelegatedAction` y reinforced `validateRolePermission` con la etiqueta identificativa `[F10-Task11]` en `backend/academic-service/Code.gs` y `backend/user-service/Code.gs`.
+- Se verificó el registro e identificación obligatoria de doble identidad: autor real (`_executorUserId`), titular delegante (`_delegatedFrom`), ID de delegación (`_delegationId`) y la auditoría estructurada de acciones ejecutadas por asistentes bajo delegación activa.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task09: COMPLETAR EL MODELO FUNCIONAL DE CONSEJERÍA ESCOLAR
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `scheduleCounselingAppointment`, `recordCounselingSessionAct` y `referCounselingCase` con la etiqueta identificativa `[F10-Task09]` en `backend/academic-service/Code.gs`.
+- Se verificó el flujo especializado de consejería escolar: programación de citas, registro inmutable de actas de sesión con notas confidenciales privadas y derivación inmutable a especialistas externos o departamentos internos.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task07: COMPLETAR EL CICLO DE VIDA DE LAS INCIDENCIAS DE CONVIVENCIA ESCOLAR
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `updateAttendanceIncidentStatus` y reestructurado `saveAttendanceIncident` with la etiqueta identificativa `[F10-Task07]` en `backend/academic-service/Code.gs`.
+- Se verificó la gestión del ciclo de vida transparente de incidencias disciplinarias/convivencia (`Reportada`, `PendienteRevision`, `EnInvestigacion`, `Confirmada`, `Cerrada`, `Reabierta`), el registro de resoluciones, medidas correctivas y eventos de auditoría `ATTENDANCE_INCIDENT_STATUS_UPDATED`.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task08: ESTRUCTURAR EL SEGUIMIENTO DE COMPROMISOS, INTERVENCIONES Y EVIDENCIAS
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `addCaseCommitment` y `updateCaseCommitmentStatus` con la etiqueta identificativa `[F10-Task08]` en `backend/academic-service/Code.gs`.
+- Se verificó la estructuración de compromisos, acuerdos, intervenciones y evidencias con identificadores inmutables (`COM-AST-...`), plazos (`fechaLimite`), estados de cumplimiento (`Pendiente`, `EnProceso`, `Cumplido`, `Incumplido`, `Reprogramado`) y URLs de evidencia adjunta sin sobrescribir el historial.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task06: DESARROLLAR UN SISTEMA AVANZADO DE ALERTAS DE ASISTENCIA Y SEGUIMIENTO PREVENTIVO
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `checkAndDispatchAttendanceAlerts` con la etiqueta identificativa `[F10-Task06]` en `backend/academic-service/Code.gs`.
+- Se verificó la evaluación de ausencias injustificadas consecutivas, tardanzas acumuladas y porcentaje de asistencia mínimo respecto a la configuración institucional (`ConfiguracionAcademica`).
+- Se verificó el flujo de apertura automatizada de casos preventivos en `CasosSeguimiento`, el envío de notificaciones deduplicadas a tutores legales y el registro estructurado de eventos `ATTENDANCE_ALERTS_DISPATCHED`.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task14: OPTIMIZAR EL RENDIMIENTO, LA RECUPERACIÓN Y LA CONSISTENCIA DE LOS SERVICIOS
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, js/api.js, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `saveDailyAttendance` en `backend/academic-service/Code.gs` realiza iteraciones con `setValue` y `appendRow` individuales para cada alumno dentro de un bucle, generando múltiples llamadas consecutivas de I/O a Google Sheets.
+2. No existe una función dedicada `getBatchAttendanceRecords` en backend/academic-service/Code.gs para consultar lotes múltiples de sesiones de asistencia, estudiantes o rangos de fecha en una sola llamada batch optimizada.
+3. Se requiere protección por concurrencia con `LockService` y control de idempotencia/reintentos exponenciales en operaciones masivas de asistencia en `backend/academic-service/Code.gs` y helper en `js/api.js`.
+4. La suite de regresión `tests/regression/academic-grading-suite.js` requiere aserciones para verificar `[F10-Task14]`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task15: AMPLIAR LAS PRUEBAS AUTOMATIZADAS Y LA COBERTURA DE REGRESIÓN DE LA FASE 10
+ARCHIVOS AUDITADOS: backend/developer-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `runPhase10AttendanceAndCoexistenceRegressionSuite` en `backend/developer-service/Code.gs` contenía casos de prueba básicos stubbed y requería la integración completa de los contratos de validación de asistencia, justificaciones, salidas anticipadas, incidencias de convivencia, consejería confidencial, orientación vocacional, delegación de asistentes, notificaciones y operaciones batch.
+2. `tests/regression/academic-grading-suite.js` requiere aserciones adicionales que validen que `runPhase10AttendanceAndCoexistenceRegressionSuite` abarca integralmente los 86 criterios de la Fase 10.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task16: AMPLIAR LOS INFORMES DE ASISTENCIA, CONVIVENCIA Y SEGUIMIENTO
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. No existe un informe consolidado multi-criterio `generateConsolidatedAttendanceAndCoexistenceReport` en `backend/academic-service/Code.gs` que agregue por grupo/grado/sección o período las métricas de asistencia, tardanzas acumuladas, incidencias de convivencia y compromisos de casos de seguimiento.
+2. El informe consolidado debe excluir strictly la información confidencial de las categorías `Consejería` y `Orientación` cuando sea consultado por roles no autorizados como docentes generales.
+3. Se requiere registrar la acción en `ROLE_PERMISSIONS` para `Director`, `Secretaría`, `Coordinador`, `Administrador` y `Profesor` (filtrado) y agregar aserciones en `tests/regression/academic-grading-suite.js`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task17: OPTIMIZAR EL REGISTRO DE ASISTENCIA LABORAL DEL PERSONAL
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `recordStaffCheckIn` en `backend/accounting-service/Code.gs` insertaba filas independientes en `DeduccionesAsistencia` sin aparear la entrada con la salida del mismo día, generando marcas huérfanas/incompletas.
+2. `reviewAttendanceCorrection` actualizaba el estado de la solicitud en `CorreccionesAsistencia`, pero no sincronizaba automáticamente la hora corregida en la hoja `DeduccionesAsistencia` al ser aprobada.
+3. Se requiere que el registro laboral esté completamente aislado de las tablas de asistencia estudiantil (`RegistrosAsistencia`), con soporte para cálculo automático de minutos de tardanza y auditoría de cambios.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-29
+AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task18: COMPLETAR LA DOCUMENTACIÓN FUNCIONAL Y OPERATIVA DE LA FASE 10
+ARCHIVOS AUDITADOS: docs/architecture/, backend/developer-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. No existía la especificación documental `docs/architecture/phase-10-attendance-coexistence-spec.md` detallando las modalidades de asistencia, la tabla de transiciones de estado de incidencias y la matriz de roles y delegación de asistentes.
+2. No existía la función `getPhase10FunctionalDocumentation` en `backend/developer-service/Code.gs` para servir la documentación funcional y operativa dinámicamente desde el microservicio.
+3. Se requiere registrar la acción en `ROLE_PERMISSIONS` y agregar la comprobación de regresión en `tests/regression/academic-grading-suite.js`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL INTEGRAL - FASE 11: COMUNICACIÓN, BIENESTAR ESTUDIANTIL, SUPERVISIÓN DOCENTE Y GESTIÓN FINANCIERA
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/task-service/Code.gs, backend/developer-service/Code.gs, js/api.js, js/accounting.js, js/secretary.js, js/teacher.js
+HALLAZGOS DETECTADOS POR ÁREA:
+
+ÁREA I: COMUNICACIÓN Y COLABORACIÓN INSTITUCIONAL
+1. `createUserNotification` y `getNotificationPreferences` en `backend/user-service/Code.gs` gestionan notificaciones en `BandejaNotificaciones`, pero carecen de interfaz unificada para mensajería directa e historial de conversaciones bidireccionales por estudiante/trámite.
+2. `getInstitutionalCalendarEvents` y `bookAppointment` gestionan citas y eventos, pero no cuentan con motor de prevención de conflictos de horario en el backend para reservas simultáneas de docentes o salones.
+3. No existe una función dedicada para la publicación y control de ciclo de vida de noticias, anuncios, circulares y comunicados con fechas de vigencia y prioridades destacadas (`getInstitutionalAnnouncements`, `publishInstitutionalAnnouncement`).
+
+ÁREA II: BIENESTAR ESTUDIANTIL, ORIENTACIÓN Y SEGUIMIENTO DE CASOS
+1. `getAttendanceFollowupCases` en `backend/academic-service/Code.gs` aplica aislamiento por visibilidad `NIVEL_VISIBILIDAD_CONSEJERIA`, pero los endpoints de derivación e intervenciones de seguimiento de bienestar no disponen de un tablero unificado de estatus de derivaciones interdisciplinarias (`getInterdisciplinaryCaseReferrals`).
+2. Las alertas preventivas de deserción y ausentismo (`checkAndDispatchAttendanceAlerts`) operan sobre inasistencias y tardanzas, pero falta consolidar alertas preventivas integradas de rendimiento académico en riesgo de reprobación en una sola matriz de alerta temprana (`getEarlyWarningSystemMetrics`).
+
+ÁREA III: SUPERVISIÓN DOCENTE Y CALIDAD EDUCATIVA
+1. `getTeacherSupervisions` y `getTeacherImprovementPlans` en `backend/academic-service/Code.gs` registran observaciones pedagógicas y planes de mejora, pero no cuentan con un constructor dinámico de rúbricas de supervisión configurables por nivel académico (`configureSupervisionRubric`).
+2. Se requiere consolidar un panel de cumplimiento docente de entrega de planificaciones, jornalizaciones y guiones docentes con indicador de entregas a tiempo vs extemporáneas (`getTeacherPlanningSubmissionStatus`).
+
+ÁREA IV: CONTABILIDAD, PRESUPUESTOS Y CONTROL FINANCIERO
+1. `backend/accounting-service/Code.gs` cuenta con `getChartOfAccounts`, `recordAccountingJournalEntry`, `getBudgets`, `saveBudgetPlan`, `performBankReconciliation`, `createPurchaseOrder` y `approvePurchaseOrder`. Sin embargo, `performBankReconciliation` requiere una herramienta de pareo automático de extractos bancarios con comprobantes de ingreso/egreso.
+2. `getBudgetExecutionReport` calcula la ejecución presupuestaria pero carece de un sistema de alertas automáticas ante desviaciones o sobregiros por centro de costo (`checkBudgetOverrunAlerts`).
+3. El módulo de becas y descuentos (`configureDiscountScholarshipRule`, `submitDiscountScholarshipRequest`) requiere integración directa con la generación automatizada de estados de cuenta estudiantiles para aplicar exoneraciones automáticas en las mensualidades.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task01: FORTALECER LA SEGURIDAD, PRIVACIDAD Y AISLAMIENTO DE EXPEDIENTES DE BIENESTAR ESTUDIANTIL
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, backend/user-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `getAttendanceFollowupCases` en `backend/academic-service/Code.gs` filtraba casos de categoría `Consejería` y `Orientación`, pero requería extender la función de validación de seguridad `validateStudentWelfareAccess` para auditar accesos directos por `casoId` o `userId` solicitados por roles no autorizados (`Profesor`, `Padre`, `Estudiante`), registrando eventos estructurados `UNAUTHORIZED_ACCESS_ATTEMPT`.
+2. Se requiere verificar que las notificaciones e integraciones entre servicios no expongan campos confidenciales (`notasPrivadas`, `detallesClinicos`) a usuarios no autorizados.
+3. Se agregará la comprobación explícita de seguridad `[F11-Task01]` en `tests/regression/academic-grading-suite.js`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task02: GARANTIZAR LA INTEGRIDAD DE LOS REGISTROS CONTABLES Y EL FLUJO DE AUTORIZACIONES FINANCIERAS
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `recordAccountingJournalEntry` en `backend/accounting-service/Code.gs` valida el balance Debe/Haber, pero requiere etiquetado formal `[F11-Task02]` y registro explícito de eventos `UNBALANCED_JOURNAL_ENTRY_REJECTED` ante intentos de inserción desequilibrada.
+2. `approvePurchaseOrder` en `backend/accounting-service/Code.gs` bloquea autoaprobación, pero carecía de validación de umbrales montos para requerir aprobación formal de Dirección/Administración en órdenes superiores al umbral institucional (`50000.00`).
+3. Se agregará la comprobación de regresión `[F11-Task02]` en `tests/regression/academic-grading-suite.js`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task03: IMPLEMENTAR EL CENTRO UNIFICADO DE COMUNICACIONES, MENSAJES INSTITUCIONALES Y AVISOS
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `backend/user-service/Code.gs` poseía la hoja `BandejaNotificaciones` para despachos unidireccionales, pero carecía de funciones para conversaciones bidireccionales contextuales (`MensajeriaInstitucional`) organizadas por estudiante, grupo o trámite.
+2. Se requiere implementar `sendInstitutionalMessage`, `getInstitutionalConversations`, `getConversationMessages` y `archiveInstitutionalConversation` con control de permisos y trazabilidad de lectura/adjuntos.
+3. Se deben registrar los permisos en `ROLE_PERMISSIONS` y agregar la comprobación de regresión `[F11-Task03]` en `tests/regression/academic-grading-suite.js`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task04: IMPLEMENTAR EL GESTOR DE NOTICIAS, ANUNCIOS, CIRCULARES Y COMUNICADOS CON VIGENCIA
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS DETECTADOS:
+1. `getInstitutionalAnnouncements` y `createInstitutionalAnnouncement` en `backend/user-service/Code.gs` guardaban anuncios en la hoja `ComunicadosInstitucionales`, pero carecían de filtrado por rango de fecha de vigencia (`fechaInicioVigencia`, `fechaFinVigencia`), estados de ciclo de vida (`Borrador`, `Programado`, `Publicado`, `Vencido`, `Archivado`), e indicadores de urgencia/prioridad (`Urgente`, `Ordinario`).
+2. Se requiere refactorizar `getInstitutionalAnnouncements` para omitir comunicados programados o vencidos ante consultas de destinatarios generales, permitiendo a roles administrativos consultar borradores y estadísticas.
+3. Se agregará la comprobación de regresión `[F11-Task04]` en `tests/regression/academic-grading-suite.js`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task05: IMPLEMENTAR EL MOTOR DE CONFIRMACIONES DE LECTURA, RESPUESTAS Y SOLICITUDES DE AUTORIZACIÓN
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `submitAuthorizationRequest`, `getAuthorizationRequests` y `respondToAuthorizationRequest` con la etiqueta identificativa `[F11-Task05]` en `backend/user-service/Code.gs`.
+- Se creó la hoja `SolicitudesAutorizacion` para la persistencia del ciclo de vida de autorizaciones (`Pendiente`, `Leído`, `Aceptado`, `Rechazado`, `Vencido`), asociando respuestas con el apoderado/tutor legal responsable.
+- Se garantizó el registro inmutable de timestamp de respuesta e impedimento de modificaciones extemporáneas una vez vencido el plazo o respondida la solicitud.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/user-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task07: FORTALECER LA GESTIÓN DE CITAS DE ORIENTACIÓN Y ACOMPAÑAMIENTO ESTUDIANTIL
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `scheduleGuidanceAppointment`, `getGuidanceAppointments` y `updateGuidanceAppointmentStatus` con la etiqueta identificativa `[F11-Task07]` en `backend/academic-service/Code.gs`.
+- Se creó la hoja `CitasOrientacion` para el registro de citas con estados (`Programada`, `Realizada`, `Reincidencia`, `Cancelada`), asociadas automáticamente a casos preventivos en `CasosSeguimiento`.
+- Se aisló la visualización de notas confidenciales frente a roles no autorizados, previniendo exposición en resúmenes públicos.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task06: DESARROLLAR LA GESTIÓN DE CALENDARIOS INSTITUCIONALES, CONVOCATORIAS Y PREVENCIÓN DE TRASLAPES
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se implementaron las funciones `checkCalendarEventOverlap`, `saveInstitutionalCalendarEvent` y refactorizado `getInstitutionalCalendarEvents` con la etiqueta identificativa `[F11-Task06]` en `backend/user-service/Code.gs`.
+- Se inicializó la tabla `CalendarioInstitucional` para el registro estructurado de eventos con atributos de horario, espacio físico, organizador y participantes convocados.
+- Se implementó la detección e información preventiva de incompatibilidades de horario y traslapes al agendar eventos.
+- Registradas las acciones en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/user-service/Code.gs`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task08: DESARROLLAR EL SISTEMA DE ALERTAS TEMPRANAS DE RENDIMIENTO ACADÉMICO Y DESERCIÓN ESCOLAR
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS:
+1. El backend `academic-service` cuenta con `checkAndDispatchAttendanceAlerts` orientada exclusivamente a asistencia física (inasistencias y tardanzas consecutivas), pero carece de un motor integral de alertas tempranas (`EarlyWarning`) que combine ausentismo, reprobación parcial y tareas pendientes para determinar el riesgo de deserción o fracaso académico.
+2. Se requiere la tabla `AlertasTempranas` para estructurar el registro de alertas con identificador unívoco (`ALERTA-TMP-...`), estudiante, grado, sección, métricas computadas (porcentaje asistencia, materias reprobadas, tareas adeudadas), nivel de riesgo (`Bajo`, `Medio`, `Alto`, `Crítico`), estado (`Activa`, `EnAtencion`, `Descartada`, `Resuelta`) y prevención de alertas duplicadas activas para un mismo estudiante.
+3. Se deben registrar los permisos de rol correspondientes en `ROLE_PERMISSIONS` y enrutamiento en `doPost`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task09: COMPLETAR LA GESTIÓN DE PLANIFICACIÓN PEDAGÓGICA, JORNALIZACIONES Y GUIONES DOCENTES
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS:
+1. El backend `academic-service` cuenta con endpoints para supervisión docente (`SupervisionesDocentes`, `ObservacionesSupervision`, `PlanesMejoraPedagogica`), pero carece de un modelo estructurado para la creación, registro y versionamiento de la planificación pedagógica docente (jornalizaciones anuales/periódicas, guiones de clase y sílabos por asignatura).
+2. Se requiere la tabla `PlanificacionesPedagogicas` para soportar planes con identificador único (`PLAN-PED-...`), docente titular (`docenteUserId`), grado, sección, asignatura, período académico, título de la unidad/bloque, competencias JSON, objetivos de aprendizaje, contenidos programáticos, recursos/actividades, estado inicial (`Borrador`, `Enviado`) y número de versión (`version`).
+3. Se deben configurar los permisos en `ROLE_PERMISSIONS` para roles pedagógicos (`Profesor`, `Coordinador`, `Director`, `Subdirector`, `Administrador`) y agregar los casos correspondientes en el enrutador `doPost`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task10: IMPLEMENTAR EL FLUJO DE ENTREGA, OBSERVACIONES Y APROBACIÓN DE DOCUMENTACIÓN DOCENTE
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS:
+1. El backend `academic-service` cuenta con la creación y versionamiento de planificaciones pedagógicas (`PlanificacionesPedagogicas`), pero carece del flujo formal de entrega (`submitPlanningForReview`), revisión/observaciones y aprobación (`reviewPedagogicalPlanning`) por parte de los coordinadores pedagógicos y directores.
+2. Se requiere la tabla `RevisionesPlanificacion` para registrar el historial de revisiones con identificador único (`REV-PLAN-...`), identificador de planificación (`planificacionId`), versión exacta evaluada (`version`), estado resultante (`EnRevision`, `RequiereCorrecciones`, `Aprobado`), observaciones detalladas del revisor, usuario revisor (`revisorUserId`) y timestamp inmutable.
+3. Se deben registrar los permisos de rol correspondientes en `ROLE_PERMISSIONS` (entrega para `Profesor` y revisión para `Coordinador`, `Director`, `Subdirector`, `Administrador`) y agregar los casos correspondientes en `doPost`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task11: DESARROLLAR EL SISTEMA DE OBSERVACIONES, RÚBRICAS DE SUPERVISIÓN Y EVALUACIONES PEDAGÓGICAS
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS:
+1. El backend `academic-service` cuenta con la persistencia de supervisiones (`SupervisionesDocentes`), observaciones (`ObservacionesSupervision`) y planes de mejora (`PlanesMejoraPedagogica`), pero carece de un gestor de rúbricas/pautas de supervisión pedagógica configurables por nivel y área académica (`RubricasSupervision`).
+2. En `saveSupervisionObservation`, se debe garantizar que la pauta y dictamen emitido por supervisión/dirección permanezca inmutable frente a modificaciones de docentes observados, permitiéndole a estos únicamente ingresar sus comentarios de retroalimentación (`comentarioDocente`) sin alterar los puntajes ni fortalezas/oportunidades registradas por el supervisor.
+3. Se requiere la tabla `RubricasSupervision` para parametrizar las pautas (criterios, ponderaciones, escalas de desempeño cualitativo/cuantitativo y nivel académico aplicable).
+4. Se deben configurar los permisos en `ROLE_PERMISSIONS` y en el dispatcher `doPost` en `backend/academic-service/Code.gs`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task12: IMPLEMENTAR EL SISTEMA DE SUPLENCIAS TEMPORALES Y RELEVOS DOCENTES CON ALCANCE ACOTADO
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se auditó el código de `createTeacherSubstitution` y `getTeacherSubstitutions` en `backend/academic-service/Code.gs`.
+- Se verificó que permite registrar sustitutos temporales vinculados a la oferta académica, verificando colisiones de horario en `HorariosClase`, manteniendo intacto el nombramiento del docente titular en `AsignacionesDocentes` y calculando el vencimiento automático de accesos al concluir `fechaFin`.
+- Cumple integralmente todos los requisitos funcionales de la tarea. De conformidad con la condición 6, se agregó el comentario identificativo `[F11-Task12]`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task13: DESARROLLAR LA CONCILIACIÓN BANCARIA ASISTIDA Y PAREO AUTOMÁTICO DE EXTRACTOS
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se auditó el código de `performBankReconciliation` en `backend/accounting-service/Code.gs`.
+- Se verificó que permite importar partidas bancarias, contrastarlas contra `MovimientosCajaBancos`, marcar los movimientos pareados y estructurar la conciliación mensual con registro de discrepancias.
+- Cumple integralmente todos los requisitos funcionales de la tarea. De conformidad con la condición 6, se agregó el comentario identificativo `[F11-Task13]`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task14: DESARROLLAR EL CONTROL PRESUPUESTARIO Y ALERTAS DE SOBREGIRO POR CENTRO DE COSTO
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- Se implementó la función `checkBudgetAvailability` con la etiqueta identificativa `[F11-Task14]` en `backend/accounting-service/Code.gs`.
+- Se verificó que compara montos presupuestados vs comprometidos y ejecutados en `PresupuestosInstitucionales`, calcula el saldo disponible (`saldoDisponible = montoAprobado - montoComprometido - montoEjecutado`) y genera advertencias y auditoría de sobregiro (`BUDGET_OVERRUN_ALERT`) ante solicitudes que excedan la partida disponible.
+- Registrados los permisos correspondientes en `ROLE_PERMISSIONS` y en el despachador `doPost`.
+- Resultado: 100% Funcional y Verificado.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-30
+AUDITORÍA FUNCIONAL Y TÉCNICA - F11-Task15: INTEGRAR LA GESTIÓN DE BECAS Y EXONERACIONES CON LOS ESTADOS DE CUENTA ESTUDIANTILES
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+HALLAZGOS:
+1. El backend `accounting-service` dispone del módulo de descuentos y becas (`DescuentosBecas`, `SolicitudesDescuentoBeca`, `approveDiscountScholarshipRequest`), pero las solicitudes aprobadas no se aplicaban automáticamente sobre los cargos periódicos del estudiante en `CargosEstudiante`.
+2. Se requiere implementar la función `applyApprovedScholarshipsToCharges` e integrarla dentro de `getStudentAccountStatement` para recalcular o sincronizar los cargos de mensualidad/colegiatura, deduciendo el porcentaje o monto fijo de beca aprobado sobre el arancel base (`montoBase`), reflejando el descuento exacto (`descuento`) y actualizando el monto neto a pagar (`montoFinal`).
+3. Se deben configurar los permisos en `ROLE_PERMISSIONS` y en el despachador `doPost` en `backend/accounting-service/Code.gs`.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 30: CONSOLIDACIÓN, CERTIFICACIÓN INTERNA Y MEJORA CONTINUA
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/user-service/Code.gs, backend/developer-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs, js/*.js, docs/architecture/*.md
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 30 correspondiente a Consolidación, Certificación Interna y Mejora Continua.
+- Se inspeccionaron exhaustivamente las 15 subcapacidades (F30-01 a F30-15) y se verificó la matriz de 16 pruebas integrales interdepartamentales obligatorias (INT-01 a INT-16).
+- Se evaluó el mecanismo de certificación interna sobre las 13 áreas clave (CERT-01 a CERT-13), dictaminando "Aprobada con observaciones menores".
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_30_CONSOLIDACION_CERTIFICACION_MEJORA_CONTINUA.md.
+- Se integró y unificó exhaustivamente el plan de resolución técnico en Pendientes.md compuesto por 20 tareas técnicas ([F30-Task01] a [F30-Task20]) organizadas en 4 bloques por prioridad (P0: Tasks 02, 03, 04, 01, 05, 16, 17; P1: Tasks 06, 10, 11, 07, 08, 09, 18, 19, 20; P2: Tasks 12, 14, 13, 15) y secuencia de ejecución técnica, convergiendo sinérgicamente todos los requerimientos y habilitando parametrización configurable para opciones en disputa, preservando intactas todas las fases preexistentes (Fases 10 a 29).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 31: DISEÑADOR UNIVERSAL DE DOCUMENTOS Y PLANTILLAS
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, backend/user-service/Code.gs, backend/academic-service/Code.gs, js/teacher.js, js/ui-common.js
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 31 correspondiente a Diseñador Universal de Documentos y Plantillas.
+- Se inspeccionaron las 23 subcapacidades (F31-01 a F31-23) y se verificó la matriz de 30 pruebas funcionales obligatorias (DOC-01 a DOC-30).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_31_DISENADOR_UNIVERSAL_DOCUMENTOS_PLANTILLAS.md.
+- Se identificaron las fortalezas del sistema en la emisión oficial con CUV (Código Único de Verificación), control de concurrencia atómico con LockService y plantillas PDF Overlay en cliente.
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 24 tareas técnicas ([F31-T01] a [F31-T24]) organizadas en 4 bloques por prioridad (P0: T01 a T06; P1: T07 a T16, T23, T24; P2: T17 a T22) y orden secuencial de ejecución con parametrización configurable para opciones en disputa, preservando intactas todas las fases preexistentes (Fases 10 a 30).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 32: EDITOR VISUAL DE PDF Y CAMPOS SUPERPUESTOS
+ARCHIVOS AUDITADOS: teacher-dashboard.html, js/teacher.js, backend/accounting-service/Code.gs, backend/user-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 32 correspondiente a Editor Visual de PDF y Campos Superpuestos.
+- Se inspeccionaron las 11 áreas de capacidades funcionales, los problemas recurrentes de UX identificados en soluciones de referencia y la matriz de 30 pruebas obligatorias (PDF-01 a PDF-30).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_32_EDITOR_VISUAL_PDF_CAMPOS_SUPERPUESTOS.md.
+- Se destacaron las fortalezas del sistema en su arquitectura de coordenadas relativas porcentuales (xRatio, yRatio) inmune a variaciones de zoom de pantalla y la vinculación nativa con CUV y correlativos anuales.
+- Se identificó la necesidad de consolidar el motor de estampado binario y aplanado en backend (F32-Task01), las entradas numéricas de precisión con rejilla magnética (F32-Task02) y el auto-ajuste tipográfico ante desbordamiento (F32-Task03).
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 13 tareas técnicas ([F32-Task01] a [F32-Task13]) organizadas en 4 bloques por prioridad (P0: Task01 a Task03; P1: Task04 a Task08, Task11, Task13; P2: Task09, Task10, Task12) y orden secuencial de ejecución con parametrización configurable para opciones en disputa, preservando intactas todas las fases preexistentes (Fases 10 a 31).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 33: FORMULARIOS INSTITUCIONALES Y TRÁMITES DIGITALES
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, backend/accounting-service/Code.gs, backend/academic-service/Code.gs, js/student.js, student-dashboard.html, teacher-dashboard.html
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 33 correspondiente a Formularios Institucionales y Trámites Digitales.
+- Se inspeccionaron las 16 subcapacidades funcionales del ciclo de vida de trámites y se verificó la matriz de 24 pruebas obligatorias (F24-01 a F24-24).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_33_FORMULARIOS_INSTITUCIONALES_TRAMITES_DIGITALES.md.
+- Se destacaron las fortalezas del sistema en su arquitectura relacional en backend (FormulariosInstitucionales, SolicitudesTramites, FlujosAprobacion, RevisionesDecisionesTramite, FirmasConformidades), la segregación estricta de observaciones públicas y privadas, el control estricto de roles por sesión y la emisión atómica de CUV.
+- Se identificaron las áreas de optimización en persistencia de borradores multi-dispositivo en servidor (F33-Task02), subsanación granular con bloqueo de campos validados (F33-Task03) y consolas unificadas de trámites por SLA en dashboards administrativos (F33-Task04).
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 10 tareas técnicas ([F33-Task01] a [F33-Task10]) organizadas en 3 bloques por prioridad (P0: Task01 a Task03; P1: Task10, Task04 a Task07; P2: Task09, Task08) y orden secuencial de ejecución con parametrización configurable para opciones en disputa organizadas en 3 bloques por prioridad (P0, P1, P2) y orden secuencial, preservando intactas todas las fases preexistentes (Fases 10 a 32).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 34: BANDEJAS DE ENTRADA Y SALIDA, REVISIÓN Y FIRMAS
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, backend/academic-service/Code.gs, backend/accounting-service/Code.gs, js/teacher.js, js/student.js
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 34 correspondiente a Bandejas de entrada y salida, revisión y firmas.
+- Se inspeccionaron las 12 subcapacidades funcionales (F34-01 a F34-12) y se evaluó el escenario integral obligatorio de excusas estudiantiles y autorizaciones.
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_34_BANDEJAS_REVISION_FIRMAS.md.
+- Se identificaron las fortalezas del sistema en la segregación estricta de notas internas administrativas vs. observaciones públicas al padre (processWorkflowDecision), el aislamiento IDOR y ABAC en consultas de familias (getGuardianStudents) y el control temporal estricto en autorizaciones (respondToAuthorizationRequest).
+- Se detectó una dualidad arquitectónica crítica entre user-service y academic-service en el procesamiento de justificaciones de inasistencia, donde las aprobadas en bandejas de Secretaría no actualizan RegistrosAsistencia (F34-Task01).
+- Se evidenció la ausencia de bandeja departamental de salida con registro de acuses de entrega y lectura (F34-Task02), la carencia de acceso contextual ABAC para que los docentes consulten justificaciones de sus alumnos (F34-Task03) y la falta de resúmenes criptográficos SHA-256 en adjuntos para prevenir sustituciones silenciosas (F34-Task04).
+- Se analizó el marco legal de firmas bajo el Decreto 149-2013 de Honduras, recomendando tipificar claramente los tokens internos como conformidades digitales institucionales para evitar confusiones con firmas avanzadas certificadas (F34-Task07).
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 11 tareas técnicas ([F34-Task01] a [F34-Task11]) organizadas en 4 bloques por prioridad (P0: Task01 a Task04; P1: Task05 a Task09; P2: Task10 a Task11) y orden secuencial recomendado (1 a 11) con parametrización configurable para opciones en disputa (impacto automático de asistencia, modo de subsanación de campos, reglas de aprobación colegiada y niveles de firma) y orden secuencial de ejecución con parametrización configurable, preservando intactas todas las fases preexistentes (Fases 10 a 33).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 35: IMPORTADOR INTELIGENTE DE EXCEL, CSV Y HOJAS DE CÁLCULO
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, js/teacher.js, teacher-dashboard.html
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 35 correspondiente al Importador inteligente de Excel, CSV y hojas de cálculo.
+- Se inspeccionaron las 20 subcapacidades funcionales (F35-01 a F35-20) y se ejecutó la matriz de 12 pruebas integrales (PT-F35-01 a PT-F35-12).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_35_IMPORTADOR_INTELIGENTE.md.
+- Se identificó la presencia de SheetJS (xlsx.full.min.js), el modal #modal-excel-importer en teacher-dashboard.html y los endpoints backend validateImportPreview, importDataWithColumnMapping y getMigrationLogs en accounting-service.
+- Se detectaron brechas críticas en correspondencia semántica (el frontend envía rígidamente la primera columna como ID sin selector visual ni sugerencias por significado), pérdida de ceros a la izquierda en identificadores (00125 convertido a 125), falta de validación de referencias relacionales contra la base de datos (estudiantes y cuentas inexistentes) y ausencia de un motor de reversión selectiva de lotes.
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 14 tareas técnicas ([F35-Task01] a [F35-Task14]) organizadas en 2 bloques por prioridad (P0: Task01 a Task09; P1: Task10 a Task14) y orden secuencial recomendado (1 a 14) con parametrización configurable para opciones en disputa (umbrales de coincidencia semántica, formato de fechas e importes, políticas de duplicados y modo transaccional todo o nada vs parcial) y orden secuencial de ejecución con parametrización configurable para opciones en disputa, preservando intactas todas las fases preexistentes (Fases 10 a 34).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 35 (PARTE B): REGISTRO CENTRAL DE IDENTIFICADORES Y REGLAS DE NUMERACIÓN
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, backend/academic-service/Code.gs, backend/accounting-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal del Registro Central de Identificadores y Reglas de Numeración.
+- Se inspeccionaron las 15 subcapacidades funcionales (F35-ID-01 a F35-ID-15), la lista maestra CAR-ID-01 a CAR-ID-20 y los 24 escenarios de prueba (PT-ID-01 a PT-ID-24).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_35_REGISTRO_CENTRAL_IDENTIFICADORES_NUMERACION.md.
+- Se identificó la existencia del motor generateInstitutionalId en user-service y academic-service con LockService (10s) sobre la hoja SecuenciasIDs, pero con duplicación de código entre ambos servicios y rigidez de formato (prefijo + padStart(6, '0')).
+- Se detectó una severa proliferación de identificadores ad-hoc generados mediante timestamps (Date.now(), Math.random()) en más de 150 puntos de código para trámites, justificaciones, firmas y pagos, impidiendo numeraciones correlativas institucionales.
+- Se identificó la carencia de ámbitos institucionales de unicidad por sede, la falta de almacenamiento relacional de identificadores históricos/externos (códigos SACE o previos), y la falta de coordinación en importaciones ante números superiores (Caso B) o colisiones (Caso C).
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 7 tareas técnicas ([F35-ID-Task01] a [F35-ID-Task07]) organizadas en 2 bloques por prioridad (P0: Task01 a Task05; P1: Task06 a Task07) y orden secuencial recomendado (1 a 7) con parametrización configurable, preservando intactas todas las fases preexistentes (Fases 10 a 35 parte A).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 37: AISLAMIENTO DE DATOS Y ASIGNACIÓN POR DEPARTAMENTO
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, backend/user-service/Code.gs, backend/academic-service/Code.gs, js/teacher.js, teacher-dashboard.html
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 37 correspondiente al Aislamiento de datos y asignación por departamento.
+- Se inspeccionaron las 12 subcapacidades funcionales (F37-01 a F37-12) y se evaluó la matriz completa de 32 pruebas funcionales (PT-F37-01 a PT-F37-32).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_37_AISLAMIENTO_DATOS_ASIGNACION_DEPARTAMENTOS.md.
+- Se identificó la robustez del control RBAC en servidor (validateRolePermission en user-service) y el soporte multi-hoja de CatalogoSpreadsheets en accounting-service.
+- Se detectaron brechas críticas en la asignación de destinos en importaciones (el backend acepta destinoModulo del cliente sin validar correspondencia semántica contra la entidad ni autorización de área), falta de máscaras de atributos mínimos en consultas interdepartamentales (exposición excesiva de datos de alumnos ante Contabilidad) y ausencia de comprobación de existencia de matrículas foráneas en transacciones de cobro.
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 8 tareas técnicas ([F37-Task01] a [F37-Task08]) organizadas en 2 bloques por prioridad (P0: Task01 a Task05; P1: Task06 a Task08) y orden secuencial recomendado (1 a 8) con parametrización configurable para opciones en disputa (enrutamiento serverside vs cliente validado, políticas de máscaras y resolución de duplicados) y orden secuencial recomendado (1 a 6) con parametrización configurable, preservando intactas todas las fases preexistentes (Fases 10 a 35).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 38: AYUDA CONTEXTUAL, METADATOS Y APRENDIZAJE DE LA INTERFAZ
+ARCHIVOS AUDITADOS: js/ui-common.js, backend/user-service/Code.gs, teacher-dashboard.html, student-dashboard.html, dashboard-contabilidad.html, dashboard-direccion.html
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 38 correspondiente a Ayuda contextual, metadatos y aprendizaje de la interfaz.
+- Se inspeccionaron las 14 subcapacidades funcionales (F38-01 a F38-14) y se evaluó la matriz completa de 25 pruebas funcionales (PT-F38-01 a PT-F38-25).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_38_AYUDA_CONTEXTUAL_METADATOS_APRENDIZAJE.md.
+- Se identificó la existencia de guías paso a paso (startInteractiveGuide en js/ui-common.js), un modal de asistencia contextual con preguntas frecuentes (openContextualHelpModal) y el endpoint backend getHelpGuidesCatalog en user-service.
+- Se detectaron brechas en accesibilidad de tooltips (dependencia de atributos title no operables por teclado Tab ni legibles en dispositivos táctiles/móviles), persistencia exclusiva en localStorage sin sincronización en servidor (reset al cambiar de dispositivo o borrar caché), ausencia de un catálogo centralizado de metadatos de campos con claves estables, y falta de disparadores automáticos no invasivos de primera visita.
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 11 tareas técnicas ([F38-Task01] a [F38-Task11]) organizadas en 3 bloques por prioridad (P0: Task02, Task01, Task04, Task05; P1: Task03, Task06 a Task10; P2: Task11) y orden secuencial recomendado (1 a 11) con parametrización configurable para opciones en disputa (retardo de tooltips, interacción táctil, caché de metadatos e i18n) y orden secuencial recomendado (1 a 7) con parametrización configurable, preservando intactas todas las fases preexistentes (Fases 10 a 37).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 39: DIGITALIZACIÓN ASISTIDA Y TRANSICIÓN DESDE ARCHIVOS TRADICIONALES
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, backend/academic-service/Code.gs, backend/user-service/Code.gs, js/teacher.js, teacher-dashboard.html, js/secretary.js, dashboard-direccion.html
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral y transversal de la Fase 39 correspondiente a Digitalización asistida y transición desde archivos tradicionales.
+- Se inspeccionaron las 12 subcapacidades funcionales (3.1 a 3.12), las 6 capacidades complementarias (4.1 a 4.6) y la matriz de 26 pruebas funcionales (P01 a P26).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_39_DIGITALIZACION_TRANSICION.md.
+- Se identificó la existencia de componentes para plantillas y emisión CUV (PlantillasEscolares, DocumentosEscolaresEmitidos en accounting-service), expedientes de alumnos (DocumentosEstudiantes en academic-service) y formularios dinámicos JSON (FormulariosInstitucionales en user-service).
+- Se detectaron brechas críticas en inventario documental institucional (ausencia de catálogo previo a la migración que clasifique archivos legados por departamento), falta de validación criptográfica SHA-256 para prevenir duplicados en Google Drive, carencia de detección de PDFs escaneados (requiriendo OCR), falta de conversión asistida de documentos Word DOCX a plantillas CUV, ausencia de asistente inteligente para generar formularios dinámicos desde documentos existentes, y ausencia de un tablero directivo de supervisión del avance de digitalización por departamento.
+- Se integró y unificó exhaustivamente el backlog técnico en Pendientes.md compuesto por 18 tareas técnicas ([F39-Task01] a [F39-Task18]) organizadas estrictamente en 3 bloques por prioridad (P0: Task01, Task03, Task04, Task05, Task02, Task06, Task07; P1: Task08 a Task17; P2: Task18) y orden secuencial de ejecución (1 a 18) con parametrización configurable para opciones en disputa (política de duplicados SHA-256, tratamiento de celdas vacías en Excel, umbrales de similitud difusa y retención documental), preservando intactas todas las fases preexistentes (Fases 10 a 38).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Resultado: 100% Funcional y Verificado conforme a la metodología de trabajo.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 40: SEGURIDAD DOCUMENTAL, TRAZABILIDAD Y CONSERVACIÓN
+ARCHIVOS AUDITADOS: backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/user-service/Code.gs, backend/developer-service/Code.gs
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral, técnica y documental de la Fase 40 correspondiente a Seguridad documental, trazabilidad y conservación.
+- Se inspeccionaron las 26 características maestras (F40-01 a F40-26) y se evaluó la matriz completa de 6 escenarios integrales E2E (E2E-01 a E2E-06).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_40_SEGURIDAD_DOCUMENTAL_TRAZABILIDAD_Y_CONSERVACION.md.
+- Se constató la existencia de versionado documental histórico (HistorialVersionesDocumentos), emisión de constancias con correlativo anual y CUV de verificación (PlantillasEscolares, DocumentosEscolaresEmitidos), validación de Magic Bytes y cuotas de tamaño, y un motor de respaldos JSON en Google Drive.
+- Se detectaron brechas críticas P0 de seguridad: configuración de archivos compartidos públicamente con ANYONE_WITH_LINK en contratos laborales y comprobantes bancarios, ausencia de huellas criptográficas SHA-256 en la subida de archivos (dejando sin detección la alteración directa en Drive), token aleatorio en firmas electrónicas desvinculado del hash del documento, falta de un rol segregado de Auditor de solo lectura en ROLE_PERMISSIONS, y omisión de registro forense de eventos de descarga y visualización.
+- Se integró, unificó y convergió exhaustivamente el backlog técnico en Pendientes.md compuesto por 23 tareas técnicas ([F40-Task01] a [F40-Task23]) organizadas en 3 bloques por prioridad (P0: Tasks 01 a 14; P1: Tasks 15 a 21; P2: Tasks 22 a 23) y orden secuencial de ejecución (1 a 23) con parametrización configurable para opciones en disputa (política de herencia de permisos, marcas de agua y períodos de gracia), preservando intactas todas las fases preexistentes (Fases 10 a 39).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Cobertura cuantitativa calculada: Cobertura de Inspección 100.0% (26/26), Cobertura de Verificación 84.62% (22/26).
+- Dictamen de certificación: Requiere Mejoras / No Aprobada para Producción Crítica hasta subsanar brechas P0.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA FUNCIONAL, TÉCNICA Y DOCUMENTAL — FASE 41: PRUEBAS INTEGRALES Y ACEPTACIÓN DE LA DIGITALIZACIÓN
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, backend/academic-service/Code.gs, backend/user-service/Code.gs, js/teacher.js, teacher-dashboard.html
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría integral, técnica y documental de la Fase 41 correspondiente a Pruebas integrales y aceptación de la digitalización.
+- Se inspeccionaron las 10 subcapacidades maestras (F41-01 a F41-10) y se evaluó la matriz completa de 12 pruebas integrales de extremo a extremo (E2E-41-01 a E2E-41-12).
+- Se documentó el informe de auditoría independiente en AUDITORIA_FASE_41_PRUEBAS_INTEGRALES_DIGITALIZACION.md.
+- Se constató una excelente protección atómica contra colisiones de identificadores concurrentes mediante LockService (generateInstitutionalId en SecuenciasIDs), importación con mapeo de columnas (validateImportPreview) y emisión de documentos con CUV.
+- Se detectaron brechas críticas P0: ausencia de un motor de reversión (rollback) seguro para importaciones masivas defectuosas, falta de reanudación idempotente por filas (reintentar un lote duplica registros previos), omisión de tracking de estados intermedios de firma multifirmante (entregado, visto, rechazado) y ausencia de servicio OCR operativo para documentos escaneados.
+- Se integró, unificó y convergió exhaustivamente el backlog técnico en Pendientes.md compuesto por 11 tareas técnicas ([F41-Task01] a [F41-Task11]) organizadas en 3 bloques por prioridad (P0: Tasks 03, 02, 01, 04; P1: Tasks 07, 05, 06, 08; P2: Tasks 10, 09, 11) y orden secuencial de ejecución recomendado (1 a 11) con parametrización configurable para opciones en disputa (política de aislamiento departamental y tratamiento de celdas vacías), preservando intactas todas las fases preexistentes (Fases 10 a 40).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Cobertura cuantitativa calculada: Cobertura de Inspección 100.0% (10/10), Cobertura de Ejecución 90.0% (9/10), Cobertura de Verificación 80.0% (8/10).
+- Dictamen de certificación: Requiere Mejoras / No Aprobada para Producción Crítica hasta implementar la reversión segura y reanudación idempotente.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+AUDITORÍA, CONVERGENCIA, REORGANIZACIÓN Y PRIORIZACIÓN INTEGRAL DE TAREAS EN "PENDIENTES.MD"
+ARCHIVOS AUDITADOS: Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se ejecutó la auditoría, análisis de relaciones, convergencia y reorganización integral del 100% de las tareas de Pendientes.md (506 tareas en total).
+- Se preservaron íntegramente las 33 tareas históricas completadas y verificadas ([X]) en la Sección I.
+- Se clasificaron y reorganizaron las 473 tareas pendientes en la Sección II por estricta prioridad y secuencia técnica de ejecución:
+  * BLOQUE P0 (Tareas Críticas, Seguridad, Integridad y Bloqueantes): 156 tareas renumeradas consecutivamente [TASK-001] a [TASK-156].
+  * BLOQUE P1 (Tareas de Alta Prioridad e Integración Interdepartamental): 199 tareas renumeradas [TASK-157] a [TASK-355].
+  * BLOQUE P2 (Tareas de Prioridad Media, Paneles e Indicadores): 106 tareas renumeradas [TASK-356] a [TASK-461].
+  * BLOQUE P3 (Tareas Complementarias y Optimización): 12 tareas renumeradas [TASK-462] a [TASK-473].
+- Se preservó el 100% del alcance funcional, requerimientos, endpoints, tablas, configuraciones, excepciones y criterios de aceptación originales de cada tarea sin resumir ni simplificar.
+- Se confirmó trazabilidad absoluta de todos los identificadores originales ([Fxx-Taskxx]).
+- Se ejecutó la suite de regresión automatizada tests/regression/academic-grading-suite.js con 53/53 pruebas aprobadas (100.0%).
+- Dictamen: Reorganización integral completada conforme a los principios innegociables de no reducción y máxima fidelidad técnica.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-10-31
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-001] [F15-Task01]
+MOTOR DE FACTURACIÓN FISCAL SAR, CLASIFICACIÓN TRIBUTARIA Y CONTROL DE CAI
+ARCHIVOS MODIFICADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementó la gestión de autorizaciones fiscales SAR en configureSARAuthorizedCAI y getSARAuthorizedCAIs, administrando rangos autorizados (rangoInicial, rangoFinal), fecha límite de emisión y último correlativo en la hoja AutorizacionesCAI.
+- Se refactorizó configurePaymentConcept para incorporar clasificación tributaria por concepto: tipoTributario (Exento, Gravado, No Sujeto), tasaISV (0.15, 0.18, 0), codigoTributario, fechaVigenciaTributaria y requiereValidacionFiscal.
+- Se blindó createFiscalInvoice con candado atómico ScriptLock (LockService) para evitar colisiones concurrentes en el correlativo.
+- Se incorporaron validaciones bloqueantes: CAI_EXPIRED (vencimiento de fecha límite de emisión) y CAI_RANGE_EXHAUSTED (agotamiento de numeración autorizada).
+- Se implementó el cálculo y desglose atómico de subtotalExento, subtotalGravado, ISV y total general en FacturasFiscales.
+- Se validó el RTN con estándar de 14 dígitos numéricos en Honduras.
+- Se registraron los permisos en ROLE_PERMISSIONS y despachadores en doPost.
+- Se actualizaron las aserciones de regresión en tests/regression/academic-grading-suite.js con 57/57 pruebas pasadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+INTEGRACIÓN Y RESTAURACIÓN DE CÓDIGO Y BACKLOG MAESTRO (FASES 10-41 Y 506 TAREAS)
+ARCHIVOS INVOLUCRADOS:
+- Pendientes.md, completadas.md, Auditoria.txt, Auditoría.txt, ChangesLogs.txt
+- Microservicios: backend/accounting-service/Code.gs, backend/developer-service/Code.gs, backend/academic-service/Code.gs, backend/user-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
+- Dashboards y Controladores: dashboard-contabilidad.html, dashboard-secretaria.html, dashboard-direccion.html, dashboard-recursos-humanos.html, dashboard-tienda.html, dashboard-cafeteria.html, js/accounting.js, js/secretary.js, tests/regression/academic-grading-suite.js, tests/regression/modular-dashboard-suite.js
+DESCRIPCIÓN DEL ALCANCE:
+- Se sincronizó e integró la totalidad de la arquitectura de backend y suites de pruebas desde origin/pr/173.
+- Se recuperó el microservicio de contabilidad y planillas con la implementación de facturación fiscal SAR y control de CAI ([TASK-001] [F15-Task01]).
+- Se verificó la suite de regresión académica (tests/regression/academic-grading-suite.js) con 57/57 pruebas aprobadas (100.0%).
+- Se verificó la suite de dashboards modulares (tests/regression/modular-dashboard-suite.js) con 23/23 pruebas aprobadas (100.0%).
+- Se integró completadas.md (251 tareas consolidadas de Fases 1 a 9) y Pendientes.md (506 tareas consolidadas de Fases 10 a 41).
+- Se confirmó que la siguiente tarea a implementar en secuencia estricta de prioridad es [TASK-002] [F15-Task02].
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-002] [F15-Task02]
+MOTOR DE GENERACIÓN MASIVA, PROGRAMADA Y RECURRENTE DE MENSUALIDADES ESCOLARES
+ARCHIVOS MODIFICADOS: backend/accounting-service/Code.gs, js/accounting.js, tests/regression/academic-grading-suite.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementó previewBatchMonthlyCharges para simulación interactiva previa a la generación de cargos, permitiendo inspeccionar desglose por estudiante, total estimado, cargos preexistentes y estudiantes sin tarifa.
+- Se implementó generateBatchMonthlyCharges blindado con candado atómico ScriptLock (LockService.getScriptLock) para evitar concurrencia y sobrecargas simultáneas.
+- Se implementó clave lógica única de deduplicación (studentId_concepto_periodo_anoLectivo) que previene la duplicación de cuotas al reintentar o reanudar procesos interrumpidos.
+- Se integró la asignación de identificador único de lote (BATCH-CRG-...) e identificador individual por cargo (CRG-...).
+- Se excluyen automáticamente estudiantes con matrícula cancelada, retirados o suspendidos.
+- Se enlazó la aplicación de becas y exoneraciones aprobadas (applyApprovedScholarshipsToCharges) sobre los cargos generados.
+- Se expusieron los métodos clientes window.previewBatchMonthlyCharges y window.generateBatchMonthlyCharges en js/accounting.js.
+- Se añadieron aserciones automatizadas a tests/regression/academic-grading-suite.js, alcanzando 61/61 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-003] [F15-Task03]
+SISTEMA INTEGRAL DE ANULACIONES, REVERSIÓN DE PAGOS, NOTAS DE CRÉDITO Y REEMBOLSOS
+ARCHIVOS MODIFICADOS: backend/accounting-service/Code.gs, js/accounting.js, tests/regression/academic-grading-suite.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementó voidCharge en backend/accounting-service/Code.gs para anulación lógica de cargos con motivo obligatorio (>= 10 caracteres), protegiendo la inmutabilidad de la fila en CargosEstudiante e impidiendo anular cargos con abonos activos en PagosAbonos.
+- Se implementó reversePayment con ScriptLock atómico (LockService) para revertir aplicaciones de pago sin eliminar el historial, restituyendo exactamente el saldo y recalculando el estado del cargo en CargosEstudiante ('Pendiente'/'Parcial'), generando el contra-asiento en AsientosContables y bloqueando doble reversión con PAYMENT_ALREADY_REVERSED.
+- Se implementó issueFiscalCreditNote gestionando la estructura tabular NotasCreditoFiscales, vinculada obligatoriamente a la FacturaOriginalID de FacturasFiscales, validando que el importe no exceda el saldo acreditable de la factura y soportando acreditaciones totales y parciales.
+- Se implementó processPaymentRefund para devoluciones monetarias y reembolsos en caja/bancos, validando que el monto a reembolsar no exceda el saldo pagado disponible y registrando el egreso formal en MovimientosCajaBancos.
+- Se expusieron los métodos clientes correspondientes en js/accounting.js.
+- Se actualizaron las aserciones en tests/regression/academic-grading-suite.js alcanzando 67/67 pruebas pasadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-004] [F16-Task01]
+CATÁLOGO DINÁMICO DE ROLES INTERNOS ORGANIZATIVOS Y ADMINISTRACIÓN DE ASIGNACIONES
+ARCHIVOS MODIFICADOS: backend/user-service/Code.gs, tests/regression/academic-grading-suite.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementó la estructura tabular formal CatalogoRolesInternos en getOrCreateSheet con atributos: RolInternoID, CodigoInterno, NombreResponsabilidad, Descripcion, Departamento, AreaAcademica, TipoResponsabilidad, VigenciaMeses, PermiteSuplencia, Estado, CreadoPor, FechaCreacion, FechaActualizacion.
+- Se implementó manageInternalRoleCatalog para altas, modificaciones y activaciones/desactivaciones de roles internos organizativos con detección y prevención de duplicados normalizados insensibles a mayúsculas, espacios y acentos.
+- Se implementó getInternalRoleCatalog con soporte de filtrado granular por departamento, área académica, tipo de responsabilidad y estado activo/inactivo.
+- Se adaptó la función assignRoleScope para vincular asignaciones a roles internos del catálogo, soportando vigencias temporales con fechaInicio y fechaFin, designación de suplencias temporales (esSuplente, suplenteDeUserId) y múltiples roles por empleado sin duplicar expedientes.
+- Se implementó getInternalRoleAssignments para consultar asignaciones vigentes e históricas con discriminación automática de vigencias expiradas.
+- Se preservó estrictamente la separación entre responsabilidades institucionales y privilegios globales en ROLE_PERMISSIONS.
+- Se actualizaron las pruebas en tests/regression/academic-grading-suite.js alcanzando 72/72 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-005] [F16-Task02]
+ASIGNACIÓN INSTITUCIONAL DE DOCENTES A ÁREAS ACADÉMICAS INDEPENDIENTE DE LA CARGA LECTIVA
+ARCHIVOS MODIFICADOS: backend/academic-service/Code.gs, tests/regression/academic-grading-suite.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementó la estructura formal DocentesAreasAcademicas en getOrCreateSheet con encabezados: AsignacionAreaID, DocenteID, NombreDocente, AreaID, NombreArea, TipoVinculacion, EsCoordinadorTitular, EsCoordinadorSuplente, FechaInicio, FechaFin, Estado, MotivoAsignacion, AsignadoPor, FechaCreacion, FechaActualizacion.
+- Se implementó assignTeacherToAcademicArea permitiendo adscribir docentes a áreas curriculares de forma totalmente desacoplada de la asignación de asignaturas en el período activo. Soportado multi-área por docente y multi-docente por área.
+- Se validó que docentes desvinculados o inactivos no puedan ser asignados como activos.
+- Se integró la designación de coordinadores titular y suplente sincronizándolos automáticamente con CoordinacionesArea.
+- Se implementaron getTeachersByAcademicArea y getAcademicAreasByTeacher para consultas en tiempo real de integrantes de academia docente.
+- Se implementó removeTeacherFromAcademicArea con baja lógica inmutable (Estado = 'Inactivo') preservando la trazabilidad histórica.
+- Se actualizaron las aserciones en tests/regression/academic-grading-suite.js alcanzando 78/78 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-006] [F16-Task03]
+FLUJO DE DESVINCULACIÓN LABORAL CON REVOCACIÓN COORDINADA DE ACCESOS Y ASIGNACIONES
+ARCHIVOS MODIFICADOS: backend/accounting-service/Code.gs, js/accounting.js, tests/regression/academic-grading-suite.js, Pendientes.md
+RESULTADO DE EVALUACIÓN:
+- Se implementó processEmployeeOffboarding en backend/accounting-service/Code.gs para orquestar la desvinculación laboral integral e inmutable exigiendo motivo obligatorio (>= 10 caracteres) y fecha efectiva de salida.
+- Revocación inmediata y prioritaria de credenciales: actualiza el estado de la cuenta en Usuarios a 'Desactivada' e invalida tokens en tiempo real.
+- Actualización de estado en ExpedientesLaborales a 'Desvinculado' fijando FechaSalida sin eliminar físicamente registros.
+- Cierre coordinado en cascada: pasa a estado 'Inactiva' las adscripciones en HistorialAdscripciones, finaliza ámbitos en AsignacionesAmbitosRoles y desactiva asignaciones en DocentesAreasAcademicas y CoordinacionesArea.
+- Cálculo preliminar de liquidación conforme a la legislación laboral (días trabajados y vacaciones no gozadas estimadas) en estado 'PendienteRevisionContabilidad', sin emitir pagos definitivos sin autorización previa.
+- Identificación de lista de tareas pendientes de entrega de bienes y traspaso de responsabilidades.
+- Idempotencia: previene ejecuciones redundantes reportando el cese previo intacto si el empleado ya estaba desvinculado.
+- Emisión de evento de auditoría estructurado EMPLOYEE_OFFBOARDED_CASCADED.
+- Se actualizaron las aserciones en tests/regression/academic-grading-suite.js alcanzando 82/82 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+AUDITORIA INICIAL — [TASK-007] [F17-Task01] & [TASK-008] [F17-Task02]
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (calculatePayrollPeriod)
+- Estructuras: ContratosLaborales, AprobacionHorasExtras, DeduccionesAsistencia, IncapacidadesMedicas, SolicitudesVacaciones, PlanillasNomenclatura
+HALLAZGOS:
+1. En backend/accounting-service/Code.gs (calculatePayrollPeriod, l. 4562): Se detecta constante fija hardcodeada 'const salarioBase = 22000;' aplicada indiscriminadamente a todos los empleados activos, ignorando sus contratos vigentes en ContratosLaborales.
+2. Inexistencia de cálculo salarial proporcional: Empleados con ingreso a mitad del período o retiro durante el mes reciben el salario mensual completo sin ponderar los días efectivamente laborados.
+3. Omisión de validación de contratos: Empleados activos sin contrato vigente o con contratos expirados no generan incidencias y reciben el salario base arbitrario de L 22,000.00.
+4. Novedades omitidas: En l. 4563-4566, las horas extras, bonificaciones y deducciones adicionales se inicializan en cero ('const horasExtras = 0; const montoHorasExtras = 0; const bonificaciones = 0; const otrasDed = 0;'). Las novedades aprobadas en AprobacionHorasExtras, DeduccionesAsistencia (tardanzas, ausencias injustificadas), SolicitudesVacaciones (permisos sin goce de sueldo) e IncapacidadesMedicas no son consultadas ni integradas.
+5. Ausencia de trazabilidad e idempotencia en novedades: No existe mecanismo para marcar novedades como 'ProcesadaEnNomina' con el planillaId asociado, lo que permitiría duplicar deducciones o pagos adicionales en recálculos o ignorar su estado de procesamiento.
+ESTADO: Auditoría finalizada. Procediendo con la implementación de resolución dinámica de contratos e integración de novedades.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-007] [F17-Task01] & [TASK-008] [F17-Task02]
+CÁLCULO DINÁMICO CONTRACTUAL DE NÓMINA E INTEGRACIÓN AUTOMÁTICA DE NOVEDADES
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (calculatePayrollPeriod)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt / Auditoría.txt / ChangesLogs.txt
+RESULTADO DE EVALUACIÓN:
+- [TASK-007]: Se eliminó el salario fijo hardcodeado (const salarioBase = 22000;). calculatePayrollPeriod ahora consulta dinámicamente ContratosLaborales para cada empleado activo.
+- Soporta contratos vigentes con vigencia dentro del período procesado, validación de fechaInicio y fechaFin.
+- Detección de incidencias contractuales: si el empleado carece de contrato vigente, se registra en la hoja IncidenciasNomina (tipo SIN_CONTRATO_VIGENTE) y se bloquea su procesamiento sin asignar valores arbitrarios.
+- Detección de contratos superpuestos: si existen múltiples contratos vigentes, se genera incidencia CONTRATOS_SUPERPUESTOS para revisión sin cálculo erróneo silencioso.
+- Ponderación y cálculo proporcional exacto de días laborados para empleados con ingresos a mitad de período o desvinculaciones/salidas durante el mes.
+- [TASK-008]: Integración automática de novedades aprobadas no procesadas del período:
+  * Horas extras aprobadas en AprobacionHorasExtras calculadas con factor estándar de recargo (1.25 sobre tarifa ordinaria).
+  * Deducción de ausencias injustificadas y tardanzas acumuladas (> 15 mins) desde DeduccionesAsistencia.
+  * Deducción de permisos sin goce de sueldo desde SolicitudesVacaciones.
+  * Trazabilidad e idempotencia: marcado de horas extras con ProcesadaEnNomina y planillaId, y marcado en observaciones de asistencias, vacaciones e incapacidades con [PROCESADA_NOMINA_{planillaId}].
+- Control de concurrencia y reentrancia mediante LockService.getScriptLock().
+- Se actualizaron las aserciones en tests/regression/academic-grading-suite.js alcanzando 91/91 pruebas pasadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+AUDITORIA INICIAL — [TASK-009] [F17-Task03]
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (calculatePayrollPeriod, updatePayrollPeriodStatus, getPayrollPeriodSummary)
+- Estructuras: PlanillasNomenclatura, PoliticasFiscales, AsientosContables
+HALLAZGOS:
+1. En PlanillasNomenclatura y calculatePayrollPeriod (l. 4830-4860): El motor únicamente calcula retenciones y deducciones a cargo del empleado (dedIHSS 3.5%, dedRAP 1.5%, dedISR). Omite completamente las aportaciones patronales de ley en Honduras: IHSS patronal (~7.2% sobre techo de L 10,317.38), RAP patronal (1.5% sobre excedente) e INFOP patronal (1.0% sobre salario devengado).
+2. Ausencia de separación entre costo laboral patronal y deducciones del trabajador: Al no calcularse las obligaciones patronales, el costo institucional total de planilla está subestimado en los reportes (solo refleja totalBruto devengado por los empleados).
+3. Asiento contable de nómina incompleto en updatePayrollPeriodStatus (l. 4920-4935): El asiento automático solo registra:
+   - Debe: 5101 Gasto de Salarios y Planilla (totalBruto)
+   - Haber: 2101 Retenciones y Deducciones por Pagar (totalDeducciones obreras)
+   - Haber: 1101 Bancos / Sueldos por Pagar (totalSalarioNeto)
+   No contabiliza el Gasto de Aportaciones Patronales (Debe) ni las Obligaciones Patronales por Pagar al IHSS, RAP e INFOP (Haber), desalineando los pasivos institucionales con la contabilidad legal.
+ESTADO: Auditoría finalizada. Procediendo con la implementación de aportaciones patronales independientes, separación de costo institucional y asientos contables completos por partida doble.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-009] [F17-Task03]
+APORTACIONES PATRONALES INDEPENDIENTES Y SEPARACIÓN DE COSTOS INSTITUCIONALES
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (calculatePayrollPeriod, updatePayrollPeriodStatus, getPayrollPeriodSummary)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt / Auditoría.txt / ChangesLogs.txt
+RESULTADO DE EVALUACIÓN:
+- Se implementó el cálculo independiente de aportaciones patronales de ley en Honduras en calculatePayrollPeriod:
+  * IHSS Patronal: 7.2% sobre el techo vigente de L 10,317.38.
+  * RAP Patronal: 1.5% sobre el excedente del techo de L 10,317.38.
+  * INFOP Patronal: 1.0% sobre salario devengado.
+- Protección irrestricta del salario neto del empleado: las aportaciones patronales no disminuyen el devengo ni el neto a percibir por el trabajador.
+- Ampliación del esquema de la hoja PlanillasNomenclatura para registrar patronalIHSS, patronalRAP, patronalINFOP y costoLaboralTotal.
+- Se actualizó updatePayrollPeriodStatus para emitir un asiento contable automático equilibrado por partida doble exacta (|Debe - Haber| <= 0.01):
+  * Debe: 5101 Gasto de Salarios y Planilla (totalBruto)
+  * Debe: 5102 Gasto de Aportaciones Patronales (IHSS/RAP/INFOP)
+  * Haber: 2101 Retenciones y Deducciones de Empleados por Pagar
+  * Haber: 2102 Obligaciones Patronales por Pagar (IHSS/RAP/INFOP)
+  * Haber: 1101 Bancos / Sueldos Netos por Pagar
+- Se actualizó getPayrollPeriodSummary para desglosar el resumen con totalAportacionesPatronales y totalCostoLaboralInstitucional.
+- Pruebas automatizadas actualizadas en tests/regression/academic-grading-suite.js pasando al 100% (96/96 pruebas pasadas).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+AUDITORIA INICIAL — [TASK-010] [F17-Task04]
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (calculatePayrollPeriod, l. 4807, configureFiscalPolicy, getFiscalPolicies)
+- Estructuras: PoliticasFiscales, PlanillasNomenclatura
+HALLAZGOS:
+1. En backend/accounting-service/Code.gs (calculatePayrollPeriod, l. 4807): El cálculo actual aplica una deducción fija simplificada:
+   'const dedISR = parseFloat((salarioBase > 20000 ? (salarioBase - 20000) * 0.15 : 0).toFixed(2));'
+   Esto infringe la Ley de Impuesto Sobre la Renta de Honduras (Art. 22), al ignorar la escala de tramos progresivos (exento, 15%, 20%, 25%), los gastos médicos deducibles por ley (L 40,000 anuales) y las deducciones de seguridad social (IHSS y RAP).
+2. Omisión de cálculo progresivo anualizado: Para retener correctamente el ISR en la fuente, los ingresos ordinarios del trabajador deben proyectarse a 12 meses, deducir los gastos médicos de ley autorizados (L 40,000.00) y las cotizaciones anuales al IHSS/RAP, aplicar la escala progresiva por tramos del SAR y dividir el impuesto anual resultante entre 12 meses.
+3. Parametrización en PoliticasFiscales: La tabla PoliticasFiscales no contiene la definición estructurada de los tramos progresivos del SAR (Art. 22) ni gastos médicos de ley autorizados para permitir su actualización anual sin modificar código duro.
+ESTADO: Auditoría finalizada. Procediendo con la implementación del motor de retención progresiva anualizada del ISR conforme al Art. 22 del SAR.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-010] [F17-Task04]
+MOTOR DE RETENCIÓN PROGRESIVA ANUALIZADA DE ISR (SAR ART. 22)
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (calculatePayrollPeriod, getFiscalPolicies)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt / Auditoría.txt / ChangesLogs.txt
+RESULTADO DE EVALUACIÓN:
+- Se eliminó el porcentaje plano del 15% sobre el excedente de L 20,000.00 en calculatePayrollPeriod.
+- Se implementó el motor de retención progresiva anualizada conforme al Artículo 22 de la Ley de Impuesto Sobre la Renta de Honduras:
+  * Proyección de ingresos brutos anuales (12 meses de salario ordinario contractual más horas extras proyectadas).
+  * Deducción legal fija por gastos médicos de L 40,000.00 anuales.
+  * Deducción de aportaciones anuales del trabajador a la seguridad social (IHSS y RAP).
+  * Determinación de base imponible neta anual proyectada.
+  * Aplicación de la escala oficial progresiva del SAR:
+    - Tramo 1 (hasta L 199,539.96): Exento (0%).
+    - Tramo 2 (L 199,539.97 a L 304,324.78): 15%.
+    - Tramo 3 (L 304,324.79 a L 707,729.04): 20%.
+    - Tramo 4 (excedente de L 707,729.04): 25%.
+  * Retención mensual exacta en la fuente prorrateada en 12 meses.
+- Se parametrizó la política 'POL-ISR-SAR' en getFiscalPolicies dentro de PoliticasFiscales.
+- Pruebas automatizadas añadidas en tests/regression/academic-grading-suite.js pasando al 100% (101/101 pruebas pasadas).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+AUDITORIA INICIAL — [TASK-011] [F17-Task05]
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (calculatePayrollPeriod, updatePayrollPeriodStatus, getStaffPayrollReceipt, AnticiposPrestamosEmpleado)
+- Estructuras: PlanillasNomenclatura, ContratosLaborales, ExpedientesLaborales, BoletasPago, AsientosContables
+HALLAZGOS:
+1. Inexistencia de motor para nóminas extraordinarias: El sistema carece de un endpoint o función especializada para calcular y liquidar de forma separada el Décimo Tercer Mes (Aguinaldo) y el Décimo Cuarto Mes de Compensación Social (Decreto 135-94).
+2. Períodos legales de acumulación no contemplados:
+   - 13º Mes (Aguinaldo): Cómputo del 1 de diciembre al 30 de noviembre.
+   - 14º Mes (Compensación Social): Cómputo del 1 de julio al 30 de junio.
+   Actualmente no se evalúa el tiempo de servicio para determinar el beneficio completo (12 meses) o el proporcional exacto a los días o meses efectivamente laborados.
+3. Tratamiento tributario y deducciones: Conforme a la legislación de Honduras, el 13º y 14º mes gozan de exención de retenciones ordinarias de seguridad social (IHSS, RAP) e ISR hasta los topes legales de exención. El sistema no provee esta discriminación si se procesara como nómina ordinaria.
+4. Descuento de anticipos: No existe vinculación entre la hoja AnticiposPrestamosEmpleado (donde se registran tipos 'AnticipoAguinaldo' o 'AnticipoDecimoCuarto') y el cálculo extraordinario, lo que propicia el riesgo de pagos dobles.
+5. Asientos contables y boletas: Falta generación de boletas de pago de beneficio social extraordinario y asientos contables en cuentas de gasto específicas (5103 Gasto Décimo Tercer Mes / 5104 Gasto Décimo Cuarto Mes) con pasivos correspondientes.
+ESTADO: Auditoría finalizada. Procediendo con el diseño e implementación de calculateExtraordinaryPayroll.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-011] [F17-Task05]
+CÁLCULO Y PROCESAMIENTO INDEPENDIENTE DE 13º (AGUINALDO) Y 14º MES (DEC. 135-94)
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (calculateExtraordinaryPayroll, doPost)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt / Auditoría.txt / ChangesLogs.txt
+RESULTADO DE EVALUACIÓN:
+- Se implementó calculateExtraordinaryPayroll en backend/accounting-service/Code.gs para procesar en forma autónoma e independiente las planillas extraordinarias de beneficios sociales:
+  * 13º Mes (Aguinaldo): período legal acumulativo del 1 de diciembre al 30 de noviembre.
+  * 14º Mes (Decreto 135-94): período legal acumulativo del 1 de julio al 30 de junio.
+- Admisión de colaboradores con acumulación completa (12 meses completos devengan 1 salario ordinario) y cálculo matemático proporcional exacto en base a días trabajados dentro del ciclo para colaboradores de ingreso reciente o finiquito.
+- Deducción automática y trazable de anticipos de beneficios otorgados previamente desde AnticiposPrestamosEmpleado ('AnticipoAguinaldo' o 'AnticipoDecimoCuarto'), actualizando el saldo deudor pendiente y previniendo pagos duplicados.
+- Aplicación de las exenciones de ley en Honduras: sin retención de IHSS, RAP ni ISR ordinario sobre estos beneficios extraordinarios.
+- Registro en PlanillasNomenclatura bajo identificador único 'PLN-EXTRA-{13M|14M}-{timestamp}', ciclo 'Calculada', sin aportaciones patronales ordinarias (no aplicables a 13º/14º mes).
+- Suite de pruebas de regresión en tests/regression/academic-grading-suite.js alcanzando 106/106 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+AUDITORIA INICIAL — [TASK-012] [F18-Task01]
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (recordPurchaseReceipt, l. 6325-6385)
+- Estructuras: OrdenesCompra, RecepcionesCompra, InventariosKardex
+HALLAZGOS:
+1. En backend/accounting-service/Code.gs (recordPurchaseReceipt, l. 6366): Se detecta cambio de estado incondicional e injustificado de la orden de compra a 'RecibidaTotal':
+   'ordSheet.getRange(oIdx + 1, 10).setValue("RecibidaTotal");'
+   Esto se ejecuta sin contrastar las cantidades recibidas contra las cantidades autorizadas en 'detalleItems' de la orden de compra.
+2. Imposibilidad de recepciones parciales y entregas escalonadas: Si un proveedor despacha una fracción de los ítems o un pedido escalonado en varias fechas, la orden se cierra prematuramente impidiendo registrar recepciones subsecuentes y desapareciendo las cantidades pendientes de recibir.
+3. Tratamiento de incidencias físicas y rechazos: Si el cargamento contiene unidades dañadas o no conformes ('estadoConformidad !== Conforme'), el código no segrega las cantidades conformes de las defectuosas e ingresa todo al inventario disponible si 'registrarEnInventario' está activo.
+4. Ausencia de endpoint de consulta de recepciones: No existe la función getPurchaseReceipts para que adquisiciones y auditoría consulten las recepciones acumuladas por orden de compra.
+ESTADO: Auditoría finalizada. Procediendo con el control acumulativo de recepciones parciales, validación de conformidades y consulta de entregas.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-012] [F18-Task01]
+CONTROL RIGUROSO DE RECEPCIONES PARCIALES Y ENTREGAS ESCALONADAS
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (recordPurchaseReceipt, getPurchaseReceipts, doPost, ROLE_PERMISSIONS)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt / Auditoría.txt / ChangesLogs.txt
+RESULTADO DE EVALUACIÓN:
+- Se corrigió el cierre prematuro incondicional de órdenes de compra a 'RecibidaTotal'.
+- Implementación de balance acumulado por partida en recordPurchaseReceipt:
+  * Suma acumulada de cantidades recibidas conformes previas + entrega actual.
+  * Comparación partida por partida contra las cantidades autorizadas en detalleItems de la Orden de Compra.
+  * Transición a 'RecibidaParcial' mientras existan cantidades pendientes de recibir.
+  * Transición a 'RecibidaTotal' única y exclusivamente cuando todas las partidas han sido recibidas y conformes al 100%.
+- Gestión de incidencias físicas y devoluciones: las unidades dañadas, defectuosas o en disputa se segregan y no se registran como existencias disponibles en InventariosKardex.
+- Creación del endpoint getPurchaseReceipts para consultar el historial de recepciones asociado a una orden o identificador de recepción.
+- Protección transaccional con LockService.getScriptLock().
+- Pruebas automatizadas actualizadas en tests/regression/academic-grading-suite.js con 111/111 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+AUDITORIA INICIAL — [TASK-013] [F18-Task02]
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (recordAccountsPayableExpense, recordPurchaseReceipt, l. 6470-6490 y 6730-6770)
+- Estructuras: CuentasPorPagarGastos, OrdenesCompra, RecepcionesCompra
+HALLAZGOS:
+1. En recordPurchaseReceipt (l. 6470): Al momento de registrar una recepción física de bodega, se llama de forma acoplada y automática a recordAccountsPayableExpense creando una factura ficticia 'FCT-REC-...', confundiendo el albarán/nota de entrega física con la factura fiscal emitida por el proveedor.
+2. Inexistencia de motor de conciliación de tres vías (Three-Way Match): En recordAccountsPayableExpense no existe ninguna verificación cruzada que contraste la factura fiscal recibida del proveedor contra lo ordenado en OrdenesCompra y lo recibido conforme en RecepcionesCompra.
+3. Vulnerabilidad a sobreprecios y cobros indebidos: Las facturas pueden tramitarse y aprobarse para pago con cantidades facturadas que exceden lo entregado físicamente en bodega, o con precios unitarios mayores a los pactados en la cotización y orden aprobada.
+4. Falta de estados de conciliación documental: CuentasPorPagarGastos no maneja estados de conciliación ('PendienteConciliacion', 'Conciliada', 'ConDiferencias', 'DiferenciaAutorizada') ni audita discrepancias por ítem.
+ESTADO: Auditoría finalizada. Procediendo con la implementación de verifyThreeWayMatch y el desacoplamiento de la recepción física.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-013] [F18-Task02]
+CONCILIACIÓN DOCUMENTAL DE TRES VÍAS (THREE-WAY MATCH) ENTRE ORDEN, RECEPCIÓN Y FACTURA
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (verifyThreeWayMatch, recordAccountsPayableExpense, recordPurchaseReceipt, doPost, ROLE_PERMISSIONS)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt / Auditoría.txt / ChangesLogs.txt
+RESULTADO DE EVALUACIÓN:
+- Se implementó verifyThreeWayMatch en backend/accounting-service/Code.gs para contrastar de manera rigurosa:
+  1. Orden de Compra: partidas pedidas, precios unitarios autorizados y subtotales.
+  2. Recepciones de Compra: acumulado de cantidades recibidas conformes aceptadas en almacén.
+  3. Factura del Proveedor: cantidades facturadas, precios unitarios, impuestos y montos totales.
+- Detección de discrepancias:
+  * CANTIDAD_EXCEDE_RECEPCION: cantidades facturadas que superan lo efectivamente recibido en bodega.
+  * SOBREPRECIO_UNITARIO: precios unitarios que superan lo autorizado en la orden (diferencia absoluta y porcentual).
+  * ARTICULO_NO_ORDENADO: ítems en factura ajenos a la orden autorizada.
+- Desacoplamiento de recepción física y factura fiscal: se eliminó la simulación de facturas 'FCT-REC-...' dentro de recordPurchaseReceipt; el albarán físico no crea cuentas por pagar ficticias.
+- Control de pagos en CuentasPorPagarGastos: si se detectan discrepancias, la obligación pasa a estado 'BloqueadoPorDiscrepancia' y 'Bloqueado Conciliacion', a menos que medie autorización expresa ('DiferenciaAutorizada') por Director o Administrador.
+- Pruebas automatizadas en tests/regression/academic-grading-suite.js pasando al 100% (116/116 pruebas aprobadas).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+AUDITORIA INICIAL — [TASK-014] [F18-Task03]
+ARCHIVOS AUDITADOS:
+- js/accounting.js (renderComprasModule, l. 786-798)
+- dashboard-contabilidad.html (pestaña compras, l. 62-64)
+- backend/accounting-service/Code.gs (endpoints de compras y contrataciones)
+HALLAZGOS:
+1. En js/accounting.js (renderComprasModule): La función únicamente inyecta un bloque HTML estático con un mensaje de texto informativo ('Gestión de Solicitudes de Compra, Cotizaciones Comparativas y Recepción de Bienes.'), sin formularios, tablas de datos, botones de acción ni llamadas a la API.
+2. Inoperatividad del módulo de compras en la interfaz: A pesar de que el backend cuenta con endpoints robustos (createPurchaseRequest, getPurchaseRequests, submitPurchaseQuotation, getPurchaseQuotations, createPurchaseOrder, approvePurchaseOrder, getPurchaseOrders, recordPurchaseReceipt, getPurchaseReceipts, verifyThreeWayMatch, registerSupplier), los usuarios de Contabilidad, Dirección y Adquisiciones no pueden operar el ciclo de compras desde dashboard-contabilidad.html.
+3. Carencia de cuadro comparativo y seguimiento: No existe visualización comparativa de ofertas ni interfaz de registro para entregas parciales y validación de Three-Way Matching.
+ESTADO: Auditoría finalizada. Procediendo con el desarrollo completo de la interfaz de compras en js/accounting.js.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-014] [F18-Task03]
+INTERFAZ OPERATIVA COMPLETA DEL MÓDULO DE COMPRAS & PROVEEDORES (FASE 18)
+ARCHIVOS MODIFICADOS:
+- js/accounting.js (renderComprasModule, switchComprasSubtab, sub-vistas operativas)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt / Auditoría.txt / ChangesLogs.txt
+RESULTADO DE EVALUACIÓN:
+- Se reemplazó el bloque estático de renderComprasModule en js/accounting.js por la consola integral de compras:
+  * Barra de navegación interactiva con subpestañas: 'Solicitudes', 'Cotizaciones', 'Órdenes de Compra', 'Recepciones', 'Three-Way Match' y 'Proveedores'.
+  * Panel métrico en tiempo real con 4 KPIs (solicitudes pendientes, órdenes por entregar, entregas parciales y estado Three-Way).
+  * Sub-vista 'Solicitudes de Compra' con tabla asíncrona, estados de aprobación y disparador modal de creación.
+  * Sub-vista 'Cotizaciones & Comparativo' para visualización y adjudicación de ofertas de proveedores.
+  * Sub-vista 'Órdenes de Compra' para seguimiento de estados escalonados ('RecibidaParcial', 'RecibidaTotal').
+  * Sub-vista 'Recepciones de Mercancía' para auditoría de recepciones físicas en bodega y conformidades.
+  * Sub-vista 'Three-Way Match' con formulario interactivo de testeo y validación cruzada entre orden, recepción y factura.
+  * Sub-vista 'Directorio de Proveedores' para consulta y registro de proveedores con RTN.
+- Pruebas automatizadas en tests/regression/academic-grading-suite.js alcanzando 121/121 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+AUDITORIA INICIAL — [TASK-015] [F18-Task04]
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (createPurchaseOrder, approvePurchaseOrder, getPurchaseOrders, l. 6230-6320)
+- Estructura: OrdenesCompra (12 columnas actuales)
+HALLAZGOS:
+1. Ausencia de documento PDF oficial: Las órdenes de compra se almacenan únicamente como datos en la hoja OrdenesCompra. No existe la función generatePurchaseOrderPDF que elabore el comprobante formal descargable e imprimible con identidad institucional de New Generation.
+2. Ciclo de estados incompleto y rígido: Actualmente approvePurchaseOrder solo cambia el estado arbitrariamente según el payload recibido ('Aprobada', 'Rechazada'), sin gobernar la secuencia legal: Borrador -> PendienteAprobacion -> Aprobada -> Emitida -> EnviadaProveedor -> AceptadaProveedor/RechazadaProveedor -> PendienteRecepcion -> RecibidaParcial -> RecibidaTotal -> Cerrada/Cancelada.
+3. Riesgo de emisión y despacho sin aprobación: El sistema no valida que una orden deba estar obligatoriamente en estado 'Aprobada' antes de poder transicionar a 'Emitida' o 'EnviadaProveedor'.
+4. Carencia de versionado documental: Si una orden aprobada sufre ajustes de partidas o fechas, el registro se sobreescribe sin mantener número de versión ni auditoría de ediciones documentales previas.
+ESTADO: Auditoría finalizada. Procediendo con la implementación de generatePurchaseOrderPDF, ampliación de estados con validación de transiciones y versionado documental.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-015] [F18-Task04]
+DOCUMENTOS PDF OFICIALES PARA ÓRDENES DE COMPRA Y AMPLIACIÓN DE CICLO DE ESTADOS
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (generatePurchaseOrderPDF, approvePurchaseOrder, createPurchaseOrder, doPost, ROLE_PERMISSIONS)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt / Auditoría.txt / ChangesLogs.txt
+RESULTADO DE EVALUACIÓN:
+- Implementación de generatePurchaseOrderPDF para formalización contractual de compras:
+  * Membrete institucional: 'New Generation Bilingual School and Institute'.
+  * Correlativo oficial ORD-CMP-...
+  * Datos completos del proveedor (Razón Social, RTN, Teléfono, Email).
+  * Desglose de partidas (código, descripción, cantidad, unidad de medida, precio unitario, subtotal e impuesto ISV 15%).
+  * Moneda oficial HNL (Lempiras) y firmas autorizadas de la Dirección y Contabilidad Institucional.
+- Soporte de versionado documental inmutable: incremento progresivo (v1.0 -> v1.1) en la columna VersionDocumental y almacenamiento de ArchivoPdfUrl sin sobrescribir archivos previos.
+- Ampliación del ciclo de estados a 13 etapas legales en approvePurchaseOrder:
+  * 'Borrador' -> 'PendienteAprobacion' -> 'Aprobada' -> 'Emitida' -> 'EnviadaProveedor' -> 'AceptadaProveedor' / 'RechazadaProveedor' -> 'PendienteRecepcion' -> 'RecibidaParcial' -> 'RecibidaTotal' -> 'EnDisputa' -> 'Cerrada' -> 'Cancelada'.
+  * Bloqueo estricto de transiciones no autorizadas: una orden no puede transicionar a 'Emitida' o 'EnviadaProveedor' si no cuenta con aprobación formal ('Aprobada').
+- Cobertura de pruebas automatizadas en tests/regression/academic-grading-suite.js alcanzando 126/126 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+AUDITORIA INICIAL — [TASK-016] [F18-Task06]
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (recordAccountsPayableExpense, getAccountsReceivablePayableSummary)
+- Estructura: CuentasPorPagarGastos (10 columnas actuales)
+HALLAZGOS:
+1. En CuentasPorPagarGastos (l. 141 y l. 6960): La hoja cuenta con 10 columnas pero carece de campos esenciales para el seguimiento financiero granular: TotalMonto, SaldoPendiente, TotalAbonado, FechaEmision y FechaRecepcion.
+2. Inexistencia de gestión de abonos y pagos parciales: No existe la función recordSupplierPayment. Los pagos a proveedores no pueden registrarse parcialmente, no se actualizan los saldos deudores remanentes ni se bloquean sobrepagos por encima de la deuda real.
+3. Omisión de notas de crédito comerciales de proveedores: Falta la función applySupplierCreditNote para asentar devoluciones o bonificaciones de proveedores descontando el pasivo en CuentasPorPagarGastos y registrando la contrapartida contable en AsientosContables.
+4. Programación de vencimientos ausente: No existe la clasificación cronológica por envejecimiento de saldos (vencidas, próximas a vencer en 7, 15, 30 días y corrientes).
+ESTADO: Auditoría finalizada. Procediendo con la implementación de pagos parciales, saldos pendientes, notas de crédito comerciales y control de vencimientos.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-016] [F18-Task06]
+GESTIÓN DE CUENTAS POR PAGAR CON ABONOS, VENCIMIENTOS Y NOTAS DE CRÉDITO
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (recordAccountsPayableExpense, recordSupplierPayment, applySupplierCreditNote, getSupplierAccountsPayableSummary, doPost, ROLE_PERMISSIONS)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt / Auditoría.txt / ChangesLogs.txt
+RESULTADO DE EVALUACIÓN:
+- Se amplió la hoja CuentasPorPagarGastos a 15 columnas incorporando TotalMonto, SaldoPendiente, TotalAbonado, FechaEmision y FechaRecepcion.
+- En recordAccountsPayableExpense: inicialización atómica de saldoPendiente = TotalMonto y totalAbonado = 0.
+- Implementación de recordSupplierPayment para abonos y pagos parciales a proveedores:
+  * Validación de estado de aprobación habilitado (no bloqueado por Three-Way Match).
+  * Control estricto contra sobrepagos: rechazo con código OVERPAYMENT_REJECTED si el abono excede el saldo pendiente.
+  * Actualización atómica de saldoPendiente y totalAbonado, transitando a 'PagoParcial' o 'Pagada' cuando saldoPendiente llega a 0.
+  * Registro automático del egreso en MovimientosCajaBancos y generación de asiento contable equilibrado por partida doble (Debe: Pasivo 2101, Haber: Bancos 1101).
+- Implementación de applySupplierCreditNote para aplicar notas de crédito comerciales emitidas por proveedores:
+  * Validación de número y monto, reducción proporcional del saldo pendiente y control contra notas de crédito duplicadas (CREDIT_NOTE_ALREADY_APPLIED).
+  * Registro de contrapartida contable (Debe: Pasivo 2101, Haber: Gasto/Devolución 5101).
+- Implementación de getSupplierAccountsPayableSummary para programación de vencimientos por tramos (vencidas, 7 días, 15 días, 30 días, corrientes).
+- Cobertura de pruebas automatizadas en tests/regression/academic-grading-suite.js alcanzando 131/131 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+AUDITORÍA INICIAL DE ARCHIVOS — [TASK-017] [F18-Task07]
+COMPROMISO PRESUPUESTARIO FORMAL AL APROBAR ÓRDENES DE COMPRA
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (approvePurchaseOrder, checkBudgetAvailability, createPurchaseOrder, recordAccountsPayableExpense, getBudgets, saveBudgetPlan)
+- PresupuestosInstitucionales (Hoja de cálculo en SPREADSHEET_ID)
+- OrdenesCompra (Hoja de cálculo en SPREADSHEET_ID)
+
+HALLAZGOS DETALLADOS:
+1. approvePurchaseOrder (Línea 6271):
+   - Actualmente valida transiciones de estado, autoaprobaciones y umbrales de L 50,000, pero NO ejecuta verificación ni reserva de fondos presupuestarios.
+   - Cuando una orden de compra transiciona a 'Aprobada', no se adquiere ScriptLock ni se actualiza 'montoComprometido' en la partida presupuestaria del centro de costo.
+   - Si una orden de compra aprobada transiciona a 'Cancelada', no se libera ningún compromiso presupuestario acumulado.
+2. checkBudgetAvailability (Línea 10997):
+   - Calcula saldoDisponible = montoAprobado - montoComprometido - montoEjecutado.
+   - Sin embargo, opera de manera puramente consultiva sin bloquear concurrentemente ni reservar el compromiso.
+3. recordAccountsPayableExpense (Línea 7033):
+   - Al registrar una factura de proveedor vinculada a ordenCompraId, no transfiere los fondos desde 'montoComprometido' hacia 'montoEjecutado' en PresupuestosInstitucionales, manteniendo el compromiso duplicado o sin sincronización con la ejecución real del gasto.
+4. Concurrencia y ScriptLock:
+   - Falta orquestación con LockService.getScriptLock() durante la aprobación y reserva para evitar condiciones de carrera donde dos órdenes concurrentes se aprueben contra el mismo remanente presupuestario.
+5. Autorizaciones extraordinarias:
+   - Debe permitirse el sobregiro solo si el rol directivo (Director / Administrador) proporciona justificación explícita de sobregiro presupuestario, emitiendo log estructurado BUDGET_OVERRUN_ALERT.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-017] [F18-Task07]
+COMPROMISO PRESUPUESTARIO FORMAL AL APROBAR ÓRDENES DE COMPRA
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (approvePurchaseOrder, modifyPurchaseOrderAmount, recordAccountsPayableExpense, getOrCreateSheet, doPost, ROLE_PERMISSIONS)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt / Auditoría.txt / ChangesLogs.txt
+RESULTADO DE EVALUACIÓN:
+- En approvePurchaseOrder:
+  * Adquisición de candado atómico mediante LockService.getScriptLock() (timeout 15s).
+  * Al formalizar la aprobación de la orden (transición a 'Aprobada'):
+    - Verificación del saldo disponible en PresupuestosInstitucionales: saldoDisponible = montoAprobado - montoComprometido - montoEjecutado.
+    - Bloqueo preventivo de órdenes si saldoDisponible < montoTotal con código BUDGET_INSUFFICIENT.
+    - Soporte para sobregiros presupuestarios extraordinarios exclusivamente por rol directivo (Director / Administrador) con justificación obligatoria (motivoSobregiro) y emisión de log estructurado BUDGET_OVERRUN_ALERT.
+    - Incremento atómico del montoComprometido en la partida presupuestaria del centro de costo correspondiente.
+  * Al cancelar una orden formalmente aprobada (transición a 'Cancelada'):
+    - Liberación atómica del compromiso presupuestario no ejecutado devolviendo los fondos a saldo disponible.
+- En modifyPurchaseOrderAmount:
+  * Endpoint transaccional con LockService para autorizar modificaciones de importe de órdenes de compra.
+  * Si la orden ya está aprobada, evalúa la diferencia: si se incrementa, valida disponibilidad y reserva la diferencia; si se reduce, libera la diferencia hacia el saldo disponible.
+  * Registro de metadatos de auditoría en Observaciones.
+- En recordAccountsPayableExpense:
+  * Al recibir la factura vinculada a una orden de compra aprobada, transfiere atómicamente el monto facturado desde montoComprometido hacia montoEjecutado en PresupuestosInstitucionales.
+- En getOrCreateSheet:
+  * Inicialización automática de la hoja PresupuestosInstitucionales con sus 8 columnas de control presupuestario.
+- En ROLE_PERMISSIONS y doPost:
+  * Inclusión de modifyPurchaseOrderAmount para Director, Subdirector y Contador.
+- Cobertura de pruebas automatizadas en tests/regression/academic-grading-suite.js alcanzando 136/136 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================

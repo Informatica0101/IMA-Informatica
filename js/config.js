@@ -1,3 +1,215 @@
+// [TAREA-AD-02] [Anexo Tareas: Dashboards Dinámicos - Catálogo de Responsabilidades] - Definición del catálogo central de capacidades, responsabilidades institucionales y módulos reutilizables
+window.CAPACITIES_CATALOG = [
+  { capacityId: "CAP_CONSULTAR", name: "Consultar", operation: "READ", description: "Permiso para visualizar y consultar registros del módulo o área." },
+  { capacityId: "CAP_CREAR", name: "Crear", operation: "CREATE", description: "Permiso para registrar nuevos elementos en el módulo." },
+  { capacityId: "CAP_EDITAR", name: "Editar", operation: "UPDATE", description: "Permiso para modificar registros existentes." },
+  { capacityId: "CAP_ELIMINAR", name: "Eliminar", operation: "DELETE", description: "Permiso para desactivar o eliminar registros." },
+  { capacityId: "CAP_APROBAR", name: "Aprobar", operation: "APPROVE", description: "Permiso para autorizar, aprobar o rechazar solicitudes y entregas." },
+  { capacityId: "CAP_ASIGNAR", name: "Asignar", operation: "ASSIGN", description: "Permiso para asignar recursos, cargas académicas o responsabilidades." },
+  { capacityId: "CAP_EXPORTAR", name: "Exportar", operation: "EXPORT", description: "Permiso para descargar y exportar reportes o datos." },
+  { capacityId: "CAP_ADMINISTRAR", name: "Administrar", operation: "ADMIN", description: "Permiso de control total sobre el módulo o configuración." }
+];
+
+window.MODULES_CATALOG = [
+  { moduleId: "mod_gestion_usuarios", name: "Gestión de Usuarios e Identidades", service: "USER" },
+  { moduleId: "mod_planificacion_horarios", name: "Planificación de Horarios y Aulas", service: "ACADEMIC" },
+  { moduleId: "mod_coordinacion_academica", name: "Coordinación Académica", service: "ACADEMIC" },
+  { moduleId: "mod_supervision_silabos", name: "Supervisión de Jornalizaciones y Sílabos", service: "ACADEMIC" },
+  { moduleId: "mod_horarios_area", name: "Horarios y Cargas por Departamento", service: "ACADEMIC" },
+  { moduleId: "mod_asistencia_docente", name: "Supervisión de Asistencia Docente", service: "ACADEMIC" },
+  { moduleId: "mod_expedientes_estudiantiles", name: "Expedientes Estudiantiles y Matrícula", service: "ACADEMIC" },
+  { moduleId: "mod_mis_clases", name: "Gestión de Clases Docentes", service: "ACADEMIC" },
+  { moduleId: "mod_aula_virtual_tareas", name: "Aula Virtual y Tareas", service: "TASK" },
+  { moduleId: "mod_mis_horarios", name: "Consulta de Horarios Personalizados", service: "ACADEMIC" },
+  { moduleId: "mod_libro_calificaciones", name: "Libro de Calificaciones", service: "ACADEMIC" },
+  { moduleId: "mod_finanzas", name: "Gestión Financiera y Cobranzas", service: "ACCOUNTING" },
+  { moduleId: "mod_auditoria_sistema", name: "Auditoria y Trazabilidad", service: "USER" }
+];
+
+window.RESPONSIBILITIES_CATALOG = [
+  {
+    responsibilityId: "RESP_COORDINACION",
+    name: "Coordinación Académica",
+    description: "Supervisión de docentes, revisión de sílabos y cargas de área.",
+    modules: ["mod_coordinacion_academica", "mod_supervision_silabos", "mod_horarios_area", "mod_asistencia_docente"],
+    capabilities: ["CAP_CONSULTAR", "CAP_CREAR", "CAP_EDITAR", "CAP_APROBAR", "CAP_ASIGNAR", "CAP_EXPORTAR"]
+  },
+  {
+    responsibilityId: "RESP_PLANIFICACION",
+    name: "Planificación y Horarios",
+    description: "Diseño y asignación de horarios de clase, docentes y aulas.",
+    modules: ["mod_planificacion_horarios", "mod_horarios_area"],
+    capabilities: ["CAP_CONSULTAR", "CAP_CREAR", "CAP_EDITAR", "CAP_ASIGNAR", "CAP_EXPORTAR"]
+  },
+  {
+    responsibilityId: "RESP_SUPERVISION_DOCENTE",
+    name: "Supervisión Docente",
+    description: "Evaluación y acompañamiento de jornalizaciones y desempeño.",
+    modules: ["mod_supervision_silabos", "mod_asistencia_docente"],
+    capabilities: ["CAP_CONSULTAR", "CAP_EDITAR", "CAP_APROBAR", "CAP_EXPORTAR"]
+  },
+  {
+    responsibilityId: "RESP_GESTION_ACADEMICA_DOCENTE",
+    name: "Gestión Académica de Aula",
+    description: "Impartición de clases, registro de tareas y notas.",
+    modules: ["mod_mis_clases", "mod_aula_virtual_tareas", "mod_mis_horarios", "mod_libro_calificaciones"],
+    capabilities: ["CAP_CONSULTAR", "CAP_CREAR", "CAP_EDITAR", "CAP_APROBAR", "CAP_EXPORTAR"]
+  },
+  {
+    responsibilityId: "RESP_CONSULTA_ESTUDIANTIL",
+    name: "Consulta y Aprendizaje Estudiantil",
+    description: "Acceso a aula virtual, entregas de tareas y horarios propios.",
+    modules: ["mod_mi_horario_estudiante", "mod_mis_tareas_entregas", "mod_mis_calificaciones", "mod_mi_asistencia"],
+    capabilities: ["CAP_CONSULTAR", "CAP_CREAR"]
+  }
+];
+
+window.getCentralCapabilitiesCatalog = function() {
+  return window.CAPACITIES_CATALOG || [];
+};
+
+window.getInstitutionalResponsibilitiesCatalog = function() {
+  return window.RESPONSIBILITIES_CATALOG || [];
+};
+
+// [TAREA-05] [TAREA-F6-030] [Fase 6: Microservicios Administrativos y Financieros con separación por responsabilidades] - Mapa de servicios por departamento con soporte para microservicio compartido Dirección/Secretaría y microservicio financiero-administrativo modular.
+window.SERVICE_VERSIONS = {
+  USER: '1.0.0',
+  ACADEMIC: '1.0.0',
+  TASK: '1.0.0',
+  EXAM: '1.0.0',
+  ACCOUNTING: '1.0.0'
+};
+
+// [FASE2-T19] [Fase 2 - Gestión de Caché de Datos Institucionales] - Políticas de vigencia (TTL), aislamiento por identidad de usuario e invalidación para datos institucionales.
+window.CACHE_POLICIES = {
+  USER_ROLES: { ttlSeconds: 21600, scope: "USER_SPECIFIC", description: "Canché de roles verificados de usuario (6 horas max) con invalidación inmediata al cambiar estado" },
+  INSTITUTIONAL_CATALOGS: { ttlSeconds: 43200, scope: "GLOBAL", description: "Catálogos estáticos como áreas curriculares y materias (12 horas)" },
+  SESSION_PERMISSIONS: { ttlSeconds: 3600, scope: "USER_SPECIFIC", description: "Permisos de sesión por rol (1 hora)" },
+  FINANCIAL_STATEMENTS: { ttlSeconds: 0, scope: "NO_CACHE", description: "Estados de cuenta y saldos nunca se almacenan en caché sin confirmación del servidor" }
+};
+
+// [FASE2-T17] [Fase 2 - Política de Versionado de Configuraciones Compartidas] - Validación de compatibilidad entre cliente y servidor, detección de consumidores obsoletos y política de evolución de contratos.
+window.getSharedConfigVersion = function() {
+  return "2.0.0";
+};
+
+window.validateServiceVersionCompatibility = function(serviceName, clientMinVersion) {
+  var serviceVersions = window.SERVICE_VERSIONS || {};
+  var currentSvcVersion = serviceVersions[serviceName] || "1.0.0";
+
+  function parseSemVer(v) {
+    var parts = (v || "1.0.0").split(".").map(Number);
+    return { major: parts[0] || 1, minor: parts[1] || 0, patch: parts[2] || 0 };
+  }
+
+  var current = parseSemVer(currentSvcVersion);
+  var required = parseSemVer(clientMinVersion || "1.0.0");
+
+  var isCompatible = current.major === required.major && current.minor >= required.minor;
+
+  if (!isCompatible) {
+    console.warn("[VERSION_COMPATIBILITY_WARN] El servicio " + serviceName + " (v" + currentSvcVersion + ") es incompatible con el cliente (v" + clientMinVersion + ").");
+  }
+
+  return {
+    isCompatible: isCompatible,
+    currentVersion: currentSvcVersion,
+    requiredVersion: clientMinVersion || "1.0.0",
+    actionRequired: isCompatible ? "NONE" : "RELOAD_CLIENT_APP"
+  };
+};
+
+window.DEPARTMENT_SERVICES_MAP = {
+  'DIRECCION_SECRETARIA': ['USER', 'ACADEMIC'],
+  'RECURSOS_HUMANOS': ['USER', 'ACCOUNTING'],
+  'CONTABILIDAD_FINANZAS': ['ACCOUNTING'],
+  'DOCENCIA_ACADEMICO': ['ACADEMIC', 'TASK', 'EXAM'],
+  'ALUMNADO_PADRES': ['USER', 'ACADEMIC', 'TASK', 'EXAM', 'ACCOUNTING']
+};
+
+// [FASE2-T13] [Fase 2 - Documentación de Dependencias] - Mapa programático de responsabilidades de servicios, funciones públicas, roles consumidores y pruebas de integración.
+window.getDepartmentalDependencyMap = function() {
+  return {
+    version: "2.0.0",
+    services: {
+      USER: {
+        domain: "Gestión de Usuarios, Autenticación y RBAC",
+        responsibilities: ["Autenticación de usuarios", "Verificación RBAC con CacheService", "Notificaciones multicanal", "Omnibox global", "Bitácora de eventos y trazabilidad"],
+        consumerRoles: ["Administrador", "Director", "Docente", "Estudiante", "Padre", "RecursosHumanos", "Contador"],
+        integrationTests: ["runUXSuiteTests", "loginUserTest"]
+      },
+      ACADEMIC: {
+        domain: "Gestión Académica, Malla Curricular y Expedientes",
+        responsibilities: ["Malla curricular de 12 áreas", "Expediente digital de estudiante", "Calificaciones SACE y cuadro de honor", "Aulas y ofertas académicas", "Criterios de almacenamiento transaccional"],
+        consumerRoles: ["Administrador", "Director", "Subdirector", "Profesor", "Estudiante", "Padre"],
+        integrationTests: ["runCurricularAreaServiceTests", "reconcileRestoredDataIntegrity"]
+      },
+      ACCOUNTING: {
+        domain: "Contabilidad, Finanzas y Recursos Humanos",
+        responsibilities: ["Estado de cuenta y cobro de aranceles", "Asientos contables y caja/bancos", "Recursos Humanos (Planillas, licencias, contrataciones, evaluaciones)", "Compras, inventario y activos fijos"],
+        consumerRoles: ["Administrador", "Contador", "RecursosHumanos", "EncargadoTienda", "EncargadoCafeteria"],
+        integrationTests: ["runHRIntegrationAndRegressionTests", "runCriticalProcessConcurrencySuite"]
+      },
+      TASK: {
+        domain: "Gestión de Tareas y Entregas con Rúbricas",
+        responsibilities: ["Creación y asignación de tareas", "Borradores progresivos y entregas", "Evaluación con rúbricas", "Penalización por morosidad/tardanza"],
+        consumerRoles: ["Docente", "Profesor", "Estudiante"],
+        integrationTests: ["gradeSubmissionWithRubricTest"]
+      },
+      EXAM: {
+        domain: "Evaluación en Línea y Banco de Preguntas",
+        responsibilities: ["Banco de preguntas por asignatura", "Exámenes cronometrados", "Calificación automática e intentos"],
+        consumerRoles: ["Docente", "Profesor", "Estudiante"],
+        integrationTests: ["getQuestionBankTest"]
+      }
+    }
+  };
+};
+
+// [TAREA-08] [Fase 1 - Malla Curricular] - Estructura jerárquica de la malla curricular por áreas, asignaturas y departamentos.
+window.CURRICULAR_AREAS_CATALOG = [
+    { areaId: "AREA-01", name: "Matemáticas y razonamiento cuantitativo", code: "MAT" },
+    { areaId: "AREA-02", name: "Ciencias naturales", code: "CNT" },
+    { areaId: "AREA-03", name: "Informática, tecnología y computación", code: "INF" },
+    { areaId: "AREA-04", name: "Español, comunicación y literatura", code: "ESP" },
+    { areaId: "AREA-05", name: "Inglés y lenguas extranjeras", code: "ING" },
+    { areaId: "AREA-06", name: "Ciencias sociales y humanidades", code: "SOC" },
+    { areaId: "AREA-07", name: "Artes y expresión creativa", code: "ART" },
+    { areaId: "AREA-08", name: "Educación física, salud y bienestar", code: "EFI" },
+    { areaId: "AREA-09", name: "Formación en valores y desarrollo personal", code: "VAL" },
+    { areaId: "AREA-10", name: "Emprendimiento, economía y formación profesional", code: "EMP" },
+    { areaId: "AREA-11", name: "Agricultura, ambiente y sostenibilidad", code: "AGR" },
+    { areaId: "AREA-12", name: "Áreas complementarias", code: "CMP" }
+];
+
+window.ACADEMIC_DEPARTMENTS_CATALOG = [
+    { deptId: "DEPT-MAT", name: "Departamento de Matemáticas", areaId: "AREA-01" },
+    { deptId: "DEPT-CNT", name: "Departamento de Ciencias", areaId: "AREA-02" },
+    { deptId: "DEPT-INF", name: "Departamento de Informática", areaId: "AREA-03" },
+    { deptId: "DEPT-ESP", name: "Departamento de Español y Comunicación", areaId: "AREA-04" },
+    { deptId: "DEPT-ING", name: "Departamento de Inglés", areaId: "AREA-05" },
+    { deptId: "DEPT-SOC", name: "Departamento de Ciencias Sociales", areaId: "AREA-06" },
+    { deptId: "DEPT-ART", name: "Departamento de Artes", areaId: "AREA-07" },
+    { deptId: "DEPT-EFI", name: "Departamento de Educación Física", areaId: "AREA-08" }
+];
+
+// [TAREA-09] [Fase 1 - Servicios Curriculares] - Registro y enrutador de servicios de Apps Script especializados por área curricular.
+window.CURRICULAR_SPECIALIZED_SERVICES = {
+    "AREA-01": { serviceKey: "MATHEMATICS_SERVICE", name: "Servicio de Matemáticas y Razonamiento Cuantitativo", tools: ["math_editor", "step_by_step_eval", "numeric_tolerance"] },
+    "AREA-02": { serviceKey: "SCIENCE_SERVICE", name: "Servicio de Ciencias Naturales y Experimentales", tools: ["lab_reports", "hypothesis_tracker", "data_graphs"] },
+    "AREA-03": { serviceKey: "COMPUTER_SCIENCE_SERVICE", name: "Servicio de Informática y Pensamiento Computacional", tools: ["code_editor", "pseudocode_tester", "version_history"] },
+    "AREA-04": { serviceKey: "SPANISH_COMMUNICATION_SERVICE", name: "Servicio de Español y Comunicación Escrita", tools: ["essay_evaluator", "inline_rubrics", "grammar_checker"] },
+    "AREA-05": { serviceKey: "ENGLISH_LANGUAGES_SERVICE", name: "Servicio de Inglés y Lenguas Extranjeras", tools: ["audio_submissions", "listening_eval", "speaking_rubrics"] },
+    "AREA-06": { serviceKey: "SOCIAL_SCIENCES_SERVICE", name: "Servicio de Ciencias Sociales y Humanidades", tools: ["historical_source_analysis", "map_evaluator", "essay_rubrics"] },
+    "AREA-07": { serviceKey: "ARTS_CREATIVE_SERVICE", name: "Servicio de Artes y Expresión Creativa", tools: ["media_galleries", "creative_rubrics", "portfolio_eval"] },
+    "AREA-08": { serviceKey: "PHYSICAL_EDUCATION_SERVICE", name: "Servicio de Educación Física y Salud", tools: ["wellness_tracker", "performance_rubrics", "health_reports"] },
+    "AREA-09": { serviceKey: "VALUES_DEVELOPMENT_SERVICE", name: "Servicio de Formación en Valores", tools: ["ethical_case_analysis", "reflective_journals"] },
+    "AREA-10": { serviceKey: "ENTREPRENEURSHIP_SERVICE", name: "Servicio de Emprendimiento y Finanzas", tools: ["business_plan_eval", "financial_sheets"] },
+    "AREA-11": { serviceKey: "AGRICULTURE_ENVIRONMENT_SERVICE", name: "Servicio de Agricultura y Sostenibilidad", tools: ["field_project_eval", "sustainability_tracker"] },
+    "AREA-12": { serviceKey: "COMPLEMENTARY_AREAS_SERVICE", name: "Servicio de Áreas Complementarias", tools: ["interdisciplinary_projects", "club_activities"] }
+};
+
 // --- INSTRUCCIONES DE DESPLIEGUE DE MICROSERVICIOS ---
 // 1. Para cada carpeta en el directorio `backend` (ej. `user-service`), crea un NUEVO proyecto de Google Apps Script.
 // 2. Copia el contenido del archivo `Code.gs` de esa carpeta en el proyecto de Apps Script.
@@ -20,7 +232,111 @@ window.SERVICE_URLS = {
   TASK: 'https://script.google.com/macros/s/AKfycbx5JaHQjBIJGY2k4QczQ0_QzRz8Iv3-gcVXbd8WRV_JQJaqyEyw6sTtZ-VgzTvM9E-X/exec',
 
   // Pega aquí la URL del despliegue del microservicio de exámenes. (v7.7.6)
-  EXAM: 'https://script.google.com/macros/s/AKfycbwUlIlqEnkEFeCTrp_tgsyAydhNsLKx6h14A8SvWjbfxNFIj3vSciN5xAe93qtNV-g/exec'
+  EXAM: 'https://script.google.com/macros/s/AKfycbwUlIlqEnkEFeCTrp_tgsyAydhNsLKx6h14A8SvWjbfxNFIj3vSciN5xAe93qtNV-g/exec',
+
+  // Microservicio de Contabilidad y Planillas (v8.0.0)
+  ACCOUNTING: 'https://script.google.com/macros/s/AKfycbzAccountingSvc/exec',
+
+  // Microservicio Central del Desarrollador y Registro de Servicios (v8.4.0) [TAREA-F6-008]
+  DEVELOPER: 'https://script.google.com/macros/s/AKfycbzDeveloperControlPlaneSvc/exec'
+};
+
+// [TAREA-F6-004] [Fase 6: Reestructuración en microservicios independientes] - Registro centralizado de descubrimiento de microservicios con endpoints, versiones y recursos
+window.SERVICE_REGISTRY = {
+  USER: {
+    serviceId: "SVC-USER-01",
+    name: "Microservicio de Usuarios, Permisos e Identidad",
+    version: "v8.4.0",
+    endpointUrl: window.SERVICE_URLS.USER,
+    healthStatus: "ACTIVE",
+    responsibilities: ["Autenticación", "Usuarios", "Roles", "RelacionesFamiliares", "Auditoria"],
+    resources: {
+      spreadsheetId: "1-USER-SPREADSHEET-ID",
+      driveFolderId: "1-USER-DRIVE-FOLDER-ID"
+    }
+  },
+  ACADEMIC: {
+    serviceId: "SVC-ACADEMIC-02",
+    name: "Microservicio Académico, Admisiones y Ciclo de Vida",
+    version: "v8.4.0",
+    endpointUrl: window.SERVICE_URLS.ACADEMIC,
+    healthStatus: "ACTIVE",
+    responsibilities: ["ExpedientesEstudiantes", "Matriculas", "SolicitudesAdmision", "Asistencia", "SupervisionDocente"],
+    resources: {
+      spreadsheetId: "1-ACADEMIC-SPREADSHEET-ID",
+      driveFolderId: "1-ACADEMIC-DRIVE-FOLDER-ID"
+    }
+  },
+  TASK: {
+    serviceId: "SVC-TASK-03",
+    name: "Microservicio de Tareas y Tareas Formativas",
+    version: "v8.4.0",
+    endpointUrl: window.SERVICE_URLS.TASK,
+    healthStatus: "ACTIVE",
+    responsibilities: ["Tareas", "Entregas", "CalificacionesTareas"],
+    resources: {
+      spreadsheetId: "1-TASK-SPREADSHEET-ID"
+    }
+  },
+  EXAM: {
+    serviceId: "SVC-EXAM-04",
+    name: "Microservicio de Exámenes y Banco de Preguntas",
+    version: "v8.4.0",
+    endpointUrl: window.SERVICE_URLS.EXAM,
+    healthStatus: "ACTIVE",
+    responsibilities: ["Examenes", "BancoPreguntas", "CalificacionesExamenes"],
+    resources: {
+      spreadsheetId: "1-EXAM-SPREADSHEET-ID"
+    }
+  },
+  ACCOUNTING: {
+    serviceId: "SVC-ACCOUNTING-05",
+    name: "Microservicio de Contabilidad, Cobros y Planillas",
+    version: "v8.4.0",
+    endpointUrl: window.SERVICE_URLS.ACCOUNTING,
+    healthStatus: "ACTIVE",
+    responsibilities: ["CobrosAdmision", "PagosMatricula", "BecasExenciones", "Facturacion"],
+    resources: {
+      spreadsheetId: "1-ACCOUNTING-SPREADSHEET-ID"
+    }
+  },
+  // [TAREA-F6-008] Plano de Control Central del Desarrollador
+  DEVELOPER: {
+    serviceId: "SVC-DEVELOPER-00",
+    name: "Microservicio Central del Desarrollador y Registro de Servicios",
+    version: "v8.4.0",
+    endpointUrl: window.SERVICE_URLS.DEVELOPER,
+    healthStatus: "ACTIVE",
+    responsibilities: ["RegistroServicios", "ControlPlane", "Diagnostico", "AuditoriaInterServicio", "PermisosMultiRol"],
+    resources: {
+      spreadsheetId: "1-DEVELOPER-SPREADSHEET-ID"
+    }
+  }
+};
+
+// [TAREA-F6-029] [Fase 6: Reestructuración en microservicios independientes] - Consulta de descriptor completo de microservicio para desacoplar el descubrimiento y enrutamiento inter-servicio.
+window.getServiceDescriptor = function(serviceKey) {
+  var registry = window.SERVICE_REGISTRY || {};
+  var svc = registry[serviceKey];
+  if (!svc) {
+    return {
+      serviceId: "SVC-UNKNOWN",
+      name: serviceKey || "Desconocido",
+      healthStatus: "UNREGISTERED",
+      endpointUrl: (window.SERVICE_URLS && window.SERVICE_URLS[serviceKey]) || null,
+      responsibilities: [],
+      resources: {}
+    };
+  }
+  return {
+    serviceId: svc.serviceId,
+    name: svc.name,
+    version: svc.version,
+    endpointUrl: svc.endpointUrl,
+    healthStatus: svc.healthStatus || "ACTIVE",
+    responsibilities: svc.responsibilities || [],
+    resources: svc.resources || {}
+  };
 };
 
 // --- URL del sitio para CORS (si es necesario ajustarlo en el backend) ---
@@ -414,6 +730,102 @@ window.isContentAuthorized = function(contentUnit, contentSubject, contentTopic,
     return true;
 };
 
+// [F8-Task03] [Anexo Tareas: Modularización - Actualización de Rutas] - Diccionario y verificador de rutas relativas y endpoints de microservicios
+window.MODULE_ROUTING_DICTIONARY = {
+    home: "index.html",
+    login: "login.html",
+    studentDashboard: "student-dashboard.html",
+    teacherDashboard: "teacher-dashboard.html",
+    coordinatorDashboard: "dashboard-coordinacion.html",
+    directorDashboard: "dashboard-direccion.html",
+    secretaryDashboard: "dashboard-secretaria.html",
+    hrDashboard: "dashboard-recursos-humanos.html",
+    accountingDashboard: "dashboard-contabilidad.html",
+    dynamicDashboard: "app/html/dashboards/dynamic-dashboard.html"
+};
+
+// [TAREA-AD-05] [Anexo Tareas: Dashboards Dinámicos - Integración de Módulos] - Contratos de integración por módulo para dashboards dinámicos
+window.DYNAMIC_DASHBOARD_MODULE_CONTRACTS = {
+    "mod_gestion_usuarios": {
+        moduleId: "mod_gestion_usuarios",
+        name: "Gestión de Usuarios y Cuentas",
+        targetService: "USER",
+        readAction: "getStudents",
+        writeAction: "updateUserProfile",
+        requiredCapabilities: ["CAP_CONSULTAR", "CAP_CREAR", "CAP_EDITAR"],
+        defaultParams: {}
+    },
+    "mod_planificacion_horarios": {
+        moduleId: "mod_planificacion_horarios",
+        name: "Planificación de Horarios y Recursos",
+        targetService: "ACADEMIC",
+        readAction: "getClassSchedules",
+        writeAction: "createClassSchedule",
+        requiredCapabilities: ["CAP_CONSULTAR", "CAP_CREAR"],
+        defaultParams: {}
+    },
+    "mod_coordinacion_academica": {
+        moduleId: "mod_coordinacion_academica",
+        name: "Resumen de Coordinación Académica",
+        targetService: "ACADEMIC",
+        readAction: "getCoordinatorOverview",
+        writeAction: "assignTeacherToSection",
+        requiredCapabilities: ["CAP_CONSULTAR", "CAP_ASIGNAR"],
+        defaultParams: {}
+    },
+    "mod_mis_clases": {
+        moduleId: "mod_mis_clases",
+        name: "Clases y Asignaciones Docentes",
+        targetService: "ACADEMIC",
+        readAction: "getTeacherAssignments",
+        writeAction: "assignTeacherToClass",
+        requiredCapabilities: ["CAP_CONSULTAR"],
+        defaultParams: {}
+    },
+    "mod_aula_virtual_tareas": {
+        moduleId: "mod_aula_virtual_tareas",
+        name: "Aula Virtual y Tareas",
+        targetService: "TASK",
+        readAction: "getStudentTasks",
+        writeAction: "submitAssignment",
+        requiredCapabilities: ["CAP_CONSULTAR", "CAP_CREAR"],
+        defaultParams: {}
+    },
+    "mod_libro_calificaciones": {
+        moduleId: "mod_libro_calificaciones",
+        name: "Libro de Calificaciones Exámenes",
+        targetService: "EXAM",
+        readAction: "getStudentExams",
+        writeAction: "gradeSubmission",
+        requiredCapabilities: ["CAP_CONSULTAR", "CAP_APROBAR"],
+        defaultParams: {}
+    }
+};
+
+// [FASE2-T04] [Fase 2 - Fuente de Verdad Institucional de Catálogos] - Sincronización del cliente con el catálogo centralizado de la institución.
+window.fetchInstitutionalCatalog = function(catalogType) {
+    if (typeof fetchApi !== 'function') {
+        console.warn("[CATALOG-SYNC] fetchApi no disponible para consulta de catálogos.");
+        return Promise.resolve({ status: "success", data: window.CURRICULAR_AREAS_CATALOG });
+    }
+    return fetchApi('ACADEMIC', 'getInstitutionalCatalog', { catalogType: catalogType || 'ALL_INSTITUTIONAL_CATALOGS' })
+        .then(function(res) {
+            if (res && res.status === 'success' && res.data) {
+                if (Array.isArray(res.data.areasCurriculares)) {
+                    res.data.areasCurriculares.forEach(function(area) {
+                        window.registerNewCurricularAreaServiceConfig(area);
+                    });
+                }
+                return res;
+            }
+            return { status: "success", data: window.CURRICULAR_AREAS_CATALOG };
+        })
+        .catch(function(e) {
+            console.error("[CATALOG-SYNC] Error en sincronización de catálogos:", e);
+            return { status: "success", data: window.CURRICULAR_AREAS_CATALOG };
+        });
+};
+
 window.validateQuestion = function(q) {
     var normalized = window.normalizeQuestion(q);
     var required = ['Asignatura', 'Nivel', 'Pregunta', 'RespuestaCorrecta'];
@@ -527,73 +939,26 @@ window.normalizeQuestion = function(q) {
     return result;
 };
 
-/**
- * MATRIZ DE AUTORIZACIÓN Y ROLES RBAC INSTITUCIONAL (REQ-EXP-008)
- * Roles soportados: Administrador, Director, Subdirector, Secretaría, Contador, Consejeros, Profesor, Asistente, Estudiante (Alumnos/Padres).
- */
-window.RBAC_ROLES = {
-    ADMINISTRADOR: 'Administrador',
-    DIRECTOR: 'Director',
-    SUBDIRECTOR: 'Subdirector',
-    SECRETARIA: 'Secretaría',
-    CONTADOR: 'Contador',
-    CONSEJERO: 'Consejeros',
-    PROFESOR: 'Profesor',
-    ASISTENTE: 'Asistente',
-    ESTUDIANTE: 'Estudiante'
+// [TAREA-20] [Fase 1 - Incorporación Curricular] - Plantilla técnica estandarizada para registro e incorporación de nuevas áreas y servicios curriculares en la configuración global.
+window.registerNewCurricularAreaServiceConfig = function(areaConfig) {
+    if (!areaConfig || !areaConfig.areaId || !areaConfig.name) return false;
+    if (!Array.isArray(window.CURRICULAR_AREAS_CATALOG)) {
+        window.CURRICULAR_AREAS_CATALOG = [];
+    }
+    if (!window.CURRICULAR_AREAS_CATALOG.some(function(a) { return a.areaId === areaConfig.areaId; })) {
+        window.CURRICULAR_AREAS_CATALOG.push({
+            areaId: areaConfig.areaId,
+            name: areaConfig.name,
+            code: areaConfig.code || areaConfig.areaId
+        });
+    }
+    if (areaConfig.serviceKey) {
+        if (!window.CURRICULAR_SPECIALIZED_SERVICES) window.CURRICULAR_SPECIALIZED_SERVICES = {};
+        window.CURRICULAR_SPECIALIZED_SERVICES[areaConfig.areaId] = {
+            serviceKey: areaConfig.serviceKey,
+            name: areaConfig.name,
+            tools: areaConfig.tools || []
+        };
+    }
+    return true;
 };
-
-window.ROLE_PERMISSIONS = {
-    // Permisos generales
-    'read_academic_public': ['*'],
-    'read_own_profile': ['*'],
-    'update_own_profile': ['*'],
-    // Estudiante / Gamificación
-    'play_and_submit_score': ['Estudiante', 'Profesor', 'Administrador'],
-    // Docente
-    'grade_students': ['Profesor', 'Asistente', 'Director', 'Subdirector', 'Administrador'],
-    'manage_tasks': ['Profesor', 'Director', 'Subdirector', 'Administrador'],
-    'manage_exams': ['Profesor', 'Director', 'Subdirector', 'Administrador'],
-    'view_all_students': ['Profesor', 'Secretaría', 'Consejeros', 'Director', 'Subdirector', 'Administrador'],
-    // Comunicación y Noticias
-    'manage_news': ['Secretaría', 'Director', 'Administrador'],
-    // Gestión Académica Institucional
-    'manage_academic_config': ['Director', 'Subdirector', 'Secretaría', 'Administrador'],
-    'close_academic_year': ['Director', 'Administrador'],
-    // Control Financiero / Contable
-    'manage_finances': ['Contador', 'Administrador', 'Director'],
-    // Matrícula y Expediente
-    'manage_enrollment': ['Secretaría', 'Director', 'Administrador'],
-    // Consola Técnica
-    'manage_system': ['Administrador']
-};
-
-window.hasPermission = function(userRole, permission) {
-    if (!userRole) return false;
-    var normRole = userRole.toString().trim();
-    if (normRole === 'Administrador' || normRole === 'Admin' || normRole === 'Desarrollador') return true;
-    var allowed = window.ROLE_PERMISSIONS[permission];
-    if (!allowed) return false;
-    if (allowed.indexOf('*') !== -1) return true;
-    return allowed.some(function(r) { return r.toLowerCase() === normRole.toLowerCase(); });
-};
-
-/**
- * MÓDULO CONTABLE Y FINANCIERO (REQ-EXP-010)
- * Métodos de pago y conceptos estándar institucionales
- */
-window.PAYMENT_METHODS = [
-    { id: 'efectivo', label: 'Efectivo en Caja', icon: 'fa-money-bill-wave' },
-    { id: 'transferencia', label: 'Transferencia o Depósito Bancario', icon: 'fa-university' },
-    { id: 'tarjeta', label: 'Tarjeta de Débito / Crédito', icon: 'fa-credit-card' },
-    { id: 'cheque', label: 'Cheque Certificado', icon: 'fa-money-check-alt' }
-];
-
-window.DEFAULT_BILLING_CONCEPTS = [
-    { conceptoId: 'CON-001', nombre: 'Matrícula Anual', tipo: 'Único', montoSugerido: 1500, obligatorio: true },
-    { conceptoId: 'CON-002', nombre: 'Mensualidad Escolar', tipo: 'Recurrente', montoSugerido: 1200, obligatorio: true },
-    { conceptoId: 'CON-003', nombre: 'Materiales y Libros', tipo: 'Único', montoSugerido: 850, obligatorio: false },
-    { conceptoId: 'CON-004', nombre: 'Transporte Escolar', tipo: 'Recurrente', montoSugerido: 600, obligatorio: false },
-    { conceptoId: 'CON-005', nombre: 'Carnet Estudiantil', tipo: 'Único', montoSugerido: 100, obligatorio: false },
-    { conceptoId: 'CON-006', nombre: 'Derecho de Graduación', tipo: 'Único', montoSugerido: 2000, obligatorio: false }
-];

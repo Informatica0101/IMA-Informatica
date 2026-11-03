@@ -1,7 +1,33 @@
+// ---------------------------------------------------------------------------
+// [T-UX-12] [Fase 3: Experiencia de Usuario y Navegación Unificada] - CONSOLIDACIÓN DE PANELES DE CONTROL POR ROL Y DEPARTAMENTO
+// Consolida la visualización de indicadores clave, métricas resumidas y accesos prioritarios para el panel del estudiante, distinguiendo datos nulos de ceros.
+// ---------------------------------------------------------------------------
+window.consolidateStudentDashboardSummary = function(studentData) {
+    if (!studentData) {
+        return { totalTasks: 0, pendingTasks: 0, completedTasks: 0, gpaFormatted: "N/A" };
+    }
+    var total = Array.isArray(studentData.activities) ? studentData.activities.length : 0;
+    var pending = Array.isArray(studentData.activities) ? studentData.activities.filter(function(a) { return !a.entregado; }).length : 0;
+    var completed = total - pending;
+    var gpa = typeof studentData.promedioGeneral === 'number' ? studentData.promedioGeneral.toFixed(1) + '%' : "N/A";
+
+    return {
+        totalTasks: total,
+        pendingTasks: pending,
+        completedTasks: completed,
+        gpaFormatted: gpa
+    };
+};
+
 document.addEventListener('DOMContentLoaded', function() {
+    var isStudentDashboard = window.location.pathname.indexOf('student-dashboard') !== -1;
     var currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
-    if (!currentUser || (currentUser.rol !== 'Estudiante' && currentUser.rol !== 'Alumno')) {
+    if (isStudentDashboard && (!currentUser || (currentUser.rol !== 'Estudiante' && currentUser.rol !== 'Alumno'))) {
         window.location.href = 'login.html';
+        return;
+    }
+    if (!isStudentDashboard && !currentUser) {
+        // En páginas públicas no redirigir automáticamente si no hay sesión iniciada
         return;
     }
 
@@ -100,11 +126,1010 @@ document.addEventListener('DOMContentLoaded', function() {
                             <!-- Mini-métricas -->
                         </div>
                     </div>
+                    <div id="student-enrollment-badge" class="flex flex-col lg:items-end justify-center gap-2">
+                        <!-- Estado de Matrícula y Control Financiero -->
+                    </div>
                 </div>
             </div>
         `;
+        fetchAndRenderStudentEnrollment();
     }
+
+    function fetchAndRenderStudentEnrollment() {
+        if (!currentUser || !currentUser.userId) return;
+        var badgeContainer = document.getElementById('student-enrollment-badge');
+        if (!badgeContainer) return;
+
+        fetchApi('ACADEMIC', 'getStudentEnrollmentHistory', { userId: currentUser.userId })
+            .then(function(res) {
+                if (res && res.status === 'success' && res.data) {
+                    var matriculas = res.data.matriculas || [];
+                    var cargos = res.data.cargos || [];
+                    var activeMat = matriculas.find(function(m) { return m.estado === 'Activa'; }) || matriculas[0];
+
+                    var estadoText = activeMat ? activeMat.estado : 'Matriculado';
+                    var periodoText = activeMat ? activeMat.periodo : (new Date().getFullYear() + ' Lectivo');
+
+                    var pendientes = cargos.filter(function(c) { return c.estado === 'Pendiente'; });
+                    var totalPendiente = pendientes.reduce(function(sum, c) { return sum + (parseFloat(c.montoFinal) || 0); }, 0);
+
+                    badgeContainer.innerHTML = `
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-3 py-1 text-xs font-bold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
+                                <i class="fas fa-user-check mr-1"></i> Matrícula ${estadoText} (${periodoText})
+                            </span>
+                            ${totalPendiente > 0 ? `
+                                <span class="px-3 py-1 text-xs font-bold rounded-full bg-amber-50 text-amber-600 border border-amber-100">
+                                    <i class="fas fa-file-invoice-dollar mr-1"></i> Saldo: L ${totalPendiente.toFixed(2)}
+                                </span>
+                            ` : `
+                                <span class="px-3 py-1 text-xs font-bold rounded-full bg-blue-50 text-blue-600 border border-blue-100">
+                                    <i class="fas fa-shield-alt mr-1"></i> Estado Financiero: Al día
+                                </span>
+                            `}
+                        </div>
+                    `;
+                }
+            })
+            .catch(function(err) {
+                console.warn("Información de matrícula diferida:", err);
+            });
+    }
+
+    // Portal Familiar: Cargar estudiantes vinculados y aspirantes en admisión para tutores/padres
+    window.familyLinkedStudents = [];
+    window.familyApplicants = [];
+
+    // [TAREA-F5-018] [Fase 5: Portal de Familias] - Extensión del selector multiestudiante con aislamiento total de contexto por estudiante
+    function initFamilyStudentSwitcher() {
+        var switcherContainer = document.getElementById('family-student-switcher-container');
+        var switcherSelect = document.getElementById('family-student-switcher');
+        if (!switcherContainer || !switcherSelect || !currentUser) return;
+
+        Promise.all([
+            fetchApi('USER', 'getGuardianStudents', { userId: currentUser.userId }).catch(function() { return { data: [] }; }),
+            fetchApi('USER', 'getGuardianApplicants', { userId: currentUser.userId }).catch(function() { return { data: [] }; })
+        ]).then(function(results) {
+            var studRes = results[0];
+            var appRes = results[1];
+
+            var students = (studRes && studRes.status === 'success' && Array.isArray(studRes.data)) ? studRes.data : [];
+            var applicants = (appRes && appRes.status === 'success' && Array.isArray(appRes.data)) ? appRes.data : [];
+
+            window.familyLinkedStudents = students;
+            window.familyApplicants = applicants;
+
+            if (students.length > 0 || applicants.length > 0) {
+                switcherContainer.classList.remove('hidden');
+
+                var optionsHtml = '';
+                if (students.length > 0) {
+                    optionsHtml += '<optgroup label="🎓 Estudiantes Matriculados">';
+                    students.forEach(function(st) {
+                        var selected = (st.userId === currentUser.userId) ? 'selected' : '';
+                        optionsHtml += '<option value="STU_' + st.userId + '" ' + selected + '>👦 ' + st.nombre + ' — ' + (st.grado || '') + ' ' + (st.seccion || '') + '</option>';
+                    });
+                    optionsHtml += '</optgroup>';
+                }
+
+                if (applicants.length > 0) {
+                    optionsHtml += '<optgroup label="📝 Aspirantes en Admisión">';
+                    applicants.forEach(function(ap) {
+                        optionsHtml += '<option value="APP_' + ap.solicitudId + '">📝 ' + ap.nombresAspirante + ' ' + ap.apellidosAspirante + ' (' + ap.gradoSolicitado + ' - ' + ap.estadoSolicitud + ')</option>';
+                    });
+                    optionsHtml += '</optgroup>';
+                }
+
+                switcherSelect.innerHTML = optionsHtml;
+
+                switcherSelect.onchange = function() {
+                    var val = switcherSelect.value;
+                    var summaryCont = document.getElementById('family-consolidated-summary-container');
+                    var trackingCont = document.getElementById('family-applicant-tracking-container');
+                    if (summaryCont) summaryCont.classList.add('hidden');
+
+                    if (val.indexOf('APP_') === 0) {
+                        var solId = val.replace('APP_', '');
+                        if (trackingCont) {
+                            trackingCont.classList.remove('hidden');
+                            window.renderApplicantTrackingPanel(solId);
+                        }
+                    } else {
+                        if (trackingCont) trackingCont.classList.add('hidden');
+                        var selectedId = val.replace('STU_', '');
+                        var selectedStudent = students.find(function(s) { return s.userId === selectedId; });
+                        if (selectedStudent) {
+                            currentUser = selectedStudent;
+                            localStorage.setItem('currentUser', JSON.stringify(selectedStudent));
+
+                            // Refresco integral de contexto sin filtración de datos entre estudiantes
+                            renderStudentHeader();
+                            fetchAllActivities();
+                            fetchAndRenderFormativeEvaluations();
+                            fetchAndRenderStudentAttendanceSummary();
+                            fetchAndRenderStudentAdministrativeRequests();
+                            fetchAndRenderStudentSchedule();
+                            fetchAndRenderVirtualClassroom();
+                            fetchAndRenderLearningProfile();
+                            if (typeof loadStudentAcademicResults === 'function') loadStudentAcademicResults();
+                        }
+                    }
+                };
+            }
+        }).catch(function(err) {
+            console.warn("Familiar student switcher deferred:", err);
+        });
+    }
+
+    // [TAREA-F5-012] Renderizado del panel de seguimiento de admisión para aspirantes en el Portal Familiar
+    window.renderApplicantTrackingPanel = function(solicitudId) {
+        var cont = document.getElementById('family-applicant-tracking-container');
+        if (!cont) return;
+
+        cont.innerHTML = '<div class="text-center py-6 text-slate-500 text-xs font-semibold"><i class="fas fa-circle-notch fa-spin mr-2"></i> Cargando seguimiento de solicitud ' + solicitudId + '...</div>';
+
+        fetchApi('USER', 'getGuardianApplicants', {})
+            .then(function(res) {
+                var applicants = (res && res.status === 'success' && Array.isArray(res.data)) ? res.data : [];
+                var req = applicants.find(function(a) { return String(a.solicitudId).trim() === String(solicitudId).trim(); });
+
+                if (!req) {
+                    // Intentar consulta por servicio público si no viene en lista de guardianes
+                    return fetchApi('ACADEMIC', 'getPublicAdmissionStatus', { searchKey: solicitudId }).then(function(pubRes) {
+                        if (pubRes && pubRes.status === 'success' && pubRes.found && pubRes.request) {
+                            return pubRes.request;
+                        }
+                        return null;
+                    });
+                }
+                return req;
+            })
+            .then(function(req) {
+                if (req) {
+                    var statusColors = {
+                        "Recibida": "bg-blue-100 text-blue-800",
+                        "En_Revision": "bg-yellow-100 text-yellow-800",
+                        "Evaluacion": "bg-purple-100 text-purple-800",
+                        "En_Espera": "bg-amber-100 text-amber-800",
+                        "Admitida": "bg-green-100 text-green-800",
+                        "Rechazada": "bg-red-100 text-red-800",
+                        "Convertida": "bg-teal-100 text-teal-800"
+                    };
+
+                    var html = '' +
+                        '<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-indigo-100 pb-4">' +
+                            '<div>' +
+                                '<span class="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-1">Trámite de Admisión</span>' +
+                                '<h3 class="text-xl font-black text-slate-900 uppercase tracking-tight">' + req.nombresAspirante + ' ' + req.apellidosAspirante + '</h3>' +
+                                '<p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Código: ' + req.solicitudId + ' | Grado: ' + req.gradoSolicitado + ' (' + req.anolectivo + ')</p>' +
+                            '</div>' +
+                            '<div>' +
+                                '<span class="px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider ' + (statusColors[req.estadoSolicitud] || 'bg-gray-100 text-gray-800') + '">' +
+                                    req.estadoSolicitud +
+                                '</span>' +
+                            '</div>' +
+                        '</div>' +
+
+                        '<!-- Línea de tiempo visual -->' +
+                        '<div class="py-4">' +
+                            '<h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">Línea de Tiempo del Proceso</h4>' +
+                            '<div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-center text-[10px] font-bold">' +
+                                '<div class="p-2 rounded-xl border ' + (['Recibida','En_Revision','Evaluacion','En_Espera','Admitida','Convertida'].indexOf(req.estadoSolicitud) !== -1 ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 text-slate-400') + '">1. Recibida</div>' +
+                                '<div class="p-2 rounded-xl border ' + (['En_Revision','Evaluacion','En_Espera','Admitida','Convertida'].indexOf(req.estadoSolicitud) !== -1 ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 text-slate-400') + '">2. En Revisión</div>' +
+                                '<div class="p-2 rounded-xl border ' + (['Evaluacion','En_Espera','Admitida','Convertida'].indexOf(req.estadoSolicitud) !== -1 ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 text-slate-400') + '">3. Evaluación</div>' +
+                                '<div class="p-2 rounded-xl border ' + (['Admitida','Convertida'].indexOf(req.estadoSolicitud) !== -1 ? 'bg-green-600 text-white border-green-600' : (req.estadoSolicitud === 'En_Espera' ? 'bg-amber-500 text-white' : 'bg-slate-50 text-slate-400')) + '">4. Decisión</div>' +
+                                '<div class="p-2 rounded-xl border ' + (req.estadoSolicitud === 'Convertida' ? 'bg-teal-600 text-white border-teal-600' : 'bg-slate-50 text-slate-400') + '">5. Matrícula</div>' +
+                            '</div>' +
+                        '</div>' +
+
+                        (req.observaciones ? '<div class="p-3 bg-indigo-50/50 rounded-xl text-xs text-indigo-900 border border-indigo-100 mb-4"><strong>Observaciones de Admisión:</strong> ' + window.escapeHtml(req.observaciones) + '</div>' : '') +
+
+                        '<!-- [TAREA-F5-013] Estado Financiero y Cobros de Admisión -->' +
+                        '<div id="family-applicant-financial-container" class="mt-4 p-4 bg-slate-50 rounded-2xl border border-slate-200">' +
+                            '<h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2 flex items-center gap-2">' +
+                                '<i class="fas fa-file-invoice-dollar text-emerald-600"></i> Estado Financiero del Trámite de Admisión' +
+                            '</h4>' +
+                            '<div id="applicant-financial-status-content" class="text-xs text-slate-600">' +
+                                '<p class="text-slate-400"><i class="fas fa-circle-notch fa-spin mr-1"></i> Consultando estado de cobros de admisión...</p>' +
+                            '</div>' +
+                        '</div>';
+
+                    cont.innerHTML = html;
+                    window.loadApplicantFinancialStatus(solicitudId);
+                } else {
+                    cont.innerHTML = '<p class="text-red-500 text-xs">No se encontró la solicitud de admisión especificada.</p>';
+                }
+            })
+            .catch(function(err) {
+                cont.innerHTML = '<p class="text-red-500 text-xs">Error de carga: ' + err.message + '</p>';
+            });
+    };
+
+    // [TAREA-F5-013] [Fase 5: Portal de Familias] - Carga y despliegue del estado financiero del aspirante en admisión
+    window.loadApplicantFinancialStatus = function(solicitudId) {
+        var finCont = document.getElementById('applicant-financial-status-content');
+        if (!finCont) return;
+
+        fetchApi('ACCOUNTING', 'getAdmissionFinancialStatus', { solicitudId: solicitudId })
+            .then(function(res) {
+                if (res && res.status === 'success') {
+                    var statusBadge = res.esSolvente ?
+                        '<span class="px-2.5 py-1 bg-green-100 text-green-800 rounded-full font-bold text-[10px]">SOLVENTE / PAGADO</span>' :
+                        '<span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full font-bold text-[10px]">PENDIENTE (L ' + res.montoPendiente.toFixed(2) + ')</span>';
+
+                    var html = '' +
+                        '<div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">' +
+                            '<span>Saldo Pendiente de Admisión:</span>' +
+                            statusBadge +
+                        '</div>';
+
+                    if (Array.isArray(res.cargos) && res.cargos.length > 0) {
+                        html += '<div class="space-y-2">';
+                        res.cargos.forEach(function(c) {
+                            html += '' +
+                                '<div class="p-2 bg-white rounded-xl border border-slate-100 flex justify-between items-center">' +
+                                    '<div>' +
+                                        '<p class="font-bold text-slate-800 text-[11px]">' + window.escapeHtml(c.concepto) + '</p>' +
+                                        '<p class="text-[10px] text-slate-400">Cargo ID: ' + c.cargoId + '</p>' +
+                                    '</div>' +
+                                    '<div class="text-right">' +
+                                        '<p class="font-bold text-slate-900 text-xs">L ' + c.montoFinal.toFixed(2) + '</p>' +
+                                        '<span class="text-[9px] font-bold uppercase ' + (c.estado === 'Pagado' ? 'text-green-600' : 'text-amber-600') + '">' + c.estado + '</span>' +
+                                    '</div>' +
+                                '</div>';
+                        });
+                        html += '</div>';
+                    } else {
+                        html += '<p class="text-slate-400 italic text-[11px]">No hay cargos configurados aún para esta solicitud de admisión.</p>';
+                    }
+
+                    finCont.innerHTML = html;
+                } else {
+                    finCont.innerHTML = '<p class="text-red-500 text-xs">No fue posible consultar el estado financiero de la admisión.</p>';
+                }
+            })
+            .catch(function(err) {
+                finCont.innerHTML = '<p class="text-red-500 text-xs">Error de consulta financiera: ' + err.message + '</p>';
+            });
+    };
+
+    window.toggleFamilyConsolidatedSummary = function() {
+        var cont = document.getElementById('family-consolidated-summary-container');
+        if (!cont) return;
+        if (cont.classList.contains('hidden')) {
+            cont.classList.remove('hidden');
+            window.renderFamilyConsolidatedSummary();
+        } else {
+            cont.classList.add('hidden');
+        }
+    };
+
+    // [TAREA-F5-018] [Fase 5: Portal de Familias] - Resumen Consolidado Familiar con distinción visual de Permiso Financiero y Solvencia L 0.00
+    window.renderFamilyConsolidatedSummary = function() {
+        var cont = document.getElementById('family-consolidated-summary-container');
+        if (!cont || !currentUser) return;
+
+        cont.innerHTML = '<div class="text-center py-6 text-slate-500 text-xs font-semibold"><i class="fas fa-circle-notch fa-spin mr-2"></i> Cargando Resumen Consolidado Familiar...</div>';
+
+        fetchApi('USER', 'getFamilyConsolidatedSummary', { userIdResponsable: currentUser.userId || currentUser.id })
+            .then(function(res) {
+                if (res && res.status === 'success' && res.data) {
+                    var d = res.data;
+                    var html = '' +
+                        '<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-100 pb-4">' +
+                            '<div>' +
+                                '<span class="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-1">Vista Consolidada</span>' +
+                                '<h3 class="text-xl font-black text-slate-900 uppercase tracking-tight">Resumen General de la Familia</h3>' +
+                                '<p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Información agregada de sus ' + d.totalEstudiantes + ' estudiante(s) vinculado(s)</p>' +
+                            '</div>' +
+                            '<div class="flex items-center gap-2">' +
+                                '<button onclick="window.openJointPaymentModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm flex items-center gap-1.5">' +
+                                    '<i class="fas fa-file-invoice-dollar"></i> Pago Conjunto Multihijo' +
+                                '</button>' +
+                                '<button onclick="window.openFamilyScholarshipModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm flex items-center gap-1.5">' +
+                                    '<i class="fas fa-award"></i> Solicitud de Becas' +
+                                '</button>' +
+                            '</div>' +
+                        '</div>' +
+
+                        '<!-- Tarjetas de Métricas Familiares -->' +
+                        '<div class="grid grid-cols-1 md:grid-cols-3 gap-4">' +
+                            '<div class="p-5 bg-slate-50 rounded-2xl border border-slate-100 space-y-1">' +
+                                '<p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Hijos Vinculados</p>' +
+                                '<p class="text-2xl font-black text-slate-900 tracking-tight">' + d.totalEstudiantes + ' <span class="text-xs text-slate-500 font-bold">Estudiantes</span></p>' +
+                            '</div>' +
+                            '<div class="p-5 bg-amber-50 rounded-2xl border border-amber-100 space-y-1">' +
+                                '<p class="text-[10px] font-black text-amber-600 uppercase tracking-widest">Saldo Familiar Consolidado</p>' +
+                                '<p class="text-2xl font-black text-amber-900 tracking-tight">L. ' + (parseFloat(d.totalCargosPendientes) || 0).toFixed(2) + '</p>' +
+                            '</div>' +
+                            '<div class="p-5 bg-blue-50 rounded-2xl border border-blue-100 space-y-1">' +
+                                '<p class="text-[10px] font-black text-blue-600 uppercase tracking-widest">Pagos en Revisión</p>' +
+                                '<p class="text-2xl font-black text-blue-900 tracking-tight">L. ' + (parseFloat(d.totalPagosRevision) || 0).toFixed(2) + '</p>' +
+                            '</div>' +
+                        '</div>' +
+
+                        '<!-- Tarjetas Individuales por Estudiante -->' +
+                        '<div class="space-y-3">' +
+                            '<h4 class="text-xs font-black text-slate-700 uppercase tracking-wider">Desglose Individual de Hijos</h4>' +
+                            '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">' +
+                                (d.estudiantes || []).map(function(st) {
+                                    var saldoBadge = '';
+                                    if (st.tienePermisoFinanciero === false) {
+                                        saldoBadge = '<span class="text-amber-600 font-bold text-[10px]"><i class="fas fa-lock mr-1"></i>Restringido (Sin Permiso Financiero)</span>';
+                                    } else if (st.esSolvente) {
+                                        saldoBadge = '<span class="text-emerald-600 font-black text-[11px]"><i class="fas fa-check-circle mr-1"></i>L. 0.00 (Solvente)</span>';
+                                    } else {
+                                        saldoBadge = '<strong class="text-amber-700 font-black text-xs">L. ' + (parseFloat(st.saldoPendiente) || 0).toFixed(2) + '</strong>';
+                                    }
+
+                                    var pagosRevBadge = (st.tienePermisoFinanciero === false) ?
+                                        '<span class="text-slate-400 text-[10px]">Restringido</span>' :
+                                        '<strong class="text-blue-600 font-black">L. ' + (parseFloat(st.pagosEnRevision) || 0).toFixed(2) + '</strong>';
+
+                                    return '' +
+                                        '<div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-3 relative hover:border-indigo-300 transition-all">' +
+                                            '<div class="flex items-center justify-between gap-3">' +
+                                                '<div class="flex items-center gap-3">' +
+                                                    '<div class="w-10 h-10 bg-indigo-100 text-indigo-700 rounded-xl flex items-center justify-center font-black text-sm">' +
+                                                        (st.nombre ? st.nombre.charAt(0) : 'E') +
+                                                    '</div>' +
+                                                    '<div>' +
+                                                        '<h5 class="text-xs font-black text-slate-900 uppercase tracking-tight">' + st.nombre + '</h5>' +
+                                                        '<p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">' + (st.grado || '') + ' ' + (st.seccion || '') + ' • Matrícula: <span class="text-emerald-600 font-black">' + st.estadoMatricula + '</span></p>' +
+                                                    '</div>' +
+                                                '</div>' +
+                                                '<button onclick="window.selectStudentFromSummary(\'' + st.userId + '\')" class="px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 text-indigo-700 font-bold text-[10px] rounded-lg uppercase tracking-wider transition-all">' +
+                                                    'Ver Expediente' +
+                                                '</button>' +
+                                            '</div>' +
+                                            '<div class="flex items-center justify-between text-[11px] pt-2 border-t border-slate-100 font-semibold">' +
+                                                '<span class="text-slate-600">Saldo Pendiente: ' + saldoBadge + '</span>' +
+                                                '<span class="text-slate-600">En revisión: ' + pagosRevBadge + '</span>' +
+                                            '</div>' +
+                                        '</div>';
+                                }).join('') +
+                            '</div>' +
+                        '</div>';
+
+                    cont.innerHTML = html;
+                } else {
+                    cont.innerHTML = '<div class="text-center py-6 text-slate-400 text-xs font-semibold">No se encontraron estudiantes vinculados para generar el resumen consolidado.</div>';
+                }
+            })
+            .catch(function(err) {
+                cont.innerHTML = '<div class="text-center py-6 text-rose-500 text-xs font-semibold"><i class="fas fa-exclamation-triangle text-rose-500 mr-1"></i> Error al cargar el resumen familiar: ' + window.escapeHtml(err.message) + '</div>';
+            });
+    };
+
+    window.selectStudentFromSummary = function(studentId) {
+        var switcherSelect = document.getElementById('family-student-switcher');
+        if (switcherSelect) {
+            switcherSelect.value = studentId;
+            switcherSelect.dispatchEvent(new Event('change'));
+        }
+    };
+
+    window.openJointPaymentModal = function() {
+        var modalId = 'modal-joint-payment';
+        var modal = document.getElementById(modalId);
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = modalId;
+            modal.className = 'fixed inset-0 z-[9995] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto';
+
+            var studentsList = window.familyLinkedStudents || [];
+            var studentsInputsHtml = studentsList.map(function(s, idx) {
+                return '' +
+                    '<div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">' +
+                        '<div class="flex items-center justify-between">' +
+                            '<span class="text-xs font-black text-slate-800 uppercase tracking-tight">👦 ' + s.nombre + ' (' + (s.grado || '') + ' ' + (s.seccion || '') + ')</span>' +
+                            '<span class="text-[10px] font-bold text-slate-400 uppercase">Monto a aplicar</span>' +
+                        '</div>' +
+                        '<input type="number" step="0.01" id="joint-amount-' + s.userId + '" data-student-id="' + s.userId + '" data-student-name="' + s.nombre + '" class="joint-distribution-input w-full p-2 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-900 outline-none focus:ring-2 focus:ring-emerald-500/20" placeholder="0.00" oninput="window.calcJointPaymentTotal()">' +
+                    '</div>';
+            }).join('');
+
+            modal.innerHTML = '' +
+                '<div class="bg-white rounded-[2rem] border border-slate-100 shadow-2xl max-w-xl w-full p-6 md:p-8 space-y-6 relative animate-fade-in">' +
+                    '<div class="flex items-center justify-between border-b border-slate-100 pb-4">' +
+                        '<div>' +
+                            '<span class="inline-block px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-1">Pago Conjunto Multihijo</span>' +
+                            '<h3 class="text-lg font-black text-slate-900 uppercase tracking-tight">Registrar Pago para Varios Estudiantes</h3>' +
+                        '</div>' +
+                        '<button onclick="document.getElementById(\'' + modalId + '\').classList.add(\'hidden\')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold text-sm transition-all">' +
+                            '<i class="fas fa-times"></i>' +
+                        '</button>' +
+                    '</div>' +
+                    '<div class="space-y-4 text-xs">' +
+                        '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">' +
+                            '<div>' +
+                                '<label class="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1">Monto Total del Depósito (L.)</label>' +
+                                '<input type="number" step="0.01" id="joint-total-amount" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 outline-none focus:bg-white" placeholder="0.00" oninput="window.calcJointPaymentTotal()">' +
+                            '</div>' +
+                            '<div>' +
+                                '<label class="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1">Número de Referencia / Comprobante</label>' +
+                                '<input type="text" id="joint-ref-number" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 outline-none focus:bg-white" placeholder="Ej. REF-8899221">' +
+                            '</div>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1">Enlace del Comprobante (Drive / Imagen)</label>' +
+                            '<input type="url" id="joint-doc-url" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 outline-none focus:bg-white" placeholder="https://drive.google.com/...">' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1">Distribución del Pago entre Estudiantes</label>' +
+                            '<div class="space-y-2 max-h-48 overflow-y-auto p-1">' +
+                                (studentsInputsHtml || '<p class="text-slate-400 italic">No hay estudiantes vinculados.</p>') +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="p-3 bg-indigo-50 rounded-xl border border-indigo-100 flex items-center justify-between text-indigo-900 font-bold">' +
+                            '<span>Total Distribuido:</span>' +
+                            '<span id="joint-sum-display">L. 0.00</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">' +
+                        '<button onclick="document.getElementById(\'' + modalId + '\').classList.add(\'hidden\')" class="px-4 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider hover:bg-slate-100 rounded-xl transition-all">' +
+                            'Cancelar' +
+                        '</button>' +
+                        '<button onclick="window.submitJointFamilyPaymentForm()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all flex items-center gap-1.5">' +
+                            '<i class="fas fa-paper-plane"></i> Enviar Pago a Revisión' +
+                        '</button>' +
+                    '</div>' +
+                '</div>';
+            document.body.appendChild(modal);
+        } else {
+            modal.classList.remove('hidden');
+        }
+    };
+
+    window.calcJointPaymentTotal = function() {
+        var inputs = document.querySelectorAll('.joint-distribution-input');
+        var sum = 0;
+        inputs.forEach(function(inp) {
+            sum += parseFloat(inp.value) || 0;
+        });
+        var display = document.getElementById('joint-sum-display');
+        if (display) display.textContent = 'L. ' + sum.toFixed(2);
+    };
+
+    window.submitJointFamilyPaymentForm = function() {
+        var totalInp = document.getElementById('joint-total-amount');
+        var refInp = document.getElementById('joint-ref-number');
+        var urlInp = document.getElementById('joint-doc-url');
+
+        var montoTotal = parseFloat(totalInp ? totalInp.value : 0) || 0;
+        var refNum = refInp ? refInp.value.trim() : '';
+        var docUrl = urlInp ? urlInp.value.trim() : '';
+
+        if (montoTotal <= 0) {
+            alert('Ingrese un monto total válido para el pago.');
+            return;
+        }
+
+        var inputs = document.querySelectorAll('.joint-distribution-input');
+        var distribuciones = [];
+        var suma = 0;
+        inputs.forEach(function(inp) {
+            var val = parseFloat(inp.value) || 0;
+            if (val > 0) {
+                var stId = inp.getAttribute('data-student-id');
+                var stName = inp.getAttribute('data-student-name');
+                distribuciones.push({
+                    estudianteId: stId,
+                    concepto: 'Colegiatura / Servicios - ' + stName,
+                    montoAplicado: val
+                });
+                suma += val;
+            }
+        });
+
+        if (distribuciones.length === 0) {
+            alert('Debe asignar el monto distribuido al menos a un estudiante.');
+            return;
+        }
+
+        if (Math.abs(suma - montoTotal) > 0.01) {
+            alert('La suma de las distribuciones (L. ' + suma.toFixed(2) + ') debe coincidir exactamente con el monto total declarado (L. ' + montoTotal.toFixed(2) + ').');
+            return;
+        }
+
+        fetchApi('USER', 'submitJointFamilyPayment', {
+            userIdResponsable: currentUser.userId || currentUser.id,
+            montoTotal: montoTotal,
+            numeroReferencia: refNum,
+            comprobanteUrl: docUrl,
+            distribuciones: distribuciones
+        }).then(function(res) {
+            if (res && res.status === 'success') {
+                alert('¡Pago conjunto multihijo enviado exitosamente!\n\nID: ' + res.pagoId);
+                var modal = document.getElementById('modal-joint-payment');
+                if (modal) modal.classList.add('hidden');
+                window.renderFamilyConsolidatedSummary();
+            } else {
+                alert('Error al registrar pago conjunto: ' + (res ? res.message : 'Error desconocido'));
+            }
+        }).catch(function(err) {
+            alert('Fallo de red: ' + err.message);
+        });
+    };
+
+    window.openFamilyScholarshipModal = function() {
+        var modalId = 'modal-family-scholarship';
+        var modal = document.getElementById(modalId);
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = modalId;
+            modal.className = 'fixed inset-0 z-[9995] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto';
+
+            modal.innerHTML = '' +
+                '<div class="bg-white rounded-[2rem] border border-slate-100 shadow-2xl max-w-lg w-full p-6 md:p-8 space-y-6 relative animate-fade-in">' +
+                    '<div class="flex items-center justify-between border-b border-slate-100 pb-4">' +
+                        '<div>' +
+                            '<span class="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-1">Becas y Descuentos</span>' +
+                            '<h3 class="text-lg font-black text-slate-900 uppercase tracking-tight">Solicitar Beneficio Familiar</h3>' +
+                        '</div>' +
+                        '<button onclick="document.getElementById(\'' + modalId + '\').classList.add(\'hidden\')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold text-sm transition-all">' +
+                            '<i class="fas fa-times"></i>' +
+                        '</button>' +
+                    '</div>' +
+                    '<div class="space-y-4 text-xs">' +
+                        '<div>' +
+                            '<label class="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1">Tipo de Beneficio</label>' +
+                            '<select id="scholarship-type" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 outline-none focus:bg-white">' +
+                                '<option value="Descuento Familiar (2+ Hijos)">Descuento Familiar (2+ Hijos)</option>' +
+                                '<option value="Beca Académica por Excelencia">Beca Académica por Excelencia</option>' +
+                                '<option value="Beca Social / Estudio Socioeconómico">Beca Social / Estudio Socioeconómico</option>' +
+                                '<option value="Descuento por Pago Anticipado">Descuento por Pago Anticipado</option>' +
+                            '</select>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1">Alcance del Beneficio</label>' +
+                            '<select id="scholarship-scope" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 outline-none focus:bg-white">' +
+                                '<option value="Familiar">Familiar (Aplica a todos los estudiantes vinculados)</option>' +
+                                '<option value="Individual">Individual (Estudiante específico)</option>' +
+                            '</select>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1">Explicación / Justificación de la Solicitud</label>' +
+                            '<textarea id="scholarship-reason" rows="3" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 outline-none focus:bg-white" placeholder="Describa los motivos de la solicitud..."></textarea>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">' +
+                        '<button onclick="document.getElementById(\'' + modalId + '\').classList.add(\'hidden\')" class="px-4 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider hover:bg-slate-100 rounded-xl transition-all">' +
+                            'Cancelar' +
+                        '</button>' +
+                        '<button onclick="window.submitFamilyScholarshipForm()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all flex items-center gap-1.5">' +
+                            '<i class="fas fa-paper-plane"></i> Enviar Solicitud' +
+                        '</button>' +
+                    '</div>' +
+                '</div>';
+            document.body.appendChild(modal);
+        } else {
+            modal.classList.remove('hidden');
+        }
+    };
+
+    window.submitFamilyScholarshipForm = function() {
+        var typeSel = document.getElementById('scholarship-type');
+        var scopeSel = document.getElementById('scholarship-scope');
+        var reasonArea = document.getElementById('scholarship-reason');
+
+        var tipo = typeSel ? typeSel.value : '';
+        var alcance = scopeSel ? scopeSel.value : 'Familiar';
+        var motivo = reasonArea ? reasonArea.value.trim() : '';
+
+        if (!motivo || motivo.length < 15) {
+            alert('Por favor ingrese una explicación detallada (mínimo 15 caracteres).');
+            return;
+        }
+
+        fetchApi('USER', 'submitFamilyScholarshipApplication', {
+            userIdResponsable: currentUser.userId || currentUser.id,
+            tipoBeneficio: tipo,
+            alcance: alcance,
+            motivo: motivo
+        }).then(function(res) {
+            if (res && res.status === 'success') {
+                alert('¡Solicitud de beneficio familiar enviada exitosamente!\n\nID Solicitud: ' + res.solicitudId);
+                var modal = document.getElementById('modal-family-scholarship');
+                if (modal) modal.classList.add('hidden');
+                if (reasonArea) reasonArea.value = '';
+            } else {
+                alert('Error enviando solicitud: ' + (res ? res.message : 'Error desconocido'));
+            }
+        }).catch(function(err) {
+            alert('Fallo de red: ' + err.message);
+        });
+    };
+
     renderStudentHeader();
+    initFamilyStudentSwitcher();
+    fetchAndRenderFormativeEvaluations();
+    fetchAndRenderStudentAttendanceSummary();
+    fetchAndRenderStudentAdministrativeRequests();
+    fetchAndRenderStudentSchedule();
+    fetchAndRenderVirtualClassroom();
+
+    document.getElementById('btn-refresh-student-schedule')?.addEventListener('click', function() {
+        fetchAndRenderStudentSchedule();
+    });
+
+    document.getElementById('btn-refresh-virtual-classroom')?.addEventListener('click', function() {
+        fetchAndRenderVirtualClassroom();
+    });
+
+    function fetchAndRenderVirtualClassroom(subjectFilter) {
+        var postsContainer = document.getElementById('classroom-posts-container');
+        var materialsContainer = document.getElementById('classroom-materials-container');
+        if (!postsContainer || !materialsContainer || !currentUser) return;
+
+        postsContainer.innerHTML = '<div class="text-center py-6 text-gray-400 italic text-xs"><i class="fas fa-spinner fa-spin mr-1"></i>Cargando anuncios...</div>';
+        materialsContainer.innerHTML = '<div class="text-center py-6 text-gray-400 italic text-xs"><i class="fas fa-spinner fa-spin mr-1"></i>Cargando materiales...</div>';
+
+        // 1. Cargar Anuncios
+        fetchApi('TASK', 'getPosts', {
+            grado: currentUser.grado,
+            seccion: currentUser.seccion,
+            asignatura: subjectFilter || null
+        }).then(function(res) {
+            if (res && res.status === 'success' && Array.isArray(res.data)) {
+                var posts = res.data;
+                if (posts.length === 0) {
+                    postsContainer.innerHTML = '<div class="p-4 rounded-2xl bg-gray-50 text-center text-gray-400 text-xs italic">No hay anuncios publicados en esta clase.</div>';
+                    return;
+                }
+                postsContainer.innerHTML = posts.map(function(p) {
+                    return `
+                        <div class="p-4 rounded-2xl bg-indigo-50/40 border border-indigo-100/60 shadow-sm hover:border-indigo-200 transition-all">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="px-2.5 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] font-bold uppercase rounded-full">${p.categoria}</span>
+                                <span class="text-[9px] text-gray-400 font-bold">${p.fechaPublicacion ? new Date(p.fechaPublicacion).toLocaleDateString() : 'Reciente'}</span>
+                            </div>
+                            <h5 class="text-xs font-bold text-gray-900 mb-1 uppercase tracking-tight">${p.titulo}</h5>
+                            <p class="text-xs text-gray-600 leading-relaxed mb-2">${p.contenido}</p>
+                            ${Array.isArray(p.adjuntos) && p.adjuntos.length > 0 ? `
+                                <div class="mt-2 pt-2 border-t border-indigo-100/50 flex flex-wrap gap-2">
+                                    ${p.adjuntos.map(function(att) {
+                                        return `<a href="${att.url || '#'}" target="_blank" class="text-[10px] font-bold text-indigo-600 hover:underline flex items-center gap-1"><i class="fas fa-paperclip"></i> ${att.nombre || 'Adjunto'}</a>`;
+                                    }).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                postsContainer.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs italic">No hay publicaciones disponibles.</div>';
+            }
+        }).catch(function() {
+            postsContainer.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs italic">No hay publicaciones disponibles.</div>';
+        });
+
+        // 2. Cargar Materiales Educativos y Guías
+        fetchApi('TASK', 'getStudyMaterials', {
+            grado: currentUser.grado,
+            parcial: window.GLOBAL_SCOPE ? window.GLOBAL_SCOPE.ParcialActual : null,
+            asignatura: subjectFilter || null
+        }).then(function(res) {
+            if (res && res.status === 'success' && Array.isArray(res.data)) {
+                var materials = res.data;
+                if (materials.length === 0) {
+                    materialsContainer.innerHTML = '<div class="p-4 rounded-2xl bg-gray-50 text-center text-gray-400 text-xs italic">No hay materiales educativos publicados.</div>';
+                    return;
+                }
+                materialsContainer.innerHTML = materials.map(function(m) {
+                    return `
+                        <div class="p-4 rounded-2xl bg-emerald-50/40 border border-emerald-100/60 shadow-sm flex items-center justify-between gap-4 hover:border-emerald-200 transition-all">
+                            <div class="truncate">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[8px] font-black uppercase rounded">${m.tipoRecurso}</span>
+                                    <span class="text-[9px] font-bold text-gray-400 uppercase">${m.parcial || 'General'}</span>
+                                </div>
+                                <h5 class="text-xs font-bold text-gray-900 truncate uppercase tracking-tight">${m.titulo}</h5>
+                                <p class="text-[10px] text-gray-500 truncate">${m.descripcion || 'Recurso educativo oficial'}</p>
+                            </div>
+                            <a href="${m.archivoUrl}" target="_blank" class="px-3 py-2 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 shadow-sm flex-shrink-0">
+                                <i class="fas fa-download"></i> Abrir
+                            </a>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                materialsContainer.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs italic">Sin materiales en esta sección.</div>';
+            }
+        }).catch(function() {
+            materialsContainer.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs italic">Sin materiales en esta sección.</div>';
+        });
+    }
+
+    // [TAREA-F7-IMP-24] [Fase 7: Planificación Académica, Horarios y Recursos] - Personalización de vista de calendario estudiantil, filtros por categoría de evento y leyenda cromática
+    window.filterStudentCalendarByCategory = function(categoria, isChecked) {
+        let prefs = {};
+        try {
+            prefs = JSON.parse(localStorage.getItem('student_cal_view_prefs') || '{}');
+        } catch (e) {
+            prefs = {};
+        }
+
+        prefs[categoria] = Boolean(isChecked);
+        localStorage.setItem('student_cal_view_prefs', JSON.stringify(prefs));
+
+        const elements = document.querySelectorAll(`[data-category="${categoria}"]`);
+        elements.forEach(el => {
+            if (isChecked) {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        });
+    };
+
+    window.resetStudentCalendarPreferences = function() {
+        localStorage.removeItem('student_cal_view_prefs');
+        const checkboxes = document.querySelectorAll('.student-cal-cat-checkbox');
+        checkboxes.forEach(cb => {
+            cb.checked = true;
+            window.filterStudentCalendarByCategory(cb.value, true);
+        });
+    };
+
+    // [TAREA-F7-IMP-23] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de impresión e exportación de horario del estudiante
+    window.openStudentPrintScheduleModal = function() {
+        const modal = document.getElementById('modal-student-print-schedule');
+        if (modal) modal.classList.remove('hidden');
+    };
+
+    window.executeStudentPrintSchedule = function() {
+        window.print();
+    };
+
+    // [TAREA-F7-IMP-11] [Fase 7: Planificación Académica, Horarios y Recursos] - Sincronización coherente de horarios en el Portal Familiar con frescura de datos y actualización bajo demanda.
+    window.fetchAndRenderStudentSchedule = function fetchAndRenderStudentSchedule() {
+        var container = document.getElementById('student-schedule-container');
+        if (!container || !currentUser || !currentUser.userId) return;
+
+        container.innerHTML = '<div class="col-span-5 text-center py-8 text-gray-400 font-bold text-xs uppercase tracking-widest animate-pulse"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando horario semanal...</div>';
+
+        fetchApi('ACADEMIC', 'getStudentSchedule', {
+            userId: currentUser.userId,
+            grado: currentUser.grado,
+            seccion: currentUser.seccion,
+            bypassCache: Boolean(window.forceStudentScheduleBypass)
+        }).then(function(res) {
+            if (res && res.status === 'success' && Array.isArray(res.schedules)) {
+                var schedules = res.schedules;
+                var meta = res.meta || {};
+                var days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+
+                if (schedules.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-5 text-center py-8 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                            No hay bloques de horario oficial publicados para ${currentUser.grado || 'Estudiante'} Sección ${currentUser.seccion || ''}.
+                        </div>
+                    `;
+                    return;
+                }
+
+                var syncTimeStr = meta.lastSyncTime ? new Date(meta.lastSyncTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Ahora';
+                var html = `
+                    <div class="col-span-5 flex justify-between items-center mb-2 px-2 py-1 bg-indigo-50/60 rounded-xl border border-indigo-100 text-[10px] font-bold text-indigo-700">
+                        <span><i class="fa-solid fa-rotate mr-1"></i>Sincronizado: ${syncTimeStr} (${schedules.length} clases activas)</span>
+                        <button onclick="window.fetchAndRenderStudentSchedule()" class="hover:text-indigo-900 transition"><i class="fa-solid fa-arrows-rotate mr-1"></i> Actualizar Horario</button>
+                    </div>
+                `;
+
+                days.forEach(function(day) {
+                    var daySchedules = schedules.filter(function(s) {
+                        return s.diaSemana.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") === day.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                    });
+
+                    html += `
+                        <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100 flex flex-col h-full">
+                            <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-200">
+                                <span class="text-xs font-black text-indigo-700 uppercase tracking-widest">${day}</span>
+                                <span class="px-2 py-0.5 bg-indigo-100 text-indigo-800 text-[9px] font-bold rounded-full">${daySchedules.length} clases</span>
+                            </div>
+                            <div class="space-y-3 flex-grow">
+                                ${daySchedules.length > 0 ? daySchedules.map(function(b) {
+                                    return `
+                                        <div class="p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:border-indigo-200 transition-all">
+                                            <p class="text-[9px] font-black text-indigo-500 uppercase tracking-widest">${b.horaInicio} - ${b.horaFin}</p>
+                                            <p class="text-xs font-bold text-gray-900 leading-tight mt-0.5">${b.asignaturaNombre}</p>
+                                            <div class="mt-2 pt-2 border-t border-gray-50 flex flex-col gap-0.5 text-[9px] font-semibold text-gray-500">
+                                                <span class="truncate"><i class="fas fa-chalkboard-teacher text-indigo-400 mr-1"></i>${b.docenteNombre} ${b.esSustituto ? '<span class="text-purple-600 font-bold">(Sustituto)</span>' : ''}</span>
+                                                <span><i class="fas fa-door-open text-teal-400 mr-1"></i>Aula: ${b.aulaCodigo || 'General'}</span>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('') : '<p class="text-[10px] text-gray-400 italic py-4 text-center">Sin clases</p>'}
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = '<div class="col-span-5 text-center py-6 text-red-500 text-xs font-bold uppercase">No se pudo obtener el horario.</div>';
+            }
+        }).catch(function(err) {
+            container.innerHTML = '<div class="col-span-5 text-center py-6 text-red-500 text-xs font-bold uppercase">Error al cargar horario: ' + err.message + '</div>';
+        });
+    }
+
+    document.getElementById('btn-open-justification-modal')?.addEventListener('click', function() {
+        var fecha = prompt('Ingrese la fecha de la ausencia (AAAA-MM-DD):', new Date().toISOString().split('T')[0]);
+        if (!fecha) return;
+        var motivo = prompt('Ingrese el motivo de la ausencia (Médico, Familiar, Personal):', 'Motivo Médico');
+        if (!motivo) return;
+        var obs = prompt('Observaciones o detalles adicionales:', 'Justificante presentado desde el Portal Familiar');
+
+        fetchApi('USER', 'submitStudentAbsenceJustification', {
+            userId: currentUser.userId,
+            estudianteId: currentUser.userId,
+            fechaAusencia: fecha,
+            motivo: motivo,
+            observaciones: obs
+        }).then(function(res) {
+            if (res && res.status === 'success') {
+                alert('Justificación de ausencia enviada a Orientación y Secretaría.');
+                fetchAndRenderStudentAdministrativeRequests();
+            } else {
+                alert('Error al enviar justificación: ' + (res.message || 'Error desconocido'));
+            }
+        }).catch(function(err) {
+            alert('Error al enviar justificación: ' + err.message);
+        });
+    });
+
+    document.getElementById('btn-open-request-modal')?.addEventListener('click', function() {
+        var tipo = prompt('Ingrese el tipo de trámite o solicitud (Ej: Constancia de Estudios, Solicitud de Justificante, Revisión de Nota):', 'Constancia de Estudios');
+        if (!tipo) return;
+        var desc = prompt('Ingrese los detalles o la descripción de su solicitud:', 'Solicitud presentada desde el Portal Familiar');
+        if (!desc) return;
+
+        fetchApi('USER', 'submitAdministrativeRequest', {
+            userId: currentUser.userId,
+            tipoTramite: tipo,
+            descripcion: desc
+        }).then(function(res) {
+            if (res && res.status === 'success') {
+                alert('Solicitud enviada exitosamente a Secretaría.');
+                fetchAndRenderStudentAdministrativeRequests();
+            } else {
+                alert('Error al enviar solicitud: ' + (res.message || 'Error desconocido'));
+            }
+        }).catch(function(err) {
+            alert('Error al enviar solicitud: ' + err.message);
+        });
+    });
+
+    function fetchAndRenderStudentAdministrativeRequests() {
+        var container = document.getElementById('family-portal-requests-container');
+        if (!container || !currentUser || !currentUser.userId) return;
+
+        fetchApi('USER', 'getAdministrativeRequests', { userId: currentUser.userId })
+            .then(function(res) {
+                if (res && res.status === 'success' && res.data) {
+                    var reqs = res.data;
+                    if (reqs.length === 0) {
+                        container.innerHTML = `
+                            <div class="col-span-2 text-center py-6 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                                No se registran trámites ni solicitudes administrativas pendientes.
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    var html = '';
+                    reqs.slice(0, 4).forEach(function(item) {
+                        html += `
+                            <div class="p-4 rounded-2xl bg-gray-50 border border-gray-100 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-bold text-gray-800">${item.tipoTramite}</span>
+                                        <span class="px-3 py-1 text-[10px] font-bold rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100 uppercase">${item.estado}</span>
+                                    </div>
+                                    <p class="text-[11px] text-gray-600 leading-relaxed mb-2">${item.descripcion}</p>
+                                    ${item.observacionesAdmin ? `<p class="text-[10px] text-indigo-600 font-medium italic">Nota Secretaría: ${item.observacionesAdmin}</p>` : ''}
+                                </div>
+                                <div class="mt-3 pt-2 border-t border-gray-100 text-[9px] font-bold text-gray-400">
+                                    <span>Solicitado el: ${item.fechaSolicitud ? new Date(item.fechaSolicitud).toLocaleDateString() : 'N/A'}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                }
+            })
+            .catch(function(err) {
+                console.log('Error al cargar trámites:', err);
+            });
+    }
+
+    function fetchAndRenderStudentAttendanceSummary() {
+        var summaryContainer = document.getElementById('attendance-summary-container');
+        var badge = document.getElementById('attendance-percentage-badge');
+        if (!summaryContainer || !currentUser || !currentUser.userId) return;
+
+        fetchApi('ACADEMIC', 'getStudentAttendanceSummary', { userId: currentUser.userId })
+            .then(function(res) {
+                if (res && res.status === 'success' && res.data) {
+                    var summary = res.data;
+                    if (badge) {
+                        badge.innerHTML = `<i class="fas fa-chart-pie"></i> Asistencia: ${summary.porcentajeAsistencia}%`;
+                    }
+                    summaryContainer.innerHTML = `
+                        <div class="p-4 rounded-2xl bg-teal-50/50 border border-teal-100 text-center">
+                            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Presencias</span>
+                            <span class="text-2xl font-black text-teal-600">${summary.presentes}</span>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-amber-50/50 border border-amber-100 text-center">
+                            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tardanzas</span>
+                            <span class="text-2xl font-black text-amber-600">${summary.tardanzas}</span>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-red-50/50 border border-red-100 text-center">
+                            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ausencias</span>
+                            <span class="text-2xl font-black text-red-600">${summary.ausentes}</span>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-blue-50/50 border border-blue-100 text-center">
+                            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Justificadas</span>
+                            <span class="text-2xl font-black text-blue-600">${summary.justificadas}</span>
+                        </div>
+                    `;
+                }
+            })
+            .catch(function(err) {
+                console.log('Error al cargar resumen de asistencia:', err);
+            });
+    }
+
+    function fetchAndRenderFormativeEvaluations() {
+        var container = document.getElementById('formative-logs-container');
+        if (!container || !currentUser || !currentUser.userId) return;
+
+        fetchApi('USER', 'getFormativeEvaluations', { userId: currentUser.userId })
+            .then(function(res) {
+                if (res && res.status === 'success' && res.data) {
+                    var evals = res.data;
+                    if (evals.length === 0) {
+                        container.innerHTML = `
+                            <div class="col-span-3 text-center py-6 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                                No se registran observaciones formativas para el período actual.
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    var html = '';
+                    var dominiosMap = {
+                        'Comportamiento': { icon: 'fa-user-shield', label: 'Comportamiento y Convivencia' },
+                        'AseoHigiene': { icon: 'fa-soap', label: 'Aseo e Higiene Personal' },
+                        'PresentacionPersonal': { icon: 'fa-user-tie', label: 'Presentación y Uniforme' }
+                    };
+
+                    evals.slice(0, 6).forEach(function(item) {
+                        var info = dominiosMap[item.dominio] || { icon: 'fa-info-circle', label: item.dominio };
+                        html += `
+                            <div class="p-4 rounded-2xl bg-gray-50 border border-gray-100 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-2 text-emerald-600 font-bold text-xs">
+                                        <i class="fas ${info.icon}"></i>
+                                        <span>${info.label}</span>
+                                    </div>
+                                    <p class="text-xs font-semibold text-gray-800 mb-1">Valoración: <span class="uppercase text-blue-600">${item.calificacionValor}</span></p>
+                                    <p class="text-[11px] text-gray-600 leading-relaxed">${item.observacionObjetiva || 'Desempeño adecuado conforme a las normas institucionales.'}</p>
+                                </div>
+                                <div class="mt-3 pt-2 border-t border-gray-100 flex justify-between items-center text-[9px] font-bold text-gray-400">
+                                    <span>Contexto: ${item.contexto || 'Rutinario'}</span>
+                                    <span>${item.fechaRegistro ? new Date(item.fechaRegistro).toLocaleDateString() : ''}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                }
+            })
+            .catch(function(err) {
+                console.log('Error al cargar evaluaciones formativas:', err);
+            });
+    }
 
     function formatDate(isoString) {
         if (!isoString) return 'N/A';
@@ -144,18 +1169,16 @@ document.addEventListener('DOMContentLoaded', function() {
         // Tarea 4: Cargar historial en paralelo para optimizar (v7.8.2)
         var historyPromise = fetchAcademicHistory();
 
-        // REQ: Eager Caching & Offline-First (Modulo 1)
-        // Priorizar renderizado local de 0ms desde cache_estudiante_dashboard
+        // REQ: Eager Caching & Offline-First aislado por estudiante (Modulo 1)
+        var cacheKeyDashboard = 'cache_estudiante_dashboard_' + (currentUser.userId || 'default');
         var hasLocalData = false;
         if (window.PersistenceManager) {
-            var cached = await window.PersistenceManager.get('cache_estudiante_dashboard');
+            var cached = await window.PersistenceManager.get(cacheKeyDashboard);
             if (cached && cached.data) {
                 allActivitiesData = cached.data.allActivities || [];
-                // Esperar al historial si es necesario para los botones
                 await historyPromise;
                 renderStudentExpediente(allActivitiesData);
                 renderSubjectNavigation(allActivitiesData);
-                // Si ya tenemos caché, procedemos a conciliación silenciosa sin bloquear la UI
                 hasLocalData = true;
             }
         }
@@ -258,9 +1281,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }));
                 }
 
-                // Persistir en cache_estudiante_dashboard para el próximo inicio (Modulo 1)
+                // Persistir en cache_estudiante_dashboard aislado por estudiante (Modulo 1)
                 if (window.PersistenceManager) {
-                    window.PersistenceManager.set('cache_estudiante_dashboard', {
+                    window.PersistenceManager.set(cacheKeyDashboard, {
                         allActivities: allActivities,
                         timestamp: Date.now()
                     });
@@ -369,33 +1392,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }).length;
         var deliveryRate = totalAssigned > 0 ? (mandatoryDelivered / totalAssigned) : 0;
 
-        // REQ-DOC-011: Cálculo de Rendimiento Integral con penalización del 50% por entregas tardías
-        var onTimeCount = 0;
-        var lateCount = 0;
-        var gradeSum = 0;
-
-        currentParcialActivities.forEach(function(a) {
-            if (a.entrega) {
-                var califOriginal = parseFloat(a.entrega.calificacion || 0);
-                var isLate = false;
-                if (a.fechaLimite) {
-                    var limit = new Date(a.fechaLimite);
-                    var deliveryDate = new Date(a.entrega.fecha || Date.now());
-                    if (deliveryDate > limit) {
-                        isLate = true;
-                        lateCount++;
-                    } else {
-                        onTimeCount++;
-                    }
-                } else {
-                    onTimeCount++;
-                }
-
-                // Penalización del 50% en entregas fuera de plazo
-                var califEfectiva = isLate ? (califOriginal * 0.5) : califOriginal;
-                gradeSum += califEfectiva;
-            }
-        });
+        // Puntos totales obtenidos (incluye recuperación por créditos extra)
+        var gradeSum = currentParcialActivities.reduce(function(sum, a) {
+            return sum + parseFloat(a.entrega ? a.entrega.calificacion || 0 : 0);
+        }, 0);
 
         // El máximo posible se basa en las tareas obligatorias
         var maxPossible = baseActivities.reduce(function(sum, a) {
@@ -403,13 +1403,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 0);
         var academicPerformance = maxPossible > 0 ? Math.min(1, gradeSum / maxPossible) : 0;
 
+        var onTimeCount = 0;
+        activities.forEach(function(a) {
+            if (a.entrega && a.fechaLimite) {
+                var limit = new Date(a.fechaLimite);
+                var deliveryDate = new Date(a.entrega.fecha || Date.now());
+                if (deliveryDate <= limit) onTimeCount++;
+            }
+        });
         var totalDelivered = activities.filter(function(a) { return a.entrega; }).length;
         var punctualityRate = totalDelivered > 0 ? (onTimeCount / totalDelivered) : 1;
-
-        // Métricas analíticas requeridas: ICR, GP y Mastery
-        var icrMetric = totalAssigned > 0 ? Math.round((onTimeCount / totalAssigned) * 100) : 100;
-        var gpMetric = totalAssigned > 0 ? Math.round((mandatoryDelivered / totalAssigned) * 100) : 100;
-        var masteryMetric = maxPossible > 0 ? Math.round(academicPerformance * 100) : 0;
 
         var compositeProgress = Math.round((deliveryRate * 0.3 + academicPerformance * 0.5 + punctualityRate * 0.2) * 100);
 
@@ -438,20 +1441,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado') {
                     subjectStats[subj].completed++;
                 }
-                var rawScore = parseFloat(a.entrega.calificacion || 0);
-                var isSubjLate = false;
+                subjectStats[subj].score += parseFloat(a.entrega.calificacion || 0);
+
                 if (a.fechaLimite) {
                     var limit = new Date(a.fechaLimite);
                     var deliveryDate = new Date(a.entrega.fecha || Date.now());
-                    if (deliveryDate > limit) {
-                        isSubjLate = true;
-                    } else {
-                        subjectStats[subj].onTime++;
-                    }
-                } else {
-                    subjectStats[subj].onTime++;
+                    if (deliveryDate <= limit) subjectStats[subj].onTime++;
                 }
-                subjectStats[subj].score += isSubjLate ? (rawScore * 0.5) : rawScore;
             }
         });
 
@@ -494,49 +1490,11 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="space-y-6">
                 <div class="card-ima bg-white border border-gray-100 p-6 rounded-[2rem] shadow-sm">
                     <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-6">Métricas de Desempeño</h3>
-                    <!-- REQ-DOC-011: Bloque de Métricas Analíticas Psicométricas y Rendimiento Separado -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                        <div class="bg-gray-50/80 p-4 rounded-2xl border border-gray-100 flex flex-col justify-between">
-                            <div>
-                                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Rendimiento Académico</span>
-                                <p class="text-xl font-black text-gray-900 mt-1">${masteryMetric}%</p>
-                            </div>
-                            <span class="text-[9px] font-bold ${masteryMetric >= 70 ? 'text-emerald-600' : 'text-amber-600'} uppercase mt-2">
-                                ${maxPossible > 0 ? (masteryMetric >= 70 ? 'Dominio Aprobatorio' : 'Refuerzo Requerido') : 'Sin evaluaciones'}
-                            </span>
-                        </div>
-
-                        <div class="bg-gray-50/80 p-4 rounded-2xl border border-gray-100 flex flex-col justify-between">
-                            <div>
-                                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Cumplimiento (ICR)</span>
-                                <p class="text-xl font-black text-blue-600 mt-1">${icrMetric}%</p>
-                            </div>
-                            <span class="text-[9px] font-bold text-gray-500 uppercase mt-2">${onTimeCount} a tiempo | ${lateCount} tardías (-50%)</span>
-                        </div>
-
-                        <div class="bg-gray-50/80 p-4 rounded-2xl border border-gray-100 flex flex-col justify-between">
-                            <div>
-                                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Participación (GP)</span>
-                                <p class="text-xl font-black text-indigo-600 mt-1">${gpMetric}%</p>
-                            </div>
-                            <span class="text-[9px] font-bold text-gray-500 uppercase mt-2">${mandatoryDelivered} de ${totalAssigned} actividades</span>
-                        </div>
-
-                        <!-- REQ-DOC-011: Control de Asistencia Totalmente Segregado -->
-                        <div id="attendance-summary-card" class="bg-gray-50/80 p-4 rounded-2xl border border-gray-100 flex flex-col justify-between">
-                            <div>
-                                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Control de Asistencia</span>
-                                <p id="attendance-index-val" class="text-xl font-black text-gray-900 mt-1">--%</p>
-                            </div>
-                            <span id="attendance-status-badge" class="text-[9px] font-bold text-gray-400 uppercase mt-2">Consultando asistencia...</span>
-                        </div>
-                    </div>
-
                     <div id="student-metrics-table-container" class="mb-8 overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="border-b border-gray-100">
-                                    <th class="py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">Métrica Psicométrica</th>
+                                    <th class="py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">Métrica</th>
                                     <th class="py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Valor</th>
                                     <th class="py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Estado</th>
                                 </tr>
@@ -562,43 +1520,6 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
         container.classList.remove('hidden');
-
-        // REQ-DOC-011: Cargar Asistencia Segregada de forma asíncrona
-        loadStudentAttendanceMetric(studentId, window.PARCIAL_ACTUAL);
-    }
-
-    async function loadStudentAttendanceMetric(studentId, parcial) {
-        var valEl = document.getElementById('attendance-index-val');
-        var badgeEl = document.getElementById('attendance-status-badge');
-        if (!valEl || !badgeEl) return;
-
-        try {
-            if (typeof window.getStudentAttendanceSummary === 'function') {
-                var res = await window.getStudentAttendanceSummary({ estudianteId: studentId, parcial: parcial });
-                if (res && res.status === 'success' && res.data) {
-                    var att = res.data;
-                    if (att.indiceAsistencia !== null && att.indiceAsistencia !== undefined) {
-                        valEl.textContent = att.indiceAsistencia + '%';
-                        var badgeColor = att.indiceAsistencia >= 85 ? 'text-emerald-600' : (att.indiceAsistencia >= 70 ? 'text-yellow-600' : 'text-red-600');
-                        badgeEl.className = 'text-[9px] font-bold uppercase mt-2 ' + badgeColor;
-                        badgeEl.textContent = `${att.presentes} presentes | ${att.ausencias} ausencias | ${att.estado}`;
-                    } else {
-                        valEl.textContent = 'N/A';
-                        badgeEl.textContent = 'Sin sesiones registradas';
-                        badgeEl.className = 'text-[9px] font-bold text-gray-400 uppercase mt-2';
-                    }
-                    return;
-                }
-            }
-            valEl.textContent = '100%';
-            badgeEl.textContent = 'Asistencia regular (Registro inicial)';
-            badgeEl.className = 'text-[9px] font-bold text-emerald-600 uppercase mt-2';
-        } catch (e) {
-            console.warn('No fue posible sincronizar asistencia remota:', e);
-            valEl.textContent = '100%';
-            badgeEl.textContent = 'Asistencia activa';
-            badgeEl.className = 'text-[9px] font-bold text-gray-400 uppercase mt-2';
-        }
     }
 
 
@@ -616,9 +1537,9 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             var profesorId = activity ? activity.profesorId : null;
 
-            // Info por defecto (New Generation Bilingual School and Institute)
+            // Info por defecto (Área de Informática)
             var profInfo = {
-                nombre: "New Generation Bilingual School and Institute",
+                nombre: "New Generation Christian Academy",
                 email: "info@newgeneration.edu.hn",
                 telefono: ""
             };
@@ -779,7 +1700,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return s === 'Rechazada' || s === 'Tarea incompleta';
             });
 
-            // Ordenar por fecha de vencimiento más próxima (ascendente)
+            // [TAREA-14] [Fase 1 - UX Flujo Académico] - Vista unificada y ordenamiento prioritario por fecha de vencimiento de actividades estudiantiles.
             pendingActivities.sort(function(a, b) {
                 var dateA = a.fechaLimite ? new Date(a.fechaLimite) : new Date(8640000000000000);
                 var dateB = b.fechaLimite ? new Date(b.fechaLimite) : new Date(8640000000000000);
@@ -830,24 +1751,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>`;
         }
 
-        // [REQ-DOC-007]: Expansión Full-Viewport con Separación Clara de Tareas Evaluables y Guías de Estudio
-        window.expandSubject = async function(subj) {
+        // Tarea 2: Expansión Full-Viewport
+        window.expandSubject = function(subj) {
             var expandedOverlay = document.createElement('div');
             expandedOverlay.id = 'expanded-subject-overlay';
-            expandedOverlay.className = 'fixed inset-0 z-[2200] bg-slate-50 overflow-y-auto animate-expansion';
+            expandedOverlay.className = 'fixed inset-0 z-[2200] bg-white overflow-y-auto animate-expansion';
 
             var subjActivities = currentActivities.filter(function(a) { return a.asignatura === subj; });
 
-            // Separar actividades evaluables
+            // Ordenar por fecha de vencimiento (más recientes primero)
             subjActivities.sort(function(a, b) {
                 return new Date(b.fechaLimite || 0) - new Date(a.fechaLimite || 0);
             });
 
             expandedOverlay.innerHTML = `
                 <div class="container mx-auto px-4 md:px-8 py-8 max-w-5xl">
-                    <div class="flex items-center justify-between mb-8 sticky top-0 bg-white/95 backdrop-blur-md p-4 rounded-3xl shadow-sm z-10 border border-gray-100">
+                    <div class="flex items-center justify-between mb-8 sticky top-0 bg-white/90 backdrop-blur-md py-4 z-10 border-b border-gray-100">
                         <div class="flex items-center gap-4">
-                            <button onclick="window.closeExpandedSubject()" class="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all shadow-sm">
+                            <button onclick="window.closeExpandedSubject()" class="w-10 h-10 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all">
                                 <i class="fas fa-arrow-left"></i>
                             </button>
                             <div>
@@ -855,129 +1776,22 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">${selectedPartial}</p>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <span id="tab-subject-tasks" onclick="window.switchSubjectTab('tasks')" class="cursor-pointer px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all bg-blue-600 text-white shadow-sm">
-                                <i class="fas fa-tasks mr-1.5"></i> Tareas (${subjActivities.length})
-                            </span>
-                            <span id="tab-subject-guides" onclick="window.switchSubjectTab('guides')" class="cursor-pointer px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all bg-white text-gray-600 hover:bg-gray-100 border border-gray-200">
-                                <i class="fas fa-book-open mr-1.5"></i> Guías de Estudio
-                            </span>
+                        <div class="px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-xs font-bold uppercase tracking-widest border border-blue-100">
+                            ${subjActivities.length} Actividades Totales
                         </div>
                     </div>
 
-                    <!-- Panel de Tareas Evaluables -->
-                    <div id="subject-tasks-panel" class="space-y-6">
-                        <div class="flex items-center justify-between pb-2 border-b border-gray-200">
-                            <div>
-                                <h3 class="text-sm font-black text-gray-800 uppercase tracking-wider">Actividades Evaluables</h3>
-                                <p class="text-[11px] text-gray-400 font-medium">Tareas y evaluaciones asignadas sujetas a calificación.</p>
-                            </div>
-                            <span class="text-xs font-bold text-gray-500">${subjActivities.length} asignadas</span>
-                        </div>
-                        <div id="expanded-tasks-list" class="grid grid-cols-1 gap-6 pb-12"></div>
-                    </div>
-
-                    <!-- Panel de Guías de Estudio (Separado Visualmente) -->
-                    <div id="subject-guides-panel" class="hidden space-y-6">
-                        <div class="flex items-center justify-between pb-2 border-b border-gray-200">
-                            <div>
-                                <h3 class="text-sm font-black text-gray-800 uppercase tracking-wider">Guías de Estudio & Material Didáctico</h3>
-                                <p class="text-[11px] text-gray-400 font-medium">Recursos formativos y material de repaso para consulta y descarga (sin entrega obligatoria).</p>
-                            </div>
-                            <span id="subject-guides-count" class="text-xs font-bold text-purple-600">0 recursos</span>
-                        </div>
-                        <div id="expanded-guides-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-12">
-                            <div class="col-span-full py-8 text-center text-gray-400 text-xs font-bold">
-                                <i class="fas fa-spinner fa-spin mr-2"></i> Cargando recursos didácticos...
-                            </div>
-                        </div>
+                    <div id="expanded-tasks-list" class="grid grid-cols-1 gap-6 pb-20">
+                        <!-- Se poblará dinámicamente -->
                     </div>
                 </div>
             `;
             document.body.appendChild(expandedOverlay);
             document.body.style.overflow = 'hidden';
 
-            window.switchSubjectTab = function(active) {
-                var tabTasks = document.getElementById('tab-subject-tasks');
-                var tabGuides = document.getElementById('tab-subject-guides');
-                var panelTasks = document.getElementById('subject-tasks-panel');
-                var panelGuides = document.getElementById('subject-guides-panel');
-
-                if (active === 'tasks') {
-                    if (tabTasks) tabTasks.className = 'cursor-pointer px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all bg-blue-600 text-white shadow-sm';
-                    if (tabGuides) tabGuides.className = 'cursor-pointer px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all bg-white text-gray-600 hover:bg-gray-100 border border-gray-200';
-                    if (panelTasks) panelTasks.classList.remove('hidden');
-                    if (panelGuides) panelGuides.classList.add('hidden');
-                } else {
-                    if (tabTasks) tabTasks.className = 'cursor-pointer px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all bg-white text-gray-600 hover:bg-gray-100 border border-gray-200';
-                    if (tabGuides) tabGuides.className = 'cursor-pointer px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all bg-purple-600 text-white shadow-sm';
-                    if (panelTasks) panelTasks.classList.add('hidden');
-                    if (panelGuides) panelGuides.classList.remove('hidden');
-                }
-            };
-
             var expandedList = document.getElementById('expanded-tasks-list');
-            if (subjActivities.length === 0) {
-                expandedList.innerHTML = `
-                    <div class="p-8 text-center bg-white rounded-2xl border border-gray-100 text-gray-400 text-xs font-bold uppercase tracking-wider">
-                        No hay actividades pendientes ni registradas para esta materia en el parcial seleccionado.
-                    </div>`;
-            } else {
-                renderActivitiesIntoContainer(subjActivities, expandedList);
-            }
-
-            // Carga de Guías de Estudio para esta Asignatura
-            try {
-                var guidesList = document.getElementById('expanded-guides-list');
-                var countLabel = document.getElementById('subject-guides-count');
-                var guidesRes = await window.getStudyGuides({
-                    grado: currentUser.grado,
-                    seccion: currentUser.seccion,
-                    parcial: selectedPartial,
-                    asignatura: subj,
-                    rol: 'Estudiante',
-                    estado: 'activo'
-                });
-                var guidesData = (guidesRes && guidesRes.status === 'success') ? (Array.isArray(guidesRes.guias) ? guidesRes.guias : (Array.isArray(guidesRes.data) ? guidesRes.data : [])) : [];
-                if (countLabel) countLabel.textContent = guidesData.length + ' recurso' + (guidesData.length === 1 ? '' : 's');
-
-                if (guidesData.length === 0) {
-                    guidesList.innerHTML = `
-                        <div class="col-span-full p-8 text-center bg-white rounded-2xl border border-gray-100 text-gray-400 text-xs font-medium">
-                            <i class="fas fa-folder-open text-2xl text-gray-300 mb-2 block"></i>
-                            No hay guías de estudio ni material complementario registrado para esta materia en este parcial.
-                        </div>`;
-                } else {
-                    guidesList.innerHTML = guidesData.map(function(g) {
-                        return `
-                            <div class="p-5 bg-white rounded-2xl border border-purple-100 hover:border-purple-300 transition-all shadow-sm flex flex-col justify-between">
-                                <div>
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-purple-50 text-purple-700">
-                                            ${g.tipo_recurso || 'Guía de Estudio'}
-                                        </span>
-                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${g.archivo_nombre ? g.archivo_nombre.split('.').pop().toUpperCase() : 'DOC'}</span>
-                                    </div>
-                                    <h4 class="text-sm font-bold text-gray-800 uppercase tracking-tight mb-1">${g.titulo}</h4>
-                                    <p class="text-xs text-gray-500 font-normal line-clamp-2 mb-4">${g.descripcion || 'Material de apoyo y estudio para repaso de contenidos.'}</p>
-                                </div>
-                                <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
-                                    <span class="text-[10px] text-gray-400 font-semibold uppercase"><i class="fas fa-user-tie mr-1"></i> ${g.docente_nombre || 'Docente'}</span>
-                                    <a href="${g.archivo_url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold transition-all">
-                                        <i class="fas fa-file-download"></i> Descargar
-                                    </a>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-                }
-            } catch (guideErr) {
-                console.error("[IMA-STUDENT] Error cargando guías de la asignatura:", guideErr);
-                var errGuidesList = document.getElementById('expanded-guides-list');
-                if (errGuidesList) {
-                    errGuidesList.innerHTML = `<div class="col-span-full p-4 text-center text-xs text-red-500">Error al sincronizar guías de estudio.</div>`;
-                }
-            }
+            // Reutilizar lógica de renderizado de tareas (con todas las tareas)
+            renderActivitiesIntoContainer(subjActivities, expandedList);
         };
 
         window.closeExpandedSubject = function() {
@@ -1003,7 +1817,11 @@ document.addEventListener('DOMContentLoaded', function() {
         var feedbackHtml = '';
         var actionButtonHtml = '';
 
-        if (activity.type === 'Tarea' || activity.type === 'Credito Extra' || activity.type === 'Crédito Extra') {
+        if (activity.tipoRecurso === 'GuiaEstudio' || activity.type === 'GuiaEstudio' || activity.tipoRecurso === 'MaterialApoyo') {
+            var downloadLink = activity.archivoUrl ? `<a href="${activity.archivoUrl}" target="_blank" class="btn-ima-primary bg-indigo-600 hover:bg-indigo-700 px-5 py-2 text-xs flex items-center gap-2"><i class="fas fa-file-pdf"></i> Descargar Guía</a>` : '<span class="text-xs text-gray-400 italic">Sin archivo adjunto</span>';
+            actionButtonHtml = downloadLink;
+            feedbackHtml = `<div class="mt-3 p-3 bg-indigo-50/50 rounded-xl border border-indigo-100 text-[11px] text-indigo-900 font-medium"><i class="fas fa-info-circle mr-1"></i> Guía informativa de estudio para preparación académica (no requiere entrega evaluable).</div>`;
+        } else if (activity.type === 'Tarea' || activity.type === 'Credito Extra' || activity.type === 'Crédito Extra') {
             if (activity.entrega) {
                 var status = activity.entrega.estado;
                 var isPending = (status === 'Pendiente de revisión' || status === 'Pendiente' || !status);
@@ -1049,12 +1867,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         ${resubmitBtnHtml}
                     </div>`;
             } else {
-                // REQ-DOC-006: Control de Disponibilidad Programada
-                if (activity.esDisponible === false) {
-                    var dispFechaText = activity.disponibleDesde ? new Date(activity.disponibleDesde).toLocaleDateString() : '';
-                    actionButtonHtml = `<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-600 border border-amber-200">
-                        <i class="fas fa-clock"></i> Programada (Disponible ${dispFechaText || 'próximamente'})
-                    </span>`;
+                var now = new Date();
+                var isScheduledFuture = false;
+                if (activity.horaDisponible) {
+                    var availDate = new Date(activity.horaDisponible);
+                    if (!isNaN(availDate.getTime()) && now < availDate) {
+                        isScheduledFuture = true;
+                    }
+                }
+
+                if (isScheduledFuture) {
+                    actionButtonHtml = `<button class="bg-gray-100 text-gray-400 px-5 py-2 rounded-xl text-[10px] font-bold uppercase cursor-not-allowed" disabled><i class="fas fa-clock mr-1"></i> Programada para ${formatDate(activity.horaDisponible)}</button>`;
                 } else {
                     actionButtonHtml = `<button class="btn-ima-primary px-5 py-2 text-xs open-submission-modal"
                         data-task-id="${activity.tareaId}"
@@ -1131,11 +1954,9 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="card-ima assignment-card cursor-pointer group ${isExpandedView ? 'is-expanded' : ''}" data-task-id="${activity.tareaId || activity.examenId}">
                 <div class="flex justify-between items-start">
                     <div class="flex-grow">
-                        <div class="flex items-center gap-2 mb-1 flex-wrap">
+                        <div class="flex items-center gap-2 mb-1">
                             <span class="text-[9px] font-semibold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded">${activity.type}</span>
                             <span class="text-[10px] text-gray-400 font-medium uppercase tracking-tighter">${activity.asignatura || 'General'}</span>
-                            ${activity.tema ? `<span class="text-[9px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded"><i class="fas fa-bookmark text-[8px] mr-1"></i>${activity.tema}</span>` : ''}
-                            ${activity.parcial ? `<span class="text-[9px] font-medium text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded">${activity.parcial}</span>` : ''}
                             ${alertBadgeHtml}
                         </div>
                         <h3 class="text-base font-semibold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight uppercase tracking-tighter flex items-center flex-wrap">
@@ -1208,6 +2029,14 @@ document.addEventListener('DOMContentLoaded', function() {
         uploadedFilesContainer.classList.add('hidden');
         filePreviewContainer.classList.add('hidden');
         fileInput.value = '';
+
+        var textResp = document.getElementById('submission-text-response');
+        var extLink = document.getElementById('submission-external-link');
+        var privComment = document.getElementById('submission-private-comment');
+        if (textResp) { textResp.value = ''; textResp.oninput = updateConfirmButtonState; }
+        if (extLink) { extLink.value = ''; extLink.oninput = updateConfirmButtonState; }
+        if (privComment) { privComment.value = ''; }
+
         updateConfirmButtonState();
 
         submissionModal.classList.remove('hidden');
@@ -1242,7 +2071,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateConfirmButtonState() {
         if (!confirmSubmissionBtn) return;
-        if (uploadedFiles.length > 0 && activeUploads === 0) {
+        var textVal = document.getElementById('submission-text-response')?.value.trim() || '';
+        var linkVal = document.getElementById('submission-external-link')?.value.trim() || '';
+        var hasContent = uploadedFiles.length > 0 || textVal.length > 0 || linkVal.length > 0;
+
+        if (hasContent && activeUploads === 0) {
             confirmSubmissionBtn.disabled = false;
             confirmSubmissionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
         } else {
@@ -1465,8 +2298,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 var fileSize = currentFile.size;
 
-                // REQ: Segmentación Libre de Corrupción (Tarea 1: Reingeniería)
-                if (fileSize >= CHUNK_THRESHOLD) {
+                if (window.uploadResumableFile && fileSize >= CHUNK_THRESHOLD) {
+                    await new Promise(function(resolveUpload, rejectUpload) {
+                        window.uploadResumableFile(currentFile, {
+                            userId: currentUser.userId || currentUser.id,
+                            chunkSize: CHUNK_SIZE
+                        }, {
+                            onProgress: function(percent, statusMsg, etaSec) {
+                                if (progressBar) progressBar.style.width = percent + '%';
+                                if (progressSpan) progressSpan.textContent = statusMsg;
+                            },
+                            onError: function(err) {
+                                rejectUpload(new Error(err));
+                            },
+                            onSuccess: function(res) {
+                                uploadResult = { status: 'success', data: { fileId: res.sessionKey, folderId: res.sessionKey, mimeType: 'folder' } };
+                                resolveUpload();
+                            }
+                        });
+                    });
+                } else if (fileSize >= CHUNK_THRESHOLD) {
                     var totalChunks = Math.ceil(fileSize / CHUNK_SIZE);
                     var segments = [];
 
@@ -1703,19 +2554,30 @@ document.addEventListener('DOMContentLoaded', function() {
                     finalMimeType = 'folder';
                 }
 
+                var textoRespuestaVal = document.getElementById('submission-text-response')?.value || '';
+                var enlaceExternoVal = document.getElementById('submission-external-link')?.value || '';
+                var observacionesVal = document.getElementById('submission-private-comment')?.value || '';
+
                 var payload = {
                     userId: currentUser.userId,
                     tareaId: currentTaskId,
                     fileId: finalFileId,
                     mimeType: finalMimeType,
-                    isLate: isLate // Informar al backend sobre la entrega tardía (Tarea 3)
+                    textoRespuesta: textoRespuestaVal,
+                    enlaceExterno: enlaceExternoVal,
+                    observaciones: observacionesVal,
+                    isLate: isLate
                 };
 
                 var result = await fetchApi('TASK', 'submitAssignment', payload);
                 if (result.status === 'success') {
                     // Operación exitosa: limpiar archivos para evitar advertencia (Caso 2)
                     uploadedFiles = [];
-                    alert('¡Tarea entregada exitosamente!');
+                    var confirmMsg = '¡Tarea entregada exitosamente!';
+                    if (result.data && result.data.submissionToken) {
+                        confirmMsg += '\nComprobante de entrega: ' + result.data.submissionToken;
+                    }
+                    alert(confirmMsg);
                     closeSubmissionModal();
                     fetchAllActivities();
                 } else {
@@ -1744,7 +2606,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!waActive || !waDisabled) return;
 
         try {
-            // WhatsApp links are now assigned by GRADO only (v7.9.3)
+            // [REQ-EXP-006] [Requerimientos de Expansión y Desarrollo] - Integración de grupos de WhatsApp por grado y vista de asignaturas autorizadas.
             var res = await fetchApi('ACADEMIC', 'getWhatsAppLink', {
                 grado: currentUser.grado
             });
@@ -1765,416 +2627,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // --- Sistema de Pestañas Principal (Tarea 1 - Fase Diagnóstico & REQ-EXP-009) ---
+    // --- Sistema de Pestañas Principal (Tarea 1 - Fase Diagnóstico) ---
     var tabActivities = document.getElementById('tab-activities');
     var tabProgress = document.getElementById('tab-progress');
-    var tabFinancial = document.getElementById('tab-financial');
-    var tabGuias = document.getElementById('tab-guias');
     var viewActivities = document.getElementById('view-activities');
     var viewProgress = document.getElementById('view-progress');
-    var viewFinancial = document.getElementById('view-financial');
-    var viewGuias = document.getElementById('view-guias');
 
-    var activeTabClass = "px-6 md:px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 bg-blue-600 text-white shadow-lg shadow-blue-100";
-    var inactiveTabClass = "px-6 md:px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 text-gray-500 hover:bg-white hover:text-blue-600";
-
-    function switchStudentTab(activeTab) {
-        if (!tabActivities || !tabProgress || !viewActivities || !viewProgress) return;
-        tabActivities.className = inactiveTabClass;
-        tabProgress.className = inactiveTabClass;
-        if (tabFinancial) tabFinancial.className = inactiveTabClass;
-        if (tabGuias) tabGuias.className = inactiveTabClass;
-
-        viewActivities.classList.add('hidden');
-        viewProgress.classList.add('hidden');
-        if (viewFinancial) viewFinancial.classList.add('hidden');
-        if (viewGuias) viewGuias.classList.add('hidden');
-
-        if (activeTab === 'activities') {
-            tabActivities.className = activeTabClass;
+    if (tabActivities && tabProgress && viewActivities && viewProgress) {
+        tabActivities.addEventListener('click', function() {
+            tabActivities.className = "px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 bg-blue-600 text-white shadow-lg shadow-blue-100";
+            tabProgress.className = "px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 text-gray-500 hover:bg-white hover:text-blue-600";
             viewActivities.classList.remove('hidden');
-        } else if (activeTab === 'progress') {
-            tabProgress.className = activeTabClass;
+            viewProgress.classList.add('hidden');
+        });
+
+        tabProgress.addEventListener('click', function() {
+            tabProgress.className = "px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 bg-blue-600 text-white shadow-lg shadow-blue-100";
+            tabActivities.className = "px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 text-gray-500 hover:bg-white hover:text-blue-600";
             viewProgress.classList.remove('hidden');
+            viewActivities.classList.add('hidden');
+            // Asegurar que las métricas se rendericen al cambiar a la pestaña
             window.renderStudentExpediente(allActivitiesData);
-        } else if (activeTab === 'financial') {
-            if (tabFinancial) tabFinancial.className = activeTabClass;
-            if (viewFinancial) viewFinancial.classList.remove('hidden');
-            loadStudentFinancials();
-        } else if (activeTab === 'guias') {
-            if (tabGuias) tabGuias.className = activeTabClass;
-            if (viewGuias) viewGuias.classList.remove('hidden');
-            loadStudentStudyGuides();
-        }
-    }
-
-    if (tabActivities) tabActivities.addEventListener('click', function() { switchStudentTab('activities'); });
-    if (tabProgress) tabProgress.addEventListener('click', function() { switchStudentTab('progress'); });
-    if (tabFinancial) tabFinancial.addEventListener('click', function() { switchStudentTab('financial'); });
-    if (tabGuias) tabGuias.addEventListener('click', function() { switchStudentTab('guias'); });
-
-    // REQ-DOC-001: Visualización y Descarga de Guías de Estudio en Dashboard Estudiantil
-    var studentStudyGuidesData = [];
-    var studentGuiaParcialSelect = document.getElementById('student-guia-parcial');
-    var btnStudentReloadGuias = document.getElementById('btn-student-reload-guias');
-
-    async function loadStudentStudyGuides() {
-        var container = document.getElementById('student-guias-list');
-        if (!container || !currentUser) return;
-        container.innerHTML = '<div class="col-span-full text-center py-12 text-gray-400"><i class="fas fa-spinner fa-spin mr-2"></i> Cargando guías de estudio...</div>';
-
-        try {
-            var res = await window.getStudyGuides({
-                grado: currentUser.grado,
-                seccion: currentUser.seccion,
-                rol: 'Estudiante',
-                estado: 'activo'
-            });
-
-            if (res && res.status === 'success') {
-                studentStudyGuidesData = res.guias || [];
-                renderStudentStudyGuides();
-            } else {
-                container.innerHTML = '<div class="col-span-full text-center py-12 text-red-500">' + (res.message || 'Error al obtener guías de estudio.') + '</div>';
-            }
-        } catch (err) {
-            container.innerHTML = '<div class="col-span-full text-center py-12 text-red-500">Error al consultar el servidor: ' + err.message + '</div>';
-        }
-    }
-
-    function renderStudentStudyGuides() {
-        var container = document.getElementById('student-guias-list');
-        if (!container) return;
-
-        var selectedParcial = studentGuiaParcialSelect ? studentGuiaParcialSelect.value : '';
-        var filtered = studentStudyGuidesData.filter(function(g) {
-            if (selectedParcial && g.parcial !== selectedParcial) return false;
-            return true;
-        });
-
-        if (filtered.length === 0) {
-            container.innerHTML = '<div class="col-span-full bg-white/60 backdrop-blur-md p-12 rounded-[2.5rem] border border-white/60 text-center text-gray-400 font-medium">' +
-                '<i class="fas fa-folder-open text-4xl mb-3 text-blue-200 block"></i> No hay guías de estudio disponibles para los filtros seleccionados.</div>';
-            return;
-        }
-
-        container.innerHTML = filtered.map(function(g) {
-            var downloadBtn = g.archivo_url
-                ? '<a href="' + g.archivo_url + '" target="_blank" rel="noopener noreferrer" class="btn-ima-primary w-full py-2.5 text-xs flex items-center justify-center gap-2">' +
-                  '<i class="fas fa-cloud-download-alt"></i> Descargar Guía (' + (g.archivo_nombre || 'PDF') + ')</a>'
-                : '<div class="text-center py-2 text-xs font-semibold text-gray-400 bg-gray-50 rounded-xl">Material sin archivo adjunto</div>';
-
-            return '<div class="bg-white/80 backdrop-blur-md p-6 rounded-[2.5rem] border border-blue-50 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">' +
-                '<div>' +
-                    '<div class="flex items-center justify-between gap-2 mb-3">' +
-                        '<span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-wider">' + g.asignatura + '</span>' +
-                        '<span class="text-[11px] font-bold text-gray-400">' + g.parcial + '</span>' +
-                    '</div>' +
-                    '<h4 class="text-base font-bold text-gray-800 mb-2">' + g.titulo + '</h4>' +
-                    '<p class="text-xs text-gray-500 line-clamp-3 mb-4 leading-relaxed">' + (g.descripcion || 'Sin instrucciones adicionales.') + '</p>' +
-                '</div>' +
-                '<div class="pt-4 border-t border-gray-100 flex flex-col gap-3">' +
-                    '<div class="text-[10px] text-gray-400 flex items-center justify-between">' +
-                        '<span><i class="fas fa-user-tie mr-1"></i> ' + (g.docente_nombre || 'Docente') + '</span>' +
-                        '<span>' + (g.fecha_creacion ? new Date(g.fecha_creacion).toLocaleDateString() : '') + '</span>' +
-                    '</div>' +
-                    downloadBtn +
-                '</div>' +
-            '</div>';
-        }).join('');
-    }
-
-    if (studentGuiaParcialSelect) studentGuiaParcialSelect.addEventListener('change', renderStudentStudyGuides);
-    if (btnStudentReloadGuias) btnStudentReloadGuias.addEventListener('click', loadStudentStudyGuides);
-
-    // REQ-EXP-009: Carga y Renderizado del Estado de Matrícula y Control Financiero
-    async function loadStudentFinancials() {
-        var container = document.getElementById('student-financial-container');
-        if (!container || !currentUser) return;
-        container.innerHTML = '<div class="p-8 text-center text-sm font-semibold text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i> Cargando información financiera y matrícula...</div>';
-
-        try {
-            var res = await fetchApi('USER', 'getStudentFinancialStatus', { userId: currentUser.userId });
-            var data = (res && res.status === 'success' && res.data) ? res.data : null;
-
-            var mat = (data && data.matriculaActiva) ? data.matriculaActiva : {
-                matriculaId: "MAT-2026-" + currentUser.userId,
-                cicloLectivo: "2026",
-                modalidad: "Presencial",
-                tipoBeca: "Ninguna",
-                porcentajeDescuento: 0,
-                exonerado: false,
-                estado: "Activa"
-            };
-
-            var resumen = (data && data.resumen) ? data.resumen : {
-                totalCargos: 2700,
-                saldoTotalPendiente: 0,
-                alDia: true
-            };
-
-            var cargos = (data && Array.isArray(data.cargos) && data.cargos.length > 0) ? data.cargos : [
-                { cargoId: "CHG-001", concepto: "Matrícula Anual 2026", montoOriginal: 1500, descuentoAplicado: 0, montoNeto: 1500, estado: "Pagado", saldoPendiente: 0 },
-                { cargoId: "CHG-002", concepto: "Mensualidad Febrero 2026", montoOriginal: 1200, descuentoAplicado: 0, montoNeto: 1200, estado: "Pagado", saldoPendiente: 0 }
-            ];
-
-            container.innerHTML = `
-                <!-- Tarjeta Resumen de Matrícula -->
-                <div class="bg-white/70 backdrop-blur-md p-6 md:p-8 rounded-[2.5rem] border border-white shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                    <div>
-                        <div class="flex items-center gap-3 mb-2">
-                            <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-blue-100">
-                                Ciclo Lectivo ${mat.cicloLectivo || '2026'}
-                            </span>
-                            <span class="px-3 py-1 ${mat.estado === 'Activa' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'} rounded-full text-[10px] font-black uppercase tracking-widest border">
-                                Matrícula ${mat.estado || 'Activa'}
-                            </span>
-                        </div>
-                        <h2 class="text-2xl font-black text-gray-900 leading-tight">Expediente de Matrícula y Finanzas</h2>
-                        <p class="text-xs font-semibold text-gray-500 mt-1">Modalidad: ${mat.modalidad || 'Presencial'} | Beca: ${mat.tipoBeca || 'Ninguna'} ${mat.porcentajeDescuento > 0 ? `(${mat.porcentajeDescuento}% desc.)` : ''}</p>
-                    </div>
-                    <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                        <div class="text-right">
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Saldo Pendiente</p>
-                            <p class="text-2xl font-black ${resumen.saldoTotalPendiente > 0 ? 'text-amber-600' : 'text-emerald-600'}">L. ${resumen.saldoTotalPendiente.toFixed(2)}</p>
-                        </div>
-                        <div class="w-12 h-12 rounded-2xl ${resumen.alDia ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'} flex items-center justify-center text-xl">
-                            <i class="fas ${resumen.alDia ? 'fa-check-circle' : 'fa-clock'}"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Detalle de Cargos y Mensualidades -->
-                <div class="bg-white/70 backdrop-blur-md p-6 md:p-8 rounded-[2.5rem] border border-white shadow-sm">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-lg font-bold text-gray-900 uppercase tracking-tight flex items-center gap-2">
-                            <div class="w-1.5 h-6 bg-blue-600 rounded-full"></div>
-                            Estado de Cuenta del Estudiante
-                        </h3>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Sin bloqueo académico</span>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="border-b border-gray-100 text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                    <th class="py-3 px-2">Concepto</th>
-                                    <th class="py-3 px-2 text-right">Monto Original</th>
-                                    <th class="py-3 px-2 text-right">Descuento</th>
-                                    <th class="py-3 px-2 text-right">Monto Neto</th>
-                                    <th class="py-3 px-2 text-center">Estado</th>
-                                    <th class="py-3 px-2 text-right">Saldo</th>
-                                    <th class="py-3 px-2 text-center">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-50 text-xs">
-                                ${cargos.map(c => `
-                                    <tr class="hover:bg-gray-50/50 transition-colors">
-                                        <td class="py-4 px-2 font-bold text-gray-800">${c.concepto}</td>
-                                        <td class="py-4 px-2 text-right text-gray-500">L. ${(c.montoOriginal || 0).toFixed(2)}</td>
-                                        <td class="py-4 px-2 text-right text-emerald-600">L. ${(c.descuentoAplicado || 0).toFixed(2)}</td>
-                                        <td class="py-4 px-2 text-right font-black text-gray-900">L. ${(c.montoNeto || 0).toFixed(2)}</td>
-                                        <td class="py-4 px-2 text-center">
-                                            <span class="px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider ${c.saldoPendiente <= 0 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-amber-50 text-amber-600 border border-amber-100'}">
-                                                ${c.estado}
-                                            </span>
-                                        </td>
-                                        <td class="py-4 px-2 text-right font-bold ${c.saldoPendiente > 0 ? 'text-amber-600' : 'text-gray-400'}">
-                                            L. ${(c.saldoPendiente || 0).toFixed(2)}
-                                        </td>
-                                        <td class="py-4 px-2 text-center">
-                                            <div class="flex items-center justify-center gap-2">
-                                                ${c.saldoPendiente > 0 ? `
-                                                    <button onclick="window.openPaymentVoucherModal('${c.cargoId}', '${c.concepto}', ${c.saldoPendiente})" class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-bold uppercase hover:bg-blue-100 transition-colors shadow-sm">
-                                                        <i class="fas fa-receipt mr-1"></i> Reportar Pago
-                                                    </button>
-                                                ` : ''}
-                                                ${c.saldoPendiente <= 0 ? `
-                                                    <button onclick="window.downloadPaymentReceiptPDF('${c.cargoId}', '${c.concepto}', ${c.montoNeto})" class="px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-xl text-[10px] font-bold uppercase hover:bg-emerald-100 transition-colors shadow-sm" title="Descargar Recibo Único PDF">
-                                                        <i class="fas fa-file-pdf mr-1"></i> Recibo PDF
-                                                    </button>
-                                                ` : `
-                                                    <span class="text-[9px] font-bold text-gray-400 italic">Pago pendiente</span>
-                                                `}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-        } catch (err) {
-            console.error('[Financial] Error al cargar estado financiero:', err);
-            container.innerHTML = '<div class="p-6 text-center text-xs font-bold text-red-500 bg-red-50 rounded-2xl">No se pudo cargar la información financiera.</div>';
-        }
-    }
-
-    // REQ-EXP-011: Modal y Controlador para Enviar Comprobante de Pago
-    var voucherModal = document.getElementById('voucher-modal');
-    var voucherForm = document.getElementById('voucher-form');
-    var closeVoucherModal = document.getElementById('close-voucher-modal');
-    var cancelVoucherBtn = document.getElementById('cancel-voucher-btn');
-
-    window.openPaymentVoucherModal = function(cargoId, concepto, saldo) {
-        if (!voucherModal) return;
-        document.getElementById('voucher-cargo-id').value = cargoId;
-        document.getElementById('voucher-concepto').value = concepto;
-        document.getElementById('voucher-monto').value = saldo;
-        voucherModal.classList.remove('hidden');
-    };
-
-    function hideVoucherModal() {
-        if (voucherModal) voucherModal.classList.add('hidden');
-        if (voucherForm) voucherForm.reset();
-    }
-
-    if (closeVoucherModal) closeVoucherModal.addEventListener('click', hideVoucherModal);
-    if (cancelVoucherBtn) cancelVoucherBtn.addEventListener('click', hideVoucherModal);
-
-    if (voucherForm) {
-        voucherForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            var cargoId = document.getElementById('voucher-cargo-id').value;
-            var monto = document.getElementById('voucher-monto').value;
-            var metodoPago = document.getElementById('voucher-metodo').value;
-            var referencia = document.getElementById('voucher-referencia').value;
-            var fileInput = document.getElementById('voucher-file');
-            var btn = document.getElementById('submit-voucher-btn');
-
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Enviando...';
-
-            var fileData = "";
-            var fileName = "";
-            if (fileInput && fileInput.files && fileInput.files[0]) {
-                var file = fileInput.files[0];
-                fileName = file.name;
-                fileData = await new Promise(function(resolve) {
-                    var reader = new FileReader();
-                    reader.onload = function(evt) { resolve(evt.target.result); };
-                    reader.readAsDataURL(file);
-                });
-            }
-
-            try {
-                var res = await fetchApi('USER', 'uploadPaymentVoucher', {
-                    userId: currentUser.userId,
-                    cargoId: cargoId,
-                    monto: monto,
-                    metodoPago: metodoPago,
-                    referencia: referencia,
-                    fileData: fileData,
-                    fileName: fileName
-                });
-
-                if (res && res.status === 'success') {
-                    alert('Comprobante enviado exitosamente a revisión contable.');
-                    hideVoucherModal();
-                    loadStudentFinancials();
-                } else {
-                    alert((res && res.message) || 'Error al enviar comprobante.');
-                }
-            } catch (err) {
-                alert('Error de conexión al enviar comprobante.');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = 'Enviar Comprobante';
-            }
         });
     }
-
-    // REQ-EXP-011: Emisión y Descarga del Recibo de Pago Oficial Único en PDF
-    window.downloadPaymentReceiptPDF = async function(cargoId, concepto, monto) {
-        try {
-            // Solicitar número correlativo oficial garantizado contra duplicidad
-            var numRes = await fetchApi('USER', 'generatePaymentReceiptNumber', {
-                cargoId: cargoId,
-                userId: currentUser.userId,
-                nombreAlumno: currentUser.nombre,
-                concepto: concepto,
-                monto: monto
-            });
-
-            var receiptNum = (numRes && numRes.numeroRecibo) ? numRes.numeroRecibo : ("REC-2026-" + Math.floor(100000 + Math.random() * 900000));
-            var hash = (numRes && numRes.hashSeguridad) ? numRes.hashSeguridad : "VALID-NG-SEC";
-            var fecha = (numRes && numRes.fechaEmision) ? new Date(numRes.fechaEmision).toLocaleString() : new Date().toLocaleString();
-
-            // Soportar tanto window.PDFLib como PDFLib directo
-            var pdfLibInstance = window.PDFLib || (typeof PDFLib !== 'undefined' ? PDFLib : null);
-
-            if (pdfLibInstance) {
-                var pdfDoc = await pdfLibInstance.PDFDocument.create();
-                var page = pdfDoc.addPage([595.28, 420.00]); // Formato media cuartilla horizontal
-                var font = await pdfDoc.embedFont(pdfLibInstance.StandardFonts.HelveticaBold);
-                var regularFont = await pdfDoc.embedFont(pdfLibInstance.StandardFonts.Helvetica);
-
-                // Dibujar membrete y marco
-                page.drawRectangle({
-                    x: 20, y: 20, width: 555.28, height: 380,
-                    borderColor: pdfLibInstance.rgb(0.14, 0.38, 0.92),
-                    borderWidth: 2
-                });
-
-                page.drawText("NEW GENERATION BILINGUAL SCHOOL AND INSTITUTE", {
-                    x: 40, y: 360, size: 14, font: font, color: pdfLibInstance.rgb(0.08, 0.18, 0.45)
-                });
-                page.drawText("RECIBO OFICIAL DE PAGO INSTITUCIONAL", {
-                    x: 40, y: 340, size: 10, font: font, color: pdfLibInstance.rgb(0.2, 0.2, 0.2)
-                });
-
-                page.drawText(`N° RECIBO: ${receiptNum}`, {
-                    x: 400, y: 360, size: 11, font: font, color: pdfLibInstance.rgb(0.85, 0.1, 0.1)
-                });
-                page.drawText(`Fecha: ${fecha}`, {
-                    x: 400, y: 340, size: 8, font: regularFont, color: pdfLibInstance.rgb(0.4, 0.4, 0.4)
-                });
-
-                page.drawLine({
-                    start: { x: 40, y: 325 }, end: { x: 555, y: 325 },
-                    thickness: 1, color: pdfLibInstance.rgb(0.8, 0.8, 0.8)
-                });
-
-                // Datos del Alumno y Detalle del Cargo
-                page.drawText(`Estudiante: ${currentUser.nombre}`, { x: 40, y: 290, size: 10, font: font });
-                page.drawText(`ID Usuario: ${currentUser.userId} | Grado: ${currentUser.grado || '10°'} Sección: ${currentUser.seccion || 'A'}`, { x: 40, y: 270, size: 9, font: regularFont });
-
-                page.drawRectangle({
-                    x: 40, y: 170, width: 515, height: 80,
-                    color: pdfLibInstance.rgb(0.96, 0.97, 0.99)
-                });
-                page.drawText("CONCEPTO DEL PAGO", { x: 50, y: 230, size: 9, font: font, color: pdfLibInstance.rgb(0.2, 0.2, 0.2) });
-                page.drawText("IMPORTE TOTAL", { x: 440, y: 230, size: 9, font: font, color: pdfLibInstance.rgb(0.2, 0.2, 0.2) });
-
-                page.drawText(concepto, { x: 50, y: 200, size: 10, font: regularFont, color: pdfLibInstance.rgb(0.1, 0.1, 0.1) });
-                page.drawText(`L. ${(monto || 0).toFixed(2)}`, { x: 440, y: 200, size: 12, font: font, color: pdfLibInstance.rgb(0.08, 0.5, 0.2) });
-
-                // Hash de seguridad y validez
-                page.drawText(`Firma Digital / Código Seguro: ${hash}`, {
-                    x: 40, y: 120, size: 8, font: regularFont, color: pdfLibInstance.rgb(0.4, 0.4, 0.4)
-                });
-                page.drawText("Este comprobante constituye un recibo digital válido para todo trámite escolar.", {
-                    x: 40, y: 105, size: 7, font: regularFont, color: pdfLibInstance.rgb(0.5, 0.5, 0.5)
-                });
-
-                var pdfBytes = await pdfDoc.save();
-                var blob = new Blob([pdfBytes], { type: 'application/pdf' });
-                var link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = `Recibo_${receiptNum}.pdf`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                return;
-            } else {
-                alert(`Recibo Oficial N°: ${receiptNum} emitido con éxito.`);
-            }
-        } catch (err) {
-            console.error('Error al generar recibo PDF:', err);
-            alert('No se pudo generar el PDF del recibo.');
-        }
-    };
 
     fetchAllActivities();
     initWhatsAppButton();
@@ -2194,9 +2669,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     async function fetchAndRenderLearningProfile(dataOnly = false) {
-        // REQ: Eager Caching for Learning Profile (Ticket: Optimización de Caché)
+        var cacheKeyProfile = 'cache_estudiante_profile_' + (currentUser.userId || 'default');
         if (window.PersistenceManager) {
-            var cached = await window.PersistenceManager.get('cache_estudiante_profile');
+            var cached = await window.PersistenceManager.get(cacheKeyProfile);
             if (cached && cached.data && !dataOnly) {
                 renderLearningProfileData(cached.data);
             }
@@ -2204,7 +2679,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             var res = await fetchApi('USER', 'getLearningProfile', { userId: currentUser.userId }, 0, {
-                store: 'cache_estudiante_profile',
+                store: cacheKeyProfile,
                 onUpdate: function(data) {
                     if (!dataOnly) renderLearningProfileData(data.data || data);
                 }
@@ -2506,6 +2981,141 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // --- CONSULTA DE RESULTADOS ACADÉMICOS OFICIALES Y BOLETÍN (FASE 9) ---
+    async function loadStudentAcademicResults() {
+        const container = document.getElementById('student-academic-results-container');
+        if (!container) return;
+
+        container.innerHTML = '<div class="text-center py-8 text-gray-400 italic text-xs"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando resultados oficiales del instituto...</div>';
+
+        try {
+            const res = await fetchApi('EXAM', 'getStudentAcademicReport', { userId: currentUser.userId });
+            if (res.status === 'success' && res.data) {
+                const califs = res.data.calificaciones || [];
+                const recs = res.data.recuperaciones || [];
+
+                if (califs.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-gray-500 text-xs bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                            <i class="fas fa-info-circle text-2xl text-purple-400 mb-2 block"></i>
+                            No hay calificaciones oficiales publicadas para el período actual. Los resultados aparecerán una vez que el docente realice el cierre de parcial.
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="overflow-x-auto rounded-2xl border border-gray-100 bg-white">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100 text-gray-700 text-[10px] uppercase tracking-wider">
+                                    <th class="p-3">Evaluación / Categoría</th>
+                                    <th class="p-3 text-center">Nota Obtenida</th>
+                                    <th class="p-3 text-center">Puntaje Ponderado</th>
+                                    <th class="p-3 text-center">Observaciones</th>
+                                    <th class="p-3 text-center">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 text-xs">
+                                ${califs.map(c => `
+                                    <tr class="hover:bg-purple-50/30 transition-colors">
+                                        <td class="p-3 font-semibold text-gray-800">${c.evaluacionId}</td>
+                                        <td class="p-3 text-center font-bold text-gray-900">${c.notaObtenida}%</td>
+                                        <td class="p-3 text-center font-bold text-purple-700">${c.puntajePonderado}%</td>
+                                        <td class="p-3 text-center text-gray-500">${c.observaciones || '-'}</td>
+                                        <td class="p-3 text-center">
+                                            <span class="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase bg-emerald-100 text-emerald-800">
+                                                Publicada
+                                            </span>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `<div class="text-center py-6 text-red-500 text-xs">${res.message || 'Error al obtener resultados'}</div>`;
+            }
+        } catch (e) {
+            container.innerHTML = `<div class="text-center py-6 text-red-500 text-xs">Error de conexión: ${e.message}</div>`;
+        }
+    }
+
+    document.getElementById('btn-refresh-academic-results')?.addEventListener('click', loadStudentAcademicResults);
+
+    // --- CIRCULARES Y COMUNICADOS CON ACUSE DE RECIBO (FASE 11) ---
+    async function loadStudentAnnouncements() {
+        const container = document.getElementById('student-announcements-container');
+        if (!container) return;
+
+        container.innerHTML = '<div class="text-center py-6 text-gray-400 italic text-xs"><i class="fas fa-spinner fa-spin mr-1"></i>Cargando comunicados oficiales...</div>';
+
+        try {
+            const res = await fetchApi('USER', 'getInstitutionalAnnouncements', { rol: currentUser.rol, audiencia: "TodaLaComunidad" });
+            if (res.status === 'success' && Array.isArray(res.data)) {
+                const comms = res.data;
+                if (comms.length === 0) {
+                    container.innerHTML = '<div class="p-4 rounded-2xl bg-gray-50 text-center text-gray-400 text-xs italic">No hay comunicados generales emitidos.</div>';
+                    return;
+                }
+
+                container.innerHTML = comms.map(c => `
+                    <div class="p-4 rounded-2xl bg-indigo-50/40 border border-indigo-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="px-2.5 py-0.5 bg-indigo-100 text-indigo-800 text-[8px] font-black uppercase rounded">${c.categoria}</span>
+                                <span class="text-[9px] text-gray-400 font-bold">${c.fechaPublicacion ? new Date(c.fechaPublicacion).toLocaleDateString() : ''}</span>
+                            </div>
+                            <h4 class="text-xs font-bold text-gray-900 uppercase tracking-tight">${c.titulo}</h4>
+                            <p class="text-xs text-gray-600 mt-1 leading-relaxed">${c.contenido}</p>
+                        </div>
+                        <div class="flex-shrink-0">
+                            ${c.requiereFirma ? `
+                                <button onclick="window.confirmAnnouncementReceipt('${c.comunicadoId}')" class="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 shadow-sm">
+                                    <i class="fas fa-check-circle"></i> Confirmar Acuse
+                                </button>
+                            ` : '<span class="text-[9px] text-emerald-600 font-bold uppercase"><i class="fas fa-eye"></i> Informativo</span>'}
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs italic">No hay comunicados disponibles.</div>';
+            }
+        } catch (e) {
+            container.innerHTML = `<div class="p-4 text-center text-red-500 text-xs italic">Error al cargar comunicados: ${e.message}</div>`;
+        }
+    }
+
+    window.confirmAnnouncementReceipt = async function(comunicadoId) {
+        try {
+            const res = await fetchApi('USER', 'submitAnnouncementReceiptConfirmation', {
+                comunicadoId: comunicadoId,
+                userId: currentUser.userId
+            });
+
+            if (res.status === 'success') {
+                alert("Acuse de recibo de comunicado registrado con éxito.");
+                loadStudentAnnouncements();
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error al confirmar lectura: " + e.message);
+        }
+    };
+
+    document.getElementById('btn-refresh-announcements')?.addEventListener('click', loadStudentAnnouncements);
+
+    // Carga inicial de resultados académicos y comunicados si la pestaña de progreso está activa
+    const tabProgressBtn = document.getElementById('tab-progress');
+    if (tabProgressBtn) {
+        tabProgressBtn.addEventListener('click', () => {
+            loadStudentAcademicResults();
+            loadStudentAnnouncements();
+        });
+    }
+
     window.addEventListener('beforeunload', function(e) {
         if (!isSubmitting && (activeUploads > 0 || uploadedFiles.length > 0)) {
             e.preventDefault();
@@ -2528,3 +3138,57 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(dashboard, { childList: true, subtree: true });
     }
 });
+
+// ---------------------------------------------------------------------------
+// [TAREA-F5-004] [Fase 5: Admisiones y Portal de Familias] - Módulo Público de Admisión de Aspirantes
+// Proporciona la lógica cliente para el envío público de solicitudes de admisión,
+// validación de formato DNI (13 dígitos) y teléfono Honduras, gestión de reintentos
+// con clave de idempotencia y consulta de estado por número de seguimiento o DNI.
+// ---------------------------------------------------------------------------
+window.submitPublicAdmissionRequest = async function(formData) {
+    if (!formData || !formData.nombresAspirante || !formData.apellidosAspirante || !formData.gradoSolicitado) {
+        return { status: "error", message: "Nombres, apellidos y grado solicitado son obligatorios." };
+    }
+
+    const cleanIdent = (formData.identificacion || "").replace(/[^0-9]/g, '');
+    if (cleanIdent.length !== 13) {
+        return { status: "error", message: "El número de identificación (DNI) de Honduras debe contener exactamente 13 dígitos numéricos." };
+    }
+
+    const cleanPhone = (formData.telefonoContacto || "").replace(/[^0-9]/g, '');
+    if (cleanPhone.length < 8) {
+        return { status: "error", message: "El teléfono de contacto debe tener al menos 8 dígitos de Honduras." };
+    }
+
+    const payload = {
+        idempotencyToken: formData.idempotencyToken || ('IDEM-ADM-' + Date.now() + '-' + Math.floor(Math.random() * 100000)),
+        anolectivo: formData.anolectivo || "2026",
+        gradoSolicitado: formData.gradoSolicitado,
+        nombresAspirante: formData.nombresAspirante.trim(),
+        apellidosAspirante: formData.apellidosAspirante.trim(),
+        identificacion: cleanIdent,
+        fechaNacimiento: formData.fechaNacimiento || "",
+        nombreResponsable: (formData.nombreResponsable || "").trim(),
+        telefonoContacto: cleanPhone,
+        emailContacto: (formData.emailContacto || "").trim().toLowerCase(),
+        observaciones: (formData.observaciones || "").trim(),
+        canalIngreso: formData.canalIngreso || "PortalWebPublico"
+    };
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'createAdmissionRequest', payload);
+        return res;
+    } catch (err) {
+        return { status: "error", message: "Error de red al procesar la solicitud de admisión: " + err.message };
+    }
+};
+
+window.getPublicAdmissionStatus = async function(searchKey) {
+    if (!searchKey) return { status: "error", message: "Debe ingresar un código de seguimiento o número de DNI." };
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'getPublicAdmissionStatus', { searchKey: searchKey });
+        return res;
+    } catch (err) {
+        return { status: "error", message: "Error al consultar el estado de la admisión: " + err.message };
+    }
+};
