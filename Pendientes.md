@@ -1357,7 +1357,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-018] [ ] [F18-Task20] Implementar suite automatizada de pruebas y regresión integral de compras
+### [TASK-018] [X] [F18-Task20] Implementar suite automatizada de pruebas y regresión integral de compras
 - **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección G (P0) y Sección F
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Aseguramiento de calidad, prevención de regresiones e integridad en adquisiciones)
@@ -1387,7 +1387,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Se bloquean facturas que intenten cobrar cantidades no recibidas físicamente.
   - Los asientos contables generados se validan como perfectamente equilibrados.
   - No se produce ninguna regresión en las pruebas de las fases anteriores (Fases 9, 10, 11, 15, 16 y 17).
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

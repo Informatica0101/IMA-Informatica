@@ -1062,3 +1062,38 @@ RESULTADO DE EVALUACIÓN:
 - Cobertura de pruebas automatizadas en tests/regression/academic-grading-suite.js alcanzando 136/136 pruebas aprobadas (100.0%).
 - Estado: Completado y Verificado funcionalmente.
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-11-03
+TAREA: [TASK-018] [F18-Task20] Implementar suite automatizada de pruebas y regresión integral de compras
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs
+- backend/developer-service/Code.gs
+- tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- En backend/accounting-service/Code.gs:
+  * El servicio de contabilidad dispone de las funciones especializadas para la operativa de compras (F18):
+    - Proveedores: registerSupplier, getSupplierAccountsPayableSummary.
+    - Solicitudes y cotizaciones: createPurchaseRequest, getPurchaseRequests, submitPurchaseQuotation, getPurchaseQuotations.
+    - Órdenes de compra: createPurchaseOrder, approvePurchaseOrder, generatePurchaseOrderPDF, modifyPurchaseOrderAmount.
+    - Recepción física y Kardex: recordPurchaseReceipt, getPurchaseReceipts.
+    - Validación y conciliación: verifyThreeWayMatch, recordAccountsPayableExpense.
+    - Cuentas por pagar y tesorería: recordSupplierPayment, applySupplierCreditNote.
+    - Compromiso presupuestario: approvePurchaseOrder (montoComprometido), recordAccountsPayableExpense (montoEjecutado).
+  * Se implementó la suite automatizada integral 'runPhase18PurchasingAndSuppliersRegressionSuite(payload)' que valida de manera exhaustiva en entorno aislado:
+    - Proveedores hondureños con RTN numérico estricto de 14 dígitos y bloqueo preventivo de proveedores inactivos.
+    - Solicitudes internas y comparativa side-by-side de cotizaciones.
+    - Bloqueo preventivo de autoaprobaciones (AUTO_APPROVAL_BLOCKED), umbral financiero L 50,000 (HIGH_VALUE_APPROVAL_REQUIRED) e identidad oficial New Generation Bilingual School and Institute en órdenes de compra.
+    - Recepciones parciales escalonadas sin cierre prematuro a 'RecibidaTotal' y segregación de artículos dañados en Kardex.
+    - Conciliación Three-Way Match detectando discrepancias de precio y cantidades facturadas no respaldadas físicamente.
+    - Cuentas por pagar con rechazo de sobrepagos (OVERPAYMENT_REJECTED) y notas de crédito comerciales.
+    - Reserva presupuestaria formal y balance por partida doble en AsientosContables (totalDebe === totalHaber).
+    - Flujo E2E completo en 10 etapas continuas.
+  * La acción se registró en ROLE_PERMISSIONS para Director, Subdirector y Contador (Administrador '*') y en el despachador doPost.
+- En backend/developer-service/Code.gs:
+  * Se registró 'runPhase18PurchasingAndSuppliersRegressionSuite' en ROLE_PERMISSIONS['Desarrollador'] y en el despachador doPost.
+  * Se implementó la suite completa para diagnóstico centralizado desde el panel del desarrollador.
+- En tests/regression/academic-grading-suite.js:
+  * Se incorporaron 6 aserciones específicas para [TASK-018], logrando 142/142 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================

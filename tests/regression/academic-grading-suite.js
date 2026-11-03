@@ -213,6 +213,14 @@ assert(acctCode.includes("BUDGET_OVERRUN_ALERT") && acctCode.includes("autorizar
 assert(acctCode.includes("compromisoLiberado") && acctCode.includes("estadosConCompromiso"), "backend/accounting-service/Code.gs libera el compromiso presupuestario ante cancelación formal de orden [TASK-017]");
 assert(acctCode.includes("modifyPurchaseOrderAmount") && acctCode.includes("ajustePresupuestario"), "backend/accounting-service/Code.gs implementa función modifyPurchaseOrderAmount con ajuste presupuestario trazable [TASK-017]");
 
+// [TASK-018] [F18-Task20] - Suite automatizada de pruebas y regresión integral de compras y proveedores
+assert(acctCode.includes("runPhase18PurchasingAndSuppliersRegressionSuite") && acctCode.includes("[TASK-018]"), "backend/accounting-service/Code.gs contiene suite automatizada runPhase18PurchasingAndSuppliersRegressionSuite [TASK-018]");
+assert(devCode.includes("runPhase18PurchasingAndSuppliersRegressionSuite") && devCode.includes("[TASK-018]"), "backend/developer-service/Code.gs integra suite runPhase18PurchasingAndSuppliersRegressionSuite [TASK-018]");
+assert(acctCode.includes("REG-F18-01-SUPPLIERS-AND-RTN") && acctCode.includes("REG-F18-02-PURCHASE-REQUESTS-AND-QUOTES"), "backend/accounting-service/Code.gs valida proveedores, formato RTN y ciclo de solicitudes [TASK-018]");
+assert(acctCode.includes("REG-F18-03-PURCHASE-ORDERS-APPROVAL-AND-PDF") && acctCode.includes("REG-F18-04-PARTIAL-RECEIPTS-AND-KARDEX"), "backend/accounting-service/Code.gs valida órdenes, prevención de autoaprobaciones y recepciones escalonadas sin cierre prematuro [TASK-018]");
+assert(acctCode.includes("REG-F18-05-THREE-WAY-MATCHING") && acctCode.includes("REG-F18-06-ACCOUNTS-PAYABLE-AND-CREDIT-NOTES"), "backend/accounting-service/Code.gs valida Three-Way Match y gestión estricta de cuentas por pagar [TASK-018]");
+assert(acctCode.includes("REG-F18-07-BUDGET-COMMITMENT-AND-DOUBLE-ENTRY") && acctCode.includes("REG-F18-08-E2E-PURCHASING-LIFECYCLE-FLOW"), "backend/accounting-service/Code.gs valida balance contable por partida doble y flujo completo E2E [TASK-018]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

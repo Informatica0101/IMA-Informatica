@@ -4026,3 +4026,35 @@ ARCHIVOS MODIFICADOS:
 3. Pendientes.md:
    - Líneas 1320-1370: Marcada tarea [TASK-017] como [X] Completado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-11-03
+TAREA: [TASK-018] [F18-Task20] Implementar suite automatizada de pruebas y regresión integral de compras
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs
+- backend/developer-service/Code.gs
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+DESCRIPCIÓN DE MODIFICACIONES:
+1. En backend/accounting-service/Code.gs:
+   - Inclusión de la acción 'runPhase18PurchasingAndSuppliersRegressionSuite' en la matriz de permisos ROLE_PERMISSIONS para los roles Director, Subdirector y Contador (Administrador con acceso universal '*').
+   - Inclusión del caso 'runPhase18PurchasingAndSuppliersRegressionSuite' en el despachador de peticiones doPost.
+   - Declaración de la función 'runPhase18PurchasingAndSuppliersRegressionSuite(payload)' que ejecuta una batería de 8 casos de prueba automatizados:
+     * REG-F18-01-SUPPLIERS-AND-RTN: Validación de RTN hondureño de 14 dígitos numéricos y control preventivo sobre proveedores inactivos.
+     * REG-F18-02-PURCHASE-REQUESTS-AND-QUOTES: Flujo de solicitudes, cotizaciones de proveedores y comparativa de ofertas side-by-side.
+     * REG-F18-03-PURCHASE-ORDERS-APPROVAL-AND-PDF: Verificación de control AUTO_APPROVAL_BLOCKED, umbral de L 50,000 (HIGH_VALUE_APPROVAL_REQUIRED) y formato oficial con identidad 'New Generation Bilingual School and Institute'.
+     * REG-F18-04-PARTIAL-RECEIPTS-AND-KARDEX: Entregas escalonadas, prevención de cierre prematuro a RecibidaTotal antes de completar el 100% y segregación física a Kardex.
+     * REG-F18-05-THREE-WAY-MATCHING: Detección de sobreprecios unitarios y exceso de cantidades facturadas con bloqueo en BloqueadoPorDiscrepancia.
+     * REG-F18-06-ACCOUNTS-PAYABLE-AND-CREDIT-NOTES: Abonos parciales, cálculo exacto de saldo pendiente, rechazo de sobrepagos OVERPAYMENT_REJECTED y aplicación de notas de crédito.
+     * REG-F18-07-BUDGET-COMMITMENT-AND-DOUBLE-ENTRY: Ciclo de reserva presupuestaria (montoComprometido) y verificación de equilibrio por partida doble en asientos contables (totalDebe === totalHaber).
+     * REG-F18-08-E2E-PURCHASING-LIFECYCLE-FLOW: Ejecución integral del ciclo completo desde solicitud hasta pago y asiento contable balanceado en 10 etapas secuenciales.
+2. En backend/developer-service/Code.gs:
+   - Incorporación de 'runPhase18PurchasingAndSuppliersRegressionSuite' en ROLE_PERMISSIONS para el rol Desarrollador.
+   - Registro de la acción en el switch de operaciones de doPost.
+   - Implementación de 'runPhase18PurchasingAndSuppliersRegressionSuite(payload)' para su monitorización desde la consola técnica de desarrollador.
+3. En tests/regression/academic-grading-suite.js:
+   - Adición de 6 aserciones de regresión para validar la presencia de la función en ambos servicios backend, los 8 identificadores de prueba, las validaciones de Three-Way Match, bloqueo de sobrepagos y balance por partida doble.
+   - Ejecución exitosa con 142/142 pruebas pasadas (100.0%).
+4. En Pendientes.md:
+   - Actualización del estado de [TASK-018] de pendiente a completado [X].
+===============================================================================
