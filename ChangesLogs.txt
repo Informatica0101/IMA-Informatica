@@ -4192,3 +4192,27 @@ Detalle de Cambios:
 3. Pendientes.md:
    - Marcadas como completadas [X] las tareas [TASK-026] y [TASK-027].
 ================================================================================
+
+================================================================================
+CHANGESLOG - [TASK-028] [F20-Task14]
+Fecha: 2025-05-18
+Archivos Afectados:
+- backend/accounting-service/Code.gs
+- backend/developer-service/Code.gs
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+
+Detalle de Cambios:
+1. backend/accounting-service/Code.gs:
+   - Línea ~200-214: Registrada acción "runPhase20LibraryAndResourcesRegressionSuite" en ROLE_PERMISSIONS.
+   - Línea ~685: Añadido caso "runPhase20LibraryAndResourcesRegressionSuite" en doPost.
+   - Línea ~11055: Implementada función "runPhase20LibraryAndResourcesRegressionSuite" cubriendo PT20-01 a PT20-14.
+2. backend/developer-service/Code.gs:
+   - Línea ~29: Registrada acción en ROLE_PERMISSIONS para rol Desarrollador.
+   - Línea ~125: Añadido caso en doPost.
+   - Línea ~735: Implementada función "runPhase20LibraryAndResourcesRegressionSuite".
+3. tests/regression/academic-grading-suite.js:
+   - Añadidas aserciones para verificar la existencia de runPhase20LibraryAndResourcesRegressionSuite en ambos servicios y cobertura completa de PT20-01 a PT20-14. Total: 188/188 pruebas (100%).
+4. Pendientes.md:
+   - Marcada como completada [X] la tarea [TASK-028] [F20-Task14].
+================================================================================

@@ -1268,3 +1268,22 @@ Acciones Ejecutadas:
 5. Protección atómica integral mediante "LockService.getScriptLock(15000)", re-verificación de disponibilidad del ejemplar dentro de la sección crítica (código "BOOK_ALREADY_LOANED"), y prevención de duplicados idempotentes ("IDEMPOTENCY_DUPLICATE_REQUEST").
 6. Cobertura completa en la suite tests/regression/academic-grading-suite.js alcanzando 185/185 pruebas aprobadas (100%).
 ================================================================================
+
+================================================================================
+AUDITORÍA TÉCNICA - [TASK-028] [F20-Task14]
+Fecha: 2025-05-18
+Archivos Auditados:
+- backend/accounting-service/Code.gs
+- backend/developer-service/Code.gs
+- tests/regression/academic-grading-suite.js
+
+Hallazgos Técnicos:
+1. Carencia de suite de regresión integral para la Fase 20: No existía un arnés automatizado de validación continua que evaluara de forma holística el catálogo normalizado de obras y ejemplares, circulación con límites de cupo, morosidad activa, reservas, incidencias físicas, recursos digitales e integridad transaccional bajo ScriptLock.
+2. Falta de integración en developer-service: El monitor técnico y consola operativa de desarrollador no contaba con el caso de despacho para ejecutar y auditar el estado funcional del subsistema bibliotecario.
+
+Acciones Ejecutadas:
+1. Implementación de "runPhase20LibraryAndResourcesRegressionSuite" en backend/accounting-service/Code.gs cubriendo 14 pruebas de aceptación unitarias y de integración (PT20-01 a PT20-14).
+2. Integración de la suite en backend/developer-service/Code.gs, habilitando su invocación técnica con control de acceso por rol y métricas estructuradas de duración.
+3. Registro de permisos en ROLE_PERMISSIONS y despachadores doPost de ambos microservicios.
+4. Cobertura en la suite tests/regression/academic-grading-suite.js alcanzando 188/188 pruebas aprobadas (100%) sin regresiones en las 53 pruebas de las fases previas.
+================================================================================

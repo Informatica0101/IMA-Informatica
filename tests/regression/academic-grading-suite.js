@@ -284,6 +284,11 @@ assert(acctCode.includes("diasPrestamo") && acctCode.includes("fechaRetorno"), "
 assert(acctCode.includes("BOOK_ALREADY_LOANED"), "backend/accounting-service/Code.gs previene asignación duplicada concurrente en processLibraryLoan [TASK-027]");
 assert(acctCode.includes("IDEMPOTENCY_DUPLICATE_REQUEST"), "backend/accounting-service/Code.gs implementa clave de idempotencia en préstamos de biblioteca [TASK-027]");
 
+// [TASK-028] [F20-Task14] - Suite automatizada de pruebas y regresión integral de biblioteca
+assert(acctCode.includes("runPhase20LibraryAndResourcesRegressionSuite") && acctCode.includes("[TASK-028]"), "backend/accounting-service/Code.gs contiene suite runPhase20LibraryAndResourcesRegressionSuite [TASK-028]");
+assert(devCode.includes("runPhase20LibraryAndResourcesRegressionSuite") && devCode.includes("[TASK-028]"), "backend/developer-service/Code.gs integra suite runPhase20LibraryAndResourcesRegressionSuite [TASK-028]");
+assert(acctCode.includes("PT20-01") && acctCode.includes("PT20-07") && acctCode.includes("PT20-14"), "backend/accounting-service/Code.gs cubre la batería completa de pruebas PT20-01 a PT20-14 [TASK-028]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

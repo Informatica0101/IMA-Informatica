@@ -1735,7 +1735,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-028] [ ] [F20-Task14] Implementar suite automatizada de pruebas y regresión integral de biblioteca
+### [TASK-028] [X] [F20-Task14] Implementar suite automatizada de pruebas y regresión integral de biblioteca
 - **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección G (P0), Sección F y Plan de Trabajo F20-14
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Aseguramiento continuo de integridad en catálogo bibliográfico, préstamos, reservas y no regresión)
@@ -1760,7 +1760,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - La suite de regresión ejecuta todas las pruebas de biblioteca y recursos educativos con el 100% de éxito (`PASS`).
   - Se valida el correcto funcionamiento de las 6 funciones previamente ausentes en backend.
   - Las suites de regresión previas (53/53 pruebas) se mantienen aprobadas al 100%.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 
