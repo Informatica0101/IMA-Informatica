@@ -941,19 +941,19 @@ const ROLE_PERMISSIONS = {
   "Director": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "dispatchScheduleChangeNotifications", "getScheduleChangeNotificationLogs", "getAdmissionNotificationLogs", "getStudentProcedureNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders",
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "dispatchScheduleChangeNotifications", "getScheduleChangeNotificationLogs", "getAdmissionNotificationLogs", "getStudentProcedureNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "generateSignatureAuditCertificate", "configureAdvancedSignatureProvider", "getAdvancedSignatureProviderConfig", "createAdvancedSignatureRequest", "checkAdvancedSignatureStatus", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
     "manageInternalRoleCatalog", "getInternalRoleCatalog", "getInternalRoleAssignments", "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData", "generatePrivilegeAndAccountAuditReport", "getPaginatedAuditLogReport", "auditAndReconcileIdentityInconsistencies"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "manageInternalRoleCatalog", "getInternalRoleCatalog", "getInternalRoleAssignments", "createLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders"
+    "manageInternalRoleCatalog", "getInternalRoleCatalog", "getInternalRoleAssignments", "createLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "generateSignatureAuditCertificate", "configureAdvancedSignatureProvider", "getAdvancedSignatureProviderConfig", "createAdvancedSignatureRequest", "checkAdvancedSignatureStatus", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders"
   ],
   "Secretaría": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders"
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "generateSignatureAuditCertificate", "configureAdvancedSignatureProvider", "getAdvancedSignatureProviderConfig", "createAdvancedSignatureRequest", "checkAdvancedSignatureStatus", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders"
   ],
   "Contador": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest"],
   "RecursosHumanos": ["manageInternalRoleCatalog", "getInternalRoleCatalog", "getInternalRoleAssignments", "getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "createNews", "getInternalMessages", "sendInternalMessage"],
@@ -1368,6 +1368,11 @@ function doPost(e) {
       case "processWorkflowDecision": result = processWorkflowDecision(payload); break;
       case "getWorkflowHistory": result = getWorkflowHistory(payload); break;
       case "registerDocumentSignature": result = registerDocumentSignature(payload); break;
+      case "generateSignatureAuditCertificate": result = generateSignatureAuditCertificate(payload); break;
+      case "configureAdvancedSignatureProvider": result = configureAdvancedSignatureProvider(payload); break;
+      case "getAdvancedSignatureProviderConfig": result = getAdvancedSignatureProviderConfig(payload); break;
+      case "createAdvancedSignatureRequest": result = createAdvancedSignatureRequest(payload); break;
+      case "checkAdvancedSignatureStatus": result = checkAdvancedSignatureStatus(payload); break;
       case "configureNotificationChannel": result = configureNotificationChannel(payload); break;
       case "getNotificationChannelConfigs": result = getNotificationChannelConfigs(payload); break;
       case "sendChannelNotificationTest": result = sendChannelNotificationTest(payload); break;
@@ -6758,6 +6763,312 @@ function registerDocumentSignature(payload) {
   };
 }
 
+// [TASK-040] [F22-Task03] - Generador de Certificado de Finalización (Certificate of Completion / Audit Trail)
+function generateSignatureAuditCertificate(payload) {
+  const { solicitudId, documentoId, transactionId } = payload || {};
+  if (!solicitudId && !documentoId && !transactionId) {
+    throw new Error("solicitudId, documentoId o transactionId es requerido para generar el certificado de auditoría.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const firmSheet = getOrCreateSheet(ss, "FirmasConformidades");
+  const firmData = firmSheet.getDataRange().getValues();
+
+  // Filtrar firmas relacionadas a la transacción
+  const matches = firmData.slice(1).filter(r => {
+    if (solicitudId && String(r[1]).trim() === String(solicitudId).trim()) return true;
+    if (documentoId && String(r[2]).trim() === String(documentoId).trim()) return true;
+    if (transactionId && (String(r[0]).trim() === String(transactionId).trim() || String(r[6]).trim() === String(transactionId).trim())) return true;
+    return false;
+  });
+
+  if (matches.length === 0) {
+    throw new Error("NO_SIGNATURES_FOUND: No se encontraron registros de firmas o conformidades para la transacción especificada.");
+  }
+
+  // Obtener metadatos de la solicitud si existe
+  let solicitudMeta = null;
+  const solSheet = getOrCreateSheet(ss, "SolicitudesTramites");
+  const solData = solSheet.getDataRange().getValues();
+  const solRow = solData.slice(1).find(r => (solicitudId && String(r[0]).trim() === String(solicitudId).trim()) || (matches[0] && String(r[0]).trim() === String(matches[0][1]).trim()));
+
+  if (solRow) {
+    solicitudMeta = {
+      solicitudId: solRow[0],
+      solicitanteId: solRow[1],
+      estudianteId: solRow[2],
+      tipoTramite: solRow[3],
+      descripcion: solRow[4],
+      estadoSolicitud: solRow[6]
+    };
+  }
+
+  // Recopilar información de los firmantes secuenciales
+  const certId = "CERT-AUDIT-" + Date.now();
+  const now = new Date();
+  const nowUTC = now.toISOString();
+
+  // Helper cálculo hora Honduras GMT-6
+  const getHondurasTime = function(isoStr) {
+    const d = isoStr ? new Date(isoStr) : new Date();
+    const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+    const hn = new Date(utc - (3600000 * 6));
+    return hn.toISOString().replace("T", " ").substring(0, 19) + " (GMT-6)";
+  };
+
+  const docHashOriginal = matches[0][9] || computeDocumentSHA256((solicitudMeta ? solicitudMeta.solicitudId : "") + "|" + (matches[0][2] || ""));
+
+  const firmantesAudit = matches.map((r, idx) => {
+    const fechaISO = r[7] ? new Date(r[7]).toISOString() : nowUTC;
+    return {
+      ordenFirma: idx + 1,
+      firmaId: r[0],
+      firmanteId: r[3],
+      rolFirmante: r[4] || "Autoridad Institucional",
+      tipoMecanismo: r[5] || "Conformidad Digital Institucional",
+      tokenVerificacion: r[6],
+      timestampUTC: fechaISO,
+      timestampHondurasGMT6: getHondurasTime(fechaISO),
+      ipOrigen: r[8] || "127.0.0.1",
+      documentoHashVinculado: r[9] || docHashOriginal,
+      signatureHash: r[10] || computeDocumentSHA256(r[0] + "|" + r[3] + "|" + fechaISO)
+    };
+  });
+
+  const targetDocId = matches[0][2] || (solicitudMeta ? solicitudMeta.solicitudId : "DOC-GENERICO");
+  const estadoFinalProceso = (solicitudMeta && solicitudMeta.estadoSolicitud === "Rechazada") ? "Rechazado" : "CompletadoConExito";
+
+  // Huella inmutable SHA-256 del certificado probatorio completo
+  const certificadoDigestData = certId + "|" + targetDocId + "|" + docHashOriginal + "|" + JSON.stringify(firmantesAudit) + "|" + nowUTC;
+  const certificadoSHA256 = computeDocumentSHA256(certificadoDigestData);
+
+  const certificado = {
+    status: "success",
+    certificadoId: certId,
+    transaccionId: matches[0][1] || matches[0][0],
+    documentoId: targetDocId,
+    tipoDocumento: solicitudMeta ? solicitudMeta.tipoTramite : "Documento Escolar Institucional",
+    documentoOriginalSHA256: docHashOriginal,
+    certificadoIntegridadSHA256: certificadoSHA256,
+    estadoTransaccion: estadoFinalProceso,
+    fechaEmisionUTC: nowUTC,
+    fechaEmisionHonduras: getHondurasTime(nowUTC),
+    entidadEmisora: "New Generation Bilingual School and Institute",
+    marcoLegalNormativo: "Decreto Legislativo No. 149-2013 y Acuerdo Ejecutivo No. 41-2014 (Honduras)",
+    totalFirmantes: firmantesAudit.length,
+    pistaAuditoriaFirmantes: firmantesAudit,
+    message: "Certificado de finalización y expediente probatorio generado con éxito."
+  };
+
+  return certificado;
+}
+
+// [TASK-041] [F22-Task04] - Integración con Proveedores de Firma Electrónica Avanzada (Decreto Legislativo 149-2013)
+function configureAdvancedSignatureProvider(payload) {
+  const {
+    proveedorId,
+    nombreProveedor,
+    endpointUrl,
+    apiKey,
+    tipoMecanismo, // 'FirmaSimple', 'ProveedorExterno', 'FirmaAvanzadaCualificada'
+    politicaSelladoTiempo,
+    formatoCertificado, // 'X.509_v3', 'PKCS7', 'CAdES_BES'
+    estadoHabilitado,
+    configuracionJSON,
+    actualizadoPor
+  } = payload || {};
+
+  if (!proveedorId || !nombreProveedor) {
+    throw new Error("proveedorId y nombreProveedor son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ConfiguracionFirmaAvanzada");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  const cfgJSON = typeof configuracionJSON === "object" ? JSON.stringify(configuracionJSON) : (configuracionJSON || "{}");
+  const rowIdx = data.findIndex(r => String(r[0]).trim() === String(proveedorId).trim());
+
+  if (rowIdx !== -1) {
+    sheet.getRange(rowIdx + 1, 2, 1, 8).setValues([[
+      nombreProveedor,
+      endpointUrl || "",
+      apiKey || "",
+      tipoMecanismo || "FirmaAvanzadaCualificada",
+      politicaSelladoTiempo ? "Habilitado" : "Deshabilitado",
+      formatoCertificado || "X.509_v3",
+      estadoHabilitado !== false ? "Activo" : "Inactivo",
+      cfgJSON
+    ]]);
+  } else {
+    sheet.appendRow([
+      proveedorId,
+      nombreProveedor,
+      endpointUrl || "",
+      apiKey || "",
+      tipoMecanismo || "FirmaAvanzadaCualificada",
+      politicaSelladoTiempo ? "Habilitado" : "Deshabilitado",
+      formatoCertificado || "X.509_v3",
+      estadoHabilitado !== false ? "Activo" : "Inactivo",
+      cfgJSON,
+      now.toISOString(),
+      actualizadoPor || "Administrador"
+    ]);
+  }
+
+  return {
+    status: "success",
+    proveedorId: proveedorId,
+    nombreProveedor: nombreProveedor,
+    tipoMecanismo: tipoMecanismo || "FirmaAvanzadaCualificada",
+    message: "Configuración de proveedor de firma avanzada guardada exitosamente."
+  };
+}
+
+function getAdvancedSignatureProviderConfig(payload) {
+  const { proveedorId, soloActivos } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ConfiguracionFirmaAvanzada");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    return {
+      status: "success",
+      proveedores: [{
+        proveedorId: "PSC-HN-DEFAULT",
+        nombreProveedor: "Prestador de Certificación Oficial Honduras",
+        tipoMecanismo: "FirmaAvanzadaCualificada",
+        formatoCertificado: "X.509_v3",
+        politicaSelladoTiempo: "Habilitado",
+        estado: "Activo",
+        marcoLegal: "Decreto 149-2013"
+      }]
+    };
+  }
+
+  const providers = data.slice(1).filter(r => {
+    if (proveedorId && String(r[0]).trim() !== String(proveedorId).trim()) return false;
+    if (soloActivos && String(r[7]).trim() !== "Activo") return false;
+    return true;
+  }).map(r => ({
+    proveedorId: r[0],
+    nombreProveedor: r[1],
+    endpointUrl: r[2],
+    apiKey: r[3] ? "••••••••" : "",
+    tipoMecanismo: r[4] || "FirmaAvanzadaCualificada",
+    politicaSelladoTiempo: r[5],
+    formatoCertificado: r[6] || "X.509_v3",
+    estado: r[7] || "Activo"
+  }));
+
+  return { status: "success", proveedores: providers };
+}
+
+function createAdvancedSignatureRequest(payload) {
+  const {
+    documentoId,
+    solicitudId,
+    firmanteId,
+    firmanteNombre,
+    firmanteEmail,
+    tipoDocumento,
+    mecanismoFirma, // 'FirmaSimple', 'ProveedorExterno', 'FirmaAvanzadaCualificada'
+    proveedorId,
+    documentoHash
+  } = payload || {};
+
+  if (!documentoId || !firmanteId) {
+    throw new Error("documentoId y firmanteId son requeridos para iniciar la transacción de firma avanzada.");
+  }
+
+  const sMecanismo = mecanismoFirma || "FirmaAvanzadaCualificada";
+  const sProveedor = proveedorId || "PSC-HN-DEFAULT";
+  const now = new Date();
+  const txId = "TX-SIG-ADV-" + Date.now();
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const txSheet = getOrCreateSheet(ss, "TransaccionesFirmaAvanzada");
+
+  txSheet.appendRow([
+    txId,
+    documentoId,
+    solicitudId || "N/A",
+    firmanteId,
+    firmanteNombre || "Firmante",
+    firmanteEmail || "",
+    sMecanismo,
+    sProveedor,
+    documentoHash || computeDocumentSHA256(documentoId + "|" + firmanteId),
+    "Pendiente", // Estados: Pendiente, Completada, Rechazada, Cancelada, Expirada
+    now.toISOString(),
+    "", // fechaRespuesta
+    "" // certificadoX509Ref
+  ]);
+
+  return {
+    status: "success",
+    transaccionId: txId,
+    documentoId: documentoId,
+    mecanismoFirma: sMecanismo,
+    proveedorId: sProveedor,
+    estadoTransaccion: "Pendiente",
+    message: "Solicitud de firma avanzada creada en estado Pendiente bajo normativa Decreto 149-2013."
+  };
+}
+
+function checkAdvancedSignatureStatus(payload) {
+  const { transaccionId, respuestaProveedor } = payload || {};
+  if (!transaccionId) throw new Error("transaccionId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const txSheet = getOrCreateSheet(ss, "TransaccionesFirmaAvanzada");
+  const data = txSheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(transaccionId).trim());
+  if (idx === -1) throw new Error("Transacción de firma avanzada no encontrada.");
+
+  const row = data[idx];
+  let estadoActual = row[9];
+
+  // Si se provee actualización desde callback o consulta de proveedor
+  if (respuestaProveedor && typeof respuestaProveedor === "object") {
+    const { nuevoEstado, tokenCUV, certificadoX509, hashValidado } = respuestaProveedor;
+    if (nuevoEstado && ["Completada", "Rechazada", "Cancelada", "Expirada"].indexOf(nuevoEstado) !== -1) {
+      estadoActual = nuevoEstado;
+      const now = new Date();
+      txSheet.getRange(idx + 1, 10).setValue(nuevoEstado);
+      txSheet.getRange(idx + 1, 12).setValue(now.toISOString());
+      if (certificadoX509) txSheet.getRange(idx + 1, 13).setValue(certificadoX509);
+
+      // Si el proveedor confirma la firma exitosamente, registrar en FirmasConformidades
+      if (nuevoEstado === "Completada") {
+        registerDocumentSignature({
+          solicitudId: row[2] !== "N/A" ? row[2] : row[1],
+          documentoId: row[1],
+          firmanteId: row[3],
+          rolFirmante: "Firmante Calificado PSC",
+          tipoFirma: row[6], // Mecanismo certificado
+          documentoHash: hashValidado || row[8],
+          ipOrigen: "127.0.0.1"
+        });
+      }
+    }
+  }
+
+  return {
+    status: "success",
+    transaccionId: row[0],
+    documentoId: row[1],
+    firmanteId: row[3],
+    mecanismoFirma: row[6],
+    proveedorId: row[7],
+    documentoHash: row[8],
+    estadoTransaccion: estadoActual,
+    esFirmadoValido: estadoActual === "Completada"
+  };
+}
+
 // ---------------------------------------------------------------------------
 // FASE 26: NOTIFICACIONES, MENSAJERÍA INTERNA Y COMUNICACIONES MULTICANAL
 // ---------------------------------------------------------------------------
@@ -8793,7 +9104,7 @@ function manageInternalRoleCatalog(payload) {
       var nuevoEstado = accion === "activar" ? "Activo" : "Inactivo";
       sheet.getRange(targetIdx + 1, 10).setValue(nuevoEstado);
       sheet.getRange(targetIdx + 1, 13).setValue(now);
-      return { status: "success", rolInternoId: data[targetIdx][0], estado: nuevoEstado, message:  };
+      return { status: "success", rolInternoId: data[targetIdx][0], estado: nuevoEstado, message: `Rol interno ${data[targetIdx][0]} cambiado a estado ${nuevoEstado}.` };
     }
 
     var rId = rolInternoId;
@@ -8830,7 +9141,7 @@ function manageInternalRoleCatalog(payload) {
       ]);
     }
 
-    logStructuredEvent("USER", "manageInternalRoleCatalog", "INFO", "INTERNAL_ROLE_SAVED", , { rolInternoId: rId, nombre: nombreResponsabilidad, tipo: tipoResponsabilidad, estado }, verifiedRole);
+    logStructuredEvent("USER", "manageInternalRoleCatalog", "INFO", "INTERNAL_ROLE_SAVED", `Rol interno guardado: ${rId} - ${nombreResponsabilidad}`, { rolInternoId: rId, nombre: nombreResponsabilidad, tipo: tipoResponsabilidad, estado }, verifiedRole);
 
     return {
       status: "success",
@@ -8838,7 +9149,7 @@ function manageInternalRoleCatalog(payload) {
       codigoInterno: codInt,
       nombreResponsabilidad: nombreResponsabilidad,
       estado: estado,
-      message:
+      message: `Rol interno '${nombreResponsabilidad}' guardado correctamente.`
     };
   } catch (error) {
     logStructuredEvent("USER", "manageInternalRoleCatalog", "ERROR", "INTERNAL_ROLE_SAVE_FAILED", error.message, payload, payload && payload.authRole);

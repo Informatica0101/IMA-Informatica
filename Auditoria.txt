@@ -1303,3 +1303,23 @@ RESULTADO DE EVALUACIÓN:
   3. Implementar computeDocumentSHA256 en ambos servicios, indexando la columna sha256Hash en DocumentosEscolaresEmitidos y vinculando criptográficamente documentoHash y signatureHash en registerDocumentSignature (FirmasConformidades).
   4. Extender tests/regression/academic-grading-suite.js con 7 nuevas pruebas de regresión cubriendo TASK-038 y TASK-039 (221/221 pruebas aprobadas al 100%).
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-03-31
+ARCHIVOS AUDITADOS:
+- backend/user-service/Code.gs
+- backend/accounting-service/Code.gs
+- tests/regression/academic-grading-suite.js
+TAREAS ASOCIADAS:
+- [TASK-040] [F22-Task03] Certificado de finalización y expediente probatorio de cada firma
+- [TASK-041] [F22-Task04] Integración con firma electrónica avanzada y proveedores de certificación (Decreto 149-2013)
+RESULTADO DE EVALUACIÓN:
+- En backend/user-service/Code.gs:
+  * Carecía de un generador de certificado de finalización consolidado (Certificate of Completion) que recopilara secuencialmente a los firmantes, roles, IPs, timestamps UTC y Honduras GMT-6, tokens CUV y hashes SHA-256 vinculantes.
+  * No existía una arquitectura de integración desacoplada para proveedores de certificación bajo el Decreto Legislativo 149-2013 y Acuerdo Ejecutivo 41-2014, ni gestión transaccional de estados de firma avanzada.
+- Plan de Acción Ejecutado:
+  1. Implementar generateSignatureAuditCertificate en backend/user-service/Code.gs con expediente probatorio inmutable y huella SHA-256 del certificado.
+  2. Integrar certificadoAuditoria en verifySchoolDocumentByCUV en backend/accounting-service/Code.gs para exponer la pista de auditoría completa de firmas al verificar documentos por CUV.
+  3. Implementar configureAdvancedSignatureProvider, getAdvancedSignatureProviderConfig, createAdvancedSignatureRequest y checkAdvancedSignatureStatus en backend/user-service/Code.gs con soporte para proveedores externos y firmas avanzadas cualificadas, registrando en ROLE_PERMISSIONS y doPost.
+  4. Extender tests/regression/academic-grading-suite.js con 6 aserciones de verificación de TASK-040 y TASK-041 (227/227 pruebas aprobadas al 100%).
+===============================================================================

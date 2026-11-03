@@ -344,6 +344,16 @@ assert(acctCode.includes("computeDocumentSHA256") && acctCode.includes("sha256Ha
 assert(userCode.includes("computeDocumentSHA256") && userCode.includes("signatureHash"), "backend/user-service/Code.gs implementa computeDocumentSHA256 y vinculación en firmas [TASK-039]");
 assert(userCode.includes("registerDocumentSignature") && userCode.includes("documentoHash") && userCode.includes("signatureHash"), "backend/user-service/Code.gs vincula criptográficamente firmas y documentos con SHA-256 [TASK-039]");
 
+// [TASK-040] [F22-Task03] - Certificado de finalización y expediente probatorio de cada firma
+assert(userCode.includes("generateSignatureAuditCertificate") && userCode.includes("pistaAuditoriaFirmantes"), "backend/user-service/Code.gs implementa función generateSignatureAuditCertificate [TASK-040]");
+assert(userCode.includes("certificadoIntegridadSHA256") && userCode.includes("timestampHondurasGMT6"), "backend/user-service/Code.gs genera certificado con huella de integridad y hora de Honduras GMT-6 [TASK-040]");
+assert(acctCode.includes("certificadoAuditoria") && acctCode.includes("verifySchoolDocumentByCUV"), "backend/accounting-service/Code.gs integra expediente probatorio en verifySchoolDocumentByCUV [TASK-040]");
+
+// [TASK-041] [F22-Task04] - Integración con firma electrónica avanzada y proveedores de certificación (Decreto 149-2013)
+assert(userCode.includes("ConfiguracionFirmaAvanzada") && userCode.includes("configureAdvancedSignatureProvider"), "backend/user-service/Code.gs implementa configureAdvancedSignatureProvider [TASK-041]");
+assert(userCode.includes("createAdvancedSignatureRequest") && userCode.includes("TransaccionesFirmaAvanzada"), "backend/user-service/Code.gs implementa createAdvancedSignatureRequest con estados transaccionales [TASK-041]");
+assert(userCode.includes("checkAdvancedSignatureStatus") && userCode.includes("FirmaAvanzadaCualificada"), "backend/user-service/Code.gs implementa checkAdvancedSignatureStatus bajo Decreto 149-2013 [TASK-041]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

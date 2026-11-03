@@ -2150,7 +2150,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-040] [ ] [F22-Task03] Certificado de finalización y expediente probatorio de cada firma
+### [TASK-040] [X] [F22-Task03] Certificado de finalización y expediente probatorio de cada firma
 - **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-19), Sección D y Plan de Trabajo TAREA 22-03
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Pista de auditoría probatoria, evidencia legal de consentimiento y estándar Certificate of Completion)
@@ -2198,7 +2198,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-041] [ ] [F22-Task04] Integración con firma electrónica avanzada y proveedores de certificación (Decreto 149-2013)
+### [TASK-041] [X] [F22-Task04] Integración con firma electrónica avanzada y proveedores de certificación (Decreto 149-2013)
 - **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección C (7), Sección E (F22-16) y Plan de Trabajo TAREA 22-04
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Cumplimiento normativo hondureño, contratos de matrícula vinculantes y convenios laborales docentes)

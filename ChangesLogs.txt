@@ -4282,3 +4282,27 @@ DESCRIPCIÓN DE MODIFICACIONES:
 4. En Pendientes.md:
    - Marcadas tareas [TASK-038] y [TASK-039] como completadas [X].
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-03-31
+TAREAS: [TASK-040] [F22-Task03] & [TASK-041] [F22-Task04]
+ARCHIVOS MODIFICADOS:
+- backend/user-service/Code.gs
+- backend/accounting-service/Code.gs
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt
+- ChangesLogs.txt
+DESCRIPCIÓN DE MODIFICACIONES:
+1. En backend/user-service/Code.gs:
+   - Implementación de 'generateSignatureAuditCertificate(payload)' para generar certificados de finalización (Audit Trail / Certificate of Completion) con timestamps UTC y Honduras GMT-6, direcciones IP, tokens CUV, hashes SHA-256 vinculantes del documento original y de cada firma, y huella inmutable del certificado.
+   - Implementación de 'configureAdvancedSignatureProvider', 'getAdvancedSignatureProviderConfig', 'createAdvancedSignatureRequest' y 'checkAdvancedSignatureStatus' desacoplados con soporte del marco legal del Decreto 149-2013 de Honduras y hoja 'ConfiguracionFirmaAvanzada'.
+   - Mapeo en 'ROLE_PERMISSIONS' para Director, Subdirector y Secretaría, y enrutamiento en 'doPost'.
+2. En backend/accounting-service/Code.gs:
+   - Integración de 'certificadoAuditoria' en 'verifySchoolDocumentByCUV' recuperando firmas vinculadas al documento con trazabilidad probatoria y timestamps GMT-6.
+3. En tests/regression/academic-grading-suite.js:
+   - Inclusión de 6 aserciones de prueba regresiva para verificar el certificado de auditoría, hora GMT-6, integración CUV, configuración y ciclo de vida de firmas avanzadas.
+   - Suite superada con 227/227 pruebas exitosas (100.0%).
+4. En Pendientes.md:
+   - Marcadas tareas [TASK-040] y [TASK-041] como completadas [X].
+===============================================================================

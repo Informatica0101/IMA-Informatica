@@ -14882,24 +14882,70 @@ function verifySchoolDocumentByCUV(payload) {
     };
   }
 
+  const docObj = {
+    documentoId: foundRow[0],
+    plantillaId: foundRow[1],
+    targetEntityId: foundRow[2],
+    solicitanteUserId: foundRow[3],
+    datosJSON: foundRow[4],
+    estadoDoc: foundRow[5],
+    codigoVerificacion: foundRow[6],
+    driveFileId: foundRow[7] || "",
+    driveUrl: foundRow[8] || "",
+    fechaEmision: foundRow[9] || "",
+    observaciones: foundRow[10] || "",
+    versionPlantilla: foundRow[11] || "1.0",
+    numeroCorrelativo: foundRow[13] || foundRow[12] || "N/A",
+    sha256Hash: foundRow[14] || ""
+  };
+
+  // [TASK-040] Expediente probatorio y certificado de auditoría de firmas vinculadas al documento
+  let certificadoAuditoria = null;
+  try {
+    const firmSheet = getOrCreateSheet(ss, "FirmasConformidades");
+    const firmRows = firmSheet.getDataRange().getValues().slice(1);
+    const relatedSignatures = firmRows.filter(r => String(r[2]).trim() === String(foundRow[0]).trim() || String(r[1]).trim() === String(foundRow[0]).trim());
+
+    if (relatedSignatures.length > 0) {
+      const getHondurasTime = function(isoStr) {
+        const d = isoStr ? new Date(isoStr) : new Date();
+        const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+        const hn = new Date(utc - (3600000 * 6));
+        return hn.toISOString().replace("T", " ").substring(0, 19) + " (GMT-6)";
+      };
+
+      const auditEntries = relatedSignatures.map((r, idx) => {
+        const fIso = r[7] ? new Date(r[7]).toISOString() : new Date().toISOString();
+        return {
+          ordenFirma: idx + 1,
+          firmaId: r[0],
+          firmanteId: r[3],
+          rolFirmante: r[4] || "Autoridad",
+          tipoMecanismo: r[5] || "Conformidad Digital Institucional",
+          tokenVerificacion: r[6],
+          timestampUTC: fIso,
+          timestampHondurasGMT6: getHondurasTime(fIso),
+          ipOrigen: r[8] || "127.0.0.1",
+          signatureHash: r[10] || ""
+        };
+      });
+
+      certificadoAuditoria = {
+        documentoId: foundRow[0],
+        documentoOriginalSHA256: foundRow[14] || "",
+        marcoLegalNormativo: "Decreto Legislativo No. 149-2013 y Acuerdo Ejecutivo No. 41-2014 (Honduras)",
+        totalFirmantes: auditEntries.length,
+        pistaAuditoriaFirmantes: auditEntries
+      };
+    }
+  } catch (e) {
+    console.warn("Error obteniendo firmas vinculadas al CUV:", e.message);
+  }
+
   return {
     status: "success",
-    documento: {
-      documentoId: foundRow[0],
-      plantillaId: foundRow[1],
-      targetEntityId: foundRow[2],
-      solicitanteUserId: foundRow[3],
-      datosJSON: foundRow[4],
-      estadoDoc: foundRow[5],
-      codigoVerificacion: foundRow[6],
-      driveFileId: foundRow[7] || "",
-      driveUrl: foundRow[8] || "",
-      fechaEmision: foundRow[9] || "",
-      observaciones: foundRow[10] || "",
-      versionPlantilla: foundRow[11] || "1.0",
-      numeroCorrelativo: foundRow[13] || foundRow[12] || "N/A",
-      sha256Hash: foundRow[14] || ""
-    },
+    documento: docObj,
+    certificadoAuditoria: certificadoAuditoria,
     message: "Documento oficial autenticado e identificado exitosamente."
   };
 }
