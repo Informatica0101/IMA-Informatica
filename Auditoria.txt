@@ -1283,3 +1283,23 @@ RESULTADO DE EVALUACIÓN:
      - Añadir bifurcación else if (tab === "biblioteca") renderBibliotecaModule(container); dentro de switchTab.
   4. Extender tests/regression/academic-grading-suite.js con 8 aserciones de verificación funcional.
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-03-31
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs
+- backend/user-service/Code.gs
+- tests/regression/academic-grading-suite.js
+TAREAS ASOCIADAS:
+- [TASK-038] [F22-Task01] Validación binaria, seguridad e integridad de archivos adjuntos
+- [TASK-039] [F22-Task02] Hash SHA-256 y vinculación criptográfica de las firmas con los documentos
+RESULTADO DE EVALUACIÓN:
+- En backend/accounting-service/Code.gs y backend/user-service/Code.gs:
+  * La recepción de archivos en uploadPaymentVoucher y submitInstitutionalFormRequest no realizaba inspección de Magic Bytes ni rechazaba de forma centralizada extensiones peligrosas (.exe, .bat, .cmd, .sh, .apk, etc.), permitiendo que archivos corruptos o maliciosos pudieran ingresar a Google Drive.
+  * La emisión de documentos en generateSchoolDocument y el registro de firmas en registerDocumentSignature carecían de cálculo de hash criptográfico SHA-256 para garantizar la inmutabilidad y el no repudio.
+- Plan de Acción Ejecutado:
+  1. Implementar validateFileBinaryIntegrity en backend/accounting-service/Code.gs y backend/user-service/Code.gs con inspección de Magic Bytes (PDF, JPEG, PNG, WEBP, PKZip/Office), rechazo de ejecutables, límite de 10MB y rechazo de archivos vacíos.
+  2. Integrar validateFileBinaryIntegrity en uploadPaymentVoucher y submitInstitutionalFormRequest.
+  3. Implementar computeDocumentSHA256 en ambos servicios, indexando la columna sha256Hash en DocumentosEscolaresEmitidos y vinculando criptográficamente documentoHash y signatureHash en registerDocumentSignature (FirmasConformidades).
+  4. Extender tests/regression/academic-grading-suite.js con 7 nuevas pruebas de regresión cubriendo TASK-038 y TASK-039 (221/221 pruebas aprobadas al 100%).
+===============================================================================

@@ -2068,7 +2068,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-038] [ ] [F22-Task01] Validación binaria, seguridad e integridad de archivos adjuntos
+### [TASK-038] [X] [F22-Task01] Validación binaria, seguridad e integridad de archivos adjuntos
 - **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-11), Sección G (Defecto 1) y Plan de Trabajo TAREA 22-01
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Seguridad perimetral, prevención de inyección de código malicioso y validación de tipos binarios reales)
@@ -2111,7 +2111,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-039] [ ] [F22-Task02] Hash SHA-256 y vinculación criptográfica de las firmas con los documentos
+### [TASK-039] [X] [F22-Task02] Hash SHA-256 y vinculación criptográfica de las firmas con los documentos
 - **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-15), Sección G (Defecto 2) y Plan de Trabajo TAREA 22-02
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Integridad documental matemática, valor probatorio inalterable y no repudio)

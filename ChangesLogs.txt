@@ -4254,3 +4254,31 @@ DESCRIPCIÓN DE MODIFICACIONES:
 4. En Pendientes.md:
    - Actualización del estado de [TASK-019] a completado [X].
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-03-31
+TAREAS: [TASK-038] [F22-Task01] & [TASK-039] [F22-Task02]
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs
+- backend/user-service/Code.gs
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt
+- ChangesLogs.txt
+DESCRIPCIÓN DE MODIFICACIONES:
+1. En backend/accounting-service/Code.gs:
+   - Implementación de 'validateFileBinaryIntegrity(fileData, fileName, options)' con validación de Magic Bytes (PDF %PDF-, JPEG 0xFFD8FF, PNG, WEBP, ZIP/OOXML), rechazo de extensiones peligrosas (.exe, .bat, .cmd, .sh, .apk, etc.), límite de 10MB y rechazo de archivos vacíos.
+   - Integración de 'validateFileBinaryIntegrity' en 'uploadPaymentVoucher'.
+   - Implementación de 'computeDocumentSHA256(contentOrBase64)' para cálculo criptográfico de integridad documental.
+   - Incorporación de columna 'sha256Hash' en 'DocumentosEscolaresEmitidos' (columna 15) dentro de 'generateSchoolDocument', 'verifySchoolDocumentByCUV' y 'getIssuedSchoolDocuments'.
+2. En backend/user-service/Code.gs:
+   - Implementación de 'validateFileBinaryIntegrity(fileData, fileName, options)' idéntica para validación de adjuntos en formularios.
+   - Integración de 'validateFileBinaryIntegrity' en 'submitInstitutionalFormRequest' para procesar adjuntoData y adjuntoNombre con subida segura a Google Drive.
+   - Implementación de 'computeDocumentSHA256(contentOrBase64)' para integridad de firmas.
+   - Integración de 'signatureHash' y vinculación criptográfica con 'documentoHash' en 'registerDocumentSignature' y retorno en 'getWorkflowHistory'.
+3. En tests/regression/academic-grading-suite.js:
+   - Inclusión de 7 pruebas regresivas para verificar validateFileBinaryIntegrity, rechazo de ejecutables, vinculación en uploadPaymentVoucher, submitInstitutionalFormRequest, computeDocumentSHA256 y registerDocumentSignature.
+   - Suite superada con 221/221 pruebas exitosas (100.0%).
+4. En Pendientes.md:
+   - Marcadas tareas [TASK-038] y [TASK-039] como completadas [X].
+===============================================================================

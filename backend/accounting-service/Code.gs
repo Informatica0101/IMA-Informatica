@@ -3913,17 +3913,148 @@ function recordStudentPayment(payload) {
 // COMPROBANTES Y RECIBOS UNICOS
 // ---------------------------------------------------------------------------
 
+// [TASK-038] [F22-Task01] - Función auxiliar para validación binaria, seguridad y verificación de integridad
+function validateFileBinaryIntegrity(fileData, fileName, options) {
+  const opts = options || {};
+  const maxSizeBytes = opts.maxSizeBytes || 10 * 1024 * 1024;
+  const allowedExtensions = opts.allowedExtensions || null;
+
+  if (!fileData) throw new Error("FILE_MISSING: Datos de archivo ausentes.");
+  if (!fileName || typeof fileName !== "string") throw new Error("FILE_INVALID_NAME: Nombre de archivo inválido o ausente.");
+
+  const dangerousExtensions = [".exe", ".bat", ".cmd", ".sh", ".msi", ".dll", ".com", ".scr", ".vbs", ".js", ".jar", ".ps1", ".apk"];
+  const lowerName = fileName.toLowerCase().trim();
+  for (let i = 0; i < dangerousExtensions.length; i++) {
+    const ext = dangerousExtensions[i];
+    if (lowerName.endsWith(ext)) {
+      throw new Error("DANGEROUS_FILE_EXTENSION: La extensión " + ext + " está prohibida por políticas de seguridad institucional.");
+    }
+  }
+
+  if (Array.isArray(allowedExtensions) && allowedExtensions.length > 0) {
+    const hasAllowed = allowedExtensions.some(function(ext) { return lowerName.endsWith(ext.toLowerCase()); });
+    if (!hasAllowed) {
+      throw new Error("INVALID_FILE_EXTENSION: Extensión no permitida. Formatos válidos: " + allowedExtensions.join(", "));
+    }
+  }
+
+  let mimeType = "";
+  let base64Content = fileData;
+  if (fileData.indexOf(",") !== -1) {
+    const parts = fileData.split(",");
+    const header = parts[0];
+    base64Content = parts[1];
+    const match = header.match(/:(.*?);/);
+    if (match) mimeType = match[1].toLowerCase().trim();
+  }
+
+  let rawBytes;
+  if (typeof Utilities !== "undefined" && Utilities.base64Decode) {
+    rawBytes = Utilities.base64Decode(base64Content);
+  } else if (typeof Buffer !== "undefined") {
+    rawBytes = Buffer.from(base64Content, "base64");
+  } else {
+    throw new Error("UNSUPPORTED_RUNTIME: No se dispone de decodificador binario.");
+  }
+
+  const byteLength = rawBytes.length;
+  if (byteLength === 0) {
+    throw new Error("EMPTY_FILE_REJECTED: El archivo está vacío (0 bytes).");
+  }
+  if (byteLength > maxSizeBytes) {
+    const mbLimit = (maxSizeBytes / (1024 * 1024)).toFixed(1);
+    const mbActual = (byteLength / (1024 * 1024)).toFixed(2);
+    throw new Error("FILE_SIZE_EXCEEDED: El archivo (" + mbActual + " MB) supera el tamaño máximo permitido (" + mbLimit + " MB).");
+  }
+
+  const b = function(idx) { return (rawBytes[idx] & 0xFF); };
+
+  let detectedFormat = "unknown";
+  if (byteLength >= 4 && b(0) === 0x25 && b(1) === 0x50 && b(2) === 0x44 && b(3) === 0x46) {
+    detectedFormat = "pdf";
+  } else if (byteLength >= 3 && b(0) === 0xFF && b(1) === 0xD8 && b(2) === 0xFF) {
+    detectedFormat = "jpeg";
+  } else if (byteLength >= 8 && b(0) === 0x89 && b(1) === 0x50 && b(2) === 0x4E && b(3) === 0x47 && b(4) === 0x0D && b(5) === 0x0A && b(6) === 0x1A && b(7) === 0x0A) {
+    detectedFormat = "png";
+  } else if (byteLength >= 12 && b(0) === 0x52 && b(1) === 0x49 && b(2) === 0x46 && b(3) === 0x46 && b(8) === 0x57 && b(9) === 0x45 && b(10) === 0x42 && b(11) === 0x50) {
+    detectedFormat = "webp";
+  } else if (byteLength >= 4 && b(0) === 0x50 && b(1) === 0x4B && b(2) === 0x03 && b(3) === 0x04) {
+    detectedFormat = "zip_or_ooxml";
+  }
+
+  if (lowerName.endsWith(".pdf") && detectedFormat !== "pdf") {
+    throw new Error("BINARY_SIGNATURE_MISMATCH: El archivo con extensión .pdf no contiene una firma binaria de PDF válida.");
+  }
+  if ((lowerName.endsWith(".jpg") || lowerName.endsWith(".jpeg")) && detectedFormat !== "jpeg") {
+    throw new Error("BINARY_SIGNATURE_MISMATCH: El archivo con extensión JPEG no contiene una cabecera binaria JPEG válida.");
+  }
+  if (lowerName.endsWith(".png") && detectedFormat !== "png") {
+    throw new Error("BINARY_SIGNATURE_MISMATCH: El archivo con extensión .png no contiene una firma binaria PNG válida.");
+  }
+
+  let finalMime = mimeType;
+  if (!finalMime || finalMime === "application/octet-stream") {
+    if (detectedFormat === "pdf") finalMime = "application/pdf";
+    else if (detectedFormat === "jpeg") finalMime = "image/jpeg";
+    else if (detectedFormat === "png") finalMime = "image/png";
+    else if (detectedFormat === "webp") finalMime = "image/webp";
+  }
+
+  return {
+    valid: true,
+    fileName: fileName,
+    detectedFormat: detectedFormat,
+    byteLength: byteLength,
+    mimeType: finalMime
+  };
+}
+
+// [TASK-039] [F22-Task02] - Cálculo de Hash criptográfico SHA-256 para integridad documental
+function computeDocumentSHA256(contentOrBase64) {
+  if (!contentOrBase64) return "";
+  let rawBytes;
+  if (typeof Utilities !== "undefined" && Utilities.computeDigest) {
+    if (typeof contentOrBase64 === "string" && contentOrBase64.indexOf(",") !== -1) {
+      rawBytes = Utilities.base64Decode(contentOrBase64.split(",")[1]);
+    } else if (typeof contentOrBase64 === "string") {
+      rawBytes = Utilities.newBlob(contentOrBase64).getBytes();
+    } else {
+      rawBytes = Utilities.newBlob(JSON.stringify(contentOrBase64)).getBytes();
+    }
+    const digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, rawBytes);
+    return digest.map(function(b) { return ("0" + ((b & 0xFF).toString(16))).slice(-2); }).join("");
+  } else if (typeof require !== "undefined") {
+    const crypto = require("crypto");
+    let buf;
+    if (typeof contentOrBase64 === "string" && contentOrBase64.indexOf(",") !== -1) {
+      buf = Buffer.from(contentOrBase64.split(",")[1], "base64");
+    } else if (typeof contentOrBase64 === "string") {
+      buf = Buffer.from(contentOrBase64, "utf8");
+    } else {
+      buf = Buffer.from(JSON.stringify(contentOrBase64), "utf8");
+    }
+    return crypto.createHash("sha256").update(buf).digest("hex");
+  }
+  return "";
+}
+
+// [TASK-038] [F22-Task01] - Subida segura de comprobante con validación binaria
 function uploadPaymentVoucher(payload) {
   const { userId, alumno, cargoId, montoReportado, metodoPago, referencia, fileData, fileName, observaciones } = payload || {};
   if (!userId || !montoReportado) throw new Error("userId y monto reportado son requeridos.");
 
   let comprobanteUrl = "";
+  let binaryValidation = null;
   if (fileData && fileName) {
+    binaryValidation = validateFileBinaryIntegrity(fileData, fileName, {
+      maxSizeBytes: 10 * 1024 * 1024,
+      allowedExtensions: [".pdf", ".jpg", ".jpeg", ".png", ".webp"]
+    });
+
     try {
       const folder = getOrCreateFolderNews(getParentDriveFolder(), "Comprobantes_Pago");
-      const mimeType = fileData.split(',')[0].match(/:(.*?);/)[1];
-      const base64Data = fileData.split(',')[1];
-      const file = folder.createFile(Utilities.newBlob(Utilities.base64Decode(base64Data), mimeType, fileName));
+      const base64Data = fileData.indexOf(",") !== -1 ? fileData.split(',')[1] : fileData;
+      const file = folder.createFile(Utilities.newBlob(Utilities.base64Decode(base64Data), binaryValidation.mimeType, fileName));
       file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
       comprobanteUrl = `https://lh3.googleusercontent.com/d/${file.getId()}`;
     } catch (e) {
@@ -14693,7 +14824,10 @@ function generateSchoolDocument(payload) {
     const driveFileId = "DRV-" + docId;
     const driveUrl = "https://drive.google.com/file/d/" + driveFileId + "/view";
 
-    // 4. Registro Definitivo sin Duplicados
+    // [TASK-039] Generar hash SHA-256 del contenido documental para garantizar inmutabilidad
+    const sha256Hash = computeDocumentSHA256(docId + "|" + plantillaId + "|" + targetId + "|" + dJSON + "|" + verifCode + "|" + nowISO);
+
+    // 4. Registro Definitivo sin Duplicados (esquema ampliado con Hash SHA-256 en col 15)
     issuedSheet.appendRow([
       docId,
       String(plantillaId).trim(),
@@ -14708,7 +14842,8 @@ function generateSchoolDocument(payload) {
       observaciones || "Emitido oficialmente mediante Diseñador de Plantillas",
       tVersion,
       nextCorrelativoNum,
-      numeroCorrelativo
+      numeroCorrelativo,
+      sha256Hash
     ]);
 
     return {
@@ -14716,11 +14851,12 @@ function generateSchoolDocument(payload) {
       documentoId: docId,
       numeroCorrelativo: numeroCorrelativo,
       codigoVerificacion: verifCode,
+      sha256Hash: sha256Hash,
       driveFileId: driveFileId,
       driveUrl: driveUrl,
       fechaEmision: nowISO,
       versionPlantilla: tVersion,
-      message: "Documento oficial generado e indexado con numeración correlativa y CUV único garantizado."
+      message: "Documento oficial generado e indexado con numeración correlativa, CUV único y Hash SHA-256 garantizado."
     };
   } finally {
     if (lockAcquired) {
@@ -14761,7 +14897,8 @@ function verifySchoolDocumentByCUV(payload) {
       fechaEmision: foundRow[9] || "",
       observaciones: foundRow[10] || "",
       versionPlantilla: foundRow[11] || "1.0",
-      numeroCorrelativo: foundRow[13] || foundRow[12] || "N/A"
+      numeroCorrelativo: foundRow[13] || foundRow[12] || "N/A",
+      sha256Hash: foundRow[14] || ""
     },
     message: "Documento oficial autenticado e identificado exitosamente."
   };
@@ -14790,7 +14927,9 @@ function getIssuedSchoolDocuments(payload) {
     driveUrl: r[8] || "",
     fechaEmision: r[9] || "",
     observaciones: r[10] || "",
-    versionPlantilla: r[11] || "1.0"
+    versionPlantilla: r[11] || "1.0",
+    numeroCorrelativo: r[13] || r[12] || "N/A",
+    sha256Hash: r[14] || ""
   }));
 
   return {

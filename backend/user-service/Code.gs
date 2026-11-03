@@ -5162,6 +5162,132 @@ function getInstitutionalForms(payload) {
   };
 }
 
+// [TASK-038] [F22-Task01] - Función auxiliar para validación binaria, seguridad y verificación de integridad
+function validateFileBinaryIntegrity(fileData, fileName, options) {
+  const opts = options || {};
+  const maxSizeBytes = opts.maxSizeBytes || 10 * 1024 * 1024;
+  const allowedExtensions = opts.allowedExtensions || null;
+
+  if (!fileData) throw new Error("FILE_MISSING: Datos de archivo ausentes.");
+  if (!fileName || typeof fileName !== "string") throw new Error("FILE_INVALID_NAME: Nombre de archivo inválido o ausente.");
+
+  const dangerousExtensions = [".exe", ".bat", ".cmd", ".sh", ".msi", ".dll", ".com", ".scr", ".vbs", ".js", ".jar", ".ps1", ".apk"];
+  const lowerName = fileName.toLowerCase().trim();
+  for (let i = 0; i < dangerousExtensions.length; i++) {
+    const ext = dangerousExtensions[i];
+    if (lowerName.endsWith(ext)) {
+      throw new Error("DANGEROUS_FILE_EXTENSION: La extensión " + ext + " está prohibida por políticas de seguridad institucional.");
+    }
+  }
+
+  if (Array.isArray(allowedExtensions) && allowedExtensions.length > 0) {
+    const hasAllowed = allowedExtensions.some(function(ext) { return lowerName.endsWith(ext.toLowerCase()); });
+    if (!hasAllowed) {
+      throw new Error("INVALID_FILE_EXTENSION: Extensión no permitida. Formatos válidos: " + allowedExtensions.join(", "));
+    }
+  }
+
+  let mimeType = "";
+  let base64Content = fileData;
+  if (fileData.indexOf(",") !== -1) {
+    const parts = fileData.split(",");
+    const header = parts[0];
+    base64Content = parts[1];
+    const match = header.match(/:(.*?);/);
+    if (match) mimeType = match[1].toLowerCase().trim();
+  }
+
+  let rawBytes;
+  if (typeof Utilities !== "undefined" && Utilities.base64Decode) {
+    rawBytes = Utilities.base64Decode(base64Content);
+  } else if (typeof Buffer !== "undefined") {
+    rawBytes = Buffer.from(base64Content, "base64");
+  } else {
+    throw new Error("UNSUPPORTED_RUNTIME: No se dispone de decodificador binario.");
+  }
+
+  const byteLength = rawBytes.length;
+  if (byteLength === 0) {
+    throw new Error("EMPTY_FILE_REJECTED: El archivo está vacío (0 bytes).");
+  }
+  if (byteLength > maxSizeBytes) {
+    const mbLimit = (maxSizeBytes / (1024 * 1024)).toFixed(1);
+    const mbActual = (byteLength / (1024 * 1024)).toFixed(2);
+    throw new Error("FILE_SIZE_EXCEEDED: El archivo (" + mbActual + " MB) supera el tamaño máximo permitido (" + mbLimit + " MB).");
+  }
+
+  const b = function(idx) { return (rawBytes[idx] & 0xFF); };
+
+  let detectedFormat = "unknown";
+  if (byteLength >= 4 && b(0) === 0x25 && b(1) === 0x50 && b(2) === 0x44 && b(3) === 0x46) {
+    detectedFormat = "pdf";
+  } else if (byteLength >= 3 && b(0) === 0xFF && b(1) === 0xD8 && b(2) === 0xFF) {
+    detectedFormat = "jpeg";
+  } else if (byteLength >= 8 && b(0) === 0x89 && b(1) === 0x50 && b(2) === 0x4E && b(3) === 0x47 && b(4) === 0x0D && b(5) === 0x0A && b(6) === 0x1A && b(7) === 0x0A) {
+    detectedFormat = "png";
+  } else if (byteLength >= 12 && b(0) === 0x52 && b(1) === 0x49 && b(2) === 0x46 && b(3) === 0x46 && b(8) === 0x57 && b(9) === 0x45 && b(10) === 0x42 && b(11) === 0x50) {
+    detectedFormat = "webp";
+  } else if (byteLength >= 4 && b(0) === 0x50 && b(1) === 0x4B && b(2) === 0x03 && b(3) === 0x04) {
+    detectedFormat = "zip_or_ooxml";
+  }
+
+  if (lowerName.endsWith(".pdf") && detectedFormat !== "pdf") {
+    throw new Error("BINARY_SIGNATURE_MISMATCH: El archivo con extensión .pdf no contiene una firma binaria de PDF válida.");
+  }
+  if ((lowerName.endsWith(".jpg") || lowerName.endsWith(".jpeg")) && detectedFormat !== "jpeg") {
+    throw new Error("BINARY_SIGNATURE_MISMATCH: El archivo con extensión JPEG no contiene una cabecera binaria JPEG válida.");
+  }
+  if (lowerName.endsWith(".png") && detectedFormat !== "png") {
+    throw new Error("BINARY_SIGNATURE_MISMATCH: El archivo con extensión .png no contiene una firma binaria PNG válida.");
+  }
+
+  let finalMime = mimeType;
+  if (!finalMime || finalMime === "application/octet-stream") {
+    if (detectedFormat === "pdf") finalMime = "application/pdf";
+    else if (detectedFormat === "jpeg") finalMime = "image/jpeg";
+    else if (detectedFormat === "png") finalMime = "image/png";
+    else if (detectedFormat === "webp") finalMime = "image/webp";
+  }
+
+  return {
+    valid: true,
+    fileName: fileName,
+    detectedFormat: detectedFormat,
+    byteLength: byteLength,
+    mimeType: finalMime
+  };
+}
+
+// [TASK-039] [F22-Task02] - Cálculo de Hash criptográfico SHA-256 para integridad documental
+function computeDocumentSHA256(contentOrBase64) {
+  if (!contentOrBase64) return "";
+  let rawBytes;
+  if (typeof Utilities !== "undefined" && Utilities.computeDigest) {
+    if (typeof contentOrBase64 === "string" && contentOrBase64.indexOf(",") !== -1) {
+      rawBytes = Utilities.base64Decode(contentOrBase64.split(",")[1]);
+    } else if (typeof contentOrBase64 === "string") {
+      rawBytes = Utilities.newBlob(contentOrBase64).getBytes();
+    } else {
+      rawBytes = Utilities.newBlob(JSON.stringify(contentOrBase64)).getBytes();
+    }
+    const digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, rawBytes);
+    return digest.map(function(b) { return ("0" + ((b & 0xFF).toString(16))).slice(-2); }).join("");
+  } else if (typeof require !== "undefined") {
+    const crypto = require("crypto");
+    let buf;
+    if (typeof contentOrBase64 === "string" && contentOrBase64.indexOf(",") !== -1) {
+      buf = Buffer.from(contentOrBase64.split(",")[1], "base64");
+    } else if (typeof contentOrBase64 === "string") {
+      buf = Buffer.from(contentOrBase64, "utf8");
+    } else {
+      buf = Buffer.from(JSON.stringify(contentOrBase64), "utf8");
+    }
+    return crypto.createHash("sha256").update(buf).digest("hex");
+  }
+  return "";
+}
+
+// [TASK-038] [F22-Task01] - Envío de formulario institucional con validación binaria de adjuntos
 function submitInstitutionalFormRequest(payload) {
   const {
     userId,
@@ -5171,10 +5297,32 @@ function submitInstitutionalFormRequest(payload) {
     respuestasFormularioJSON,
     adjuntoUrl,
     adjuntoFileId,
+    adjuntoData,
+    adjuntoNombre,
     observaciones
   } = payload || {};
 
   if (!userId || !tipoTramite) throw new Error("userId y tipoTramite son requeridos.");
+
+  let finalAdjuntoUrl = adjuntoUrl || (adjuntoFileId ? "https://drive.google.com/uc?id=" + adjuntoFileId : "");
+
+  // Si se provee archivo binario en base64 para el trámite, validar estrictamente
+  if (adjuntoData && adjuntoNombre) {
+    const binaryValidation = validateFileBinaryIntegrity(adjuntoData, adjuntoNombre, {
+      maxSizeBytes: 10 * 1024 * 1024,
+      allowedExtensions: [".pdf", ".jpg", ".jpeg", ".png", ".webp", ".docx", ".xlsx"]
+    });
+
+    try {
+      const folder = getOrCreateFolderNews(getParentDriveFolder(), "Tramites_Adjuntos");
+      const base64Data = adjuntoData.indexOf(",") !== -1 ? adjuntoData.split(',')[1] : adjuntoData;
+      const file = folder.createFile(Utilities.newBlob(Utilities.base64Decode(base64Data), binaryValidation.mimeType, adjuntoNombre));
+      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      finalAdjuntoUrl = "https://drive.google.com/uc?id=" + file.getId();
+    } catch (e) {
+      logDebug("Error subida archivo tramite:", e.message);
+    }
+  }
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "SolicitudesTramites");
@@ -5191,7 +5339,7 @@ function submitInstitutionalFormRequest(payload) {
     estudianteId || "N/A",
     tipoTramite,
     desc,
-    adjuntoUrl || (adjuntoFileId ? "https://drive.google.com/uc?id=" + adjuntoFileId : ""),
+    finalAdjuntoUrl,
     "Enviada",
     "Secretaría/Orientación",
     "",
@@ -5202,6 +5350,7 @@ function submitInstitutionalFormRequest(payload) {
   return {
     status: "success",
     solicitudId: solId,
+    adjuntoUrl: finalAdjuntoUrl,
     fechaSolicitud: now.toISOString(),
     message: "Trámite digital enviado con éxito para revisión oficial."
   };
@@ -6548,19 +6697,25 @@ function getWorkflowHistory(payload) {
     rolFirmante: r[4],
     tipoFirma: r[5],
     tokenVerificacion: r[6],
-    fechaFirma: r[7] ? new Date(r[7]).toISOString() : null
+    fechaFirma: r[7] ? new Date(r[7]).toISOString() : null,
+    ipOrigen: r[8] || "",
+    documentoHash: r[9] || "",
+    signatureHash: r[10] || ""
   })) : [];
 
   return { status: "success", historialDecisiones: history, firmas: signatures };
 }
 
+// [TASK-039] [F22-Task02] - Registro de firma electrónica y conformidad institucional con vinculación criptográfica SHA-256
 function registerDocumentSignature(payload) {
   const {
     solicitudId,
     documentoId,
     firmanteId,
     rolFirmante,
-    tipoFirma
+    tipoFirma,
+    documentoHash,
+    ipOrigen
   } = payload || {};
 
   if (!solicitudId || !firmanteId) {
@@ -6571,7 +6726,12 @@ function registerDocumentSignature(payload) {
   const sheet = getOrCreateSheet(ss, "FirmasConformidades");
   const fid = "SIG-" + Date.now();
   const now = new Date();
+  const nowISO = now.toISOString();
   const tokenVerif = "VERIF-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+
+  // Calcular Hash vinculante SHA-256 de la firma si no se suministra o derivarlo de los datos inmutables
+  const baseData = (documentoHash || "") + "|" + solicitudId + "|" + (documentoId || "DOC-N/A") + "|" + firmanteId + "|" + (rolFirmante || "Autoridad") + "|" + nowISO;
+  const signatureHash = computeDocumentSHA256(baseData);
 
   sheet.appendRow([
     fid,
@@ -6581,16 +6741,20 @@ function registerDocumentSignature(payload) {
     rolFirmante || "Autoridad Institucional",
     tipoFirma || "Conformidad Digital Institucional",
     tokenVerif,
-    now.toISOString(),
-    "127.0.0.1"
+    nowISO,
+    ipOrigen || "127.0.0.1",
+    documentoHash || "",
+    signatureHash
   ]);
 
   return {
     status: "success",
     firmaId: fid,
     tokenVerificacion: tokenVerif,
-    fechaFirma: now.toISOString(),
-    message: "Firma / Conformidad institucional registrada con token de verificación."
+    signatureHash: signatureHash,
+    documentoHash: documentoHash || "",
+    fechaFirma: nowISO,
+    message: "Firma / Conformidad institucional registrada con token y vinculación criptográfica SHA-256 garantizada."
   };
 }
 

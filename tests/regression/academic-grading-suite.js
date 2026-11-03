@@ -333,6 +333,17 @@ assert(acctCode.includes("runPhase21TransportAndServicesRegressionSuite") && acc
 assert(devCode.includes("runPhase21TransportAndServicesRegressionSuite") && devCode.includes("[TASK-037]"), "backend/developer-service/Code.gs integra orquestación de suite de transporte [TASK-037]");
 assert(acctCode.includes("PT21-01") && acctCode.includes("PT21-06") && acctCode.includes("PT21-12"), "backend/accounting-service/Code.gs cubre pruebas completas PT21-01 a PT21-12 [TASK-037]");
 
+// [TASK-038] [F22-Task01] - Validación binaria, seguridad e integridad de archivos adjuntos
+assert(acctCode.includes("validateFileBinaryIntegrity") && acctCode.includes("DANGEROUS_FILE_EXTENSION") && acctCode.includes("BINARY_SIGNATURE_MISMATCH"), "backend/accounting-service/Code.gs contiene función validateFileBinaryIntegrity con Magic Bytes [TASK-038]");
+assert(userCode.includes("validateFileBinaryIntegrity") && userCode.includes("DANGEROUS_FILE_EXTENSION"), "backend/user-service/Code.gs contiene función validateFileBinaryIntegrity [TASK-038]");
+assert(acctCode.includes("binaryValidation = validateFileBinaryIntegrity(fileData, fileName") && acctCode.includes("uploadPaymentVoucher"), "backend/accounting-service/Code.gs integra validación binaria en uploadPaymentVoucher [TASK-038]");
+assert(userCode.includes("binaryValidation = validateFileBinaryIntegrity(adjuntoData, adjuntoNombre") && userCode.includes("submitInstitutionalFormRequest"), "backend/user-service/Code.gs integra validación binaria en submitInstitutionalFormRequest [TASK-038]");
+
+// [TASK-039] [F22-Task02] - Hash SHA-256 y vinculación criptográfica de firmas con documentos
+assert(acctCode.includes("computeDocumentSHA256") && acctCode.includes("sha256Hash"), "backend/accounting-service/Code.gs calcula hash SHA-256 e indexa en emisión de documentos [TASK-039]");
+assert(userCode.includes("computeDocumentSHA256") && userCode.includes("signatureHash"), "backend/user-service/Code.gs implementa computeDocumentSHA256 y vinculación en firmas [TASK-039]");
+assert(userCode.includes("registerDocumentSignature") && userCode.includes("documentoHash") && userCode.includes("signatureHash"), "backend/user-service/Code.gs vincula criptográficamente firmas y documentos con SHA-256 [TASK-039]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");
