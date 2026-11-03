@@ -1278,7 +1278,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-016] [ ] [F18-Task06] Ampliar la gestión de cuentas por pagar con abonos, vencimientos y notas de crédito
+### [TASK-016] [X] [F18-Task06] Ampliar la gestión de cuentas por pagar con abonos, vencimientos y notas de crédito
 - **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección B (B.5), Sección E y Sección G (P0)
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Control de tesorería, prevención de pagos duplicados y gestión de notas de crédito)
@@ -1316,7 +1316,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Se bloquea cualquier intento de pagar un monto superior al saldo pendiente de la factura.
   - Las facturas con discrepancias o en disputa quedan bloqueadas para pagos automáticos.
   - Anular un pago revierte el saldo pendiente y el asiento contable sin eliminar el historial.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 ---

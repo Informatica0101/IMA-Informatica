@@ -199,6 +199,13 @@ assert(acctCode.includes("EnviadaProveedor") && acctCode.includes("AceptadaProve
 assert(acctCode.includes("La orden debe estar previamente 'Aprobada'"), "backend/accounting-service/Code.gs bloquea emisión/envío al proveedor de órdenes no aprobadas [TASK-015]");
 assert(acctCode.includes("New Generation Bilingual School and Institute"), "backend/accounting-service/Code.gs emite documento formal con identidad institucional de New Generation [TASK-015]");
 
+// [TASK-016] [F18-Task06] - Gestión de cuentas por pagar con abonos, vencimientos y notas de crédito
+assert(acctCode.includes("recordSupplierPayment") && acctCode.includes("[TASK-016]"), "backend/accounting-service/Code.gs contiene función recordSupplierPayment [TASK-016]");
+assert(acctCode.includes("OVERPAYMENT_REJECTED"), "backend/accounting-service/Code.gs rechaza pagos superiores al saldo pendiente de la obligación [TASK-016]");
+assert(acctCode.includes("applySupplierCreditNote") && acctCode.includes("CREDIT_NOTE_ALREADY_APPLIED"), "backend/accounting-service/Code.gs implementa aplicación de notas de crédito comerciales sin duplicación [TASK-016]");
+assert(acctCode.includes("getSupplierAccountsPayableSummary") && acctCode.includes("clasificacionVencimiento"), "backend/accounting-service/Code.gs programa y clasifica vencimientos de cuentas por pagar [TASK-016]");
+assert(acctCode.includes("PagoParcial") && acctCode.includes("Pagada"), "backend/accounting-service/Code.gs actualiza automáticamente estados de pago según saldo remanente [TASK-016]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

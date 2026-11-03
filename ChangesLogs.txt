@@ -3995,3 +3995,18 @@ ARCHIVOS MODIFICADOS:
 3. Pendientes.md:
    - Líneas 1250-1278: Marcada tarea [TASK-015] como [X] Completado.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+TAREA: [TASK-016] [F18-Task06]
+ARCHIVOS MODIFICADOS:
+1. backend/accounting-service/Code.gs:
+   - Línea 141: Ampliación de columnas en CuentasPorPagarGastos ('TotalMonto', 'SaldoPendiente', 'TotalAbonado', 'FechaEmision', 'FechaRecepcion').
+   - Líneas 197, 201, 563-565: Habilitación de 'recordSupplierPayment', 'applySupplierCreditNote' y 'getSupplierAccountsPayableSummary' en permisos RBAC y switch doPost.
+   - Líneas 7073-7095: recordAccountsPayableExpense inicializa TotalMonto, SaldoPendiente y TotalAbonado.
+   - Líneas 7115-7280: Implementación de recordSupplierPayment con control de sobrepagos y asiento contable por partida doble, applySupplierCreditNote con prevención de duplicados y getSupplierAccountsPayableSummary para clasificación cronológica de vencimientos.
+2. tests/regression/academic-grading-suite.js:
+   - Líneas 217-226: Aserciones automatizadas para validar registro de abonos a proveedores, control de sobrepagos, aplicación de notas de crédito comerciales, clasificación de vencimientos y actualización de estados.
+3. Pendientes.md:
+   - Líneas 1281-1319: Marcada tarea [TASK-016] como [X] Completado.
+===============================================================================

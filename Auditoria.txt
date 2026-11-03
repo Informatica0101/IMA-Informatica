@@ -965,3 +965,42 @@ RESULTADO DE EVALUACIÓN:
 - Cobertura de pruebas automatizadas en tests/regression/academic-grading-suite.js alcanzando 126/126 pruebas aprobadas (100.0%).
 - Estado: Completado y Verificado funcionalmente.
 ===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+AUDITORIA INICIAL — [TASK-016] [F18-Task06]
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (recordAccountsPayableExpense, getAccountsReceivablePayableSummary)
+- Estructura: CuentasPorPagarGastos (10 columnas actuales)
+HALLAZGOS:
+1. En CuentasPorPagarGastos (l. 141 y l. 6960): La hoja cuenta con 10 columnas pero carece de campos esenciales para el seguimiento financiero granular: TotalMonto, SaldoPendiente, TotalAbonado, FechaEmision y FechaRecepcion.
+2. Inexistencia de gestión de abonos y pagos parciales: No existe la función recordSupplierPayment. Los pagos a proveedores no pueden registrarse parcialmente, no se actualizan los saldos deudores remanentes ni se bloquean sobrepagos por encima de la deuda real.
+3. Omisión de notas de crédito comerciales de proveedores: Falta la función applySupplierCreditNote para asentar devoluciones o bonificaciones de proveedores descontando el pasivo en CuentasPorPagarGastos y registrando la contrapartida contable en AsientosContables.
+4. Programación de vencimientos ausente: No existe la clasificación cronológica por envejecimiento de saldos (vencidas, próximas a vencer en 7, 15, 30 días y corrientes).
+ESTADO: Auditoría finalizada. Procediendo con la implementación de pagos parciales, saldos pendientes, notas de crédito comerciales y control de vencimientos.
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-02
+VERIFICACIÓN E IMPLEMENTACIÓN FUNCIONAL — [TASK-016] [F18-Task06]
+GESTIÓN DE CUENTAS POR PAGAR CON ABONOS, VENCIMIENTOS Y NOTAS DE CRÉDITO
+ARCHIVOS MODIFICADOS:
+- backend/accounting-service/Code.gs (recordAccountsPayableExpense, recordSupplierPayment, applySupplierCreditNote, getSupplierAccountsPayableSummary, doPost, ROLE_PERMISSIONS)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt / Auditoría.txt / ChangesLogs.txt
+RESULTADO DE EVALUACIÓN:
+- Se amplió la hoja CuentasPorPagarGastos a 15 columnas incorporando TotalMonto, SaldoPendiente, TotalAbonado, FechaEmision y FechaRecepcion.
+- En recordAccountsPayableExpense: inicialización atómica de saldoPendiente = TotalMonto y totalAbonado = 0.
+- Implementación de recordSupplierPayment para abonos y pagos parciales a proveedores:
+  * Validación de estado de aprobación habilitado (no bloqueado por Three-Way Match).
+  * Control estricto contra sobrepagos: rechazo con código OVERPAYMENT_REJECTED si el abono excede el saldo pendiente.
+  * Actualización atómica de saldoPendiente y totalAbonado, transitando a 'PagoParcial' o 'Pagada' cuando saldoPendiente llega a 0.
+  * Registro automático del egreso en MovimientosCajaBancos y generación de asiento contable equilibrado por partida doble (Debe: Pasivo 2101, Haber: Bancos 1101).
+- Implementación de applySupplierCreditNote para aplicar notas de crédito comerciales emitidas por proveedores:
+  * Validación de número y monto, reducción proporcional del saldo pendiente y control contra notas de crédito duplicadas (CREDIT_NOTE_ALREADY_APPLIED).
+  * Registro de contrapartida contable (Debe: Pasivo 2101, Haber: Gasto/Devolución 5101).
+- Implementación de getSupplierAccountsPayableSummary para programación de vencimientos por tramos (vencidas, 7 días, 15 días, 30 días, corrientes).
+- Cobertura de pruebas automatizadas en tests/regression/academic-grading-suite.js alcanzando 131/131 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
