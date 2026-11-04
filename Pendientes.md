@@ -2441,7 +2441,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-048] [F23-Task05] [P0] [Seguridad y Red - Protocolo Universal de Comunicación Interservicio y Gestión de Credenciales]
+### [TASK-048] [X] [F23-Task05] [P0] [Seguridad y Red - Protocolo Universal de Comunicación Interservicio y Gestión de Credenciales]
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs`
   - `backend/accounting-service/Code.gs`
@@ -2470,20 +2470,20 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   Un servicio debe poder comunicarse con otro servicio perteneciente a una cuenta diferente, siempre que exista una autorización explícita.
   Un servicio no debe poder suplantar a otro ni utilizar sus credenciales para acceder a operaciones ajenas.
 - **Criterios de Aceptación:**
-  - [ ] Comunicación autenticada entre dos cuentas diferentes con verificación de firma HMAC.
-  - [ ] Rechazar solicitudes sin firma o con firma incorrecta.
-  - [ ] Rechazar solicitudes expiradas por tiempo de vigencia.
-  - [ ] Rechazar repetición de solicitudes (protección anti-replay).
-  - [ ] Ejecutar rotación de credenciales sin interrupción de servicio.
-  - [ ] Revocación individual de un servicio específico.
-  - [ ] Rechazar intento de ejecutar una operación no autorizada.
-  - [ ] Inspeccionar el frontend para comprobar que no contiene secretos ni claves de servicio.
-  - [ ] Verificar que los errores no exponen claves ni tokens en texto plano.
-- **Estado:** [ ] Pendiente
+  - [X] Comunicación autenticada entre dos cuentas diferentes con verificación de firma HMAC.
+  - [X] Rechazar solicitudes sin firma o con firma incorrecta.
+  - [X] Rechazar solicitudes expiradas por tiempo de vigencia.
+  - [X] Rechazar repetición de solicitudes (protección anti-replay).
+  - [X] Ejecutar rotación de credenciales sin interrupción de servicio.
+  - [X] Revocación individual de un servicio específico.
+  - [X] Rechazar intento de ejecutar una operación no autorizada.
+  - [X] Inspeccionar el frontend para comprobar que no contiene secretos ni claves de servicio.
+  - [X] Verificar que los errores no exponen claves ni tokens en texto plano.
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-049] [F23-Task06] [P0] [Auditoría Criptográfica - Protección de Decisiones Históricas y Auditoría Anti-Manipulación]
+### [TASK-049] [X] [F23-Task06] [P0] [Auditoría Criptográfica - Protección de Decisiones Históricas y Auditoría Anti-Manipulación]
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs`
 - **Dependencias Expuestas:** `RevisionesDecisionesTramite`, `F23-Task01`, `F23-Task13`.
@@ -2505,13 +2505,13 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   Si una decisión histórica cambia de manera no autorizada, la verificación de integridad debe detectar la alteración.
   Las correcciones legítimas deben quedar documentadas como nuevos eventos vinculados al registro original.
 - **Criterios de Aceptación:**
-  - [ ] Crear una secuencia de decisiones encadenadas por hash.
-  - [ ] Verificar la integridad matemática de la secuencia histórica.
-  - [ ] Modificar un registro histórico de prueba y comprobar que la auditoría detecta la alteración.
-  - [ ] Registrar una corrección autorizada como nuevo evento vinculado.
-  - [ ] Comprobar que la secuencia histórica conserva todos los eventos originales.
-  - [ ] Intentar eliminar registros mediante una cuenta sin privilegios y verificar su bloqueo.
-- **Estado:** [ ] Pendiente
+  - [X] Crear una secuencia de decisiones encadenadas por hash.
+  - [X] Verificar la integridad matemática de la secuencia histórica.
+  - [X] Modificar un registro histórico de prueba y comprobar que la auditoría detecta la alteración.
+  - [X] Registrar una corrección autorizada como nuevo evento vinculado.
+  - [X] Comprobar que la secuencia histórica conserva todos los eventos originales.
+  - [X] Intentar eliminar registros mediante una cuenta sin privilegios y verificar su bloqueo.
+- **Estado:** [X] Completada
 
 ---
 ---

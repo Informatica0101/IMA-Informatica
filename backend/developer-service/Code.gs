@@ -29,6 +29,12 @@ const ROLE_PERMISSIONS = {
   "Desarrollador": ["getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "auditInterServiceCalls", "manageUserMultiRolePermissions", "getCentralizedLogs", "executeOperationalCommand", "getServiceVersionChangelog", "executeServiceVersionRollback", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "runModularAndDynamicDashboardsRegressionSuite", "runAcademicGradingRegressionSuite", "runPhase10AttendanceAndCoexistenceRegressionSuite", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "runPhase20LibraryAndResourcesRegressionSuite", "runPhase21TransportAndServicesRegressionSuite", "runPhase22DocumentManagementAndSACERegressionSuite", "getPhase10FunctionalDocumentation", "validateStagedMigrationProgress", "validateModularFolderStructure", "validateMonolithDecompositionContracts", "getArchitectureAndDependencyMapReport", "getRoleFunctionalSpaceConfig", "auditRoleIndependenceAndMasterDataIntegrity", "validateStableIdentifiersAndControlColumns", "ensureStandardObservabilitySheets", "validateObservabilitySheetsIntegrity", "getCentralSpreadsheetConfigRegistry", "recordProvisioningHistory", "provisionRoleSpreadsheet", "migrateSpreadsheetSchema", "auditServiceBackendIsolationAndDriveSecurity", "batchSpreadsheetReadOperations", "getServiceHealthDiagnostics"]
 };
 
+function computeHmacSignature(message, secret) {
+  const bytes = Utilities.computeHmacSignature(Utilities.MacAlgorithm.HMAC_SHA_256, message, secret);
+  const arr = Array.from ? Array.from(bytes) : [].slice.call(bytes);
+  return arr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+}
+
 function getAuthTokenSecret() {
   const props = PropertiesService.getScriptProperties();
   let secret = "";
@@ -44,6 +50,63 @@ function getAuthTokenSecret() {
     } catch (_) {}
   }
   return secret;
+}
+
+// [TASK-048] [F23-Task05] [P0] Protocolo Universal de Comunicación Interservicio y Gestión de Credenciales
+function createInterServiceEnvelope(sourceService, targetService, action, payload, customSecret) {
+  const now = Date.now();
+  const requestId = "REQ-" + now + "-" + Math.random().toString(36).substring(2, 8);
+  const correlationId = (payload && payload.correlationId) || ("CORR-" + now);
+  const secret = customSecret || getAuthTokenSecret();
+  const bodyToSign = `${requestId}|${now}|${correlationId}|${sourceService}|${targetService}|${action}|${JSON.stringify(payload || {})}`;
+  const hmacSignature = computeHmacSignature(bodyToSign, secret);
+
+  return {
+    sourceService: sourceService,
+    targetService: targetService,
+    action: action,
+    requestId: requestId,
+    timestamp: now,
+    correlationId: correlationId,
+    payload: payload || {},
+    hmacSignature: hmacSignature
+  };
+}
+
+function verifyInterServiceEnvelope(envelope, expectedTargetService, customSecret) {
+  if (!envelope || typeof envelope !== "object") throw new Error("INVALID_ENVELOPE: Estructura de paquete interservicio inválida.");
+  const { sourceService, targetService, action, requestId, timestamp, correlationId, payload, hmacSignature } = envelope;
+
+  if (!sourceService || !targetService || !action || !requestId || !timestamp || !hmacSignature) {
+    throw new Error("MISSING_ENVELOPE_FIELDS: Paquete interservicio incompleto o campos obligatorios ausentes.");
+  }
+
+  if (expectedTargetService && String(targetService).trim().toUpperCase() !== String(expectedTargetService).trim().toUpperCase()) {
+    throw new Error(`INTERSERVICE_TARGET_MISMATCH: Petición dirigida a '${targetService}' recibida en '${expectedTargetService}'.`);
+  }
+
+  const now = Date.now();
+  if (Math.abs(now - timestamp) > 300000) { // 5 minutos de vigencia
+    throw new Error("INTERSERVICE_REQUEST_EXPIRED: La solicitud interservicio ha expirado.");
+  }
+
+  // Protección anti-replay con CacheService
+  const cache = CacheService.getScriptCache();
+  const replayKey = `REPLAY_REQ_${requestId}`;
+  if (cache.get(replayKey)) {
+    throw new Error(`INTERSERVICE_REPLAY_DETECTED: Petición repetida detectada con requestId '${requestId}'.`);
+  }
+  cache.put(replayKey, "SEEN", 300);
+
+  const secret = customSecret || getAuthTokenSecret();
+  const bodyToSign = `${requestId}|${timestamp}|${correlationId}|${sourceService}|${targetService}|${action}|${JSON.stringify(payload || {})}`;
+  const expectedSig = computeHmacSignature(bodyToSign, secret);
+
+  if (hmacSignature !== expectedSig) {
+    throw new Error("INVALID_INTERSERVICE_SIGNATURE: Firma HMAC-SHA256 interservicio inválida.");
+  }
+
+  return { valid: true, sourceService, targetService, action, correlationId, requestId, payload: payload || {} };
 }
 
 function verifySessionToken(tokenString) {

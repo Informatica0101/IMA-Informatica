@@ -4376,3 +4376,29 @@ DESCRIPCIÓN DE MODIFICACIONES:
 4. En Pendientes.md:
    - Marcadas las tareas [TASK-046] y [TASK-047] como completadas [X].
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-03-31
+TAREAS: [TASK-048] [F23-Task05] & [TASK-049] [F23-Task06]
+ARCHIVOS MODIFICADOS:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/developer-service/Code.gs
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt
+- ChangesLogs.txt
+DESCRIPCIÓN DE MODIFICACIONES:
+1. En backend/accounting-service/Code.gs, backend/user-service/Code.gs, backend/academic-service/Code.gs y backend/developer-service/Code.gs:
+   - Implementación de 'createInterServiceEnvelope' y 'verifyInterServiceEnvelope' con autenticación HMAC-SHA256, requestId, timestamp, correlationId, vigencia de 5 minutos, aislamiento de servicio destino (INTERSERVICE_TARGET_MISMATCH) y protección anti-repetición en CacheService (INTERSERVICE_REPLAY_DETECTED).
+2. En backend/user-service/Code.gs:
+   - Encadenamiento de hashes SHA-256 (hashPrevio + hashActual) en 'processWorkflowDecision' sobre 'RevisionesDecisionesTramite'.
+   - Implementación de 'verifyWorkflowDecisionAuditChain' para detección de alteraciones (AUDIT_CHAIN_INTEGRITY_COMPROMISED) y 'recordWorkflowDecisionCorrection' para asentar correcciones autorizadas sin reescribir eventos pasados.
+   - Enlace en ROLE_PERMISSIONS y despachador doPost.
+3. En tests/regression/academic-grading-suite.js:
+   - Inclusión de 4 aserciones para verificar el protocolo interservicio, anti-replay, verificación de cadena de auditoría y encadenamiento criptográfico.
+   - Suite superada con 243/243 pruebas exitosas (100.0%).
+4. En Pendientes.md:
+   - Marcadas las tareas [TASK-048] y [TASK-049] como completadas [X].
+===============================================================================

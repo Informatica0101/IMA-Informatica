@@ -943,19 +943,19 @@ const ROLE_PERMISSIONS = {
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
     "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "dispatchScheduleChangeNotifications", "getScheduleChangeNotificationLogs", "getAdmissionNotificationLogs", "getStudentProcedureNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "generateSignatureAuditCertificate", "configureAdvancedSignatureProvider", "getAdvancedSignatureProviderConfig", "createAdvancedSignatureRequest", "checkAdvancedSignatureStatus", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
-    "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog",
+    "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "verifyWorkflowDecisionAuditChain", "recordWorkflowDecisionCorrection",
     "manageInternalRoleCatalog", "getInternalRoleCatalog", "getInternalRoleAssignments", "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData", "generatePrivilegeAndAccountAuditReport", "getPaginatedAuditLogReport", "auditAndReconcileIdentityInconsistencies"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog",
+    "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "verifyWorkflowDecisionAuditChain", "recordWorkflowDecisionCorrection",
     "manageInternalRoleCatalog", "getInternalRoleCatalog", "getInternalRoleAssignments", "createLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "generateSignatureAuditCertificate", "configureAdvancedSignatureProvider", "getAdvancedSignatureProviderConfig", "createAdvancedSignatureRequest", "checkAdvancedSignatureStatus", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders"
   ],
   "Secretaría": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog",
+    "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "verifyWorkflowDecisionAuditChain", "recordWorkflowDecisionCorrection",
     "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "generateSignatureAuditCertificate", "configureAdvancedSignatureProvider", "getAdvancedSignatureProviderConfig", "createAdvancedSignatureRequest", "checkAdvancedSignatureStatus", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders"
   ],
   "Contador": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest"],
@@ -1003,6 +1003,63 @@ function getAuthTokenSecret() {
     } catch (e) {}
   }
   return secret;
+}
+
+// [TASK-048] [F23-Task05] [P0] Protocolo Universal de Comunicación Interservicio y Gestión de Credenciales
+function createInterServiceEnvelope(sourceService, targetService, action, payload, customSecret) {
+  const now = Date.now();
+  const requestId = "REQ-" + now + "-" + Math.random().toString(36).substring(2, 8);
+  const correlationId = (payload && payload.correlationId) || ("CORR-" + now);
+  const secret = customSecret || getAuthTokenSecret();
+  const bodyToSign = `${requestId}|${now}|${correlationId}|${sourceService}|${targetService}|${action}|${JSON.stringify(payload || {})}`;
+  const hmacSignature = computeHmacSignature(bodyToSign, secret);
+
+  return {
+    sourceService: sourceService,
+    targetService: targetService,
+    action: action,
+    requestId: requestId,
+    timestamp: now,
+    correlationId: correlationId,
+    payload: payload || {},
+    hmacSignature: hmacSignature
+  };
+}
+
+function verifyInterServiceEnvelope(envelope, expectedTargetService, customSecret) {
+  if (!envelope || typeof envelope !== "object") throw new Error("INVALID_ENVELOPE: Estructura de paquete interservicio inválida.");
+  const { sourceService, targetService, action, requestId, timestamp, correlationId, payload, hmacSignature } = envelope;
+
+  if (!sourceService || !targetService || !action || !requestId || !timestamp || !hmacSignature) {
+    throw new Error("MISSING_ENVELOPE_FIELDS: Paquete interservicio incompleto o campos obligatorios ausentes.");
+  }
+
+  if (expectedTargetService && String(targetService).trim().toUpperCase() !== String(expectedTargetService).trim().toUpperCase()) {
+    throw new Error(`INTERSERVICE_TARGET_MISMATCH: Petición dirigida a '${targetService}' recibida en '${expectedTargetService}'.`);
+  }
+
+  const now = Date.now();
+  if (Math.abs(now - timestamp) > 300000) { // 5 minutos de vigencia
+    throw new Error("INTERSERVICE_REQUEST_EXPIRED: La solicitud interservicio ha expirado.");
+  }
+
+  // Protección anti-replay con CacheService
+  const cache = CacheService.getScriptCache();
+  const replayKey = `REPLAY_REQ_${requestId}`;
+  if (cache.get(replayKey)) {
+    throw new Error(`INTERSERVICE_REPLAY_DETECTED: Petición repetida detectada con requestId '${requestId}'.`);
+  }
+  cache.put(replayKey, "SEEN", 300);
+
+  const secret = customSecret || getAuthTokenSecret();
+  const bodyToSign = `${requestId}|${timestamp}|${correlationId}|${sourceService}|${targetService}|${action}|${JSON.stringify(payload || {})}`;
+  const expectedSig = computeHmacSignature(bodyToSign, secret);
+
+  if (hmacSignature !== expectedSig) {
+    throw new Error("INVALID_INTERSERVICE_SIGNATURE: Firma HMAC-SHA256 interservicio inválida.");
+  }
+
+  return { valid: true, sourceService, targetService, action, correlationId, requestId, payload: payload || {} };
 }
 
 function generateSessionToken(user) {
@@ -1534,6 +1591,12 @@ function doPost(e) {
         break;
       case "getSpreadsheetCatalog":
         result = getSpreadsheetCatalog(payload);
+        break;
+      case "verifyWorkflowDecisionAuditChain":
+        result = verifyWorkflowDecisionAuditChain(payload);
+        break;
+      case "recordWorkflowDecisionCorrection":
+        result = recordWorkflowDecisionCorrection(payload);
         break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
@@ -6774,9 +6837,22 @@ function processWorkflowDecision(payload) {
       siguienteAsignadoCalculado = asignadoAActual;
     }
 
-    // 6. Registrar la decisión de forma consistente e inmutable
+    // 6. [TASK-049] Registrar la decisión con encadenamiento criptográfico anti-manipulación (hashPrevio + hashActual)
     const decId = "DEC-" + Date.now();
     const now = new Date();
+    const nowISO = now.toISOString();
+
+    // Obtener hash de la última decisión registrada
+    let hashPrevio = "GENESIS_DECISION_HASH_0000000000000000000000000000000000000000";
+    if (decData.length > 1) {
+      const lastRow = decData[decData.length - 1];
+      if (lastRow[10]) {
+        hashPrevio = String(lastRow[10]).trim();
+      }
+    }
+
+    const decisionPayloadToHash = `${decId}|${solicitudId}|${targetEtapa}|${callerId}|${accionDecision}|${nowISO}|${hashPrevio}`;
+    const hashActual = computeDocumentSHA256(decisionPayloadToHash);
 
     decSheet.appendRow([
       decId,
@@ -6786,8 +6862,10 @@ function processWorkflowDecision(payload) {
       accionDecision,
       observacionesInternas || "",
       observacionesPublicas || "",
-      now.toISOString(),
-      "127.0.0.1"
+      nowISO,
+      "127.0.0.1",
+      hashPrevio,
+      hashActual
     ]);
 
     // 7. Actualizar estado de la solicitud en el servidor
@@ -6828,7 +6906,9 @@ function getWorkflowHistory(payload) {
     accionDecision: r[4],
     observacionesInternas: r[5],
     observacionesPublicas: r[6],
-    fechaDecision: r[7] ? new Date(r[7]).toISOString() : null
+    fechaDecision: r[7] ? new Date(r[7]).toISOString() : null,
+    hashPrevio: r[9] || "",
+    hashActual: r[10] || ""
   })) : [];
 
   // Firmas
@@ -7316,6 +7396,126 @@ function getSpreadsheetCatalog(payload) {
   return {
     status: "success",
     catalogo: mapped
+  };
+}
+
+// [TASK-049] [F23-Task06] [P0] Auditoría Criptográfica: Verificación de Cadena de Decisiones y Registro de Correcciones
+function verifyWorkflowDecisionAuditChain(payload) {
+  const { solicitudId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const decSheet = getOrCreateSheet(ss, "RevisionesDecisionesTramite");
+  const data = decSheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    return {
+      status: "success",
+      cadenaValida: true,
+      totalDecisionesAuditadas: 0,
+      inconsistencias: [],
+      message: "Historial de decisiones vacío, cadena íntegra por defecto."
+    };
+  }
+
+  const rows = data.slice(1);
+  const filteredRows = solicitudId ? rows.filter(r => String(r[1]).trim() === String(solicitudId).trim()) : rows;
+
+  const inconsistencias = [];
+  let cadenaValida = true;
+
+  for (let i = 0; i < filteredRows.length; i++) {
+    const row = filteredRows[i];
+    const decId = row[0];
+    const solId = row[1];
+    const targetEtapa = row[2];
+    const callerId = row[3];
+    const accion = row[4];
+    const fIso = row[7] ? new Date(row[7]).toISOString() : "";
+    const hashPrevioAlmacenado = row[9] || "";
+    const hashActualAlmacenado = row[10] || "";
+
+    // Si tiene campos de hash criptográfico, recalcular y cotejar
+    if (hashActualAlmacenado) {
+      const payloadExpected = `${decId}|${solId}|${targetEtapa}|${callerId}|${accion}|${fIso}|${hashPrevioAlmacenado}`;
+      const recalculatedHash = computeDocumentSHA256(payloadExpected);
+
+      if (recalculatedHash !== hashActualAlmacenado) {
+        cadenaValida = false;
+        inconsistencias.push({
+          decisionId: decId,
+          solicitudId: solId,
+          tipoError: "AUDIT_CHAIN_INTEGRITY_COMPROMISED",
+          mensaje: `Alteración detectada en decisión ${decId}: el hash actual no coincide con los datos del registro.`,
+          hashAlmacenado: hashActualAlmacenado,
+          hashRecalculado: recalculatedHash
+        });
+      }
+    }
+  }
+
+  return {
+    status: "success",
+    cadenaValida: cadenaValida,
+    totalDecisionesAuditadas: filteredRows.length,
+    inconsistencias: inconsistencias,
+    solicitudId: solicitudId || "TODAS",
+    message: cadenaValida
+      ? "Cadena criptográfica de decisiones verificada: integridad 100% inalterada."
+      : `Alerta de seguridad: se detectaron ${inconsistencias.length} inconsistencias o manipulaciones en la cadena histórica.`
+  };
+}
+
+function recordWorkflowDecisionCorrection(payload) {
+  const { decisionIdOriginal, solicitudId, motivoCorreccion, nuevaAccionDecision, revisorId, observaciones } = payload || {};
+  if (!decisionIdOriginal || !solicitudId || !motivoCorreccion || !nuevaAccionDecision) {
+    throw new Error("decisionIdOriginal, solicitudId, motivoCorreccion y nuevaAccionDecision son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const decSheet = getOrCreateSheet(ss, "RevisionesDecisionesTramite");
+  const data = decSheet.getDataRange().getValues();
+
+  const originalRow = data.slice(1).find(r => String(r[0]).trim() === String(decisionIdOriginal).trim());
+  if (!originalRow) {
+    throw new Error(`DECISION_ORIGINAL_NOT_FOUND: No se encontró la decisión previa '${decisionIdOriginal}'.`);
+  }
+
+  // Obtener último hash de la cadena
+  let hashPrevio = "GENESIS_DECISION_HASH_0000000000000000000000000000000000000000";
+  if (data.length > 1 && data[data.length - 1][10]) {
+    hashPrevio = String(data[data.length - 1][10]).trim();
+  }
+
+  const corrId = "DEC-CORR-" + Date.now();
+  const now = new Date();
+  const nowISO = now.toISOString();
+  const caller = revisorId || "Auditor/Dirección";
+  const obs = `[CORRECCIÓN VINCULADA A ${decisionIdOriginal}]: Motivo: ${motivoCorreccion}. ${observaciones || ""}`;
+
+  const payloadHash = `${corrId}|${solicitudId}|Corrección-${originalRow[2]}|${caller}|${nuevaAccionDecision}|${nowISO}|${hashPrevio}`;
+  const hashActual = computeDocumentSHA256(payloadHash);
+
+  decSheet.appendRow([
+    corrId,
+    solicitudId,
+    `Corrección-${originalRow[2]}`,
+    caller,
+    nuevaAccionDecision,
+    obs,
+    motivoCorreccion,
+    nowISO,
+    "127.0.0.1",
+    hashPrevio,
+    hashActual
+  ]);
+
+  return {
+    status: "success",
+    decisionIdCorreccion: corrId,
+    decisionIdOriginal: decisionIdOriginal,
+    solicitudId: solicitudId,
+    nuevaAccion: nuevaAccionDecision,
+    hashActual: hashActual,
+    message: "Corrección vinculada registrada en la cadena inmutable sin reescribir el evento original."
   };
 }
 

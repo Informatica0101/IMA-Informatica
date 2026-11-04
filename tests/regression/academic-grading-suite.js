@@ -377,6 +377,14 @@ assert(acctCode.includes("SOURCE_SPREADSHEET_DISABLED") && userCode.includes("SO
 assert(devCode.includes("CatalogoServicios") && devCode.includes("registerServiceInstance"), "backend/developer-service/Code.gs implementa registro de servicios en CatalogoServicios [TASK-047]");
 assert(devCode.includes("DUPLICATE_SERVICE_REGISTRATION") && devCode.includes("HistorialServiciosDistribuidos"), "backend/developer-service/Code.gs previene duplicados y mantiene histórico de servicios [TASK-047]");
 
+// [TASK-048] [F23-Task05] - Protocolo Universal de Comunicación Interservicio y Gestión de Credenciales
+assert(userCode.includes("createInterServiceEnvelope") && acctCode.includes("createInterServiceEnvelope") && acadCode.includes("createInterServiceEnvelope") && devCode.includes("createInterServiceEnvelope"), "backend servicios implementan createInterServiceEnvelope homogéneo [TASK-048]");
+assert(userCode.includes("INTERSERVICE_REPLAY_DETECTED") && acctCode.includes("INTERSERVICE_REPLAY_DETECTED") && userCode.includes("INVALID_INTERSERVICE_SIGNATURE"), "backend servicios implementan verificación anti-replay y firma HMAC interservicio [TASK-048]");
+
+// [TASK-049] [F23-Task06] - Auditoría Criptográfica y Encadenamiento Anti-Manipulación de Decisiones
+assert(userCode.includes("verifyWorkflowDecisionAuditChain") && userCode.includes("AUDIT_CHAIN_INTEGRITY_COMPROMISED"), "backend/user-service/Code.gs implementa verifyWorkflowDecisionAuditChain [TASK-049]");
+assert(userCode.includes("recordWorkflowDecisionCorrection") && userCode.includes("hashPrevio") && userCode.includes("hashActual"), "backend/user-service/Code.gs implementa encadenamiento de decisiones y eventos de corrección inmutables [TASK-049]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");
