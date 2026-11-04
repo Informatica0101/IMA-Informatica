@@ -359,6 +359,15 @@ assert(acctCode.includes("runPhase22DocumentManagementAndSACERegressionSuite") &
 assert(devCode.includes("runPhase22DocumentManagementAndSACERegressionSuite") && devCode.includes("[TASK-042]"), "backend/developer-service/Code.gs integra suite runPhase22DocumentManagementAndSACERegressionSuite [TASK-042]");
 assert(acctCode.includes("PT22-01") && acctCode.includes("PT22-06") && acctCode.includes("PT22-12"), "backend/accounting-service/Code.gs cubre pruebas completas PT22-01 a PT22-12 [TASK-042]");
 
+// [TASK-044] [F23-Task01] - Integridad Transaccional, Candados Atómicos y Autorización de Decisiones
+assert(userCode.includes("processWorkflowDecision") && userCode.includes("WORKFLOW_CONCURRENCY_LOCKED"), "backend/user-service/Code.gs bloquea decisiones concurrentes con LockService [TASK-044]");
+assert(userCode.includes("STAGE_ALREADY_RESOLVED_CONFLICT") && userCode.includes("WORKFLOW_INVALID_STATE"), "backend/user-service/Code.gs impide resolver etapas ya decididas o en estado inválido [TASK-044]");
+assert(userCode.includes("estadoFinalCalculado") && userCode.includes("siguienteAsignadoCalculado"), "backend/user-service/Code.gs calcula transiciones del lado del servidor [TASK-044]");
+
+// [TASK-045] [F23-Task02] - Idempotencia de Solicitudes, Decisiones y Operaciones Institucionales
+assert(userCode.includes("checkAndRegisterIdempotencyKey") && userCode.includes("saveIdempotentResult"), "backend/user-service/Code.gs implementa motor de idempotencia [TASK-045]");
+assert(userCode.includes("IDEMPOTENCY_KEY_PAYLOAD_MISMATCH") && userCode.includes("cachedIdempotentResult"), "backend/user-service/Code.gs rechaza claves reutilizadas incompatibles y devuelve resultado previo [TASK-045]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");

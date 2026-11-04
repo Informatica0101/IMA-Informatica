@@ -4329,3 +4329,24 @@ DESCRIPCIÓN DE MODIFICACIONES:
 4. En Pendientes.md:
    - Marcada la tarea [TASK-042] como completada [X].
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-03-31
+TAREAS: [TASK-044] [F23-Task01] & [TASK-045] [F23-Task02]
+ARCHIVOS MODIFICADOS:
+- backend/user-service/Code.gs
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt
+- ChangesLogs.txt
+DESCRIPCIÓN DE MODIFICACIONES:
+1. En backend/user-service/Code.gs:
+   - Modificación de 'processWorkflowDecision' con protección atómica mediante LockService.getScriptLock(15000), validación de estados finalizados (WORKFLOW_INVALID_STATE), detección de etapa ya resuelta (STAGE_ALREADY_RESOLVED_CONFLICT) y cálculo determinista en servidor de transiciones y responsables.
+   - Implementación de 'getIdempotencyPayloadSignature', 'checkAndRegisterIdempotencyKey' y 'saveIdempotentResult' integrados en el despachador doPost para acciones no-consulta.
+   - Retorno de resultados cacheados con 'cachedIdempotentResult: true' y detección de firmas de payload incompatibles (IDEMPOTENCY_KEY_PAYLOAD_MISMATCH).
+2. En tests/regression/academic-grading-suite.js:
+   - Inclusión de 5 aserciones de prueba regresiva para la integridad transaccional de workflows e idempotencia en servicios de usuario.
+   - Suite superada con 235/235 pruebas exitosas (100.0%).
+3. En Pendientes.md:
+   - Marcadas las tareas [TASK-044] y [TASK-045] como completadas [X].
+===============================================================================

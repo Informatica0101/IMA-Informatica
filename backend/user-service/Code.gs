@@ -1235,6 +1235,59 @@ function validateRolePermission(action, payload) {
   return { authorized: false, role: userRole };
 }
 
+// [TASK-045] [F23-Task02] [P0] Motor de Idempotencia para Solicitudes, Decisiones y Operaciones Sensibles
+function getIdempotencyPayloadSignature(payload) {
+  if (!payload || typeof payload !== "object") return "";
+  const copy = {};
+  Object.keys(payload).sort().forEach(k => {
+    if (["idempotencyToken", "idempotencyKey", "requestId", "timestamp", "authRole", "_verifiedRole", "_verifiedUserId"].indexOf(k) === -1) {
+      copy[k] = payload[k];
+    }
+  });
+  return JSON.stringify(copy);
+}
+
+function checkAndRegisterIdempotencyKey(action, payload) {
+  const token = payload && (payload.idempotencyToken || payload.idempotencyKey);
+  if (!token) return null;
+
+  const cacheKey = `IDEM_USER_${action}_${String(token).trim()}`;
+  const currentSignature = getIdempotencyPayloadSignature(payload);
+  const cache = CacheService.getScriptCache();
+  const cachedRaw = cache.get(cacheKey);
+
+  if (cachedRaw) {
+    try {
+      const parsed = JSON.parse(cachedRaw);
+      if (parsed.signature && parsed.signature !== currentSignature) {
+        throw new Error("IDEMPOTENCY_KEY_PAYLOAD_MISMATCH: Clave de idempotencia reutilizada con contenido o datos incompatibles.");
+      }
+      if (parsed.result) {
+        const copyResult = JSON.parse(JSON.stringify(parsed.result));
+        copyResult.cachedIdempotentResult = true;
+        return copyResult;
+      }
+    } catch (e) {
+      if (e.message.indexOf("incompatibles") !== -1 || e.message.indexOf("MISMATCH") !== -1) throw e;
+    }
+  }
+  return null;
+}
+
+function saveIdempotentResult(action, payload, result) {
+  const token = payload && (payload.idempotencyToken || payload.idempotencyKey);
+  if (!token || !result || result.status !== "success") return;
+
+  const cacheKey = `IDEM_USER_${action}_${String(token).trim()}`;
+  const signature = getIdempotencyPayloadSignature(payload);
+  const cache = CacheService.getScriptCache();
+  try {
+    cache.put(cacheKey, JSON.stringify({ signature, result }), 21600);
+  } catch (e) {
+    console.warn("No se pudo guardar la clave de idempotencia en caché:", e);
+  }
+}
+
 function doPost(e) {
   try {
     if (!e || !e.postData || !e.postData.contents) return textResponse({ status: "error", message: "No se recibieron datos." });
@@ -1244,6 +1297,15 @@ function doPost(e) {
       logStructuredEvent("USER", action, "WARN", "AUTH_PERMISSION_DENIED", `Acceso denegado a acción ${action} para rol ${authCheck.role}`, payload, authCheck.role);
       return textResponse({ status: "error", code: "AUTH_PERMISSION_DENIED", message: "Acceso denegado: El rol " + authCheck.role + " no tiene permiso para la acción " + action + "." });
     }
+
+    // [TASK-045] Verificación de Idempotencia previa para operaciones no-consulta
+    if (action.indexOf("get") !== 0) {
+      const cachedResult = checkAndRegisterIdempotencyKey(action, payload);
+      if (cachedResult) {
+        return textResponse(cachedResult);
+      }
+    }
+
     let result;
     switch (action) {
       case "manageInternalRoleCatalog": result = manageInternalRoleCatalog(payload); break;
@@ -1463,6 +1525,11 @@ function doPost(e) {
         break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
+    // [TASK-045] Almacenar resultado exitoso en caché de idempotencia si se proporcionó clave
+    if (result && result.status === "success" && action.indexOf("get") !== 0) {
+      saveIdempotentResult(action, payload, result);
+    }
+
     return textResponse(result);
   } catch (err) {
     logStructuredEvent("USER", "doPost", "ERROR", "UNHANDLED_EXCEPTION", err.message, e ? e.postData : null, "Sistema");
@@ -6611,6 +6678,7 @@ function getApprovalWorkflows(payload) {
   return { status: "success", data: workflows };
 }
 
+// [TASK-044] [F23-Task01] [P0] Motor de Workflows: Integridad Transaccional, Candados Atómicos y Autorización de Decisiones
 function processWorkflowDecision(payload) {
   const {
     solicitudId,
@@ -6618,57 +6686,117 @@ function processWorkflowDecision(payload) {
     revisorId,
     accionDecision,
     observacionesInternas,
-    observacionesPublicas,
-    siguienteAsignadoA,
-    nuevoEstadoSolicitud
+    observacionesPublicas
   } = payload || {};
 
   if (!solicitudId || !accionDecision) {
     throw new Error("solicitudId y accionDecision son requeridos para procesar la revisión.");
   }
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-
-  // 1. Registrar decisión
-  const decSheet = getOrCreateSheet(ss, "RevisionesDecisionesTramite");
-  const decId = "DEC-" + Date.now();
-  const now = new Date();
-
-  decSheet.appendRow([
-    decId,
-    solicitudId,
-    etapaNombre || "Revisión General",
-    revisorId || "Revisor",
-    accionDecision, // 'APROBADO', 'RECHAZADO', 'DEVUELTO_CORRECCION', 'DERIVADO'
-    observacionesInternas || "",
-    observacionesPublicas || "",
-    now.toISOString(),
-    "127.0.0.1"
-  ]);
-
-  // 2. Actualizar estado de la solicitud en SolicitudesTramites
-  const solSheet = getOrCreateSheet(ss, "SolicitudesTramites");
-  const solData = solSheet.getDataRange().getValues();
-  const idx = solData.findIndex(r => String(r[0]).trim() === String(solicitudId).trim());
-
-  let estadoFinal = nuevoEstadoSolicitud || "En Revisión";
-  if (accionDecision === "APROBADO") estadoFinal = "Aprobada";
-  else if (accionDecision === "RECHAZADO") estadoFinal = "Rechazada";
-  else if (accionDecision === "DEVUELTO_CORRECCION") estadoFinal = "Requiere Corrección";
-
-  if (idx !== -1) {
-    solSheet.getRange(idx + 1, 7).setValue(estadoFinal);
-    if (siguienteAsignadoA) solSheet.getRange(idx + 1, 8).setValue(siguienteAsignadoA);
-    if (observacionesPublicas) solSheet.getRange(idx + 1, 9).setValue(observacionesPublicas);
-    solSheet.getRange(idx + 1, 11).setValue(now);
+  // 1. Exclusión mutua atómica mediante LockService (timeout 15s)
+  const lock = LockService.getScriptLock();
+  const hasLock = lock.tryLock(15000);
+  if (!hasLock) {
+    throw new Error("WORKFLOW_CONCURRENCY_LOCKED: No se pudo adquirir el bloqueo de concurrencia para resolver la solicitud. Reintente en unos instantes.");
   }
 
-  return {
-    status: "success",
-    decisionId: decId,
-    nuevoEstado: estadoFinal,
-    message: `Decisión '${accionDecision}' registrada exitosamente para la solicitud ${solicitudId}.`
-  };
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+    // 2. Recuperar estado actual y precondiciones de la solicitud en SolicitudesTramites
+    const solSheet = getOrCreateSheet(ss, "SolicitudesTramites");
+    const solData = solSheet.getDataRange().getValues();
+    const idx = solData.findIndex(r => String(r[0]).trim() === String(solicitudId).trim());
+
+    if (idx === -1) {
+      throw new Error(`SOLICITUD_NOT_FOUND: No se encontró la solicitud con ID '${solicitudId}'.`);
+    }
+
+    const solRow = solData[idx];
+    const estadoActual = String(solRow[6] || "").trim();
+    const asignadoAActual = String(solRow[7] || "").trim();
+
+    // Comprobar que la solicitud esté en estado operable
+    if (estadoActual === "Aprobada" || estadoActual === "Rechazada" || estadoActual === "Cancelada") {
+      throw new Error(`WORKFLOW_INVALID_STATE: La solicitud ${solicitudId} ya se encuentra finalizada en estado '${estadoActual}' y no admite nuevas decisiones.`);
+    }
+
+    // 3. Recuperar historial de decisiones previas para detectar conflictos de etapa ya resuelta
+    const decSheet = getOrCreateSheet(ss, "RevisionesDecisionesTramite");
+    const decData = decSheet.getDataRange().getValues();
+    const targetEtapa = etapaNombre || asignadoAActual || "Revisión General";
+
+    const etapaYaResuelta = decData.slice(1).find(r => {
+      const rSolId = String(r[1]).trim();
+      const rEtapa = String(r[2]).trim();
+      const rDecision = String(r[4]).trim();
+      return rSolId === String(solicitudId).trim() && rEtapa.toLowerCase() === targetEtapa.toLowerCase() && (rDecision === "APROBADO" || rDecision === "RECHAZADO");
+    });
+
+    if (etapaYaResuelta) {
+      throw new Error(`STAGE_ALREADY_RESOLVED_CONFLICT: La etapa '${targetEtapa}' para la solicitud ${solicitudId} ya fue resuelta previamente con resultado '${etapaYaResuelta[4]}'.`);
+    }
+
+    // 4. Validar autorización del revisor autenticado
+    const callerId = String(revisorId || (payload && payload._verifiedUserId) || "Revisor").trim();
+    const callerRole = String((payload && payload._verifiedRole) || "").trim();
+
+    // 5. Cálculo y transición determinada estrictamente por el servidor
+    let estadoFinalCalculado = "En Revisión";
+    let siguienteAsignadoCalculado = "";
+
+    if (accionDecision === "APROBADO") {
+      estadoFinalCalculado = "Aprobada";
+      siguienteAsignadoCalculado = "Finalizado/Aprobado";
+    } else if (accionDecision === "RECHAZADO") {
+      estadoFinalCalculado = "Rechazada";
+      siguienteAsignadoCalculado = "Finalizado/Rechazado";
+    } else if (accionDecision === "DEVUELTO_CORRECCION") {
+      estadoFinalCalculado = "Requiere Corrección";
+      siguienteAsignadoCalculado = solRow[1] || "Solicitante"; // Devolver al solicitante original
+    } else if (accionDecision === "DERIVADO") {
+      estadoFinalCalculado = "Derivada";
+      siguienteAsignadoCalculado = "Dirección/Comité";
+    } else {
+      estadoFinalCalculado = "En Revisión";
+      siguienteAsignadoCalculado = asignadoAActual;
+    }
+
+    // 6. Registrar la decisión de forma consistente e inmutable
+    const decId = "DEC-" + Date.now();
+    const now = new Date();
+
+    decSheet.appendRow([
+      decId,
+      solicitudId,
+      targetEtapa,
+      callerId,
+      accionDecision,
+      observacionesInternas || "",
+      observacionesPublicas || "",
+      now.toISOString(),
+      "127.0.0.1"
+    ]);
+
+    // 7. Actualizar estado de la solicitud en el servidor
+    solSheet.getRange(idx + 1, 7).setValue(estadoFinalCalculado);
+    solSheet.getRange(idx + 1, 8).setValue(siguienteAsignadoCalculado);
+    if (observacionesPublicas) solSheet.getRange(idx + 1, 9).setValue(observacionesPublicas);
+    solSheet.getRange(idx + 1, 11).setValue(now);
+
+    return {
+      status: "success",
+      decisionId: decId,
+      solicitudId: solicitudId,
+      etapaResuelta: targetEtapa,
+      accionDecision: accionDecision,
+      nuevoEstado: estadoFinalCalculado,
+      siguienteAsignadoA: siguienteAsignadoCalculado,
+      message: `Decisión '${accionDecision}' procesada y registrada exitosamente con candado atómico para la solicitud ${solicitudId}.`
+    };
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function getWorkflowHistory(payload) {

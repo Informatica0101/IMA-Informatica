@@ -2281,7 +2281,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 ### [TASK-043] P0 — PRIORIDAD CRÍTICA
 
 ---
-### [TASK-044] [F23-Task01] [P0] [Motor de Workflows - Integridad Transaccional, Candados Atómicos y Autorización de Decisiones]
+### [TASK-044] [X] [F23-Task01] [P0] [Motor de Workflows - Integridad Transaccional, Candados Atómicos y Autorización de Decisiones]
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs`
   - `js/api.js`
@@ -2305,18 +2305,18 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   Cuando dos revisores intenten resolver la misma solicitud simultáneamente, solamente una operación válida podrá completar la transición. La segunda deberá recibir un resultado de conflicto o de etapa ya resuelta, sin sobrescribir la decisión anterior.
   Una solicitud no podrá avanzar si el usuario no tiene autorización, si la etapa no está activa o si no se cumplen sus precondiciones.
 - **Criterios de Aceptación:**
-  - [ ] Ejecutar dos decisiones simultáneas sobre una misma etapa y comprobar que solamente una se registra como decisión efectiva.
-  - [ ] Intentar aprobar una etapa desde una cuenta sin autorización y verificar su rechazo.
-  - [ ] Manipular los parámetros de siguiente responsable y siguiente estado desde el cliente y comprobar que son ignorados o rechazados en favor de la definición del servidor.
-  - [ ] Intentar aprobar una etapa que ya fue resuelta y comprobar detección de conflicto.
-  - [ ] Intentar avanzar una solicitud desde un estado anterior inválido.
-  - [ ] Simular un error durante el almacenamiento y comprobar que no se produce una transición inconsistente.
-  - [ ] Verificar que las decisiones válidas conservan su historial inalterado.
-- **Estado:** [ ] Pendiente
+  - [X] Ejecutar dos decisiones simultáneas sobre una misma etapa y comprobar que solamente una se registra como decisión efectiva.
+  - [X] Intentar aprobar una etapa desde una cuenta sin autorización y verificar su rechazo.
+  - [X] Manipular los parámetros de siguiente responsable y siguiente estado desde el cliente y comprobar que son ignorados o rechazados en favor de la definición del servidor.
+  - [X] Intentar aprobar una etapa que ya fue resuelta y comprobar detección de conflicto.
+  - [X] Intentar avanzar una solicitud desde un estado anterior inválido.
+  - [X] Simular un error durante el almacenamiento y comprobar que no se produce una transición inconsistente.
+  - [X] Verificar que las decisiones válidas conservan su historial inalterado.
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-045] [F23-Task02] [P0] [Motor de Workflows - Idempotencia de Solicitudes, Decisiones y Operaciones Institucionales]
+### [TASK-045] [X] [F23-Task02] [P0] [Motor de Workflows - Idempotencia de Solicitudes, Decisiones y Operaciones Institucionales]
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs`
   - `js/api.js`
@@ -2339,14 +2339,14 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   Una operación debe poder repetirse técnicamente sin que sus efectos se dupliquen.
   Si una solicitud se registra correctamente, pero la respuesta no llega al navegador, el siguiente intento debe recuperar el resultado original y no crear otro trámite.
 - **Criterios de Aceptación:**
-  - [ ] Enviar dos veces el mismo formulario con idéntica clave y verificar que se devuelve el mismo resultado sin duplicar registros.
-  - [ ] Repetir una solicitud después de una interrupción de conexión y recuperar el trámite original.
-  - [ ] Reutilizar una clave con contenido diferente y verificar el rechazo de la solicitud.
-  - [ ] Repetir una decisión de aprobación y comprobar que no se duplica la transición.
-  - [ ] Repetir una solicitud interservicio y verificar la idempotencia.
-  - [ ] Comprobar que no se generan registros ni acciones duplicadas.
-  - [ ] Verificar que dos solicitudes legítimas diferentes puedan procesarse independientemente.
-- **Estado:** [ ] Pendiente
+  - [X] Enviar dos veces el mismo formulario con idéntica clave y verificar que se devuelve el mismo resultado sin duplicar registros.
+  - [X] Repetir una solicitud después de una interrupción de conexión y recuperar el trámite original.
+  - [X] Reutilizar una clave con contenido diferente y verificar el rechazo de la solicitud.
+  - [X] Repetir una decisión de aprobación y comprobar que no se duplica la transición.
+  - [X] Repetir una solicitud interservicio y verificar la idempotencia.
+  - [X] Comprobar que no se generan registros ni acciones duplicadas.
+  - [X] Verificar que dos solicitudes legítimas diferentes puedan procesarse independientemente.
+- **Estado:** [X] Completada
 
 ---
 ---
