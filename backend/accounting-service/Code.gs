@@ -14590,36 +14590,46 @@ function registerSpreadsheetSource(payload) {
   };
 }
 
+// [TASK-046] [F23-Task03] [P0] Enrutador Universal de Spreadsheets y Resolución Dinámica de Fuentes de Datos
 function resolveSpreadsheetSource(payload) {
-  const { dominioArea, anoLectivo } = payload || {};
+  const { dominioArea, anoLectivo, departamento, servicio } = payload || {};
   if (!dominioArea || !anoLectivo) throw new Error("dominioArea y anoLectivo requeridos.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const rows = getOrCreateSheet(ss, "CatalogoSpreadsheets").getDataRange().getValues().slice(1);
 
-  const match = rows.find(r => String(r[1]).toLowerCase().trim() === String(dominioArea).toLowerCase().trim() && String(r[2]).trim() === String(anoLectivo).trim() && r[5] === "active");
+  // Buscar coincidencia exacta por dominio y año lectivo
+  const candidate = rows.find(r => String(r[1]).toLowerCase().trim() === String(dominioArea).toLowerCase().trim() && String(r[2]).trim() === String(anoLectivo).trim());
 
-  if (!match) {
-    // Retornar ID por defecto si no existe una hoja externa específica
+  if (candidate) {
+    const estadoFuente = String(candidate[5] || "active").toLowerCase().trim();
+    if (estadoFuente === "disabled" || estadoFuente === "inactivo" || estadoFuente === "suspendido") {
+      throw new Error(`SOURCE_SPREADSHEET_DISABLED: La fuente de datos '${candidate[0]}' para dominio '${dominioArea}' y año '${anoLectivo}' se encuentra deshabilitada.`);
+    }
+
     return {
       status: "success",
-      resolved: false,
-      spreadsheetId: SPREADSHEET_ID,
-      dominioArea: dominioArea,
-      anoLectivo: anoLectivo,
-      message: "Utilizando Spreadsheet Principal predeterminada."
+      resolved: true,
+      fuenteId: candidate[0],
+      dominioArea: candidate[1],
+      anoLectivo: candidate[2],
+      spreadsheetId: candidate[3],
+      urlAcceso: candidate[4],
+      estado: candidate[5],
+      schemaVersion: candidate[6] || "1.0",
+      message: `Fuente de datos distribuida resuelta para ${dominioArea} (${anoLectivo}).`
     };
   }
 
+  // Retornar ID por defecto si no existe una partición específica registrada
   return {
     status: "success",
-    resolved: true,
-    fuenteId: match[0],
-    dominioArea: match[1],
-    anoLectivo: match[2],
-    spreadsheetId: match[3],
-    urlAcceso: match[4],
-    schemaVersion: match[6]
+    resolved: false,
+    spreadsheetId: SPREADSHEET_ID,
+    dominioArea: dominioArea,
+    anoLectivo: anoLectivo,
+    schemaVersion: "1.0",
+    message: "Utilizando Spreadsheet Principal predeterminada."
   };
 }
 

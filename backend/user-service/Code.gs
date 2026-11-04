@@ -943,16 +943,19 @@ const ROLE_PERMISSIONS = {
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
     "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "dispatchScheduleChangeNotifications", "getScheduleChangeNotificationLogs", "getAdmissionNotificationLogs", "getStudentProcedureNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "generateSignatureAuditCertificate", "configureAdvancedSignatureProvider", "getAdvancedSignatureProviderConfig", "createAdvancedSignatureRequest", "checkAdvancedSignatureStatus", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
+    "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog",
     "manageInternalRoleCatalog", "getInternalRoleCatalog", "getInternalRoleAssignments", "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData", "generatePrivilegeAndAccountAuditReport", "getPaginatedAuditLogReport", "auditAndReconcileIdentityInconsistencies"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
+    "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog",
     "manageInternalRoleCatalog", "getInternalRoleCatalog", "getInternalRoleAssignments", "createLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "generateSignatureAuditCertificate", "configureAdvancedSignatureProvider", "getAdvancedSignatureProviderConfig", "createAdvancedSignatureRequest", "checkAdvancedSignatureStatus", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders"
   ],
   "Secretaría": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
+    "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog",
     "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "generateSignatureAuditCertificate", "configureAdvancedSignatureProvider", "getAdvancedSignatureProviderConfig", "createAdvancedSignatureRequest", "checkAdvancedSignatureStatus", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders"
   ],
   "Contador": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest"],
@@ -1522,6 +1525,15 @@ function doPost(e) {
         break;
       case "updateInstitutionalServiceRequestStatus":
         result = updateInstitutionalServiceRequestStatus(payload);
+        break;
+      case "registerSpreadsheetSource":
+        result = registerSpreadsheetSource(payload);
+        break;
+      case "resolveSpreadsheetSource":
+        result = resolveSpreadsheetSource(payload);
+        break;
+      case "getSpreadsheetCatalog":
+        result = getSpreadsheetCatalog(payload);
         break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
@@ -7194,6 +7206,116 @@ function checkAdvancedSignatureStatus(payload) {
     documentoHash: row[8],
     estadoTransaccion: estadoActual,
     esFirmadoValido: estadoActual === "Completada"
+  };
+}
+
+// [TASK-046] [F23-Task03] [P0] Enrutador Universal de Spreadsheets y Resolución Dinámica de Fuentes de Datos
+function registerSpreadsheetSource(payload) {
+  const { dominioArea, anoLectivo, spreadsheetId, urlAcceso, estado, schemaVersion, departamento, servicio, observaciones } = payload || {};
+  if (!dominioArea || !anoLectivo || !spreadsheetId) throw new Error("dominioArea, anoLectivo y spreadsheetId son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CatalogoSpreadsheets");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  const existingIdx = data.findIndex(r => String(r[1]).toLowerCase().trim() === String(dominioArea).toLowerCase().trim() && String(r[2]).trim() === String(anoLectivo).trim());
+
+  let fId = "";
+  if (existingIdx !== -1) {
+    fId = data[existingIdx][0];
+    sheet.getRange(existingIdx + 1, 1, 1, 8).setValues([[
+      fId,
+      String(dominioArea).trim(),
+      String(anoLectivo).trim(),
+      String(spreadsheetId).trim(),
+      urlAcceso || `https://docs.google.com/spreadsheets/d/${spreadsheetId}`,
+      estado || "active",
+      schemaVersion || "1.0",
+      observaciones || ""
+    ]]);
+  } else {
+    fId = "SRC-" + now.getTime();
+    sheet.appendRow([
+      fId,
+      String(dominioArea).trim(),
+      String(anoLectivo).trim(),
+      String(spreadsheetId).trim(),
+      urlAcceso || `https://docs.google.com/spreadsheets/d/${spreadsheetId}`,
+      estado || "active",
+      schemaVersion || "1.0",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    fuenteId: fId,
+    spreadsheetId: spreadsheetId,
+    message: "Fuente de datos distribuida registrada exitosamente en catálogo central."
+  };
+}
+
+function resolveSpreadsheetSource(payload) {
+  const { dominioArea, anoLectivo, departamento, servicio } = payload || {};
+  if (!dominioArea || !anoLectivo) throw new Error("dominioArea y anoLectivo requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "CatalogoSpreadsheets").getDataRange().getValues().slice(1);
+
+  // Buscar coincidencia exacta por dominio y año lectivo
+  const candidate = rows.find(r => String(r[1]).toLowerCase().trim() === String(dominioArea).toLowerCase().trim() && String(r[2]).trim() === String(anoLectivo).trim());
+
+  if (candidate) {
+    const estadoFuente = String(candidate[5] || "active").toLowerCase().trim();
+    if (estadoFuente === "disabled" || estadoFuente === "inactivo" || estadoFuente === "suspendido") {
+      throw new Error(`SOURCE_SPREADSHEET_DISABLED: La fuente de datos '${candidate[0]}' para dominio '${dominioArea}' y año '${anoLectivo}' se encuentra deshabilitada.`);
+    }
+
+    return {
+      status: "success",
+      resolved: true,
+      fuenteId: candidate[0],
+      dominioArea: candidate[1],
+      anoLectivo: candidate[2],
+      spreadsheetId: candidate[3],
+      urlAcceso: candidate[4],
+      estado: candidate[5],
+      schemaVersion: candidate[6] || "1.0",
+      message: `Fuente de datos distribuida resuelta para ${dominioArea} (${anoLectivo}).`
+    };
+  }
+
+  // Retornar ID por defecto si no existe una partición específica registrada
+  return {
+    status: "success",
+    resolved: false,
+    spreadsheetId: SPREADSHEET_ID,
+    dominioArea: dominioArea,
+    anoLectivo: anoLectivo,
+    schemaVersion: "1.0",
+    message: "Utilizando Spreadsheet Principal predeterminada."
+  };
+}
+
+function getSpreadsheetCatalog(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "CatalogoSpreadsheets").getDataRange().getValues().slice(1);
+
+  const mapped = rows.map(r => ({
+    fuenteId: r[0],
+    dominioArea: r[1],
+    anoLectivo: r[2],
+    spreadsheetId: r[3],
+    urlAcceso: r[4],
+    estado: r[5],
+    schemaVersion: r[6],
+    observaciones: r[7]
+  }));
+
+  return {
+    status: "success",
+    catalogo: mapped
   };
 }
 

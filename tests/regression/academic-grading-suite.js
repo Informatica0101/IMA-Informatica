@@ -74,6 +74,7 @@ assert(devCode.includes("runPhase10AttendanceAndCoexistenceRegressionSuite") && 
 assert(academicCode.includes("generateConsolidatedAttendanceAndCoexistenceReport") && academicCode.includes("[F10-Task16]"), "backend/academic-service/Code.gs contiene generateConsolidatedAttendanceAndCoexistenceReport [F10-Task16]");
 
 const acctCode = fs.readFileSync(path.join(__dirname, '../../backend/accounting-service/Code.gs'), 'utf8');
+const acadCode = fs.readFileSync(path.join(__dirname, '../../backend/academic-service/Code.gs'), 'utf8');
 assert(acctCode.includes("recordStaffCheckIn") && acctCode.includes("[F10-Task17]"), "backend/accounting-service/Code.gs contiene recordStaffCheckIn optimizado con trazabilidad [F10-Task17]");
 assert(devCode.includes("getPhase10FunctionalDocumentation") && devCode.includes("[F10-Task18]"), "backend/developer-service/Code.gs contiene getPhase10FunctionalDocumentation [F10-Task18]");
 assert(fs.existsSync(path.join(__dirname, '../../docs/architecture/phase-10-attendance-coexistence-spec.md')), "Existe documento funcional docs/architecture/phase-10-attendance-coexistence-spec.md [F10-Task18]");
@@ -367,6 +368,14 @@ assert(userCode.includes("estadoFinalCalculado") && userCode.includes("siguiente
 // [TASK-045] [F23-Task02] - Idempotencia de Solicitudes, Decisiones y Operaciones Institucionales
 assert(userCode.includes("checkAndRegisterIdempotencyKey") && userCode.includes("saveIdempotentResult"), "backend/user-service/Code.gs implementa motor de idempotencia [TASK-045]");
 assert(userCode.includes("IDEMPOTENCY_KEY_PAYLOAD_MISMATCH") && userCode.includes("cachedIdempotentResult"), "backend/user-service/Code.gs rechaza claves reutilizadas incompatibles y devuelve resultado previo [TASK-045]");
+
+// [TASK-046] [F23-Task03] - Enrutador Universal de Spreadsheets y Resolución Dinámica de Fuentes de Datos
+assert(userCode.includes("resolveSpreadsheetSource") && acadCode.includes("resolveSpreadsheetSource") && acctCode.includes("resolveSpreadsheetSource"), "backend servicios implementan resolveSpreadsheetSource homogéneo [TASK-046]");
+assert(acctCode.includes("SOURCE_SPREADSHEET_DISABLED") && userCode.includes("SOURCE_SPREADSHEET_DISABLED"), "backend servicios rechazan fuentes deshabilitadas de Spreadsheets [TASK-046]");
+
+// [TASK-047] [F23-Task04] - Catálogo Institucional de Cuentas, Servicios y Permisos Distribuidos
+assert(devCode.includes("CatalogoServicios") && devCode.includes("registerServiceInstance"), "backend/developer-service/Code.gs implementa registro de servicios en CatalogoServicios [TASK-047]");
+assert(devCode.includes("DUPLICATE_SERVICE_REGISTRATION") && devCode.includes("HistorialServiciosDistribuidos"), "backend/developer-service/Code.gs previene duplicados y mantiene histórico de servicios [TASK-047]");
 
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {

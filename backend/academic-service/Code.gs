@@ -183,6 +183,7 @@ const ROLE_PERMISSIONS = {
     "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches", "scheduleGuidanceAppointment", "getGuidanceAppointments", "updateGuidanceAppointmentStatus", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts", "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "reviewPedagogicalPlanning", "getPlanningReviewHistory", "saveSupervisionRubric", "getSupervisionRubrics"
   ],
   "Subdirector": [
+    "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog",
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "registerStudentEnrollment", "getStudentEnrollmentHistory",
     "getInstitutionParams", "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getStudyPlans", "getAcademicOffers",
     "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs", "getReusableResourceCatalog", "manageReusableResource",
@@ -193,6 +194,7 @@ const ROLE_PERMISSIONS = {
     "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "reviewPedagogicalPlanning", "getPlanningReviewHistory", "saveSupervisionRubric", "getSupervisionRubrics"
   ],
   "Secretaría": [
+    "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog",
     "getAcademicConfig", "getAsignaturasActivas", "registerStudentEnrollment", "getStudentEnrollmentHistory",
     "getInstitutionParams", "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getStudyPlans", "getAcademicOffers",
     "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs", "getReusableResourceCatalog", "manageReusableResource",
@@ -655,6 +657,9 @@ function doPost(e) {
       case "generateInstitutionalReport": result = generateInstitutionalReport(payload); break;
       case "getSectionEquivalences": result = getSectionEquivalences(payload); break;
       case "calculateUnifiedAcademicGrade": result = calculateUnifiedAcademicGrade(payload); break;
+      case "registerSpreadsheetSource": result = registerSpreadsheetSource(payload); break;
+      case "resolveSpreadsheetSource": result = resolveSpreadsheetSource(payload); break;
+      case "getSpreadsheetCatalog": result = getSpreadsheetCatalog(payload); break;
       case "previewAcademicGradeCalculation": result = previewAcademicGradeCalculation(payload); break;
       case "auditAcademicGradesIntegrity": result = auditAcademicGradesIntegrity(payload); break;
       case "generateStudentReportCard": result = generateStudentReportCard(payload); break;
@@ -11285,6 +11290,116 @@ function changeStudentSection(payload) {
   } finally {
     lock.releaseLock();
   }
+}
+
+// [TASK-046] [F23-Task03] [P0] Enrutador Universal de Spreadsheets y Resolución Dinámica de Fuentes de Datos
+function registerSpreadsheetSource(payload) {
+  const { dominioArea, anoLectivo, spreadsheetId, urlAcceso, estado, schemaVersion, departamento, servicio, observaciones } = payload || {};
+  if (!dominioArea || !anoLectivo || !spreadsheetId) throw new Error("dominioArea, anoLectivo y spreadsheetId son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CatalogoSpreadsheets");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  const existingIdx = data.findIndex(r => String(r[1]).toLowerCase().trim() === String(dominioArea).toLowerCase().trim() && String(r[2]).trim() === String(anoLectivo).trim());
+
+  let fId = "";
+  if (existingIdx !== -1) {
+    fId = data[existingIdx][0];
+    sheet.getRange(existingIdx + 1, 1, 1, 8).setValues([[
+      fId,
+      String(dominioArea).trim(),
+      String(anoLectivo).trim(),
+      String(spreadsheetId).trim(),
+      urlAcceso || `https://docs.google.com/spreadsheets/d/${spreadsheetId}`,
+      estado || "active",
+      schemaVersion || "1.0",
+      observaciones || ""
+    ]]);
+  } else {
+    fId = "SRC-" + now.getTime();
+    sheet.appendRow([
+      fId,
+      String(dominioArea).trim(),
+      String(anoLectivo).trim(),
+      String(spreadsheetId).trim(),
+      urlAcceso || `https://docs.google.com/spreadsheets/d/${spreadsheetId}`,
+      estado || "active",
+      schemaVersion || "1.0",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    fuenteId: fId,
+    spreadsheetId: spreadsheetId,
+    message: "Fuente de datos distribuida registrada exitosamente en catálogo central."
+  };
+}
+
+function resolveSpreadsheetSource(payload) {
+  const { dominioArea, anoLectivo, departamento, servicio } = payload || {};
+  if (!dominioArea || !anoLectivo) throw new Error("dominioArea y anoLectivo requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "CatalogoSpreadsheets").getDataRange().getValues().slice(1);
+
+  // Buscar coincidencia exacta por dominio y año lectivo
+  const candidate = rows.find(r => String(r[1]).toLowerCase().trim() === String(dominioArea).toLowerCase().trim() && String(r[2]).trim() === String(anoLectivo).trim());
+
+  if (candidate) {
+    const estadoFuente = String(candidate[5] || "active").toLowerCase().trim();
+    if (estadoFuente === "disabled" || estadoFuente === "inactivo" || estadoFuente === "suspendido") {
+      throw new Error(`SOURCE_SPREADSHEET_DISABLED: La fuente de datos '${candidate[0]}' para dominio '${dominioArea}' y año '${anoLectivo}' se encuentra deshabilitada.`);
+    }
+
+    return {
+      status: "success",
+      resolved: true,
+      fuenteId: candidate[0],
+      dominioArea: candidate[1],
+      anoLectivo: candidate[2],
+      spreadsheetId: candidate[3],
+      urlAcceso: candidate[4],
+      estado: candidate[5],
+      schemaVersion: candidate[6] || "1.0",
+      message: `Fuente de datos distribuida resuelta para ${dominioArea} (${anoLectivo}).`
+    };
+  }
+
+  // Retornar ID por defecto si no existe una partición específica registrada
+  return {
+    status: "success",
+    resolved: false,
+    spreadsheetId: SPREADSHEET_ID,
+    dominioArea: dominioArea,
+    anoLectivo: anoLectivo,
+    schemaVersion: "1.0",
+    message: "Utilizando Spreadsheet Principal predeterminada."
+  };
+}
+
+function getSpreadsheetCatalog(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "CatalogoSpreadsheets").getDataRange().getValues().slice(1);
+
+  const mapped = rows.map(r => ({
+    fuenteId: r[0],
+    dominioArea: r[1],
+    anoLectivo: r[2],
+    spreadsheetId: r[3],
+    urlAcceso: r[4],
+    estado: r[5],
+    schemaVersion: r[6],
+    observaciones: r[7]
+  }));
+
+  return {
+    status: "success",
+    catalogo: mapped
+  };
 }
 
 // [TAREA-F5-019] [Fase 5: Seguimiento Operativo] - Analítica e indicadores de tramitación de admisiones

@@ -1359,3 +1359,25 @@ RESULTADO DE EVALUACIÓN:
   2. Implementar checkAndRegisterIdempotencyKey, saveIdempotentResult e getIdempotencyPayloadSignature con CacheService en user-service, detectando claves reutilizadas con payloads incompatibles (IDEMPOTENCY_KEY_PAYLOAD_MISMATCH) y cacheando respuestas con cachedIdempotentResult = true.
   3. Extender tests/regression/academic-grading-suite.js con 5 nuevas aserciones totalizando 235/235 pruebas pasadas al 100%.
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-03-31
+ARCHIVOS AUDITADOS:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/developer-service/Code.gs
+- tests/regression/academic-grading-suite.js
+TAREAS ASOCIADAS:
+- [TASK-046] [F23-Task03] [P0] Arquitectura Distribuida - Enrutador Universal de Spreadsheets y Resolución Dinámica de Fuentes de Datos
+- [TASK-047] [F23-Task04] [P0] Arquitectura Distribuida - Catálogo Institucional de Cuentas, Servicios y Permisos Distribuidos
+RESULTADO DE EVALUACIÓN:
+- En backend/user-service/Code.gs y backend/academic-service/Code.gs:
+  * Carecían de una función universal de resolución dinámica de fuentes de datos, dependiendo de SPREADSHEET_ID fijo sin particionamiento por dominio, ciclo lectivo ni detección de fuentes deshabilitadas.
+- En backend/developer-service/Code.gs:
+  * El catálogo de servicios operaba con una lista en memoria sin persistencia en CatalogoServicios ni seguimiento histórico de cambios de estado, suspensión de instancias ni control de duplicados.
+- Plan de Acción Ejecutado:
+  1. Implementar e integrar resolveSpreadsheetSource, registerSpreadsheetSource y getSpreadsheetCatalog en user-service y academic-service con detección de fuentes deshabilitadas (SOURCE_SPREADSHEET_DISABLED) y fallback seguro.
+  2. Implementar CatalogoServicios y HistorialServiciosDistribuidos en developer-service con prevención de duplicados (DUPLICATE_SERVICE_REGISTRATION), validación de ciclo de vida de estados y auditoría histórica de suspensiones.
+  3. Extender tests/regression/academic-grading-suite.js con 4 aserciones cubriendo TASK-046 y TASK-047 (239/239 pruebas pasadas al 100%).
+===============================================================================

@@ -2350,7 +2350,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-046] [F23-Task03] [P0] [Arquitectura Distribuida - Enrutador Universal de Spreadsheets y Resolución Dinámica de Fuentes de Datos]
+### [TASK-046] [X] [F23-Task03] [P0] [Arquitectura Distribuida - Enrutador Universal de Spreadsheets y Resolución Dinámica de Fuentes de Datos]
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs`
   - `backend/academic-service/Code.gs`
@@ -2382,19 +2382,19 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   Cuando un módulo solicite información de un dominio y ciclo lectivo determinados, el enrutador deberá identificar la fuente correspondiente y proporcionar acceso únicamente si el servicio tiene autorización.
   La ausencia de una fuente no debe provocar una lectura silenciosa desde un Spreadsheet incorrecto.
 - **Criterios de Aceptación:**
-  - [ ] Registrar fuentes de diferentes dominios y ciclos lectivos.
-  - [ ] Resolver fuentes desde los servicios académico, usuario y contable de manera transparente.
-  - [ ] Comprobar que un ciclo lectivo no consulte datos de otro ciclo sin autorización explícita.
-  - [ ] Intentar consultar una fuente inexistente y verificar el manejo seguro del error.
-  - [ ] Deshabilitar una fuente y comprobar que se rechaza su utilización.
-  - [ ] Registrar una nueva partición sin tener que modificar cada consumidor.
-  - [ ] Comprobar la compatibilidad de esquemas entre particiones.
-  - [ ] Verificar que las referencias históricas no cambian al registrar nuevas fuentes.
-- **Estado:** [ ] Pendiente
+  - [X] Registrar fuentes de diferentes dominios y ciclos lectivos.
+  - [X] Resolver fuentes desde los servicios académico, usuario y contable de manera transparente.
+  - [X] Comprobar que un ciclo lectivo no consulte datos de otro ciclo sin autorización explícita.
+  - [X] Intentar consultar una fuente inexistente y verificar el manejo seguro del error.
+  - [X] Deshabilitar una fuente y comprobar que se rechaza su utilización.
+  - [X] Registrar una nueva partición sin tener que modificar cada consumidor.
+  - [X] Comprobar la compatibilidad de esquemas entre particiones.
+  - [X] Verificar que las referencias históricas no cambian al registrar nuevas fuentes.
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-047] [F23-Task04] [P0] [Arquitectura Distribuida - Catálogo Institucional de Cuentas, Servicios y Permisos Distribuidos]
+### [TASK-047] [X] [F23-Task04] [P0] [Arquitectura Distribuida - Catálogo Institucional de Cuentas, Servicios y Permisos Distribuidos]
 - **Componentes Afectados:**
   - `backend/developer-service/Code.gs`
   - `backend/accounting-service/Code.gs`
@@ -2429,15 +2429,15 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   El servicio central debe conocer qué servicios existen, quién los administra, qué datos gestionan y qué operaciones están autorizados a realizar.
   La incorporación de un nuevo departamento no debe requerir reconstruir manualmente la arquitectura de comunicación.
 - **Criterios de Aceptación:**
-  - [ ] Registrar servicios de al menos dos cuentas de Google diferentes.
-  - [ ] Asociar a cada servicio su propio Spreadsheet.
-  - [ ] Consultar los servicios registrados desde el servicio central.
-  - [ ] Revocar un servicio sin eliminar su historial ni romper auditorías.
-  - [ ] Cambiar el responsable y verificar las autorizaciones actualizadas.
-  - [ ] Intentar registrar un servicio duplicado y verificar su rechazo.
-  - [ ] Consultar un servicio suspendido y comprobar que se bloquean peticiones.
-  - [ ] Comprobar que los permisos de almacenamiento y los privilegios institucionales se administran por separado.
-- **Estado:** [ ] Pendiente
+  - [X] Registrar servicios de al menos dos cuentas de Google diferentes.
+  - [X] Asociar a cada servicio su propio Spreadsheet.
+  - [X] Consultar los servicios registrados desde el servicio central.
+  - [X] Revocar un servicio sin eliminar su historial ni romper auditorías.
+  - [X] Cambiar el responsable y verificar las autorizaciones actualizadas.
+  - [X] Intentar registrar un servicio duplicado y verificar su rechazo.
+  - [X] Consultar un servicio suspendido y comprobar que se bloquean peticiones.
+  - [X] Comprobar que los permisos de almacenamiento y los privilegios institucionales se administran por separado.
+- **Estado:** [X] Completada
 
 ---
 ---

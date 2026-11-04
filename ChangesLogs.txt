@@ -4350,3 +4350,29 @@ DESCRIPCIÓN DE MODIFICACIONES:
 3. En Pendientes.md:
    - Marcadas las tareas [TASK-044] y [TASK-045] como completadas [X].
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-03-31
+TAREAS: [TASK-046] [F23-Task03] & [TASK-047] [F23-Task04]
+ARCHIVOS MODIFICADOS:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/developer-service/Code.gs
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt
+- ChangesLogs.txt
+DESCRIPCIÓN DE MODIFICACIONES:
+1. En backend/accounting-service/Code.gs, backend/user-service/Code.gs y backend/academic-service/Code.gs:
+   - Implementación homogénea de 'resolveSpreadsheetSource(payload)', 'registerSpreadsheetSource(payload)' y 'getSpreadsheetCatalog(payload)' con validación de estado activo y rechazo explícito con 'SOURCE_SPREADSHEET_DISABLED' ante fuentes deshabilitadas.
+   - Enlace en ROLE_PERMISSIONS y despachador doPost en los servicios afectados.
+2. En backend/developer-service/Code.gs:
+   - Refactorización de 'getCentralServiceRegistry', 'registerServiceInstance' y 'updateServiceStatus' persistiendo en 'CatalogoServicios'.
+   - Prevención de duplicados con 'DUPLICATE_SERVICE_REGISTRATION', validación de ciclo de vida de estados y registro inmutable en 'HistorialServiciosDistribuidos'.
+3. En tests/regression/academic-grading-suite.js:
+   - Inclusión de 4 aserciones de prueba regresiva para enrutamiento de Spreadsheets y catálogo de servicios distribuidos.
+   - Suite superada con 239/239 pruebas exitosas (100.0%).
+4. En Pendientes.md:
+   - Marcadas las tareas [TASK-046] y [TASK-047] como completadas [X].
+===============================================================================

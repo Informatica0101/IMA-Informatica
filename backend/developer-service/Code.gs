@@ -2141,48 +2141,163 @@ function executeOperationalCommand(payload) {
   };
 }
 
-// [TAREA-F6-008] [TAREA-F6-029] [TAREA-F6-033] [Fase 6: Microservicio Central del Desarrollador] - Registro central de servicios con identificadores estables, versionado, contrato común correlationId y aislamiento operativo
+// [TASK-047] [F23-Task04] [P0] Arquitectura Distribuida - Catálogo Institucional de Cuentas, Servicios y Permisos Distribuidos
 function getCentralServiceRegistry(payload) {
   const defaultServices = [
-    { serviceId: "SVC-USER-01", name: "User Service", type: "IDENTITY", state: "Activo", version: "v8.4.0", responsibilities: ["Auth", "Users", "Roles"] },
-    { serviceId: "SVC-ACADEMIC-02", name: "Academic Service", type: "ACADEMIC", state: "Activo", version: "v8.4.0", responsibilities: ["Files", "Enrollments", "Admissions"] },
-    { serviceId: "SVC-TASK-03", name: "Task Service", type: "ACADEMIC_SUB", state: "Activo", version: "v8.4.0", responsibilities: ["Tasks", "Submissions"] },
-    { serviceId: "SVC-EXAM-04", name: "Exam Service", type: "ACADEMIC_SUB", state: "Activo", version: "v8.4.0", responsibilities: ["Exams", "QuestionBank"] },
-    { serviceId: "SVC-ACCOUNTING-05", name: "Accounting Service", type: "FINANCIAL", state: "Activo", version: "v8.4.0", responsibilities: ["Billing", "Payments", "Payroll"] },
-    { serviceId: "SVC-DEVELOPER-00", name: "Developer Service", type: "CONTROL_PLANE", state: "Activo", version: "v8.4.0", responsibilities: ["ControlPlane", "Diagnostics", "InterServiceAudit"] }
+    { serviceId: "SVC-USER-01", name: "User Service", type: "IDENTITY", state: "Activo", version: "v8.4.0", responsibilities: ["Auth", "Users", "Roles"], cuentaPropietaria: "primary@domain.edu", spreadsheetId: SPREADSHEET_ID },
+    { serviceId: "SVC-ACADEMIC-02", name: "Academic Service", type: "ACADEMIC", state: "Activo", version: "v8.4.0", responsibilities: ["Files", "Enrollments", "Admissions"], cuentaPropietaria: "academic@domain.edu", spreadsheetId: SPREADSHEET_ID },
+    { serviceId: "SVC-TASK-03", name: "Task Service", type: "ACADEMIC_SUB", state: "Activo", version: "v8.4.0", responsibilities: ["Tasks", "Submissions"], cuentaPropietaria: "academic@domain.edu", spreadsheetId: SPREADSHEET_ID },
+    { serviceId: "SVC-EXAM-04", name: "Exam Service", type: "ACADEMIC_SUB", state: "Activo", version: "v8.4.0", responsibilities: ["Exams", "QuestionBank"], cuentaPropietaria: "academic@domain.edu", spreadsheetId: SPREADSHEET_ID },
+    { serviceId: "SVC-ACCOUNTING-05", name: "Accounting Service", type: "FINANCIAL", state: "Activo", version: "v8.4.0", responsibilities: ["Billing", "Payments", "Payroll"], cuentaPropietaria: "accounting@domain.edu", spreadsheetId: SPREADSHEET_ID },
+    { serviceId: "SVC-DEVELOPER-00", name: "Developer Service", type: "CONTROL_PLANE", state: "Activo", version: "v8.4.0", responsibilities: ["ControlPlane", "Diagnostics", "InterServiceAudit"], cuentaPropietaria: "developer@domain.edu", spreadsheetId: SPREADSHEET_ID }
   ];
 
-  return {
-    status: "success",
-    service: "DEVELOPER",
-    registry: defaultServices,
-    timestamp: new Date().toISOString()
-  };
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "CatalogoServicios");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) {
+      return {
+        status: "success",
+        service: "DEVELOPER",
+        registry: defaultServices,
+        totalServicios: defaultServices.length,
+        timestamp: new Date().toISOString()
+      };
+    }
+
+    const customServices = data.slice(1).map(r => ({
+      serviceId: r[0],
+      name: r[1],
+      departamento: r[2],
+      cuentaPropietaria: r[3],
+      endpointUrl: r[4],
+      spreadsheetAsociado: r[5],
+      dominioDatos: r[6],
+      state: r[7] || "Activo",
+      version: r[8] || "v1.0.0",
+      permisosConcedidos: r[9] ? JSON.parse(r[9]) : ["*"],
+      registeredAt: r[10]
+    }));
+
+    return {
+      status: "success",
+      service: "DEVELOPER",
+      registry: customServices,
+      totalServicios: customServices.length,
+      timestamp: new Date().toISOString()
+    };
+  } catch (e) {
+    return {
+      status: "success",
+      service: "DEVELOPER",
+      registry: defaultServices,
+      totalServicios: defaultServices.length,
+      timestamp: new Date().toISOString()
+    };
+  }
 }
 
-// [TAREA-F6-008] [Fase 6: Reestructuración en microservicios independientes] - Registro e inicialización de nuevas instancias de microservicios en el plano de control
+// [TASK-047] [F23-Task04] [P0] Registro de instancias y cuentas de servicio distribuidos con prevención de duplicados
 function registerServiceInstance(payload) {
-  const { serviceId, name, type, endpointUrl, version } = payload || {};
+  const {
+    serviceId,
+    name,
+    type,
+    departamento,
+    cuentaPropietaria,
+    endpointUrl,
+    spreadsheetAsociado,
+    dominioDatos,
+    version,
+    permisosConcedidos
+  } = payload || {};
+
   if (!serviceId || !name) throw new Error("serviceId y name son requeridos.");
 
+  const sId = String(serviceId).trim();
+  const sName = String(name).trim();
+  const now = new Date();
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CatalogoServicios");
+  const data = sheet.getDataRange().getValues();
+
+  // Detección y rechazo de duplicados
+  const exists = data.slice(1).some(r => String(r[0]).trim().toUpperCase() === sId.toUpperCase());
+  if (exists) {
+    throw new Error(`DUPLICATE_SERVICE_REGISTRATION: Ya existe un servicio registrado con el identificador '${sId}'.`);
+  }
+
+  const permisosStr = Array.isArray(permisosConcedidos) ? JSON.stringify(permisosConcedidos) : JSON.stringify(["*"]);
+
+  sheet.appendRow([
+    sId,
+    sName,
+    departamento || type || "General",
+    cuentaPropietaria || "sistema@institucional.edu",
+    endpointUrl || "",
+    spreadsheetAsociado || SPREADSHEET_ID,
+    dominioDatos || type || "Institucional",
+    "Activo", // Estados: registrado, activo, degradado, desconectado, suspendido, retirado
+    version || "v1.0.0",
+    permisosStr,
+    now.toISOString()
+  ]);
+
   return {
     status: "success",
-    message: `Microservicio ${serviceId} - ${name} registrado en el plano de control central.`,
-    serviceId,
-    registeredAt: new Date().toISOString()
+    serviceId: sId,
+    name: sName,
+    cuentaPropietaria: cuentaPropietaria || "sistema@institucional.edu",
+    estado: "Activo",
+    registeredAt: now.toISOString(),
+    message: `Microservicio ${sId} - ${sName} registrado exitosamente en el catálogo distribuido.`
   };
 }
 
-// [TAREA-F6-008] [Fase 6: Reestructuración en microservicios independientes] - Cambio de estado operativo/administrativo de microservicios catalogados
+// [TASK-047] [F23-Task04] [P0] Cambio de estado operativo, suspensión y revocación con historial auditado
 function updateServiceStatus(payload) {
-  const { serviceId, newState, reason } = payload || {};
+  const { serviceId, newState, reason, updatedBy } = payload || {};
   if (!serviceId || !newState) throw new Error("serviceId y newState son requeridos.");
+
+  const validStates = ["registrado", "activo", "degradado", "desconectado", "suspendido", "retirado", "Activo", "Inactivo"];
+  if (validStates.indexOf(newState) === -1) {
+    throw new Error(`ESTADO_INVALIDO: El estado '${newState}' no es válido para el ciclo de vida del servicio.`);
+  }
+
+  const sId = String(serviceId).trim();
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CatalogoServicios");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim().toUpperCase() === sId.toUpperCase());
+  if (idx === -1) {
+    throw new Error(`SERVICE_NOT_FOUND: No se encontró el servicio con identificador '${sId}'.`);
+  }
+
+  sheet.getRange(idx + 1, 8).setValue(newState);
+
+  // Registrar histórico en BitacoraLogs
+  const histSheet = getOrCreateSheet(ss, "HistorialServiciosDistribuidos");
+  const now = new Date();
+  histSheet.appendRow([
+    "HIST-SVC-" + now.getTime(),
+    sId,
+    data[idx][7], // estadoAnterior
+    newState, // nuevoEstado
+    reason || "Actualización administrativa",
+    updatedBy || "Administrador",
+    now.toISOString()
+  ]);
 
   return {
     status: "success",
-    message: `Estado del microservicio ${serviceId} actualizado a '${newState}'. Motivo: ${reason || 'N/A'}`,
-    serviceId,
-    newState
+    serviceId: sId,
+    estadoAnterior: data[idx][7],
+    newState: newState,
+    message: `Estado del microservicio ${sId} actualizado a '${newState}'. Motivo: ${reason || 'N/A'}`
   };
 }
 
