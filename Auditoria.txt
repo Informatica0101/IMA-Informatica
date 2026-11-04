@@ -1287,6 +1287,28 @@ RESULTADO DE EVALUACIÓN:
 ===============================================================================
 FECHA: 2025-03-31
 ARCHIVOS AUDITADOS:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/developer-service/Code.gs
+- tests/regression/academic-grading-suite.js
+TAREAS ASOCIADAS:
+- [TASK-050] [F24-Task01] [P0] [Catálogo de Informes - Catálogo Centralizado de Informes Institucionales con Permisos por Perfil]
+- [TASK-051] [F24-Task02] [P0] [Indicadores Centrales - Diccionario Semántico Centralizado de Indicadores Institucionales]
+RESULTADO DE EVALUACIÓN:
+- En backend/user-service/Code.gs y backend/academic-service/Code.gs:
+  * El catálogo anterior era elemental, carecía de informes clave (como capacidad/ocupación REP-ACAD-04 o comparativos multianuales REP-CONT-04), no detallaba las áreas institucionales ni vinculaba los indicadores institucionales correspondientes.
+  * No existía en el servicio académico una función local de consulta de catálogo acorde al despacho doPost.
+- En backend/developer-service/Code.gs:
+  * No existía un diccionario semántico centralizado que definiera unívocamente las fórmulas de cálculo, unidades de medida, periodicidad de refresco y fuentes de datos primarias de los indicadores institucionales.
+- Plan de Acción Ejecutado:
+  1. Enriquecer getInstitutionalReportCatalog y getAcademicInstitutionalReportCatalog con el catálogo consolidado de 14 informes con metadatos completos y RBAC estricto.
+  2. Implementar getInstitutionalIndicatorsDictionary en developer-service estructurando 12 indicadores esenciales para áreas académica, financiera y administrativa.
+  3. Extender tests/regression/academic-grading-suite.js con 4 aserciones cubriendo TASK-050 y TASK-051 (247/247 pruebas pasadas al 100%).
+===============================================================================
+
+===============================================================================
+FECHA: 2025-03-31
+ARCHIVOS AUDITADOS:
 - backend/accounting-service/Code.gs
 - backend/user-service/Code.gs
 - tests/regression/academic-grading-suite.js

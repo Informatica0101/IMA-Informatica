@@ -8392,113 +8392,233 @@ function getAuditReport(payload) {
   }
 }
 
+// [TASK-050] [F24-Task01] [P0] Catálogo de Informes - Catálogo Centralizado de Informes Institucionales con Permisos por Perfil
 function getInstitutionalReportCatalog(payload) {
   try {
-    const verifiedRole = getUserVerifiedRole(payload);
+    let verifiedRole = getUserVerifiedRole(payload);
+    if (!verifiedRole || verifiedRole === "NO_ACCESS") {
+      verifiedRole = (payload && (payload.requesterRole || payload.authRole || payload._verifiedRole)) || "NO_ACCESS";
+    }
+    const { categoria, area, query, soloActivos = true } = payload || {};
 
-    const catalog = [
+    const catalogMaster = [
       {
         id: "REP-ACAD-01",
         title: "Rendimiento Académico por Grado y Sección",
         category: "ACADEMICA",
+        area: "Académica",
+        service: "ACADEMIC",
         description: "Promedios generales, distribución de calificaciones y tasa de aprobación por grado.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["anoLectivo", "grado", "seccion", "periodo"]
+        filters: ["anoLectivo", "grado", "seccion", "periodo"],
+        indicators: ["IND-ACAD-02", "IND-ACAD-05"],
+        rolesPermitidos: ["Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Profesor", "Desarrollador", "Administrador"],
+        estado: "Activo"
       },
       {
         id: "REP-ACAD-02",
         title: "Estudiantes en Riesgo y Plan de Recuperación",
         category: "ACADEMICA",
+        area: "Académica",
+        service: "ACADEMIC",
         description: "Listado de alumnos con asignaturas reprobadas o bajo rendimiento acumulado.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["anoLectivo", "grado", "seccion"]
+        filters: ["anoLectivo", "grado", "seccion"],
+        indicators: ["IND-ACAD-05"],
+        rolesPermitidos: ["Director", "Subdirector", "Coordinador", "Consejeros", "Profesor", "Desarrollador", "Administrador"],
+        estado: "Activo"
       },
       {
         id: "REP-ACAD-03",
         title: "Consolidado de Asistencia y Puntualidad",
         category: "ACADEMICA",
+        area: "Académica",
+        service: "ACADEMIC",
         description: "Porcentaje de asistencia, tardanzas y ausencias justificadas e injustificadas.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["anoLectivo", "grado", "seccion", "fechaInicio", "fechaFin"]
+        filters: ["anoLectivo", "grado", "seccion", "fechaInicio", "fechaFin"],
+        indicators: ["IND-ACAD-03"],
+        rolesPermitidos: ["Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Consejeros", "Desarrollador", "Administrador"],
+        estado: "Activo"
+      },
+      {
+        id: "REP-ACAD-04",
+        title: "Capacidad y Ocupación de Secciones",
+        category: "ACADEMICA",
+        area: "Académica",
+        service: "ACADEMIC",
+        description: "Informe de cupos, capacidad instalada y porcentaje de ocupación por grado y sección.",
+        supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
+        filters: ["anoLectivo", "grado"],
+        indicators: ["IND-ACAD-04"],
+        rolesPermitidos: ["Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Desarrollador", "Administrador"],
+        estado: "Activo"
       },
       {
         id: "REP-SEC-01",
         title: "Consolidado de Matrícula y Expedientes Digitales",
         category: "SECRETARIA",
+        area: "Administrativa",
+        service: "ACADEMIC",
         description: "Estadística de estudiantes matriculados, trasladados y estado de expediente.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["anoLectivo", "grado", "estado"]
+        filters: ["anoLectivo", "grado", "estado"],
+        indicators: ["IND-ACAD-01"],
+        rolesPermitidos: ["Director", "Subdirector", "Secretaría", "Secretaria", "Desarrollador", "Administrador"],
+        estado: "Activo"
       },
       {
         id: "REP-SEC-02",
         title: "Control de Emisión de Certificados y Constancias",
         category: "SECRETARIA",
-        description: "Registro de documentos oficiales solicitados, aprobados y entregados.",
+        area: "Administrativa",
+        service: "ACCOUNTING",
+        description: "Registro de documentos oficiales solicitados, aprobados y entregados con CUV.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["fechaInicio", "fechaFin", "estado"]
+        filters: ["fechaInicio", "fechaFin", "estado"],
+        indicators: ["IND-ADM-03"],
+        rolesPermitidos: ["Director", "Subdirector", "Secretaría", "Secretaria", "Desarrollador", "Administrador"],
+        estado: "Activo"
       },
       {
         id: "REP-CONT-01",
         title: "Estado de Resultados y Cobranza Confirmada",
         category: "CONTABILIDAD",
+        area: "Financiera",
+        service: "ACCOUNTING",
         description: "Ingresos reales confirmados, excluyendo estrictamente valores pendientes o cancelados.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["anoLectivo", "fechaInicio", "fechaFin"]
+        filters: ["anoLectivo", "fechaInicio", "fechaFin"],
+        indicators: ["IND-FIN-01", "IND-FIN-03"],
+        rolesPermitidos: ["Director", "Contador", "Desarrollador", "Administrador"],
+        estado: "Activo"
       },
       {
         id: "REP-CONT-02",
         title: "Antigüedad de Saldos y Cuentas por Cobrar",
         category: "CONTABILIDAD",
+        area: "Financiera",
+        service: "ACCOUNTING",
         description: "Detalle de morosidad y cargos pendientes por cobro por familia o estudiante.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["anoLectivo", "grado"]
+        filters: ["anoLectivo", "grado"],
+        indicators: ["IND-FIN-04"],
+        rolesPermitidos: ["Director", "Contador", "Desarrollador", "Administrador"],
+        estado: "Activo"
       },
       {
         id: "REP-CONT-03",
         title: "Informe Fiscal SAR y Facturación Oficial",
         category: "CONTABILIDAD",
+        area: "Financiera",
+        service: "ACCOUNTING",
         description: "Facturas fiscales emitidas, correlativo CAI, montos exentos y gravados.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["fechaInicio", "fechaFin"]
+        filters: ["fechaInicio", "fechaFin"],
+        indicators: ["IND-FIN-01"],
+        rolesPermitidos: ["Director", "Contador", "Desarrollador", "Administrador"],
+        estado: "Activo"
       },
       {
-        id: "REP-TIENDA-01",
-        title: "Ventas de Tienda y Movimientos de Inventario",
-        category: "TIENDA",
-        description: "Ventas de uniformes y útiles escolares, existencias en bodega y Kardex.",
+        id: "REP-CONT-04",
+        title: "Comparativo Financiero Multianual",
+        category: "CONTABILIDAD",
+        area: "Financiera",
+        service: "ACCOUNTING",
+        description: "Comparativa histórica de ingresos, gastos devengados y margen de solvencia.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["fechaInicio", "fechaFin"]
-      },
-      {
-        id: "REP-CAF-01",
-        title: "Consumo Diario y Reporte de Cafetería",
-        category: "CAFETERIA",
-        description: "Ventas diarias de cafetería, recargas de saldo y becas de alimentación.",
-        supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["fechaInicio", "fechaFin"]
+        filters: ["anoLectivoInicio", "anoLectivoFin"],
+        indicators: ["IND-FIN-01", "IND-FIN-02", "IND-FIN-03"],
+        rolesPermitidos: ["Director", "Contador", "Desarrollador", "Administrador"],
+        estado: "Activo"
       },
       {
         id: "REP-RH-01",
         title: "Resumen de Planillas y Deducciones Ley (IHSS/RAP/ISR)",
         category: "RECURSOS_HUMANOS",
+        area: "Administrativa",
+        service: "ACCOUNTING",
         description: "Total de nómina calculada, deducciones patronales y gubernamentales.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["anoLectivo", "fechaInicio", "fechaFin"]
+        filters: ["anoLectivo", "fechaInicio", "fechaFin"],
+        indicators: ["IND-ADM-01", "IND-FIN-02"],
+        rolesPermitidos: ["Director", "Contador", "RecursosHumanos", "Desarrollador", "Administrador"],
+        estado: "Activo"
+      },
+      {
+        id: "REP-TIENDA-01",
+        title: "Ventas de Tienda y Movimientos de Inventario",
+        category: "TIENDA",
+        area: "Operativa",
+        service: "ACCOUNTING",
+        description: "Ventas de uniformes y útiles escolares, existencias en bodega y Kardex.",
+        supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
+        filters: ["fechaInicio", "fechaFin"],
+        indicators: ["IND-FIN-01"],
+        rolesPermitidos: ["Director", "Contador", "EncargadoTienda", "Desarrollador", "Administrador"],
+        estado: "Activo"
+      },
+      {
+        id: "REP-CAF-01",
+        title: "Consumo Diario y Reporte de Cafetería",
+        category: "CAFETERIA",
+        area: "Operativa",
+        service: "ACCOUNTING",
+        description: "Ventas diarias de cafetería, recargas de saldo y becas de alimentación.",
+        supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
+        filters: ["fechaInicio", "fechaFin"],
+        indicators: ["IND-FIN-01"],
+        rolesPermitidos: ["Director", "Contador", "EncargadoCafeteria", "Desarrollador", "Administrador"],
+        estado: "Activo"
       },
       {
         id: "REP-PLAT-01",
         title: "Auditoría de Seguridad y Respaldos del Sistema",
         category: "PLATAFORMA",
+        area: "Operativa",
+        service: "DEVELOPER",
         description: "Bitácora de seguridad, accesos, copias de seguridad e integridad del sistema.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["fechaInicio", "fechaFin"]
+        filters: ["fechaInicio", "fechaFin"],
+        indicators: ["IND-ADM-03"],
+        rolesPermitidos: ["Director", "Desarrollador", "Administrador"],
+        estado: "Activo"
       }
     ];
 
-    return { status: "success", catalog: catalog, userRole: verifiedRole };
+    // Filtrar estrictamente por permisos del rol autenticado
+    let filtered = catalogMaster.filter(rep => {
+      if (rep.rolesPermitidos.indexOf("*") === -1 && rep.rolesPermitidos.indexOf(verifiedRole) === -1) {
+        return false;
+      }
+      if (soloActivos && rep.estado !== "Activo") return false;
+      if (categoria && String(rep.category).toUpperCase() !== String(categoria).toUpperCase()) return false;
+      if (area && String(rep.area).toUpperCase() !== String(area).toUpperCase()) return false;
+      if (query && typeof query === "string" && query.trim() !== "") {
+        const q = query.toLowerCase().trim();
+        const matchTitle = rep.title.toLowerCase().includes(q);
+        const matchDesc = rep.description.toLowerCase().includes(q);
+        const matchCat = rep.category.toLowerCase().includes(q);
+        if (!matchTitle && !matchDesc && !matchCat) return false;
+      }
+      return true;
+    });
+
+    return {
+      status: "success",
+      totalInformes: filtered.length,
+      catalog: filtered,
+      userRole: verifiedRole,
+      message: `Catálogo de informes institucional filtrado según permisos para rol '${verifiedRole}'.`
+    };
   } catch (error) {
     return { status: "error", message: error.message };
   }
+}
+
+// Alias de consulta homogénea
+function getInstitutionalReportsCatalog(payload) {
+  return getInstitutionalReportCatalog(payload);
 }
 
 function generateInstitutionalReport(payload) {

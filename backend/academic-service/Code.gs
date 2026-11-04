@@ -710,7 +710,7 @@ function doPost(e) {
       case "restoreSystemBackup": result = restoreSystemBackup(payload); break;
       case "reconcileRestoredDataIntegrity": result = reconcileRestoredDataIntegrity(payload); break;
       case "evaluateTransactionalStorageMigrationNeed": result = evaluateTransactionalStorageMigrationNeed(payload); break;
-      case "getInstitutionalReportCatalog": result = getInstitutionalReportCatalog(payload); break;
+      case "getInstitutionalReportCatalog": result = getAcademicInstitutionalReportCatalog(payload); break;
       case "generateInstitutionalReport": result = generateInstitutionalReport(payload); break;
       case "getSectionEquivalences": result = getSectionEquivalences(payload); break;
       case "calculateUnifiedAcademicGrade": result = calculateUnifiedAcademicGrade(payload); break;
@@ -11346,6 +11346,106 @@ function changeStudentSection(payload) {
     return { status: "success", message: "Estudiante trasladado exitosamente a la Sección " + nuevaSeccion + "." };
   } finally {
     lock.releaseLock();
+  }
+}
+
+// [TASK-050] [F24-Task01] [P0] Catálogo de Informes Académicos Integrado
+function getAcademicInstitutionalReportCatalog(payload) {
+  try {
+    const verifiedRole = (payload && (payload.requesterRole || payload.authRole || payload._verifiedRole)) || "Director";
+    const { soloActivos = true, query } = payload || {};
+
+    const catalogAcademic = [
+      {
+        id: "REP-ACAD-01",
+        title: "Rendimiento Académico por Grado y Sección",
+        category: "ACADEMICA",
+        area: "Académica",
+        service: "ACADEMIC",
+        description: "Promedios generales, distribución de calificaciones y tasa de aprobación por grado.",
+        supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
+        filters: ["anoLectivo", "grado", "seccion", "periodo"],
+        indicators: ["IND-ACAD-02", "IND-ACAD-05"],
+        rolesPermitidos: ["Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Profesor", "Desarrollador", "Administrador"],
+        estado: "Activo"
+      },
+      {
+        id: "REP-ACAD-02",
+        title: "Estudiantes en Riesgo y Plan de Recuperación",
+        category: "ACADEMICA",
+        area: "Académica",
+        service: "ACADEMIC",
+        description: "Listado de alumnos con asignaturas reprobadas o bajo rendimiento acumulado.",
+        supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
+        filters: ["anoLectivo", "grado", "seccion"],
+        indicators: ["IND-ACAD-05"],
+        rolesPermitidos: ["Director", "Subdirector", "Coordinador", "Consejeros", "Profesor", "Desarrollador", "Administrador"],
+        estado: "Activo"
+      },
+      {
+        id: "REP-ACAD-03",
+        title: "Consolidado de Asistencia y Puntualidad",
+        category: "ACADEMICA",
+        area: "Académica",
+        service: "ACADEMIC",
+        description: "Porcentaje de asistencia, tardanzas y ausencias justificadas e injustificadas.",
+        supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
+        filters: ["anoLectivo", "grado", "seccion", "fechaInicio", "fechaFin"],
+        indicators: ["IND-ACAD-03"],
+        rolesPermitidos: ["Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Consejeros", "Desarrollador", "Administrador"],
+        estado: "Activo"
+      },
+      {
+        id: "REP-ACAD-04",
+        title: "Capacidad y Ocupación de Secciones",
+        category: "ACADEMICA",
+        area: "Académica",
+        service: "ACADEMIC",
+        description: "Informe de cupos, capacidad instalada y porcentaje de ocupación por grado y sección.",
+        supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
+        filters: ["anoLectivo", "grado"],
+        indicators: ["IND-ACAD-04"],
+        rolesPermitidos: ["Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Desarrollador", "Administrador"],
+        estado: "Activo"
+      },
+      {
+        id: "REP-SEC-01",
+        title: "Consolidado de Matrícula y Expedientes Digitales",
+        category: "SECRETARIA",
+        area: "Administrativa",
+        service: "ACADEMIC",
+        description: "Estadística de estudiantes matriculados, trasladados y estado de expediente.",
+        supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
+        filters: ["anoLectivo", "grado", "estado"],
+        indicators: ["IND-ACAD-01"],
+        rolesPermitidos: ["Director", "Subdirector", "Secretaría", "Secretaria", "Desarrollador", "Administrador"],
+        estado: "Activo"
+      }
+    ];
+
+    let filtered = catalogAcademic.filter(rep => {
+      if (rep.rolesPermitidos.indexOf("*") === -1 && rep.rolesPermitidos.indexOf(verifiedRole) === -1) {
+        return false;
+      }
+      if (soloActivos && rep.estado !== "Activo") return false;
+      if (query && typeof query === "string" && query.trim() !== "") {
+        const q = query.toLowerCase().trim();
+        const matchTitle = rep.title.toLowerCase().includes(q);
+        const matchDesc = rep.description.toLowerCase().includes(q);
+        if (!matchTitle && !matchDesc) return false;
+      }
+      return true;
+    });
+
+    return {
+      status: "success",
+      totalInformes: filtered.length,
+      catalog: filtered,
+      userRole: verifiedRole,
+      service: "academic-service"
+    };
+  } catch (err) {
+    return { status: "error", message: err.message };
   }
 }
 

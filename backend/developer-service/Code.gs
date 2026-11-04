@@ -26,7 +26,10 @@ function textResponse(obj) {
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Desarrollador": ["getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "auditInterServiceCalls", "manageUserMultiRolePermissions", "getCentralizedLogs", "executeOperationalCommand", "getServiceVersionChangelog", "executeServiceVersionRollback", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "runModularAndDynamicDashboardsRegressionSuite", "runAcademicGradingRegressionSuite", "runPhase10AttendanceAndCoexistenceRegressionSuite", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "runPhase20LibraryAndResourcesRegressionSuite", "runPhase21TransportAndServicesRegressionSuite", "runPhase22DocumentManagementAndSACERegressionSuite", "getPhase10FunctionalDocumentation", "validateStagedMigrationProgress", "validateModularFolderStructure", "validateMonolithDecompositionContracts", "getArchitectureAndDependencyMapReport", "getRoleFunctionalSpaceConfig", "auditRoleIndependenceAndMasterDataIntegrity", "validateStableIdentifiersAndControlColumns", "ensureStandardObservabilitySheets", "validateObservabilitySheetsIntegrity", "getCentralSpreadsheetConfigRegistry", "recordProvisioningHistory", "provisionRoleSpreadsheet", "migrateSpreadsheetSchema", "auditServiceBackendIsolationAndDriveSecurity", "batchSpreadsheetReadOperations", "getServiceHealthDiagnostics"]
+  "Desarrollador": ["getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "auditInterServiceCalls", "manageUserMultiRolePermissions", "getCentralizedLogs", "executeOperationalCommand", "getServiceVersionChangelog", "executeServiceVersionRollback", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "runModularAndDynamicDashboardsRegressionSuite", "runAcademicGradingRegressionSuite", "runPhase10AttendanceAndCoexistenceRegressionSuite", "runPhase18PurchasingAndSuppliersRegressionSuite", "runPhase19InventoryAndAssetsRegressionSuite", "runPhase20LibraryAndResourcesRegressionSuite", "runPhase21TransportAndServicesRegressionSuite", "runPhase22DocumentManagementAndSACERegressionSuite", "getPhase10FunctionalDocumentation", "validateStagedMigrationProgress", "validateModularFolderStructure", "validateMonolithDecompositionContracts", "getArchitectureAndDependencyMapReport", "getRoleFunctionalSpaceConfig", "auditRoleIndependenceAndMasterDataIntegrity", "validateStableIdentifiersAndControlColumns", "ensureStandardObservabilitySheets", "validateObservabilitySheetsIntegrity", "getCentralSpreadsheetConfigRegistry", "recordProvisioningHistory", "provisionRoleSpreadsheet", "migrateSpreadsheetSchema", "auditServiceBackendIsolationAndDriveSecurity", "batchSpreadsheetReadOperations", "getServiceHealthDiagnostics", "getCentralCapabilitiesCatalog", "getInstitutionalIndicatorsDictionary"],
+  "Director": ["getInstitutionalIndicatorsDictionary", "getCentralConfigAndContractCatalog"],
+  "Coordinador": ["getInstitutionalIndicatorsDictionary"],
+  "Contador": ["getInstitutionalIndicatorsDictionary"]
 };
 
 function computeHmacSignature(message, secret) {
@@ -205,6 +208,7 @@ function doPost(e) {
       case "auditServiceBackendIsolationAndDriveSecurity": result = auditServiceBackendIsolationAndDriveSecurity(payload); break;
       case "batchSpreadsheetReadOperations": result = batchSpreadsheetReadOperations(payload); break;
       case "getCentralCapabilitiesCatalog": result = getCentralCapabilitiesCatalog(payload); break;
+      case "getInstitutionalIndicatorsDictionary": result = getInstitutionalIndicatorsDictionary(payload); break;
       default:
         return textResponse({ status: "error", code: "ACTION_NOT_FOUND", message: `Acción '${action}' no reconocida en el servicio del desarrollador.` });
     }
@@ -797,6 +801,209 @@ function runPhase18PurchasingAndSuppliersRegressionSuite(payload) {
     resultadosSuiteRegresion: testResults,
     executedAt: new Date().toISOString()
   };
+}
+
+// [TASK-051] [F24-Task02] [P0] Diccionario Semántico Centralizado de Indicadores Institucionales
+function getInstitutionalIndicatorsDictionary(payload) {
+  try {
+    const { categoria, ambito, periodicidad, query } = payload || {};
+
+    const indicatorsMaster = [
+      {
+        id: "IND-ACAD-01",
+        nombre: "Tasa de Matrícula Efectiva",
+        categoria: "ACADEMICA",
+        ambito: "Institucional",
+        definicion: "Proporción de estudiantes matriculados formalmente con expediente activo sobre la capacidad institucional disponible.",
+        unidadMedida: "PORCENTAJE",
+        formulaCalculo: "(TotalEstudiantesActivos / CapacidadMaximaTotal) * 100",
+        fuenteDatosPrimaria: "academic-service:Matriculas",
+        periodicidadActualizacion: "MENSUAL",
+        interpretacion: "Un valor entre 85% y 100% refleja una utilización óptima de la infraestructura institucional.",
+        responsableSeguimiento: "Secretaría General / Dirección",
+        estado: "Activo"
+      },
+      {
+        id: "IND-ACAD-02",
+        nombre: "Promedio General de Rendimiento Académico",
+        categoria: "ACADEMICA",
+        ambito: "Sección / Grado / Nivel",
+        definicion: "Media aritmética ponderada de las calificaciones obtenidas por los alumnos en las evaluaciones acumulativas y de examen.",
+        unidadMedida: "CALIFICACION_100",
+        formulaCalculo: "SUM(NotaFinalAsignatura) / TotalAsignaturasEvaluadas",
+        fuenteDatosPrimaria: "academic-service:CalificacionesConsolidadas",
+        periodicidadActualizacion: "PARCIAL",
+        interpretacion: "Promedio estándar institucional meta >= 75%. Valores inferiores a 70% activan alerta de intervención pedagógica.",
+        responsableSeguimiento: "Coordinación Académica / Docentes Titulares",
+        estado: "Activo"
+      },
+      {
+        id: "IND-ACAD-03",
+        nombre: "Índice de Asistencia Regular de Estudiantes",
+        categoria: "ACADEMICA",
+        ambito: "Grado / Sección",
+        definicion: "Porcentaje de días o sesiones en las que los estudiantes registraron presencia efectiva o ausencia debidamente justificada.",
+        unidadMedida: "PORCENTAJE",
+        formulaCalculo: "((DiasPresentes + DiasJustificados) / TotalDiasHabilesClase) * 100",
+        fuenteDatosPrimaria: "academic-service:AsistenciaEstudiantes",
+        periodicidadActualizacion: "SEMANAL",
+        interpretacion: "Meta institucional >= 92%. Inasistencias injustificadas reiteradas impactan el seguimiento de consejería.",
+        responsableSeguimiento: "Consejeros / Secretaría",
+        estado: "Activo"
+      },
+      {
+        id: "IND-ACAD-04",
+        nombre: "Porcentaje de Ocupación por Sección",
+        categoria: "ACADEMICA",
+        ambito: "Sección",
+        definicion: "Ratio de estudiantes matriculados en una sección específica respecto al aforo máximo pedagógico establecido.",
+        unidadMedida: "PORCENTAJE",
+        formulaCalculo: "(EstudiantesInscritosSeccion / CupoMaximoSeccion) * 100",
+        fuenteDatosPrimaria: "academic-service:ConfiguracionAcademica",
+        periodicidadActualizacion: "MENSUAL",
+        interpretacion: "Permite planificar desdoblamientos de cursos o redistribución de recursos docentes.",
+        responsableSeguimiento: "Dirección Académica",
+        estado: "Activo"
+      },
+      {
+        id: "IND-ACAD-05",
+        nombre: "Tasa de Riesgo de Deserción o Reprobación",
+        categoria: "ACADEMICA",
+        ambito: "Grado / Nivel",
+        definicion: "Porcentaje de alumnos que presentan dos o más asignaturas con calificación proyectada menor al 70% o inasistencias críticas.",
+        unidadMedida: "PORCENTAJE",
+        formulaCalculo: "(AlumnosConDosOMasReprobadas / TotalAlumnosMatriculados) * 100",
+        fuenteDatosPrimaria: "academic-service:CalificacionesParciales",
+        periodicidadActualizacion: "PARCIAL",
+        interpretacion: "Indicador preventivo temprano para activar tutorías personalizadas y citación a padres de familia.",
+        responsableSeguimiento: "Coordinación Académica / Consejería",
+        estado: "Activo"
+      },
+      {
+        id: "IND-FIN-01",
+        nombre: "Eficacia de Recaudación de Mensualidades",
+        categoria: "FINANCIERA",
+        ambito: "Institucional",
+        definicion: "Proporción de ingresos reales efectivamente confirmados respecto al total de cargos emitidos facturables del ciclo.",
+        unidadMedida: "PORCENTAJE",
+        formulaCalculo: "(TotalIngresosCobradosReales / TotalCargosDevengados) * 100",
+        fuenteDatosPrimaria: "accounting-service:PagosAbonos & CargosFinancieros",
+        periodicidadActualizacion: "MENSUAL",
+        interpretacion: "Meta de cobranza mensual mínima del 90% para garantizar flujo operativo y pago puntual de nómina.",
+        responsableSeguimiento: "Departamento de Contabilidad",
+        estado: "Activo"
+      },
+      {
+        id: "IND-FIN-02",
+        nombre: "Margen de Ejecución Presupuestaria de Nómina",
+        categoria: "FINANCIERA",
+        ambito: "Institucional",
+        definicion: "Porcentaje de desviación entre el costo laboral real devengado (salarios + aportaciones patronales IHSS/RAP/INFOP) y el presupuesto asignado.",
+        unidadMedida: "PORCENTAJE",
+        formulaCalculo: "(CostoLaboralTotalDevengado / PresupuestoNominaAprobado) * 100",
+        fuenteDatosPrimaria: "accounting-service:PlanillasGeneradas",
+        periodicidadActualizacion: "MENSUAL",
+        interpretacion: "Valores superiores al 100% indican sobrecostos por horas extras, bonificaciones o desajustes contractuales.",
+        responsableSeguimiento: "Contador General / Gerencia Financiera",
+        estado: "Activo"
+      },
+      {
+        id: "IND-FIN-03",
+        nombre: "Tasa de Morosidad Cartera Vencida",
+        categoria: "FINANCIERA",
+        ambito: "Institucional / Grado",
+        definicion: "Proporción de saldos por cobrar vencidos con más de 30 días de retraso respecto a la cartera total exigible.",
+        unidadMedida: "PORCENTAJE",
+        formulaCalculo: "(SaldoPendienteVencidoMas30Dias / TotalCargosEmitidos) * 100",
+        fuenteDatosPrimaria: "accounting-service:CargosFinancieros",
+        periodicidadActualizacion: "MENSUAL",
+        interpretacion: "Umbral de tolerancia < 8%. Superar el 10% activa protocolos de seguimiento financiero institucional.",
+        responsableSeguimiento: "Cobranzas / Contabilidad",
+        estado: "Activo"
+      },
+      {
+        id: "IND-FIN-04",
+        nombre: "Rotación y Cumplimiento de Cuentas por Pagar",
+        categoria: "FINANCIERA",
+        ambito: "Institucional",
+        definicion: "Porcentaje de obligaciones de proveedores canceladas en tiempo respecto al total de pasivos programados.",
+        unidadMedida: "PORCENTAJE",
+        formulaCalculo: "(TotalPagosProveedoresEfectuados / TotalCuentasPorPagarExigibles) * 100",
+        fuenteDatosPrimaria: "accounting-service:CuentasPorPagarGastos",
+        periodicidadActualizacion: "MENSUAL",
+        interpretacion: "Mide el cumplimiento comercial y salud crediticia institucional frente a proveedores de bienes y servicios.",
+        responsableSeguimiento: "Contabilidad / Tesorería",
+        estado: "Activo"
+      },
+      {
+        id: "IND-ADM-01",
+        nombre: "Índice de Retención del Personal Docente",
+        categoria: "ADMINISTRATIVA",
+        ambito: "Institucional",
+        definicion: "Porcentaje de profesores que mantienen vinculación contractual activa a lo largo del año lectivo.",
+        unidadMedida: "PORCENTAJE",
+        formulaCalculo: "(TotalDocentesContinuos / TotalDocentesInicioPeriodo) * 100",
+        fuenteDatosPrimaria: "accounting-service:ExpedientesLaborales",
+        periodicidadActualizacion: "ANUAL",
+        interpretacion: "Refleja estabilidad laboral institucional y clima organizacional. Meta >= 90%.",
+        responsableSeguimiento: "Recursos Humanos / Dirección",
+        estado: "Activo"
+      },
+      {
+        id: "IND-ADM-02",
+        nombre: "Tiempo Promedio de Resolución de Trámites y Solicitudes",
+        categoria: "ADMINISTRATIVA",
+        ambito: "Institucional",
+        definicion: "Cantidad media de horas o días hábiles transcurridos desde la radicación de una solicitud hasta su resolución final.",
+        unidadMedida: "HORAS",
+        formulaCalculo: "SUM(TiempoFin - TiempoInicio) / TotalTramitesConcluidos",
+        fuenteDatosPrimaria: "user-service:TramitesExpedientes",
+        periodicidadActualizacion: "MENSUAL",
+        interpretacion: "Estándar de calidad de servicio institucional meta <= 48 horas para constancias y certificados ordinarios.",
+        responsableSeguimiento: "Secretaría General / Calidad",
+        estado: "Activo"
+      },
+      {
+        id: "IND-ADM-03",
+        nombre: "Cumplimiento de Respaldos e Integridad del Sistema",
+        categoria: "ADMINISTRATIVA",
+        ambito: "Plataforma / Operaciones",
+        definicion: "Porcentaje de copias de seguridad programadas ejecutadas con verificación de checksum SHA-256 exitosa.",
+        unidadMedida: "PORCENTAJE",
+        formulaCalculo: "(RespaldosExitososVerificados / RespaldosTotalesProgramados) * 100",
+        fuenteDatosPrimaria: "developer-service:CopiasSeguridad",
+        periodicidadActualizacion: "SEMANAL",
+        interpretacion: "Estándar crítico de continuidad operativa y seguridad de datos. Meta 100%.",
+        responsableSeguimiento: "Administrador de Sistemas / Desarrollador",
+        estado: "Activo"
+      }
+    ];
+
+    let filtered = indicatorsMaster.filter(ind => {
+      if (categoria && String(ind.categoria).toUpperCase() !== String(categoria).toUpperCase()) return false;
+      if (ambito && String(ind.ambito).toUpperCase() !== String(ambito).toUpperCase()) return false;
+      if (periodicidad && String(ind.periodicidadActualizacion).toUpperCase() !== String(periodicidad).toUpperCase()) return false;
+      if (query && typeof query === "string" && query.trim() !== "") {
+        const q = query.toLowerCase().trim();
+        const matchNom = ind.nombre.toLowerCase().includes(q);
+        const matchDef = ind.definicion.toLowerCase().includes(q);
+        const matchId = ind.id.toLowerCase().includes(q);
+        const matchResp = ind.responsableSeguimiento.toLowerCase().includes(q);
+        if (!matchNom && !matchDef && !matchId && !matchResp) return false;
+      }
+      return true;
+    });
+
+    return {
+      status: "success",
+      totalIndicadores: filtered.length,
+      dictionary: filtered,
+      service: "developer-service",
+      version: "v24.1.0"
+    };
+  } catch (err) {
+    return { status: "error", message: err.message };
+  }
 }
 
 // SUITE DE REGRESIÓN FASE 22 (DEVELOPER SERVICE ORCHESTRATION)
@@ -2060,7 +2267,7 @@ function getCentralConfigAndContractCatalog(payload) {
     TASK: { actions: ["ping", "getAllTasks", "submitTask", "getSubmissionDocumentPreviewUrl", "getDriveStorageQuotaMetricsReport"], version: "v8.4.0", deprecatedActions: [] },
     EXAM: { actions: ["ping", "getAllExams", "submitExam", "getExamGradeDistributionAnalytics"], version: "v8.4.0", deprecatedActions: [] },
     ACCOUNTING: { actions: ["ping", "initializeFinancialDriveStructure", "getAdmissionFinancialStatus", "recordStudentPayment"], version: "v8.4.0", deprecatedActions: [] },
-    DEVELOPER: { actions: ["ping", "getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "getCentralizedLogs", "executeOperationalCommand", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "runModularAndDynamicDashboardsRegressionSuite", "validateStagedMigrationProgress", "validateModularFolderStructure", "validateMonolithDecompositionContracts", "getArchitectureAndDependencyMapReport", "getRoleFunctionalSpaceConfig", "auditRoleIndependenceAndMasterDataIntegrity", "validateStableIdentifiersAndControlColumns", "ensureStandardObservabilitySheets", "validateObservabilitySheetsIntegrity", "getCentralSpreadsheetConfigRegistry", "recordProvisioningHistory", "getCentralCapabilitiesCatalog", "getServiceHealthDiagnostics"], version: "v8.4.0", deprecatedActions: [] },
+    DEVELOPER: { actions: ["ping", "getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "getCentralizedLogs", "executeOperationalCommand", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "runModularAndDynamicDashboardsRegressionSuite", "validateStagedMigrationProgress", "validateModularFolderStructure", "validateMonolithDecompositionContracts", "getArchitectureAndDependencyMapReport", "getRoleFunctionalSpaceConfig", "auditRoleIndependenceAndMasterDataIntegrity", "validateStableIdentifiersAndControlColumns", "ensureStandardObservabilitySheets", "validateObservabilitySheetsIntegrity", "getCentralSpreadsheetConfigRegistry", "recordProvisioningHistory", "getCentralCapabilitiesCatalog", "getInstitutionalIndicatorsDictionary", "getServiceHealthDiagnostics"], version: "v8.4.0", deprecatedActions: [] },
     FRONTEND: { actions: ["loadDynamicDashboard", "filterDataByScope", "validateUserScopeContext", "initCoordinatorDashboard", "openRoleResponsibilityConfigModal", "loadRoleConfigAdminData", "previewSubmissionPDFDocument", "openExamGradeDistributionModal", "executeDynamicModuleContract"], version: "v8.4.0", deprecatedActions: [] }
   };
 

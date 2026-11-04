@@ -2515,7 +2515,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-050] [F24-Task01] [P0] [Catálogo de Informes - Catálogo Centralizado de Informes Institucionales con Permisos por Perfil]
+### [X] [TASK-050] [F24-Task01] [P0] [Catálogo de Informes - Catálogo Centralizado de Informes Institucionales con Permisos por Perfil]
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs`
   - `backend/academic-service/Code.gs`
@@ -2572,7 +2572,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-051] [F24-Task02] [P0] [Indicadores Centrales - Diccionario Semántico Centralizado de Indicadores Institucionales]
+### [X] [TASK-051] [F24-Task02] [P0] [Indicadores Centrales - Diccionario Semántico Centralizado de Indicadores Institucionales]
 - **Componentes Afectados:**
   - `backend/developer-service/Code.gs`
   - `backend/academic-service/Code.gs`

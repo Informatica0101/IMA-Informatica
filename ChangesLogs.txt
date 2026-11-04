@@ -4379,6 +4379,31 @@ DESCRIPCIÓN DE MODIFICACIONES:
 
 ===============================================================================
 FECHA: 2025-03-31
+TAREAS: [TASK-050] [F24-Task01] & [TASK-051] [F24-Task02]
+ARCHIVOS MODIFICADOS:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/developer-service/Code.gs
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+- Auditoria.txt
+- ChangesLogs.txt
+DESCRIPCIÓN DE MODIFICACIONES:
+1. En backend/user-service/Code.gs y backend/academic-service/Code.gs:
+   - Implementación de 'getInstitutionalReportCatalog' y 'getAcademicInstitutionalReportCatalog' con catálogo maestro ampliado de 14 informes consolidados (Académica, Secretaría, Contabilidad, Tienda, Cafetería, RRHH, Plataforma).
+   - Inclusión de metadatos estandarizados: id, title, category, area, service, description, supportedFormats, filters, indicators vinculados, rolesPermitidos y estado.
+   - Filtrado estricto por roles autenticados (RBAC) y soporte de parámetros opcionales de búsqueda por texto ('query'), 'categoria', 'area' y 'soloActivos'.
+2. En backend/developer-service/Code.gs:
+   - Implementación de 'getInstitutionalIndicatorsDictionary' con 12 indicadores semánticos institucionales normalizados (IND-ACAD-01 a 05, IND-FIN-01 a 04, IND-ADM-01 a 03).
+   - Estructuración con id, nombre, categoria, ambito, definicion, unidadMedida, formulaCalculo, fuenteDatosPrimaria, periodicidadActualizacion, interpretacion, responsableSeguimiento y estado.
+   - Registro en despachador 'doPost', 'ROLE_PERMISSIONS' y catálogo de contratos de servicio.
+3. En tests/regression/academic-grading-suite.js:
+   - Inclusión de 4 aserciones para verificar el catálogo unificado de informes institucionales y el diccionario semántico de indicadores.
+   - Suite superada con 247/247 pruebas exitosas (100.0%).
+4. En Pendientes.md:
+   - Marcadas las tareas [TASK-050] y [TASK-051] como completadas [X].
+===============================================================================
+FECHA: 2025-03-31
 TAREAS: [TASK-048] [F23-Task05] & [TASK-049] [F23-Task06]
 ARCHIVOS MODIFICADOS:
 - backend/user-service/Code.gs

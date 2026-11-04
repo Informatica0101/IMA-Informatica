@@ -385,6 +385,14 @@ assert(userCode.includes("INTERSERVICE_REPLAY_DETECTED") && acctCode.includes("I
 assert(userCode.includes("verifyWorkflowDecisionAuditChain") && userCode.includes("AUDIT_CHAIN_INTEGRITY_COMPROMISED"), "backend/user-service/Code.gs implementa verifyWorkflowDecisionAuditChain [TASK-049]");
 assert(userCode.includes("recordWorkflowDecisionCorrection") && userCode.includes("hashPrevio") && userCode.includes("hashActual"), "backend/user-service/Code.gs implementa encadenamiento de decisiones y eventos de corrección inmutables [TASK-049]");
 
+// [TASK-050] [F24-Task01] - Catálogo Centralizado de Informes Institucionales con Permisos por Perfil
+assert(userCode.includes("getInstitutionalReportCatalog") && userCode.includes("rolesPermitidos") && acadCode.includes("getAcademicInstitutionalReportCatalog"), "backend servicios implementan catálogo unificado de informes con roles [TASK-050]");
+assert(userCode.includes("REP-ACAD-04") && userCode.includes("REP-CONT-04") && userCode.includes("soloActivos"), "backend/user-service/Code.gs incluye informes expandidos REP-ACAD-04 y REP-CONT-04 [TASK-050]");
+
+// [TASK-051] [F24-Task02] - Diccionario Semántico Centralizado de Indicadores Institucionales
+assert(devCode.includes("getInstitutionalIndicatorsDictionary") && devCode.includes("IND-ACAD-01") && devCode.includes("IND-FIN-01"), "backend/developer-service/Code.gs implementa getInstitutionalIndicatorsDictionary [TASK-051]");
+assert(devCode.includes("formulaCalculo") && devCode.includes("fuenteDatosPrimaria") && devCode.includes("IND-ADM-03"), "backend/developer-service/Code.gs estructura diccionario semántico con fórmulas y fuentes [TASK-051]");
+
 console.log(`\nRESULTADOS: ${passed}/${total} pruebas pasadas (${((passed/total)*100).toFixed(1)}%).`);
 if (passed === total) {
   console.log("SUITE DE REGRESIÓN DE LA FASE 9 SUPERADA INTEGRALMENTE.");
