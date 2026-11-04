@@ -1,4 +1,41 @@
 ===============================================================================
+FECHA: 2026-11-03
+AUDITORÍA FUNCIONAL Y TÉCNICA - [TASK-035], [TASK-036], [TASK-037]: TRANSPORTE ESCOLAR INTEGRAL, MANTENIMIENTO, MIGRACIÓN Y REGRESIÓN
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, backend/developer-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- [TASK-035] [F21-Task07]: Sincronización entre órdenes de mantenimiento automáticas/preventivas y estado operativo del vehículo en `TransporteVehiculos`. Detección y bloqueo estricto con código `VEHICLE_UNDER_MAINTENANCE` al intentar asignar vehículos con órdenes activas a rutas escolares en `manageTransportRoute`.
+- [TASK-036] [F21-Task08]: Auditoría y migración de datos de transporte en `auditAndMigrateTransportData`. Detección de inconsistencias en rutas sin unidad vehicular en el catálogo maestro, formato estructurado de paradas JSON y asignaciones huérfanas de estudiantes. Auto-aprovisionamiento correctivo sin entidades ficticias (`CORRECTIVE_AUTO_PROVISIONED_VEHICLE`).
+- [TASK-037] [F21-Task34]: Suite automatizada de pruebas y regresión integral de transporte `runPhase21TransportAndServicesRegressionSuite` en `backend/accounting-service/Code.gs` y orquestación en `backend/developer-service/Code.gs`. Batería completa de pruebas (PT21-01 a PT21-12) verificando alta de flota, rechazo por póliza de seguro o licencia vencida, aforos, concurrencia, abordaje, manifiesto en tiempo real, entrega a tutores autorizados y cierre obligatorio con barrido físico.
+- Verificación: 214/214 pruebas superadas en `tests/regression/academic-grading-suite.js` (100%) y 23/23 en `tests/regression/modular-dashboard-suite.js` (100%).
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-03
+AUDITORÍA FUNCIONAL Y TÉCNICA - [TASK-029] A [TASK-034]: SEGURIDAD INFANTIL EN TRANSPORTE, CONTROL DE AFORO, ABORDAJE/DESCENSO Y CIERRE OBLIGATORIO
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- [TASK-029] [F21-Task01]: Control estricto de cupos y capacidad vehicular con hoja maestra `TransporteVehiculos`. Bloqueo atómico con ScriptLock ante sobrecupo (`TRANSPORT_CAPACITY_EXCEEDED`), duplicidad de asignación (`DUPLICATE_TRANSPORT_ASSIGNMENT`) y colisión horaria (`TRANSPORT_SCHEDULE_CONFLICT`).
+- [TASK-030] [F21-Task02]: Protección y aislamiento de datos de transporte RBAC/ABAC en `getTransportAssignments`. Restricción estricta de estudiantes y padres a su propio expediente o relaciones familiares en `RelacionesFamiliares`, auditando y bloqueando accesos no autorizados con código `UNAUTHORIZED_ACCESS_ATTEMPT`.
+- [TASK-031] [F21-Task03]: Trazabilidad de viaje con hojas `TransporteViajes` y `TransporteAsistenciaViajes`. Control de abordaje (`recordStudentBoarding`) con rechazo de estudiantes ajenos a la ruta (`UNAUTHORIZED_ROUTE_STUDENT`) y prevención de doble abordaje (`STUDENT_ALREADY_BOARDED`). Control de descenso (`recordStudentAlighting`) con verificación previa (`STUDENT_NOT_BOARDED_IN_TRIP`) y manifiesto en tiempo real (`getTripPassengerManifest`).
+- [TASK-032] [F21-Task04]: Gestión de personas autorizadas en `TransportePersonasAutorizadas`. Verificación de adultos vigentes en `getAuthorizedPickupPersons` y entrega segura en `recordStudentSafeDelivery` con bloqueo taxativo si el receptor no está autorizado (`UNAUTHORIZED_PICKUP_PERSON`), admitiendo excepciones documentadas de Dirección escolar.
+- [TASK-033] [F21-Task05]: Gestión de flota vehicular (`manageTransportVehicle`, `getTransportVehicles`) y conductores (`manageTransportDriver`, `getTransportDrivers`). Validación de pólizas de seguros vigentes (`VEHICLE_INSURANCE_EXPIRED`) y licencias pesadas no vencidas (`DRIVER_LICENSE_EXPIRED`) al vincular en `manageTransportRoute`.
+- [TASK-034] [F21-Task06]: Protocolo de fin de recorrido `finalizeTransportTrip`. Detección automática y bloqueo de cierre ordinario si permanecen menores a bordo con alerta crítica (`STUDENTS_STILL_ON_BOARD`) y requisito obligatorio de confirmación de barrido físico de asientos (`PHYSICAL_INSPECTION_REQUIRED`) para alcanzar el estado `CerradoNormal`.
+- Verificación: 207/207 pruebas superadas en `academic-grading-suite.js` (100%) y 23/23 en `modular-dashboard-suite.js` (100%).
+===============================================================================
+
+===============================================================================
+FECHA: 2026-11-03
+AUDITORÍA FUNCIONAL Y TÉCNICA - [TASK-025], [TASK-026], [TASK-027], [TASK-028]: BIBLIOTECA FRBR/RDA, POLÍTICAS DE CIRCULACIÓN, CONCURRENCIA Y REGRESIÓN
+ARCHIVOS AUDITADOS: backend/accounting-service/Code.gs, backend/developer-service/Code.gs, js/accounting.js, tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- [TASK-025] [F20-Task03]: Normalización relacional FRBR/RDA. Creación de hoja `BibliotecaCatalogoObras` (15 columnas) y endpoints `manageBibliographicWork` y `getBibliographicWorks` generando identificadores correlativos `OBRA-YYYY-NNNNNN` y métricas agregadas de disponibilidad por obra. Separación estricta respecto a `BibliotecaEjemplares`. Actualizado `js/accounting.js` para renderizar el catálogo FRBR consolidado.
+- [TASK-026] [F20-Task04]: Políticas de circulación parametrizadas en `BibliotecaPoliticasCirculacion`. Cuotas simultáneas por rol (Estudiante: 2, Docente: 5, etc.) con bloqueo por `LOAN_LIMIT_EXCEEDED` y bloqueo preventivo por mora activa no devuelta `ACTIVE_OVERDUE_BLOCK`. Cálculo dinámico de fecha de retorno.
+- [TASK-027] [F20-Task05]: Control de concurrencia e idempotencia en `processLibraryLoan`. Protección con `LockService.getScriptLock()` re-evaluando estado en tiempo real para evitar préstamos simultáneos del mismo ejemplar físico (`BOOK_ALREADY_LOANED`) y claves de idempotencia para prevenir duplicados (`IDEMPOTENCY_DUPLICATE_REQUEST`).
+- [TASK-028] [F20-Task14]: Suite automatizada de pruebas y regresión integral `runPhase20LibraryAndResourcesRegressionSuite` en `backend/accounting-service/Code.gs` y orquestación en `backend/developer-service/Code.gs`. Batería completa de pruebas PT20-01 a PT20-14.
+- Verificación: 188/188 pruebas pasando en `academic-grading-suite.js` (100%) y 23/23 en `modular-dashboard-suite.js` (100%).
+===============================================================================
+
+===============================================================================
 FECHA: 2026-10-29
 AUDITORÍA FUNCIONAL Y TÉCNICA - F10-Task05: AMPLIAR LA GESTIÓN DE JUSTIFICACIONES, PERMISOS Y SALIDAS ANTICIPADAS
 ARCHIVOS AUDITADOS: backend/academic-service/Code.gs
@@ -1061,4 +1098,330 @@ RESULTADO DE EVALUACIÓN:
   * Inclusión de modifyPurchaseOrderAmount para Director, Subdirector y Contador.
 - Cobertura de pruebas automatizadas en tests/regression/academic-grading-suite.js alcanzando 136/136 pruebas aprobadas (100.0%).
 - Estado: Completado y Verificado funcionalmente.
+===============================================================================
+
+===============================================================================
+FECHA: 2025-11-03
+TAREA: [TASK-018] [F18-Task20] Implementar suite automatizada de pruebas y regresión integral de compras
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs
+- backend/developer-service/Code.gs
+- tests/regression/academic-grading-suite.js
+RESULTADO DE EVALUACIÓN:
+- En backend/accounting-service/Code.gs:
+  * El servicio de contabilidad dispone de las funciones especializadas para la operativa de compras (F18):
+    - Proveedores: registerSupplier, getSupplierAccountsPayableSummary.
+    - Solicitudes y cotizaciones: createPurchaseRequest, getPurchaseRequests, submitPurchaseQuotation, getPurchaseQuotations.
+    - Órdenes de compra: createPurchaseOrder, approvePurchaseOrder, generatePurchaseOrderPDF, modifyPurchaseOrderAmount.
+    - Recepción física y Kardex: recordPurchaseReceipt, getPurchaseReceipts.
+    - Validación y conciliación: verifyThreeWayMatch, recordAccountsPayableExpense.
+    - Cuentas por pagar y tesorería: recordSupplierPayment, applySupplierCreditNote.
+    - Compromiso presupuestario: approvePurchaseOrder (montoComprometido), recordAccountsPayableExpense (montoEjecutado).
+  * Se implementó la suite automatizada integral 'runPhase18PurchasingAndSuppliersRegressionSuite(payload)' que valida de manera exhaustiva en entorno aislado:
+    - Proveedores hondureños con RTN numérico estricto de 14 dígitos y bloqueo preventivo de proveedores inactivos.
+    - Solicitudes internas y comparativa side-by-side de cotizaciones.
+    - Bloqueo preventivo de autoaprobaciones (AUTO_APPROVAL_BLOCKED), umbral financiero L 50,000 (HIGH_VALUE_APPROVAL_REQUIRED) e identidad oficial New Generation Bilingual School and Institute en órdenes de compra.
+    - Recepciones parciales escalonadas sin cierre prematuro a 'RecibidaTotal' y segregación de artículos dañados en Kardex.
+    - Conciliación Three-Way Match detectando discrepancias de precio y cantidades facturadas no respaldadas físicamente.
+    - Cuentas por pagar con rechazo de sobrepagos (OVERPAYMENT_REJECTED) y notas de crédito comerciales.
+    - Reserva presupuestaria formal y balance por partida doble en AsientosContables (totalDebe === totalHaber).
+    - Flujo E2E completo en 10 etapas continuas.
+  * La acción se registró en ROLE_PERMISSIONS para Director, Subdirector y Contador (Administrador '*') y en el despachador doPost.
+- En backend/developer-service/Code.gs:
+  * Se registró 'runPhase18PurchasingAndSuppliersRegressionSuite' en ROLE_PERMISSIONS['Desarrollador'] y en el despachador doPost.
+  * Se implementó la suite completa para diagnóstico centralizado desde el panel del desarrollador.
+- En tests/regression/academic-grading-suite.js:
+  * Se incorporaron 6 aserciones específicas para [TASK-018], logrando 142/142 pruebas aprobadas (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
+
+===============================================================================
+FECHA: 2025-11-03
+TAREA: [TASK-019] [F19-Task01] Corrección integral del control de existencias multialmacén
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (recordInventoryMovement, getInventoryKardex, transferInventoryStock)
+- js/accounting.js (loadKardexData, handleMovimientoKardex, renderAlmacenesView)
+RESULTADO DE EVALUACIÓN:
+- En backend/accounting-service/Code.gs:
+  * En 'recordInventoryMovement':
+    - Causa raíz del defecto F19-02: Para determinar 'currentStock', la función recorre la hoja InventariosKardex filtrando únicamente por 'itemCodigo' ('String(r[2]).trim() === sCodigo') y toma el último valor de la columna 8 sin considerar la bodega ('r[10]').
+    - Consecuencia: El stock de un artículo se calcula de forma global. Si se registra una salida en Bodega A, se descuenta sobre el saldo consolidado de todas las bodegas, permitiendo salidas en ubicaciones donde físicamente no hay stock e impidiendo conocer el saldo individual de cada almacén.
+    - Ausencia de ScriptLock: La operación no utiliza LockService, provocando condiciones de carrera si dos operadores registran movimientos simultáneos.
+    - Los registros sin ubicación explícita no tienen un fallback normalizado y consistente.
+  * En 'getInventoryKardex':
+    - 'latestStockMap' indexa por 'code' únicamente, sobrescribiendo el stock de cada ubicación con el del último registro del artículo.
+    - No calcula ni desglosa existencias por ubicación ni consolidado institucional.
+    - No permite filtrar por almacén o ubicación ni por rango de fechas.
+    - No detecta inconsistencias entre movimientos acumulados y saldos de fila.
+  * En 'transferInventoryStock':
+    - Delega en recordInventoryMovement, pero al tener cálculo global, los saldos reflejados en el kardex son erróneos.
+- En js/accounting.js:
+  * 'loadKardexData' renderiza una tabla plana y espera , mostrando únicamente la ubicación del último movimiento sin desagregación por almacén ni vista consolidada institucional.
+- Plan de Acción:
+  1. En recordInventoryMovement, implementar adquisición atómica con LockService.getScriptLock(), normalizar la ubicación (por defecto 'Bodega General'), y calcular currentStock buscando el último registro del artículo ESPECÍFICAMENTE en esa ubicación física.
+  2. Validar que si el movimiento es de salida, el stock de la ubicación particular sea suficiente.
+  3. En getInventoryKardex, implementar filtrado multidimensional y calcular en tiempo real existencias por bodega, consolidado institucional y auditoría de consistencia.
+  4. En js/accounting.js, permitir visualizar saldos por almacén y consolidado institucional.
+===============================================================================
+
+===============================================================================
+FECHA: 2025-11-03
+TAREA: [TASK-019] [F19-Task01] Corrección integral del control de existencias multialmacén
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (recordInventoryMovement, getInventoryKardex, transferInventoryStock, reconcilePhysicalCount)
+- js/accounting.js (loadKardexData, handleMovimientoKardex, renderAlmacenesView)
+- tests/regression/academic-grading-suite.js
+- Pendientes.md
+RESULTADO DE EVALUACIÓN TRAS IMPLEMENTACIÓN:
+- En backend/accounting-service/Code.gs:
+  * 'recordInventoryMovement':
+    - Adquisición de candado atómico con LockService.getScriptLock() (timeout 15s).
+    - 'currentStockLocal' determinado por coincidencia estricta de 'itemCodigo' y 'targetUbicacion'.
+    - Validación de stock suficiente en la ubicación: si se solicita una salida superior a la existencia local, se bloquea con mensaje descriptivo indicando el stock disponible en la bodega sin modificar saldos de otros almacenes.
+    - Se registran en InventariosKardex el StockAnterior y StockNuevo locales de la ubicación.
+    - Se calcula simultáneamente y se retorna el total consolidado institucional.
+  * 'getInventoryKardex':
+    - Soporte de filtrado por artículo, categoría, almacén/ubicación ('ubicacionResponsable' / 'almacenId' / 'ubicacionId') y fechas.
+    - Generación de 'resumenPorUbicacion' (desglose por bodega) y 'resumenExistencias' (consolidado por artículo).
+  * 'transferInventoryStock':
+    - Descuenta existencias en la bodega origen e incrementa en la bodega destino mediante lote atómico, validando que origen y destino sean distintos y manteniendo invariante el consolidado institucional.
+  * 'reconcilePhysicalCount':
+    - Cotejo de inventario físico y generación de ajustes focalizados en la ubicación auditada.
+- En js/accounting.js:
+  * 'loadKardexData' renderiza tarjetas de resumen multialmacén e institucional y tabla detallada de movimientos.
+- Cobertura de pruebas automatizadas:
+  * 149/149 pruebas pasadas en academic-grading-suite.js (100.0%).
+  * 23/23 pruebas pasadas en modular-dashboard-suite.js (100.0%).
+- Estado: Completado y Verificado funcionalmente.
+===============================================================================
+
+===============================================================================
+FECHA: 2025-11-03
+TAREA: [TASK-020] [F19-Task02] Implementación del flujo completo de devolución y recepción de activos bajo custodia
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs (assignAssetCustody, getAssetAssignments, manageAssetItem, manageMaintenanceOrder)
+- js/accounting.js
+RESULTADO DE EVALUACIÓN:
+- En backend/accounting-service/Code.gs:
+  * 'assignAssetCustody':
+    - Permite asignar un custodio a un activo en 'ActivosPatrimoniales' (columna 7 = custodioUserId, columna 8 = 'assigned') y crea un registro en 'AsignacionesActivos' con FechaEntrega y EstadoActa = 'Acta Firmada'.
+    - Defecto detectado: No valida el estado operativo actual del activo ('available'). Permite asignar activos que ya están asignados o que están en mantenimiento ('maintenance') o de baja.
+    - Carencia crítica: No existe la función inversa 'returnAssetCustody'. Una vez asignado, el activo no puede ser devuelto formalmente, permaneciendo indefinidamente ligado al custodio sin finiquito ni inspección física.
+  * 'getAssetAssignments':
+    - Mapea las filas de AsignacionesActivos, pero la columna 4 (FechaDevolucion) nunca se actualiza al no existir endpoint de devolución.
+  * Inexistencia de enlace automático con mantenimiento:
+    - No hay lógica para evaluar la condición física del bien devuelto (Nuevo, Bueno, Regular, Dañado, Incompleto, RequiereReparacion) ni para generar órdenes automáticas en 'MantenimientoOrdenes' cuando un activo reingresa con averías.
+  * ROLE_PERMISSIONS y doPost:
+    - No contemplan la acción 'returnAssetCustody'.
+- En js/accounting.js:
+  * No existe controlador ni formulario para registrar la devolución de activos bajo custodia ni visualizar su acta de entrega-recepción.
+- Plan de Acción:
+  1. Implementar 'returnAssetCustody' con LockService en backend/accounting-service/Code.gs:
+     - Validar que exista una asignación activa (FechaDevolucion vacía) para el activo y custodio.
+     - Registrar FechaDevolucion, responsable de recepción, estado físico y acta formal.
+     - Si el estado físico es Dañado, Incompleto o RequiereReparacion, cambiar estado a 'maintenance', generar orden de mantenimiento y bloquear reasignación.
+     - Si es conforme, liberar custodio (vacío) y establecer estado 'available'.
+  2. Ajustar 'assignAssetCustody' para impedir asignar activos que no estén en estado 'available'.
+  3. Registrar 'returnAssetCustody' en ROLE_PERMISSIONS y doPost.
+  4. Integrar función de devolución en js/accounting.js.
+  5. Validar con pruebas automatizadas en tests/regression/academic-grading-suite.js.
+===============================================================================
+
+===============================================================================
+FECHA: 2025-11-03
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs
+- backend/developer-service/Code.gs
+- js/accounting.js
+TAREAS ASOCIADAS:
+- [TASK-021] [F19-Task03] Validación transaccional de transferencias entre almacenes
+- [TASK-022] [F19-Task20] Implementar suite automatizada de pruebas y regresión integral de inventario y activos
+RESULTADO DE EVALUACIÓN:
+- En backend/accounting-service/Code.gs:
+  * "transferInventoryStock":
+    - Defecto detectado: No realizaba una comprobación previa atómica del stock local disponible en la bodega de origen antes de despachar, lo que permitía solicitar transferencias superiores a las existencias físicas.
+    - Carencia: No existía persistencia en "TransferenciasInventario" ni ciclo documental completo (Borrador, EnTransito, RecibidaTotal, RecibidaParcial, Rechazada).
+    - Carencia: No existía la función "confirmTransferReceipt" para que el custodio receptor valide físicamente las unidades que ingresan a su almacén e ingrese discrepancias justificadas.
+  * Suite de regresión integral Fase 19:
+    - Inexistencia de "runPhase19InventoryAndAssetsRegressionSuite" para evaluar de forma continua las 20 pruebas transversales (PT19-01 a PT19-20) de inventario y activos patrimoniales, incluyendo la partida doble en depreciaciones contables.
+- En js/accounting.js:
+  * Inexistencia de interfaz para transferencias entre bodegas ni botón de recepción física en almacén de destino.
+- Plan de Acción Ejecutado:
+  1. Modificar "transferInventoryStock" para validar stock disponible local en origen bajo ScriptLock, rechazar transferencias sin existencia suficiente ("INSUFFICIENT_SOURCE_STOCK") y registrar la operación en "TransferenciasInventario" con lote "TRF-...".
+  2. Implementar "confirmTransferReceipt" y "getInventoryTransfers", actualizando Kardex al confirmar la recepción en destino y documentando discrepancias.
+  3. Implementar "runPhase19InventoryAndAssetsRegressionSuite" cubriendo las 20 pruebas transversales en accounting-service y developer-service.
+  4. Integrar vista de transferencias y acciones de despacho y recepción en "js/accounting.js".
+  5. Extender tests/regression/academic-grading-suite.js con validaciones específicas.
+===============================================================================
+
+===============================================================================
+FECHA: 2025-11-03
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs
+- dashboard-contabilidad.html
+- js/accounting.js
+TAREAS ASOCIADAS:
+- [TASK-023] [F20-Task01] Implementación de funciones backend faltantes para biblioteca
+- [TASK-024] [F20-Task02] Conexión y activación del módulo de Biblioteca en la interfaz institucional
+RESULTADO DE EVALUACIÓN:
+- En backend/accounting-service/Code.gs:
+  * Las funciones reserveLibraryBook, getLibraryReservations, recordLibraryIncident, getLibraryIncidents, manageDigitalResource y getDigitalResources se encontraban declaradas en ROLE_PERMISSIONS y en el switch de doPost, pero carecían de implementación ejecutable en el backend.
+  * Invocaciones a estas acciones producían ReferenceError en el entorno de Apps Script.
+- En dashboard-contabilidad.html y js/accounting.js:
+  * La función renderBibliotecaModule y sus subpestañas estaban codificadas en js/accounting.js, pero la navegación en switchTab no tenía el caso para "biblioteca" ni existía un botón de acceso en el submenú de dashboard-contabilidad.html, resultando en un módulo huérfano e inaccesible.
+- Plan de Acción Ejecutado:
+  1. Implementar en backend/accounting-service/Code.gs las 6 funciones faltantes:
+     - reserveLibraryBook: reserva con ScriptLock en "BibliotecaReservas", prevención de reservas duplicadas y comprobación de estado "on_loan".
+     - getLibraryReservations: consulta filtrada por usuario, ejemplar y estado.
+     - recordLibraryIncident: reporte en "BibliotecaIncidencias" con actualización automática de estado del libro a "damaged" o "lost" en "BibliotecaEjemplares".
+     - getLibraryIncidents: consulta de incidencias y estado resolutivo.
+     - manageDigitalResource: alta/edición en "RecursosDigitalesBiblioteca" con serialización de permisos y URLs.
+     - getDigitalResources: consulta con catálogo predeterminado y filtrado de recursos activos.
+  2. En dashboard-contabilidad.html:
+     - Agregar botón de acceso "Biblioteca" con icono fas fa-book-reader en la grilla de submenús.
+  3. En js/accounting.js:
+     - Añadir bifurcación else if (tab === "biblioteca") renderBibliotecaModule(container); dentro de switchTab.
+  4. Extender tests/regression/academic-grading-suite.js con 8 aserciones de verificación funcional.
+===============================================================================
+
+===============================================================================
+FECHA: 2025-03-31
+ARCHIVOS AUDITADOS:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/developer-service/Code.gs
+- tests/regression/academic-grading-suite.js
+TAREAS ASOCIADAS:
+- [TASK-050] [F24-Task01] [P0] [Catálogo de Informes - Catálogo Centralizado de Informes Institucionales con Permisos por Perfil]
+- [TASK-051] [F24-Task02] [P0] [Indicadores Centrales - Diccionario Semántico Centralizado de Indicadores Institucionales]
+RESULTADO DE EVALUACIÓN:
+- En backend/user-service/Code.gs y backend/academic-service/Code.gs:
+  * El catálogo anterior era elemental, carecía de informes clave (como capacidad/ocupación REP-ACAD-04 o comparativos multianuales REP-CONT-04), no detallaba las áreas institucionales ni vinculaba los indicadores institucionales correspondientes.
+  * No existía en el servicio académico una función local de consulta de catálogo acorde al despacho doPost.
+- En backend/developer-service/Code.gs:
+  * No existía un diccionario semántico centralizado que definiera unívocamente las fórmulas de cálculo, unidades de medida, periodicidad de refresco y fuentes de datos primarias de los indicadores institucionales.
+- Plan de Acción Ejecutado:
+  1. Enriquecer getInstitutionalReportCatalog y getAcademicInstitutionalReportCatalog con el catálogo consolidado de 14 informes con metadatos completos y RBAC estricto.
+  2. Implementar getInstitutionalIndicatorsDictionary en developer-service estructurando 12 indicadores esenciales para áreas académica, financiera y administrativa.
+  3. Extender tests/regression/academic-grading-suite.js con 4 aserciones cubriendo TASK-050 y TASK-051 (247/247 pruebas pasadas al 100%).
+===============================================================================
+
+===============================================================================
+FECHA: 2025-03-31
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs
+- backend/user-service/Code.gs
+- tests/regression/academic-grading-suite.js
+TAREAS ASOCIADAS:
+- [TASK-038] [F22-Task01] Validación binaria, seguridad e integridad de archivos adjuntos
+- [TASK-039] [F22-Task02] Hash SHA-256 y vinculación criptográfica de las firmas con los documentos
+RESULTADO DE EVALUACIÓN:
+- En backend/accounting-service/Code.gs y backend/user-service/Code.gs:
+  * La recepción de archivos en uploadPaymentVoucher y submitInstitutionalFormRequest no realizaba inspección de Magic Bytes ni rechazaba de forma centralizada extensiones peligrosas (.exe, .bat, .cmd, .sh, .apk, etc.), permitiendo que archivos corruptos o maliciosos pudieran ingresar a Google Drive.
+  * La emisión de documentos en generateSchoolDocument y el registro de firmas en registerDocumentSignature carecían de cálculo de hash criptográfico SHA-256 para garantizar la inmutabilidad y el no repudio.
+- Plan de Acción Ejecutado:
+  1. Implementar validateFileBinaryIntegrity en backend/accounting-service/Code.gs y backend/user-service/Code.gs con inspección de Magic Bytes (PDF, JPEG, PNG, WEBP, PKZip/Office), rechazo de ejecutables, límite de 10MB y rechazo de archivos vacíos.
+  2. Integrar validateFileBinaryIntegrity en uploadPaymentVoucher y submitInstitutionalFormRequest.
+  3. Implementar computeDocumentSHA256 en ambos servicios, indexando la columna sha256Hash en DocumentosEscolaresEmitidos y vinculando criptográficamente documentoHash y signatureHash en registerDocumentSignature (FirmasConformidades).
+  4. Extender tests/regression/academic-grading-suite.js con 7 nuevas pruebas de regresión cubriendo TASK-038 y TASK-039 (221/221 pruebas aprobadas al 100%).
+===============================================================================
+
+===============================================================================
+FECHA: 2025-03-31
+ARCHIVOS AUDITADOS:
+- backend/user-service/Code.gs
+- backend/accounting-service/Code.gs
+- tests/regression/academic-grading-suite.js
+TAREAS ASOCIADAS:
+- [TASK-040] [F22-Task03] Certificado de finalización y expediente probatorio de cada firma
+- [TASK-041] [F22-Task04] Integración con firma electrónica avanzada y proveedores de certificación (Decreto 149-2013)
+RESULTADO DE EVALUACIÓN:
+- En backend/user-service/Code.gs:
+  * Carecía de un generador de certificado de finalización consolidado (Certificate of Completion) que recopilara secuencialmente a los firmantes, roles, IPs, timestamps UTC y Honduras GMT-6, tokens CUV y hashes SHA-256 vinculantes.
+  * No existía una arquitectura de integración desacoplada para proveedores de certificación bajo el Decreto Legislativo 149-2013 y Acuerdo Ejecutivo 41-2014, ni gestión transaccional de estados de firma avanzada.
+- Plan de Acción Ejecutado:
+  1. Implementar generateSignatureAuditCertificate en backend/user-service/Code.gs con expediente probatorio inmutable y huella SHA-256 del certificado.
+  2. Integrar certificadoAuditoria en verifySchoolDocumentByCUV en backend/accounting-service/Code.gs para exponer la pista de auditoría completa de firmas al verificar documentos por CUV.
+  3. Implementar configureAdvancedSignatureProvider, getAdvancedSignatureProviderConfig, createAdvancedSignatureRequest y checkAdvancedSignatureStatus en backend/user-service/Code.gs con soporte para proveedores externos y firmas avanzadas cualificadas, registrando en ROLE_PERMISSIONS y doPost.
+  4. Extender tests/regression/academic-grading-suite.js con 6 aserciones de verificación de TASK-040 y TASK-041 (227/227 pruebas aprobadas al 100%).
+===============================================================================
+
+===============================================================================
+FECHA: 2025-03-31
+ARCHIVOS AUDITADOS:
+- backend/accounting-service/Code.gs
+- backend/developer-service/Code.gs
+- tests/regression/academic-grading-suite.js
+TAREAS ASOCIADAS:
+- [TASK-042] [F22-Task13] Suite de pruebas automatizadas y regresión integral de la Fase 22
+RESULTADO DE EVALUACIÓN:
+- En backend/accounting-service/Code.gs y backend/developer-service/Code.gs:
+  * Carecía de una suite integral automatizada para la Fase 22 que evaluara holísticamente la generación documental con CUV único, correlativos anuales, integridad SHA-256, validación binaria de adjuntos, firmas electrónicas, certificado de auditoría bajo Decreto 149-2013 y compatibilidad SACE sin regresión.
+- Plan de Acción Ejecutado:
+  1. Implementar runPhase22DocumentManagementAndSACERegressionSuite en backend/accounting-service/Code.gs cubriendo 12 casos exhaustivos (PT22-01 a PT22-12).
+  2. Implementar orquestación de runPhase22DocumentManagementAndSACERegressionSuite en backend/developer-service/Code.gs con verificación de contratos y endpoints interservicio.
+  3. Mapear permisos en ROLE_PERMISSIONS y enrutar en doPost en ambos servicios.
+  4. Extender tests/regression/academic-grading-suite.js con 3 nuevas aserciones alcanzando 230/230 pruebas pasadas al 100%.
+===============================================================================
+
+===============================================================================
+FECHA: 2025-03-31
+ARCHIVOS AUDITADOS:
+- backend/user-service/Code.gs
+- tests/regression/academic-grading-suite.js
+TAREAS ASOCIADAS:
+- [TASK-044] [F23-Task01] [P0] Motor de Workflows - Integridad Transaccional, Candados Atómicos y Autorización de Decisiones
+- [TASK-045] [F23-Task02] [P0] Motor de Workflows - Idempotencia de Solicitudes, Decisiones y Operaciones Institucionales
+RESULTADO DE EVALUACIÓN:
+- En backend/user-service/Code.gs:
+  * El procesamiento de decisiones de aprobación carecía de exclusión mutua, permitiendo colisiones concurrentes y manipulación de parámetros de transición dictados por el cliente (siguienteAsignadoA, nuevoEstadoSolicitud).
+  * No existía control de idempotencia para solicitudes y transacciones repetidas, arriesgando registros duplicados y repetición de transiciones.
+- Plan de Acción Ejecutado:
+  1. En processWorkflowDecision: incorporación de LockService.getScriptLock(15000) (WORKFLOW_CONCURRENCY_LOCKED), comprobación de estado de solicitud (WORKFLOW_INVALID_STATE), detección de etapa ya resuelta (STAGE_ALREADY_RESOLVED_CONFLICT) y cálculo estricto de transiciones del lado del servidor.
+  2. Implementar checkAndRegisterIdempotencyKey, saveIdempotentResult e getIdempotencyPayloadSignature con CacheService en user-service, detectando claves reutilizadas con payloads incompatibles (IDEMPOTENCY_KEY_PAYLOAD_MISMATCH) y cacheando respuestas con cachedIdempotentResult = true.
+  3. Extender tests/regression/academic-grading-suite.js con 5 nuevas aserciones totalizando 235/235 pruebas pasadas al 100%.
+===============================================================================
+
+===============================================================================
+FECHA: 2025-03-31
+ARCHIVOS AUDITADOS:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/developer-service/Code.gs
+- tests/regression/academic-grading-suite.js
+TAREAS ASOCIADAS:
+- [TASK-046] [F23-Task03] [P0] Arquitectura Distribuida - Enrutador Universal de Spreadsheets y Resolución Dinámica de Fuentes de Datos
+- [TASK-047] [F23-Task04] [P0] Arquitectura Distribuida - Catálogo Institucional de Cuentas, Servicios y Permisos Distribuidos
+RESULTADO DE EVALUACIÓN:
+- En backend/user-service/Code.gs y backend/academic-service/Code.gs:
+  * Carecían de una función universal de resolución dinámica de fuentes de datos, dependiendo de SPREADSHEET_ID fijo sin particionamiento por dominio, ciclo lectivo ni detección de fuentes deshabilitadas.
+- En backend/developer-service/Code.gs:
+  * El catálogo de servicios operaba con una lista en memoria sin persistencia en CatalogoServicios ni seguimiento histórico de cambios de estado, suspensión de instancias ni control de duplicados.
+- Plan de Acción Ejecutado:
+  1. Implementar e integrar resolveSpreadsheetSource, registerSpreadsheetSource y getSpreadsheetCatalog en user-service y academic-service con detección de fuentes deshabilitadas (SOURCE_SPREADSHEET_DISABLED) y fallback seguro.
+  2. Implementar CatalogoServicios y HistorialServiciosDistribuidos en developer-service con prevención de duplicados (DUPLICATE_SERVICE_REGISTRATION), validación de ciclo de vida de estados y auditoría histórica de suspensiones.
+  3. Extender tests/regression/academic-grading-suite.js con 4 aserciones cubriendo TASK-046 y TASK-047 (239/239 pruebas pasadas al 100%).
+===============================================================================
+
+===============================================================================
+FECHA: 2025-03-31
+ARCHIVOS AUDITADOS:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/developer-service/Code.gs
+- tests/regression/academic-grading-suite.js
+TAREAS ASOCIADAS:
+- [TASK-048] [F23-Task05] [P0] Seguridad y Red - Protocolo Universal de Comunicación Interservicio y Gestión de Credenciales
+- [TASK-049] [F23-Task06] [P0] Auditoría Criptográfica - Protección de Decisiones Históricas y Auditoría Anti-Manipulación
+RESULTADO DE EVALUACIÓN:
+- En backend microservicios:
+  * Carecían de un protocolo estandarizado de paquetes interservicio autenticados con firma HMAC, vigencia temporal (TTL) y prevención de repetición (anti-replay).
+  * Las decisiones de workflow en RevisionesDecisionesTramite carecían de encadenamiento criptográfico (hashPrevio + hashActual), exponiendo el historial a manipulaciones sin detección.
+- Plan de Acción Ejecutado:
+  1. Implementar createInterServiceEnvelope y verifyInterServiceEnvelope en accounting-service, user-service, academic-service y developer-service con validación de firma HMAC-SHA256, TTL de 5 minutos, prevención anti-replay con CacheService y validación de servicio destino previsto.
+  2. Implementar encadenamiento de decisiones (hashPrevio y hashActual con SHA-256) en processWorkflowDecision en backend/user-service/Code.gs.
+  3. Implementar verifyWorkflowDecisionAuditChain para auditar la integridad criptográfica de la cadena histórica y recordWorkflowDecisionCorrection para asentar correcciones inmutables vinculadas.
+  4. Extender tests/regression/academic-grading-suite.js con 4 nuevas aserciones alcanzando 243/243 pruebas aprobadas al 100%.
 ===============================================================================

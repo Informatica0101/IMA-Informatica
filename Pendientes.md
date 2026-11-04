@@ -1357,7 +1357,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-018] [ ] [F18-Task20] Implementar suite automatizada de pruebas y regresión integral de compras
+### [TASK-018] [X] [F18-Task20] Implementar suite automatizada de pruebas y regresión integral de compras
 - **Origen del Hallazgo:** `AUDITORIA-FASE-18-COMPRAS-PROVEEDORES-CONTRATACION.md` / Sección G (P0) y Sección F
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Aseguramiento de calidad, prevención de regresiones e integridad en adquisiciones)
@@ -1387,7 +1387,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Se bloquean facturas que intenten cobrar cantidades no recibidas físicamente.
   - Los asientos contables generados se validan como perfectamente equilibrados.
   - No se produce ninguna regresión en las pruebas de las fases anteriores (Fases 9, 10, 11, 15, 16 y 17).
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -1397,7 +1397,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-019] [ ] [F19-Task01] Corrección integral del control de existencias multialmacén
+### [TASK-019] [X] [F19-Task01] Corrección integral del control de existencias multialmacén
 - **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-02), Sección G (Defecto 1) y Plan de Trabajo F19-01
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Integridad física de inventarios, auditoría por bodega, prevención de saldos inconsistentes y desabastecimiento)
@@ -1454,11 +1454,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Los registros históricos mantienen su trazabilidad y cantidades intactas.
   - Los conteos físicos y conciliaciones operan bajo el nuevo modelo por almacén.
   - Los reportes muestran correctamente los saldos individuales por ubicación y el consolidado institucional.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 ---
-### [TASK-020] [ ] [F19-Task02] Implementación del flujo completo de devolución y recepción de activos bajo custodia
+### [TASK-020] [X] [F19-Task02] Implementación del flujo completo de devolución y recepción de activos bajo custodia
 - **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-06), Sección G (Defecto 2) y Plan de Trabajo F19-02
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Control patrimonial, cierre formal de responsabilidades de custodios, actas de devolución y reasignación de bienes)
@@ -1495,11 +1495,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Los activos dañados no pueden reasignarse como disponibles.
   - Se genera un acta verificable de entrega-recepción descargable en PDF.
   - Se rechazan devoluciones duplicadas de una misma asignación.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 ---
-### [TASK-021] [ ] [F19-Task03] Validación transaccional de transferencias entre almacenes
+### [TASK-021] [X] [F19-Task03] Validación transaccional de transferencias entre almacenes
 - **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección E (F19-05), Sección F (PT-04) y Plan de Trabajo F19-03
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Consistencia de traslados físicos, prevención de existencias negativas, atocimidad y control de tránsito)
@@ -1535,7 +1535,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Salida y entrada comparten identificador de transferencia y trazabilidad.
   - No existen movimientos huérfanos bajo fallos o interrupciones de red.
   - Se garantiza integridad y bloqueo transaccional bajo solicitudes concurrentes.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -1543,7 +1543,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-022] [ ] [F19-Task20] Implementar suite automatizada de pruebas y regresión integral de inventario y activos
+### [TASK-022] [X] [F19-Task20] Implementar suite automatizada de pruebas y regresión integral de inventario y activos
 - **Origen del Hallazgo:** `AUDITORIA_FASE_19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md` / Sección G (P0), Sección F y Plan de Trabajo F19-20
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Aseguramiento continuo de integridad en recursos físicos, bodegas multialmacén y balances contables)
@@ -1583,7 +1583,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - No existen desbalances contables (`totalDebe === totalHaber` en todos los asientos generados).
   - No se generan saldos negativos de inventario bajo ninguna circunstancia.
   - La suite de regresión previa (53/53 pruebas) se mantiene aprobada al 100%.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -1593,7 +1593,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-023] [ ] [F20-Task01] Implementación de funciones backend faltantes para biblioteca
+### [TASK-023] [X] [F20-Task01] Implementación de funciones backend faltantes para biblioteca
 - **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E (Defecto 1), Sección G y Plan de Trabajo P0
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Funciones cableadas en enrutador doPost y ROLE_PERMISSIONS pero no declaradas, originando errores fatales de ejecución ReferenceError)
@@ -1620,11 +1620,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Al reservar un libro prestado, se genera la reserva con fecha de expiración y orden de lista de espera.
   - Al reportar una incidencia de extravío, el libro deja de figurar como disponible en el catálogo.
   - La consulta de recursos digitales devuelve los materiales activos respetando los permisos del rol.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 ---
-### [TASK-024] [ ] [F20-Task02] Conexión y activación del módulo de Biblioteca en la interfaz institucional
+### [TASK-024] [X] [F20-Task02] Conexión y activación del módulo de Biblioteca en la interfaz institucional
 - **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E (Defecto 2), Sección G y Plan de Trabajo P0
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Código de frontend huérfano, falta de navegación en dashboards y operatividad de la interfaz)
@@ -1646,11 +1646,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Al hacer clic en el botón "Biblioteca" del dashboard, se despliega la interfaz del módulo sin errores de consola.
   - Se puede navegar entre las 5 subpestañas y cada una carga sus datos correspondientes desde Google Sheets.
   - Los formularios de registro y modales de préstamo operan de forma interactiva y notifican al usuario.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 ---
-### [TASK-025] [ ] [F20-Task03] Normalización relacional del catálogo: separación entre Obras y Ejemplares
+### [TASK-025] [X] [F20-Task03] Normalización relacional del catálogo: separación entre Obras y Ejemplares
 - **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E (Defecto 3), Sección C y Plan de Trabajo P0
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Normalización de datos bibliográficos, modelo FRBR/RDA y prevención de duplicidad de obras)
@@ -1673,11 +1673,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Se puede registrar una obra bibliográfica una sola vez y asociarle múltiples ejemplares físicos independientes.
   - Modificar los datos de la obra (ej. corregir nombre de la editorial) actualiza la ficha global sin tocar los registros de préstamos de sus ejemplares.
   - Cada ejemplar físico mantiene su propio estado de disponibilidad y ubicación física aislada.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-026] [ ] [F20-Task04] Control de políticas de circulación, límites de préstamo y bloqueo por mora
+### [TASK-026] [X] [F20-Task04] Control de políticas de circulación, límites de préstamo y bloqueo por mora
 - **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E (Defecto 4), Sección C y Plan de Trabajo P0
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Políticas institucionales de circulación, límites por rol escolar y prevención de retención indebida de libros)
@@ -1702,11 +1702,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Un estudiante con 2 libros en préstamo intenta solicitar un 3º y el sistema rechaza la operación por límite de cupo alcanzado.
   - Un usuario con un libro vencido no puede recibir nuevos préstamos hasta devolver el material atrasado.
   - Un docente puede recibir hasta 5 libros con fecha de retorno configurada a 15 días.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-027] [ ] [F20-Task05] Control de concurrencia e idempotencia en circulación bibliotecaria
+### [TASK-027] [X] [F20-Task05] Control de concurrencia e idempotencia en circulación bibliotecaria
 - **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección E, Sección F (PT-20-24, PT-20-25) y Plan de Trabajo P0
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Integridad transaccional, prevención de doble asignación de ejemplares y protección de reintentos)
@@ -1727,7 +1727,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 - **Criterios de Aceptación:**
   - Dos solicitudes simultáneas sobre el mismo ejemplar resultan en un préstamo exitoso y un rechazo controlado.
   - Los reintentos de red no duplican las filas de préstamo en `BibliotecaPrestamos`.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 
@@ -1735,7 +1735,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-028] [ ] [F20-Task14] Implementar suite automatizada de pruebas y regresión integral de biblioteca
+### [TASK-028] [X] [F20-Task14] Implementar suite automatizada de pruebas y regresión integral de biblioteca
 - **Origen del Hallazgo:** `AUDITORIA_FASE_20_BIBLIOTECA_RECURSOS_EDUCATIVOS.md` / Sección G (P0), Sección F y Plan de Trabajo F20-14
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Aseguramiento continuo de integridad en catálogo bibliográfico, préstamos, reservas y no regresión)
@@ -1760,7 +1760,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - La suite de regresión ejecuta todas las pruebas de biblioteca y recursos educativos con el 100% de éxito (`PASS`).
   - Se valida el correcto funcionamiento de las 6 funciones previamente ausentes en backend.
   - Las suites de regresión previas (53/53 pruebas) se mantienen aprobadas al 100%.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 
@@ -1770,7 +1770,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-029] [ ] [F21-Task01] Control estricto de cupos, capacidad vehicular y asignaciones de transporte
+### [TASK-029] [X] [F21-Task01] Control estricto de cupos, capacidad vehicular y asignaciones de transporte
 - **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-02), Sección G (Defecto 1) y Plan de Implementación TAREA 01
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Seguridad física de estudiantes, cumplimiento de límites legales de capacidad vehicular y prevención de sobrecupos)
@@ -1806,11 +1806,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Se detectan y bloquean asignaciones duplicadas o colisiones de horario en el mismo estudiante.
   - Las solicitudes simultáneas concurrentes no producen sobrecupos.
   - Los reportes de ocupación coinciden con las asignaciones reales.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-030] [ ] [F21-Task02] Protección de datos de transporte y aislamiento de consultas por usuario (RBAC/ABAC)
+### [TASK-030] [X] [F21-Task02] Protección de datos de transporte y aislamiento de consultas por usuario (RBAC/ABAC)
 - **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-49), Sección G (Defecto 2) y Plan de Implementación TAREA 02
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Privacidad y protección de datos de menores, FERPA y prevención de fuga de geolocalización y paradas a terceros)
@@ -1840,11 +1840,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Una consulta sin filtros nunca devuelve todos los estudiantes de la institución a un rol no directivo.
   - Las coordenadas GPS no son accesibles mediante enlaces públicos sin autenticación.
   - Se auditan los intentos de acceso no autorizado.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-031] [ ] [F21-Task03] Control de abordaje, descenso y asistencia de pasajeros mediante QR y registro asistido
+### [TASK-031] [X] [F21-Task03] Control de abordaje, descenso y asistencia de pasajeros mediante QR y registro asistido
 - **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-20), Sección G (Defecto 3) y Plan de Implementación TAREA 03
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Seguridad de menores a bordo, prevención de extravíos y trazabilidad de viaje)
@@ -1872,11 +1872,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Un escaneo repetido no duplica el evento ni altera las métricas de pasajeros a bordo.
   - El descenso queda vinculado exactamente al mismo viaje de abordaje.
   - El personal de ruta puede consultar en todo momento la lista de pasajeros esperados y el estado individual de cada uno.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-032] [ ] [F21-Task04] Gestión de personas autorizadas para recoger y recibir estudiantes en paradas
+### [TASK-032] [X] [F21-Task04] Gestión de personas autorizadas para recoger y recibir estudiantes en paradas
 - **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-15, PT-21-16), Sección C (1.8) y Plan de Implementación TAREA 04
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Custodia legal, seguridad en entrega de infantes y prevención de entregas a personas no autorizadas)
@@ -1902,11 +1902,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Se registra con precisión quién entregó y quién recibió al menor.
   - Las excepciones requieren autorización documentada de un perfil facultado.
   - Los documentos de identidad no son visibles para usuarios sin privilegios.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-033] [ ] [F21-Task05] Administración de flota vehicular, conductores, acompañantes y documentación habilitante
+### [TASK-033] [X] [F21-Task05] Administración de flota vehicular, conductores, acompañantes y documentación habilitante
 - **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-01, PT-21-03, PT-21-04), Sección C (1.1, 1.2) y Plan de Implementación TAREA 05
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Habilitación legal de transporte escolar, pólizas de seguros vigentes y licencias de conducir pesada)
@@ -1932,11 +1932,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Un vehículo fuera de servicio o con póliza vencida no puede asignarse a una ruta activa.
   - Un conductor con licencia vencida queda bloqueado para operar recorridos.
   - Las sustituciones quedan registradas sin borrar la asignación titular histórica.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-034] [ ] [F21-Task06] Cierre obligatorio de recorrido, control de pasajeros y confirmación de unidad vacía
+### [TASK-034] [X] [F21-Task06] Cierre obligatorio de recorrido, control de pasajeros y confirmación de unidad vacía
 - **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-24), Sección C (1.9) y Plan de Implementación TAREA 06
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Seguridad infantil absoluta, prevención de niños olvidados a bordo y protocolo de fin de viaje)
@@ -1963,11 +1963,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - La inspección física final queda registrada con responsable y fecha.
   - Se generan alertas inmediatas cuando se detecta un pasajero sin descenso confirmado.
   - El historial permite reconstruir con exactitud el cierre de cada recorrido escolar.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-035] [ ] [F21-Task07] Integración con mantenimiento y bloqueo de vehículos no disponibles
+### [TASK-035] [X] [F21-Task07] Integración con mantenimiento y bloqueo de vehículos no disponibles
 - **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E (PT-21-36), Sección C (1.13) y Plan de Implementación TAREA 07
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Seguridad vial, prevención de fallas mecánicas en ruta y coherencia con activos fijos)
@@ -1993,11 +1993,11 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - La disponibilidad cambia automáticamente al abrir y cerrar órdenes de trabajo.
   - Se conserva el historial de reparaciones y costos por unidad vehicular.
   - La sustitución vehicular queda asociada al recorrido afectado sin duplicar activos patrimoniales.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-036] [ ] [F21-Task08] Auditoría de integridad de datos y transición de las estructuras actuales de transporte
+### [TASK-036] [X] [F21-Task08] Auditoría de integridad de datos y transición de las estructuras actuales de transporte
 - **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E, Sección G y Plan de Implementación TAREA 34
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Migración segura de datos, preservación de rutas existentes y prevención de relaciones huérfanas)
@@ -2023,7 +2023,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - Las consultas antiguas continúan funcionando mientras se activa la nueva estructura.
   - No se generan duplicados de rutas ni asignaciones huérfanas.
   - Se genera un reporte claro de registros que requieran conciliación manual.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 
@@ -2031,7 +2031,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-037] [ ] [F21-Task34] Suite automatizada de pruebas y regresión integral de transporte y servicios complementarios
+### [TASK-037] [X] [F21-Task34] Suite automatizada de pruebas y regresión integral de transporte y servicios complementarios
 - **Origen del Hallazgo:** `AUDITORIA_FASE_21_TRANSPORTE_SERVICIOS_COMPLEMENTARIOS.md` / Sección E, Sección G (P0) y Plan de Implementación TAREA 33
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Aseguramiento continuo de integridad en movilidad escolar, cupos, seguridad infantil y cobros)
@@ -2058,7 +2058,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   - La suite de regresión ejecuta todas las pruebas de transporte y servicios complementarios con el 100% de éxito (`PASS`).
   - Se valida el bloqueo efectivo de sobrecupos y la protección de datos de menores.
   - Las suites de regresión previas (53/53 pruebas) se mantienen aprobadas al 100%.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 
@@ -2068,7 +2068,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-038] [ ] [F22-Task01] Validación binaria, seguridad e integridad de archivos adjuntos
+### [TASK-038] [X] [F22-Task01] Validación binaria, seguridad e integridad de archivos adjuntos
 - **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-11), Sección G (Defecto 1) y Plan de Trabajo TAREA 22-01
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Seguridad perimetral, prevención de inyección de código malicioso y validación de tipos binarios reales)
@@ -2111,7 +2111,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-039] [ ] [F22-Task02] Hash SHA-256 y vinculación criptográfica de las firmas con los documentos
+### [TASK-039] [X] [F22-Task02] Hash SHA-256 y vinculación criptográfica de las firmas con los documentos
 - **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-15), Sección G (Defecto 2) y Plan de Trabajo TAREA 22-02
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Integridad documental matemática, valor probatorio inalterable y no repudio)
@@ -2150,7 +2150,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-040] [ ] [F22-Task03] Certificado de finalización y expediente probatorio de cada firma
+### [TASK-040] [X] [F22-Task03] Certificado de finalización y expediente probatorio de cada firma
 - **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección E (F22-19), Sección D y Plan de Trabajo TAREA 22-03
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Pista de auditoría probatoria, evidencia legal de consentimiento y estándar Certificate of Completion)
@@ -2198,7 +2198,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-041] [ ] [F22-Task04] Integración con firma electrónica avanzada y proveedores de certificación (Decreto 149-2013)
+### [TASK-041] [X] [F22-Task04] Integración con firma electrónica avanzada y proveedores de certificación (Decreto 149-2013)
 - **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección C (7), Sección E (F22-16) y Plan de Trabajo TAREA 22-04
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Cumplimiento normativo hondureño, contratos de matrícula vinculantes y convenios laborales docentes)
@@ -2244,7 +2244,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-042] [ ] [F22-Task13] Suite de pruebas automatizadas y regresión integral de la Fase 22
+### [TASK-042] [X] [F22-Task13] Suite de pruebas automatizadas y regresión integral de la Fase 22
 - **Origen del Hallazgo:** `AUDITORIA_FASE_22_GESTION_DOCUMENTAL_FORMULARIOS_FIRMA_ELECTRONICA.md` / Sección G (P0), Sección F y Plan de Trabajo TAREA 22-13
 - **Prioridad:** P0
 - **Severidad/Clasificación:** Crítica (Aseguramiento continuo de emisión CUV, correlativos seguros, firmas, compatibilidad SACE y no regresión)
@@ -2281,7 +2281,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 ### [TASK-043] P0 — PRIORIDAD CRÍTICA
 
 ---
-### [TASK-044] [F23-Task01] [P0] [Motor de Workflows - Integridad Transaccional, Candados Atómicos y Autorización de Decisiones]
+### [TASK-044] [X] [F23-Task01] [P0] [Motor de Workflows - Integridad Transaccional, Candados Atómicos y Autorización de Decisiones]
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs`
   - `js/api.js`
@@ -2305,18 +2305,18 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   Cuando dos revisores intenten resolver la misma solicitud simultáneamente, solamente una operación válida podrá completar la transición. La segunda deberá recibir un resultado de conflicto o de etapa ya resuelta, sin sobrescribir la decisión anterior.
   Una solicitud no podrá avanzar si el usuario no tiene autorización, si la etapa no está activa o si no se cumplen sus precondiciones.
 - **Criterios de Aceptación:**
-  - [ ] Ejecutar dos decisiones simultáneas sobre una misma etapa y comprobar que solamente una se registra como decisión efectiva.
-  - [ ] Intentar aprobar una etapa desde una cuenta sin autorización y verificar su rechazo.
-  - [ ] Manipular los parámetros de siguiente responsable y siguiente estado desde el cliente y comprobar que son ignorados o rechazados en favor de la definición del servidor.
-  - [ ] Intentar aprobar una etapa que ya fue resuelta y comprobar detección de conflicto.
-  - [ ] Intentar avanzar una solicitud desde un estado anterior inválido.
-  - [ ] Simular un error durante el almacenamiento y comprobar que no se produce una transición inconsistente.
-  - [ ] Verificar que las decisiones válidas conservan su historial inalterado.
-- **Estado:** [ ] Pendiente
+  - [X] Ejecutar dos decisiones simultáneas sobre una misma etapa y comprobar que solamente una se registra como decisión efectiva.
+  - [X] Intentar aprobar una etapa desde una cuenta sin autorización y verificar su rechazo.
+  - [X] Manipular los parámetros de siguiente responsable y siguiente estado desde el cliente y comprobar que son ignorados o rechazados en favor de la definición del servidor.
+  - [X] Intentar aprobar una etapa que ya fue resuelta y comprobar detección de conflicto.
+  - [X] Intentar avanzar una solicitud desde un estado anterior inválido.
+  - [X] Simular un error durante el almacenamiento y comprobar que no se produce una transición inconsistente.
+  - [X] Verificar que las decisiones válidas conservan su historial inalterado.
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-045] [F23-Task02] [P0] [Motor de Workflows - Idempotencia de Solicitudes, Decisiones y Operaciones Institucionales]
+### [TASK-045] [X] [F23-Task02] [P0] [Motor de Workflows - Idempotencia de Solicitudes, Decisiones y Operaciones Institucionales]
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs`
   - `js/api.js`
@@ -2339,18 +2339,18 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   Una operación debe poder repetirse técnicamente sin que sus efectos se dupliquen.
   Si una solicitud se registra correctamente, pero la respuesta no llega al navegador, el siguiente intento debe recuperar el resultado original y no crear otro trámite.
 - **Criterios de Aceptación:**
-  - [ ] Enviar dos veces el mismo formulario con idéntica clave y verificar que se devuelve el mismo resultado sin duplicar registros.
-  - [ ] Repetir una solicitud después de una interrupción de conexión y recuperar el trámite original.
-  - [ ] Reutilizar una clave con contenido diferente y verificar el rechazo de la solicitud.
-  - [ ] Repetir una decisión de aprobación y comprobar que no se duplica la transición.
-  - [ ] Repetir una solicitud interservicio y verificar la idempotencia.
-  - [ ] Comprobar que no se generan registros ni acciones duplicadas.
-  - [ ] Verificar que dos solicitudes legítimas diferentes puedan procesarse independientemente.
-- **Estado:** [ ] Pendiente
+  - [X] Enviar dos veces el mismo formulario con idéntica clave y verificar que se devuelve el mismo resultado sin duplicar registros.
+  - [X] Repetir una solicitud después de una interrupción de conexión y recuperar el trámite original.
+  - [X] Reutilizar una clave con contenido diferente y verificar el rechazo de la solicitud.
+  - [X] Repetir una decisión de aprobación y comprobar que no se duplica la transición.
+  - [X] Repetir una solicitud interservicio y verificar la idempotencia.
+  - [X] Comprobar que no se generan registros ni acciones duplicadas.
+  - [X] Verificar que dos solicitudes legítimas diferentes puedan procesarse independientemente.
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-046] [F23-Task03] [P0] [Arquitectura Distribuida - Enrutador Universal de Spreadsheets y Resolución Dinámica de Fuentes de Datos]
+### [TASK-046] [X] [F23-Task03] [P0] [Arquitectura Distribuida - Enrutador Universal de Spreadsheets y Resolución Dinámica de Fuentes de Datos]
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs`
   - `backend/academic-service/Code.gs`
@@ -2382,19 +2382,19 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   Cuando un módulo solicite información de un dominio y ciclo lectivo determinados, el enrutador deberá identificar la fuente correspondiente y proporcionar acceso únicamente si el servicio tiene autorización.
   La ausencia de una fuente no debe provocar una lectura silenciosa desde un Spreadsheet incorrecto.
 - **Criterios de Aceptación:**
-  - [ ] Registrar fuentes de diferentes dominios y ciclos lectivos.
-  - [ ] Resolver fuentes desde los servicios académico, usuario y contable de manera transparente.
-  - [ ] Comprobar que un ciclo lectivo no consulte datos de otro ciclo sin autorización explícita.
-  - [ ] Intentar consultar una fuente inexistente y verificar el manejo seguro del error.
-  - [ ] Deshabilitar una fuente y comprobar que se rechaza su utilización.
-  - [ ] Registrar una nueva partición sin tener que modificar cada consumidor.
-  - [ ] Comprobar la compatibilidad de esquemas entre particiones.
-  - [ ] Verificar que las referencias históricas no cambian al registrar nuevas fuentes.
-- **Estado:** [ ] Pendiente
+  - [X] Registrar fuentes de diferentes dominios y ciclos lectivos.
+  - [X] Resolver fuentes desde los servicios académico, usuario y contable de manera transparente.
+  - [X] Comprobar que un ciclo lectivo no consulte datos de otro ciclo sin autorización explícita.
+  - [X] Intentar consultar una fuente inexistente y verificar el manejo seguro del error.
+  - [X] Deshabilitar una fuente y comprobar que se rechaza su utilización.
+  - [X] Registrar una nueva partición sin tener que modificar cada consumidor.
+  - [X] Comprobar la compatibilidad de esquemas entre particiones.
+  - [X] Verificar que las referencias históricas no cambian al registrar nuevas fuentes.
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-047] [F23-Task04] [P0] [Arquitectura Distribuida - Catálogo Institucional de Cuentas, Servicios y Permisos Distribuidos]
+### [TASK-047] [X] [F23-Task04] [P0] [Arquitectura Distribuida - Catálogo Institucional de Cuentas, Servicios y Permisos Distribuidos]
 - **Componentes Afectados:**
   - `backend/developer-service/Code.gs`
   - `backend/accounting-service/Code.gs`
@@ -2429,19 +2429,19 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   El servicio central debe conocer qué servicios existen, quién los administra, qué datos gestionan y qué operaciones están autorizados a realizar.
   La incorporación de un nuevo departamento no debe requerir reconstruir manualmente la arquitectura de comunicación.
 - **Criterios de Aceptación:**
-  - [ ] Registrar servicios de al menos dos cuentas de Google diferentes.
-  - [ ] Asociar a cada servicio su propio Spreadsheet.
-  - [ ] Consultar los servicios registrados desde el servicio central.
-  - [ ] Revocar un servicio sin eliminar su historial ni romper auditorías.
-  - [ ] Cambiar el responsable y verificar las autorizaciones actualizadas.
-  - [ ] Intentar registrar un servicio duplicado y verificar su rechazo.
-  - [ ] Consultar un servicio suspendido y comprobar que se bloquean peticiones.
-  - [ ] Comprobar que los permisos de almacenamiento y los privilegios institucionales se administran por separado.
-- **Estado:** [ ] Pendiente
+  - [X] Registrar servicios de al menos dos cuentas de Google diferentes.
+  - [X] Asociar a cada servicio su propio Spreadsheet.
+  - [X] Consultar los servicios registrados desde el servicio central.
+  - [X] Revocar un servicio sin eliminar su historial ni romper auditorías.
+  - [X] Cambiar el responsable y verificar las autorizaciones actualizadas.
+  - [X] Intentar registrar un servicio duplicado y verificar su rechazo.
+  - [X] Consultar un servicio suspendido y comprobar que se bloquean peticiones.
+  - [X] Comprobar que los permisos de almacenamiento y los privilegios institucionales se administran por separado.
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-048] [F23-Task05] [P0] [Seguridad y Red - Protocolo Universal de Comunicación Interservicio y Gestión de Credenciales]
+### [TASK-048] [X] [F23-Task05] [P0] [Seguridad y Red - Protocolo Universal de Comunicación Interservicio y Gestión de Credenciales]
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs`
   - `backend/accounting-service/Code.gs`
@@ -2470,20 +2470,20 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   Un servicio debe poder comunicarse con otro servicio perteneciente a una cuenta diferente, siempre que exista una autorización explícita.
   Un servicio no debe poder suplantar a otro ni utilizar sus credenciales para acceder a operaciones ajenas.
 - **Criterios de Aceptación:**
-  - [ ] Comunicación autenticada entre dos cuentas diferentes con verificación de firma HMAC.
-  - [ ] Rechazar solicitudes sin firma o con firma incorrecta.
-  - [ ] Rechazar solicitudes expiradas por tiempo de vigencia.
-  - [ ] Rechazar repetición de solicitudes (protección anti-replay).
-  - [ ] Ejecutar rotación de credenciales sin interrupción de servicio.
-  - [ ] Revocación individual de un servicio específico.
-  - [ ] Rechazar intento de ejecutar una operación no autorizada.
-  - [ ] Inspeccionar el frontend para comprobar que no contiene secretos ni claves de servicio.
-  - [ ] Verificar que los errores no exponen claves ni tokens en texto plano.
-- **Estado:** [ ] Pendiente
+  - [X] Comunicación autenticada entre dos cuentas diferentes con verificación de firma HMAC.
+  - [X] Rechazar solicitudes sin firma o con firma incorrecta.
+  - [X] Rechazar solicitudes expiradas por tiempo de vigencia.
+  - [X] Rechazar repetición de solicitudes (protección anti-replay).
+  - [X] Ejecutar rotación de credenciales sin interrupción de servicio.
+  - [X] Revocación individual de un servicio específico.
+  - [X] Rechazar intento de ejecutar una operación no autorizada.
+  - [X] Inspeccionar el frontend para comprobar que no contiene secretos ni claves de servicio.
+  - [X] Verificar que los errores no exponen claves ni tokens en texto plano.
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-049] [F23-Task06] [P0] [Auditoría Criptográfica - Protección de Decisiones Históricas y Auditoría Anti-Manipulación]
+### [TASK-049] [X] [F23-Task06] [P0] [Auditoría Criptográfica - Protección de Decisiones Históricas y Auditoría Anti-Manipulación]
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs`
 - **Dependencias Expuestas:** `RevisionesDecisionesTramite`, `F23-Task01`, `F23-Task13`.
@@ -2505,17 +2505,17 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
   Si una decisión histórica cambia de manera no autorizada, la verificación de integridad debe detectar la alteración.
   Las correcciones legítimas deben quedar documentadas como nuevos eventos vinculados al registro original.
 - **Criterios de Aceptación:**
-  - [ ] Crear una secuencia de decisiones encadenadas por hash.
-  - [ ] Verificar la integridad matemática de la secuencia histórica.
-  - [ ] Modificar un registro histórico de prueba y comprobar que la auditoría detecta la alteración.
-  - [ ] Registrar una corrección autorizada como nuevo evento vinculado.
-  - [ ] Comprobar que la secuencia histórica conserva todos los eventos originales.
-  - [ ] Intentar eliminar registros mediante una cuenta sin privilegios y verificar su bloqueo.
-- **Estado:** [ ] Pendiente
+  - [X] Crear una secuencia de decisiones encadenadas por hash.
+  - [X] Verificar la integridad matemática de la secuencia histórica.
+  - [X] Modificar un registro histórico de prueba y comprobar que la auditoría detecta la alteración.
+  - [X] Registrar una corrección autorizada como nuevo evento vinculado.
+  - [X] Comprobar que la secuencia histórica conserva todos los eventos originales.
+  - [X] Intentar eliminar registros mediante una cuenta sin privilegios y verificar su bloqueo.
+- **Estado:** [X] Completada
 
 ---
 ---
-### [TASK-050] [F24-Task01] [P0] [Catálogo de Informes - Catálogo Centralizado de Informes Institucionales con Permisos por Perfil]
+### [X] [TASK-050] [F24-Task01] [P0] [Catálogo de Informes - Catálogo Centralizado de Informes Institucionales con Permisos por Perfil]
 - **Componentes Afectados:**
   - `backend/user-service/Code.gs`
   - `backend/academic-service/Code.gs`
@@ -2572,7 +2572,7 @@ REGLA RECTORA INNEGOCIABLE DEL BACKLOG:
 
 ---
 ---
-### [TASK-051] [F24-Task02] [P0] [Indicadores Centrales - Diccionario Semántico Centralizado de Indicadores Institucionales]
+### [X] [TASK-051] [F24-Task02] [P0] [Indicadores Centrales - Diccionario Semántico Centralizado de Indicadores Institucionales]
 - **Componentes Afectados:**
   - `backend/developer-service/Code.gs`
   - `backend/academic-service/Code.gs`

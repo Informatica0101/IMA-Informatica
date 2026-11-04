@@ -183,6 +183,7 @@ const ROLE_PERMISSIONS = {
     "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches", "scheduleGuidanceAppointment", "getGuidanceAppointments", "updateGuidanceAppointmentStatus", "evaluateAndDispatchEarlyWarningAlerts", "getEarlyWarningAlerts", "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "reviewPedagogicalPlanning", "getPlanningReviewHistory", "saveSupervisionRubric", "getSupervisionRubrics"
   ],
   "Subdirector": [
+    "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog",
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "registerStudentEnrollment", "getStudentEnrollmentHistory",
     "getInstitutionParams", "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getStudyPlans", "getAcademicOffers",
     "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs", "getReusableResourceCatalog", "manageReusableResource",
@@ -193,6 +194,7 @@ const ROLE_PERMISSIONS = {
     "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "savePedagogicalPlanning", "getPedagogicalPlannings", "submitPlanningForReview", "reviewPedagogicalPlanning", "getPlanningReviewHistory", "saveSupervisionRubric", "getSupervisionRubrics"
   ],
   "Secretaría": [
+    "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog",
     "getAcademicConfig", "getAsignaturasActivas", "registerStudentEnrollment", "getStudentEnrollmentHistory",
     "getInstitutionParams", "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getStudyPlans", "getAcademicOffers",
     "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs", "getReusableResourceCatalog", "manageReusableResource",
@@ -337,6 +339,63 @@ function getAuthTokenSecret() {
     } catch (e) {}
   }
   return secret;
+}
+
+// [TASK-048] [F23-Task05] [P0] Protocolo Universal de Comunicación Interservicio y Gestión de Credenciales
+function createInterServiceEnvelope(sourceService, targetService, action, payload, customSecret) {
+  const now = Date.now();
+  const requestId = "REQ-" + now + "-" + Math.random().toString(36).substring(2, 8);
+  const correlationId = (payload && payload.correlationId) || ("CORR-" + now);
+  const secret = customSecret || getAuthTokenSecret();
+  const bodyToSign = `${requestId}|${now}|${correlationId}|${sourceService}|${targetService}|${action}|${JSON.stringify(payload || {})}`;
+  const hmacSignature = computeHmacSignature(bodyToSign, secret);
+
+  return {
+    sourceService: sourceService,
+    targetService: targetService,
+    action: action,
+    requestId: requestId,
+    timestamp: now,
+    correlationId: correlationId,
+    payload: payload || {},
+    hmacSignature: hmacSignature
+  };
+}
+
+function verifyInterServiceEnvelope(envelope, expectedTargetService, customSecret) {
+  if (!envelope || typeof envelope !== "object") throw new Error("INVALID_ENVELOPE: Estructura de paquete interservicio inválida.");
+  const { sourceService, targetService, action, requestId, timestamp, correlationId, payload, hmacSignature } = envelope;
+
+  if (!sourceService || !targetService || !action || !requestId || !timestamp || !hmacSignature) {
+    throw new Error("MISSING_ENVELOPE_FIELDS: Paquete interservicio incompleto o campos obligatorios ausentes.");
+  }
+
+  if (expectedTargetService && String(targetService).trim().toUpperCase() !== String(expectedTargetService).trim().toUpperCase()) {
+    throw new Error(`INTERSERVICE_TARGET_MISMATCH: Petición dirigida a '${targetService}' recibida en '${expectedTargetService}'.`);
+  }
+
+  const now = Date.now();
+  if (Math.abs(now - timestamp) > 300000) { // 5 minutos de vigencia
+    throw new Error("INTERSERVICE_REQUEST_EXPIRED: La solicitud interservicio ha expirado.");
+  }
+
+  // Protección anti-replay con CacheService
+  const cache = CacheService.getScriptCache();
+  const replayKey = `REPLAY_REQ_${requestId}`;
+  if (cache.get(replayKey)) {
+    throw new Error(`INTERSERVICE_REPLAY_DETECTED: Petición repetida detectada con requestId '${requestId}'.`);
+  }
+  cache.put(replayKey, "SEEN", 300);
+
+  const secret = customSecret || getAuthTokenSecret();
+  const bodyToSign = `${requestId}|${timestamp}|${correlationId}|${sourceService}|${targetService}|${action}|${JSON.stringify(payload || {})}`;
+  const expectedSig = computeHmacSignature(bodyToSign, secret);
+
+  if (hmacSignature !== expectedSig) {
+    throw new Error("INVALID_INTERSERVICE_SIGNATURE: Firma HMAC-SHA256 interservicio inválida.");
+  }
+
+  return { valid: true, sourceService, targetService, action, correlationId, requestId, payload: payload || {} };
 }
 
 function verifySessionToken(tokenString) {
@@ -651,10 +710,13 @@ function doPost(e) {
       case "restoreSystemBackup": result = restoreSystemBackup(payload); break;
       case "reconcileRestoredDataIntegrity": result = reconcileRestoredDataIntegrity(payload); break;
       case "evaluateTransactionalStorageMigrationNeed": result = evaluateTransactionalStorageMigrationNeed(payload); break;
-      case "getInstitutionalReportCatalog": result = getInstitutionalReportCatalog(payload); break;
+      case "getInstitutionalReportCatalog": result = getAcademicInstitutionalReportCatalog(payload); break;
       case "generateInstitutionalReport": result = generateInstitutionalReport(payload); break;
       case "getSectionEquivalences": result = getSectionEquivalences(payload); break;
       case "calculateUnifiedAcademicGrade": result = calculateUnifiedAcademicGrade(payload); break;
+      case "registerSpreadsheetSource": result = registerSpreadsheetSource(payload); break;
+      case "resolveSpreadsheetSource": result = resolveSpreadsheetSource(payload); break;
+      case "getSpreadsheetCatalog": result = getSpreadsheetCatalog(payload); break;
       case "previewAcademicGradeCalculation": result = previewAcademicGradeCalculation(payload); break;
       case "auditAcademicGradesIntegrity": result = auditAcademicGradesIntegrity(payload); break;
       case "generateStudentReportCard": result = generateStudentReportCard(payload); break;
@@ -11285,6 +11347,216 @@ function changeStudentSection(payload) {
   } finally {
     lock.releaseLock();
   }
+}
+
+// [TASK-050] [F24-Task01] [P0] Catálogo de Informes Académicos Integrado
+function getAcademicInstitutionalReportCatalog(payload) {
+  try {
+    const verifiedRole = (payload && (payload.requesterRole || payload.authRole || payload._verifiedRole)) || "Director";
+    const { soloActivos = true, query } = payload || {};
+
+    const catalogAcademic = [
+      {
+        id: "REP-ACAD-01",
+        title: "Rendimiento Académico por Grado y Sección",
+        category: "ACADEMICA",
+        area: "Académica",
+        service: "ACADEMIC",
+        description: "Promedios generales, distribución de calificaciones y tasa de aprobación por grado.",
+        supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
+        filters: ["anoLectivo", "grado", "seccion", "periodo"],
+        indicators: ["IND-ACAD-02", "IND-ACAD-05"],
+        rolesPermitidos: ["Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Profesor", "Desarrollador", "Administrador"],
+        estado: "Activo"
+      },
+      {
+        id: "REP-ACAD-02",
+        title: "Estudiantes en Riesgo y Plan de Recuperación",
+        category: "ACADEMICA",
+        area: "Académica",
+        service: "ACADEMIC",
+        description: "Listado de alumnos con asignaturas reprobadas o bajo rendimiento acumulado.",
+        supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
+        filters: ["anoLectivo", "grado", "seccion"],
+        indicators: ["IND-ACAD-05"],
+        rolesPermitidos: ["Director", "Subdirector", "Coordinador", "Consejeros", "Profesor", "Desarrollador", "Administrador"],
+        estado: "Activo"
+      },
+      {
+        id: "REP-ACAD-03",
+        title: "Consolidado de Asistencia y Puntualidad",
+        category: "ACADEMICA",
+        area: "Académica",
+        service: "ACADEMIC",
+        description: "Porcentaje de asistencia, tardanzas y ausencias justificadas e injustificadas.",
+        supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
+        filters: ["anoLectivo", "grado", "seccion", "fechaInicio", "fechaFin"],
+        indicators: ["IND-ACAD-03"],
+        rolesPermitidos: ["Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Consejeros", "Desarrollador", "Administrador"],
+        estado: "Activo"
+      },
+      {
+        id: "REP-ACAD-04",
+        title: "Capacidad y Ocupación de Secciones",
+        category: "ACADEMICA",
+        area: "Académica",
+        service: "ACADEMIC",
+        description: "Informe de cupos, capacidad instalada y porcentaje de ocupación por grado y sección.",
+        supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
+        filters: ["anoLectivo", "grado"],
+        indicators: ["IND-ACAD-04"],
+        rolesPermitidos: ["Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Desarrollador", "Administrador"],
+        estado: "Activo"
+      },
+      {
+        id: "REP-SEC-01",
+        title: "Consolidado de Matrícula y Expedientes Digitales",
+        category: "SECRETARIA",
+        area: "Administrativa",
+        service: "ACADEMIC",
+        description: "Estadística de estudiantes matriculados, trasladados y estado de expediente.",
+        supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
+        filters: ["anoLectivo", "grado", "estado"],
+        indicators: ["IND-ACAD-01"],
+        rolesPermitidos: ["Director", "Subdirector", "Secretaría", "Secretaria", "Desarrollador", "Administrador"],
+        estado: "Activo"
+      }
+    ];
+
+    let filtered = catalogAcademic.filter(rep => {
+      if (rep.rolesPermitidos.indexOf("*") === -1 && rep.rolesPermitidos.indexOf(verifiedRole) === -1) {
+        return false;
+      }
+      if (soloActivos && rep.estado !== "Activo") return false;
+      if (query && typeof query === "string" && query.trim() !== "") {
+        const q = query.toLowerCase().trim();
+        const matchTitle = rep.title.toLowerCase().includes(q);
+        const matchDesc = rep.description.toLowerCase().includes(q);
+        if (!matchTitle && !matchDesc) return false;
+      }
+      return true;
+    });
+
+    return {
+      status: "success",
+      totalInformes: filtered.length,
+      catalog: filtered,
+      userRole: verifiedRole,
+      service: "academic-service"
+    };
+  } catch (err) {
+    return { status: "error", message: err.message };
+  }
+}
+
+// [TASK-046] [F23-Task03] [P0] Enrutador Universal de Spreadsheets y Resolución Dinámica de Fuentes de Datos
+function registerSpreadsheetSource(payload) {
+  const { dominioArea, anoLectivo, spreadsheetId, urlAcceso, estado, schemaVersion, departamento, servicio, observaciones } = payload || {};
+  if (!dominioArea || !anoLectivo || !spreadsheetId) throw new Error("dominioArea, anoLectivo y spreadsheetId son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CatalogoSpreadsheets");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  const existingIdx = data.findIndex(r => String(r[1]).toLowerCase().trim() === String(dominioArea).toLowerCase().trim() && String(r[2]).trim() === String(anoLectivo).trim());
+
+  let fId = "";
+  if (existingIdx !== -1) {
+    fId = data[existingIdx][0];
+    sheet.getRange(existingIdx + 1, 1, 1, 8).setValues([[
+      fId,
+      String(dominioArea).trim(),
+      String(anoLectivo).trim(),
+      String(spreadsheetId).trim(),
+      urlAcceso || `https://docs.google.com/spreadsheets/d/${spreadsheetId}`,
+      estado || "active",
+      schemaVersion || "1.0",
+      observaciones || ""
+    ]]);
+  } else {
+    fId = "SRC-" + now.getTime();
+    sheet.appendRow([
+      fId,
+      String(dominioArea).trim(),
+      String(anoLectivo).trim(),
+      String(spreadsheetId).trim(),
+      urlAcceso || `https://docs.google.com/spreadsheets/d/${spreadsheetId}`,
+      estado || "active",
+      schemaVersion || "1.0",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    fuenteId: fId,
+    spreadsheetId: spreadsheetId,
+    message: "Fuente de datos distribuida registrada exitosamente en catálogo central."
+  };
+}
+
+function resolveSpreadsheetSource(payload) {
+  const { dominioArea, anoLectivo, departamento, servicio } = payload || {};
+  if (!dominioArea || !anoLectivo) throw new Error("dominioArea y anoLectivo requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "CatalogoSpreadsheets").getDataRange().getValues().slice(1);
+
+  // Buscar coincidencia exacta por dominio y año lectivo
+  const candidate = rows.find(r => String(r[1]).toLowerCase().trim() === String(dominioArea).toLowerCase().trim() && String(r[2]).trim() === String(anoLectivo).trim());
+
+  if (candidate) {
+    const estadoFuente = String(candidate[5] || "active").toLowerCase().trim();
+    if (estadoFuente === "disabled" || estadoFuente === "inactivo" || estadoFuente === "suspendido") {
+      throw new Error(`SOURCE_SPREADSHEET_DISABLED: La fuente de datos '${candidate[0]}' para dominio '${dominioArea}' y año '${anoLectivo}' se encuentra deshabilitada.`);
+    }
+
+    return {
+      status: "success",
+      resolved: true,
+      fuenteId: candidate[0],
+      dominioArea: candidate[1],
+      anoLectivo: candidate[2],
+      spreadsheetId: candidate[3],
+      urlAcceso: candidate[4],
+      estado: candidate[5],
+      schemaVersion: candidate[6] || "1.0",
+      message: `Fuente de datos distribuida resuelta para ${dominioArea} (${anoLectivo}).`
+    };
+  }
+
+  // Retornar ID por defecto si no existe una partición específica registrada
+  return {
+    status: "success",
+    resolved: false,
+    spreadsheetId: SPREADSHEET_ID,
+    dominioArea: dominioArea,
+    anoLectivo: anoLectivo,
+    schemaVersion: "1.0",
+    message: "Utilizando Spreadsheet Principal predeterminada."
+  };
+}
+
+function getSpreadsheetCatalog(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "CatalogoSpreadsheets").getDataRange().getValues().slice(1);
+
+  const mapped = rows.map(r => ({
+    fuenteId: r[0],
+    dominioArea: r[1],
+    anoLectivo: r[2],
+    spreadsheetId: r[3],
+    urlAcceso: r[4],
+    estado: r[5],
+    schemaVersion: r[6],
+    observaciones: r[7]
+  }));
+
+  return {
+    status: "success",
+    catalogo: mapped
+  };
 }
 
 // [TAREA-F5-019] [Fase 5: Seguimiento Operativo] - Analítica e indicadores de tramitación de admisiones

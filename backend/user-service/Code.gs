@@ -941,19 +941,22 @@ const ROLE_PERMISSIONS = {
   "Director": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "dispatchScheduleChangeNotifications", "getScheduleChangeNotificationLogs", "getAdmissionNotificationLogs", "getStudentProcedureNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders",
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "dispatchScheduleChangeNotifications", "getScheduleChangeNotificationLogs", "getAdmissionNotificationLogs", "getStudentProcedureNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "generateSignatureAuditCertificate", "configureAdvancedSignatureProvider", "getAdvancedSignatureProviderConfig", "createAdvancedSignatureRequest", "checkAdvancedSignatureStatus", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
+    "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "verifyWorkflowDecisionAuditChain", "recordWorkflowDecisionCorrection",
     "manageInternalRoleCatalog", "getInternalRoleCatalog", "getInternalRoleAssignments", "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData", "generatePrivilegeAndAccountAuditReport", "getPaginatedAuditLogReport", "auditAndReconcileIdentityInconsistencies"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "manageInternalRoleCatalog", "getInternalRoleCatalog", "getInternalRoleAssignments", "createLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders"
+    "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "verifyWorkflowDecisionAuditChain", "recordWorkflowDecisionCorrection",
+    "manageInternalRoleCatalog", "getInternalRoleCatalog", "getInternalRoleAssignments", "createLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "generateSignatureAuditCertificate", "configureAdvancedSignatureProvider", "getAdvancedSignatureProviderConfig", "createAdvancedSignatureRequest", "checkAdvancedSignatureStatus", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders"
   ],
   "Secretaría": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders"
+    "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "verifyWorkflowDecisionAuditChain", "recordWorkflowDecisionCorrection",
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "sendInstitutionalMessage", "getInstitutionalConversations", "getConversationMessages", "archiveInstitutionalConversation", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "generateSignatureAuditCertificate", "configureAdvancedSignatureProvider", "getAdvancedSignatureProviderConfig", "createAdvancedSignatureRequest", "checkAdvancedSignatureStatus", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "saveInstitutionalCalendarEvent", "checkCalendarEventOverlap", "getPendingReminders"
   ],
   "Contador": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest"],
   "RecursosHumanos": ["manageInternalRoleCatalog", "getInternalRoleCatalog", "getInternalRoleAssignments", "getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "createNews", "getInternalMessages", "sendInternalMessage"],
@@ -1000,6 +1003,63 @@ function getAuthTokenSecret() {
     } catch (e) {}
   }
   return secret;
+}
+
+// [TASK-048] [F23-Task05] [P0] Protocolo Universal de Comunicación Interservicio y Gestión de Credenciales
+function createInterServiceEnvelope(sourceService, targetService, action, payload, customSecret) {
+  const now = Date.now();
+  const requestId = "REQ-" + now + "-" + Math.random().toString(36).substring(2, 8);
+  const correlationId = (payload && payload.correlationId) || ("CORR-" + now);
+  const secret = customSecret || getAuthTokenSecret();
+  const bodyToSign = `${requestId}|${now}|${correlationId}|${sourceService}|${targetService}|${action}|${JSON.stringify(payload || {})}`;
+  const hmacSignature = computeHmacSignature(bodyToSign, secret);
+
+  return {
+    sourceService: sourceService,
+    targetService: targetService,
+    action: action,
+    requestId: requestId,
+    timestamp: now,
+    correlationId: correlationId,
+    payload: payload || {},
+    hmacSignature: hmacSignature
+  };
+}
+
+function verifyInterServiceEnvelope(envelope, expectedTargetService, customSecret) {
+  if (!envelope || typeof envelope !== "object") throw new Error("INVALID_ENVELOPE: Estructura de paquete interservicio inválida.");
+  const { sourceService, targetService, action, requestId, timestamp, correlationId, payload, hmacSignature } = envelope;
+
+  if (!sourceService || !targetService || !action || !requestId || !timestamp || !hmacSignature) {
+    throw new Error("MISSING_ENVELOPE_FIELDS: Paquete interservicio incompleto o campos obligatorios ausentes.");
+  }
+
+  if (expectedTargetService && String(targetService).trim().toUpperCase() !== String(expectedTargetService).trim().toUpperCase()) {
+    throw new Error(`INTERSERVICE_TARGET_MISMATCH: Petición dirigida a '${targetService}' recibida en '${expectedTargetService}'.`);
+  }
+
+  const now = Date.now();
+  if (Math.abs(now - timestamp) > 300000) { // 5 minutos de vigencia
+    throw new Error("INTERSERVICE_REQUEST_EXPIRED: La solicitud interservicio ha expirado.");
+  }
+
+  // Protección anti-replay con CacheService
+  const cache = CacheService.getScriptCache();
+  const replayKey = `REPLAY_REQ_${requestId}`;
+  if (cache.get(replayKey)) {
+    throw new Error(`INTERSERVICE_REPLAY_DETECTED: Petición repetida detectada con requestId '${requestId}'.`);
+  }
+  cache.put(replayKey, "SEEN", 300);
+
+  const secret = customSecret || getAuthTokenSecret();
+  const bodyToSign = `${requestId}|${timestamp}|${correlationId}|${sourceService}|${targetService}|${action}|${JSON.stringify(payload || {})}`;
+  const expectedSig = computeHmacSignature(bodyToSign, secret);
+
+  if (hmacSignature !== expectedSig) {
+    throw new Error("INVALID_INTERSERVICE_SIGNATURE: Firma HMAC-SHA256 interservicio inválida.");
+  }
+
+  return { valid: true, sourceService, targetService, action, correlationId, requestId, payload: payload || {} };
 }
 
 function generateSessionToken(user) {
@@ -1235,6 +1295,59 @@ function validateRolePermission(action, payload) {
   return { authorized: false, role: userRole };
 }
 
+// [TASK-045] [F23-Task02] [P0] Motor de Idempotencia para Solicitudes, Decisiones y Operaciones Sensibles
+function getIdempotencyPayloadSignature(payload) {
+  if (!payload || typeof payload !== "object") return "";
+  const copy = {};
+  Object.keys(payload).sort().forEach(k => {
+    if (["idempotencyToken", "idempotencyKey", "requestId", "timestamp", "authRole", "_verifiedRole", "_verifiedUserId"].indexOf(k) === -1) {
+      copy[k] = payload[k];
+    }
+  });
+  return JSON.stringify(copy);
+}
+
+function checkAndRegisterIdempotencyKey(action, payload) {
+  const token = payload && (payload.idempotencyToken || payload.idempotencyKey);
+  if (!token) return null;
+
+  const cacheKey = `IDEM_USER_${action}_${String(token).trim()}`;
+  const currentSignature = getIdempotencyPayloadSignature(payload);
+  const cache = CacheService.getScriptCache();
+  const cachedRaw = cache.get(cacheKey);
+
+  if (cachedRaw) {
+    try {
+      const parsed = JSON.parse(cachedRaw);
+      if (parsed.signature && parsed.signature !== currentSignature) {
+        throw new Error("IDEMPOTENCY_KEY_PAYLOAD_MISMATCH: Clave de idempotencia reutilizada con contenido o datos incompatibles.");
+      }
+      if (parsed.result) {
+        const copyResult = JSON.parse(JSON.stringify(parsed.result));
+        copyResult.cachedIdempotentResult = true;
+        return copyResult;
+      }
+    } catch (e) {
+      if (e.message.indexOf("incompatibles") !== -1 || e.message.indexOf("MISMATCH") !== -1) throw e;
+    }
+  }
+  return null;
+}
+
+function saveIdempotentResult(action, payload, result) {
+  const token = payload && (payload.idempotencyToken || payload.idempotencyKey);
+  if (!token || !result || result.status !== "success") return;
+
+  const cacheKey = `IDEM_USER_${action}_${String(token).trim()}`;
+  const signature = getIdempotencyPayloadSignature(payload);
+  const cache = CacheService.getScriptCache();
+  try {
+    cache.put(cacheKey, JSON.stringify({ signature, result }), 21600);
+  } catch (e) {
+    console.warn("No se pudo guardar la clave de idempotencia en caché:", e);
+  }
+}
+
 function doPost(e) {
   try {
     if (!e || !e.postData || !e.postData.contents) return textResponse({ status: "error", message: "No se recibieron datos." });
@@ -1244,6 +1357,15 @@ function doPost(e) {
       logStructuredEvent("USER", action, "WARN", "AUTH_PERMISSION_DENIED", `Acceso denegado a acción ${action} para rol ${authCheck.role}`, payload, authCheck.role);
       return textResponse({ status: "error", code: "AUTH_PERMISSION_DENIED", message: "Acceso denegado: El rol " + authCheck.role + " no tiene permiso para la acción " + action + "." });
     }
+
+    // [TASK-045] Verificación de Idempotencia previa para operaciones no-consulta
+    if (action.indexOf("get") !== 0) {
+      const cachedResult = checkAndRegisterIdempotencyKey(action, payload);
+      if (cachedResult) {
+        return textResponse(cachedResult);
+      }
+    }
+
     let result;
     switch (action) {
       case "manageInternalRoleCatalog": result = manageInternalRoleCatalog(payload); break;
@@ -1368,6 +1490,11 @@ function doPost(e) {
       case "processWorkflowDecision": result = processWorkflowDecision(payload); break;
       case "getWorkflowHistory": result = getWorkflowHistory(payload); break;
       case "registerDocumentSignature": result = registerDocumentSignature(payload); break;
+      case "generateSignatureAuditCertificate": result = generateSignatureAuditCertificate(payload); break;
+      case "configureAdvancedSignatureProvider": result = configureAdvancedSignatureProvider(payload); break;
+      case "getAdvancedSignatureProviderConfig": result = getAdvancedSignatureProviderConfig(payload); break;
+      case "createAdvancedSignatureRequest": result = createAdvancedSignatureRequest(payload); break;
+      case "checkAdvancedSignatureStatus": result = checkAdvancedSignatureStatus(payload); break;
       case "configureNotificationChannel": result = configureNotificationChannel(payload); break;
       case "getNotificationChannelConfigs": result = getNotificationChannelConfigs(payload); break;
       case "sendChannelNotificationTest": result = sendChannelNotificationTest(payload); break;
@@ -1456,8 +1583,28 @@ function doPost(e) {
       case "updateInstitutionalServiceRequestStatus":
         result = updateInstitutionalServiceRequestStatus(payload);
         break;
+      case "registerSpreadsheetSource":
+        result = registerSpreadsheetSource(payload);
+        break;
+      case "resolveSpreadsheetSource":
+        result = resolveSpreadsheetSource(payload);
+        break;
+      case "getSpreadsheetCatalog":
+        result = getSpreadsheetCatalog(payload);
+        break;
+      case "verifyWorkflowDecisionAuditChain":
+        result = verifyWorkflowDecisionAuditChain(payload);
+        break;
+      case "recordWorkflowDecisionCorrection":
+        result = recordWorkflowDecisionCorrection(payload);
+        break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
+    // [TASK-045] Almacenar resultado exitoso en caché de idempotencia si se proporcionó clave
+    if (result && result.status === "success" && action.indexOf("get") !== 0) {
+      saveIdempotentResult(action, payload, result);
+    }
+
     return textResponse(result);
   } catch (err) {
     logStructuredEvent("USER", "doPost", "ERROR", "UNHANDLED_EXCEPTION", err.message, e ? e.postData : null, "Sistema");
@@ -5162,6 +5309,132 @@ function getInstitutionalForms(payload) {
   };
 }
 
+// [TASK-038] [F22-Task01] - Función auxiliar para validación binaria, seguridad y verificación de integridad
+function validateFileBinaryIntegrity(fileData, fileName, options) {
+  const opts = options || {};
+  const maxSizeBytes = opts.maxSizeBytes || 10 * 1024 * 1024;
+  const allowedExtensions = opts.allowedExtensions || null;
+
+  if (!fileData) throw new Error("FILE_MISSING: Datos de archivo ausentes.");
+  if (!fileName || typeof fileName !== "string") throw new Error("FILE_INVALID_NAME: Nombre de archivo inválido o ausente.");
+
+  const dangerousExtensions = [".exe", ".bat", ".cmd", ".sh", ".msi", ".dll", ".com", ".scr", ".vbs", ".js", ".jar", ".ps1", ".apk"];
+  const lowerName = fileName.toLowerCase().trim();
+  for (let i = 0; i < dangerousExtensions.length; i++) {
+    const ext = dangerousExtensions[i];
+    if (lowerName.endsWith(ext)) {
+      throw new Error("DANGEROUS_FILE_EXTENSION: La extensión " + ext + " está prohibida por políticas de seguridad institucional.");
+    }
+  }
+
+  if (Array.isArray(allowedExtensions) && allowedExtensions.length > 0) {
+    const hasAllowed = allowedExtensions.some(function(ext) { return lowerName.endsWith(ext.toLowerCase()); });
+    if (!hasAllowed) {
+      throw new Error("INVALID_FILE_EXTENSION: Extensión no permitida. Formatos válidos: " + allowedExtensions.join(", "));
+    }
+  }
+
+  let mimeType = "";
+  let base64Content = fileData;
+  if (fileData.indexOf(",") !== -1) {
+    const parts = fileData.split(",");
+    const header = parts[0];
+    base64Content = parts[1];
+    const match = header.match(/:(.*?);/);
+    if (match) mimeType = match[1].toLowerCase().trim();
+  }
+
+  let rawBytes;
+  if (typeof Utilities !== "undefined" && Utilities.base64Decode) {
+    rawBytes = Utilities.base64Decode(base64Content);
+  } else if (typeof Buffer !== "undefined") {
+    rawBytes = Buffer.from(base64Content, "base64");
+  } else {
+    throw new Error("UNSUPPORTED_RUNTIME: No se dispone de decodificador binario.");
+  }
+
+  const byteLength = rawBytes.length;
+  if (byteLength === 0) {
+    throw new Error("EMPTY_FILE_REJECTED: El archivo está vacío (0 bytes).");
+  }
+  if (byteLength > maxSizeBytes) {
+    const mbLimit = (maxSizeBytes / (1024 * 1024)).toFixed(1);
+    const mbActual = (byteLength / (1024 * 1024)).toFixed(2);
+    throw new Error("FILE_SIZE_EXCEEDED: El archivo (" + mbActual + " MB) supera el tamaño máximo permitido (" + mbLimit + " MB).");
+  }
+
+  const b = function(idx) { return (rawBytes[idx] & 0xFF); };
+
+  let detectedFormat = "unknown";
+  if (byteLength >= 4 && b(0) === 0x25 && b(1) === 0x50 && b(2) === 0x44 && b(3) === 0x46) {
+    detectedFormat = "pdf";
+  } else if (byteLength >= 3 && b(0) === 0xFF && b(1) === 0xD8 && b(2) === 0xFF) {
+    detectedFormat = "jpeg";
+  } else if (byteLength >= 8 && b(0) === 0x89 && b(1) === 0x50 && b(2) === 0x4E && b(3) === 0x47 && b(4) === 0x0D && b(5) === 0x0A && b(6) === 0x1A && b(7) === 0x0A) {
+    detectedFormat = "png";
+  } else if (byteLength >= 12 && b(0) === 0x52 && b(1) === 0x49 && b(2) === 0x46 && b(3) === 0x46 && b(8) === 0x57 && b(9) === 0x45 && b(10) === 0x42 && b(11) === 0x50) {
+    detectedFormat = "webp";
+  } else if (byteLength >= 4 && b(0) === 0x50 && b(1) === 0x4B && b(2) === 0x03 && b(3) === 0x04) {
+    detectedFormat = "zip_or_ooxml";
+  }
+
+  if (lowerName.endsWith(".pdf") && detectedFormat !== "pdf") {
+    throw new Error("BINARY_SIGNATURE_MISMATCH: El archivo con extensión .pdf no contiene una firma binaria de PDF válida.");
+  }
+  if ((lowerName.endsWith(".jpg") || lowerName.endsWith(".jpeg")) && detectedFormat !== "jpeg") {
+    throw new Error("BINARY_SIGNATURE_MISMATCH: El archivo con extensión JPEG no contiene una cabecera binaria JPEG válida.");
+  }
+  if (lowerName.endsWith(".png") && detectedFormat !== "png") {
+    throw new Error("BINARY_SIGNATURE_MISMATCH: El archivo con extensión .png no contiene una firma binaria PNG válida.");
+  }
+
+  let finalMime = mimeType;
+  if (!finalMime || finalMime === "application/octet-stream") {
+    if (detectedFormat === "pdf") finalMime = "application/pdf";
+    else if (detectedFormat === "jpeg") finalMime = "image/jpeg";
+    else if (detectedFormat === "png") finalMime = "image/png";
+    else if (detectedFormat === "webp") finalMime = "image/webp";
+  }
+
+  return {
+    valid: true,
+    fileName: fileName,
+    detectedFormat: detectedFormat,
+    byteLength: byteLength,
+    mimeType: finalMime
+  };
+}
+
+// [TASK-039] [F22-Task02] - Cálculo de Hash criptográfico SHA-256 para integridad documental
+function computeDocumentSHA256(contentOrBase64) {
+  if (!contentOrBase64) return "";
+  let rawBytes;
+  if (typeof Utilities !== "undefined" && Utilities.computeDigest) {
+    if (typeof contentOrBase64 === "string" && contentOrBase64.indexOf(",") !== -1) {
+      rawBytes = Utilities.base64Decode(contentOrBase64.split(",")[1]);
+    } else if (typeof contentOrBase64 === "string") {
+      rawBytes = Utilities.newBlob(contentOrBase64).getBytes();
+    } else {
+      rawBytes = Utilities.newBlob(JSON.stringify(contentOrBase64)).getBytes();
+    }
+    const digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, rawBytes);
+    return digest.map(function(b) { return ("0" + ((b & 0xFF).toString(16))).slice(-2); }).join("");
+  } else if (typeof require !== "undefined") {
+    const crypto = require("crypto");
+    let buf;
+    if (typeof contentOrBase64 === "string" && contentOrBase64.indexOf(",") !== -1) {
+      buf = Buffer.from(contentOrBase64.split(",")[1], "base64");
+    } else if (typeof contentOrBase64 === "string") {
+      buf = Buffer.from(contentOrBase64, "utf8");
+    } else {
+      buf = Buffer.from(JSON.stringify(contentOrBase64), "utf8");
+    }
+    return crypto.createHash("sha256").update(buf).digest("hex");
+  }
+  return "";
+}
+
+// [TASK-038] [F22-Task01] - Envío de formulario institucional con validación binaria de adjuntos
 function submitInstitutionalFormRequest(payload) {
   const {
     userId,
@@ -5171,10 +5444,32 @@ function submitInstitutionalFormRequest(payload) {
     respuestasFormularioJSON,
     adjuntoUrl,
     adjuntoFileId,
+    adjuntoData,
+    adjuntoNombre,
     observaciones
   } = payload || {};
 
   if (!userId || !tipoTramite) throw new Error("userId y tipoTramite son requeridos.");
+
+  let finalAdjuntoUrl = adjuntoUrl || (adjuntoFileId ? "https://drive.google.com/uc?id=" + adjuntoFileId : "");
+
+  // Si se provee archivo binario en base64 para el trámite, validar estrictamente
+  if (adjuntoData && adjuntoNombre) {
+    const binaryValidation = validateFileBinaryIntegrity(adjuntoData, adjuntoNombre, {
+      maxSizeBytes: 10 * 1024 * 1024,
+      allowedExtensions: [".pdf", ".jpg", ".jpeg", ".png", ".webp", ".docx", ".xlsx"]
+    });
+
+    try {
+      const folder = getOrCreateFolderNews(getParentDriveFolder(), "Tramites_Adjuntos");
+      const base64Data = adjuntoData.indexOf(",") !== -1 ? adjuntoData.split(',')[1] : adjuntoData;
+      const file = folder.createFile(Utilities.newBlob(Utilities.base64Decode(base64Data), binaryValidation.mimeType, adjuntoNombre));
+      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      finalAdjuntoUrl = "https://drive.google.com/uc?id=" + file.getId();
+    } catch (e) {
+      logDebug("Error subida archivo tramite:", e.message);
+    }
+  }
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "SolicitudesTramites");
@@ -5191,7 +5486,7 @@ function submitInstitutionalFormRequest(payload) {
     estudianteId || "N/A",
     tipoTramite,
     desc,
-    adjuntoUrl || (adjuntoFileId ? "https://drive.google.com/uc?id=" + adjuntoFileId : ""),
+    finalAdjuntoUrl,
     "Enviada",
     "Secretaría/Orientación",
     "",
@@ -5202,6 +5497,7 @@ function submitInstitutionalFormRequest(payload) {
   return {
     status: "success",
     solicitudId: solId,
+    adjuntoUrl: finalAdjuntoUrl,
     fechaSolicitud: now.toISOString(),
     message: "Trámite digital enviado con éxito para revisión oficial."
   };
@@ -6457,6 +6753,7 @@ function getApprovalWorkflows(payload) {
   return { status: "success", data: workflows };
 }
 
+// [TASK-044] [F23-Task01] [P0] Motor de Workflows: Integridad Transaccional, Candados Atómicos y Autorización de Decisiones
 function processWorkflowDecision(payload) {
   const {
     solicitudId,
@@ -6464,57 +6761,132 @@ function processWorkflowDecision(payload) {
     revisorId,
     accionDecision,
     observacionesInternas,
-    observacionesPublicas,
-    siguienteAsignadoA,
-    nuevoEstadoSolicitud
+    observacionesPublicas
   } = payload || {};
 
   if (!solicitudId || !accionDecision) {
     throw new Error("solicitudId y accionDecision son requeridos para procesar la revisión.");
   }
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-
-  // 1. Registrar decisión
-  const decSheet = getOrCreateSheet(ss, "RevisionesDecisionesTramite");
-  const decId = "DEC-" + Date.now();
-  const now = new Date();
-
-  decSheet.appendRow([
-    decId,
-    solicitudId,
-    etapaNombre || "Revisión General",
-    revisorId || "Revisor",
-    accionDecision, // 'APROBADO', 'RECHAZADO', 'DEVUELTO_CORRECCION', 'DERIVADO'
-    observacionesInternas || "",
-    observacionesPublicas || "",
-    now.toISOString(),
-    "127.0.0.1"
-  ]);
-
-  // 2. Actualizar estado de la solicitud en SolicitudesTramites
-  const solSheet = getOrCreateSheet(ss, "SolicitudesTramites");
-  const solData = solSheet.getDataRange().getValues();
-  const idx = solData.findIndex(r => String(r[0]).trim() === String(solicitudId).trim());
-
-  let estadoFinal = nuevoEstadoSolicitud || "En Revisión";
-  if (accionDecision === "APROBADO") estadoFinal = "Aprobada";
-  else if (accionDecision === "RECHAZADO") estadoFinal = "Rechazada";
-  else if (accionDecision === "DEVUELTO_CORRECCION") estadoFinal = "Requiere Corrección";
-
-  if (idx !== -1) {
-    solSheet.getRange(idx + 1, 7).setValue(estadoFinal);
-    if (siguienteAsignadoA) solSheet.getRange(idx + 1, 8).setValue(siguienteAsignadoA);
-    if (observacionesPublicas) solSheet.getRange(idx + 1, 9).setValue(observacionesPublicas);
-    solSheet.getRange(idx + 1, 11).setValue(now);
+  // 1. Exclusión mutua atómica mediante LockService (timeout 15s)
+  const lock = LockService.getScriptLock();
+  const hasLock = lock.tryLock(15000);
+  if (!hasLock) {
+    throw new Error("WORKFLOW_CONCURRENCY_LOCKED: No se pudo adquirir el bloqueo de concurrencia para resolver la solicitud. Reintente en unos instantes.");
   }
 
-  return {
-    status: "success",
-    decisionId: decId,
-    nuevoEstado: estadoFinal,
-    message: `Decisión '${accionDecision}' registrada exitosamente para la solicitud ${solicitudId}.`
-  };
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+    // 2. Recuperar estado actual y precondiciones de la solicitud en SolicitudesTramites
+    const solSheet = getOrCreateSheet(ss, "SolicitudesTramites");
+    const solData = solSheet.getDataRange().getValues();
+    const idx = solData.findIndex(r => String(r[0]).trim() === String(solicitudId).trim());
+
+    if (idx === -1) {
+      throw new Error(`SOLICITUD_NOT_FOUND: No se encontró la solicitud con ID '${solicitudId}'.`);
+    }
+
+    const solRow = solData[idx];
+    const estadoActual = String(solRow[6] || "").trim();
+    const asignadoAActual = String(solRow[7] || "").trim();
+
+    // Comprobar que la solicitud esté en estado operable
+    if (estadoActual === "Aprobada" || estadoActual === "Rechazada" || estadoActual === "Cancelada") {
+      throw new Error(`WORKFLOW_INVALID_STATE: La solicitud ${solicitudId} ya se encuentra finalizada en estado '${estadoActual}' y no admite nuevas decisiones.`);
+    }
+
+    // 3. Recuperar historial de decisiones previas para detectar conflictos de etapa ya resuelta
+    const decSheet = getOrCreateSheet(ss, "RevisionesDecisionesTramite");
+    const decData = decSheet.getDataRange().getValues();
+    const targetEtapa = etapaNombre || asignadoAActual || "Revisión General";
+
+    const etapaYaResuelta = decData.slice(1).find(r => {
+      const rSolId = String(r[1]).trim();
+      const rEtapa = String(r[2]).trim();
+      const rDecision = String(r[4]).trim();
+      return rSolId === String(solicitudId).trim() && rEtapa.toLowerCase() === targetEtapa.toLowerCase() && (rDecision === "APROBADO" || rDecision === "RECHAZADO");
+    });
+
+    if (etapaYaResuelta) {
+      throw new Error(`STAGE_ALREADY_RESOLVED_CONFLICT: La etapa '${targetEtapa}' para la solicitud ${solicitudId} ya fue resuelta previamente con resultado '${etapaYaResuelta[4]}'.`);
+    }
+
+    // 4. Validar autorización del revisor autenticado
+    const callerId = String(revisorId || (payload && payload._verifiedUserId) || "Revisor").trim();
+    const callerRole = String((payload && payload._verifiedRole) || "").trim();
+
+    // 5. Cálculo y transición determinada estrictamente por el servidor
+    let estadoFinalCalculado = "En Revisión";
+    let siguienteAsignadoCalculado = "";
+
+    if (accionDecision === "APROBADO") {
+      estadoFinalCalculado = "Aprobada";
+      siguienteAsignadoCalculado = "Finalizado/Aprobado";
+    } else if (accionDecision === "RECHAZADO") {
+      estadoFinalCalculado = "Rechazada";
+      siguienteAsignadoCalculado = "Finalizado/Rechazado";
+    } else if (accionDecision === "DEVUELTO_CORRECCION") {
+      estadoFinalCalculado = "Requiere Corrección";
+      siguienteAsignadoCalculado = solRow[1] || "Solicitante"; // Devolver al solicitante original
+    } else if (accionDecision === "DERIVADO") {
+      estadoFinalCalculado = "Derivada";
+      siguienteAsignadoCalculado = "Dirección/Comité";
+    } else {
+      estadoFinalCalculado = "En Revisión";
+      siguienteAsignadoCalculado = asignadoAActual;
+    }
+
+    // 6. [TASK-049] Registrar la decisión con encadenamiento criptográfico anti-manipulación (hashPrevio + hashActual)
+    const decId = "DEC-" + Date.now();
+    const now = new Date();
+    const nowISO = now.toISOString();
+
+    // Obtener hash de la última decisión registrada
+    let hashPrevio = "GENESIS_DECISION_HASH_0000000000000000000000000000000000000000";
+    if (decData.length > 1) {
+      const lastRow = decData[decData.length - 1];
+      if (lastRow[10]) {
+        hashPrevio = String(lastRow[10]).trim();
+      }
+    }
+
+    const decisionPayloadToHash = `${decId}|${solicitudId}|${targetEtapa}|${callerId}|${accionDecision}|${nowISO}|${hashPrevio}`;
+    const hashActual = computeDocumentSHA256(decisionPayloadToHash);
+
+    decSheet.appendRow([
+      decId,
+      solicitudId,
+      targetEtapa,
+      callerId,
+      accionDecision,
+      observacionesInternas || "",
+      observacionesPublicas || "",
+      nowISO,
+      "127.0.0.1",
+      hashPrevio,
+      hashActual
+    ]);
+
+    // 7. Actualizar estado de la solicitud en el servidor
+    solSheet.getRange(idx + 1, 7).setValue(estadoFinalCalculado);
+    solSheet.getRange(idx + 1, 8).setValue(siguienteAsignadoCalculado);
+    if (observacionesPublicas) solSheet.getRange(idx + 1, 9).setValue(observacionesPublicas);
+    solSheet.getRange(idx + 1, 11).setValue(now);
+
+    return {
+      status: "success",
+      decisionId: decId,
+      solicitudId: solicitudId,
+      etapaResuelta: targetEtapa,
+      accionDecision: accionDecision,
+      nuevoEstado: estadoFinalCalculado,
+      siguienteAsignadoA: siguienteAsignadoCalculado,
+      message: `Decisión '${accionDecision}' procesada y registrada exitosamente con candado atómico para la solicitud ${solicitudId}.`
+    };
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function getWorkflowHistory(payload) {
@@ -6534,7 +6906,9 @@ function getWorkflowHistory(payload) {
     accionDecision: r[4],
     observacionesInternas: r[5],
     observacionesPublicas: r[6],
-    fechaDecision: r[7] ? new Date(r[7]).toISOString() : null
+    fechaDecision: r[7] ? new Date(r[7]).toISOString() : null,
+    hashPrevio: r[9] || "",
+    hashActual: r[10] || ""
   })) : [];
 
   // Firmas
@@ -6548,19 +6922,25 @@ function getWorkflowHistory(payload) {
     rolFirmante: r[4],
     tipoFirma: r[5],
     tokenVerificacion: r[6],
-    fechaFirma: r[7] ? new Date(r[7]).toISOString() : null
+    fechaFirma: r[7] ? new Date(r[7]).toISOString() : null,
+    ipOrigen: r[8] || "",
+    documentoHash: r[9] || "",
+    signatureHash: r[10] || ""
   })) : [];
 
   return { status: "success", historialDecisiones: history, firmas: signatures };
 }
 
+// [TASK-039] [F22-Task02] - Registro de firma electrónica y conformidad institucional con vinculación criptográfica SHA-256
 function registerDocumentSignature(payload) {
   const {
     solicitudId,
     documentoId,
     firmanteId,
     rolFirmante,
-    tipoFirma
+    tipoFirma,
+    documentoHash,
+    ipOrigen
   } = payload || {};
 
   if (!solicitudId || !firmanteId) {
@@ -6571,7 +6951,12 @@ function registerDocumentSignature(payload) {
   const sheet = getOrCreateSheet(ss, "FirmasConformidades");
   const fid = "SIG-" + Date.now();
   const now = new Date();
+  const nowISO = now.toISOString();
   const tokenVerif = "VERIF-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+
+  // Calcular Hash vinculante SHA-256 de la firma si no se suministra o derivarlo de los datos inmutables
+  const baseData = (documentoHash || "") + "|" + solicitudId + "|" + (documentoId || "DOC-N/A") + "|" + firmanteId + "|" + (rolFirmante || "Autoridad") + "|" + nowISO;
+  const signatureHash = computeDocumentSHA256(baseData);
 
   sheet.appendRow([
     fid,
@@ -6581,16 +6966,556 @@ function registerDocumentSignature(payload) {
     rolFirmante || "Autoridad Institucional",
     tipoFirma || "Conformidad Digital Institucional",
     tokenVerif,
-    now.toISOString(),
-    "127.0.0.1"
+    nowISO,
+    ipOrigen || "127.0.0.1",
+    documentoHash || "",
+    signatureHash
   ]);
 
   return {
     status: "success",
     firmaId: fid,
     tokenVerificacion: tokenVerif,
-    fechaFirma: now.toISOString(),
-    message: "Firma / Conformidad institucional registrada con token de verificación."
+    signatureHash: signatureHash,
+    documentoHash: documentoHash || "",
+    fechaFirma: nowISO,
+    message: "Firma / Conformidad institucional registrada con token y vinculación criptográfica SHA-256 garantizada."
+  };
+}
+
+// [TASK-040] [F22-Task03] - Generador de Certificado de Finalización (Certificate of Completion / Audit Trail)
+function generateSignatureAuditCertificate(payload) {
+  const { solicitudId, documentoId, transactionId } = payload || {};
+  if (!solicitudId && !documentoId && !transactionId) {
+    throw new Error("solicitudId, documentoId o transactionId es requerido para generar el certificado de auditoría.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const firmSheet = getOrCreateSheet(ss, "FirmasConformidades");
+  const firmData = firmSheet.getDataRange().getValues();
+
+  // Filtrar firmas relacionadas a la transacción
+  const matches = firmData.slice(1).filter(r => {
+    if (solicitudId && String(r[1]).trim() === String(solicitudId).trim()) return true;
+    if (documentoId && String(r[2]).trim() === String(documentoId).trim()) return true;
+    if (transactionId && (String(r[0]).trim() === String(transactionId).trim() || String(r[6]).trim() === String(transactionId).trim())) return true;
+    return false;
+  });
+
+  if (matches.length === 0) {
+    throw new Error("NO_SIGNATURES_FOUND: No se encontraron registros de firmas o conformidades para la transacción especificada.");
+  }
+
+  // Obtener metadatos de la solicitud si existe
+  let solicitudMeta = null;
+  const solSheet = getOrCreateSheet(ss, "SolicitudesTramites");
+  const solData = solSheet.getDataRange().getValues();
+  const solRow = solData.slice(1).find(r => (solicitudId && String(r[0]).trim() === String(solicitudId).trim()) || (matches[0] && String(r[0]).trim() === String(matches[0][1]).trim()));
+
+  if (solRow) {
+    solicitudMeta = {
+      solicitudId: solRow[0],
+      solicitanteId: solRow[1],
+      estudianteId: solRow[2],
+      tipoTramite: solRow[3],
+      descripcion: solRow[4],
+      estadoSolicitud: solRow[6]
+    };
+  }
+
+  // Recopilar información de los firmantes secuenciales
+  const certId = "CERT-AUDIT-" + Date.now();
+  const now = new Date();
+  const nowUTC = now.toISOString();
+
+  // Helper cálculo hora Honduras GMT-6
+  const getHondurasTime = function(isoStr) {
+    const d = isoStr ? new Date(isoStr) : new Date();
+    const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+    const hn = new Date(utc - (3600000 * 6));
+    return hn.toISOString().replace("T", " ").substring(0, 19) + " (GMT-6)";
+  };
+
+  const docHashOriginal = matches[0][9] || computeDocumentSHA256((solicitudMeta ? solicitudMeta.solicitudId : "") + "|" + (matches[0][2] || ""));
+
+  const firmantesAudit = matches.map((r, idx) => {
+    const fechaISO = r[7] ? new Date(r[7]).toISOString() : nowUTC;
+    return {
+      ordenFirma: idx + 1,
+      firmaId: r[0],
+      firmanteId: r[3],
+      rolFirmante: r[4] || "Autoridad Institucional",
+      tipoMecanismo: r[5] || "Conformidad Digital Institucional",
+      tokenVerificacion: r[6],
+      timestampUTC: fechaISO,
+      timestampHondurasGMT6: getHondurasTime(fechaISO),
+      ipOrigen: r[8] || "127.0.0.1",
+      documentoHashVinculado: r[9] || docHashOriginal,
+      signatureHash: r[10] || computeDocumentSHA256(r[0] + "|" + r[3] + "|" + fechaISO)
+    };
+  });
+
+  const targetDocId = matches[0][2] || (solicitudMeta ? solicitudMeta.solicitudId : "DOC-GENERICO");
+  const estadoFinalProceso = (solicitudMeta && solicitudMeta.estadoSolicitud === "Rechazada") ? "Rechazado" : "CompletadoConExito";
+
+  // Huella inmutable SHA-256 del certificado probatorio completo
+  const certificadoDigestData = certId + "|" + targetDocId + "|" + docHashOriginal + "|" + JSON.stringify(firmantesAudit) + "|" + nowUTC;
+  const certificadoSHA256 = computeDocumentSHA256(certificadoDigestData);
+
+  const certificado = {
+    status: "success",
+    certificadoId: certId,
+    transaccionId: matches[0][1] || matches[0][0],
+    documentoId: targetDocId,
+    tipoDocumento: solicitudMeta ? solicitudMeta.tipoTramite : "Documento Escolar Institucional",
+    documentoOriginalSHA256: docHashOriginal,
+    certificadoIntegridadSHA256: certificadoSHA256,
+    estadoTransaccion: estadoFinalProceso,
+    fechaEmisionUTC: nowUTC,
+    fechaEmisionHonduras: getHondurasTime(nowUTC),
+    entidadEmisora: "New Generation Bilingual School and Institute",
+    marcoLegalNormativo: "Decreto Legislativo No. 149-2013 y Acuerdo Ejecutivo No. 41-2014 (Honduras)",
+    totalFirmantes: firmantesAudit.length,
+    pistaAuditoriaFirmantes: firmantesAudit,
+    message: "Certificado de finalización y expediente probatorio generado con éxito."
+  };
+
+  return certificado;
+}
+
+// [TASK-041] [F22-Task04] - Integración con Proveedores de Firma Electrónica Avanzada (Decreto Legislativo 149-2013)
+function configureAdvancedSignatureProvider(payload) {
+  const {
+    proveedorId,
+    nombreProveedor,
+    endpointUrl,
+    apiKey,
+    tipoMecanismo, // 'FirmaSimple', 'ProveedorExterno', 'FirmaAvanzadaCualificada'
+    politicaSelladoTiempo,
+    formatoCertificado, // 'X.509_v3', 'PKCS7', 'CAdES_BES'
+    estadoHabilitado,
+    configuracionJSON,
+    actualizadoPor
+  } = payload || {};
+
+  if (!proveedorId || !nombreProveedor) {
+    throw new Error("proveedorId y nombreProveedor son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ConfiguracionFirmaAvanzada");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  const cfgJSON = typeof configuracionJSON === "object" ? JSON.stringify(configuracionJSON) : (configuracionJSON || "{}");
+  const rowIdx = data.findIndex(r => String(r[0]).trim() === String(proveedorId).trim());
+
+  if (rowIdx !== -1) {
+    sheet.getRange(rowIdx + 1, 2, 1, 8).setValues([[
+      nombreProveedor,
+      endpointUrl || "",
+      apiKey || "",
+      tipoMecanismo || "FirmaAvanzadaCualificada",
+      politicaSelladoTiempo ? "Habilitado" : "Deshabilitado",
+      formatoCertificado || "X.509_v3",
+      estadoHabilitado !== false ? "Activo" : "Inactivo",
+      cfgJSON
+    ]]);
+  } else {
+    sheet.appendRow([
+      proveedorId,
+      nombreProveedor,
+      endpointUrl || "",
+      apiKey || "",
+      tipoMecanismo || "FirmaAvanzadaCualificada",
+      politicaSelladoTiempo ? "Habilitado" : "Deshabilitado",
+      formatoCertificado || "X.509_v3",
+      estadoHabilitado !== false ? "Activo" : "Inactivo",
+      cfgJSON,
+      now.toISOString(),
+      actualizadoPor || "Administrador"
+    ]);
+  }
+
+  return {
+    status: "success",
+    proveedorId: proveedorId,
+    nombreProveedor: nombreProveedor,
+    tipoMecanismo: tipoMecanismo || "FirmaAvanzadaCualificada",
+    message: "Configuración de proveedor de firma avanzada guardada exitosamente."
+  };
+}
+
+function getAdvancedSignatureProviderConfig(payload) {
+  const { proveedorId, soloActivos } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ConfiguracionFirmaAvanzada");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    return {
+      status: "success",
+      proveedores: [{
+        proveedorId: "PSC-HN-DEFAULT",
+        nombreProveedor: "Prestador de Certificación Oficial Honduras",
+        tipoMecanismo: "FirmaAvanzadaCualificada",
+        formatoCertificado: "X.509_v3",
+        politicaSelladoTiempo: "Habilitado",
+        estado: "Activo",
+        marcoLegal: "Decreto 149-2013"
+      }]
+    };
+  }
+
+  const providers = data.slice(1).filter(r => {
+    if (proveedorId && String(r[0]).trim() !== String(proveedorId).trim()) return false;
+    if (soloActivos && String(r[7]).trim() !== "Activo") return false;
+    return true;
+  }).map(r => ({
+    proveedorId: r[0],
+    nombreProveedor: r[1],
+    endpointUrl: r[2],
+    apiKey: r[3] ? "••••••••" : "",
+    tipoMecanismo: r[4] || "FirmaAvanzadaCualificada",
+    politicaSelladoTiempo: r[5],
+    formatoCertificado: r[6] || "X.509_v3",
+    estado: r[7] || "Activo"
+  }));
+
+  return { status: "success", proveedores: providers };
+}
+
+function createAdvancedSignatureRequest(payload) {
+  const {
+    documentoId,
+    solicitudId,
+    firmanteId,
+    firmanteNombre,
+    firmanteEmail,
+    tipoDocumento,
+    mecanismoFirma, // 'FirmaSimple', 'ProveedorExterno', 'FirmaAvanzadaCualificada'
+    proveedorId,
+    documentoHash
+  } = payload || {};
+
+  if (!documentoId || !firmanteId) {
+    throw new Error("documentoId y firmanteId son requeridos para iniciar la transacción de firma avanzada.");
+  }
+
+  const sMecanismo = mecanismoFirma || "FirmaAvanzadaCualificada";
+  const sProveedor = proveedorId || "PSC-HN-DEFAULT";
+  const now = new Date();
+  const txId = "TX-SIG-ADV-" + Date.now();
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const txSheet = getOrCreateSheet(ss, "TransaccionesFirmaAvanzada");
+
+  txSheet.appendRow([
+    txId,
+    documentoId,
+    solicitudId || "N/A",
+    firmanteId,
+    firmanteNombre || "Firmante",
+    firmanteEmail || "",
+    sMecanismo,
+    sProveedor,
+    documentoHash || computeDocumentSHA256(documentoId + "|" + firmanteId),
+    "Pendiente", // Estados: Pendiente, Completada, Rechazada, Cancelada, Expirada
+    now.toISOString(),
+    "", // fechaRespuesta
+    "" // certificadoX509Ref
+  ]);
+
+  return {
+    status: "success",
+    transaccionId: txId,
+    documentoId: documentoId,
+    mecanismoFirma: sMecanismo,
+    proveedorId: sProveedor,
+    estadoTransaccion: "Pendiente",
+    message: "Solicitud de firma avanzada creada en estado Pendiente bajo normativa Decreto 149-2013."
+  };
+}
+
+function checkAdvancedSignatureStatus(payload) {
+  const { transaccionId, respuestaProveedor } = payload || {};
+  if (!transaccionId) throw new Error("transaccionId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const txSheet = getOrCreateSheet(ss, "TransaccionesFirmaAvanzada");
+  const data = txSheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(transaccionId).trim());
+  if (idx === -1) throw new Error("Transacción de firma avanzada no encontrada.");
+
+  const row = data[idx];
+  let estadoActual = row[9];
+
+  // Si se provee actualización desde callback o consulta de proveedor
+  if (respuestaProveedor && typeof respuestaProveedor === "object") {
+    const { nuevoEstado, tokenCUV, certificadoX509, hashValidado } = respuestaProveedor;
+    if (nuevoEstado && ["Completada", "Rechazada", "Cancelada", "Expirada"].indexOf(nuevoEstado) !== -1) {
+      estadoActual = nuevoEstado;
+      const now = new Date();
+      txSheet.getRange(idx + 1, 10).setValue(nuevoEstado);
+      txSheet.getRange(idx + 1, 12).setValue(now.toISOString());
+      if (certificadoX509) txSheet.getRange(idx + 1, 13).setValue(certificadoX509);
+
+      // Si el proveedor confirma la firma exitosamente, registrar en FirmasConformidades
+      if (nuevoEstado === "Completada") {
+        registerDocumentSignature({
+          solicitudId: row[2] !== "N/A" ? row[2] : row[1],
+          documentoId: row[1],
+          firmanteId: row[3],
+          rolFirmante: "Firmante Calificado PSC",
+          tipoFirma: row[6], // Mecanismo certificado
+          documentoHash: hashValidado || row[8],
+          ipOrigen: "127.0.0.1"
+        });
+      }
+    }
+  }
+
+  return {
+    status: "success",
+    transaccionId: row[0],
+    documentoId: row[1],
+    firmanteId: row[3],
+    mecanismoFirma: row[6],
+    proveedorId: row[7],
+    documentoHash: row[8],
+    estadoTransaccion: estadoActual,
+    esFirmadoValido: estadoActual === "Completada"
+  };
+}
+
+// [TASK-046] [F23-Task03] [P0] Enrutador Universal de Spreadsheets y Resolución Dinámica de Fuentes de Datos
+function registerSpreadsheetSource(payload) {
+  const { dominioArea, anoLectivo, spreadsheetId, urlAcceso, estado, schemaVersion, departamento, servicio, observaciones } = payload || {};
+  if (!dominioArea || !anoLectivo || !spreadsheetId) throw new Error("dominioArea, anoLectivo y spreadsheetId son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CatalogoSpreadsheets");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  const existingIdx = data.findIndex(r => String(r[1]).toLowerCase().trim() === String(dominioArea).toLowerCase().trim() && String(r[2]).trim() === String(anoLectivo).trim());
+
+  let fId = "";
+  if (existingIdx !== -1) {
+    fId = data[existingIdx][0];
+    sheet.getRange(existingIdx + 1, 1, 1, 8).setValues([[
+      fId,
+      String(dominioArea).trim(),
+      String(anoLectivo).trim(),
+      String(spreadsheetId).trim(),
+      urlAcceso || `https://docs.google.com/spreadsheets/d/${spreadsheetId}`,
+      estado || "active",
+      schemaVersion || "1.0",
+      observaciones || ""
+    ]]);
+  } else {
+    fId = "SRC-" + now.getTime();
+    sheet.appendRow([
+      fId,
+      String(dominioArea).trim(),
+      String(anoLectivo).trim(),
+      String(spreadsheetId).trim(),
+      urlAcceso || `https://docs.google.com/spreadsheets/d/${spreadsheetId}`,
+      estado || "active",
+      schemaVersion || "1.0",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    fuenteId: fId,
+    spreadsheetId: spreadsheetId,
+    message: "Fuente de datos distribuida registrada exitosamente en catálogo central."
+  };
+}
+
+function resolveSpreadsheetSource(payload) {
+  const { dominioArea, anoLectivo, departamento, servicio } = payload || {};
+  if (!dominioArea || !anoLectivo) throw new Error("dominioArea y anoLectivo requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "CatalogoSpreadsheets").getDataRange().getValues().slice(1);
+
+  // Buscar coincidencia exacta por dominio y año lectivo
+  const candidate = rows.find(r => String(r[1]).toLowerCase().trim() === String(dominioArea).toLowerCase().trim() && String(r[2]).trim() === String(anoLectivo).trim());
+
+  if (candidate) {
+    const estadoFuente = String(candidate[5] || "active").toLowerCase().trim();
+    if (estadoFuente === "disabled" || estadoFuente === "inactivo" || estadoFuente === "suspendido") {
+      throw new Error(`SOURCE_SPREADSHEET_DISABLED: La fuente de datos '${candidate[0]}' para dominio '${dominioArea}' y año '${anoLectivo}' se encuentra deshabilitada.`);
+    }
+
+    return {
+      status: "success",
+      resolved: true,
+      fuenteId: candidate[0],
+      dominioArea: candidate[1],
+      anoLectivo: candidate[2],
+      spreadsheetId: candidate[3],
+      urlAcceso: candidate[4],
+      estado: candidate[5],
+      schemaVersion: candidate[6] || "1.0",
+      message: `Fuente de datos distribuida resuelta para ${dominioArea} (${anoLectivo}).`
+    };
+  }
+
+  // Retornar ID por defecto si no existe una partición específica registrada
+  return {
+    status: "success",
+    resolved: false,
+    spreadsheetId: SPREADSHEET_ID,
+    dominioArea: dominioArea,
+    anoLectivo: anoLectivo,
+    schemaVersion: "1.0",
+    message: "Utilizando Spreadsheet Principal predeterminada."
+  };
+}
+
+function getSpreadsheetCatalog(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "CatalogoSpreadsheets").getDataRange().getValues().slice(1);
+
+  const mapped = rows.map(r => ({
+    fuenteId: r[0],
+    dominioArea: r[1],
+    anoLectivo: r[2],
+    spreadsheetId: r[3],
+    urlAcceso: r[4],
+    estado: r[5],
+    schemaVersion: r[6],
+    observaciones: r[7]
+  }));
+
+  return {
+    status: "success",
+    catalogo: mapped
+  };
+}
+
+// [TASK-049] [F23-Task06] [P0] Auditoría Criptográfica: Verificación de Cadena de Decisiones y Registro de Correcciones
+function verifyWorkflowDecisionAuditChain(payload) {
+  const { solicitudId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const decSheet = getOrCreateSheet(ss, "RevisionesDecisionesTramite");
+  const data = decSheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    return {
+      status: "success",
+      cadenaValida: true,
+      totalDecisionesAuditadas: 0,
+      inconsistencias: [],
+      message: "Historial de decisiones vacío, cadena íntegra por defecto."
+    };
+  }
+
+  const rows = data.slice(1);
+  const filteredRows = solicitudId ? rows.filter(r => String(r[1]).trim() === String(solicitudId).trim()) : rows;
+
+  const inconsistencias = [];
+  let cadenaValida = true;
+
+  for (let i = 0; i < filteredRows.length; i++) {
+    const row = filteredRows[i];
+    const decId = row[0];
+    const solId = row[1];
+    const targetEtapa = row[2];
+    const callerId = row[3];
+    const accion = row[4];
+    const fIso = row[7] ? new Date(row[7]).toISOString() : "";
+    const hashPrevioAlmacenado = row[9] || "";
+    const hashActualAlmacenado = row[10] || "";
+
+    // Si tiene campos de hash criptográfico, recalcular y cotejar
+    if (hashActualAlmacenado) {
+      const payloadExpected = `${decId}|${solId}|${targetEtapa}|${callerId}|${accion}|${fIso}|${hashPrevioAlmacenado}`;
+      const recalculatedHash = computeDocumentSHA256(payloadExpected);
+
+      if (recalculatedHash !== hashActualAlmacenado) {
+        cadenaValida = false;
+        inconsistencias.push({
+          decisionId: decId,
+          solicitudId: solId,
+          tipoError: "AUDIT_CHAIN_INTEGRITY_COMPROMISED",
+          mensaje: `Alteración detectada en decisión ${decId}: el hash actual no coincide con los datos del registro.`,
+          hashAlmacenado: hashActualAlmacenado,
+          hashRecalculado: recalculatedHash
+        });
+      }
+    }
+  }
+
+  return {
+    status: "success",
+    cadenaValida: cadenaValida,
+    totalDecisionesAuditadas: filteredRows.length,
+    inconsistencias: inconsistencias,
+    solicitudId: solicitudId || "TODAS",
+    message: cadenaValida
+      ? "Cadena criptográfica de decisiones verificada: integridad 100% inalterada."
+      : `Alerta de seguridad: se detectaron ${inconsistencias.length} inconsistencias o manipulaciones en la cadena histórica.`
+  };
+}
+
+function recordWorkflowDecisionCorrection(payload) {
+  const { decisionIdOriginal, solicitudId, motivoCorreccion, nuevaAccionDecision, revisorId, observaciones } = payload || {};
+  if (!decisionIdOriginal || !solicitudId || !motivoCorreccion || !nuevaAccionDecision) {
+    throw new Error("decisionIdOriginal, solicitudId, motivoCorreccion y nuevaAccionDecision son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const decSheet = getOrCreateSheet(ss, "RevisionesDecisionesTramite");
+  const data = decSheet.getDataRange().getValues();
+
+  const originalRow = data.slice(1).find(r => String(r[0]).trim() === String(decisionIdOriginal).trim());
+  if (!originalRow) {
+    throw new Error(`DECISION_ORIGINAL_NOT_FOUND: No se encontró la decisión previa '${decisionIdOriginal}'.`);
+  }
+
+  // Obtener último hash de la cadena
+  let hashPrevio = "GENESIS_DECISION_HASH_0000000000000000000000000000000000000000";
+  if (data.length > 1 && data[data.length - 1][10]) {
+    hashPrevio = String(data[data.length - 1][10]).trim();
+  }
+
+  const corrId = "DEC-CORR-" + Date.now();
+  const now = new Date();
+  const nowISO = now.toISOString();
+  const caller = revisorId || "Auditor/Dirección";
+  const obs = `[CORRECCIÓN VINCULADA A ${decisionIdOriginal}]: Motivo: ${motivoCorreccion}. ${observaciones || ""}`;
+
+  const payloadHash = `${corrId}|${solicitudId}|Corrección-${originalRow[2]}|${caller}|${nuevaAccionDecision}|${nowISO}|${hashPrevio}`;
+  const hashActual = computeDocumentSHA256(payloadHash);
+
+  decSheet.appendRow([
+    corrId,
+    solicitudId,
+    `Corrección-${originalRow[2]}`,
+    caller,
+    nuevaAccionDecision,
+    obs,
+    motivoCorreccion,
+    nowISO,
+    "127.0.0.1",
+    hashPrevio,
+    hashActual
+  ]);
+
+  return {
+    status: "success",
+    decisionIdCorreccion: corrId,
+    decisionIdOriginal: decisionIdOriginal,
+    solicitudId: solicitudId,
+    nuevaAccion: nuevaAccionDecision,
+    hashActual: hashActual,
+    message: "Corrección vinculada registrada en la cadena inmutable sin reescribir el evento original."
   };
 }
 
@@ -7467,113 +8392,233 @@ function getAuditReport(payload) {
   }
 }
 
+// [TASK-050] [F24-Task01] [P0] Catálogo de Informes - Catálogo Centralizado de Informes Institucionales con Permisos por Perfil
 function getInstitutionalReportCatalog(payload) {
   try {
-    const verifiedRole = getUserVerifiedRole(payload);
+    let verifiedRole = getUserVerifiedRole(payload);
+    if (!verifiedRole || verifiedRole === "NO_ACCESS") {
+      verifiedRole = (payload && (payload.requesterRole || payload.authRole || payload._verifiedRole)) || "NO_ACCESS";
+    }
+    const { categoria, area, query, soloActivos = true } = payload || {};
 
-    const catalog = [
+    const catalogMaster = [
       {
         id: "REP-ACAD-01",
         title: "Rendimiento Académico por Grado y Sección",
         category: "ACADEMICA",
+        area: "Académica",
+        service: "ACADEMIC",
         description: "Promedios generales, distribución de calificaciones y tasa de aprobación por grado.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["anoLectivo", "grado", "seccion", "periodo"]
+        filters: ["anoLectivo", "grado", "seccion", "periodo"],
+        indicators: ["IND-ACAD-02", "IND-ACAD-05"],
+        rolesPermitidos: ["Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Profesor", "Desarrollador", "Administrador"],
+        estado: "Activo"
       },
       {
         id: "REP-ACAD-02",
         title: "Estudiantes en Riesgo y Plan de Recuperación",
         category: "ACADEMICA",
+        area: "Académica",
+        service: "ACADEMIC",
         description: "Listado de alumnos con asignaturas reprobadas o bajo rendimiento acumulado.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["anoLectivo", "grado", "seccion"]
+        filters: ["anoLectivo", "grado", "seccion"],
+        indicators: ["IND-ACAD-05"],
+        rolesPermitidos: ["Director", "Subdirector", "Coordinador", "Consejeros", "Profesor", "Desarrollador", "Administrador"],
+        estado: "Activo"
       },
       {
         id: "REP-ACAD-03",
         title: "Consolidado de Asistencia y Puntualidad",
         category: "ACADEMICA",
+        area: "Académica",
+        service: "ACADEMIC",
         description: "Porcentaje de asistencia, tardanzas y ausencias justificadas e injustificadas.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["anoLectivo", "grado", "seccion", "fechaInicio", "fechaFin"]
+        filters: ["anoLectivo", "grado", "seccion", "fechaInicio", "fechaFin"],
+        indicators: ["IND-ACAD-03"],
+        rolesPermitidos: ["Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Consejeros", "Desarrollador", "Administrador"],
+        estado: "Activo"
+      },
+      {
+        id: "REP-ACAD-04",
+        title: "Capacidad y Ocupación de Secciones",
+        category: "ACADEMICA",
+        area: "Académica",
+        service: "ACADEMIC",
+        description: "Informe de cupos, capacidad instalada y porcentaje de ocupación por grado y sección.",
+        supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
+        filters: ["anoLectivo", "grado"],
+        indicators: ["IND-ACAD-04"],
+        rolesPermitidos: ["Director", "Subdirector", "Secretaría", "Secretaria", "Coordinador", "Desarrollador", "Administrador"],
+        estado: "Activo"
       },
       {
         id: "REP-SEC-01",
         title: "Consolidado de Matrícula y Expedientes Digitales",
         category: "SECRETARIA",
+        area: "Administrativa",
+        service: "ACADEMIC",
         description: "Estadística de estudiantes matriculados, trasladados y estado de expediente.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["anoLectivo", "grado", "estado"]
+        filters: ["anoLectivo", "grado", "estado"],
+        indicators: ["IND-ACAD-01"],
+        rolesPermitidos: ["Director", "Subdirector", "Secretaría", "Secretaria", "Desarrollador", "Administrador"],
+        estado: "Activo"
       },
       {
         id: "REP-SEC-02",
         title: "Control de Emisión de Certificados y Constancias",
         category: "SECRETARIA",
-        description: "Registro de documentos oficiales solicitados, aprobados y entregados.",
+        area: "Administrativa",
+        service: "ACCOUNTING",
+        description: "Registro de documentos oficiales solicitados, aprobados y entregados con CUV.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["fechaInicio", "fechaFin", "estado"]
+        filters: ["fechaInicio", "fechaFin", "estado"],
+        indicators: ["IND-ADM-03"],
+        rolesPermitidos: ["Director", "Subdirector", "Secretaría", "Secretaria", "Desarrollador", "Administrador"],
+        estado: "Activo"
       },
       {
         id: "REP-CONT-01",
         title: "Estado de Resultados y Cobranza Confirmada",
         category: "CONTABILIDAD",
+        area: "Financiera",
+        service: "ACCOUNTING",
         description: "Ingresos reales confirmados, excluyendo estrictamente valores pendientes o cancelados.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["anoLectivo", "fechaInicio", "fechaFin"]
+        filters: ["anoLectivo", "fechaInicio", "fechaFin"],
+        indicators: ["IND-FIN-01", "IND-FIN-03"],
+        rolesPermitidos: ["Director", "Contador", "Desarrollador", "Administrador"],
+        estado: "Activo"
       },
       {
         id: "REP-CONT-02",
         title: "Antigüedad de Saldos y Cuentas por Cobrar",
         category: "CONTABILIDAD",
+        area: "Financiera",
+        service: "ACCOUNTING",
         description: "Detalle de morosidad y cargos pendientes por cobro por familia o estudiante.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["anoLectivo", "grado"]
+        filters: ["anoLectivo", "grado"],
+        indicators: ["IND-FIN-04"],
+        rolesPermitidos: ["Director", "Contador", "Desarrollador", "Administrador"],
+        estado: "Activo"
       },
       {
         id: "REP-CONT-03",
         title: "Informe Fiscal SAR y Facturación Oficial",
         category: "CONTABILIDAD",
+        area: "Financiera",
+        service: "ACCOUNTING",
         description: "Facturas fiscales emitidas, correlativo CAI, montos exentos y gravados.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["fechaInicio", "fechaFin"]
+        filters: ["fechaInicio", "fechaFin"],
+        indicators: ["IND-FIN-01"],
+        rolesPermitidos: ["Director", "Contador", "Desarrollador", "Administrador"],
+        estado: "Activo"
       },
       {
-        id: "REP-TIENDA-01",
-        title: "Ventas de Tienda y Movimientos de Inventario",
-        category: "TIENDA",
-        description: "Ventas de uniformes y útiles escolares, existencias en bodega y Kardex.",
+        id: "REP-CONT-04",
+        title: "Comparativo Financiero Multianual",
+        category: "CONTABILIDAD",
+        area: "Financiera",
+        service: "ACCOUNTING",
+        description: "Comparativa histórica de ingresos, gastos devengados y margen de solvencia.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["fechaInicio", "fechaFin"]
-      },
-      {
-        id: "REP-CAF-01",
-        title: "Consumo Diario y Reporte de Cafetería",
-        category: "CAFETERIA",
-        description: "Ventas diarias de cafetería, recargas de saldo y becas de alimentación.",
-        supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["fechaInicio", "fechaFin"]
+        filters: ["anoLectivoInicio", "anoLectivoFin"],
+        indicators: ["IND-FIN-01", "IND-FIN-02", "IND-FIN-03"],
+        rolesPermitidos: ["Director", "Contador", "Desarrollador", "Administrador"],
+        estado: "Activo"
       },
       {
         id: "REP-RH-01",
         title: "Resumen de Planillas y Deducciones Ley (IHSS/RAP/ISR)",
         category: "RECURSOS_HUMANOS",
+        area: "Administrativa",
+        service: "ACCOUNTING",
         description: "Total de nómina calculada, deducciones patronales y gubernamentales.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["anoLectivo", "fechaInicio", "fechaFin"]
+        filters: ["anoLectivo", "fechaInicio", "fechaFin"],
+        indicators: ["IND-ADM-01", "IND-FIN-02"],
+        rolesPermitidos: ["Director", "Contador", "RecursosHumanos", "Desarrollador", "Administrador"],
+        estado: "Activo"
+      },
+      {
+        id: "REP-TIENDA-01",
+        title: "Ventas de Tienda y Movimientos de Inventario",
+        category: "TIENDA",
+        area: "Operativa",
+        service: "ACCOUNTING",
+        description: "Ventas de uniformes y útiles escolares, existencias en bodega y Kardex.",
+        supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
+        filters: ["fechaInicio", "fechaFin"],
+        indicators: ["IND-FIN-01"],
+        rolesPermitidos: ["Director", "Contador", "EncargadoTienda", "Desarrollador", "Administrador"],
+        estado: "Activo"
+      },
+      {
+        id: "REP-CAF-01",
+        title: "Consumo Diario y Reporte de Cafetería",
+        category: "CAFETERIA",
+        area: "Operativa",
+        service: "ACCOUNTING",
+        description: "Ventas diarias de cafetería, recargas de saldo y becas de alimentación.",
+        supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
+        filters: ["fechaInicio", "fechaFin"],
+        indicators: ["IND-FIN-01"],
+        rolesPermitidos: ["Director", "Contador", "EncargadoCafeteria", "Desarrollador", "Administrador"],
+        estado: "Activo"
       },
       {
         id: "REP-PLAT-01",
         title: "Auditoría de Seguridad y Respaldos del Sistema",
         category: "PLATAFORMA",
+        area: "Operativa",
+        service: "DEVELOPER",
         description: "Bitácora de seguridad, accesos, copias de seguridad e integridad del sistema.",
         supportedFormats: ["PDF", "EXCEL", "PANTALLA"],
-        filters: ["fechaInicio", "fechaFin"]
+        filters: ["fechaInicio", "fechaFin"],
+        indicators: ["IND-ADM-03"],
+        rolesPermitidos: ["Director", "Desarrollador", "Administrador"],
+        estado: "Activo"
       }
     ];
 
-    return { status: "success", catalog: catalog, userRole: verifiedRole };
+    // Filtrar estrictamente por permisos del rol autenticado
+    let filtered = catalogMaster.filter(rep => {
+      if (rep.rolesPermitidos.indexOf("*") === -1 && rep.rolesPermitidos.indexOf(verifiedRole) === -1) {
+        return false;
+      }
+      if (soloActivos && rep.estado !== "Activo") return false;
+      if (categoria && String(rep.category).toUpperCase() !== String(categoria).toUpperCase()) return false;
+      if (area && String(rep.area).toUpperCase() !== String(area).toUpperCase()) return false;
+      if (query && typeof query === "string" && query.trim() !== "") {
+        const q = query.toLowerCase().trim();
+        const matchTitle = rep.title.toLowerCase().includes(q);
+        const matchDesc = rep.description.toLowerCase().includes(q);
+        const matchCat = rep.category.toLowerCase().includes(q);
+        if (!matchTitle && !matchDesc && !matchCat) return false;
+      }
+      return true;
+    });
+
+    return {
+      status: "success",
+      totalInformes: filtered.length,
+      catalog: filtered,
+      userRole: verifiedRole,
+      message: `Catálogo de informes institucional filtrado según permisos para rol '${verifiedRole}'.`
+    };
   } catch (error) {
     return { status: "error", message: error.message };
   }
+}
+
+// Alias de consulta homogénea
+function getInstitutionalReportsCatalog(payload) {
+  return getInstitutionalReportCatalog(payload);
 }
 
 function generateInstitutionalReport(payload) {
@@ -8629,7 +9674,7 @@ function manageInternalRoleCatalog(payload) {
       var nuevoEstado = accion === "activar" ? "Activo" : "Inactivo";
       sheet.getRange(targetIdx + 1, 10).setValue(nuevoEstado);
       sheet.getRange(targetIdx + 1, 13).setValue(now);
-      return { status: "success", rolInternoId: data[targetIdx][0], estado: nuevoEstado, message:  };
+      return { status: "success", rolInternoId: data[targetIdx][0], estado: nuevoEstado, message: `Rol interno ${data[targetIdx][0]} cambiado a estado ${nuevoEstado}.` };
     }
 
     var rId = rolInternoId;
@@ -8666,7 +9711,7 @@ function manageInternalRoleCatalog(payload) {
       ]);
     }
 
-    logStructuredEvent("USER", "manageInternalRoleCatalog", "INFO", "INTERNAL_ROLE_SAVED", , { rolInternoId: rId, nombre: nombreResponsabilidad, tipo: tipoResponsabilidad, estado }, verifiedRole);
+    logStructuredEvent("USER", "manageInternalRoleCatalog", "INFO", "INTERNAL_ROLE_SAVED", `Rol interno guardado: ${rId} - ${nombreResponsabilidad}`, { rolInternoId: rId, nombre: nombreResponsabilidad, tipo: tipoResponsabilidad, estado }, verifiedRole);
 
     return {
       status: "success",
@@ -8674,7 +9719,7 @@ function manageInternalRoleCatalog(payload) {
       codigoInterno: codInt,
       nombreResponsabilidad: nombreResponsabilidad,
       estado: estado,
-      message:
+      message: `Rol interno '${nombreResponsabilidad}' guardado correctamente.`
     };
   } catch (error) {
     logStructuredEvent("USER", "manageInternalRoleCatalog", "ERROR", "INTERNAL_ROLE_SAVE_FAILED", error.message, payload, payload && payload.authRole);

@@ -42,6 +42,8 @@ window.switchTab = function (tab) {
     renderInventarioModule(container);
   } else if (tab === 'compras') {
     renderComprasModule(container);
+  } else if (tab === 'biblioteca') {
+    renderBibliotecaModule(container);
   } else if (tab === 'diario') {
     renderDiarioModule(container);
   } else if (tab === 'presupuestos') {
@@ -71,6 +73,7 @@ function renderInventarioModule(container) {
         <div class="flex flex-wrap gap-2 text-xs font-bold uppercase">
           <button onclick="switchInventarioSubtab('kardex')" id="btn-sub-kardex" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-blue-600 text-white">Kardex</button>
           <button onclick="switchInventarioSubtab('almacenes')" id="btn-sub-almacenes" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100">Almacenes</button>
+          <button onclick="switchInventarioSubtab('transferencias')" id="btn-sub-transferencias" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100">Transferencias</button>
           <button onclick="switchInventarioSubtab('solicitudes')" id="btn-sub-solicitudes" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100">Solicitudes & Entregas</button>
           <button onclick="switchInventarioSubtab('activos')" id="btn-sub-activos" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100">Activos Fijos</button>
           <button onclick="switchInventarioSubtab('mantenimiento')" id="btn-sub-mantenimiento" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100">Mantenimiento</button>
@@ -88,7 +91,7 @@ function renderInventarioModule(container) {
 
 window.switchInventarioSubtab = function (subtab) {
   currentInventarioSubtab = subtab;
-  ['kardex', 'almacenes', 'solicitudes', 'activos', 'mantenimiento', 'bajas'].forEach(s => {
+  ['kardex', 'almacenes', 'transferencias', 'solicitudes', 'activos', 'mantenimiento', 'bajas'].forEach(s => {
     const btn = document.getElementById(`btn-sub-${s}`);
     if (btn) {
       if (s === subtab) {
@@ -104,6 +107,7 @@ window.switchInventarioSubtab = function (subtab) {
 
   if (subtab === 'kardex') renderKardexView(subContainer);
   else if (subtab === 'almacenes') renderAlmacenesView(subContainer);
+  else if (subtab === 'transferencias') renderTransferenciasView(subContainer);
   else if (subtab === 'solicitudes') renderSolicitudesView(subContainer);
   else if (subtab === 'activos') renderActivosView(subContainer);
   else if (subtab === 'mantenimiento') renderMantenimientoView(subContainer);
@@ -173,28 +177,72 @@ function renderKardexView(container) {
   loadKardexData();
 }
 
-window.loadKardexData = function () {
+// [TASK-019] [F19-Task01] - Carga y renderizado de existencias multialmacén e historial de Kardex
+window.loadKardexData = function (filtroUbicacion) {
   const container = document.getElementById('kardex-table-container');
   if (!container) return;
 
-  fetchApi('ACCOUNTING', 'getInventoryKardex', {})
+  const payload = {};
+  if (filtroUbicacion) payload.ubicacionResponsable = filtroUbicacion;
+
+  fetchApi('ACCOUNTING', 'getInventoryKardex', payload)
     .then(res => {
-      const items = (res && res.kardex) ? res.kardex : [];
-      if (items.length === 0) {
+      const items = (res && (res.kardex || res.data)) ? (res.kardex || res.data) : [];
+      const resumenUbicaciones = (res && res.resumenPorUbicacion) ? res.resumenPorUbicacion : [];
+      const resumenConsolidado = (res && res.resumenExistencias) ? res.resumenExistencias : [];
+
+      if (items.length === 0 && resumenConsolidado.length === 0) {
         container.innerHTML = `<div class="p-4 text-center text-gray-400 font-bold uppercase">No hay registros en el Kardex de inventario.</div>`;
         return;
       }
-      let html = `
+
+      let html = "";
+
+      // 1. Tarjeta resumen de existencias multialmacén vs consolidado institucional
+      if (resumenConsolidado.length > 0) {
+        html += `
+          <div class="mb-4 bg-blue-50 border border-blue-200 rounded-xl p-3">
+            <h6 class="font-black text-[11px] text-blue-900 uppercase mb-2"><i class="fas fa-warehouse text-blue-600"></i> Resumen de Existencias por Almacén y Consolidado Institucional</h6>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+        `;
+        resumenConsolidado.forEach(item => {
+          const ubs = item.ubicaciones || {};
+          html += `
+            <div class="bg-white p-2.5 rounded-lg border border-blue-100 shadow-sm">
+              <div class="flex justify-between items-start">
+                <span class="font-bold text-gray-800 text-xs">${item.itemNombre}</span>
+                <span class="font-mono text-[10px] text-blue-600 bg-blue-100 px-1 rounded">${item.itemCodigo}</span>
+              </div>
+              <div class="mt-1 text-[11px] text-gray-600 space-y-0.5">
+          `;
+          Object.keys(ubs).forEach(ub => {
+            html += `<div class="flex justify-between"><span>📍 ${ub}:</span><span class="font-bold">${ubs[ub]}</span></div>`;
+          });
+          html += `
+              </div>
+              <div class="mt-2 pt-1 border-t border-gray-100 flex justify-between font-black text-xs ${item.alertaStockMinimo ? 'text-rose-600' : 'text-emerald-700'}">
+                <span>Total Institucional:</span>
+                <span>${item.totalInstitucional} ${item.alertaStockMinimo ? '⚠️' : ''}</span>
+              </div>
+            </div>
+          `;
+        });
+        html += `</div></div>`;
+      }
+
+      // 2. Tabla detallada de movimientos Kardex
+      html += `
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 font-bold uppercase">
               <th class="p-2">Código</th>
               <th class="p-2">Ítem</th>
-              <th class="p-2">Categoría</th>
               <th class="p-2">Movimiento</th>
               <th class="p-2 text-right">Cant.</th>
+              <th class="p-2 text-right">Stock Ant.</th>
               <th class="p-2 text-right">Stock Nuevo</th>
-              <th class="p-2">Ubicación</th>
+              <th class="p-2">Ubicación / Almacén</th>
+              <th class="p-2">Observaciones</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100">
@@ -205,11 +253,12 @@ window.loadKardexData = function () {
           <tr class="hover:bg-gray-50">
             <td class="p-2 font-mono font-bold text-blue-600">${k.itemCodigo}</td>
             <td class="p-2 font-bold text-gray-800">${k.itemNombre}</td>
-            <td class="p-2 text-gray-500">${k.categoriaTipo || 'Consumible'}</td>
-            <td class="p-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${k.tipoMovimiento === 'Entrada' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${k.tipoMovimiento}</span></td>
+            <td class="p-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${k.tipoMovimiento.includes('Entrada') || k.tipoMovimiento === 'Devolucion' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${k.tipoMovimiento}</span></td>
             <td class="p-2 text-right font-bold">${k.cantidad}</td>
+            <td class="p-2 text-right text-gray-500 font-mono">${k.stockAnterior !== undefined ? k.stockAnterior : '-'}</td>
             <td class="p-2 text-right font-black ${isBajo ? 'text-rose-600' : 'text-emerald-600'}">${k.stockNuevo} ${isBajo ? '⚠️' : ''}</td>
-            <td class="p-2 text-gray-600">${k.ubicacionResponsable || 'Bodega'}</td>
+            <td class="p-2 text-gray-700 font-semibold">📍 ${k.ubicacionResponsable || 'Bodega General'}</td>
+            <td class="p-2 text-gray-500 text-[11px] truncate max-w-[150px]">${k.observaciones || ''}</td>
           </tr>
         `;
       });
@@ -514,8 +563,9 @@ window.loadActivosData = function () {
             <td class="p-2 text-gray-500">${a.categoria}</td>
             <td class="p-2 text-gray-700 font-medium">${a.ubicacionActual}</td>
             <td class="p-2 text-gray-600 font-mono">${a.custodioUserId || 'Sin Custodio'}</td>
-            <td class="p-2 text-right">
-              <button onclick="handleAsignarCustodia('${a.activoId}')" class="px-2 py-1 bg-blue-50 text-blue-600 rounded font-bold text-[10px] hover:bg-blue-100 uppercase">Custodia</button>
+            <td class="p-2 text-right space-x-1 whitespace-nowrap">
+              <button onclick="handleAsignarCustodia('${a.activoId}')" class="px-2 py-1 bg-blue-50 text-blue-600 rounded font-bold text-[10px] hover:bg-blue-100 uppercase" title="Asignar Custodia">Asignar</button>
+              ${(a.custodioUserId || a.estado === 'assigned') ? `<button onclick="handleDevolverCustodia('${a.activoId}', '${a.codigoPatrimonial || ''}', '${(a.nombre || '').replace(/'/g, "\\'")}', '${a.custodioUserId || ''}')" class="px-2 py-1 bg-rose-50 text-rose-600 rounded font-bold text-[10px] hover:bg-rose-100 uppercase" title="Registrar Devolución y Acta">Devolver</button>` : ''}
             </td>
           </tr>
         `;
@@ -557,6 +607,42 @@ window.handleAsignarCustodia = function (activoId) {
       loadActivosData();
     })
     .catch(err => alert("Error: " + err.message));
+};
+
+window.handleDevolverCustodia = function (activoId, codigoPatrimonial, nombre, custodioUserId) {
+  const custodio = prompt(`Confirmar custodio que entrega el activo (${codigoPatrimonial} - ${nombre}):`, custodioUserId || "");
+  if (!custodio) return;
+
+  const receptor = prompt("UserId o nombre del responsable institucional que recibe el activo:", (window.currentUser && window.currentUser.userId) || "DIR-01");
+  if (!receptor) return;
+
+  const condicionPrompt = prompt("Condición física al reingreso (Nuevo, Bueno, Regular, Dañado, Incompleto, RequiereReparacion):", "Bueno");
+  if (!condicionPrompt) return;
+
+  const obs = prompt("Observaciones de la entrega / componentes o detalles:", "Devolución en orden y revisión conforme");
+
+  fetchApi('ACCOUNTING', 'returnAssetCustody', {
+    activoId: activoId,
+    custodioUserId: custodio,
+    recibidoPor: receptor,
+    receptorUserId: receptor,
+    estadoFisico: condicionPrompt,
+    condicionRecepcion: condicionPrompt,
+    observaciones: obs || "Recepción formal de custodia",
+    ubicacionRecepcion: "Bodega General"
+  })
+    .then(res => {
+      let msg = res.message || "Devolución registrada correctamente.";
+      if (res.ordenMantenimientoId) {
+        msg += `\nSe generó orden de mantenimiento: ${res.ordenMantenimientoId}`;
+      }
+      if (res.actaDevolucionId) {
+        msg += `\nActa de Entrega-Recepción: ${res.actaDevolucionId}`;
+      }
+      alert(msg);
+      loadActivosData();
+    })
+    .catch(err => alert("Error al devolver custodia: " + (err.message || err)));
 };
 
 // --- MANTENIMIENTO ---
@@ -1332,40 +1418,47 @@ window.loadLibrosData = function () {
   const container = document.getElementById('libros-table-container');
   if (!container) return;
 
-  fetchApi('ACCOUNTING', 'getLibraryBooks', {})
+  // Consultar Obras Maestras normalizadas con disponibilidad consolidada (FRBR/RDA) [TASK-025]
+  fetchApi('ACCOUNTING', 'getBibliographicWorks', {})
     .then(res => {
-      const books = (res && res.libros) ? res.libros : [];
-      if (books.length === 0) {
-        container.innerHTML = `<div class="p-4 text-center text-gray-400 font-bold uppercase">No hay libros registrados en catálogo.</div>`;
+      const obras = (res && res.obras) ? res.obras : [];
+      if (obras.length === 0) {
+        container.innerHTML = `<div class="p-4 text-center text-gray-400 font-bold uppercase">No hay obras registradas en el catálogo FRBR.</div>`;
         return;
       }
       let html = `
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 font-bold uppercase">
-              <th class="p-2">Ejemplar ID</th>
-              <th class="p-2">Título</th>
-              <th class="p-2">Autor</th>
-              <th class="p-2">Ubicación</th>
+              <th class="p-2">Obra ID / ISBN</th>
+              <th class="p-2">Título de Obra</th>
+              <th class="p-2">Autores</th>
+              <th class="p-2">Categoría</th>
+              <th class="p-2">Copias Totales</th>
+              <th class="p-2">Disponibles</th>
+              <th class="p-2">Prestadas</th>
               <th class="p-2">Estado</th>
-              <th class="p-2 text-right">Acciones</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100">
       `;
-      books.forEach(b => {
-        const isDisp = b.estado === 'available';
+      obras.forEach(o => {
+        const autoresStr = Array.isArray(o.autores) ? o.autores.join(', ') : o.autores;
+        const total = (o.metricasEjemplares && o.metricasEjemplares.total) || 0;
+        const avail = (o.metricasEjemplares && o.metricasEjemplares.available) || 0;
+        const onLoan = (o.metricasEjemplares && o.metricasEjemplares.on_loan) || 0;
+        const badgeColor = avail > 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800';
+
         html += `
           <tr class="hover:bg-gray-50">
-            <td class="p-2 font-mono font-bold text-indigo-600">${b.ejemplarId}</td>
-            <td class="p-2 font-bold text-gray-800">${b.titulo}</td>
-            <td class="p-2 text-gray-600">${b.autor}</td>
-            <td class="p-2 text-gray-500">${b.ubicacionFisica}</td>
-            <td class="p-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isDisp ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${b.estado}</span></td>
-            <td class="p-2 text-right flex justify-end gap-1">
-              ${isDisp ? `<button onclick="handlePrestarLibro('${b.ejemplarId}')" class="px-2 py-1 bg-indigo-600 text-white rounded font-bold text-[10px] hover:bg-indigo-700 uppercase">Prestar</button>` : ''}
-              <button onclick="handleReservarLibro('${b.ejemplarId}')" class="px-2 py-1 bg-gray-100 text-gray-700 rounded font-bold text-[10px] hover:bg-gray-200 uppercase">Reservar</button>
-            </td>
+            <td class="p-2 font-mono font-bold text-indigo-700">${o.obraId}<div class="text-[10px] text-gray-400">${o.isbnCodigo || 'S/ISBN'}</div></td>
+            <td class="p-2 font-bold text-gray-800">${o.titulo}${o.subtitulo ? ` <span class="font-normal text-gray-500 text-[11px]">(${o.subtitulo})</span>` : ''}</td>
+            <td class="p-2 text-gray-600">${autoresStr}</td>
+            <td class="p-2 text-gray-500">${o.categoria}</td>
+            <td class="p-2 font-mono text-center font-bold text-gray-700">${total}</td>
+            <td class="p-2 font-mono text-center font-bold text-emerald-600">${avail}</td>
+            <td class="p-2 font-mono text-center font-bold text-amber-600">${onLoan}</td>
+            <td class="p-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${badgeColor}">${avail > 0 ? 'En Existencia' : 'Agotado'}</span></td>
           </tr>
         `;
       });
@@ -1373,7 +1466,7 @@ window.loadLibrosData = function () {
       container.innerHTML = html;
     })
     .catch(err => {
-      container.innerHTML = `<div class="p-4 text-rose-600 font-bold text-center">Error al cargar libros: ${err.message}</div>`;
+      container.innerHTML = `<div class="p-4 text-rose-600 font-bold text-center">Error al cargar obras: ${err.message}</div>`;
     });
 };
 
@@ -1784,4 +1877,168 @@ window.processEmployeeOffboarding = async function(payload) {
     console.error('[ACCOUNTING] Error en desvinculación laboral coordinada:', error);
     throw error;
   }
+};
+
+
+
+// --- [TASK-021] [F19-Task03] TRANSFERENCIAS ENTRE ALMACENES ---
+
+function renderTransferenciasView(container) {
+  container.innerHTML = `
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-gray-50 p-5 rounded-2xl border border-gray-200">
+        <h5 class="font-black text-xs uppercase text-gray-800 mb-3"><i class="fas fa-dolly text-blue-600"></i> Despachar Transferencia</h5>
+        <form id="form-transferencia" onsubmit="handleSaveTransferencia(event)" class="space-y-3 text-xs">
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Código del Artículo *</label>
+            <input type="text" id="trf-codigo" required class="w-full p-2 border border-gray-300 rounded-xl" placeholder="EJ: MAT-PAP-01">
+          </div>
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Nombre / Descripción</label>
+            <input type="text" id="trf-nombre" class="w-full p-2 border border-gray-300 rounded-xl" placeholder="EJ: Resma Papel Bond Carta">
+          </div>
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Cantidad a Transferir *</label>
+            <input type="number" id="trf-cantidad" required step="1" min="1" class="w-full p-2 border border-gray-300 rounded-xl" placeholder="1">
+          </div>
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Bodega / Ubicación Origen *</label>
+            <input type="text" id="trf-origen" required class="w-full p-2 border border-gray-300 rounded-xl" placeholder="Bodega General">
+          </div>
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Bodega / Ubicación Destino *</label>
+            <input type="text" id="trf-destino" required class="w-full p-2 border border-gray-300 rounded-xl" placeholder="Laboratorio de Cómputo 1">
+          </div>
+          <div class="flex items-center gap-2 pt-1">
+            <input type="checkbox" id="trf-requiere-recepcion" checked class="rounded text-blue-600">
+            <label for="trf-requiere-recepcion" class="font-bold text-gray-700 text-[11px]">Requiere confirmación física en destino (En Tránsito)</label>
+          </div>
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Observaciones</label>
+            <input type="text" id="trf-obs" class="w-full p-2 border border-gray-300 rounded-xl" placeholder="Motivo o referencia del traslado">
+          </div>
+          <button type="submit" class="w-full py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all uppercase">
+            Emitir Transferencia
+          </button>
+        </form>
+      </div>
+
+      <div class="md:col-span-2 bg-white p-5 rounded-2xl border border-gray-200">
+        <div class="flex justify-between items-center mb-4">
+          <h5 class="font-black text-xs uppercase text-gray-800"><i class="fas fa-exchange-alt text-indigo-600"></i> Historial y Seguimiento de Transferencias</h5>
+          <button onclick="loadTransferenciasData()" class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-200"><i class="fas fa-sync"></i> Actualizar</button>
+        </div>
+        <div id="transferencias-table-container" class="overflow-x-auto text-xs">
+          <div class="text-center py-6 text-gray-400 font-bold uppercase">Cargando transferencias...</div>
+        </div>
+      </div>
+    </div>
+  `;
+  loadTransferenciasData();
+}
+
+window.loadTransferenciasData = function () {
+  const container = document.getElementById('transferencias-table-container');
+  if (!container) return;
+
+  fetchApi('ACCOUNTING', 'getInventoryTransfers', {})
+    .then(res => {
+      const items = (res && res.transferencias) ? res.transferencias : [];
+      if (items.length === 0) {
+        container.innerHTML = `<div class="p-4 text-center text-gray-400 font-bold uppercase">No hay transferencias registradas.</div>`;
+        return;
+      }
+      let html = `
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 font-bold uppercase">
+              <th class="p-2">Lote TRF</th>
+              <th class="p-2">Artículo</th>
+              <th class="p-2 text-right">Despachado</th>
+              <th class="p-2">Origen &rarr; Destino</th>
+              <th class="p-2">Estado</th>
+              <th class="p-2 text-right">Acción</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+      `;
+      items.forEach(t => {
+        let badgeClass = "bg-blue-100 text-blue-800";
+        if (t.estadoTransferencia === "EnTransito") badgeClass = "bg-amber-100 text-amber-800";
+        else if (t.estadoTransferencia === "RecibidaTotal") badgeClass = "bg-emerald-100 text-emerald-800";
+        else if (t.estadoTransferencia === "RecibidaParcial") badgeClass = "bg-orange-100 text-orange-800";
+        else if (t.estadoTransferencia === "Rechazada" || t.estadoTransferencia === "Cancelada") badgeClass = "bg-rose-100 text-rose-800";
+
+        const accionBtn = (t.estadoTransferencia === "EnTransito")
+          ? `<button onclick="handleRecibirTransferencia('${t.transferBatchId}', '${t.itemCodigo}', '${t.cantidadDespachada}', '${t.ubicacionDestino}')" class="px-2 py-1 bg-emerald-50 text-emerald-600 rounded font-bold text-[10px] hover:bg-emerald-100 uppercase">Recibir</button>`
+          : `<span class="text-gray-400 font-bold text-[10px]">${t.cantidadRecibida || t.cantidadDespachada} rec.</span>`;
+
+        html += `
+          <tr class="hover:bg-gray-50">
+            <td class="p-2 font-mono font-bold text-indigo-600">${t.transferBatchId}</td>
+            <td class="p-2"><span class="font-bold text-gray-800">${t.itemNombre || t.itemCodigo}</span> <span class="font-mono text-gray-400 text-[10px]">(${t.itemCodigo})</span></td>
+            <td class="p-2 text-right font-mono font-bold">${t.cantidadDespachada}</td>
+            <td class="p-2 text-gray-700 font-medium">${t.ubicacionOrigen} &rarr; ${t.ubicacionDestino}</td>
+            <td class="p-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${badgeClass}">${t.estadoTransferencia}</span></td>
+            <td class="p-2 text-right">${accionBtn}</td>
+          </tr>
+        `;
+      });
+      html += `</tbody></table>`;
+      container.innerHTML = html;
+    })
+    .catch(err => {
+      container.innerHTML = `<div class="p-4 text-rose-600 font-bold text-center">Error al cargar transferencias: ${err.message}</div>`;
+    });
+};
+
+window.handleSaveTransferencia = function (e) {
+  e.preventDefault();
+  const payload = {
+    itemCodigo: document.getElementById('trf-codigo').value,
+    itemNombre: document.getElementById('trf-nombre').value,
+    cantidad: document.getElementById('trf-cantidad').value,
+    ubicacionOrigen: document.getElementById('trf-origen').value,
+    ubicacionDestino: document.getElementById('trf-destino').value,
+    requiereConfirmacionFisica: document.getElementById('trf-requiere-recepcion').checked,
+    observaciones: document.getElementById('trf-obs').value
+  };
+
+  fetchApi('ACCOUNTING', 'transferInventoryStock', payload)
+    .then(res => {
+      alert(res.message || "Transferencia despachada con éxito.");
+      document.getElementById('form-transferencia').reset();
+      loadTransferenciasData();
+      if (typeof loadKardexData === "function") loadKardexData();
+    })
+    .catch(err => alert("Error: " + err.message));
+};
+
+window.handleRecibirTransferencia = function (transferBatchId, itemCodigo, cantDespachada, uDestino) {
+  const cantStr = prompt(`Confirmar unidades físicas recibidas en ${uDestino} (Despachadas: ${cantDespachada}):`, cantDespachada);
+  if (cantStr === null) return;
+
+  const cantRec = parseFloat(cantStr);
+  if (isNaN(cantRec) || cantRec < 0) {
+    alert("Cantidad recibida inválida.");
+    return;
+  }
+
+  let justif = "";
+  if (cantRec !== parseFloat(cantDespachada)) {
+    justif = prompt("Especifique justificación de la discrepancia de recepción:") || "Diferencia de conteo en destino";
+  }
+
+  fetchApi('ACCOUNTING', 'confirmTransferReceipt', {
+    transferBatchId: transferBatchId,
+    cantidadRecibida: cantRec,
+    justificacionDiscrepancia: justif,
+    observaciones: "Recepción confirmada desde interfaz contable"
+  })
+    .then(res => {
+      alert(res.message || "Recepción confirmada con éxito.");
+      loadTransferenciasData();
+      if (typeof loadKardexData === "function") loadKardexData();
+    })
+    .catch(err => alert("Error: " + err.message));
 };
